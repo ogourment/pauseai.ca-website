@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  repository-boundary:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Keep the public repository agent-instruction-free
+        run: |
+          if find . -type f \( -name AGENTS.md -o -name CLAUDE.md \) -print -quit | grep -q .; then
+            echo "AGENTS.md and CLAUDE.md must not be committed to this repository" >&2
+            exit 1
+          fi
+
+  phoenix:
+    uses: ogourment/github-ci-cd-harness/.github/workflows/phoenix.yml@main

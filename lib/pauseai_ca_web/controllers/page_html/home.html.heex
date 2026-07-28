@@ -1,0 +1,273 @@
+<Layouts.app flash={@flash} current_scope={@current_scope} locale={@locale}>
+  <section class="relative overflow-hidden border-b border-stone-200">
+    <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_80%_15%,rgba(239,91,53,0.18),transparent_32%),linear-gradient(180deg,#f8f5ed_0%,#f3efe4_100%)]">
+    </div>
+    <div class="mx-auto max-w-6xl px-5 py-20 sm:py-28">
+      <p class="eyebrow">
+        {if(@locale == "fr",
+          do: "Comprendre avant de décider",
+          else: "Understand before deciding"
+        )}
+      </p>
+      <h1 class="mt-5 max-w-4xl font-serif text-5xl leading-[1.02] tracking-tight text-stone-950 sm:text-7xl">
+        {if(@locale == "fr",
+          do: "Jusqu’où devrions-nous laisser l’IA progresser?",
+          else: "How far should we let AI advance?"
+        )}
+      </h1>
+      <p class="mt-7 max-w-2xl text-xl leading-9 text-stone-600">
+        {if(@locale == "fr",
+          do:
+            "Trois questions. Aucune bonne réponse imposée. Nous vous proposerons un parcours pour examiner les arguments, les objections et les options.",
+          else:
+            "Three questions. No prescribed right answer. We’ll suggest a path through the arguments, objections, and possible responses."
+        )}
+      </p>
+      <a
+        href="#questions"
+        class="mt-9 inline-flex rounded-full bg-stone-900 px-6 py-3 font-semibold text-white transition hover:-translate-y-0.5 hover:bg-stone-700"
+      >
+        {if(@locale == "fr", do: "Commencer · 2 minutes", else: "Begin · 2 minutes")}
+      </a>
+    </div>
+  </section>
+
+  <section id="questions" class="mx-auto max-w-6xl px-5 py-20">
+    <div class="grid gap-12 lg:grid-cols-[0.7fr_1.3fr]">
+      <div>
+        <p class="eyebrow">
+          {if(@locale == "fr", do: "Votre point de départ", else: "Your starting point")}
+        </p>
+        <h2 class="mt-3 font-serif text-4xl leading-tight text-stone-950">
+          {if(@locale == "fr",
+            do: "Qu’en pensez-vous aujourd’hui?",
+            else: "Where do you stand today?"
+          )}
+        </h2>
+        <p class="mt-5 leading-7 text-stone-600">
+          {if(@locale == "fr",
+            do:
+              "Vos réponses restent dans ce navigateur. Elles ne sont ni envoyées ni liées à un compte.",
+            else:
+              "Your answers stay in this browser. They are not sent to us or connected to an account."
+          )}
+        </p>
+      </div>
+
+      <div id="belief-check" data-locale={@locale} class="space-y-6">
+        <.belief_question
+          id="risk"
+          number="01"
+          question={
+            if(@locale == "fr",
+              do: "L’IA pose un véritable risque existentiel.",
+              else: "AI poses a genuine existential risk."
+            )
+          }
+          locale={@locale}
+        />
+        <.belief_question
+          id="pause"
+          number="02"
+          question={
+            if(@locale == "fr",
+              do: "Une pause ou un traité pourrait réduire sensiblement ce risque.",
+              else: "A pause or treaty could materially reduce that risk."
+            )
+          }
+          locale={@locale}
+        />
+        <.belief_question
+          id="coordination"
+          number="03"
+          question={
+            if(@locale == "fr",
+              do:
+                "La coordination internationale est politiquement réalisable : les pays peuvent s’entendre, respecter l’accord et le faire appliquer.",
+              else:
+                "International coordination is politically achievable—countries can agree, comply, and enforce it."
+            )
+          }
+          locale={@locale}
+        />
+        <div class="flex flex-wrap items-center gap-4 pt-2">
+          <button
+            id="show-path"
+            type="button"
+            class="rounded-full bg-[#ef5b35] px-6 py-3 font-semibold text-white hover:bg-[#d84b29]"
+          >
+            {if(@locale == "fr", do: "Voir mon parcours suggéré", else: "Show my suggested path")}
+          </button>
+          <button
+            id="reset-beliefs"
+            type="button"
+            class="text-sm font-semibold text-stone-500 underline-offset-4 hover:text-stone-900 hover:underline"
+          >
+            {if(@locale == "fr", do: "Effacer mes réponses", else: "Clear my answers")}
+          </button>
+          <p id="local-status" class="text-sm text-stone-500" aria-live="polite"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="reading-path" class="border-y border-stone-200 bg-white">
+    <div class="mx-auto max-w-6xl px-5 py-20">
+      <div class="max-w-2xl">
+        <p class="eyebrow">
+          {if(@locale == "fr", do: "Explorer les arguments", else: "Explore the case")}
+        </p>
+        <h2 class="mt-3 font-serif text-4xl text-stone-950">
+          {if(@locale == "fr",
+            do: "Commencez là où vous avez des questions.",
+            else: "Start where you have questions."
+          )}
+        </h2>
+        <p id="path-explanation" class="mt-5 text-lg leading-8 text-stone-600">
+          {if(@locale == "fr",
+            do: "Tout reste accessible. Vos réponses ne font que changer l’ordre suggéré.",
+            else: "Everything remains available. Your answers only change the suggested order."
+          )}
+        </p>
+      </div>
+
+      <div id="resource-grid" class="mt-10 grid gap-5 md:grid-cols-2">
+        <.resource_card
+          id="resource-risk"
+          stage={if(@locale == "fr", do: "Comprendre le risque", else: "Understand the risk")}
+          title={
+            if(@locale == "fr",
+              do: "Pourquoi des chercheurs parlent-ils de risque existentiel?",
+              else: "Why do researchers discuss existential risk?"
+            )
+          }
+          body={
+            if(@locale == "fr",
+              do:
+                "Un point de départ sur la perte de contrôle, l’incertitude et les raisons de prendre le risque au sérieux.",
+              else:
+                "A starting point on loss of control, uncertainty, and why the risk deserves serious attention."
+            )
+          }
+          href="https://pauseai.info/x-risk"
+          source="PauseAI"
+          cta={
+            if(@locale == "fr", do: "Lire la synthèse source", else: "Read the source overview")
+          }
+        />
+        <.resource_card
+          id="resource-pause"
+          stage={if(@locale == "fr", do: "Évaluer les réponses", else: "Evaluate responses")}
+          title={
+            if(@locale == "fr",
+              do: "Que signifie réellement « faire une pause »?",
+              else: "What would a pause actually mean?"
+            )
+          }
+          body={
+            if(@locale == "fr",
+              do:
+                "Ce qui serait mis en pause, ce qui continuerait, et comment une pause diffère d’une interdiction générale de l’IA.",
+              else:
+                "What would pause, what would continue, and how a pause differs from a blanket ban on AI."
+            )
+          }
+          href="https://pauseai.info/proposal"
+          source="PauseAI"
+          cta={if(@locale == "fr", do: "Examiner la proposition", else: "Examine the proposal")}
+        />
+        <.resource_card
+          id="resource-coordination"
+          stage={if(@locale == "fr", do: "Tester la coordination", else: "Test coordination")}
+          title={
+            if(@locale == "fr",
+              do: "Un traité mondial est-il vérifiable?",
+              else: "Could a global treaty be verified?"
+            )
+          }
+          body={
+            if(@locale == "fr",
+              do:
+                "Les arguments sur les puces avancées, les centres de calcul, l’inspection, la conformité et les défections.",
+              else:
+                "The case involving advanced chips, compute centres, inspection, compliance, and defection."
+            )
+          }
+          href="https://pauseai.info/treaty"
+          source="PauseAI"
+          cta={if(@locale == "fr", do: "Explorer les mécanismes", else: "Explore the mechanisms")}
+        />
+        <.resource_card
+          id="resource-agency"
+          stage={if(@locale == "fr", do: "Passer à l’action", else: "Move toward action")}
+          title={
+            if(@locale == "fr",
+              do: "Pourquoi une circonscription visible compte",
+              else: "Why a visible constituency matters"
+            )
+          }
+          body={
+            if(@locale == "fr",
+              do:
+                "Les décideurs peuvent être convaincus sans agir. Une mobilisation crédible change ce qu’ils peuvent défendre.",
+              else:
+                "Policymakers can be convinced without acting. A credible constituency changes what they can defend."
+            )
+          }
+          href="https://www.lesswrong.com/posts/aoqhszdEWqcFWbnda/existential-ai-safety-needs-an-effective-social-movement"
+          source="PauseAI / LessWrong"
+          cta={if(@locale == "fr", do: "Lire la stratégie", else: "Read the strategy")}
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-5 py-20">
+    <div class="grid gap-10 rounded-[2rem] bg-[#18352f] p-8 text-white sm:p-12 lg:grid-cols-[1.4fr_0.6fr]">
+      <div>
+        <p class="text-sm font-bold uppercase tracking-[0.2em] text-[#f6a68d]">
+          {if(@locale == "fr",
+            do: "De la curiosité à la capacité",
+            else: "From curiosity to capacity"
+          )}
+        </p>
+        <h2 class="mt-4 max-w-2xl font-serif text-4xl leading-tight">
+          {if(@locale == "fr",
+            do: "Gardez une trace privée des gestes que vous posez.",
+            else: "Keep a private record of the steps you take."
+          )}
+        </h2>
+        <p class="mt-5 max-w-2xl text-lg leading-8 text-white/75">
+          {if(@locale == "fr",
+            do:
+              "Créez un compte pour noter une lecture, une conversation, un événement ou une prise de contact. Rien n’est public.",
+            else:
+              "Create an account to record a reading, conversation, event, or representative contact. Nothing is public."
+          )}
+        </p>
+      </div>
+      <div class="flex items-end lg:justify-end">
+        <.link
+          href={if(@current_scope, do: ~p"/dashboard", else: ~p"/users/register")}
+          class="inline-flex rounded-full bg-white px-6 py-3 font-semibold text-stone-900 hover:bg-[#f8d7cc]"
+        >
+          {cond do
+            @current_scope && @locale == "fr" -> "Voir mes actions"
+            @current_scope -> "View my actions"
+            @locale == "fr" -> "Créer un compte"
+            true -> "Create an account"
+          end}
+        </.link>
+      </div>
+    </div>
+  </section>
+
+  <footer class="border-t border-stone-200">
+    <div class="mx-auto flex max-w-6xl flex-col gap-4 px-5 py-10 text-sm text-stone-500 sm:flex-row sm:items-center">
+      <p class="mr-auto">PauseAI Canada · prototype</p>
+      <a class="hover:text-stone-900" href="https://pauseai.info/">PauseAI.info</a>
+      <a class="hover:text-stone-900" href="https://pauseia.fr/fr">Pause IA France</a>
+      <a class="hover:text-stone-900" href="https://github.com/ogourment/pauseai.ca-website">Source</a>
+    </div>
+  </footer>
+</Layouts.app>
