@@ -121,8 +121,14 @@ defmodule PauseAiCa.MixProject do
 
   defp acceptance_harness_git_url do
     case System.get_env("ACCEPTANCE_HARNESS_TOKEN") do
-      token when is_binary(token) and token != "" ->
-        "https://oauth2:#{URI.encode_www_form(token)}@framagit.org/olivierg/acceptance_harness.git"
+      credentials when is_binary(credentials) and credentials != "" ->
+        {username, token} =
+          case String.split(credentials, ":", parts: 2) do
+            [username, token] -> {username, token}
+            [token] -> {"oauth2", token}
+          end
+
+        "https://#{URI.encode_www_form(username)}:#{URI.encode_www_form(token)}@framagit.org/olivierg/acceptance_harness.git"
 
       _unset ->
         "git@framagit.org:olivierg/acceptance_harness.git"
