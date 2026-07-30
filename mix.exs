@@ -95,7 +95,7 @@ defmodule PauseAiCa.MixProject do
         "ecto.create --quiet",
         "ecto.migrate --quiet",
         "assets.build",
-        "test --only atdd --max-cases 1"
+        "cmd mix test --only atdd --max-cases 1"
       ],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["compile", "tailwind pauseai_ca", "esbuild pauseai_ca"],
