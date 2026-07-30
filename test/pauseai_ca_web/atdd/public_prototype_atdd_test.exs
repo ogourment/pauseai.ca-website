@@ -2,8 +2,6 @@ if System.get_env("ATDD") == "true" do
   defmodule PauseAiCaWeb.Atdd.PublicPrototypeTest do
     use PhoenixTest.Playwright.Case, async: false
 
-    import PhoenixTest.Playwright
-
     alias AcceptanceHarness.BrowserScreenshot
     alias PauseAiCaWeb.AtddEvidence
 
@@ -30,7 +28,10 @@ if System.get_env("ATDD") == "true" do
         |> visit("/")
         |> assert_has("#questions")
         |> assert_has("h1", text: "How far should we let AI advance?")
-        |> BrowserScreenshot.capture("public-prototype-01-home.png", &screenshot/2)
+        |> BrowserScreenshot.capture(
+          "public-prototype-01-home.png",
+          &PhoenixTest.Playwright.screenshot/2
+        )
 
       AtddEvidence.record_step(
         "public-prototype-01-home.png",
