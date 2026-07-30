@@ -50,6 +50,15 @@ config :phoenix_live_view,
 # at the `config/runtime.exs`.
 config :pauseai_ca, PauseAiCa.Mailer, adapter: Swoosh.Adapters.Local
 
+config :acceptance_harness, :harness,
+  app_name: "PauseAI Canada",
+  otp_app: :pauseai_ca,
+  site_title: "PauseAI Canada acceptance evidence"
+
+config :acceptance_harness, :health,
+  otp_app: :pauseai_ca,
+  env_prefix: "PAUSEAI_CA"
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.25.4",

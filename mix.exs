@@ -27,7 +27,7 @@ defmodule PauseAiCa.MixProject do
 
   def cli do
     [
-      preferred_envs: [precommit: :test]
+      preferred_envs: [precommit: :test, "test.atdd": :test]
     ]
   end
 
@@ -49,6 +49,8 @@ defmodule PauseAiCa.MixProject do
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 1.2.0"},
       {:lazy_html, ">= 0.1.0", only: :test},
+      acceptance_harness_dependency(),
+      {:phoenix_test_playwright, "~> 0.15.0", only: :test, runtime: false},
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.5", runtime: Mix.env() == :dev},
@@ -89,6 +91,12 @@ defmodule PauseAiCa.MixProject do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
+      "test.atdd": [
+        "ecto.create --quiet",
+        "ecto.migrate --quiet",
+        "assets.build",
+        "test --only atdd --max-cases 1"
+      ],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["compile", "tailwind pauseai_ca", "esbuild pauseai_ca"],
       "assets.deploy": [
@@ -99,5 +107,25 @@ defmodule PauseAiCa.MixProject do
       ],
       precommit: ["compile --warnings-as-errors", "deps.unlock --unused", "format", "test"]
     ]
+  end
+
+  defp acceptance_harness_dependency do
+    case System.get_env("ACCEPTANCE_HARNESS_PATH") do
+      path when is_binary(path) and path != "" ->
+        {:acceptance_harness, path: Path.expand(path), override: true}
+
+      _unset ->
+        {:acceptance_harness, git: acceptance_harness_git_url(), tag: "v0.6.1"}
+    end
+  end
+
+  defp acceptance_harness_git_url do
+    case System.get_env("ACCEPTANCE_HARNESS_TOKEN") do
+      token when is_binary(token) and token != "" ->
+        "https://oauth2:#{URI.encode_www_form(token)}@framagit.org/olivierg/acceptance_harness.git"
+
+      _unset ->
+        "git@framagit.org:olivierg/acceptance_harness.git"
+    end
   end
 end

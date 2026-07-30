@@ -1,6 +1,7 @@
 defmodule PauseAiCaWeb.Router do
   use PauseAiCaWeb, :router
 
+  import AcceptanceHarnessWeb.Router
   import PauseAiCaWeb.UserAuth
 
   pipeline :browser do
@@ -15,6 +16,12 @@ defmodule PauseAiCaWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+  end
+
+  scope "/" do
+    pipe_through :api
+
+    acceptance_harness_health("/health")
   end
 
   scope "/", PauseAiCaWeb do

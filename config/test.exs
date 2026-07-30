@@ -1,5 +1,7 @@
 import Config
 
+atdd_port = System.get_env("ATDD_PORT", "4116") |> String.to_integer()
+
 # Only in tests, remove the complexity from the password hashing algorithm
 config :argon2_elixir, t_cost: 1, m_cost: 8
 
@@ -19,9 +21,27 @@ config :pauseai_ca, PauseAiCa.Repo,
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
 config :pauseai_ca, PauseAiCaWeb.Endpoint,
-  http: [ip: {127, 0, 0, 1}, port: 4002],
+  http: [ip: {127, 0, 0, 1}, port: atdd_port],
   secret_key_base: "5Vkv9MzGeaVJ8q0JxD/hSW9dy6yp4ICThE+njQukPZmS5oWfYq0KFVadquCale9t",
-  server: false
+  server: System.get_env("ATDD") == "true"
+
+config :phoenix_test,
+  otp_app: :pauseai_ca,
+  base_url: System.get_env("ATDD_BASE_URL", "http://localhost:#{atdd_port}"),
+  playwright: [
+    screenshot_dir: "tmp/atdd/screenshots",
+    trace_dir: "tmp/atdd/traces",
+    timeout: 8_000
+  ]
+
+config :acceptance_harness, :harness,
+  app_name: "PauseAI Canada",
+  otp_app: :pauseai_ca,
+  site_title: "PauseAI Canada acceptance evidence",
+  evidence_dir: "tmp/atdd",
+  screenshot_dir: "tmp/atdd/screenshots",
+  trace_dir: "tmp/atdd/traces",
+  commit_sha_env: ["PAUSEAI_CA_GIT_SHA", "GITHUB_SHA"]
 
 # In test we don't send emails
 config :pauseai_ca, PauseAiCa.Mailer, adapter: Swoosh.Adapters.Test

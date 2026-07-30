@@ -22,3 +22,9 @@ jobs:
 
   phoenix:
     uses: ogourment/github-ci-cd-harness/.github/workflows/phoenix.yml@main
+    with:
+      run-acceptance: true
+      build-release: true
+      release-artifact-name: pauseai-ca-release
+    secrets:
+      acceptance-harness-token: ${{ secrets.ACCEPTANCE_HARNESS_TOKEN }}
