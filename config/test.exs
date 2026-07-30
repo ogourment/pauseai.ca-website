@@ -27,7 +27,7 @@ config :pauseai_ca, PauseAiCaWeb.Endpoint,
 
 config :phoenix_test,
   otp_app: :pauseai_ca,
-  base_url: System.get_env("ATDD_BASE_URL", "http://localhost:#{atdd_port}"),
+  base_url: System.get_env("ATDD_BASE_URL", "http://127.0.0.1:#{atdd_port}"),
   playwright: [
     screenshot_dir: "tmp/atdd/screenshots",
     trace_dir: "tmp/atdd/traces",
