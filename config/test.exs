@@ -23,7 +23,7 @@ config :pauseai_ca, PauseAiCa.Repo,
 config :pauseai_ca, PauseAiCaWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: atdd_port],
   secret_key_base: "5Vkv9MzGeaVJ8q0JxD/hSW9dy6yp4ICThE+njQukPZmS5oWfYq0KFVadquCale9t",
-  server: true
+  server: false
 
 config :phoenix_test,
   otp_app: :pauseai_ca,
