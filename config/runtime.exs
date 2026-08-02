@@ -20,8 +20,11 @@ if System.get_env("PHX_SERVER") do
   config :pauseai_ca, PauseAiCaWeb.Endpoint, server: true
 end
 
+# Applies to every environment and runs after config/dev.exs, so this is the
+# single source of truth for the port. 4013 is this project's entry in the local
+# port registry; deployed slots set PORT explicitly.
 config :pauseai_ca, PauseAiCaWeb.Endpoint,
-  http: [port: String.to_integer(System.get_env("PORT", "4000"))]
+  http: [port: String.to_integer(System.get_env("PORT", "4013"))]
 
 if config_env() == :dev do
   # Reload browser tabs when matching files change.

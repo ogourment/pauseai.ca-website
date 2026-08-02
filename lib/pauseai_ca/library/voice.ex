@@ -1,37 +1,52 @@
 defmodule PauseAiCa.Library.Voice do
   @moduledoc """
-  A Canadian voice on advanced AI risk, with a short attributed quotation.
+  Someone working in Canada who has said something on the record about advanced
+  AI risk, with what they actually said and where to check it.
 
-  Canada holds an unusual share of the field's founders and of its most
-  prominent critics. Naming them is the point: a visitor who thinks this is a
-  fringe worry should recognize the people saying it, and should be able to
-  reach the original in one click.
-
-  Quotations are kept short and attributed, and every entry links to the source.
+  Every quotation is verbatim from a linked source. Where a claim about a person
+  is contested — Geoffrey Hinton, for instance, has publicly rejected the
+  "quit Google to warn the world" story that circulated about him — we quote him
+  instead of narrating him.
   """
 
-  @enforce_keys [:id, :name, :affiliation, :url, :source, :reviewed_on, :quote]
-  defstruct [:id, :name, :affiliation, :url, :source, :reviewed_on, :quote, :note]
+  alias PauseAiCa.Library.Reference
+
+  @enforce_keys [:id, :name, :affiliation, :quotes, :references]
+  defstruct [:id, :name, :affiliation, :quotes, :references]
+
+  @type quotation :: %{
+          text: %{String.t() => String.t()},
+          source: String.t(),
+          url: String.t(),
+          said_on: String.t() | nil,
+          language: String.t()
+        }
 
   @type t :: %__MODULE__{
           id: String.t(),
           name: String.t(),
           affiliation: %{String.t() => String.t()},
-          url: String.t(),
-          source: String.t(),
-          reviewed_on: Date.t(),
-          quote: %{String.t() => String.t()},
-          note: %{String.t() => String.t()} | nil
+          quotes: [quotation()],
+          references: [Reference.t()]
         }
 
   @doc """
-  Returns the value of `field` for `locale`, falling back to English.
+  Returns the affiliation line for `locale`, falling back to English.
   """
-  @spec text(t(), :quote | :affiliation | :note, String.t()) :: String.t() | nil
-  def text(%__MODULE__{} = voice, field, locale) do
-    case Map.fetch!(voice, field) do
-      nil -> nil
-      map -> Map.get(map, locale) || Map.get(map, "en")
-    end
+  @spec affiliation(t(), String.t()) :: String.t()
+  def affiliation(%__MODULE__{affiliation: affiliation}, locale) do
+    Map.get(affiliation, locale) || Map.fetch!(affiliation, "en")
+  end
+
+  @doc """
+  Returns the text of `quotation` for `locale`.
+
+  A quotation given in English stays in English even for a French reader: a
+  translated quotation is no longer a quotation. The template marks the language
+  so the reader knows before they start.
+  """
+  @spec quote_text(quotation(), String.t()) :: String.t()
+  def quote_text(quotation, locale) do
+    Map.get(quotation.text, locale) || Map.fetch!(quotation.text, quotation.language)
   end
 end

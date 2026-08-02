@@ -2,7 +2,7 @@
   <.link
     id="warning-shot-banner"
     navigate={if(@locale == "fr", do: ~p"/fr/tir-de-semonce", else: ~p"/en/warning-shot")}
-    class="block bg-brand px-5 py-3 text-center text-stone-950 transition hover:bg-brand-strong"
+    class="sticky top-[var(--header-height)] z-30 block bg-brand px-5 py-3 text-center text-stone-950 transition hover:bg-brand-strong"
   >
     <span class="font-heading text-sm font-bold uppercase tracking-[0.16em]">
       {if(@locale == "fr",

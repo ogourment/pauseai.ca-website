@@ -164,7 +164,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope} locale={@locale}>
       <article>
-        <p class="bg-brand px-5 py-3 text-center font-heading text-sm font-bold uppercase tracking-[0.16em] text-stone-950">
+        <p class="sticky top-[var(--header-height)] z-30 bg-brand px-5 py-3 text-center font-heading text-sm font-bold uppercase tracking-[0.16em] text-stone-950">
           {@copy.badge}
         </p>
 

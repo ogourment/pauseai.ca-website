@@ -24,7 +24,9 @@
 @plugin "daisyui/packages/bundle/daisyui-theme" {
   name: "dark";
   default: false;
-  prefersdark: true;
+  /* The page palette is light-only; following the OS into this theme put
+     dark daisyUI inputs under dark page text. */
+  prefersdark: false;
   color-scheme: "dark";
   --color-base-100: oklch(30.33% 0.016 252.42);
   --color-base-200: oklch(25.26% 0.014 253.1);
@@ -191,6 +193,9 @@
 :root {
   --paper: #f8f5ed;
   --ink: #1c1917;
+  /* Height of the sticky header, so a campaign bandeau can stick right below
+     it instead of scrolling away. */
+  --header-height: 4.25rem;
 }
 
 html {

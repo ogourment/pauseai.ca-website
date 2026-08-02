@@ -12,6 +12,7 @@ defmodule PauseAiCaWeb.LibraryLive do
 
   alias PauseAiCa.Campaigns.Subscription
   alias PauseAiCa.Library
+  alias PauseAiCa.Library.Reference
   alias PauseAiCa.Library.Resource
   alias PauseAiCa.Library.Voice
 
@@ -65,7 +66,6 @@ defmodule PauseAiCaWeb.LibraryLive do
           {page_title(@locale)}
         </h1>
         <p class="mt-6 max-w-3xl text-xl leading-9 text-stone-700">{lede(@locale)}</p>
-        <p class="mt-4 max-w-3xl text-sm leading-6 text-stone-500">{sourcing_note(@locale)}</p>
       </section>
 
       <section id="voices" class="border-y border-stone-200 bg-white">
@@ -75,29 +75,51 @@ defmodule PauseAiCaWeb.LibraryLive do
           </h2>
           <p class="mt-3 max-w-3xl leading-7 text-stone-600">{voices_note(@locale)}</p>
 
-          <ul class="mt-8 grid gap-5 md:grid-cols-2">
+          <ul class="mt-8 grid gap-6 lg:grid-cols-2">
             <li
               :for={voice <- @voices}
               id={"voice-#{voice.id}"}
-              class="rounded-2xl border border-stone-200 p-6 transition hover:shadow-md"
+              class="flex flex-col rounded-2xl border border-stone-200 p-6"
             >
               <h3 class="font-heading text-2xl text-stone-950">{voice.name}</h3>
-              <p class="mt-1 text-sm text-stone-500">
-                {Voice.text(voice, :affiliation, @locale)}
+              <p class="mt-1 text-sm leading-6 text-stone-500">
+                {Voice.affiliation(voice, @locale)}
               </p>
-              <p class="mt-4 border-l-4 border-brand pl-4 leading-7 text-stone-800">
-                {Voice.text(voice, :quote, @locale)}
-              </p>
-              <p :if={voice.note} class="mt-3 leading-7 text-stone-600">
-                {Voice.text(voice, :note, @locale)}
-              </p>
-              <a
-                href={voice.url}
-                rel="noreferrer"
-                class="mt-4 inline-flex font-semibold text-stone-900 underline decoration-brand decoration-2 underline-offset-4"
+
+              <blockquote
+                :for={quotation <- voice.quotes}
+                class="mt-5 border-l-4 border-brand pl-4"
               >
-                {voice.source} <span aria-hidden="true">↗</span>
-              </a>
+                <p class="leading-7 text-stone-800">
+                  “{Voice.quote_text(quotation, @locale)}”
+                </p>
+                <footer class="mt-2 text-sm text-stone-500">
+                  <a
+                    href={quotation.url}
+                    rel="noreferrer"
+                    class="underline decoration-brand decoration-2 underline-offset-4"
+                  >{quotation.source}</a><span :if={quotation.said_on}>, {quotation.said_on}</span><span
+                    :if={quotation.language != @locale}
+                    class="ml-2 rounded border border-stone-300 px-1.5 py-0.5 text-xs uppercase"
+                  >{quotation.language}</span>
+                </footer>
+              </blockquote>
+
+              <div class="mt-5 border-t border-stone-200 pt-4">
+                <p class="text-xs font-bold uppercase tracking-[0.14em] text-stone-500">
+                  {further_label(@locale)}
+                </p>
+                <ul class="mt-2 space-y-1.5">
+                  <li :for={reference <- voice.references} class="leading-6">
+                    <a
+                      href={reference.url}
+                      rel="noreferrer"
+                      class="text-stone-900 underline decoration-brand decoration-2 underline-offset-4"
+                    >{Reference.label(reference, @locale)}</a>
+                    <span class="text-sm text-stone-500">· {reference.publisher}</span>
+                  </li>
+                </ul>
+              </div>
             </li>
           </ul>
         </div>
@@ -218,44 +240,39 @@ defmodule PauseAiCaWeb.LibraryLive do
     """
   end
 
-  defp page_title("fr"), do: "Comprendre, en français comme en anglais"
-  defp page_title(_locale), do: "Understand it, in English or in French"
+  defp page_title("fr"), do: "Faut-il ralentir l'IA?"
+  defp page_title(_locale), do: "Should we slow AI down?"
 
   defp lede("fr"),
     do:
-      "Une bibliothèque de sources vérifiées sur le risque lié à l'IA avancée, ce qu'une pause signifierait, et si la coordination internationale est réalisable. Tout reste accessible: rien n'est réservé."
+      "Les gens qui ont construit cette technologie sont parmi les plus inquiets de ce qu'elle devient, et plusieurs d'entre eux travaillent ici. Voici ce qu'ils disent, et les arguments — pour et contre — que vous pouvez examiner vous-même."
 
   defp lede(_locale),
     do:
-      "A reviewed library on the risk from advanced AI, what a pause would mean, and whether international coordination is achievable. Everything stays available: nothing is gated."
-
-  defp sourcing_note("fr"),
-    do:
-      "Nous ne copions ni ne traduisons le travail des autres. Chaque fiche indique l'éditeur, la langue d'origine et la date de la dernière vérification; les résumés sont les nôtres."
-
-  defp sourcing_note(_locale),
-    do:
-      "We do not copy or translate other people's work. Each card names the publisher, the original language and when a person last checked it; the summaries are ours."
+      "The people who built this technology are among the most worried about where it is going, and several of them work here. Here is what they say, and the arguments — for and against — you can weigh yourself."
 
   defp voices_heading("fr"), do: "Des voix canadiennes"
   defp voices_heading(_locale), do: "Canadian voices"
 
   defp voices_note("fr"),
     do:
-      "Une part inhabituelle des fondateurs de ce domaine — et de ses critiques les plus sérieux — travaille au Canada. Vérifiez par vous-même: chaque nom renvoie à sa source."
+      "Deux des trois lauréats du prix Turing pour l'apprentissage profond ont bâti leur carrière au Canada. Tous deux affirment aujourd'hui que la technologie qu'ils ont créée pourrait échapper au contrôle humain."
 
   defp voices_note(_locale),
     do:
-      "An unusual share of this field's founders — and of its most serious critics — work in Canada. Check for yourself: every name links to its source."
+      "Two of the three Turing Award winners for deep learning built their careers in Canada. Both now say the technology they created could escape human control."
 
-  defp reading_heading("fr"), do: "Le parcours de lecture"
-  defp reading_heading(_locale), do: "The reading path"
+  defp reading_heading("fr"), do: "Les arguments"
+  defp reading_heading(_locale), do: "The arguments"
+
+  defp further_label("fr"), do: "Pour aller plus loin"
+  defp further_label(_locale), do: "Further reading"
 
   defp canadian_label("fr"), do: "Canada"
   defp canadian_label(_locale), do: "Canada"
 
-  defp read_label("fr"), do: "Lire la source"
-  defp read_label(_locale), do: "Read the source"
+  defp read_label("fr"), do: "Lire"
+  defp read_label(_locale), do: "Read it"
 
   defp updates_heading("fr"), do: "Recevoir les mises à jour"
   defp updates_heading(_locale), do: "Get updates"

@@ -2,6 +2,7 @@ defmodule PauseAiCa.LibraryTest do
   use ExUnit.Case, async: true
 
   alias PauseAiCa.Library
+  alias PauseAiCa.Library.Reference
   alias PauseAiCa.Library.Resource
   alias PauseAiCa.Library.Voice
 
@@ -62,16 +63,56 @@ defmodule PauseAiCa.LibraryTest do
       end
     end
 
-    test "every quotation is attributed to a source a reader can open" do
+    test "every quotation is verbatim and linked to where it was said" do
       for voice <- Library.voices() do
-        assert String.starts_with?(voice.url, "https://")
-        assert voice.source != ""
+        assert voice.quotes != [], "#{voice.name} has no quotation"
 
-        for locale <- ["en", "fr"] do
-          assert Voice.text(voice, :quote, locale) != ""
-          assert Voice.text(voice, :affiliation, locale) != ""
+        for quotation <- voice.quotes do
+          assert String.starts_with?(quotation.url, "https://")
+          assert quotation.source != ""
+          assert Voice.quote_text(quotation, "en") != ""
+          assert Voice.quote_text(quotation, "fr") != ""
         end
       end
+    end
+
+    test "a quotation is not silently translated" do
+      english_quote =
+        Library.voices()
+        |> Enum.flat_map(& &1.quotes)
+        |> Enum.find(&(&1.language == "en"))
+
+      # A French reader gets the English words, not a paraphrase of them.
+      assert Voice.quote_text(english_quote, "fr") == Voice.quote_text(english_quote, "en")
+    end
+
+    test "every voice offers more than one way to read further" do
+      for voice <- Library.voices() do
+        assert length(voice.references) >= 1
+
+        for reference <- voice.references do
+          assert String.starts_with?(reference.url, "https://")
+          assert Reference.label(reference, "en") != ""
+          assert Reference.label(reference, "fr") != ""
+        end
+      end
+    end
+
+    test "affiliations read in both languages" do
+      for voice <- Library.voices() do
+        assert Voice.affiliation(voice, "en") != ""
+        assert Voice.affiliation(voice, "fr") != ""
+      end
+    end
+
+    test "Hinton is quoted rather than narrated" do
+      hinton = Enum.find(Library.voices(), &(&1.id == "hinton"))
+      text = Enum.map_join(hinton.quotes, " ", &Voice.quote_text(&1, "en"))
+
+      # He has publicly disputed the "quit Google to warn the world" story, so
+      # the page must not repeat it.
+      refute String.contains?(String.downcase(text), "google")
+      refute String.contains?(String.downcase(Voice.affiliation(hinton, "en")), "google")
     end
   end
 end
