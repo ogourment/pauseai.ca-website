@@ -14,6 +14,7 @@ defmodule PauseAiCaWeb.LibraryLive do
   alias PauseAiCa.Library
   alias PauseAiCa.Library.Reference
   alias PauseAiCa.Library.Resource
+  alias PauseAiCa.Library.Signatory
   alias PauseAiCa.Library.Voice
 
   @impl true
@@ -27,6 +28,7 @@ defmodule PauseAiCaWeb.LibraryLive do
      |> assign(:page_title, page_title(locale))
      |> assign(:stages, Library.stages())
      |> assign(:voices, Library.voices())
+     |> assign(:signatories, Library.signatories())
      |> assign(:subscribe_form, to_form(%{"email" => "", "consent" => "false"}, as: :subscribe))
      |> assign(:subscribe_state, :idle)}
   end
@@ -123,6 +125,42 @@ defmodule PauseAiCaWeb.LibraryLive do
             </li>
           </ul>
         </div>
+      </section>
+
+      <section id="parliament" class="mx-auto max-w-5xl px-5 py-14">
+        <h2 class="font-heading text-3xl uppercase tracking-wide text-stone-950">
+          {parliament_heading(@locale)}
+        </h2>
+        <p class="mt-3 max-w-3xl leading-7 text-stone-600">{parliament_note(@locale)}</p>
+
+        <div class="mt-8 grid gap-8 md:grid-cols-2">
+          <div :for={chamber <- [:commons, :senate]}>
+            <h3 class="font-heading text-xl text-brand-ink">{chamber_label(chamber, @locale)}</h3>
+            <ul class="mt-3 space-y-2">
+              <li
+                :for={signatory <- Enum.filter(@signatories, &(&1.chamber == chamber))}
+                class="leading-6"
+              >
+                <span class="font-semibold text-stone-900">{signatory.name}</span>
+                <span class="text-sm text-stone-500">· {Signatory.party(signatory, @locale)}</span>
+                <span :if={Signatory.note(signatory, @locale)} class="block text-sm text-stone-500">
+                  {Signatory.note(signatory, @locale)}
+                </span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="mt-6">
+          <a
+            id="parliament-source"
+            href={Library.statement_url(@locale)}
+            rel="noreferrer"
+            class="font-semibold text-stone-900 underline decoration-brand decoration-2 underline-offset-4"
+          >
+            {parliament_source(@locale)} <span aria-hidden="true">↗</span>
+          </a>
+        </p>
       </section>
 
       <section id="reading" class="mx-auto max-w-5xl px-5 py-14">
@@ -261,6 +299,25 @@ defmodule PauseAiCaWeb.LibraryLive do
   defp voices_note(_locale),
     do:
       "Two of the three Turing Award winners for deep learning built their careers in Canada. Both now say the technology they created could escape human control."
+
+  defp parliament_heading("fr"), do: "Des parlementaires l'ont déjà signé"
+  defp parliament_heading(_locale), do: "Parliamentarians have already signed"
+
+  defp parliament_note("fr"),
+    do:
+      "Seize député·es et sénateur·rices, de tous les partis et des deux chambres, ont signé la déclaration réclamant un accord international pour interdire l'IA superintelligente. Écrire à votre député·e n'est pas un geste marginal: la question est déjà à Ottawa."
+
+  defp parliament_note(_locale),
+    do:
+      "Sixteen MPs and Senators, from every party and both chambers, have signed the statement calling for an international agreement to prohibit superintelligent AI. Writing to your MP is not a fringe act: the question is already in Ottawa."
+
+  defp chamber_label(:commons, "fr"), do: "Chambre des communes"
+  defp chamber_label(:commons, _locale), do: "House of Commons"
+  defp chamber_label(:senate, "fr"), do: "Sénat"
+  defp chamber_label(:senate, _locale), do: "Senate"
+
+  defp parliament_source("fr"), do: "La déclaration et la liste complète des appuis"
+  defp parliament_source(_locale), do: "The statement and the full list of supporters"
 
   defp reading_heading("fr"), do: "Les arguments"
   defp reading_heading(_locale), do: "The arguments"

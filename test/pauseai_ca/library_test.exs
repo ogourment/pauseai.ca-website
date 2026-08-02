@@ -4,6 +4,7 @@ defmodule PauseAiCa.LibraryTest do
   alias PauseAiCa.Library
   alias PauseAiCa.Library.Reference
   alias PauseAiCa.Library.Resource
+  alias PauseAiCa.Library.Signatory
   alias PauseAiCa.Library.Voice
 
   describe "the reading library" do
@@ -113,6 +114,46 @@ defmodule PauseAiCa.LibraryTest do
       # the page must not repeat it.
       refute String.contains?(String.downcase(text), "google")
       refute String.contains?(String.downcase(Voice.affiliation(hinton, "en")), "google")
+    end
+  end
+
+  describe "parliamentary signatories" do
+    test "cover both chambers and more than one party" do
+      signatories = Library.signatories()
+
+      assert Enum.any?(signatories, &(&1.chamber == :commons))
+      assert Enum.any?(signatories, &(&1.chamber == :senate))
+
+      parties = signatories |> Enum.map(&Signatory.party(&1, "en")) |> Enum.uniq()
+      assert length(parties) >= 4
+    end
+
+    test "read in both languages" do
+      for signatory <- Library.signatories() do
+        assert signatory.name != ""
+        assert Signatory.party(signatory, "en") != ""
+        assert Signatory.party(signatory, "fr") != ""
+      end
+    end
+
+    test "only names verified against the published statement" do
+      names = Enum.map(Library.signatories(), & &1.name)
+
+      # Verified present on controlai.org/canada-statement, 2026-08-02.
+      assert "Hon. Steven Guilbeault" in names
+      assert "Martin Champoux" in names
+      assert "Hon. Colin Deacon" in names
+
+      # Circulated in a summary but not on the statement. Do not re-add without
+      # a source that names them.
+      for unverified <- ["Elizabeth May", "Paula Simons", "Francis Scarpaleggia", "Marilène Gill"] do
+        refute Enum.any?(names, &String.contains?(&1, unverified))
+      end
+    end
+
+    test "the statement is linked in the reader's language" do
+      assert Library.statement_url("fr") =~ "/fr"
+      assert Library.statement_url("en") =~ "/en"
     end
   end
 end

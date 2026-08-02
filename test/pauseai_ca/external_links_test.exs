@@ -21,7 +21,7 @@ defmodule PauseAiCa.ExternalLinksTest do
 
   test "every published external link resolves" do
     urls =
-      (library_urls() ++ voice_urls() ++ campaign_urls())
+      (library_urls() ++ voice_urls() ++ statement_urls() ++ campaign_urls())
       |> Enum.uniq()
 
     broken =
@@ -35,6 +35,7 @@ defmodule PauseAiCa.ExternalLinksTest do
   end
 
   defp library_urls, do: Enum.map(Library.resources(), & &1.url)
+  defp statement_urls, do: Enum.map(["en", "fr"], &Library.statement_url/1)
 
   defp voice_urls do
     Enum.flat_map(Library.voices(), fn voice ->
