@@ -74,6 +74,13 @@ defmodule PauseAiCaWeb.Router do
 
     live_session :current_user,
       on_mount: [{PauseAiCaWeb.UserAuth, :mount_current_scope}] do
+      # Public campaign pages. They work signed in or signed out, so they belong
+      # in :current_user rather than :require_authenticated_user.
+      live "/en/warning-shot", WarningShotLive, :en
+      live "/fr/tir-de-semonce", WarningShotLive, :fr
+      live "/en/learn", LibraryLive, :en
+      live "/fr/comprendre", LibraryLive, :fr
+
       live "/users/register", UserLive.Registration, :new
       live "/users/log-in", UserLive.Login, :new
       live "/users/log-in/:token", UserLive.Confirmation, :new

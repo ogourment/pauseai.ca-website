@@ -43,9 +43,27 @@ defmodule PauseAiCaWeb.Layouts do
           href={if(@locale == "fr", do: ~p"/fr", else: ~p"/en")}
           class="mr-auto flex items-center gap-3"
         >
-          <span class="grid size-9 place-items-center rounded-full bg-[#ef5b35] text-sm font-black text-white">II</span>
+          <img
+            src={~p"/images/pauseai-ca.png"}
+            alt=""
+            width="36"
+            height="36"
+            class="size-9"
+          />
           <span class="font-semibold tracking-tight text-stone-900">PauseAI Canada</span>
         </a>
+        <.link
+          class="text-sm font-medium text-stone-700 hover:text-stone-950"
+          navigate={if(@locale == "fr", do: ~p"/fr/comprendre", else: ~p"/en/learn")}
+        >
+          {if(@locale == "fr", do: "Comprendre", else: "Learn")}
+        </.link>
+        <.link
+          class="text-sm font-medium text-brand-ink hover:text-stone-950"
+          navigate={if(@locale == "fr", do: ~p"/fr/tir-de-semonce", else: ~p"/en/warning-shot")}
+        >
+          {if(@locale == "fr", do: "Tir de semonce", else: "Warning shot")}
+        </.link>
         <a
           class="text-sm font-medium text-stone-600 hover:text-stone-950"
           href={if(@locale == "fr", do: ~p"/en", else: ~p"/fr")}

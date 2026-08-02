@@ -89,11 +89,29 @@ if config_env() == :prod do
     config :pauseai_ca, PauseAiCa.Mailer,
       adapter: Swoosh.Adapters.Brevo,
       api_key: brevo_api_key
+
+    # The same key also drives mailing-list subscriptions through the Brevo
+    # contacts API. BREVO_LIST_IDS is a comma-separated list of numeric ids.
+    config :pauseai_ca, :brevo_api_key, brevo_api_key
+
+    config :pauseai_ca,
+           :brevo_list_ids,
+           "BREVO_LIST_IDS"
+           |> System.get_env("")
+           |> String.split(",", trim: true)
+           |> Enum.map(&String.to_integer(String.trim(&1)))
   else
     if System.get_env("PHX_SERVER") do
       raise "environment variable BREVO_API_KEY is missing"
     end
   end
+
+  # Address campaign letters are sent from when a supporter asks us to send on
+  # their behalf. Their own address is used as reply-to.
+  config :pauseai_ca,
+         :campaign_sender,
+         {System.get_env("CAMPAIGN_SENDER_NAME", "PauseAI Canada"),
+          System.get_env("CAMPAIGN_SENDER_EMAIL", "campaigns@pauseai.ca")}
 
   # ## SSL Support
   #
