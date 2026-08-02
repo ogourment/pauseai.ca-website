@@ -17,9 +17,9 @@ config :pauseai_ca, PauseAiCa.Repo,
 # watchers to your application. For example, we can use it
 # to bundle .js and .css sources.
 config :pauseai_ca, PauseAiCaWeb.Endpoint,
-  # Binding to loopback ipv4 address prevents access from other machines.
-  # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
-  http: [ip: {127, 0, 0, 1}],
+  # Bound to all interfaces so the site can be opened from a phone or tablet on
+  # the same network. The port is set in config/runtime.exs.
+  http: [ip: {0, 0, 0, 0}],
   check_origin: false,
   code_reloader: true,
   debug_errors: true,

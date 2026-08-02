@@ -35,7 +35,12 @@ defmodule PauseAiCa.ExternalLinksTest do
   end
 
   defp library_urls, do: Enum.map(Library.resources(), & &1.url)
-  defp voice_urls, do: Enum.map(Library.voices(), & &1.url)
+
+  defp voice_urls do
+    Enum.flat_map(Library.voices(), fn voice ->
+      Enum.map(voice.quotes, & &1.url) ++ Enum.map(voice.references, & &1.url)
+    end)
+  end
 
   defp campaign_urls do
     campaign = Campaigns.current_warning_shot()

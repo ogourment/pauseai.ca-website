@@ -29,8 +29,12 @@ mix setup
 mix phx.server
 ```
 
-Visit <http://localhost:4000>. Development email is available at
-<http://localhost:4000/dev/mailbox>.
+Visit <http://localhost:4013>. Development email is available at
+<http://localhost:4013/dev/mailbox>.
+
+The development server listens on all interfaces, so you can also open
+`http://<your-machine>:4013` from a phone or tablet on the same network. Set
+`PORT` to use a different port.
 
 Before proposing a change:
 

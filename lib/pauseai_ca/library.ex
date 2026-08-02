@@ -12,6 +12,7 @@ defmodule PauseAiCa.Library do
   pretending a French reader has the same material.
   """
 
+  alias PauseAiCa.Library.Reference
   alias PauseAiCa.Library.Resource
   alias PauseAiCa.Library.Voice
 
@@ -80,14 +81,14 @@ defmodule PauseAiCa.Library do
         reviewed_on: @reviewed,
         copy: %{
           "en" => %{
-            title: "Start here: what the argument actually is",
+            title: "What is actually being built",
             summary:
-              "PauseAI's own entry point. What is being built, why the people building it say it is dangerous, and what a pause would and would not cover."
+              "Systems that write code, use tools and pursue goals over hours without supervision — and why the labs building them say so themselves."
           },
           "fr" => %{
-            title: "Commencer ici: en quoi consiste l'argument",
+            title: "Ce qui est réellement en train d'être construit",
             summary:
-              "Le point d'entrée de PauseAI. Ce qui est en construction, pourquoi celles et ceux qui le construisent le disent dangereux, et ce qu'une pause couvrirait ou non."
+              "Des systèmes qui écrivent du code, utilisent des outils et poursuivent des objectifs pendant des heures sans supervision — et pourquoi les laboratoires qui les construisent le disent eux-mêmes."
           }
         }
       },
@@ -101,14 +102,14 @@ defmodule PauseAiCa.Library do
         reviewed_on: @reviewed,
         copy: %{
           "en" => %{
-            title: "Frequently asked questions (in French)",
+            title: "The questions people ask first",
             summary:
-              "Pause IA's answers to the questions that come up first, written for a French-speaking public rather than translated from English."
+              "Is this science fiction? Is it not just hype? What about the benefits? Pause IA's answers, written in French for a French-speaking public."
           },
           "fr" => %{
             title: "Foire aux questions",
             summary:
-              "Les réponses de Pause IA aux questions qui reviennent en premier, écrites pour un public francophone plutôt que traduites de l'anglais."
+              "Est-ce de la science-fiction? N'est-ce pas que du battage? Et les bénéfices? Les réponses de Pause IA, écrites en français pour un public francophone."
           }
         }
       },
@@ -126,12 +127,12 @@ defmodule PauseAiCa.Library do
           "en" => %{
             title: "The International AI Safety Report",
             summary:
-              "The closest thing to an IPCC report for AI, chaired by Montréal's Yoshua Bengio and backed by thirty countries. Read the summary if you read nothing else."
+              "Thirty countries, one report, chaired from Montréal: what the evidence currently supports about AI capabilities and harms, and where experts genuinely disagree."
           },
           "fr" => %{
             title: "Le Rapport international sur la sécurité de l'IA",
             summary:
-              "Ce qui se rapproche le plus d'un rapport du GIEC pour l'IA, présidé par le Montréalais Yoshua Bengio et soutenu par une trentaine de pays. À lire en priorité, ne serait-ce que le résumé."
+              "Une trentaine de pays, un rapport, présidé depuis Montréal: ce que les données appuient actuellement sur les capacités et les dangers de l'IA, et là où les experts divergent réellement."
           }
         }
       },
@@ -147,12 +148,12 @@ defmodule PauseAiCa.Library do
           "en" => %{
             title: "Why researchers talk about existential risk",
             summary:
-              "Loss of control, misuse and concentration of power, set out with the uncertainty left in rather than argued away."
+              "The argument that a system optimizing hard enough for any goal ends up wanting resources, self-preservation and no off switch — and why nobody knows how to rule that out."
           },
           "fr" => %{
             title: "Pourquoi les chercheur·ses parlent de risque existentiel",
             summary:
-              "Perte de contrôle, mésusage et concentration du pouvoir, exposés en conservant l'incertitude plutôt qu'en l'évacuant."
+              "L'argument selon lequel un système qui optimise assez fort n'importe quel objectif finit par vouloir des ressources, sa propre survie et aucun interrupteur — et pourquoi personne ne sait l'exclure."
           }
         }
       },
@@ -166,14 +167,14 @@ defmodule PauseAiCa.Library do
         reviewed_on: @reviewed,
         copy: %{
           "en" => %{
-            title: "Dangers for humanity (in French)",
+            title: "What is at stake for everyone",
             summary:
-              "Pause IA's account of the risks to humanity as a whole, and the clearest French-language starting point on loss of control."
+              "Loss of control, concentration of power, and the erosion of the human ability to decide. The clearest French-language treatment of the case."
           },
           "fr" => %{
             title: "Les dangers pour l'humanité",
             summary:
-              "L'exposé de Pause IA sur les risques pour l'humanité entière, et le point de départ francophone le plus clair sur la perte de contrôle."
+              "Perte de contrôle, concentration du pouvoir et érosion de la capacité humaine à décider. L'exposé francophone le plus clair sur la question."
           }
         }
       },
@@ -191,12 +192,12 @@ defmodule PauseAiCa.Library do
           "en" => %{
             title: "How rogue AIs may arise",
             summary:
-              "The essay in which one of deep learning's founders set out, in his own words, why he changed his mind about the risk."
+              "Bengio walks through how a system with goals of its own could actually arise from the training methods in use today. Technical, but written to be followed."
           },
           "fr" => %{
             title: "Comment des IA malveillantes peuvent apparaître",
             summary:
-              "L'essai dans lequel l'un des fondateurs de l'apprentissage profond explique, dans ses propres mots, pourquoi il a changé d'avis sur le risque."
+              "Bengio explique comment un système doté de ses propres objectifs pourrait réellement émerger des méthodes d'entraînement actuelles. Technique, mais écrit pour être suivi."
           }
         }
       },
@@ -210,14 +211,14 @@ defmodule PauseAiCa.Library do
         reviewed_on: @reviewed,
         copy: %{
           "en" => %{
-            title: "What a pause would actually mean",
+            title: "What a pause would and would not stop",
             summary:
-              "What would stop, what would continue, and why this is not a ban on AI. The specific proposal, not the slogan."
+              "Not a ban on AI. A ceiling on training runs above a compute threshold, until safety methods catch up. Medical AI, translation and everything else continues."
           },
           "fr" => %{
-            title: "Ce que signifierait réellement une pause",
+            title: "Ce qu'une pause arrêterait, et ce qu'elle n'arrêterait pas",
             summary:
-              "Ce qui s'arrêterait, ce qui continuerait, et pourquoi il ne s'agit pas d'une interdiction de l'IA. La proposition précise, pas le slogan."
+              "Pas une interdiction de l'IA. Un plafond sur les entraînements dépassant un seuil de calcul, jusqu'à ce que la sécurité rattrape. L'IA médicale, la traduction et le reste continuent."
           }
         }
       },
@@ -231,14 +232,14 @@ defmodule PauseAiCa.Library do
         reviewed_on: @reviewed,
         copy: %{
           "en" => %{
-            title: "Pause IA's proposals (in French)",
+            title: "The same case, in French law and politics",
             summary:
-              "The French chapter's policy asks, useful for seeing how the same argument is made inside another legal system."
+              "How Pause IA translates the argument into concrete demands on a European government — a useful comparison for what Canada could ask for."
           },
           "fr" => %{
             title: "Les propositions de Pause IA",
             summary:
-              "Les demandes politiques de la section française, utiles pour voir comment le même argument se formule dans un autre système juridique."
+              "Comment Pause IA traduit l'argument en demandes concrètes à un gouvernement européen — une comparaison utile pour ce que le Canada pourrait exiger."
           }
         }
       },
@@ -256,12 +257,12 @@ defmodule PauseAiCa.Library do
           "en" => %{
             title: "LawZero: building AI that does not act on its own",
             summary:
-              "The Montréal non-profit Bengio founded to pursue non-agentic, verifiable AI — evidence that technical work and a pause are not opposed."
+              "Bengio's answer to \"so what should we build instead\": AI that reasons and explains but does not act, designed so its safety can be checked."
           },
           "fr" => %{
             title: "LawZero: construire une IA qui n'agit pas d'elle-même",
             summary:
-              "L'organisme montréalais fondé par Bengio pour développer une IA non agentique et vérifiable — la preuve que travaux techniques et pause ne s'opposent pas."
+              "La réponse de Bengio à « alors, que construire à la place »: une IA qui raisonne et explique mais n'agit pas, conçue pour que sa sûreté soit vérifiable."
           }
         }
       },
@@ -275,14 +276,14 @@ defmodule PauseAiCa.Library do
         reviewed_on: @reviewed,
         copy: %{
           "en" => %{
-            title: "The strongest objections, stated fairly",
+            title: "Why a pause might not work",
             summary:
-              "Including the one most people raise first: another country will keep going anyway. Read this before deciding you disagree."
+              "China will not stop. The technology is already out. Regulation only punishes the careful. PauseAI's answers to the objections it hears most, including the ones it concedes."
           },
           "fr" => %{
-            title: "Les objections les plus fortes, présentées honnêtement",
+            title: "Pourquoi une pause pourrait ne pas fonctionner",
             summary:
-              "Y compris celle que l'on soulève en premier: un autre pays continuera de toute façon. À lire avant de conclure que vous n'êtes pas d'accord."
+              "La Chine ne s'arrêtera pas. La technologie est déjà sortie. La réglementation ne punit que les prudents. Les réponses de PauseAI aux objections les plus fréquentes, y compris celles qu'elle concède."
           }
         }
       },
@@ -296,14 +297,14 @@ defmodule PauseAiCa.Library do
         reviewed_on: @reviewed,
         copy: %{
           "en" => %{
-            title: "Could an international agreement actually be enforced?",
+            title: "Could a treaty be enforced?",
             summary:
-              "Advanced chips, compute centres, inspection and defection — the mechanics of verification rather than an appeal to good intentions."
+              "Frontier training needs enormous, physically traceable compute in a handful of data centres, built on chips from very few suppliers. That is what makes verification thinkable."
           },
           "fr" => %{
             title: "Un accord international pourrait-il vraiment être appliqué?",
             summary:
-              "Puces avancées, centres de calcul, inspection et défection: la mécanique de la vérification plutôt qu'un appel aux bonnes intentions."
+              "Les entraînements de pointe exigent une puissance de calcul énorme et physiquement traçable, concentrée dans quelques centres et bâtie sur des puces issues de très peu de fournisseurs. C'est ce qui rend la vérification pensable."
           }
         }
       },
@@ -320,12 +321,12 @@ defmodule PauseAiCa.Library do
           "en" => %{
             title: "AI Governance & Safety Canada",
             summary:
-              "The Canadian civil-society organization that testifies before parliamentary committees on advanced AI. Useful for seeing what is already on the record in Ottawa."
+              "The organization that has been making this case to Canadian parliamentary committees since 2022, with the submissions and testimony to show for it."
           },
           "fr" => %{
             title: "Gouvernance et sécurité de l'IA Canada",
             summary:
-              "L'organisme canadien de la société civile qui témoigne devant les comités parlementaires sur l'IA avancée. Utile pour voir ce qui figure déjà au compte rendu à Ottawa."
+              "L'organisme qui porte cet argument devant les comités parlementaires canadiens depuis 2022, mémoires et témoignages à l'appui."
           }
         }
       },
@@ -339,14 +340,14 @@ defmodule PauseAiCa.Library do
         reviewed_on: @reviewed,
         copy: %{
           "en" => %{
-            title: "Who else is saying this",
+            title: "Who else says this, in their own words",
             summary:
-              "Researchers, executives and heads of state, quoted with sources. The point is that this is not a fringe position."
+              "The CEOs of OpenAI, Anthropic and Google DeepMind have all signed a statement putting AI extinction risk alongside pandemics and nuclear war. Here they are, quoted with sources."
           },
           "fr" => %{
-            title: "Qui d'autre le dit",
+            title: "Qui d'autre le dit, dans ses propres mots",
             summary:
-              "Chercheur·ses, dirigeant·es d'entreprise et chef·fes d'État, cité·es avec leurs sources. L'enjeu: ce n'est pas une position marginale."
+              "Les PDG d'OpenAI, d'Anthropic et de Google DeepMind ont tous signé une déclaration plaçant le risque d'extinction lié à l'IA aux côtés des pandémies et de la guerre nucléaire. Les voici, cité·es avec leurs sources."
           }
         }
       },
@@ -360,13 +361,14 @@ defmodule PauseAiCa.Library do
         reviewed_on: @reviewed,
         copy: %{
           "en" => %{
-            title: "Things you can do, ranked by effort",
-            summary: "From a single email to organizing locally. No account needed to start."
+            title: "What actually moves a government",
+            summary:
+              "Elected officials count letters. Most files get almost none. PauseAI's list of actions, from a five-minute email to organizing a local group."
           },
           "fr" => %{
-            title: "Ce que vous pouvez faire, par ordre d'effort",
+            title: "Ce qui fait vraiment bouger un gouvernement",
             summary:
-              "D'un simple courriel à l'organisation locale. Aucun compte n'est nécessaire pour commencer."
+              "Les élu·es comptent les lettres. La plupart des dossiers n'en reçoivent presque aucune. La liste d'actions de PauseAI, du courriel de cinq minutes au groupe local."
           }
         }
       },
@@ -380,14 +382,14 @@ defmodule PauseAiCa.Library do
         reviewed_on: @reviewed,
         copy: %{
           "en" => %{
-            title: "Take action (in French)",
+            title: "Getting organized, in French",
             summary:
-              "Pause IA's action list, for French-speaking readers who prefer to organize in French."
+              "Pause IA's action list, for readers who would rather write, meet and organize in French."
           },
           "fr" => %{
             title: "Agir",
             summary:
-              "La liste d'actions de Pause IA, pour les lecteur·rices francophones qui préfèrent s'organiser en français."
+              "La liste d'actions de Pause IA, pour celles et ceux qui préfèrent écrire, se rencontrer et s'organiser en français."
           }
         }
       }
@@ -401,102 +403,262 @@ defmodule PauseAiCa.Library do
         name: "Yoshua Bengio",
         affiliation: %{
           "en" =>
-            "Université de Montréal and Mila · Turing Award · chaired the International AI Safety Report",
+            "Université de Montréal and Mila. Turing Award. Chaired the International AI Safety Report.",
           "fr" =>
-            "Université de Montréal et Mila · prix Turing · a présidé le Rapport international sur la sécurité de l'IA"
+            "Université de Montréal et Mila. Prix Turing. A présidé le Rapport international sur la sécurité de l'IA."
         },
-        url: "https://yoshuabengio.org/2023/05/22/how-rogue-ais-may-arise/",
-        source: "yoshuabengio.org",
-        reviewed_on: @reviewed,
-        quote: %{
-          "en" => "How rogue AIs may arise.",
-          "fr" => "Comment des IA malveillantes peuvent apparaître."
-        },
-        note: %{
-          "en" =>
-            "One of the three researchers whose work made modern AI possible, who now argues publicly for slowing it down.",
-          "fr" =>
-            "L'un des trois chercheurs dont les travaux ont rendu l'IA moderne possible, et qui plaide aujourd'hui publiquement pour la ralentir."
-        }
+        quotes: [
+          %{
+            text: %{
+              "en" =>
+                "Rogue AI may be dangerous for the whole of humanity. Banning powerful AI systems (say beyond the abilities of GPT-4) that are given autonomy and agency would be a good start."
+            },
+            source: "PauseAI, quotes with sources",
+            url: "https://pauseai.info/quotes",
+            said_on: nil,
+            language: "en"
+          },
+          %{
+            text: %{
+              "en" =>
+                "It's very hard, in terms of your ego and feeling good about what you do, to accept the idea that the thing you've been working on for decades might actually be very dangerous to humanity."
+            },
+            source: "PauseAI, quotes with sources",
+            url: "https://pauseai.info/quotes",
+            said_on: nil,
+            language: "en"
+          }
+        ],
+        references: [
+          %Reference{
+            label: %{
+              "en" => "How rogue AIs may arise — his own account of changing his mind",
+              "fr" => "Comment des IA malveillantes peuvent apparaître — son propre récit"
+            },
+            url: "https://yoshuabengio.org/2023/05/22/how-rogue-ais-may-arise/",
+            publisher: "yoshuabengio.org",
+            language: "en"
+          },
+          %Reference{
+            label: %{
+              "en" => "The International AI Safety Report, which he chairs",
+              "fr" => "Le Rapport international sur la sécurité de l'IA, qu'il préside"
+            },
+            url: "https://internationalaisafetyreport.org/",
+            publisher: "International AI Safety Report",
+            language: "en"
+          },
+          %Reference{
+            label: %{
+              "en" => "LawZero, the Montréal non-profit he founded",
+              "fr" => "LawZero, l'organisme montréalais qu'il a fondé"
+            },
+            url: "https://lawzero.org/en",
+            publisher: "LawZero",
+            language: "en"
+          }
+        ]
       },
       %Voice{
         id: "hinton",
         name: "Geoffrey Hinton",
         affiliation: %{
-          "en" => "University of Toronto · Nobel Prize in Physics 2024 · Turing Award",
-          "fr" => "Université de Toronto · prix Nobel de physique 2024 · prix Turing"
+          "en" => "University of Toronto. Nobel Prize in Physics 2024. Turing Award.",
+          "fr" => "Université de Toronto. Prix Nobel de physique 2024. Prix Turing."
         },
-        url: "https://pauseai.info/quotes",
-        source: "PauseAI, quotes with sources",
-        reviewed_on: @reviewed,
-        quote: %{
-          "en" =>
-            "Left Google in 2023 to speak freely about the risks of the technology he helped create.",
-          "fr" =>
-            "A quitté Google en 2023 pour parler librement des risques de la technologie qu'il a contribué à créer."
-        },
-        note: nil
+        quotes: [
+          %{
+            text: %{
+              "en" =>
+                "If you take the existential risk seriously, as I now do, it might be quite sensible to just stop developing these things any further."
+            },
+            source: "PauseAI, quotes with sources",
+            url: "https://pauseai.info/quotes",
+            said_on: nil,
+            language: "en"
+          },
+          %{
+            text: %{
+              "en" =>
+                "The research question is: how do you prevent them from ever wanting to take control? And nobody knows the answer."
+            },
+            source: "PauseAI, quotes with sources",
+            url: "https://pauseai.info/quotes",
+            said_on: nil,
+            language: "en"
+          }
+        ],
+        references: [
+          %Reference{
+            label: %{
+              "en" => "The one-sentence statement on extinction risk he signed",
+              "fr" => "La déclaration d'une phrase sur le risque d'extinction qu'il a signée"
+            },
+            url: "https://www.safe.ai/work/statement-on-ai-risk",
+            publisher: "Center for AI Safety",
+            language: "en"
+          },
+          %Reference{
+            label: %{
+              "en" => "More quotations, each with its original source",
+              "fr" => "D'autres citations, chacune avec sa source d'origine"
+            },
+            url: "https://pauseai.info/quotes",
+            publisher: "PauseAI",
+            language: "en"
+          }
+        ]
       },
       %Voice{
         id: "krueger",
         name: "David Krueger",
         affiliation: %{
-          "en" => "Mila, Université de Montréal · AI safety researcher",
-          "fr" => "Mila, Université de Montréal · chercheur en sécurité de l'IA"
+          "en" => "Mila and Université de Montréal. Founding CEO of Evitable.",
+          "fr" => "Mila et Université de Montréal. PDG fondateur d'Evitable."
         },
-        url: "https://pauseai.info/xrisk",
-        source: "PauseAI",
-        reviewed_on: @reviewed,
-        quote: %{
-          "en" =>
-            "Works on loss-of-control risk from inside the research community, not outside it.",
-          "fr" =>
-            "Travaille sur le risque de perte de contrôle depuis l'intérieur de la communauté de recherche, et non de l'extérieur."
-        },
-        note: nil
+        quotes: [
+          %{
+            text: %{"en" => "AI is not inevitable."},
+            source: "The Real AI",
+            url: "https://therealartificialintelligence.substack.com/p/ai-is-not-inevitable",
+            said_on: nil,
+            language: "en"
+          }
+        ],
+        references: [
+          %Reference{
+            label: %{
+              "en" => "His blog, The Real AI",
+              "fr" => "Son blogue, The Real AI"
+            },
+            url: "https://therealartificialintelligence.substack.com/p/ai-is-not-inevitable",
+            publisher: "Substack",
+            language: "en"
+          },
+          %Reference{
+            label: %{
+              "en" => "Evitable, the non-profit he founded",
+              "fr" => "Evitable, l'organisme qu'il a fondé"
+            },
+            url: "https://www.evitable.org/",
+            publisher: "Evitable",
+            language: "en"
+          },
+          %Reference{
+            label: %{
+              "en" => "The statement on extinction risk he signed",
+              "fr" => "La déclaration sur le risque d'extinction qu'il a signée"
+            },
+            url: "https://www.safe.ai/work/statement-on-ai-risk",
+            publisher: "Center for AI Safety",
+            language: "en"
+          }
+        ]
       },
       %Voice{
         id: "tessari",
         name: "Wyatt Tessari L'Allié",
         affiliation: %{
-          "en" => "Founder and executive director, AI Governance & Safety Canada",
-          "fr" => "Fondateur et directeur général, Gouvernance et sécurité de l'IA Canada"
+          "en" => "Founder and executive director, AI Governance & Safety Canada.",
+          "fr" => "Fondateur et directeur général, Gouvernance et sécurité de l'IA Canada."
         },
-        url: "https://aigs.ca/",
-        source: "AIGS Canada",
-        reviewed_on: @reviewed,
-        quote: %{
-          "en" =>
-            "Has testified to House of Commons committees that advanced AI is a national security matter.",
-          "fr" =>
-            "A témoigné devant des comités de la Chambre des communes que l'IA avancée relève de la sécurité nationale."
-        },
-        note: %{
-          "en" =>
-            "The most direct route from a Canadian concern to a Canadian parliamentary record.",
-          "fr" =>
-            "Le chemin le plus direct entre une préoccupation canadienne et le compte rendu parlementaire."
-        }
+        quotes: [
+          %{
+            text: %{
+              "en" =>
+                "Certain AI capabilities pose an unacceptable risk because they could lead to dangerous weaponization or loss of control scenarios: systems that, without the instruction or authorization of their users, can detect and evade monitoring, rewrite their own code, make copies of themselves, spawn other AI systems, commandeer resources or refuse shutdown."
+            },
+            source: "Standing Committee on Industry and Technology",
+            url:
+              "https://openparliament.ca/committees/industry-and-technology/45-1/27/wyatt-tessari-lallie-1/only/",
+            said_on: "2026-03-09",
+            language: "en"
+          },
+          %{
+            text: %{
+              "en" =>
+                "What can we do in and from Canada to ensure that AI is safe and benefits everyone?"
+            },
+            source: "Standing Committee on Industry and Technology",
+            url:
+              "https://openparliament.ca/committees/industry-and-technology/45-1/27/wyatt-tessari-lallie-1/only/",
+            said_on: "2026-03-09",
+            language: "en"
+          }
+        ],
+        references: [
+          %Reference{
+            label: %{
+              "en" => "His March 2026 testimony in full, from Hansard",
+              "fr" => "Son témoignage de mars 2026 en entier, tiré du hansard"
+            },
+            url:
+              "https://openparliament.ca/committees/industry-and-technology/45-1/27/wyatt-tessari-lallie-1/only/",
+            publisher: "openparliament.ca",
+            language: "en"
+          },
+          %Reference{
+            label: %{
+              "en" => "AI Governance & Safety Canada, the organization he runs",
+              "fr" => "Gouvernance et sécurité de l'IA Canada, l'organisme qu'il dirige"
+            },
+            url: "https://aigs.ca/",
+            publisher: "AIGS Canada",
+            language: "en"
+          }
+        ]
       },
       %Voice{
         id: "hadfield",
         name: "Gillian Hadfield",
         affiliation: %{
           "en" =>
-            "Johns Hopkins · on leave from the University of Toronto · CIFAR AI Chair, Vector Institute",
+            "Johns Hopkins, on leave from the University of Toronto. Canada CIFAR AI Chair at the Vector Institute.",
           "fr" =>
-            "Johns Hopkins · en congé de l'Université de Toronto · chaire en IA CIFAR, Institut Vecteur"
+            "Johns Hopkins, en congé de l'Université de Toronto. Chaire en IA Canada-CIFAR à l'Institut Vecteur."
         },
-        url: "https://vectorinstitute.ai/team/gillian-k-hadfield/",
-        source: "Vector Institute",
-        reviewed_on: @reviewed,
-        quote: %{
-          "en" =>
-            "Works on how you would actually regulate a technology that changes faster than law does.",
-          "fr" =>
-            "Travaille sur la manière de réglementer concrètement une technologie qui évolue plus vite que le droit."
-        },
-        note: nil
+        quotes: [
+          %{
+            text: %{
+              "en" =>
+                "Governments require the targets of regulation to purchase regulatory services from a government-licensed private regulator."
+            },
+            source: "Regulatory Markets: The Future of AI Governance",
+            url: "https://arxiv.org/abs/2304.04914",
+            said_on: "2023",
+            language: "en"
+          }
+        ],
+        references: [
+          %Reference{
+            label: %{
+              "en" => "Regulatory Markets: The Future of AI Governance",
+              "fr" => "Regulatory Markets: The Future of AI Governance"
+            },
+            url: "https://arxiv.org/abs/2304.04914",
+            publisher: "arXiv",
+            language: "en"
+          },
+          %Reference{
+            label: %{
+              "en" => "An interview on building rules AI can actually follow",
+              "fr" => "Une entrevue sur la conception de règles que l'IA peut suivre"
+            },
+            url:
+              "https://aihub.org/2025/05/22/interview-with-gillian-hadfield-normative-infrastructure-for-ai-alignment/",
+            publisher: "AIhub",
+            language: "en"
+          },
+          %Reference{
+            label: %{
+              "en" => "Her profile at the Vector Institute",
+              "fr" => "Sa fiche à l'Institut Vecteur"
+            },
+            url: "https://vectorinstitute.ai/team/gillian-k-hadfield/",
+            publisher: "Vector Institute",
+            language: "en"
+          }
+        ]
       }
     ]
   end
