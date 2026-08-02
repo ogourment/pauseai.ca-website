@@ -22,8 +22,9 @@ defmodule PauseAiCa.Campaigns.Delivery do
   alias PauseAiCa.Campaigns.Letter
   alias PauseAiCa.Mailer
 
-  # The only sender verified in PauseAI Canada's Brevo account.
-  @default_sender {"PauseAI Canada", "pauseaicanada@proton.me"}
+  # Verified sender on the authenticated pauseai.ca domain. Replies to a
+  # supporter's letter go to the supporter; anything else lands in info@.
+  @default_sender {"PauseAI Canada", "info@pauseai.ca"}
 
   @doc """
   Sends `letter` on behalf of `supporter`.
