@@ -131,7 +131,7 @@ defmodule PauseAiCaWeb.DashboardLive do
           </p>
 
           <div class="mt-8 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm">
-            <p class="text-sm font-semibold uppercase tracking-widest text-[#b94628]">
+            <p class="text-sm font-semibold uppercase tracking-widest text-brand-ink">
               {@action_count} actions recorded
             </p>
             <p class="mt-3 text-stone-600">
@@ -170,7 +170,7 @@ defmodule PauseAiCaWeb.DashboardLive do
               <div class="flex gap-3">
                 <button
                   id="save-action"
-                  class="rounded-full bg-[#ef5b35] px-5 py-3 font-semibold text-white hover:bg-[#d84b29]"
+                  class="rounded-full bg-brand px-5 py-3 font-semibold text-white hover:bg-brand-strong"
                 >
                   {if(@editing_id, do: "Save changes", else: "Record privately")}
                 </button>

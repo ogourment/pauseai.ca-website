@@ -1,4 +1,5 @@
-ExUnit.start()
+# :atdd and :external reach outside the test process; opt in with --only.
+ExUnit.start(exclude: [:external])
 Ecto.Adapters.SQL.Sandbox.mode(PauseAiCa.Repo, :manual)
 
 if System.get_env("ATDD") == "true" do

@@ -46,6 +46,16 @@ config :acceptance_harness, :harness,
 # In test we don't send emails
 config :pauseai_ca, PauseAiCa.Mailer, adapter: Swoosh.Adapters.Test
 
+# Member of parliament lookups are answered by a local stub, never the network
+config :pauseai_ca, :represent_req_options, plug: &PauseAiCa.RepresentStub.call/1
+
+# Mailing-list subscriptions likewise never leave the test process
+config :pauseai_ca, :brevo_req_options, plug: &PauseAiCa.BrevoStub.call/1
+config :pauseai_ca, :brevo_api_key, "test-key"
+config :pauseai_ca, :brevo_list_ids, [1]
+
+config :pauseai_ca, :campaign_sender, {"PauseAI Canada", "campaigns@example.org"}
+
 # Disable swoosh api client as it is only required for production adapters
 config :swoosh, :api_client, false
 
