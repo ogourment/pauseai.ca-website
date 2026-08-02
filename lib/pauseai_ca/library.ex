@@ -14,6 +14,7 @@ defmodule PauseAiCa.Library do
 
   alias PauseAiCa.Library.Reference
   alias PauseAiCa.Library.Resource
+  alias PauseAiCa.Library.Signatory
   alias PauseAiCa.Library.Voice
 
   @stages [:curiosity, :risk, :responses, :coordination, :agency, :participation]
@@ -33,6 +34,19 @@ defmodule PauseAiCa.Library do
   def resources(stage) do
     Enum.filter(all_resources(), &(&1.stage == stage))
   end
+
+  @doc """
+  Canadian parliamentarians who signed the ControlAI Canada statement.
+
+  Verified against controlai.org/canada-statement on 2026-08-02.
+  """
+  @spec signatories() :: [Signatory.t()]
+  def signatories, do: all_signatories()
+
+  @doc "Where the signatory list came from, in `locale`."
+  @spec statement_url(String.t()) :: String.t()
+  def statement_url("fr"), do: "https://controlai.org/canada-statement/fr"
+  def statement_url(_locale), do: "https://controlai.org/canada-statement/en"
 
   @doc "Canadian voices, with attributed quotations."
   @spec voices() :: [Voice.t()]
@@ -470,6 +484,16 @@ defmodule PauseAiCa.Library do
           %{
             text: %{
               "en" =>
+                "It is inspiring to see Canadian parliamentarians on both sides of the aisle directly confront the risk posed by superintelligence. This is one of the defining challenges of our era, and it will shape the life of every Canadian citizen. It's about time we address it."
+            },
+            source: "ControlAI Canada statement",
+            url: "https://controlai.org/canada-statement/en",
+            said_on: "2026",
+            language: "en"
+          },
+          %{
+            text: %{
+              "en" =>
                 "If you take the existential risk seriously, as I now do, it might be quite sensible to just stop developing these things any further."
             },
             source: "PauseAI, quotes with sources",
@@ -517,6 +541,16 @@ defmodule PauseAiCa.Library do
           "fr" => "Mila et Université de Montréal. PDG fondateur d'Evitable."
         },
         quotes: [
+          %{
+            text: %{
+              "en" =>
+                "To proceed towards superintelligent AI without any concrete plan to control it is completely unacceptable. Developers cannot currently comply with any effective regulation because they do not understand what they are building."
+            },
+            source: "ControlAI Canada statement",
+            url: "https://controlai.org/canada-statement/en",
+            said_on: "2026",
+            language: "en"
+          },
           %{
             text: %{"en" => "AI is not inevitable."},
             source: "The Real AI",
@@ -660,6 +694,58 @@ defmodule PauseAiCa.Library do
           }
         ]
       }
+    ]
+  end
+
+  defp all_signatories do
+    liberal = %{"en" => "Liberal", "fr" => "Parti libéral"}
+    conservative = %{"en" => "Conservative", "fr" => "Parti conservateur"}
+
+    [
+      %Signatory{name: "Hon. Judy A. Sgro", chamber: :commons, party: liberal},
+      %Signatory{name: "Hon. Jonathan Wilkinson", chamber: :commons, party: liberal},
+      %Signatory{name: "Hon. Steven Guilbeault", chamber: :commons, party: liberal},
+      %Signatory{name: "William Stevenson", chamber: :commons, party: conservative},
+      %Signatory{name: "Joël Godin", chamber: :commons, party: conservative},
+      %Signatory{name: "Cathay Wagantall", chamber: :commons, party: conservative},
+      %Signatory{name: "Arnold Viersen", chamber: :commons, party: conservative},
+      %Signatory{
+        name: "Martin Champoux",
+        chamber: :commons,
+        party: %{"en" => "Bloc Québécois", "fr" => "Bloc Québécois"},
+        note: %{
+          "en" => "on behalf of the Bloc Québécois MPs",
+          "fr" => "au nom des député·es du Bloc Québécois"
+        }
+      },
+      %Signatory{
+        name: "Simon-Pierre Savard-Tremblay",
+        chamber: :commons,
+        party: %{"en" => "Independent", "fr" => "Indépendant"}
+      },
+      %Signatory{
+        name: "Hon. Colin Deacon",
+        chamber: :senate,
+        party: %{"en" => "CSG", "fr" => "GSC"}
+      },
+      %Signatory{
+        name: "Hon. Tony Loffreda",
+        chamber: :senate,
+        party: %{"en" => "ISG", "fr" => "GSI"}
+      },
+      %Signatory{name: "Hon. Kim Pate", chamber: :senate, party: %{"en" => "ISG", "fr" => "GSI"}},
+      %Signatory{
+        name: "Hon. Paulette Senior",
+        chamber: :senate,
+        party: %{"en" => "ISG", "fr" => "GSI"}
+      },
+      %Signatory{
+        name: "Hon. Judy A. White",
+        chamber: :senate,
+        party: %{"en" => "PSG", "fr" => "GPS"}
+      },
+      %Signatory{name: "Hon. Jim Quinn", chamber: :senate, party: conservative},
+      %Signatory{name: "Hon. Mary Jane McCallum", chamber: :senate, party: conservative}
     ]
   end
 end
