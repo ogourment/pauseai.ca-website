@@ -111,7 +111,7 @@ if config_env() == :prod do
   config :pauseai_ca,
          :campaign_sender,
          {System.get_env("CAMPAIGN_SENDER_NAME", "PauseAI Canada"),
-          System.get_env("CAMPAIGN_SENDER_EMAIL", "campaigns@pauseai.ca")}
+          System.get_env("CAMPAIGN_SENDER_EMAIL", "pauseaicanada@proton.me")}
 
   # ## SSL Support
   #
