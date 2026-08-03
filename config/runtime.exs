@@ -43,6 +43,13 @@ if config_env() == :dev do
     ]
 end
 
+# Which deployment this is. The blue/green deploy sets this; unset means
+# production, which carries no badge. Only set when present, or this would
+# clobber the value config/dev.exs establishes for local work.
+if display_env = System.get_env("PAUSEAI_CA_DISPLAY_ENV") do
+  config :pauseai_ca, :display_env, display_env
+end
+
 # Google Analytics. Unset means no tracker and no consent banner, which is the
 # default everywhere including production until a measurement id is provided.
 config :pauseai_ca, :ga_measurement_id, System.get_env("GA_MEASUREMENT_ID")

@@ -54,6 +54,18 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
       assert render(view) =~ "Signer"
     end
 
+    test "the banner asks about cookies rather than naming a vendor", %{conn: conn} do
+      original = Application.get_env(:pauseai_ca, :ga_measurement_id)
+      Application.put_env(:pauseai_ca, :ga_measurement_id, "G-TEST123")
+      on_exit(fn -> Application.put_env(:pauseai_ca, :ga_measurement_id, original) end)
+
+      {:ok, view, _html} = live(conn, ~p"/en/learn")
+      html = render(view)
+
+      assert html =~ "analytics cookies"
+      refute html =~ "Google Analytics"
+    end
+
     test "no tracker and no banner without a measurement id", %{conn: conn} do
       original = Application.get_env(:pauseai_ca, :ga_measurement_id)
       Application.put_env(:pauseai_ca, :ga_measurement_id, nil)

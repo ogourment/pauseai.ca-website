@@ -47,13 +47,16 @@ defmodule PauseAiCaWeb.Layouts do
           href={if(@locale == "fr", do: ~p"/fr", else: ~p"/en")}
           class="mr-auto flex items-center gap-3"
         >
-          <img
-            src={~p"/images/pauseai-ca.png"}
-            alt=""
-            width="36"
-            height="36"
-            class="size-9"
-          />
+          <span class="relative inline-flex">
+            <img src={~p"/images/pauseai-ca.png"} alt="" width="36" height="36" class="size-9" />
+            <span
+              :if={PauseAiCa.Environment.badged?()}
+              class="absolute -bottom-1 -right-2 rounded px-1 py-px text-[9px] font-black leading-none text-white"
+              style={"background: #{env_badge_colour()}"}
+            >
+              {PauseAiCa.Environment.label()}
+            </span>
+          </span>
           <span class="font-semibold tracking-tight text-stone-900">PauseAI Canada</span>
         </a>
         <.link
@@ -133,6 +136,11 @@ defmodule PauseAiCaWeb.Layouts do
   end
 
   defp analytics_id, do: Application.get_env(:pauseai_ca, :ga_measurement_id)
+
+  # Red for the environment that looks most like production and is not it.
+  defp env_badge_colour do
+    if PauseAiCa.Environment.label() == "STAGING", do: "#b91c1c", else: "#1d4ed8"
+  end
 
   # The three things PauseAI Global asks people to do. They all leave this site,
   # so each says where it goes rather than pretending to be a local page.

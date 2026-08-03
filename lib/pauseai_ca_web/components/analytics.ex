@@ -8,6 +8,10 @@ defmodule PauseAiCaWeb.Analytics do
   to a political letter, shipping a tracker that starts before the banner is
   answered would be both unlawful and a poor look.
 
+  The banner speaks about cookies rather than naming the vendor. Naming it made
+  the notice read like a warning about a third party; what a visitor is
+  actually being asked is whether something may be stored on their device.
+
   So the gtag snippet is not in the page until someone accepts. Declining
   stores the refusal and loads nothing. The choice is kept in `localStorage`,
   not a cookie, so a refusal does not itself create the thing being refused.
@@ -101,11 +105,11 @@ defmodule PauseAiCaWeb.Analytics do
 
   defp consent_text("fr"),
     do:
-      "Nous aimerions mesurer quelles pages aident les gens à passer à l'action, avec Google Analytics. Rien n'est activé tant que vous n'avez pas accepté, et refuser n'enlève aucune fonctionnalité."
+      "Acceptez-vous les témoins (cookies) de mesure d'audience? Ils nous aident à voir quelles pages amènent les gens à agir. Refuser n'enlève aucune fonctionnalité."
 
   defp consent_text(_locale),
     do:
-      "We would like to measure which pages help people take action, using Google Analytics. Nothing runs until you accept, and declining costs you no functionality."
+      "Accept analytics cookies? They help us see which pages actually lead people to act. Declining costs you no functionality."
 
   defp accept_label("fr"), do: "Accepter"
   defp accept_label(_locale), do: "Accept"
