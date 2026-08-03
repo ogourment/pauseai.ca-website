@@ -8,16 +8,21 @@ defmodule PauseAiCaWeb.LetterController do
 
   use PauseAiCaWeb, :controller
 
+  alias PauseAiCa.Audit
   alias PauseAiCa.Campaigns.Confirmations
 
   def confirm(conn, %{"token" => token}) do
     case Confirmations.release(token) do
       {:ok, %{locale: locale}} ->
+        Audit.event(:letter_released, %{locale: locale})
+
         conn
         |> put_flash(:info, sent_message(locale))
         |> redirect(to: campaign_path(locale))
 
-      {:error, _reason} ->
+      {:error, reason} ->
+        Audit.event(:letter_release_failed, %{reason: reason})
+
         conn
         |> put_flash(:error, failed_message(locale_from(conn)))
         |> redirect(to: campaign_path(locale_from(conn)))

@@ -78,3 +78,6 @@ config :swoosh, :api_client, false
 
 # Letters go to the sender, never to a member of parliament.
 config :pauseai_ca, :campaign_rehearsal, true
+
+# Local work is badged too, so a screenshot from dev is never mistaken for staging.
+config :pauseai_ca, :display_env, "dev"
