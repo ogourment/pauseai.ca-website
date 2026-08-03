@@ -12,10 +12,11 @@ defmodule PauseAiCaWeb.DashboardLive do
     {:ok,
      socket
      |> assign(:page_title, "My actions")
-     |> assign(:action_count, length(actions))
+     |> assign(:action_count, Enum.count(actions, &(not Action.pending?(&1))))
+     |> assign(:pending, Engagement.list_pending_actions(scope))
      |> assign(:editing_id, nil)
      |> assign_form(Engagement.new_action(scope))
-     |> stream(:actions, actions)}
+     |> stream(:actions, Enum.reject(actions, &Action.pending?/1))}
   end
 
   @impl true
@@ -34,6 +35,31 @@ defmodule PauseAiCaWeb.DashboardLive do
     else
       create_action(socket, params)
     end
+  end
+
+  def handle_event("confirm-action", %{"id" => id}, socket) do
+    scope = socket.assigns.current_scope
+    action = Engagement.get_action!(scope, id)
+    {:ok, action} = Engagement.confirm_action(scope, action)
+
+    {:noreply,
+     socket
+     |> assign(:pending, Engagement.list_pending_actions(scope))
+     |> assign(:action_count, socket.assigns.action_count + 1)
+     |> stream_insert(:actions, action)
+     |> put_flash(:info, "Recorded. Thank you for following through.")}
+  end
+
+  def handle_event("discard-action", %{"id" => id}, socket) do
+    scope = socket.assigns.current_scope
+    action = Engagement.get_action!(scope, id)
+    {:ok, _deleted} = Engagement.delete_action(scope, action)
+
+    {:noreply,
+     socket
+     |> assign(:pending, Engagement.list_pending_actions(scope))
+     |> stream_delete(:actions, action)
+     |> put_flash(:info, "Removed. Nothing recorded.")}
   end
 
   def handle_event("edit", %{"id" => id}, socket) do
@@ -142,6 +168,51 @@ defmodule PauseAiCaWeb.DashboardLive do
         </div>
 
         <div class="space-y-8">
+          <div
+            :if={@pending != []}
+            id="pending-actions"
+            class="rounded-3xl border-2 border-brand bg-brand-wash p-6 sm:p-8"
+          >
+            <h2 class="font-heading text-2xl uppercase tracking-wide text-stone-950">
+              Did you send it?
+            </h2>
+            <p class="mt-2 leading-7 text-stone-700">
+              You opened these in your own mail app, so we cannot tell whether they went.
+              We would rather ask than assume.
+            </p>
+
+            <ul class="mt-5 space-y-3">
+              <li
+                :for={action <- @pending}
+                id={"pending-#{action.id}"}
+                class="flex flex-wrap items-center gap-3 rounded-2xl bg-white p-4"
+              >
+                <div class="mr-auto">
+                  <p class="font-semibold text-stone-900">{action_label(action.action_type)}</p>
+                  <p class="text-sm text-stone-500">{action.happened_on}</p>
+                </div>
+                <button
+                  type="button"
+                  id={"confirm-#{action.id}"}
+                  phx-click="confirm-action"
+                  phx-value-id={action.id}
+                  class="rounded-full bg-brand px-5 py-2.5 font-heading font-bold text-stone-950 transition hover:bg-brand-strong"
+                >
+                  Yes, I sent it
+                </button>
+                <button
+                  type="button"
+                  id={"discard-#{action.id}"}
+                  phx-click="discard-action"
+                  phx-value-id={action.id}
+                  class="rounded-full px-4 py-2.5 font-semibold text-stone-500 underline-offset-4 hover:text-stone-900 hover:underline"
+                >
+                  No, remove it
+                </button>
+              </li>
+            </ul>
+          </div>
+
           <div class="rounded-3xl bg-stone-900 p-6 text-white shadow-xl sm:p-8">
             <h2 class="font-serif text-3xl">
               {if(@editing_id, do: "Edit action", else: "Record an action")}

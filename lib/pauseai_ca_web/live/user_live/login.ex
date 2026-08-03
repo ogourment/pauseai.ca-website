@@ -7,33 +7,20 @@ defmodule PauseAiCaWeb.UserLive.Login do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="mx-auto max-w-sm space-y-4">
-        <div class="text-center">
-          <.header>
-            <p>Log in</p>
-            <:subtitle>
-              <%= if @current_scope do %>
-                You need to reauthenticate to perform sensitive actions on your account.
-              <% else %>
-                Don't have an account? <.link
-                  navigate={~p"/users/register"}
-                  class="font-semibold text-brand hover:underline"
-                  phx-no-format
-                >Sign up</.link> for an account now.
-              <% end %>
-            </:subtitle>
-          </.header>
-        </div>
-
-        <div :if={local_mail_adapter?()} class="alert alert-info">
-          <.icon name="hero-information-circle" class="size-6 shrink-0" />
-          <div>
-            <p>You are running the local mail adapter.</p>
-            <p>
-              To see sent emails, visit <.link href="/dev/mailbox" class="underline">the mailbox page</.link>.
-            </p>
-          </div>
-        </div>
+      <.panel title_en="Sign in" title_fr="Se connecter">
+        <:subtitle>
+          <%= if @current_scope do %>
+            <.bilingual
+              en="Confirm it is you before changing your account."
+              fr="Confirmez votre identité avant de modifier votre compte."
+            />
+          <% else %>
+            <.bilingual
+              en="We email you a link. No password to invent or forget."
+              fr="Nous vous envoyons un lien par courriel. Aucun mot de passe à inventer ni à oublier."
+            />
+          <% end %>
+        </:subtitle>
 
         <.form
           :let={f}
@@ -46,51 +33,70 @@ defmodule PauseAiCaWeb.UserLive.Login do
             readonly={!!@current_scope}
             field={f[:email]}
             type="email"
-            label="Email"
+            label="Email · Courriel"
             autocomplete="username"
             spellcheck="false"
             required
             phx-mounted={JS.focus()}
           />
-          <.button class="btn btn-primary w-full">
-            Log in with email <span aria-hidden="true">→</span>
-          </.button>
+          <button
+            type="submit"
+            class="mt-2 w-full rounded-full bg-brand px-6 py-3 font-heading text-lg font-bold text-stone-950 transition hover:bg-brand-strong"
+          >
+            Email me a link · Envoyez-moi un lien
+          </button>
         </.form>
 
-        <div class="divider">or</div>
+        <p :if={!@current_scope} class="mt-6 text-sm leading-6 text-stone-500">
+          Entering your address above makes an account if you do not have one, or you can
+          <.link
+            navigate={~p"/users/register"}
+            class="font-semibold text-stone-800 underline decoration-brand decoration-2 underline-offset-4"
+          >Register</.link>
+          first.<br /> Entrer votre adresse ci-dessus crée un compte si vous n'en avez pas.
+        </p>
 
-        <.form
-          :let={f}
-          for={@form}
-          id="login_form_password"
-          action={~p"/users/log-in"}
-          phx-submit="submit_password"
-          phx-trigger-action={@trigger_submit}
-        >
-          <.input
-            readonly={!!@current_scope}
-            field={f[:email]}
-            type="email"
-            label="Email"
-            autocomplete="username"
-            spellcheck="false"
-            required
-          />
-          <.input
-            field={@form[:password]}
-            type="password"
-            label="Password"
-            autocomplete="current-password"
-            spellcheck="false"
-          />
-          <.button class="btn btn-primary w-full" name={@form[:remember_me].name} value="true">
-            Log in and stay logged in <span aria-hidden="true">→</span>
-          </.button>
-          <.button class="btn btn-primary btn-soft w-full mt-2">
-            Log in only this time
-          </.button>
-        </.form>
-      </div>
+        <details class="mt-6 border-t border-stone-200 pt-4">
+          <summary class="cursor-pointer text-sm font-semibold text-stone-600">
+            Prefer a password? · Vous préférez un mot de passe?
+          </summary>
+
+          <.form
+            :let={f}
+            for={@form}
+            id="login_form_password"
+            action={~p"/users/log-in"}
+            phx-submit="submit_password"
+            phx-trigger-action={@trigger_submit}
+            class="mt-4"
+          >
+            <.input
+              readonly={!!@current_scope}
+              field={f[:email]}
+              type="email"
+              label="Email · Courriel"
+              autocomplete="username"
+              spellcheck="false"
+              required
+            />
+            <.input
+              field={@form[:password]}
+              type="password"
+              label="Password · Mot de passe"
+              autocomplete="current-password"
+              spellcheck="false"
+            />
+            <button
+              type="submit"
+              name={@form[:remember_me].name}
+              value="true"
+              class="mt-2 w-full rounded-full border-2 border-stone-300 px-6 py-3 font-heading font-bold text-stone-800 transition hover:border-brand"
+            >
+              Sign in · Se connecter
+            </button>
+          </.form>
+        </details>
+      </.panel>
     </Layouts.app>
     """
   end
@@ -126,9 +132,5 @@ defmodule PauseAiCaWeb.UserLive.Login do
      socket
      |> put_flash(:info, info)
      |> push_navigate(to: ~p"/users/log-in")}
-  end
-
-  defp local_mail_adapter? do
-    Application.get_env(:pauseai_ca, PauseAiCa.Mailer)[:adapter] == Swoosh.Adapters.Local
   end
 end

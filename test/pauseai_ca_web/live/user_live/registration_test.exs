@@ -8,8 +8,8 @@ defmodule PauseAiCaWeb.UserLive.RegistrationTest do
     test "renders registration page", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/users/register")
 
-      assert html =~ "Register"
-      assert html =~ "Log in"
+      assert html =~ "Create an account"
+      assert html =~ "Sign in"
     end
 
     test "redirects if already logged in", %{conn: conn} do
@@ -30,7 +30,7 @@ defmodule PauseAiCaWeb.UserLive.RegistrationTest do
         |> element("#registration_form")
         |> render_change(user: %{"email" => "with spaces"})
 
-      assert result =~ "Register"
+      assert result =~ "Create an account"
       assert result =~ "must have the @ sign and no spaces"
     end
   end
@@ -72,11 +72,11 @@ defmodule PauseAiCaWeb.UserLive.RegistrationTest do
 
       {:ok, _login_live, login_html} =
         lv
-        |> element("main a", "Log in")
+        |> element("main a", "Sign in")
         |> render_click()
         |> follow_redirect(conn, ~p"/users/log-in")
 
-      assert login_html =~ "Log in"
+      assert login_html =~ "Sign in"
     end
   end
 end
