@@ -29,6 +29,10 @@ defmodule PauseAiCaWeb.Router do
   scope "/", PauseAiCaWeb do
     pipe_through :browser
 
+    # Reached from a link in an email, so it must work for a signed-out visitor
+    # even while the staging gate is on.
+    get "/letters/confirm/:token", LetterController, :confirm
+
     get "/", PageController, :index
     get "/en", PageController, :en
     get "/fr", PageController, :fr

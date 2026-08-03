@@ -1,0 +1,45 @@
+defmodule PauseAiCaWeb.LetterController do
+  @moduledoc """
+  Releases a letter that was waiting for its sender to confirm the address.
+
+  A GET is the wrong verb for something with an effect, but it is the only verb
+  a link in an email can produce, and the token is single-use and short-lived.
+  """
+
+  use PauseAiCaWeb, :controller
+
+  alias PauseAiCa.Campaigns.Confirmations
+
+  def confirm(conn, %{"token" => token}) do
+    case Confirmations.release(token) do
+      {:ok, %{locale: locale}} ->
+        conn
+        |> put_flash(:info, sent_message(locale))
+        |> redirect(to: campaign_path(locale))
+
+      {:error, _reason} ->
+        conn
+        |> put_flash(:error, failed_message(locale_from(conn)))
+        |> redirect(to: campaign_path(locale_from(conn)))
+    end
+  end
+
+  defp campaign_path("fr"), do: ~p"/fr/tir-de-semonce"
+  defp campaign_path(_locale), do: ~p"/en/warning-shot"
+
+  defp locale_from(conn) do
+    if String.starts_with?(conn.request_path, "/fr"), do: "fr", else: "en"
+  end
+
+  defp sent_message("fr"),
+    do: "Votre lettre est partie. Merci — les bureaux répondent souvent en quelques jours."
+
+  defp sent_message(_locale),
+    do: "Your letter is on its way. Thank you — offices often reply within a few days."
+
+  defp failed_message("fr"),
+    do: "Ce lien n'est plus valide. Les liens expirent après 24 heures et ne servent qu'une fois."
+
+  defp failed_message(_locale),
+    do: "That link is no longer valid. Links expire after 24 hours and work only once."
+end

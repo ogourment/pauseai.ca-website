@@ -4,7 +4,12 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
   import Phoenix.LiveViewTest
   import Swoosh.TestAssertions
 
+  import PauseAiCa.AccountsFixtures
+
+  alias PauseAiCa.Accounts.Scope
   alias PauseAiCa.Campaigns.RateLimit
+  alias PauseAiCa.Engagement
+  alias PauseAiCa.Engagement.Action
 
   describe "reading the campaign" do
     test "an English visitor sees what happened, what to do, and the developments", %{conn: conn} do
@@ -87,7 +92,8 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
       assert has_element?(view, "#open-mail-app[href*='My%20own%20subject']")
     end
 
-    test "a consenting supporter can have us send it for them", %{conn: conn} do
+    test "an unverified sender is asked to confirm before anything reaches an MP",
+         %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/en/warning-shot")
 
       view
@@ -98,28 +104,80 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
       |> form("#send-form", send: %{email: "camille@example.org", consent: "true"})
       |> render_submit()
 
-      assert has_element?(view, "#send-success")
+      assert has_element?(view, "#awaiting-confirmation")
+      refute has_element?(view, "#send-success")
 
-      # Rehearsal mode is on outside production, so it lands with the sender.
+      # The only mail sent is the confirmation, addressed to the sender.
       assert_email_sent(fn email ->
-        assert email.reply_to == {"Camille Roy", "camille@example.org"}
         assert email.to == [{"", "camille@example.org"}]
+        assert email.subject =~ "Confirm and send your letter"
       end)
     end
 
-    test "sending offers a way to bring someone else in", %{conn: conn} do
+    test "the confirmation prompt tells people how to rescue it from spam", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/en/warning-shot")
+
+      view
+      |> form("#mp-lookup-form", sender: %{postal_code: "H2X 1Y4"})
+      |> render_submit()
+
+      html =
+        view
+        |> form("#send-form", send: %{email: "camille@example.org", consent: "true"})
+        |> render_submit()
+
+      assert html =~ "Not spam"
+    end
+
+    test "a signed-in supporter with a confirmed address sends straight away", %{conn: conn} do
+      user = user_fixture()
+
+      {:ok, view, _html} = live(log_in_user(conn, user), ~p"/en/warning-shot")
 
       view
       |> form("#mp-lookup-form", sender: %{name: "Camille Roy", postal_code: "H2X 1Y4"})
       |> render_submit()
 
       view
-      |> form("#send-form", send: %{email: "camille@example.org", consent: "true"})
+      |> form("#send-form", send: %{email: user.email, consent: "true"})
       |> render_submit()
 
+      assert has_element?(view, "#send-success")
       assert has_element?(view, "#share-bluesky")
-      assert has_element?(view, "#share-email")
+      refute has_element?(view, "#awaiting-confirmation")
+    end
+
+    test "sending records a confirmed action for a signed-in supporter", %{conn: conn} do
+      user = user_fixture()
+      scope = Scope.for_user(user)
+
+      {:ok, view, _html} = live(log_in_user(conn, user), ~p"/en/warning-shot")
+
+      view |> form("#mp-lookup-form", sender: %{postal_code: "H2X 1Y4"}) |> render_submit()
+
+      view
+      |> form("#send-form", send: %{email: user.email, consent: "true"})
+      |> render_submit()
+
+      assert [action] = Engagement.list_actions(scope)
+      assert action.action_type == "contacted_representative"
+      refute Action.pending?(action)
+    end
+
+    test "opening your own mail app records an action we cannot vouch for", %{conn: conn} do
+      user = user_fixture()
+      scope = Scope.for_user(user)
+
+      {:ok, view, _html} = live(log_in_user(conn, user), ~p"/en/warning-shot")
+
+      view |> form("#mp-lookup-form", sender: %{postal_code: "H2X 1Y4"}) |> render_submit()
+      view |> element("#send-mode-diy") |> render_click()
+      view |> element("#open-mail-app") |> render_click()
+
+      assert [action] = Engagement.list_actions(scope)
+      assert Action.pending?(action)
+      assert [^action] = Engagement.list_pending_actions(scope)
+      assert has_element?(view, "#diy-handed-over")
     end
 
     test "the page says letters are diverted before anyone presses send", %{conn: conn} do

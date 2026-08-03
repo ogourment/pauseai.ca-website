@@ -18,15 +18,32 @@ defmodule PauseAiCaWeb.Emails.Layout do
   Returns `{html, text}` for a message.
 
   `blocks` is a list of `{english, french}` paragraph pairs. `action` is an
-  optional `{label_en, label_fr, url}` button.
+  optional `{label_en, label_fr, url}` button. Pass `notice: true` to include
+  the spam-folder guidance; see `deliverability_notice/0`.
   """
-  @spec render(String.t(), String.t(), [{String.t(), String.t()}], tuple() | nil) ::
+  @spec render(String.t(), String.t(), [{String.t(), String.t()}], tuple() | nil, keyword()) ::
           {String.t(), String.t()}
-  def render(title_en, title_fr, blocks, action \\ nil) do
-    {html(title_en, title_fr, blocks, action), text(title_en, title_fr, blocks, action)}
+  def render(title_en, title_fr, blocks, action \\ nil, opts \\ []) do
+    notice? = Keyword.get(opts, :notice, false)
+
+    {html(title_en, title_fr, blocks, action, notice?),
+     text(title_en, title_fr, blocks, action, notice?)}
   end
 
-  defp html(title_en, title_fr, blocks, action) do
+  @doc """
+  The spam-folder guidance shown on a recipient's first message.
+
+  Asking someone to move a message out of spam is not only for their benefit:
+  every "not spam" is a signal to their provider, and on a young sending domain
+  those signals are most of what reputation is built from.
+  """
+  @spec deliverability_notice() :: {String.t(), String.t()}
+  def deliverability_notice do
+    {"Did this land in spam or promotions? Please move it to your inbox and mark it \"Not spam\". It takes a second, and it is how we stay out of the spam folder for everyone else.",
+     "Ce message est-il arrivé dans les indésirables ou les promotions? Déplacez-le vers votre boîte de réception et marquez-le « Non indésirable ». Cela prend une seconde, et c'est ainsi que nous évitons le dossier spam pour tout le monde."}
+  end
+
+  defp html(title_en, title_fr, blocks, action, notice?) do
     """
     <!DOCTYPE html>
     <html lang="en">
@@ -53,6 +70,7 @@ defmodule PauseAiCaWeb.Emails.Layout do
                               font-size:20px;line-height:1.25;color:#7a7268;">#{esc(title_fr)}</p>
                     #{Enum.map_join(blocks, "", &html_block/1)}
                     #{html_action(action)}
+                    #{html_notice(notice?)}
                   </td>
                 </tr>
                 <tr>
@@ -76,6 +94,26 @@ defmodule PauseAiCaWeb.Emails.Layout do
     """
     <p style="margin:0 0 10px;">#{esc(en)}</p>
     <p style="margin:0 0 22px;color:#6f675d;">#{esc(fr)}</p>
+    """
+  end
+
+  # Yellow, bordered, and the instruction itself in bold: this is the one part
+  # of the message we actively want people to act on.
+  defp html_notice(false), do: ""
+
+  defp html_notice(true) do
+    {en, fr} = deliverability_notice()
+
+    """
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+           style="margin:8px 0 4px;background:#fff8dc;border:1px solid #e6d27a;border-radius:8px;">
+      <tr>
+        <td style="padding:16px 18px;font-family:Georgia,serif;font-size:14px;line-height:1.55;color:#4a4034;">
+          <p style="margin:0 0 8px;">📥 <strong>#{esc(en)}</strong></p>
+          <p style="margin:0;color:#6b5f4e;">#{esc(fr)}</p>
+        </td>
+      </tr>
+    </table>
     """
   end
 
@@ -103,7 +141,7 @@ defmodule PauseAiCaWeb.Emails.Layout do
     """
   end
 
-  defp text(title_en, title_fr, blocks, action) do
+  defp text(title_en, title_fr, blocks, action, notice?) do
     body =
       Enum.map_join(blocks, "\n\n", fn {en, fr} -> "#{en}\n\n#{fr}" end)
 
@@ -113,6 +151,15 @@ defmodule PauseAiCaWeb.Emails.Layout do
         {_label_en, _label_fr, url} -> "\n\n#{url}\n"
       end
 
+    notice_text =
+      if notice? do
+        {en, fr} = deliverability_notice()
+
+        "\n-----------------------------------------------------------\n#{en}\n\n#{fr}\n-----------------------------------------------------------\n"
+      else
+        ""
+      end
+
     """
     PauseAI Canada
     ==============
@@ -120,7 +167,7 @@ defmodule PauseAiCaWeb.Emails.Layout do
     #{title_en}
     #{title_fr}
 
-    #{body}#{action_text}
+    #{body}#{action_text}#{notice_text}
     --
     pauseai.ca · info@pauseai.ca
     You are receiving this because someone asked to sign in with this address.

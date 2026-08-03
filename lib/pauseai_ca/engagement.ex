@@ -89,6 +89,29 @@ defmodule PauseAiCa.Engagement do
   end
 
   @doc """
+  Marks an action as having actually happened.
+  """
+  def confirm_action(%Scope{} = scope, %Action{} = action) do
+    true = action.user_id == scope.user.id
+
+    with {:ok, action} <- action |> Action.confirm_changeset() |> Repo.update() do
+      broadcast_action(scope, {:updated, action})
+      {:ok, action}
+    end
+  end
+
+  @doc """
+  Actions the user has not yet told us actually happened.
+  """
+  def list_pending_actions(%Scope{} = scope) do
+    Repo.all(
+      from a in Action,
+        where: a.user_id == ^scope.user.id and is_nil(a.confirmed_at),
+        order_by: [desc: a.inserted_at]
+    )
+  end
+
+  @doc """
   Updates a action.
 
   ## Examples

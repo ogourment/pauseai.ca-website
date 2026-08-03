@@ -14,6 +14,8 @@ defmodule PauseAiCaWeb.WarningShotLive do
   alias PauseAiCa.Campaigns
   alias PauseAiCa.Campaigns.Delivery
   alias PauseAiCa.Campaigns.Letter
+  alias PauseAiCa.Campaigns.ConfirmationNotifier
+  alias PauseAiCa.Campaigns.Confirmations
   alias PauseAiCa.Campaigns.RateLimit
   alias PauseAiCa.Engagement
   alias PauseAiCa.Campaigns.Update
@@ -92,6 +94,10 @@ defmodule PauseAiCaWeb.WarningShotLive do
     {:noreply, socket |> assign(:letter, letter) |> assign(:letter_form, to_letter_form(letter))}
   end
 
+  def handle_event("opened-mail-app", _params, socket) do
+    {:noreply, socket |> record_action(confirmed: false) |> assign(:send_state, :handed_over)}
+  end
+
   def handle_event("choose-send-mode", %{"mode" => mode}, socket) when mode in ~w(assisted diy) do
     {:noreply, socket |> assign(:send_mode, mode) |> assign(:send_state, :idle)}
   end
@@ -127,22 +133,70 @@ defmodule PauseAiCaWeb.WarningShotLive do
   defp deliver(socket, params) do
     supporter = %{name: socket.assigns.sender["name"], email: params["email"]}
 
-    with :ok <- RateLimit.check(String.downcase(String.trim(params["email"]))),
-         {:ok, _result} <- Delivery.deliver(socket.assigns.letter, supporter) do
-      {:noreply, socket |> record_action() |> assign(:send_state, :sent)}
-    else
+    case RateLimit.check(String.downcase(String.trim(params["email"]))) do
+      :ok -> dispatch(socket, supporter, params)
       {:error, reason} -> {:noreply, assign(socket, :send_state, {:error, reason})}
+    end
+  end
+
+  # A signed-in supporter with a confirmed address has already proved it is
+  # theirs. Anyone else confirms by email first, because reply-to is the address
+  # an MP's office will answer, and we will not put an unproved address on a
+  # letter to Parliament.
+  defp dispatch(socket, supporter, params) do
+    if verified_sender?(socket, params["email"]) do
+      case Delivery.deliver(socket.assigns.letter, supporter) do
+        {:ok, _result} ->
+          {:noreply, socket |> record_action(confirmed: true) |> assign(:send_state, :sent)}
+
+        {:error, reason} ->
+          {:noreply, assign(socket, :send_state, {:error, reason})}
+      end
+    else
+      hold_for_confirmation(socket, supporter)
+    end
+  end
+
+  defp hold_for_confirmation(socket, supporter) do
+    with {:ok, token, pending} <-
+           Confirmations.hold(socket.assigns.letter, supporter, socket.assigns.locale),
+         {:ok, _sent} <- ConfirmationNotifier.deliver(pending, confirm_url(socket, token)) do
+      {:noreply, assign(socket, :send_state, :awaiting_confirmation)}
+    else
+      _error -> {:noreply, assign(socket, :send_state, {:error, :delivery_failed})}
+    end
+  end
+
+  defp confirm_url(socket, token), do: url(socket, ~p"/letters/confirm/#{token}")
+
+  defp verified_sender?(socket, email) do
+    case socket.assigns[:current_scope] do
+      %{user: %{email: account_email, confirmed_at: %DateTime{}}} ->
+        String.downcase(String.trim(email || "")) == String.downcase(account_email)
+
+      _otherwise ->
+        false
     end
   end
 
   # A signed-in supporter's action log is the point of having accounts. Anyone
   # else simply sends the letter; we do not create a record to attach it to.
-  defp record_action(socket) do
+  #
+  # `confirmed: false` records a letter we handed to someone's own mail client.
+  # We do not know whether they pressed send, so the dashboard asks them later
+  # rather than quietly claiming credit for it.
+  defp record_action(socket, opts) do
+    confirmed_at =
+      if Keyword.get(opts, :confirmed, false) do
+        DateTime.utc_now() |> DateTime.truncate(:second)
+      end
+
     case socket.assigns[:current_scope] do
       %{user: %{}} = scope ->
         Engagement.create_action(scope, %{
           "action_type" => "contacted_representative",
-          "happened_on" => Date.utc_today()
+          "happened_on" => Date.utc_today(),
+          "confirmed_at" => confirmed_at
         })
 
         socket
@@ -555,6 +609,19 @@ defmodule PauseAiCaWeb.WarningShotLive do
                   </div>
                 </div>
               </div>
+              <div
+                :if={@send_state == :awaiting_confirmation}
+                id="awaiting-confirmation"
+                role="status"
+                class="mt-5 rounded-2xl border-2 border-brand bg-brand-wash p-5"
+              >
+                <p class="font-heading text-xl text-stone-950">{check_inbox_heading(@locale)}</p>
+                <p class="mt-2 leading-7 text-stone-800">{check_inbox_note(@locale)}</p>
+                <p class="mt-3 rounded-lg border border-[#e6d27a] bg-[#fff8dc] p-3 leading-6 text-stone-800">
+                  📥 <strong>{spam_note(@locale)}</strong>
+                </p>
+              </div>
+
               <p
                 :if={match?({:error, _reason}, @send_state)}
                 id="send-error"
@@ -567,10 +634,19 @@ defmodule PauseAiCaWeb.WarningShotLive do
 
             <div :if={@send_mode == "diy"} id="send-diy" class="mt-6 max-w-2xl">
               <p class="leading-7 text-stone-600">{diy_note(@locale)}</p>
+              <p
+                :if={@send_state == :handed_over and @current_scope}
+                id="diy-handed-over"
+                role="status"
+                class="mt-4 rounded-2xl border border-stone-200 bg-white p-4 leading-7 text-stone-700"
+              >
+                {diy_recorded_note(@locale)}
+              </p>
               <div class="mt-4 flex flex-wrap gap-3">
                 <a
                   id="open-mail-app"
                   href={Letter.mailto(@letter)}
+                  phx-click="opened-mail-app"
                   class="rounded-full bg-brand px-6 py-3 font-heading text-lg font-bold text-stone-950 transition hover:-translate-y-0.5 hover:bg-brand-strong"
                 >
                   {open_mail_label(@locale)}
@@ -790,6 +866,33 @@ defmodule PauseAiCaWeb.WarningShotLive do
 
   defp send_error_message(_state, _locale),
     do: "Sending failed. Try again, or use \"I'll send it myself\"."
+
+  defp check_inbox_heading("fr"), do: "Vérifiez votre boîte de réception"
+  defp check_inbox_heading(_locale), do: "Check your inbox"
+
+  defp check_inbox_note("fr"),
+    do:
+      "Nous vous avons envoyé la lettre. Cliquez sur le bouton qu'elle contient et elle part vers votre député·e. Nous procédons ainsi parce que votre adresse est celle à laquelle votre député·e répondra."
+
+  defp check_inbox_note(_locale),
+    do:
+      "We have emailed you the letter. Click the button in it and the letter goes to your MP. We do this because your address is the one your MP will reply to."
+
+  defp spam_note("fr"),
+    do:
+      "Rien reçu? Regardez dans les indésirables ou les promotions, déplacez le message vers votre boîte de réception et marquez-le « Non indésirable ». Cela aide tout le monde à recevoir nos courriels."
+
+  defp spam_note(_locale),
+    do:
+      "Nothing yet? Look in spam or promotions, move the message to your inbox and mark it \"Not spam\". That is what keeps us out of the spam folder for everyone else."
+
+  defp diy_recorded_note("fr"),
+    do:
+      "Nous avons noté cette action comme « à confirmer » dans votre tableau de bord. Nous ne savons pas si vous avez appuyé sur envoyer — vous pourrez le confirmer là-bas."
+
+  defp diy_recorded_note(_locale),
+    do:
+      "We have noted this as unconfirmed in your dashboard. We cannot tell whether you pressed send, so you can confirm it there."
 
   defp rehearsal_note("fr"),
     do:
