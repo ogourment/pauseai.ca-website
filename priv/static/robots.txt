@@ -1,5 +1,9 @@
-# See https://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
-#
-# To ban all spiders from the entire site uncomment the next two lines:
-# User-agent: *
-# Disallow: /
+# The public site welcomes crawlers. Non-production deployments serve a
+# noindex meta tag instead; see PauseAiCaWeb.Layouts root template.
+User-agent: *
+Allow: /
+
+# Nothing behind an account is useful to a crawler.
+Disallow: /users/
+Disallow: /dashboard
+Disallow: /letters/
