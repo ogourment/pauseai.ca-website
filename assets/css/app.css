@@ -285,8 +285,9 @@ h3 {
   }
 }
 
-/* The Act menu is a <details>: it works before JavaScript loads and closes on
-   Escape for free. Only the marker needs hiding. */
+/* The Get involved menu is a <details>: it works before JavaScript loads.
+   Closing on an outside click needs the handler in app.js; the marker is
+   hidden here. */
 .act-menu > summary::-webkit-details-marker {
   display: none;
 }

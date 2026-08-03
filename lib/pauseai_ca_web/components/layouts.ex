@@ -75,7 +75,7 @@ defmodule PauseAiCaWeb.Layouts do
              and the menu is CSS-only: no JavaScript to fail on a slow phone. --%>
         <details class="act-menu relative">
           <summary class="cursor-pointer list-none text-sm font-medium text-stone-700 hover:text-stone-950">
-            {if(@locale == "fr", do: "Agir", else: "Act")}
+            {if(@locale == "fr", do: "S'impliquer", else: "Get involved")}
             <span aria-hidden="true" class="text-xs">▾</span>
           </summary>
           <div class="absolute right-0 z-50 mt-2 w-64 overflow-hidden rounded-xl border border-stone-200 bg-white shadow-lg">

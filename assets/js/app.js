@@ -179,3 +179,35 @@ if (process.env.NODE_ENV === "development") {
     window.liveReloader = reloader
   })
 }
+
+// A <details> dropdown stays open until its own summary is clicked again, which
+// is not what anyone expects from a menu. Close it on an outside click, on
+// Escape, and when another one opens.
+//
+// Delegated from the document rather than bound per-element: the header is
+// rendered by both LiveViews and plain controllers, and LiveView replaces the
+// DOM underneath us on navigation.
+document.addEventListener("click", (event) => {
+  document.querySelectorAll("details.act-menu[open]").forEach((menu) => {
+    if (!menu.contains(event.target)) menu.open = false
+  })
+})
+
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape") return
+  document.querySelectorAll("details.act-menu[open]").forEach((menu) => {
+    menu.open = false
+    menu.querySelector("summary")?.focus()
+  })
+})
+
+// Opening one menu closes any other.
+document.addEventListener("toggle", (event) => {
+  const opened = event.target
+  if (!(opened instanceof HTMLDetailsElement) || !opened.open) return
+  if (!opened.classList.contains("act-menu")) return
+
+  document.querySelectorAll("details.act-menu[open]").forEach((menu) => {
+    if (menu !== opened) menu.open = false
+  })
+}, true)
