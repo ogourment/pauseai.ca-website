@@ -94,7 +94,7 @@ defmodule PauseAiCaWeb.LibraryLive do
               </p>
 
               <blockquote
-                :for={quotation <- voice.quotes}
+                :for={quotation <- voice_quotes(voice, @locale)}
                 class="mt-5 border-l-4 border-brand pl-4"
               >
                 <p class="leading-7 text-stone-800">
@@ -285,6 +285,11 @@ defmodule PauseAiCaWeb.LibraryLive do
 
   defp page_title("fr"), do: "Faut-il ralentir l'IA?"
   defp page_title(_locale), do: "Should we slow AI down?"
+
+  defp voice_quotes(voice, locale) do
+    local = Enum.filter(voice.quotes, &(&1.language == locale))
+    if local == [], do: voice.quotes, else: local
+  end
 
   defp lede("fr"),
     do:

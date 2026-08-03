@@ -17,11 +17,12 @@ defmodule PauseAiCaWeb.ActControllerTest do
     end
 
     test "join sends a French visitor to the French form", %{conn: conn} do
-      assert get(conn, ~p"/act/join?locale=fr") |> redirected_to() =~ "languages=French"
+      assert get(conn, ~p"/act/join?locale=fr") |> redirected_to() == "https://pauseia.fr/agir"
     end
 
     test "sign sends everyone to the statement", %{conn: conn} do
       assert redirected_to(get(conn, ~p"/act/sign?locale=en")) == "https://pauseai.info/statement"
+      assert redirected_to(get(conn, ~p"/act/sign?locale=fr")) == "https://pauseia.fr/agir"
     end
 
     test "an unknown destination does not redirect off-site", %{conn: conn} do

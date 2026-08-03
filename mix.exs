@@ -4,7 +4,7 @@ defmodule PauseAiCa.MixProject do
   def project do
     [
       app: :pauseai_ca,
-      version: "0.1.1",
+      version: "0.1.2",
       elixir: "~> 1.17",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -95,7 +95,7 @@ defmodule PauseAiCa.MixProject do
         "ecto.create --quiet",
         "ecto.migrate --quiet",
         "assets.build",
-        "cmd mix test --only atdd --max-cases 1"
+        "cmd env ATDD=true mix test --only atdd --max-cases 1"
       ],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["compile", "tailwind pauseai_ca", "esbuild pauseai_ca"],

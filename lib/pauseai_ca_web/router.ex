@@ -40,6 +40,10 @@ defmodule PauseAiCaWeb.Router do
     get "/", PageController, :index
     get "/en", PageController, :en
     get "/fr", PageController, :fr
+    get "/en/strategy", PageController, :strategy_en
+    get "/fr/strategie", PageController, :strategy_fr
+    get "/en/about", PageController, :about_en
+    get "/fr/a-propos", PageController, :about_fr
   end
 
   # Other scopes may use custom stacks.
@@ -72,6 +76,9 @@ defmodule PauseAiCaWeb.Router do
     live_session :require_authenticated_user,
       on_mount: [{PauseAiCaWeb.UserAuth, :require_authenticated}] do
       live "/dashboard", DashboardLive, :index
+      live "/en/actions", DashboardLive, :en
+      live "/fr/actions", DashboardLive, :fr
+      live "/admin/metrics", AdminMetricsLive, :index
       live "/users/settings", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
     end

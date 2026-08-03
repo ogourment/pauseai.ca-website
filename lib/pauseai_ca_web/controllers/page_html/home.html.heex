@@ -175,8 +175,14 @@
                 "A starting point on loss of control, uncertainty, and why the risk deserves serious attention."
             )
           }
-          href="https://pauseai.info/xrisk"
-          source="PauseAI"
+          href={
+            if(@locale == "fr",
+              do:
+                "https://yoshuabengio.org/fr/blogue/questions-frequentes-sur-les-risques-catastrophiques-lies-lia",
+              else: "https://pauseai.info/xrisk"
+            )
+          }
+          source={if(@locale == "fr", do: "Yoshua Bengio", else: "PauseAI")}
           cta={
             if(@locale == "fr", do: "Lire la synthèse source", else: "Read the source overview")
           }
@@ -198,8 +204,13 @@
                 "What would pause, what would continue, and how a pause differs from a blanket ban on AI."
             )
           }
-          href="https://pauseai.info/proposal"
-          source="PauseAI"
+          href={
+            if(@locale == "fr",
+              do: "https://pauseia.fr/propositions",
+              else: "https://pauseai.info/proposal"
+            )
+          }
+          source={if(@locale == "fr", do: "Pause IA", else: "PauseAI")}
           cta={if(@locale == "fr", do: "Examiner la proposition", else: "Examine the proposal")}
         />
         <.resource_card
@@ -219,8 +230,13 @@
                 "The case involving advanced chips, compute centres, inspection, compliance, and defection."
             )
           }
-          href="https://pauseai.info/feasibility"
-          source="PauseAI"
+          href={
+            if(@locale == "fr",
+              do: "https://pauseia.fr/faq",
+              else: "https://pauseai.info/feasibility"
+            )
+          }
+          source={if(@locale == "fr", do: "Pause IA", else: "PauseAI")}
           cta={if(@locale == "fr", do: "Explorer les mécanismes", else: "Explore the mechanisms")}
         />
         <.resource_card
@@ -240,9 +256,9 @@
                 "Policymakers can be convinced without acting. A credible constituency changes what they can defend."
             )
           }
-          href="https://www.lesswrong.com/posts/aoqhszdEWqcFWbnda/existential-ai-safety-needs-an-effective-social-movement"
-          source="PauseAI / LessWrong"
-          cta={if(@locale == "fr", do: "Lire la stratégie", else: "Read the strategy")}
+          href={if(@locale == "fr", do: ~p"/fr/strategie", else: ~p"/en/strategy")}
+          source="PauseAI Canada"
+          cta={if(@locale == "fr", do: "Lire le résumé", else: "Read the summary")}
         />
       </div>
     </div>

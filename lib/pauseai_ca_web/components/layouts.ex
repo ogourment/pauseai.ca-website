@@ -66,6 +66,14 @@ defmodule PauseAiCaWeb.Layouts do
           {if(@locale == "fr", do: "Comprendre", else: "Learn")}
         </.link>
         <.link
+          class="hidden text-sm font-medium text-stone-700 hover:text-stone-950 lg:inline"
+          navigate={if(@locale == "fr", do: ~p"/fr/strategie", else: ~p"/en/strategy")}
+        >{if(@locale == "fr", do: "Stratégie", else: "Strategy")}</.link>
+        <.link
+          class="hidden text-sm font-medium text-stone-700 hover:text-stone-950 lg:inline"
+          navigate={if(@locale == "fr", do: ~p"/fr/a-propos", else: ~p"/en/about")}
+        >{if(@locale == "fr", do: "À propos", else: "About")}</.link>
+        <.link
           class="text-sm font-medium text-brand-ink hover:text-stone-950"
           navigate={if(@locale == "fr", do: ~p"/fr/tir-de-semonce", else: ~p"/en/warning-shot")}
         >
@@ -107,10 +115,15 @@ defmodule PauseAiCaWeb.Layouts do
           </.link>
           <.link
             class="text-sm font-medium text-stone-700 hover:text-stone-950"
-            navigate={~p"/dashboard"}
+            navigate={if(@locale == "fr", do: ~p"/fr/actions", else: ~p"/en/actions")}
           >
             {if(@locale == "fr", do: "Mes actions", else: "My actions")}
           </.link>
+          <.link
+            :if={@current_scope.user.superadmin}
+            class="text-sm font-medium text-stone-700 hover:text-stone-950"
+            navigate={~p"/admin/metrics"}
+          >Admin</.link>
           <.link
             class="text-sm font-medium text-stone-600 hover:text-stone-950"
             href={~p"/users/log-out"}

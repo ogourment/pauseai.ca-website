@@ -164,8 +164,27 @@ defmodule PauseAiCa.Accounts do
   def update_user_password(user, attrs) do
     user
     |> User.password_changeset(attrs)
-    |> update_user_and_delete_all_tokens()
+    |> update_user_and_delete_all_tokens(bootstrap_superadmin?: true)
   end
+
+  def list_users, do: Repo.all(from u in User, order_by: [asc: u.email])
+
+  def set_superadmin(%User{superadmin: true}, %User{} = target, false) do
+    if Repo.aggregate(from(u in User, where: u.superadmin), :count) == 1 and target.superadmin do
+      {:error, :last_superadmin}
+    else
+      target |> Ecto.Changeset.change(superadmin: false) |> Repo.update()
+    end
+  end
+
+  def set_superadmin(%User{superadmin: true}, %User{confirmed_at: nil}, true),
+    do: {:error, :email_unconfirmed}
+
+  def set_superadmin(%User{superadmin: true}, %User{} = target, value) when is_boolean(value) do
+    target |> Ecto.Changeset.change(superadmin: value) |> Repo.update()
+  end
+
+  def set_superadmin(%User{}, %User{}, _value), do: {:error, :unauthorized}
 
   ## Session
 
@@ -283,9 +302,23 @@ defmodule PauseAiCa.Accounts do
 
   ## Token helper
 
-  defp update_user_and_delete_all_tokens(changeset) do
+  defp update_user_and_delete_all_tokens(changeset, opts \\ []) do
     Repo.transact(fn ->
+      if opts[:bootstrap_superadmin?] == true do
+        # Serialize only the one-time bootstrap decision. A table lock can
+        # deadlock unrelated password updates that already hold row locks.
+        Repo.query!("SELECT pg_advisory_xact_lock(706_175_001)")
+      end
+
       with {:ok, user} <- Repo.update(changeset) do
+        user =
+          if opts[:bootstrap_superadmin?] == true and not is_nil(user.confirmed_at) and
+               not Repo.exists?(from(u in User, where: u.superadmin)) do
+            user |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+          else
+            user
+          end
+
         tokens_to_expire = Repo.all_by(UserToken, user_id: user.id)
 
         Repo.delete_all(from(t in UserToken, where: t.id in ^Enum.map(tokens_to_expire, & &1.id)))

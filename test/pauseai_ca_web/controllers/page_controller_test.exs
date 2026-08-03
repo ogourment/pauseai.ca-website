@@ -12,4 +12,11 @@ defmodule PauseAiCaWeb.PageControllerTest do
     assert html_response(get(conn, ~p"/fr"), 200) =~
              "Jusqu’où devrions-nous laisser l’IA progresser?"
   end
+
+  test "strategy and identity are available without leaving either language", %{conn: conn} do
+    assert html_response(get(conn, ~p"/en/strategy"), 200) =~ ~s(id="engagement-ladder")
+    assert html_response(get(conn, ~p"/fr/strategie"), 200) =~ ~s(id="engagement-ladder")
+    assert html_response(get(conn, ~p"/en/about"), 200) =~ ~s(id="about")
+    assert html_response(get(conn, ~p"/fr/a-propos"), 200) =~ ~s(id="about")
+  end
 end
