@@ -109,6 +109,12 @@ if config_env() == :prod do
     end
   end
 
+  # Close the site to anyone not signed in. Set on staging; left off in
+  # production, where the site is meant to be public.
+  config :pauseai_ca,
+         :require_invited,
+         System.get_env("REQUIRE_INVITED") in ~w(true 1)
+
   # Address campaign letters are sent from when a supporter asks us to send on
   # their behalf. Their own address is used as reply-to.
   config :pauseai_ca,

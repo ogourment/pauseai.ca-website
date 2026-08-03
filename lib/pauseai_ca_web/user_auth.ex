@@ -211,6 +211,20 @@ defmodule PauseAiCaWeb.UserAuth do
         live "/profile", ProfileLive, :index
       end
   """
+  # :require_invited refuses anonymous visitors while the staging gate is on.
+  # Applied only to public content routes. The sign-in routes must never carry
+  # this hook, or reaching them would redirect to themselves.
+  def on_mount(:require_invited, _params, session, socket) do
+    socket = mount_current_scope(socket, session)
+
+    if Application.get_env(:pauseai_ca, :require_invited, false) and
+         is_nil(socket.assigns.current_scope) do
+      {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/users/log-in")}
+    else
+      {:cont, socket}
+    end
+  end
+
   def on_mount(:mount_current_scope, _params, session, socket) do
     {:cont, mount_current_scope(socket, session)}
   end
