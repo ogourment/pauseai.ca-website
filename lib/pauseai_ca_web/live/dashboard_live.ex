@@ -3,15 +3,22 @@ defmodule PauseAiCaWeb.DashboardLive do
 
   alias PauseAiCa.Engagement
   alias PauseAiCa.Engagement.Action
+  alias PauseAiCa.Engagement.Ladder
 
   @impl true
   def mount(_params, _session, socket) do
     scope = socket.assigns.current_scope
     actions = Engagement.list_actions(scope)
+    locale = if socket.assigns.live_action == :fr, do: "fr", else: "en"
 
     {:ok,
      socket
-     |> assign(:page_title, "My actions")
+     |> assign(:locale, locale)
+     |> assign(:page_title, if(locale == "fr", do: "Mes actions", else: "My actions"))
+     |> assign(
+       :recommendation,
+       Ladder.recommendation(Enum.reject(actions, &Action.pending?/1), locale)
+     )
      |> assign(:action_count, Enum.count(actions, &(not Action.pending?(&1))))
      |> assign(:pending, Engagement.list_pending_actions(scope))
      |> assign(:editing_id, nil)
@@ -51,6 +58,7 @@ defmodule PauseAiCaWeb.DashboardLive do
      |> assign(:pending, Engagement.list_pending_actions(scope))
      |> assign(:action_count, socket.assigns.action_count + 1)
      |> stream_insert(:actions, action)
+     |> refresh_recommendation()
      |> put_flash(:info, "Recorded. Thank you for following through.")}
   end
 
@@ -91,7 +99,8 @@ defmodule PauseAiCaWeb.DashboardLive do
     {:noreply,
      socket
      |> update(:action_count, &max(&1 - 1, 0))
-     |> stream_delete(:actions, action)}
+     |> stream_delete(:actions, action)
+     |> refresh_recommendation()}
   end
 
   defp create_action(socket, params) do
@@ -102,7 +111,8 @@ defmodule PauseAiCaWeb.DashboardLive do
          |> put_flash(:info, "Action recorded privately.")
          |> update(:action_count, &(&1 + 1))
          |> stream_insert(:actions, action, at: 0)
-         |> assign_form(Engagement.new_action(socket.assigns.current_scope))}
+         |> assign_form(Engagement.new_action(socket.assigns.current_scope))
+         |> refresh_recommendation()}
 
       {:error, changeset} ->
         {:noreply, assign(socket, :form, to_form(changeset))}
@@ -120,7 +130,8 @@ defmodule PauseAiCaWeb.DashboardLive do
          |> assign(:editing_id, nil)
          |> assign(:selected_type, nil)
          |> stream_insert(:actions, action)
-         |> assign_form(Engagement.new_action(socket.assigns.current_scope))}
+         |> assign_form(Engagement.new_action(socket.assigns.current_scope))
+         |> refresh_recommendation()}
 
       {:error, changeset} ->
         {:noreply, assign(socket, :form, to_form(changeset))}
@@ -139,6 +150,15 @@ defmodule PauseAiCaWeb.DashboardLive do
     assign(socket, :form, to_form(changeset))
   end
 
+  defp refresh_recommendation(socket) do
+    actions =
+      socket.assigns.current_scope
+      |> Engagement.list_actions()
+      |> Enum.reject(&Action.pending?/1)
+
+    assign(socket, :recommendation, Ladder.recommendation(actions, socket.assigns.locale))
+  end
+
   defp unit("flyered"), do: "handed out"
   defp unit("conversation"), do: "people"
   defp unit(_type), do: "people"
@@ -150,41 +170,78 @@ defmodule PauseAiCaWeb.DashboardLive do
   defp quantity_label("conversation"), do: "How many people did you talk with?"
   defp quantity_label(_type), do: "How many?"
 
-  defp action_label("learned"), do: "Read or watched a resource"
-  defp action_label("conversation"), do: "Discussed AI risk with someone"
-  defp action_label("event"), do: "Attended an event"
-  defp action_label("contacted_representative"), do: "Contacted a representative"
-  defp action_label("met_representative"), do: "Met a representative"
-  defp action_label("joined"), do: "Joined PauseAI"
-  defp action_label("signed"), do: "Signed the PauseAI statement"
-  defp action_label("flyered"), do: "Handed out flyers or put up posters"
-  defp action_label("volunteered"), do: "Volunteered"
-  defp action_label("organized"), do: "Organized an activity"
-  defp action_label("other"), do: "Other private action"
+  defp action_label(type, "fr") do
+    %{
+      "learned" => "Lu ou regardé une ressource",
+      "conversation" => "Discuté des risques de l'IA",
+      "event" => "Participé à un événement",
+      "contacted_representative" => "Contacté une personne élue",
+      "met_representative" => "Rencontré une personne élue",
+      "joined" => "Rejoint PauseAI",
+      "signed" => "Signé la déclaration",
+      "flyered" => "Distribué des dépliants ou posé des affiches",
+      "volunteered" => "Fait du bénévolat",
+      "organized" => "Organisé une activité",
+      "other" => "Autre action privée"
+    }[type]
+  end
+
+  defp action_label("learned", _locale), do: "Read or watched a resource"
+  defp action_label("conversation", _), do: "Discussed AI risk with someone"
+  defp action_label("event", _), do: "Attended an event"
+  defp action_label("contacted_representative", _), do: "Contacted a representative"
+  defp action_label("met_representative", _), do: "Met a representative"
+  defp action_label("joined", _), do: "Joined PauseAI"
+  defp action_label("signed", _), do: "Signed the PauseAI statement"
+  defp action_label("flyered", _), do: "Handed out flyers or put up posters"
+  defp action_label("volunteered", _), do: "Volunteered"
+  defp action_label("organized", _), do: "Organized an activity"
+  defp action_label("other", _), do: "Other private action"
 
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash} current_scope={@current_scope}>
+    <Layouts.app
+      flash={@flash}
+      current_scope={@current_scope}
+      locale={@locale}
+      translated_path={if(@locale == "fr", do: ~p"/en/actions", else: ~p"/fr/actions")}
+    >
       <section class="mx-auto grid max-w-6xl gap-10 px-5 py-12 lg:grid-cols-[0.8fr_1.2fr] lg:py-20">
         <div>
-          <p class="eyebrow">Your private workspace</p>
+          <p class="eyebrow">
+            {if(@locale == "fr", do: "Votre espace privé", else: "Your private workspace")}
+          </p>
           <h1 class="mt-3 font-serif text-5xl leading-tight text-stone-950">
-            Small actions become capacity.
+            {if(@locale == "fr",
+              do: "Notez ce que vous avez fait et choisissez la suite.",
+              else: "Record what you did and choose what comes next."
+            )}
           </h1>
           <p class="mt-5 max-w-lg text-lg leading-8 text-stone-600">
-            Keep a private record of what you have tried. This prototype does not publish,
-            rank, or include your actions in public movement statistics.
+            {if(@locale == "fr",
+              do:
+                "Votre journal n'est visible que par vous. Seuls des totaux anonymisés servent à suivre la progression du mouvement.",
+              else:
+                "Your log is visible only to you. Only aggregate counts are used to understand movement progress."
+            )}
           </p>
 
           <div class="mt-8 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm">
             <p class="text-sm font-semibold uppercase tracking-widest text-brand-ink">
-              {@action_count} actions recorded
+              {@action_count} {if(@locale == "fr", do: "actions consignées", else: "actions recorded")}
             </p>
-            <p class="mt-3 text-stone-600">
-              Suggested next step: choose one person you trust and share one resource that
-              helped you understand the issue.
+            <h2 id="suggested-next-step" class="mt-3 font-heading text-2xl text-stone-950">
+              {@recommendation.title}
+            </h2>
+            <p class="mt-2 text-stone-600">{@recommendation.why}</p>
+            <p class="mt-3 text-sm text-stone-500">
+              {if(@locale == "fr", do: "Temps estimé", else: "Estimated time")}: {@recommendation.effort}
             </p>
+            <.link
+              href={@recommendation.href}
+              class="mt-4 inline-flex rounded-full bg-brand px-5 py-2.5 font-semibold text-stone-950 hover:bg-brand-strong"
+            >{@recommendation.cta}</.link>
           </div>
         </div>
 
@@ -209,7 +266,9 @@ defmodule PauseAiCaWeb.DashboardLive do
                 class="flex flex-wrap items-center gap-3 rounded-2xl bg-white p-4"
               >
                 <div class="mr-auto">
-                  <p class="font-semibold text-stone-900">{action_label(action.action_type)}</p>
+                  <p class="font-semibold text-stone-900">
+                    {action_label(action.action_type, @locale)}
+                  </p>
                   <p class="text-sm text-stone-500">{action.happened_on}</p>
                 </div>
                 <button
@@ -234,9 +293,12 @@ defmodule PauseAiCaWeb.DashboardLive do
             </ul>
           </div>
 
-          <div class="rounded-3xl bg-stone-900 p-6 text-white shadow-xl sm:p-8">
+          <div id="action-editor" class="rounded-3xl bg-stone-900 p-6 text-white shadow-xl sm:p-8">
             <h2 class="font-serif text-3xl">
-              {if(@editing_id, do: "Edit action", else: "Record an action")}
+              {if(@locale == "fr",
+                do: if(@editing_id, do: "Modifier l'action", else: "Noter une action"),
+                else: if(@editing_id, do: "Edit action", else: "Record an action")
+              )}
             </h2>
             <.form
               for={@form}
@@ -248,17 +310,24 @@ defmodule PauseAiCaWeb.DashboardLive do
               <.input
                 field={@form[:action_type]}
                 type="select"
-                label="What did you do?"
-                prompt="Choose an action"
-                options={Enum.map(Action.action_types(), &{action_label(&1), &1})}
+                label={if(@locale == "fr", do: "Qu'avez-vous fait?", else: "What did you do?")}
+                prompt={if(@locale == "fr", do: "Choisir une action", else: "Choose an action")}
+                options={Enum.map(Action.action_types(), &{action_label(&1, @locale), &1})}
+                class="w-full select bg-white text-stone-950"
               />
-              <.input field={@form[:happened_on]} type="date" label="When?" />
+              <.input
+                field={@form[:happened_on]}
+                type="date"
+                label={if(@locale == "fr", do: "Quand?", else: "When?")}
+                class="w-full input bg-white text-stone-950"
+              />
               <.input
                 :if={Action.location?(@selected_type)}
                 field={@form[:location]}
                 type="text"
                 label="Where?"
                 placeholder="Montréal, Concordia University, Rue Sainte-Catherine…"
+                class="w-full input bg-white text-stone-950 placeholder:text-stone-500"
               />
               <.input
                 :if={Action.quantity?(@selected_type)}
@@ -266,19 +335,24 @@ defmodule PauseAiCaWeb.DashboardLive do
                 type="number"
                 label={quantity_label(@selected_type)}
                 min="0"
+                class="w-full input bg-white text-stone-950"
               />
               <.input
                 field={@form[:notes]}
                 type="textarea"
                 label="Private note (optional)"
                 placeholder="What did you learn? What might you try next?"
+                class="w-full textarea bg-white text-stone-950 placeholder:text-stone-500"
               />
               <div class="flex gap-3">
                 <button
                   id="save-action"
                   class="rounded-full bg-brand px-5 py-3 font-semibold text-white hover:bg-brand-strong"
                 >
-                  {if(@editing_id, do: "Save changes", else: "Record privately")}
+                  {if(@locale == "fr",
+                    do: if(@editing_id, do: "Enregistrer", else: "Noter en privé"),
+                    else: if(@editing_id, do: "Save changes", else: "Record privately")
+                  )}
                 </button>
                 <button
                   :if={@editing_id}
@@ -306,7 +380,9 @@ defmodule PauseAiCaWeb.DashboardLive do
             >
               <div class="flex items-start justify-between gap-5">
                 <div>
-                  <p class="font-semibold text-stone-900">{action_label(action.action_type)}</p>
+                  <p class="font-semibold text-stone-900">
+                    {action_label(action.action_type, @locale)}
+                  </p>
                   <time class="mt-1 block text-sm text-stone-500">{Calendar.strftime(
                     action.happened_on,
                     "%B %-d, %Y"

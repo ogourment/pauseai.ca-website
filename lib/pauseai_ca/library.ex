@@ -193,6 +193,27 @@ defmodule PauseAiCa.Library do
         }
       },
       %Resource{
+        id: "senat-france-risques",
+        stage: :risk,
+        format: :report,
+        language: "fr",
+        url: "https://www.senat.fr/rap/r24-170/r24-17019.html",
+        publisher: "Sénat français — OPECST",
+        reviewed_on: @reviewed,
+        copy: %{
+          "en" => %{
+            title: "A parliamentary review of systemic and existential AI risk",
+            summary:
+              "A French parliamentary science and technology report maps the competing expert positions, including sceptical arguments, rather than presenting advocacy alone."
+          },
+          "fr" => %{
+            title: "Risque systémique, risque existentiel: l'état du débat",
+            summary:
+              "Un rapport de l'Office parlementaire français présente les différentes positions scientifiques, y compris les objections, plutôt qu'un seul plaidoyer."
+          }
+        }
+      },
+      %Resource{
         id: "bengio-rogue-ai",
         stage: :risk,
         format: :article,
@@ -424,6 +445,28 @@ defmodule PauseAiCa.Library do
         quotes: [
           %{
             text: %{
+              "fr" =>
+                "Je pense maintenant que nous ne sommes pas sur la bonne voie, que pour récolter les bénéfices de l'IA, éviter des conséquences catastrophiques, mieux comprendre et atténuer les risques, des changements importants sont nécessaires."
+            },
+            source: "Yoshua Bengio, Dimensions personnelles et psychologiques",
+            url:
+              "https://yoshuabengio.org/fr/blogue/dimensions-personnelles-et-psychologiques-des-chercheurs-en-ia-face-aux-risques",
+            said_on: "2023",
+            language: "fr"
+          },
+          %{
+            text: %{
+              "fr" =>
+                "Il ne suffit pas d'espérer que tout se passera bien : vaut mieux prévenir que guérir."
+            },
+            source: "Yoshua Bengio, Questions fréquentes sur les risques catastrophiques",
+            url:
+              "https://yoshuabengio.org/fr/blogue/questions-frequentes-sur-les-risques-catastrophiques-lies-lia",
+            said_on: "2023",
+            language: "fr"
+          },
+          %{
+            text: %{
               "en" =>
                 "Rogue AI may be dangerous for the whole of humanity. Banning powerful AI systems (say beyond the abilities of GPT-4) that are given autonomy and agency would be a good start."
             },
@@ -446,12 +489,23 @@ defmodule PauseAiCa.Library do
         references: [
           %Reference{
             label: %{
+              "en" => "His French FAQ on catastrophic AI risks",
+              "fr" => "Ses questions fréquentes sur les risques catastrophiques liés à l'IA"
+            },
+            url:
+              "https://yoshuabengio.org/fr/blogue/questions-frequentes-sur-les-risques-catastrophiques-lies-lia",
+            publisher: "yoshuabengio.org",
+            language: "fr"
+          },
+          %Reference{
+            label: %{
               "en" => "How rogue AIs may arise — his own account of changing his mind",
               "fr" => "Comment des IA malveillantes peuvent apparaître — son propre récit"
             },
-            url: "https://yoshuabengio.org/2023/05/22/how-rogue-ais-may-arise/",
+            url:
+              "https://yoshuabengio.org/fr/2023/05/30/comment-des-ia-nocives-pourraient-apparaitre/",
             publisher: "yoshuabengio.org",
-            language: "en"
+            language: "fr"
           },
           %Reference{
             label: %{

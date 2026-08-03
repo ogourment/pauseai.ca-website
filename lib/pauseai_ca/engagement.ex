@@ -175,4 +175,28 @@ defmodule PauseAiCa.Engagement do
   def new_action(%Scope{} = scope) do
     %Action{user_id: scope.user.id, happened_on: Date.utc_today()}
   end
+
+  @doc "Aggregate movement-building metrics without exposing supporter records."
+  def metrics do
+    user_count = Repo.aggregate(PauseAiCa.Accounts.User, :count)
+    action_count = Repo.aggregate(from(a in Action, where: not is_nil(a.confirmed_at)), :count)
+
+    by_type =
+      Repo.all(
+        from a in Action,
+          where: not is_nil(a.confirmed_at),
+          group_by: a.action_type,
+          order_by: [desc: count(a.id)],
+          select: {a.action_type, count(a.id)}
+      )
+
+    active_people =
+      Repo.one(
+        from a in Action,
+          where: not is_nil(a.confirmed_at),
+          select: count(a.user_id, :distinct)
+      )
+
+    %{users: user_count, actions: action_count, active_people: active_people, by_type: by_type}
+  end
 end

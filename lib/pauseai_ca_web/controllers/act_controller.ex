@@ -20,17 +20,17 @@ defmodule PauseAiCaWeb.ActController do
     "join" => %{
       action_type: "joined",
       en: "https://pauseai.info/embed/onboarding-form?country=Canada&languages=English",
-      fr: "https://pauseai.info/embed/onboarding-form?country=Canada&languages=French,English"
+      fr: "https://pauseia.fr/agir"
     },
     "sign" => %{
       action_type: "signed",
       en: "https://pauseai.info/statement",
-      fr: "https://pauseai.info/statement"
+      fr: "https://pauseia.fr/agir"
     },
     "actions" => %{
       action_type: nil,
       en: "https://pauseai.info/action",
-      fr: "https://pauseai.info/action"
+      fr: "https://pauseia.fr/agir"
     }
   }
 

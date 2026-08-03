@@ -1,0 +1,62 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  locale={@locale}
+  translated_path={if(@locale == "fr", do: ~p"/en/about", else: ~p"/fr/a-propos")}
+>
+  <article id="about" class="mx-auto max-w-4xl px-5 py-16 sm:py-24">
+    <p class="eyebrow">PauseAI Canada</p>
+    <h1 class="mt-3 font-heading text-5xl text-stone-950">
+      {if(@locale == "fr", do: "Qui sommes-nous?", else: "Who we are")}
+    </h1>
+    <p class="mt-7 text-xl leading-9 text-stone-700">
+      {if(@locale == "fr",
+        do:
+          "PauseAI Canada est un groupe canadien en développement qui sensibilise le public aux risques liés aux systèmes d'IA avancés et défend des mesures de sécurité nationales et internationales.",
+        else:
+          "PauseAI Canada is a developing Canadian group raising public awareness of risks from advanced AI systems and advocating for national and international safeguards."
+      )}
+    </p>
+    <div class="mt-10 space-y-8 leading-8 text-stone-600">
+      <section>
+        <h2 class="font-heading text-3xl text-stone-950">
+          {if(@locale == "fr", do: "Notre rôle", else: "Our role")}
+        </h2><p class="mt-3">
+          {if(@locale == "fr",
+            do:
+              "Nous adaptons les arguments et les possibilités d'action au contexte canadien, dans les deux langues officielles. Nous voulons aider les personnes à se faire une opinion, à communiquer avec leurs représentantes et représentants et à s'organiser.",
+            else:
+              "We adapt the case and opportunities for action to the Canadian context in both official languages. We help people form a view, contact representatives, and organize."
+          )}
+        </p>
+      </section>
+      <section>
+        <h2 class="font-heading text-3xl text-stone-950">
+          {if(@locale == "fr", do: "Nos liens", else: "Our relationships")}
+        </h2><p class="mt-3">
+          {if(@locale == "fr",
+            do:
+              "Nous faisons partie du réseau international PauseAI et collaborons avec des groupes francophones comme Pause IA. Les contenus externes sont identifiés clairement; ce site demeure responsable de son propre contenu canadien.",
+            else:
+              "We are part of the international PauseAI network and collaborate with francophone groups such as Pause IA. External material is clearly identified; this site remains responsible for its Canadian content."
+          )}
+        </p>
+      </section>
+      <section>
+        <h2 class="font-heading text-3xl text-stone-950">
+          {if(@locale == "fr", do: "Nous joindre", else: "Contact us")}
+        </h2><p class="mt-3">
+          {if(@locale == "fr",
+            do:
+              "Vous voulez poser une question, vérifier une source ou participer? Utilisez le formulaire pour rejoindre le réseau et indiquez que vous êtes au Canada.",
+            else:
+              "Want to ask a question, check a source, or participate? Use the network form and indicate that you are in Canada."
+          )}
+        </p><a
+          class="mt-4 inline-flex rounded-full bg-brand px-5 py-3 font-semibold text-stone-950"
+          href={if(@locale == "fr", do: "https://pauseia.fr/agir", else: ~p"/act/join?locale=en")}
+        >{if(@locale == "fr", do: "Participer en français", else: "Get involved")}</a>
+      </section>
+    </div>
+  </article>
+</Layouts.app>

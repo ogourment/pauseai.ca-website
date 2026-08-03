@@ -35,6 +35,7 @@ defmodule PauseAiCa.LibraryTest do
 
       assert length(french) >= 3
       assert Enum.any?(french, &(&1.publisher == "Pause IA"))
+      assert Enum.any?(french, &String.starts_with?(&1.publisher, "Sénat français"))
     end
 
     test "tells a reader when a source is in the other language" do
@@ -62,6 +63,14 @@ defmodule PauseAiCa.LibraryTest do
           ] do
         assert expected in names
       end
+    end
+
+    test "Bengio is represented by his own original French words" do
+      bengio = Enum.find(Library.voices(), &(&1.id == "bengio"))
+      french = Enum.filter(bengio.quotes, &(&1.language == "fr"))
+
+      assert length(french) >= 2
+      assert Enum.all?(french, &String.starts_with?(&1.url, "https://yoshuabengio.org/fr/"))
     end
 
     test "every quotation is verbatim and linked to where it was said" do
