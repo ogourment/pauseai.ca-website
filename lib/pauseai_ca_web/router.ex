@@ -33,6 +33,10 @@ defmodule PauseAiCaWeb.Router do
     # even while the staging gate is on.
     get "/letters/confirm/:token", LetterController, :confirm
 
+    # Leaving for PauseAI Global. Goes through us so a signed-in visitor's
+    # departure can be recorded; see ActController.
+    get "/act/:destination", ActController, :go
+
     get "/", PageController, :index
     get "/en", PageController, :en
     get "/fr", PageController, :fr

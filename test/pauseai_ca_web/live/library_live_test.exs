@@ -39,18 +39,20 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
       assert html =~ "/en/warning-shot"
     end
 
-    test "the Act menu offers the three global asks", %{conn: conn} do
+    test "the Act menu offers the three global asks, in a new tab", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/en/learn")
 
-      assert has_element?(view, "#act-join[href*='onboarding-form']")
-      assert has_element?(view, "#act-sign[href='https://pauseai.info/statement']")
-      assert has_element?(view, "#act-actions[href='https://pauseai.info/action']")
+      # They route through the app so a departure can be recorded, and open in a
+      # new tab so a reader does not lose their place.
+      assert has_element?(view, "#act-join[href='/act/join?locale=en'][target='_blank']")
+      assert has_element?(view, "#act-sign[href='/act/sign?locale=en'][target='_blank']")
+      assert has_element?(view, "#act-actions[href='/act/actions?locale=en'][target='_blank']")
     end
 
     test "the Act menu speaks French on French pages", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/fr/comprendre")
 
-      assert has_element?(view, "#act-join[href*='languages=French']")
+      assert has_element?(view, "#act-join[href='/act/join?locale=fr']")
       assert render(view) =~ "Signer"
     end
 

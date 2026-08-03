@@ -79,11 +79,14 @@ defmodule PauseAiCaWeb.Layouts do
             <span aria-hidden="true" class="text-xs">▾</span>
           </summary>
           <div class="absolute right-0 z-50 mt-2 w-64 overflow-hidden rounded-xl border border-stone-200 bg-white shadow-lg">
+            <%!-- New tab: these leave for another site, and a visitor part-way
+                 through reading should not lose their place. --%>
             <a
               :for={{id, label, note, href} <- act_items(@locale)}
               id={id}
               href={href}
-              rel="noreferrer"
+              target="_blank"
+              rel="noopener noreferrer"
               class="block border-b border-stone-100 px-4 py-3 last:border-0 hover:bg-brand-wash"
             >
               <span class="block font-heading text-base font-bold text-stone-950">{label}</span>
@@ -146,22 +149,22 @@ defmodule PauseAiCaWeb.Layouts do
   # so each says where it goes rather than pretending to be a local page.
   defp act_items("fr") do
     [
-      {"act-join", "Rejoindre", "Formulaire mondial de PauseAI",
-       "https://pauseai.info/embed/onboarding-form?country=Canada&languages=French,English"},
-      {"act-sign", "Signer", "La déclaration de PauseAI", "https://pauseai.info/statement"},
+      {"act-join", "Rejoindre", "Formulaire mondial de PauseAI", act_path("join", "fr")},
+      {"act-sign", "Signer", "La déclaration de PauseAI", act_path("sign", "fr")},
       {"act-actions", "Passer à l'action", "Les actions proposées par PauseAI",
-       "https://pauseai.info/action"}
+       act_path("actions", "fr")}
     ]
   end
 
   defp act_items(_locale) do
     [
-      {"act-join", "Join", "PauseAI's global form",
-       "https://pauseai.info/embed/onboarding-form?country=Canada&languages=English"},
-      {"act-sign", "Sign", "The PauseAI statement", "https://pauseai.info/statement"},
-      {"act-actions", "Actions", "What PauseAI asks people to do", "https://pauseai.info/action"}
+      {"act-join", "Join", "PauseAI's global form", act_path("join", "en")},
+      {"act-sign", "Sign", "The PauseAI statement", act_path("sign", "en")},
+      {"act-actions", "Actions", "What PauseAI asks people to do", act_path("actions", "en")}
     ]
   end
+
+  defp act_path(destination, locale), do: ~p"/act/#{destination}?locale=#{locale}"
 
   @doc """
   Shows the flash group with standard titles and content.
