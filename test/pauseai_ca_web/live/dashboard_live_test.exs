@@ -83,4 +83,109 @@ defmodule PauseAiCaWeb.DashboardLiveTest do
       assert html =~ "0 actions recorded"
     end
   end
+
+  describe "logging what happened off the platform" do
+    test "an organiser can record where and how many", %{conn: conn, scope: scope} do
+      {:ok, view, _html} = live(conn, ~p"/dashboard")
+
+      # Choosing the type reveals the fields that make sense for it.
+      html =
+        view
+        |> form("#action-form", action: %{action_type: "organized"})
+        |> render_change()
+
+      assert html =~ "Where?"
+      assert html =~ "Roughly how many people came?"
+
+      view
+      |> form("#action-form",
+        action: %{
+          action_type: "organized",
+          happened_on: "2026-08-01",
+          location: "Concordia University, Montréal",
+          quantity: "23"
+        }
+      )
+      |> render_submit()
+
+      assert [action] = Engagement.list_actions(scope)
+      assert action.location == "Concordia University, Montréal"
+      assert action.quantity == 23
+    end
+
+    test "flyering asks how many went out", %{conn: conn, scope: scope} do
+      {:ok, view, _html} = live(conn, ~p"/dashboard")
+
+      html = view |> form("#action-form", action: %{action_type: "flyered"}) |> render_change()
+      assert html =~ "Roughly how many did you hand out"
+
+      view
+      |> form("#action-form",
+        action: %{
+          action_type: "flyered",
+          happened_on: "2026-08-01",
+          location: "Rue Sainte-Catherine",
+          quantity: "150"
+        }
+      )
+      |> render_submit()
+
+      assert [action] = Engagement.list_actions(scope)
+      assert action.quantity == 150
+    end
+
+    test "a reader is not asked how many people attended", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/dashboard")
+
+      html = view |> form("#action-form", action: %{action_type: "learned"}) |> render_change()
+
+      refute html =~ "Where?"
+      refute html =~ "How many"
+    end
+
+    test "detail that stops applying is dropped rather than kept", %{scope: scope} do
+      # Someone picks "organized", fills in a count, then switches to "learned".
+      # The browser no longer shows the field; the server must not keep the value.
+      {:ok, action} =
+        Engagement.create_action(scope, %{
+          "action_type" => "learned",
+          "happened_on" => Date.utc_today(),
+          "location" => "somewhere",
+          "quantity" => "99"
+        })
+
+      assert is_nil(action.location)
+      assert is_nil(action.quantity)
+    end
+
+    test "the record shows the place and the count", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/dashboard")
+
+      # Reveal the detail fields first; they do not exist until a type wants them.
+      view |> form("#action-form", action: %{action_type: "event"}) |> render_change()
+
+      html =
+        view
+        |> form("#action-form",
+          action: %{
+            action_type: "event",
+            happened_on: "2026-08-01",
+            location: "Montréal",
+            quantity: "40"
+          }
+        )
+        |> render_submit()
+
+      assert html =~ "Montréal"
+      assert html =~ "40"
+    end
+
+    test "joining and signing are offered as things to log", %{conn: conn} do
+      {:ok, _view, html} = live(conn, ~p"/dashboard")
+
+      assert html =~ "Joined PauseAI"
+      assert html =~ "Signed the PauseAI statement"
+      assert html =~ "Handed out flyers"
+    end
+  end
 end

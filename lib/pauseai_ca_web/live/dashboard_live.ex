@@ -15,6 +15,7 @@ defmodule PauseAiCaWeb.DashboardLive do
      |> assign(:action_count, Enum.count(actions, &(not Action.pending?(&1))))
      |> assign(:pending, Engagement.list_pending_actions(scope))
      |> assign(:editing_id, nil)
+     |> assign(:selected_type, nil)
      |> assign_form(Engagement.new_action(scope))
      |> stream(:actions, Enum.reject(actions, &Action.pending?/1))}
   end
@@ -26,7 +27,10 @@ defmodule PauseAiCaWeb.DashboardLive do
       |> Engagement.change_action(form_action(socket), params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign(socket, :form, to_form(changeset))}
+    {:noreply,
+     socket
+     |> assign(:form, to_form(changeset))
+     |> assign(:selected_type, params["action_type"])}
   end
 
   def handle_event("save", %{"action" => params}, socket) do
@@ -68,6 +72,7 @@ defmodule PauseAiCaWeb.DashboardLive do
     {:noreply,
      socket
      |> assign(:editing_id, action.id)
+     |> assign(:selected_type, action.action_type)
      |> assign_form(action)}
   end
 
@@ -75,6 +80,7 @@ defmodule PauseAiCaWeb.DashboardLive do
     {:noreply,
      socket
      |> assign(:editing_id, nil)
+     |> assign(:selected_type, nil)
      |> assign_form(Engagement.new_action(socket.assigns.current_scope))}
   end
 
@@ -112,6 +118,7 @@ defmodule PauseAiCaWeb.DashboardLive do
          socket
          |> put_flash(:info, "Action updated.")
          |> assign(:editing_id, nil)
+         |> assign(:selected_type, nil)
          |> stream_insert(:actions, action)
          |> assign_form(Engagement.new_action(socket.assigns.current_scope))}
 
@@ -132,11 +139,25 @@ defmodule PauseAiCaWeb.DashboardLive do
     assign(socket, :form, to_form(changeset))
   end
 
+  defp unit("flyered"), do: "handed out"
+  defp unit("conversation"), do: "people"
+  defp unit(_type), do: "people"
+
+  # What a number means depends entirely on what was done.
+  defp quantity_label("event"), do: "Roughly how many people were there?"
+  defp quantity_label("organized"), do: "Roughly how many people came?"
+  defp quantity_label("flyered"), do: "Roughly how many did you hand out or put up?"
+  defp quantity_label("conversation"), do: "How many people did you talk with?"
+  defp quantity_label(_type), do: "How many?"
+
   defp action_label("learned"), do: "Read or watched a resource"
   defp action_label("conversation"), do: "Discussed AI risk with someone"
   defp action_label("event"), do: "Attended an event"
   defp action_label("contacted_representative"), do: "Contacted a representative"
   defp action_label("met_representative"), do: "Met a representative"
+  defp action_label("joined"), do: "Joined PauseAI"
+  defp action_label("signed"), do: "Signed the PauseAI statement"
+  defp action_label("flyered"), do: "Handed out flyers or put up posters"
   defp action_label("volunteered"), do: "Volunteered"
   defp action_label("organized"), do: "Organized an activity"
   defp action_label("other"), do: "Other private action"
@@ -233,6 +254,20 @@ defmodule PauseAiCaWeb.DashboardLive do
               />
               <.input field={@form[:happened_on]} type="date" label="When?" />
               <.input
+                :if={Action.location?(@selected_type)}
+                field={@form[:location]}
+                type="text"
+                label="Where?"
+                placeholder="Montréal, Concordia University, Rue Sainte-Catherine…"
+              />
+              <.input
+                :if={Action.quantity?(@selected_type)}
+                field={@form[:quantity]}
+                type="number"
+                label={quantity_label(@selected_type)}
+                min="0"
+              />
+              <.input
                 field={@form[:notes]}
                 type="textarea"
                 label="Private note (optional)"
@@ -276,6 +311,14 @@ defmodule PauseAiCaWeb.DashboardLive do
                     action.happened_on,
                     "%B %-d, %Y"
                   )}</time>
+                  <p
+                    :if={action.location not in [nil, ""] or action.quantity}
+                    class="mt-1 text-sm text-brand-ink"
+                  >
+                    <span :if={action.location not in [nil, ""]}>{action.location}</span>
+                    <span :if={action.location not in [nil, ""] and action.quantity}> · </span>
+                    <span :if={action.quantity}>{action.quantity} {unit(action.action_type)}</span>
+                  </p>
                   <p
                     :if={action.notes not in [nil, ""]}
                     class="mt-3 whitespace-pre-line text-stone-600"
