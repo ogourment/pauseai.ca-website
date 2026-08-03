@@ -8,36 +8,56 @@ defmodule PauseAiCaWeb.UserLive.Registration do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="mx-auto max-w-sm">
-        <div class="text-center">
-          <.header>
-            Register for an account
-            <:subtitle>
-              Already registered?
-              <.link navigate={~p"/users/log-in"} class="font-semibold text-brand hover:underline">
-                Log in
-              </.link>
-              to your account now.
-            </:subtitle>
-          </.header>
-        </div>
+      <.panel title_en="Create an account" title_fr="Créer un compte">
+        <:subtitle>
+          <.bilingual
+            en="An account keeps a private record of what you have done, and lets your letters go in one click."
+            fr="Un compte conserve un registre privé de vos actions et permet à vos lettres de partir en un clic."
+          />
+        </:subtitle>
 
         <.form for={@form} id="registration_form" phx-submit="save" phx-change="validate">
           <.input
             field={@form[:email]}
             type="email"
-            label="Email"
+            label="Email · Courriel"
             autocomplete="username"
             spellcheck="false"
             required
             phx-mounted={JS.focus()}
           />
 
-          <.button phx-disable-with="Creating account..." class="btn btn-primary w-full">
-            Create an account
-          </.button>
+          <button
+            type="submit"
+            phx-disable-with="Creating account… · Création…"
+            class="mt-2 w-full rounded-full bg-brand px-6 py-3 font-heading text-lg font-bold text-stone-950 transition hover:bg-brand-strong"
+          >
+            Create account · Créer le compte
+          </button>
         </.form>
-      </div>
+
+        <p class="mt-6 text-sm leading-6 text-stone-500">
+          Your address is used to sign you in and is never sold or shared.<br />
+          Votre adresse sert à vous connecter; elle n'est jamais vendue ni partagée.
+        </p>
+
+        <p class="mt-4 border-t border-stone-200 pt-4 text-sm leading-6 text-stone-600">
+          Already have one?
+          <.link
+            navigate={~p"/users/log-in"}
+            class="font-semibold underline decoration-brand decoration-2 underline-offset-4"
+          >
+            Sign in
+          </.link>
+          · Vous en avez déjà un?
+          <.link
+            navigate={~p"/users/log-in"}
+            class="font-semibold underline decoration-brand decoration-2 underline-offset-4"
+          >
+            Se connecter
+          </.link>
+        </p>
+      </.panel>
     </Layouts.app>
     """
   end
