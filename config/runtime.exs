@@ -43,6 +43,16 @@ if config_env() == :dev do
     ]
 end
 
+# Google Analytics. Unset means no tracker and no consent banner, which is the
+# default everywhere including production until a measurement id is provided.
+config :pauseai_ca, :ga_measurement_id, System.get_env("GA_MEASUREMENT_ID")
+
+# Audit events are emitted at :info. LOG_LEVEL raises or lowers the floor;
+# set it to debug when diagnosing something.
+if level = System.get_env("LOG_LEVEL") do
+  config :logger, level: String.to_existing_atom(level)
+end
+
 if config_env() == :prod do
   database_url =
     System.get_env("DATABASE_URL") ||

@@ -38,6 +38,47 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
       assert html =~ "/en/learn"
       assert html =~ "/en/warning-shot"
     end
+
+    test "the Act menu offers the three global asks", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/en/learn")
+
+      assert has_element?(view, "#act-join[href*='onboarding-form']")
+      assert has_element?(view, "#act-sign[href='https://pauseai.info/statement']")
+      assert has_element?(view, "#act-actions[href='https://pauseai.info/action']")
+    end
+
+    test "the Act menu speaks French on French pages", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/fr/comprendre")
+
+      assert has_element?(view, "#act-join[href*='languages=French']")
+      assert render(view) =~ "Signer"
+    end
+
+    test "no tracker and no banner without a measurement id", %{conn: conn} do
+      original = Application.get_env(:pauseai_ca, :ga_measurement_id)
+      Application.put_env(:pauseai_ca, :ga_measurement_id, nil)
+      on_exit(fn -> Application.put_env(:pauseai_ca, :ga_measurement_id, original) end)
+
+      {:ok, view, _html} = live(conn, ~p"/en/learn")
+
+      refute has_element?(view, "#consent-banner")
+      refute render(view) =~ "googletagmanager"
+    end
+
+    test "with a measurement id the banner appears but the tracker does not", %{conn: conn} do
+      original = Application.get_env(:pauseai_ca, :ga_measurement_id)
+      Application.put_env(:pauseai_ca, :ga_measurement_id, "G-TEST123")
+      on_exit(fn -> Application.put_env(:pauseai_ca, :ga_measurement_id, original) end)
+
+      {:ok, view, _html} = live(conn, ~p"/en/learn")
+      html = render(view)
+
+      assert has_element?(view, "#consent-banner")
+      assert has_element?(view, "#consent-accept")
+      assert has_element?(view, "#consent-decline")
+      # Law 25: nothing loads until the banner is answered.
+      refute html =~ "gtag/js?id=G-TEST123"
+    end
   end
 
   describe "getting updates" do

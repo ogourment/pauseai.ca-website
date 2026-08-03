@@ -88,6 +88,7 @@ defmodule PauseAiCaWeb do
       import PauseAiCaWeb.CoreComponents
       import PauseAiCaWeb.CampaignPrompt
       import PauseAiCaWeb.AuthLayout
+      import PauseAiCaWeb.Analytics
 
       # Common modules used in templates
       alias Phoenix.LiveView.JS

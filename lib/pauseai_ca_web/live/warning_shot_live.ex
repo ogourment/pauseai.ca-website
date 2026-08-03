@@ -11,6 +11,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
 
   use PauseAiCaWeb, :live_view
 
+  alias PauseAiCa.Audit
   alias PauseAiCa.Campaigns
   alias PauseAiCa.Campaigns.Delivery
   alias PauseAiCa.Campaigns.Letter
@@ -73,9 +74,15 @@ defmodule PauseAiCaWeb.WarningShotLive do
 
     case Campaigns.find_members_of_parliament(socket.assigns.sender["postal_code"]) do
       {:ok, []} ->
+        Audit.event(:mp_lookup_empty, %{locale: socket.assigns.locale})
         {:noreply, no_representatives(socket, :not_found)}
 
       {:ok, representatives} ->
+        Audit.event(:mp_lookup_ok, %{
+          locale: socket.assigns.locale,
+          matches: length(representatives)
+        })
+
         {:noreply,
          socket
          |> assign(:representatives, representatives)
@@ -83,6 +90,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
          |> recompose()}
 
       {:error, reason} ->
+        Audit.event(:mp_lookup_failed, %{locale: socket.assigns.locale, reason: reason})
         {:noreply, no_representatives(socket, reason)}
     end
   end
@@ -95,6 +103,11 @@ defmodule PauseAiCaWeb.WarningShotLive do
   end
 
   def handle_event("opened-mail-app", _params, socket) do
+    Audit.event(:letter_handed_over, %{
+      locale: socket.assigns.locale,
+      signed_in: not is_nil(socket.assigns[:current_scope])
+    })
+
     {:noreply, socket |> record_action(confirmed: false) |> assign(:send_state, :handed_over)}
   end
 
@@ -114,15 +127,22 @@ defmodule PauseAiCaWeb.WarningShotLive do
     cond do
       # Silently accept the honeypot: telling a bot it was caught teaches it.
       params["website"] != "" ->
+        Audit.event(:letter_rejected, %{reason: :honeypot})
         {:noreply, assign(socket, :send_state, :sent)}
 
       System.system_time(:second) - socket.assigns.mounted_at < min_seconds_before_send() ->
+        Audit.event(:letter_rejected, %{reason: :too_fast})
         {:noreply, assign(socket, :send_state, {:error, :too_fast})}
 
       params["consent"] != "true" ->
         {:noreply, assign(socket, :send_state, {:error, :consent_required})}
 
       String.length(letter.body) > @max_body_length ->
+        Audit.event(:letter_rejected, %{
+          reason: :body_too_long,
+          length: String.length(letter.body)
+        })
+
         {:noreply, assign(socket, :send_state, {:error, :body_too_long})}
 
       true ->
@@ -134,8 +154,12 @@ defmodule PauseAiCaWeb.WarningShotLive do
     supporter = %{name: socket.assigns.sender["name"], email: params["email"]}
 
     case RateLimit.check(String.downcase(String.trim(params["email"]))) do
-      :ok -> dispatch(socket, supporter, params)
-      {:error, reason} -> {:noreply, assign(socket, :send_state, {:error, reason})}
+      :ok ->
+        dispatch(socket, supporter, params)
+
+      {:error, reason} ->
+        Audit.event(:letter_rejected, %{reason: reason, email: params["email"]})
+        {:noreply, assign(socket, :send_state, {:error, reason})}
     end
   end
 
@@ -147,9 +171,17 @@ defmodule PauseAiCaWeb.WarningShotLive do
     if verified_sender?(socket, params["email"]) do
       case Delivery.deliver(socket.assigns.letter, supporter) do
         {:ok, _result} ->
+          Audit.event(:letter_sent, %{
+            email: supporter.email,
+            locale: socket.assigns.locale,
+            verified: true,
+            rehearsal: Delivery.rehearsal?()
+          })
+
           {:noreply, socket |> record_action(confirmed: true) |> assign(:send_state, :sent)}
 
         {:error, reason} ->
+          Audit.event(:letter_failed, %{email: supporter.email, reason: reason})
           {:noreply, assign(socket, :send_state, {:error, reason})}
       end
     else
@@ -161,9 +193,12 @@ defmodule PauseAiCaWeb.WarningShotLive do
     with {:ok, token, pending} <-
            Confirmations.hold(socket.assigns.letter, supporter, socket.assigns.locale),
          {:ok, _sent} <- ConfirmationNotifier.deliver(pending, confirm_url(socket, token)) do
+      Audit.event(:letter_held, %{email: supporter.email, locale: socket.assigns.locale})
       {:noreply, assign(socket, :send_state, :awaiting_confirmation)}
     else
-      _error -> {:noreply, assign(socket, :send_state, {:error, :delivery_failed})}
+      _error ->
+        Audit.event(:letter_failed, %{email: supporter.email, reason: :hold_failed})
+        {:noreply, assign(socket, :send_state, {:error, :delivery_failed})}
     end
   end
 

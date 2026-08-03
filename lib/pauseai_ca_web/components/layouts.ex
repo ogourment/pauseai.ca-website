@@ -68,6 +68,27 @@ defmodule PauseAiCaWeb.Layouts do
         >
           {if(@locale == "fr", do: "Tir de semonce", else: "Warning shot")}
         </.link>
+        <%!-- Everything here leaves for PauseAI Global, so these are plain links
+             and the menu is CSS-only: no JavaScript to fail on a slow phone. --%>
+        <details class="act-menu relative">
+          <summary class="cursor-pointer list-none text-sm font-medium text-stone-700 hover:text-stone-950">
+            {if(@locale == "fr", do: "Agir", else: "Act")}
+            <span aria-hidden="true" class="text-xs">▾</span>
+          </summary>
+          <div class="absolute right-0 z-50 mt-2 w-64 overflow-hidden rounded-xl border border-stone-200 bg-white shadow-lg">
+            <a
+              :for={{id, label, note, href} <- act_items(@locale)}
+              id={id}
+              href={href}
+              rel="noreferrer"
+              class="block border-b border-stone-100 px-4 py-3 last:border-0 hover:bg-brand-wash"
+            >
+              <span class="block font-heading text-base font-bold text-stone-950">{label}</span>
+              <span class="block text-xs leading-5 text-stone-500">{note}</span>
+            </a>
+          </div>
+        </details>
+
         <a
           class="text-sm font-medium text-stone-600 hover:text-stone-950"
           href={@translated_path || if(@locale == "fr", do: ~p"/en", else: ~p"/fr")}
@@ -107,7 +128,31 @@ defmodule PauseAiCaWeb.Layouts do
     </main>
 
     <.flash_group flash={@flash} />
+    <.analytics measurement_id={analytics_id()} locale={@locale} />
     """
+  end
+
+  defp analytics_id, do: Application.get_env(:pauseai_ca, :ga_measurement_id)
+
+  # The three things PauseAI Global asks people to do. They all leave this site,
+  # so each says where it goes rather than pretending to be a local page.
+  defp act_items("fr") do
+    [
+      {"act-join", "Rejoindre", "Formulaire mondial de PauseAI",
+       "https://pauseai.info/embed/onboarding-form?country=Canada&languages=French,English"},
+      {"act-sign", "Signer", "La déclaration de PauseAI", "https://pauseai.info/statement"},
+      {"act-actions", "Passer à l'action", "Les actions proposées par PauseAI",
+       "https://pauseai.info/action"}
+    ]
+  end
+
+  defp act_items(_locale) do
+    [
+      {"act-join", "Join", "PauseAI's global form",
+       "https://pauseai.info/embed/onboarding-form?country=Canada&languages=English"},
+      {"act-sign", "Sign", "The PauseAI statement", "https://pauseai.info/statement"},
+      {"act-actions", "Actions", "What PauseAI asks people to do", "https://pauseai.info/action"}
+    ]
   end
 
   @doc """

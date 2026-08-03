@@ -284,3 +284,13 @@ h3 {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* The Act menu is a <details>: it works before JavaScript loads and closes on
+   Escape for free. Only the marker needs hiding. */
+.act-menu > summary::-webkit-details-marker {
+  display: none;
+}
+
+.act-menu > summary::marker {
+  content: "";
+}
