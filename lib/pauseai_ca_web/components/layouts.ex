@@ -51,7 +51,7 @@ defmodule PauseAiCaWeb.Layouts do
             <img src={~p"/images/pauseai-ca.png"} alt="" width="36" height="36" class="size-9" />
             <span
               :if={PauseAiCa.Environment.badged?()}
-              class="absolute -bottom-1 -right-2 rounded px-1 py-px text-[9px] font-black leading-none text-white"
+              class="pointer-events-none absolute -right-3 top-1/4 -translate-y-1/2 rotate-[-12deg] rounded-[3px] px-1.5 py-0.5 text-[10px] font-black uppercase leading-none tracking-wide text-white shadow-sm"
               style={"background: #{env_badge_colour()}"}
             >
               {PauseAiCa.Environment.label()}
