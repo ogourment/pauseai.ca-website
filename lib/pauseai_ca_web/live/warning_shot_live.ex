@@ -14,10 +14,18 @@ defmodule PauseAiCaWeb.WarningShotLive do
   alias PauseAiCa.Campaigns
   alias PauseAiCa.Campaigns.Delivery
   alias PauseAiCa.Campaigns.Letter
+  alias PauseAiCa.Campaigns.RateLimit
+  alias PauseAiCa.Engagement
   alias PauseAiCa.Campaigns.Update
   alias PauseAiCa.Campaigns.WarningShot
 
   @draft_languages ~w(bilingual en fr)
+  @genders ~w(inclusive feminine masculine)
+  # Long enough for a thoughtful personal letter, short enough that the field
+  # cannot be used to push bulk content through our domain.
+  @max_body_length 8_000
+  # A letter typed and reviewed in under this many seconds was not typed.
+  @default_min_seconds_before_send 4
 
   @impl true
   def mount(_params, _session, socket) do
@@ -30,7 +38,8 @@ defmodule PauseAiCaWeb.WarningShotLive do
     sender = %{
       "name" => "",
       "postal_code" => "",
-      "draft_language" => default_draft_language(locale)
+      "draft_language" => default_draft_language(locale),
+      "gender" => "inclusive"
     }
 
     {:ok,
@@ -46,8 +55,10 @@ defmodule PauseAiCaWeb.WarningShotLive do
      |> assign(:letter, nil)
      |> assign(:letter_form, nil)
      |> assign(:send_mode, "assisted")
-     |> assign(:send_form, to_form(%{"email" => "", "consent" => "false"}, as: :send))
-     |> assign(:send_state, :idle)}
+     |> assign(:send_form, to_form(default_send_params(socket), as: :send))
+     |> assign(:send_state, :idle)
+     |> assign(:rehearsal?, Delivery.rehearsal?())
+     |> assign(:mounted_at, System.system_time(:second))}
   end
 
   @impl true
@@ -92,33 +103,82 @@ defmodule PauseAiCaWeb.WarningShotLive do
   def handle_event("send-letter", %{"send" => params}, socket) do
     params = send_params(params)
     socket = assign(socket, :send_form, to_form(params, as: :send))
+    letter = socket.assigns.letter
 
     cond do
+      # Silently accept the honeypot: telling a bot it was caught teaches it.
+      params["website"] != "" ->
+        {:noreply, assign(socket, :send_state, :sent)}
+
+      System.system_time(:second) - socket.assigns.mounted_at < min_seconds_before_send() ->
+        {:noreply, assign(socket, :send_state, {:error, :too_fast})}
+
       params["consent"] != "true" ->
         {:noreply, assign(socket, :send_state, {:error, :consent_required})}
 
-      true ->
-        supporter = %{name: socket.assigns.sender["name"], email: params["email"]}
+      String.length(letter.body) > @max_body_length ->
+        {:noreply, assign(socket, :send_state, {:error, :body_too_long})}
 
-        case Delivery.deliver(socket.assigns.letter, supporter) do
-          {:ok, _result} -> {:noreply, assign(socket, :send_state, :sent)}
-          {:error, reason} -> {:noreply, assign(socket, :send_state, {:error, reason})}
-        end
+      true ->
+        deliver(socket, params)
+    end
+  end
+
+  defp deliver(socket, params) do
+    supporter = %{name: socket.assigns.sender["name"], email: params["email"]}
+
+    with :ok <- RateLimit.check(String.downcase(String.trim(params["email"]))),
+         {:ok, _result} <- Delivery.deliver(socket.assigns.letter, supporter) do
+      {:noreply, socket |> record_action() |> assign(:send_state, :sent)}
+    else
+      {:error, reason} -> {:noreply, assign(socket, :send_state, {:error, reason})}
+    end
+  end
+
+  # A signed-in supporter's action log is the point of having accounts. Anyone
+  # else simply sends the letter; we do not create a record to attach it to.
+  defp record_action(socket) do
+    case socket.assigns[:current_scope] do
+      %{user: %{}} = scope ->
+        Engagement.create_action(scope, %{
+          "action_type" => "contacted_representative",
+          "happened_on" => Date.utc_today()
+        })
+
+        socket
+
+      _anonymous ->
+        socket
     end
   end
 
   defp send_params(params) do
     %{
       "email" => params["email"] || "",
-      "consent" => if(params["consent"] in ["true", "on"], do: "true", else: "false")
+      "consent" => if(params["consent"] in ["true", "on"], do: "true", else: "false"),
+      # Honeypot. Hidden from people, irresistible to naive bots.
+      "website" => params["website"] || ""
     }
+  end
+
+  # Signed-in visitors already proved they control their address, so it is
+  # pre-filled and used as the reply-to rather than asked for again.
+  defp default_send_params(socket) do
+    email =
+      case socket.assigns[:current_scope] do
+        %{user: %{email: email}} -> email
+        _anonymous -> ""
+      end
+
+    %{"email" => email, "consent" => "false", "website" => ""}
   end
 
   defp put_sender(socket, params) do
     sender = %{
       "name" => params["name"] || "",
       "postal_code" => params["postal_code"] || "",
-      "draft_language" => draft_language(params["draft_language"])
+      "draft_language" => draft_language(params["draft_language"]),
+      "gender" => gender(params["gender"])
     }
 
     socket
@@ -142,8 +202,12 @@ defmodule PauseAiCaWeb.WarningShotLive do
     letter =
       Campaigns.compose_letter(
         socket.assigns.representatives,
-        String.to_existing_atom(sender["draft_language"]),
-        %{name: sender["name"], postal_code: sender["postal_code"]}
+        to_draft_language(sender["draft_language"]),
+        %{
+          name: sender["name"],
+          postal_code: sender["postal_code"],
+          gender: to_gender(sender["gender"])
+        }
       )
 
     socket |> assign(:letter, letter) |> assign(:letter_form, to_letter_form(letter))
@@ -159,10 +223,32 @@ defmodule PauseAiCaWeb.WarningShotLive do
   defp draft_language(value) when value in @draft_languages, do: value
   defp draft_language(_value), do: "bilingual"
 
+  # Mapped rather than String.to_existing_atom/1: the target atoms live in
+  # another module which may not be loaded when this runs.
+  defp to_draft_language("en"), do: :en
+  defp to_draft_language("fr"), do: :fr
+  defp to_draft_language(_bilingual), do: :bilingual
+
+  defp to_gender("feminine"), do: :feminine
+  defp to_gender("masculine"), do: :masculine
+  defp to_gender(_inclusive), do: :inclusive
+
+  defp min_seconds_before_send do
+    Application.get_env(:pauseai_ca, :campaign_min_seconds, @default_min_seconds_before_send)
+  end
+
+  defp gender(value) when value in @genders, do: value
+  defp gender(_value), do: "inclusive"
+
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash} current_scope={@current_scope} locale={@locale}>
+    <Layouts.app
+      flash={@flash}
+      current_scope={@current_scope}
+      locale={@locale}
+      translated_path={if(@locale == "fr", do: ~p"/en/warning-shot", else: ~p"/fr/tir-de-semonce")}
+    >
       <article>
         <p class="sticky top-[var(--header-height)] z-30 bg-brand px-5 py-3 text-center font-heading text-sm font-bold uppercase tracking-[0.16em] text-stone-950">
           {@copy.badge}
@@ -270,6 +356,18 @@ defmodule PauseAiCaWeb.WarningShotLive do
                 options={draft_language_options(@locale)}
               />
             </div>
+            <div :if={@locale == "fr"} class="sm:col-span-2">
+              <.input
+                field={@sender_form[:gender]}
+                type="select"
+                label="Comment vous décrire dans la lettre"
+                options={[
+                  {"un·e citoyen·ne", "inclusive"},
+                  {"une citoyenne", "feminine"},
+                  {"un citoyen", "masculine"}
+                ]}
+              />
+            </div>
             <div class="sm:col-span-2">
               <button
                 type="submit"
@@ -372,6 +470,13 @@ defmodule PauseAiCaWeb.WarningShotLive do
             </div>
 
             <div :if={@send_mode == "assisted"} id="send-assisted" class="mt-6 max-w-2xl">
+              <p
+                :if={@rehearsal?}
+                id="rehearsal-notice"
+                class="mb-4 border-l-4 border-brand bg-brand-wash p-4 leading-7 text-stone-800"
+              >
+                {rehearsal_note(@locale)}
+              </p>
               <p class="leading-7 text-stone-600">{assisted_note(@locale)}</p>
 
               <.form
@@ -387,6 +492,21 @@ defmodule PauseAiCaWeb.WarningShotLive do
                   label={email_label(@locale)}
                   autocomplete="email"
                 />
+                <%!-- Honeypot: hidden from people, irresistible to naive bots. --%>
+                <div
+                  aria-hidden="true"
+                  style="position:absolute;left:-9999px;height:0;overflow:hidden;"
+                >
+                  <label for="send-website">Website</label>
+                  <input
+                    type="text"
+                    id="send-website"
+                    name="send[website]"
+                    value={@send_form[:website].value}
+                    tabindex="-1"
+                    autocomplete="off"
+                  />
+                </div>
                 <label class="mt-2 flex items-start gap-3 leading-6">
                   <input type="hidden" name="send[consent]" value="false" />
                   <input
@@ -410,14 +530,31 @@ defmodule PauseAiCaWeb.WarningShotLive do
                 </button>
               </.form>
 
-              <p
-                :if={@send_state == :sent}
-                id="send-success"
-                role="status"
-                class="mt-5 font-semibold text-green-800"
-              >
-                {sent_message(@locale)}
-              </p>
+              <div :if={@send_state == :sent} id="send-success" role="status" class="mt-5">
+                <p class="font-semibold text-green-800">{sent_message(@locale)}</p>
+
+                <div class="mt-4 rounded-2xl border border-stone-200 bg-white p-5">
+                  <p class="font-heading text-xl text-stone-950">{share_heading(@locale)}</p>
+                  <p class="mt-2 leading-7 text-stone-600">{share_note(@locale)}</p>
+                  <div class="mt-4 flex flex-wrap gap-3">
+                    <a
+                      id="share-bluesky"
+                      href={share_url(:bluesky, @locale)}
+                      rel="noreferrer"
+                      class="rounded-full border-2 border-brand px-5 py-2.5 font-heading font-bold text-stone-950 transition hover:bg-brand-wash"
+                    >
+                      Bluesky
+                    </a>
+                    <a
+                      id="share-email"
+                      href={share_url(:email, @locale)}
+                      class="rounded-full border-2 border-stone-300 px-5 py-2.5 font-heading font-bold text-stone-800 transition hover:border-brand"
+                    >
+                      {share_email_label(@locale)}
+                    </a>
+                  </div>
+                </div>
+              </div>
               <p
                 :if={match?({:error, _reason}, @send_state)}
                 id="send-error"
@@ -629,11 +766,76 @@ defmodule PauseAiCaWeb.WarningShotLive do
   defp send_error_message({:error, :no_recipient}, _locale),
     do: "No MP selected. Look up your postal code first."
 
+  defp send_error_message({:error, :rate_limited}, "fr"),
+    do:
+      "Vous avez déjà envoyé plusieurs lettres récemment. Réessayez plus tard, ou utilisez « Je l'envoie moi-même »."
+
+  defp send_error_message({:error, :rate_limited}, _locale),
+    do: "You have sent several letters recently. Try again later, or use \"I'll send it myself\"."
+
+  defp send_error_message({:error, :body_too_long}, "fr"),
+    do: "La lettre est trop longue. Raccourcissez-la avant l'envoi."
+
+  defp send_error_message({:error, :body_too_long}, _locale),
+    do: "The letter is too long. Shorten it before sending."
+
+  defp send_error_message({:error, :too_fast}, "fr"),
+    do: "Prenez un instant pour relire la lettre avant de l'envoyer."
+
+  defp send_error_message({:error, :too_fast}, _locale),
+    do: "Take a moment to read the letter before sending it."
+
   defp send_error_message(_state, "fr"),
     do: "L'envoi a échoué. Réessayez, ou utilisez « Je l'envoie moi-même »."
 
   defp send_error_message(_state, _locale),
     do: "Sending failed. Try again, or use \"I'll send it myself\"."
+
+  defp rehearsal_note("fr"),
+    do:
+      "Environnement de préversion: la lettre vous sera envoyée à vous, pas à votre député·e. L'objet indiquera à qui elle serait allée sur le site public."
+
+  defp rehearsal_note(_locale),
+    do:
+      "Preview environment: the letter goes to you, not to your MP. The subject line names who would have received it on the live site."
+
+  defp share_heading("fr"), do: "Une lettre de plus compte double"
+  defp share_heading(_locale), do: "One more letter counts double"
+
+  defp share_note("fr"),
+    do:
+      "Les bureaux comptent les lettres, et la plupart des dossiers n'en reçoivent presque aucune. Si une personne de votre entourage écrit aussi, vous venez de doubler l'effet de votre geste."
+
+  defp share_note(_locale),
+    do:
+      "Offices count letters, and most files get almost none. If one person you know writes too, you have just doubled what you did."
+
+  defp share_email_label("fr"), do: "Écrire à un·e ami·e"
+  defp share_email_label(_locale), do: "Email a friend"
+
+  defp share_text("fr"),
+    do:
+      "Une IA s'est échappée de son laboratoire et a piraté une vraie entreprise. Je viens d'écrire à ma députée. Ça prend une minute:"
+
+  defp share_text(_locale),
+    do:
+      "An AI escaped its lab and hacked a real company. I just wrote to my MP about it. It takes a minute:"
+
+  defp share_link("fr"), do: "https://pauseai.ca/fr/tir-de-semonce"
+  defp share_link(_locale), do: "https://pauseai.ca/en/warning-shot"
+
+  defp share_url(:bluesky, locale) do
+    "https://bsky.app/intent/compose?text=" <>
+      URI.encode_www_form(share_text(locale) <> " " <> share_link(locale))
+  end
+
+  defp share_url(:email, locale) do
+    subject = if locale == "fr", do: "Ça vaut une minute", else: "Worth a minute of your time"
+
+    "mailto:?subject=" <>
+      URI.encode_www_form(subject) <>
+      "&body=" <> URI.encode_www_form(share_text(locale) <> "\n\n" <> share_link(locale))
+  end
 
   defp open_mail_label("fr"), do: "Ouvrir dans ma messagerie"
   defp open_mail_label(_locale), do: "Open in my email app"

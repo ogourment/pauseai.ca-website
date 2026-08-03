@@ -33,6 +33,10 @@ defmodule PauseAiCaWeb.Layouts do
 
   attr :locale, :string, default: "en"
 
+  attr :translated_path, :string,
+    default: nil,
+    doc: "where the language switch should go; defaults to the other home page"
+
   slot :inner_block, required: true
 
   def app(assigns) do
@@ -66,7 +70,7 @@ defmodule PauseAiCaWeb.Layouts do
         </.link>
         <a
           class="text-sm font-medium text-stone-600 hover:text-stone-950"
-          href={if(@locale == "fr", do: ~p"/en", else: ~p"/fr")}
+          href={@translated_path || if(@locale == "fr", do: ~p"/en", else: ~p"/fr")}
         >
           {if(@locale == "fr", do: "English", else: "Français")}
         </a>

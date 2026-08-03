@@ -11,6 +11,16 @@ defmodule PauseAiCa.Campaigns.Letter do
 
   @type draft_language :: :bilingual | :en | :fr
 
+  @typedoc """
+  How the sender refers to themselves in French.
+
+  French has no ungendered way to write "a constituent". Inclusive spelling
+  (`citoyen·ne`) is the default because it excludes nobody, but people who
+  would rather write about themselves in a gendered form should not have to
+  hand-edit the letter to do it.
+  """
+  @type gender :: :inclusive | :feminine | :masculine
+
   @enforce_keys [:to, :subject, :body]
   defstruct [:to, :subject, :body, cc: "", bcc: ""]
 
@@ -36,7 +46,8 @@ defmodule PauseAiCa.Campaigns.Letter do
       mp_name: salutation(representatives, language),
       district: districts(representatives, language),
       sender_name: present(sender[:name], anonymous_sender(language)),
-      postal_code: present(sender[:postal_code], "")
+      postal_code: present(sender[:postal_code], ""),
+      constituent: constituent(sender[:gender])
     }
 
     %__MODULE__{
@@ -58,6 +69,16 @@ defmodule PauseAiCa.Campaigns.Letter do
 
     "mailto:" <> URI.encode(draft.to || "") <> "?" <> query
   end
+
+  @doc "The French self-description for `gender`."
+  @spec constituent(gender() | nil) :: String.t()
+  def constituent(:feminine), do: "une citoyenne"
+  def constituent(:masculine), do: "un citoyen"
+  def constituent(_inclusive), do: "un·e citoyen·ne"
+
+  @doc "The gender options offered, in order."
+  @spec genders() :: [gender()]
+  def genders, do: [:inclusive, :feminine, :masculine]
 
   defp present(value, fallback) when is_binary(value) do
     case String.trim(value) do
@@ -141,7 +162,7 @@ defmodule PauseAiCa.Campaigns.Letter do
     """
     Bonjour {mp_name},
 
-    Je m'appelle {sender_name} et je suis un·e citoyen·ne de la circonscription de {district}.
+    Je m'appelle {sender_name} et je suis {constituent} de la circonscription de {district}.
 
     Je vous écris au sujet d'un incident qui, selon moi, relève de la sécurité nationale et qui a reçu très peu d'attention au Canada.
 

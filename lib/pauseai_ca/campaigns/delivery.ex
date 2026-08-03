@@ -15,6 +15,14 @@ defmodule PauseAiCa.Campaigns.Delivery do
 
   The DIY path in `PauseAiCa.Campaigns.Letter.mailto/1` remains available and
   requires no personal data to reach us at all.
+
+  ## Rehearsal mode
+
+  Any environment that is not production must set
+  `config :pauseai_ca, :campaign_rehearsal, true`. Letters are then delivered to
+  the supporter instead of the member of parliament, with the real recipient
+  named in a `STAGING` subject prefix and a banner at the top of the body. The
+  whole flow can be exercised without a single MP office receiving test mail.
   """
 
   import Swoosh.Email
@@ -47,13 +55,41 @@ defmodule PauseAiCa.Campaigns.Delivery do
     end
   end
 
+  @doc """
+  True when letters are being diverted to the supporter rather than sent to an
+  MP. The page says so before anyone presses send.
+  """
+  @spec rehearsal?() :: boolean()
+  def rehearsal?, do: Application.get_env(:pauseai_ca, :campaign_rehearsal, false)
+
   defp build(letter, name, reply_to, recipients) do
+    body = letter.body <> attribution(name, reply_to)
+
+    {to, subject_line, body} =
+      if rehearsal?() do
+        {[reply_to], "[STAGING → #{Enum.join(recipients, ", ")}] " <> letter.subject,
+         rehearsal_banner(recipients) <> body}
+      else
+        {recipients, letter.subject, body}
+      end
+
     new()
     |> from(sender())
     |> reply_to({presence(name) || reply_to, reply_to})
-    |> to(recipients)
-    |> subject(letter.subject)
-    |> text_body(letter.body <> attribution(name, reply_to))
+    |> to(to)
+    |> subject(subject_line)
+    |> text_body(body)
+    |> html_body(html_body(body))
+  end
+
+  defp rehearsal_banner(recipients) do
+    """
+    ===========================================================
+    STAGING — this letter was NOT sent to a member of parliament.
+    On the live site it would have gone to: #{Enum.join(recipients, ", ")}
+    ===========================================================
+
+    """
   end
 
   # The MP's office needs to know this arrived through a campaign tool and who
@@ -61,6 +97,46 @@ defmodule PauseAiCa.Campaigns.Delivery do
   defp attribution(name, reply_to) do
     "\n\n---\nSent through pauseai.ca on behalf of #{presence(name) || reply_to} <#{reply_to}>.\n" <>
       "Envoyé via pauseai.ca au nom de #{presence(name) || reply_to} <#{reply_to}>.\n"
+  end
+
+  # When we send, we control the message, so the three asks can actually be
+  # emphasised. The DIY mailto path cannot do this — mailto: bodies are plain
+  # text — which is one concrete reason to let us send it.
+  defp html_body(body) do
+    paragraphs =
+      body
+      |> String.split(~r/\n{2,}/, trim: true)
+      |> Enum.map_join("\n", fn paragraph ->
+        text =
+          paragraph
+          |> String.trim()
+          |> escape()
+          |> String.replace(~r/\n/, "<br />")
+          |> emphasise_asks()
+
+        ~s(<p style="margin:0 0 16px;">#{text}</p>)
+      end)
+
+    """
+    <!DOCTYPE html>
+    <html><body style="margin:0;padding:0;">
+      <div style="font-family:Georgia,'Times New Roman',serif;font-size:15px;
+                  line-height:1.65;color:#1c1917;max-width:640px;">
+        #{paragraphs}
+      </div>
+    </body></html>
+    """
+  end
+
+  # A numbered ask reads as an ask. Everything else is left alone.
+  defp emphasise_asks(text) do
+    Regex.replace(~r/^(\d\.\s)(.+)$/u, text, fn _whole, number, rest ->
+      "#{number}<strong>#{rest}</strong>"
+    end)
+  end
+
+  defp escape(value) do
+    value |> Phoenix.HTML.html_escape() |> Phoenix.HTML.safe_to_string()
   end
 
   defp validate_email(email) when is_binary(email) do

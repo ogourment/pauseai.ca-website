@@ -4,6 +4,8 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
   import Phoenix.LiveViewTest
   import Swoosh.TestAssertions
 
+  alias PauseAiCa.Campaigns.RateLimit
+
   describe "reading the campaign" do
     test "an English visitor sees what happened, what to do, and the developments", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/en/warning-shot")
@@ -98,10 +100,99 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
 
       assert has_element?(view, "#send-success")
 
+      # Rehearsal mode is on outside production, so it lands with the sender.
       assert_email_sent(fn email ->
-        assert email.to == [{"", "Steven.Guilbeault@parl.gc.ca"}]
         assert email.reply_to == {"Camille Roy", "camille@example.org"}
+        assert email.to == [{"", "camille@example.org"}]
       end)
+    end
+
+    test "sending offers a way to bring someone else in", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/en/warning-shot")
+
+      view
+      |> form("#mp-lookup-form", sender: %{name: "Camille Roy", postal_code: "H2X 1Y4"})
+      |> render_submit()
+
+      view
+      |> form("#send-form", send: %{email: "camille@example.org", consent: "true"})
+      |> render_submit()
+
+      assert has_element?(view, "#share-bluesky")
+      assert has_element?(view, "#share-email")
+    end
+
+    test "the page says letters are diverted before anyone presses send", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/en/warning-shot")
+
+      view |> form("#mp-lookup-form", sender: %{postal_code: "H2X 1Y4"}) |> render_submit()
+
+      assert has_element?(view, "#rehearsal-notice")
+    end
+
+    test "a bot that fills the honeypot is not told it was caught", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/en/warning-shot")
+
+      view |> form("#mp-lookup-form", sender: %{postal_code: "H2X 1Y4"}) |> render_submit()
+
+      view
+      |> form("#send-form",
+        send: %{email: "bot@example.org", consent: "true", website: "https://spam.example"}
+      )
+      |> render_submit()
+
+      assert has_element?(view, "#send-success")
+      refute_email_sent()
+    end
+
+    test "an over-long letter is refused", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/en/warning-shot")
+
+      view |> form("#mp-lookup-form", sender: %{postal_code: "H2X 1Y4"}) |> render_submit()
+
+      view
+      |> form("#letter-form", letter: %{subject: "Hi", body: String.duplicate("a", 8_001)})
+      |> render_change()
+
+      view
+      |> form("#send-form", send: %{email: "camille@example.org", consent: "true"})
+      |> render_submit()
+
+      assert has_element?(view, "#send-error")
+      refute_email_sent()
+    end
+
+    test "a burst of letters from one address is refused", %{conn: conn} do
+      RateLimit.reset()
+      on_exit(&RateLimit.reset/0)
+
+      for attempt <- 1..5 do
+        {:ok, view, _html} = live(conn, ~p"/en/warning-shot")
+
+        view |> form("#mp-lookup-form", sender: %{postal_code: "H2X 1Y4"}) |> render_submit()
+
+        view
+        |> form("#send-form", send: %{email: "flood@example.org", consent: "true"})
+        |> render_submit()
+
+        if attempt > 3, do: assert(has_element?(view, "#send-error"))
+      end
+    end
+
+    test "a French sender chooses how to describe themselves", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/fr/tir-de-semonce")
+
+      view
+      |> form("#mp-lookup-form", sender: %{postal_code: "H2X 1Y4"})
+      |> render_submit()
+
+      html =
+        view
+        |> form("#mp-lookup-form", sender: %{postal_code: "H2X 1Y4", gender: "feminine"})
+        |> render_change()
+
+      assert html =~ "une citoyenne de la circonscription"
+      refute html =~ "un·e citoyen·ne de la circonscription"
     end
 
     test "we never send without explicit authorization", %{conn: conn} do

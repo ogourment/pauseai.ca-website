@@ -72,3 +72,9 @@ config :phoenix_live_view,
 # Sort query params output of verified routes for robust url comparisons
 config :phoenix,
   sort_verified_routes_query_params: true
+
+# Letters go to the sender, never to a member of parliament.
+config :pauseai_ca, :campaign_rehearsal, true
+
+# Tests submit instantly; the human-pace check is exercised explicitly.
+config :pauseai_ca, :campaign_min_seconds, 0
