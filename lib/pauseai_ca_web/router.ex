@@ -12,6 +12,8 @@ defmodule PauseAiCaWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :fetch_current_scope_for_user
+    # Staging only: closes the site to anyone not signed in. See the plug.
+    plug PauseAiCaWeb.Plugs.RequireInvited
   end
 
   pipeline :api do
@@ -72,15 +74,19 @@ defmodule PauseAiCaWeb.Router do
   scope "/", PauseAiCaWeb do
     pipe_through [:browser]
 
-    live_session :current_user,
-      on_mount: [{PauseAiCaWeb.UserAuth, :mount_current_scope}] do
-      # Public campaign pages. They work signed in or signed out, so they belong
-      # in :current_user rather than :require_authenticated_user.
+    # Public campaign pages. They work signed in or signed out, so they are not
+    # in :require_authenticated_user — but they do carry :require_invited, which
+    # closes them on staging only. The sign-in routes below must not carry it.
+    live_session :public_content,
+      on_mount: [{PauseAiCaWeb.UserAuth, :require_invited}] do
       live "/en/warning-shot", WarningShotLive, :en
       live "/fr/tir-de-semonce", WarningShotLive, :fr
       live "/en/learn", LibraryLive, :en
       live "/fr/comprendre", LibraryLive, :fr
+    end
 
+    live_session :current_user,
+      on_mount: [{PauseAiCaWeb.UserAuth, :mount_current_scope}] do
       live "/users/register", UserLive.Registration, :new
       live "/users/log-in", UserLive.Login, :new
       live "/users/log-in/:token", UserLive.Confirmation, :new
