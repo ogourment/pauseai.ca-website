@@ -39,7 +39,15 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
       assert html =~ "/en/warning-shot"
     end
 
-    test "the Act menu offers the three global asks, in a new tab", %{conn: conn} do
+    test "the menu is named the way PauseAI Global names it", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/en/learn")
+      assert render(view) =~ "Get involved"
+
+      {:ok, fr_view, _html} = live(conn, ~p"/fr/comprendre")
+      assert render(fr_view) =~ "S&#39;impliquer"
+    end
+
+    test "the Get involved menu offers the three global asks, in a new tab", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/en/learn")
 
       # They route through the app so a departure can be recorded, and open in a
