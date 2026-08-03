@@ -10,6 +10,7 @@ defmodule PauseAiCa.Application do
     children = [
       PauseAiCaWeb.Telemetry,
       PauseAiCa.Repo,
+      PauseAiCa.Campaigns.RateLimit,
       {DNSCluster, query: Application.get_env(:pauseai_ca, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: PauseAiCa.PubSub},
       # Start a worker by calling: PauseAiCa.Worker.start_link(arg)

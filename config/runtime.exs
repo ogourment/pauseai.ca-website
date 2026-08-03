@@ -109,6 +109,12 @@ if config_env() == :prod do
     end
   end
 
+  # Divert campaign letters to the sender instead of a member of parliament.
+  # Any environment that is not production must set this.
+  config :pauseai_ca,
+         :campaign_rehearsal,
+         System.get_env("CAMPAIGN_REHEARSAL") in ~w(true 1)
+
   # Close the site to anyone not signed in. Set on staging; left off in
   # production, where the site is meant to be public.
   config :pauseai_ca,

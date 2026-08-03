@@ -17,15 +17,63 @@ defmodule PauseAiCa.Campaigns.DeliveryTest do
     %{letter: Campaigns.compose_letter([member], :en, %{name: "Camille Roy"})}
   end
 
-  test "sends to the MP with the supporter as reply-to", %{letter: letter} do
-    assert {:ok, _result} =
-             Delivery.deliver(letter, %{name: "Camille Roy", email: "camille@example.org"})
+  describe "outside production" do
+    test "the letter goes to the supporter, never to the MP", %{letter: letter} do
+      assert {:ok, _result} =
+               Delivery.deliver(letter, %{name: "Camille Roy", email: "camille@example.org"})
 
-    assert_email_sent(fn email ->
-      assert email.to == [{"", "Steven.Guilbeault@parl.gc.ca"}]
-      assert email.reply_to == {"Camille Roy", "camille@example.org"}
-      assert email.from == {"PauseAI Canada", "campaigns@example.org"}
-    end)
+      assert_email_sent(fn email ->
+        assert email.to == [{"", "camille@example.org"}]
+        refute Enum.any?(email.to, fn {_name, address} -> address =~ "parl.gc.ca" end)
+        assert email.subject =~ "[STAGING"
+        assert email.subject =~ "Steven.Guilbeault@parl.gc.ca"
+      end)
+    end
+
+    test "the body says plainly that nothing reached Parliament", %{letter: letter} do
+      Delivery.deliver(letter, %{name: "Camille Roy", email: "camille@example.org"})
+
+      assert_email_sent(fn email ->
+        assert email.text_body =~ "NOT sent to a member of parliament"
+      end)
+    end
+  end
+
+  describe "in production" do
+    setup do
+      Application.put_env(:pauseai_ca, :campaign_rehearsal, false)
+      on_exit(fn -> Application.put_env(:pauseai_ca, :campaign_rehearsal, true) end)
+    end
+
+    test "sends to the MP with the supporter as reply-to", %{letter: letter} do
+      assert {:ok, _result} =
+               Delivery.deliver(letter, %{name: "Camille Roy", email: "camille@example.org"})
+
+      assert_email_sent(fn email ->
+        assert email.reply_to == {"Camille Roy", "camille@example.org"}
+        assert email.from == {"PauseAI Canada", "campaigns@example.org"}
+        assert email.to == [{"", "Steven.Guilbeault@parl.gc.ca"}]
+      end)
+    end
+
+    test "the numbered asks are emphasised in the HTML part", %{letter: letter} do
+      Delivery.deliver(letter, %{name: "Camille Roy", email: "camille@example.org"})
+
+      assert_email_sent(fn email ->
+        assert email.html_body =~ "<strong>Raise this incident"
+        assert email.text_body =~ "1. Raise this incident"
+      end)
+    end
+
+    test "a letter cannot smuggle markup into the HTML part", %{letter: letter} do
+      hostile = %{letter | body: "Hello <script>alert(1)</script>"}
+      Delivery.deliver(hostile, %{name: "Camille", email: "camille@example.org"})
+
+      assert_email_sent(fn email ->
+        refute email.html_body =~ "<script>"
+        assert email.html_body =~ "&lt;script&gt;"
+      end)
+    end
   end
 
   test "tells the MP's office the letter came through a campaign tool", %{letter: letter} do

@@ -62,7 +62,12 @@ defmodule PauseAiCaWeb.LibraryLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash} current_scope={@current_scope} locale={@locale}>
+    <Layouts.app
+      flash={@flash}
+      current_scope={@current_scope}
+      locale={@locale}
+      translated_path={if(@locale == "fr", do: ~p"/en/learn", else: ~p"/fr/comprendre")}
+    >
       <section class="mx-auto max-w-5xl px-5 pt-14 pb-8">
         <h1 class="max-w-3xl font-heading text-5xl leading-[1.05] text-stone-950 sm:text-6xl">
           {page_title(@locale)}
