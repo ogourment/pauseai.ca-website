@@ -31,6 +31,13 @@ pauseai_ca-*.tar
 # Ignore digested assets cache.
 /priv/static/cache_manifest.json
 
+# mix phx.digest writes fingerprinted copies and gzipped twins beside the
+# originals in priv/static. They are build output, they accumulate a fresh set
+# on every build, and stale hashes from earlier builds are never cleaned up.
+# The 32 characters match a digest suffix and not an ordinary filename.
+/priv/static/**/*-????????????????????????????????.*
+/priv/static/**/*.gz
+
 # In case you use Node.js/npm, you want to ignore these.
 npm-debug.log
 /assets/node_modules/
