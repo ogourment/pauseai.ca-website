@@ -26,13 +26,19 @@ defmodule PauseAiCa.Environment do
   def badged?, do: not is_nil(label())
 
   @doc """
-  The favicon for this deployment.
+  The favicon for this deployment, with a cache-busting digest.
 
   A different tab icon is the fastest way to tell two identical-looking sites
-  apart in a row of open tabs.
+  apart in a row of open tabs — but only if the browser fetches the new one.
+  Favicons are cached hard, so this goes through the endpoint's static path to
+  pick up the content hash and change whenever the file does.
   """
   @spec favicon_path() :: String.t()
   def favicon_path do
+    PauseAiCaWeb.Endpoint.static_path(favicon_file())
+  end
+
+  defp favicon_file do
     case label() do
       nil -> "/images/favicon.svg"
       "STAGING" -> "/images/favicon-staging.svg"
