@@ -21,7 +21,16 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
       {:ok, view, _html} = live(conn, ~p"/fr/comprendre")
 
       assert has_element?(view, "#voices")
+      assert has_element?(view, "#voice-saba")
+      assert has_element?(view, "#voice-guay")
       assert render(view) =~ "Des voix canadiennes"
+    end
+
+    test "the legacy French learn route opens the French-first edition", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/fr/learn")
+
+      assert has_element?(view, "#voice-saba")
+      assert render(view) =~ "Faut-il ralentir l&#39;IA?"
     end
 
     test "French-language sources are offered to French readers", %{conn: conn} do

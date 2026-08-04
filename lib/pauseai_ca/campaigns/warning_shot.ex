@@ -85,11 +85,9 @@ defmodule PauseAiCa.Campaigns.WarningShot do
         "PauseAI's global join form. Say Canada, and a Canadian organizer picks it up from there.",
       act_read: "Read PauseAI's full analysis",
       updates_heading: "Latest developments",
-      updates_note:
-        "Reviewed %{date}. Links go to first-party disclosures and official records; the summaries are ours.",
+      updates_note: "Updated %{date}.",
       source_label: "Source",
-      educational_note:
-        "We link to primary sources so you can check this yourself. Where official accounts disagree with reported details, we identify the disagreement rather than presenting either account as settled fact."
+      educational_note: nil
     }
   end
 
@@ -120,11 +118,9 @@ defmodule PauseAiCa.Campaigns.WarningShot do
         "Le formulaire d'adhésion mondial de PauseAI. Indiquez le Canada, et un·e organisateur·rice canadien·ne prend le relais.",
       act_read: "Lire l'analyse complète de PauseAI",
       updates_heading: "Derniers développements",
-      updates_note:
-        "Révisé le %{date}. Les liens mènent aux déclarations des acteurs concernés et aux documents officiels; les résumés sont les nôtres.",
+      updates_note: "Mis à jour le %{date}.",
       source_label: "Source",
-      educational_note:
-        "Nous renvoyons aux sources primaires pour que vous puissiez vérifier par vous-même. Lorsque les laboratoires et les journalistes divergent sur l'intention, nous le disons plutôt que de retenir la lecture la plus alarmante."
+      educational_note: nil
     }
   end
 
