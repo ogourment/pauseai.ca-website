@@ -225,6 +225,32 @@ defmodule PauseAiCaWeb.Layouts do
       </nav>
     </header>
 
+    <.link
+      id="warning-shot-banner"
+      navigate={if(@locale == "fr", do: ~p"/fr/tir-de-semonce", else: ~p"/en/warning-shot")}
+      class="sticky top-[var(--header-height)] z-30 block bg-brand px-5 py-3 text-center text-stone-950 transition hover:bg-brand-strong"
+    >
+      <span class="font-heading text-sm font-bold uppercase tracking-[0.16em]">
+        {if(@locale == "fr",
+          do: "Protocole Tir de semonce · Deuxième activation",
+          else: "Warning Shot Protocol · Second activation"
+        )}
+      </span>
+      <span class="ml-2 text-sm underline underline-offset-4">
+        {if(@locale == "fr",
+          do: "Une IA s’est échappée de son laboratoire et a piraté une vraie entreprise",
+          else: "An AI escaped its lab and hacked a real company"
+        )}
+        <span aria-hidden="true">→</span>
+      </span>
+    </.link>
+
+    <.campaign_prompt
+      locale={@locale}
+      campaign_id="warning-shot-2"
+      href={if(@locale == "fr", do: ~p"/fr/tir-de-semonce", else: ~p"/en/warning-shot")}
+    />
+
     <main>
       {render_slot(@inner_block)}
     </main>

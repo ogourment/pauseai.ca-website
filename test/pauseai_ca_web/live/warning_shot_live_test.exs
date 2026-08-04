@@ -49,8 +49,10 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
 
     test "the home page points visitors at the campaign", %{conn: conn} do
       conn = get(conn, ~p"/en")
+      html = html_response(conn, 200)
 
-      assert html_response(conn, 200) =~ "/en/warning-shot"
+      assert html =~ "/en/warning-shot"
+      assert length(Regex.scan(~r/id="warning-shot-banner"/, html)) == 1
     end
   end
 
