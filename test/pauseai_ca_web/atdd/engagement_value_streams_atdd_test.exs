@@ -5,7 +5,7 @@ if System.get_env("ATDD") == "true" do
     import PauseAiCa.AccountsFixtures
 
     alias AcceptanceHarness.BrowserScreenshot
-    alias PauseAiCa.{Engagement, Repo}
+    alias PauseAiCa.Repo
     alias PauseAiCaWeb.AtddEvidence
 
     @moduletag :atdd
@@ -75,26 +75,35 @@ if System.get_env("ATDD") == "true" do
       member = user_fixture()
       {login_token, _token} = generate_user_magic_link_token(member)
 
-      {:ok, _action} =
-        Engagement.create_action(PauseAiCa.Accounts.Scope.for_user(member), %{
-          "action_type" => "learned",
-          "happened_on" => Date.utc_today(),
-          "confirmed_at" => DateTime.utc_now(:second)
-        })
-
       browser =
         conn
         |> visit("/users/log-in/#{login_token}")
         |> click_button("Keep me logged in on this device")
         |> assert_path("/")
 
+      browser =
+        browser
+        |> visit("/fr/actions")
+        |> assert_has("#action-form")
+        |> evaluate("""
+        (() => {
+          const field = document.querySelector("#action_action_type");
+          field.value = "learned";
+          field.dispatchEvent(new Event("change", {bubbles: true}));
+        })()
+        """)
+        |> fill_in("Quand?", with: Date.to_iso8601(Date.utc_today()))
+        |> click_button("Noter en privé")
+        |> assert_has("#suggested-next-step", text: "En parler à une personne")
+
       browser
       |> visit("/fr/actions")
       |> assert_has("#suggested-next-step", text: "En parler à une personne")
+      |> refute_has("#pending-actions")
       |> capture(
         "engagement-03-member-next-step.png",
         Enum.at(@scenarios, 1),
-        "A confirmed learning action changes the member's suggested next step"
+        "A member-recorded learning action still changes the suggested next step after refresh"
       )
 
       _admin = member |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()

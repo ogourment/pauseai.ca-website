@@ -104,6 +104,12 @@ defmodule PauseAiCaWeb.DashboardLive do
   end
 
   defp create_action(socket, params) do
+    # Submitting this journal form is the user's direct statement that the
+    # action happened. Pending actions are reserved for external handoffs,
+    # where opening a mail app or form does not prove completion.
+    params =
+      Map.put(params, "confirmed_at", DateTime.utc_now() |> DateTime.truncate(:second))
+
     case Engagement.create_action(socket.assigns.current_scope, params) do
       {:ok, action} ->
         {:noreply,
@@ -252,11 +258,18 @@ defmodule PauseAiCaWeb.DashboardLive do
             class="rounded-3xl border-2 border-brand bg-brand-wash p-6 sm:p-8"
           >
             <h2 class="font-heading text-2xl uppercase tracking-wide text-stone-950">
-              Did you send it?
+              {if(@locale == "fr",
+                do: "Avez-vous réalisé ces actions ?",
+                else: "Did you complete these actions?"
+              )}
             </h2>
             <p class="mt-2 leading-7 text-stone-700">
-              You opened these in your own mail app, so we cannot tell whether they went.
-              We would rather ask than assume.
+              {if(@locale == "fr",
+                do:
+                  "Nous les avons notées lorsque vous les avez commencées hors de ce journal. Confirmez-nous si vous les avez terminées.",
+                else:
+                  "We recorded these when you started them outside this journal. Please confirm whether you completed them."
+              )}
             </p>
 
             <ul class="mt-5 space-y-3">
@@ -278,7 +291,7 @@ defmodule PauseAiCaWeb.DashboardLive do
                   phx-value-id={action.id}
                   class="rounded-full bg-brand px-5 py-2.5 font-heading font-bold text-stone-950 transition hover:bg-brand-strong"
                 >
-                  Yes, I sent it
+                  {if(@locale == "fr", do: "Oui, c'est fait", else: "Yes, I did")}
                 </button>
                 <button
                   type="button"
@@ -287,7 +300,7 @@ defmodule PauseAiCaWeb.DashboardLive do
                   phx-value-id={action.id}
                   class="rounded-full px-4 py-2.5 font-semibold text-stone-500 underline-offset-4 hover:text-stone-900 hover:underline"
                 >
-                  No, remove it
+                  {if(@locale == "fr", do: "Non, supprimer", else: "No, remove it")}
                 </button>
               </li>
             </ul>
