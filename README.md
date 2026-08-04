@@ -1,6 +1,6 @@
 # PauseAI Canada website
 
-A bilingual information and organizing prototype for PauseAI Canada.
+A bilingual information and organizing platform for PauseAI Canada.
 
 The first product loop helps a visitor:
 
@@ -46,9 +46,9 @@ mix precommit
 
 Anonymous onboarding answers use browser `localStorage`. They are not sent to
 the Phoenix application. Account action records are private to their owner.
-This is a prototype and must not collect real supporter data until the
-deployment, privacy, retention, backup, and incident-response work documented
-in the private guide has been completed.
+Account data is stored by the application and governed by the published privacy
+policy. Deployment, retention, backup, and incident-response requirements are
+documented in the private operating guide.
 
 ## Human contribution workflow
 
@@ -65,4 +65,6 @@ linked and summarized rather than copied.
 
 ## Status
 
-Prototype only. There is no staging or production deployment yet.
+The current release is deployed to staging and to the temporary production
+service at `new.pauseai.ca`. The existing `pauseai.ca` site remains unchanged
+until a separately approved production cutover.

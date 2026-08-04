@@ -46,6 +46,19 @@
           )}
         </p>
       </section>
+      <section>
+        <h2 class="font-heading text-2xl text-stone-950">
+          {if(@locale == "fr", do: "Votre profil", else: "Your profile")}
+        </h2>
+        <p class="mt-2">
+          {if(@locale == "fr",
+            do:
+              "Si vous choisissez de compléter votre profil, nous conservons votre code postal, votre préférence concernant les nouvelles locales, les renseignements publics sur votre député et les ressources que vous enregistrez. Vous pouvez modifier ou retirer ces éléments dans Mon profil.",
+            else:
+              "If you choose to complete your profile, we store your postal code, local-update preference, public information about your MP, and resources you save. You can change or remove these items in My profile."
+          )}
+        </p>
+      </section>
       <p>
         {if(@locale == "fr",
           do: "Pour toute question : info@pauseai.ca",

@@ -169,9 +169,13 @@ defmodule PauseAiCaWeb.Layouts do
             </summary>
             <div class="absolute right-0 z-50 mt-2 w-64 overflow-hidden rounded-xl border border-stone-200 bg-white p-2 shadow-lg">
               <.link
-                navigate={if(@locale == "fr", do: ~p"/fr/actions", else: ~p"/en/actions")}
+                navigate={if(@locale == "fr", do: ~p"/fr/tableau-de-bord", else: ~p"/en/dashboard")}
                 class="block rounded-lg px-3 py-2.5 font-semibold text-stone-900 hover:bg-brand-wash"
-              >{if(@locale == "fr", do: "Mes actions", else: "My actions")}</.link>
+              >{if(@locale == "fr", do: "Mon tableau de bord", else: "My dashboard")}</.link>
+              <.link
+                navigate={if(@locale == "fr", do: ~p"/fr/profil", else: ~p"/en/profile")}
+                class="block rounded-lg px-3 py-2.5 font-semibold text-stone-900 hover:bg-brand-wash"
+              >{if(@locale == "fr", do: "Mon profil", else: "My profile")}</.link>
               <div role="separator" class="my-2 border-t border-stone-200"></div>
               <.link
                 href={~p"/users/settings"}
