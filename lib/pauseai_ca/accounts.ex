@@ -360,7 +360,7 @@ defmodule PauseAiCa.Accounts do
       if opts[:bootstrap_superadmin?] == true do
         # Serialize only the one-time bootstrap decision. A table lock can
         # deadlock unrelated password updates that already hold row locks.
-        Repo.query!("SELECT pg_advisory_xact_lock(706_175_001)")
+        Repo.query!("SELECT pg_advisory_xact_lock(706175001)")
       end
 
       with {:ok, user} <- Repo.update(changeset) do
