@@ -186,6 +186,28 @@ defmodule PauseAiCa.Accounts do
 
   def set_superadmin(%User{}, %User{}, _value), do: {:error, :unauthorized}
 
+  def change_user_local_context(%User{} = user, attrs \\ %{}) do
+    User.local_context_changeset(user, attrs)
+  end
+
+  def update_user_local_context(%User{} = user, attrs) do
+    user |> User.local_context_changeset(attrs) |> Repo.update()
+  end
+
+  @saved_resources ~w(risk pause coordination agency)
+
+  def save_resource(%User{} = user, resource) when resource in @saved_resources do
+    saved_resources = Enum.uniq(user.saved_resources ++ [resource])
+    user |> Ecto.Changeset.change(saved_resources: saved_resources) |> Repo.update()
+  end
+
+  def save_resource(%User{}, _resource), do: {:error, :unknown_resource}
+
+  def save_belief_answers(%User{} = user, answers) when is_map(answers) do
+    allowed = answers |> Map.take(~w(risk pause coordination)) |> Enum.into(%{})
+    user |> Ecto.Changeset.change(belief_answers: allowed) |> Repo.update()
+  end
+
   ## Session
 
   @doc """

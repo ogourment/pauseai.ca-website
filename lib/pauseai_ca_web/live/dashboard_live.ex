@@ -1,6 +1,7 @@
 defmodule PauseAiCaWeb.DashboardLive do
   use PauseAiCaWeb, :live_view
 
+  alias PauseAiCa.Accounts
   alias PauseAiCa.Engagement
   alias PauseAiCa.Engagement.Action
   alias PauseAiCa.Engagement.Ladder
@@ -25,6 +26,12 @@ defmodule PauseAiCaWeb.DashboardLive do
      |> assign(:pending, Engagement.list_pending_actions(scope))
      |> assign(:editing_id, nil)
      |> assign(:selected_type, nil)
+     |> assign(:needs_local_context, is_nil(scope.user.fsa))
+     |> assign(:saved_resources, scope.user.saved_resources)
+     |> assign(
+       :local_context_form,
+       to_form(Accounts.change_user_local_context(scope.user), as: "local_context")
+     )
      |> assign_form(Engagement.new_action(scope))
      |> stream(:actions, Enum.reject(actions, &Action.pending?/1))}
   end
@@ -40,6 +47,22 @@ defmodule PauseAiCaWeb.DashboardLive do
      socket
      |> assign(:form, to_form(changeset))
      |> assign(:selected_type, params["action_type"])}
+  end
+
+  def handle_event("save-local-context", %{"local_context" => params}, socket) do
+    case Accounts.update_user_local_context(socket.assigns.current_scope.user, params) do
+      {:ok, _user} ->
+        {:noreply,
+         socket
+         |> assign(:needs_local_context, false)
+         |> put_flash(
+           :info,
+           if(socket.assigns.locale == "fr", do: "Région enregistrée.", else: "Region saved.")
+         )}
+
+      {:error, changeset} ->
+        {:noreply, assign(socket, :local_context_form, to_form(changeset, as: "local_context"))}
+    end
   end
 
   def handle_event("save", %{"action" => params}, socket) do
@@ -180,6 +203,41 @@ defmodule PauseAiCaWeb.DashboardLive do
   defp quantity_label("conversation"), do: "How many people did you talk with?"
   defp quantity_label(_type), do: "How many?"
 
+  defp format_date(%Date{} = date, "fr") do
+    months =
+      ~w(janvier février mars avril mai juin juillet août septembre octobre novembre décembre)
+
+    "#{date.day} #{Enum.at(months, date.month - 1)} #{date.year}"
+  end
+
+  defp format_date(%Date{} = date, _locale) do
+    months =
+      ~w(January February March April May June July August September October November December)
+
+    "#{Enum.at(months, date.month - 1)} #{date.day}, #{date.year}"
+  end
+
+  defp saved_resource_url("risk", "fr"),
+    do:
+      "https://yoshuabengio.org/fr/blogue/questions-frequentes-sur-les-risques-catastrophiques-lies-lia"
+
+  defp saved_resource_url("risk", _), do: "https://pauseai.info/xrisk"
+  defp saved_resource_url("pause", "fr"), do: "https://pauseia.fr/propositions"
+  defp saved_resource_url("pause", _), do: "https://pauseai.info/proposal"
+  defp saved_resource_url("coordination", "fr"), do: "https://pauseia.fr/faq"
+  defp saved_resource_url("coordination", _), do: "https://pauseai.info/feasibility"
+  defp saved_resource_url("agency", "fr"), do: ~p"/fr/strategie"
+  defp saved_resource_url("agency", _), do: ~p"/en/strategy"
+
+  defp saved_resource_label("risk", "fr"), do: "Comprendre le risque existentiel"
+  defp saved_resource_label("risk", _), do: "Understand existential risk"
+  defp saved_resource_label("pause", "fr"), do: "Comprendre une pause"
+  defp saved_resource_label("pause", _), do: "Understand a pause"
+  defp saved_resource_label("coordination", "fr"), do: "Tester la coordination"
+  defp saved_resource_label("coordination", _), do: "Test coordination"
+  defp saved_resource_label("agency", "fr"), do: "Passer à l’action"
+  defp saved_resource_label("agency", _), do: "Move toward action"
+
   defp action_label(type, "fr") do
     %{
       "learned" => "Lu ou regardé une ressource",
@@ -228,6 +286,57 @@ defmodule PauseAiCaWeb.DashboardLive do
               else: "Record what you did and choose what comes next."
             )}
           </h1>
+
+          <div
+            :if={@needs_local_context}
+            id="fsa-reminder"
+            class="mt-8 rounded-3xl border border-brand/40 bg-brand-wash p-6"
+          >
+            <h2 class="font-serif text-2xl text-stone-950">
+              {if(@locale == "fr", do: "Que pense votre député?", else: "Where does your MP stand?")}
+            </h2>
+            <p class="mt-2 leading-7 text-stone-600">
+              {if(@locale == "fr",
+                do:
+                  "Votre RTA nous permet d’identifier votre circonscription et de vous envoyer des nouvelles locales plus pertinentes.",
+                else: "Your FSA lets us identify your riding and send more relevant local updates."
+              )}
+            </p>
+            <.form
+              for={@local_context_form}
+              id="local-context-form"
+              phx-submit="save-local-context"
+              class="mt-4 space-y-4"
+            >
+              <.input
+                field={@local_context_form[:fsa]}
+                type="text"
+                label={
+                  if(@locale == "fr",
+                    do: "RTA (3 premiers caractères du code postal)",
+                    else: "FSA (first 3 postal-code characters)"
+                  )
+                }
+                placeholder={if(@locale == "fr", do: "H2X", else: "K1A")}
+                maxlength="3"
+                autocomplete="postal-code"
+                class="w-full input bg-white text-stone-950 uppercase placeholder:text-stone-400"
+              />
+              <.input
+                field={@local_context_form[:local_updates]}
+                type="checkbox"
+                label={
+                  if(@locale == "fr",
+                    do: "M’envoyer des nouvelles locales et les nouveaux développements importants",
+                    else: "Send me local news and important new developments"
+                  )
+                }
+              />
+              <button class="rounded-full bg-stone-900 px-5 py-3 font-semibold text-white hover:bg-stone-700">
+                {if(@locale == "fr", do: "Enregistrer ma région", else: "Save my region")}
+              </button>
+            </.form>
+          </div>
           <p class="mt-5 max-w-lg text-lg leading-8 text-stone-600">
             {if(@locale == "fr",
               do:
@@ -236,6 +345,26 @@ defmodule PauseAiCaWeb.DashboardLive do
                 "Your log is visible only to you. Only aggregate counts are used to understand movement progress."
             )}
           </p>
+
+          <div
+            :if={@saved_resources != []}
+            id="saved-resources"
+            class="mt-8 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm"
+          >
+            <h2 class="font-serif text-2xl text-stone-950">
+              {if(@locale == "fr", do: "À lire plus tard", else: "Saved for later")}
+            </h2>
+            <ul class="mt-3 space-y-2">
+              <li :for={resource <- @saved_resources}>
+                <a
+                  class="font-semibold text-stone-700 underline decoration-brand underline-offset-4"
+                  href={saved_resource_url(resource, @locale)}
+                >
+                  {saved_resource_label(resource, @locale)}
+                </a>
+              </li>
+            </ul>
+          </div>
 
           <div class="mt-8 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm">
             <p class="text-sm font-semibold uppercase tracking-widest text-brand-ink">
@@ -328,7 +457,7 @@ defmodule PauseAiCaWeb.DashboardLive do
                   <p class="font-semibold text-stone-900">
                     {action_label(action.action_type, @locale)}
                   </p>
-                  <p class="text-sm text-stone-500">{action.happened_on}</p>
+                  <p class="text-sm text-stone-500">{format_date(action.happened_on, @locale)}</p>
                 </div>
                 <button
                   type="button"
@@ -378,6 +507,7 @@ defmodule PauseAiCaWeb.DashboardLive do
                 field={@form[:happened_on]}
                 type="date"
                 label={if(@locale == "fr", do: "Quand?", else: "When?")}
+                lang={if(@locale == "fr", do: "fr-CA", else: "en-CA")}
                 class="w-full input bg-white text-stone-950"
               />
               <.input

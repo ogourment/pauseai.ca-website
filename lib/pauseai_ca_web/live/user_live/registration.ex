@@ -68,16 +68,25 @@ defmodule PauseAiCaWeb.UserLive.Registration do
     {:ok, redirect(socket, to: PauseAiCaWeb.UserAuth.signed_in_path(socket))}
   end
 
-  def mount(_params, _session, socket) do
+  def mount(params, _session, socket) do
     changeset = Accounts.change_user_email(%User{}, %{}, validate_unique: false)
 
-    {:ok, assign_form(socket, changeset), temporary_assigns: [form: nil]}
+    {:ok,
+     socket
+     |> assign(:bookmark, params["bookmark"])
+     |> assign(:belief_answers, Map.take(params, ~w(risk pause coordination)))
+     |> assign_form(changeset), temporary_assigns: [form: nil]}
   end
 
   @impl true
   def handle_event("save", %{"user" => user_params}, socket) do
     case Accounts.register_user(user_params) do
       {:ok, user} ->
+        if socket.assigns.bookmark, do: Accounts.save_resource(user, socket.assigns.bookmark)
+
+        if socket.assigns.belief_answers != %{},
+          do: Accounts.save_belief_answers(user, socket.assigns.belief_answers)
+
         {:ok, _} =
           Accounts.deliver_login_instructions(
             user,

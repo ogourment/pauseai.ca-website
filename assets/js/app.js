@@ -73,6 +73,13 @@ function initializeBeliefCheck() {
         button.setAttribute("aria-pressed", active ? "true" : "false")
       })
     })
+    const complete = ["risk", "pause", "coordination"].every(key => answers[key] !== undefined)
+    document.querySelector("#save-progress-invitation")?.classList.toggle("hidden", !complete)
+    const saveLink = document.querySelector("#save-question-progress")
+    if (saveLink && complete) {
+      const params = new URLSearchParams({from: "questions", ...answers})
+      saveLink.href = `/users/register?${params.toString()}`
+    }
   }
 
   const saveAnswers = () => {
@@ -95,6 +102,7 @@ function initializeBeliefCheck() {
     localStorage.removeItem(beliefStorageKey)
     renderAnswers()
     document.querySelectorAll(".resource-card").forEach(card => card.classList.remove("is-recommended"))
+    document.querySelector("#save-progress-invitation")?.classList.add("hidden")
     status.textContent = locale === "fr" ? "Réponses effacées." : "Answers cleared."
   })
 

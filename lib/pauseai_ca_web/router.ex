@@ -44,6 +44,8 @@ defmodule PauseAiCaWeb.Router do
     get "/fr/strategie", PageController, :strategy_fr
     get "/en/about", PageController, :about_en
     get "/fr/a-propos", PageController, :about_fr
+    get "/en/privacy", PageController, :privacy_en
+    get "/fr/confidentialite", PageController, :privacy_fr
   end
 
   # Other scopes may use custom stacks.

@@ -229,6 +229,21 @@ defmodule PauseAiCaWeb.Layouts do
       {render_slot(@inner_block)}
     </main>
 
+    <footer class="border-t border-stone-200">
+      <div class="mx-auto flex max-w-6xl flex-col gap-4 px-5 py-10 text-sm text-stone-500 sm:flex-row sm:items-center">
+        <p class="mr-auto">PauseAI Canada</p>
+        <.link
+          class="hover:text-stone-900"
+          href={if(@locale == "fr", do: ~p"/fr/a-propos", else: ~p"/en/about")}
+        >{if(@locale == "fr", do: "À propos de PauseAI Canada", else: "About PauseAI Canada")}</.link>
+        <.link
+          class="hover:text-stone-900"
+          href={if(@locale == "fr", do: ~p"/fr/confidentialite", else: ~p"/en/privacy")}
+        >{if(@locale == "fr", do: "Confidentialité", else: "Privacy")}</.link>
+        <a class="hover:text-stone-900" href="https://github.com/ogourment/pauseai.ca-website">Source</a>
+      </div>
+    </footer>
+
     <.flash_group flash={@flash} />
     <.analytics measurement_id={analytics_id()} locale={@locale} />
     """

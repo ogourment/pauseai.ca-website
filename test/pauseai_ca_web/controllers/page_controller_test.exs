@@ -17,11 +17,27 @@ defmodule PauseAiCaWeb.PageControllerTest do
 
     fr_html = html_response(get(conn, ~p"/fr"), 200)
     assert fr_html =~ "Jusqu’où devrions-nous laisser l’IA progresser?"
+    assert fr_html =~ "Commencez là où vous avez des questions."
+    refute fr_html =~ "Explorer les arguments"
+    assert fr_html =~ "Créer un compte pour enregistrer votre parcours"
+    assert fr_html =~ "Politique de confidentialité"
+    assert fr_html =~ ~s(href="/users/register?bookmark=risk")
     refute fr_html =~ "Trois questions."
     refute fr_html =~ "Vos réponses restent dans ce navigateur"
     refute fr_html =~ "Tout reste accessible"
     refute fr_html =~ "De la curiosité à la capacité"
     refute fr_html =~ "Rien n’est public"
+  end
+
+  test "privacy pages and the three durable footer links are available", %{conn: conn} do
+    fr_html = html_response(get(conn, ~p"/fr/confidentialite"), 200)
+    assert fr_html =~ "Politique de confidentialité"
+
+    home = html_response(get(conn, ~p"/fr"), 200)
+    assert home =~ "À propos de PauseAI Canada"
+    assert home =~ ~s(href="/fr/confidentialite")
+    assert home =~ "Source"
+    refute home =~ "Pause IA France"
   end
 
   test "strategy and identity are available without leaving either language", %{conn: conn} do
