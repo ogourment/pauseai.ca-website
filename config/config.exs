@@ -53,6 +53,7 @@ config :pauseai_ca, PauseAiCa.Mailer, adapter: Swoosh.Adapters.Local
 config :acceptance_harness, :harness,
   app_name: "PauseAI Canada",
   otp_app: :pauseai_ca,
+  repo: PauseAiCa.Repo,
   site_title: "PauseAI Canada acceptance evidence",
   admin_acceptance_path: "/admin/acceptance",
   admin_versions_path: "/admin/versions"

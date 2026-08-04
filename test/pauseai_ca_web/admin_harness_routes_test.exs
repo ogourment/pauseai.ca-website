@@ -19,6 +19,8 @@ defmodule PauseAiCaWeb.AdminHarnessRoutesTest do
   test "a superadmin can open acceptance evidence", %{admin_conn: conn} do
     {:ok, _view, html} = live(conn, "/admin/acceptance")
     assert html =~ "Acceptance"
+    refute html =~ "configure :acceptance_harness"
+    refute html =~ "undefined_table"
   end
 
   test "a regular account cannot access harness admin pages", %{conn: conn} do
