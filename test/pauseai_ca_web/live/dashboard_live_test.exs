@@ -25,6 +25,7 @@ defmodule PauseAiCaWeb.DashboardLiveTest do
 
     [action] = PauseAiCa.Engagement.list_actions(scope)
     assert action.action_type == "conversation"
+    refute Action.pending?(action)
     assert has_element?(view, "#actions article", "Discussed AI risk with someone")
 
     view
@@ -32,6 +33,23 @@ defmodule PauseAiCaWeb.DashboardLiveTest do
     |> render_click()
 
     assert PauseAiCa.Engagement.list_actions(scope) == []
+  end
+
+  test "a recorded action changes the next step after a refresh", %{conn: conn, scope: scope} do
+    {:ok, view, _html} = live(conn, ~p"/dashboard")
+
+    view
+    |> form("#action-form",
+      action: %{action_type: "learned", happened_on: "2026-08-03"}
+    )
+    |> render_submit()
+
+    assert has_element?(view, "#suggested-next-step", "Talk with one person")
+    assert [%Action{confirmed_at: %DateTime{}}] = Engagement.list_actions(scope)
+
+    {:ok, refreshed_view, _html} = live(conn, ~p"/dashboard")
+    assert has_element?(refreshed_view, "#suggested-next-step", "Talk with one person")
+    refute has_element?(refreshed_view, "#pending-actions")
   end
 
   test "requires an authenticated user", %{conn: _authenticated_conn} do
@@ -56,6 +74,9 @@ defmodule PauseAiCaWeb.DashboardLiveTest do
 
       assert has_element?(view, "#pending-actions")
       assert has_element?(view, "#pending-#{pending.id}")
+      assert has_element?(view, "#pending-actions", "Did you complete these actions?")
+      assert has_element?(view, "#confirm-#{pending.id}", "Yes, I did")
+      refute render(view) =~ "Did you send it?"
     end
 
     test "confirming moves it into the record", %{conn: conn, scope: scope, pending: pending} do
