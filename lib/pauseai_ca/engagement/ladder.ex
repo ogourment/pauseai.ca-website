@@ -47,6 +47,12 @@ defmodule PauseAiCa.Engagement.Ladder do
     end)
   end
 
+  def counts(by_type) do
+    counts = Map.new(by_type)
+
+    Enum.map(@levels, fn {_level, types} -> Enum.sum(Enum.map(types, &Map.get(counts, &1, 0))) end)
+  end
+
   def recommendation(actions, locale) do
     completed = MapSet.new(Enum.map(actions, & &1.action_type))
 

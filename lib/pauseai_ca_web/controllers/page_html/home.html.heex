@@ -41,14 +41,6 @@
           else: "How far should we let AI advance?"
         )}
       </h1>
-      <p class="mt-7 max-w-2xl text-xl leading-9 text-stone-600">
-        {if(@locale == "fr",
-          do:
-            "Trois questions. Aucune bonne réponse imposée. Nous vous proposerons un parcours pour examiner les arguments, les objections et les options.",
-          else:
-            "Three questions. No prescribed right answer. We’ll suggest a path through the arguments, objections, and possible responses."
-        )}
-      </p>
       <a
         href="#questions"
         class="mt-9 inline-flex rounded-full bg-stone-900 px-6 py-3 font-semibold text-white transition hover:-translate-y-0.5 hover:bg-stone-700"
@@ -70,14 +62,6 @@
             else: "Where do you stand today?"
           )}
         </h2>
-        <p class="mt-5 leading-7 text-stone-600">
-          {if(@locale == "fr",
-            do:
-              "Vos réponses restent dans ce navigateur. Elles ne sont ni envoyées ni liées à un compte.",
-            else:
-              "Your answers stay in this browser. They are not sent to us or connected to an account."
-          )}
-        </p>
       </div>
 
       <div id="belief-check" data-locale={@locale} class="space-y-6">
@@ -149,12 +133,7 @@
             else: "Start where you have questions."
           )}
         </h2>
-        <p id="path-explanation" class="mt-5 text-lg leading-8 text-stone-600">
-          {if(@locale == "fr",
-            do: "Tout reste accessible. Vos réponses ne font que changer l’ordre suggéré.",
-            else: "Everything remains available. Your answers only change the suggested order."
-          )}
-        </p>
+        <p id="path-explanation" class="mt-5 text-lg leading-8 text-stone-600"></p>
       </div>
 
       <div id="resource-grid" class="mt-10 grid gap-5 md:grid-cols-2">
@@ -267,26 +246,12 @@
   <section class="mx-auto max-w-6xl px-5 py-20">
     <div class="grid gap-10 rounded-[2rem] bg-[#18352f] p-8 text-white sm:p-12 lg:grid-cols-[1.4fr_0.6fr]">
       <div>
-        <p class="text-sm font-bold uppercase tracking-[0.2em] text-[#f6a68d]">
-          {if(@locale == "fr",
-            do: "De la curiosité à la capacité",
-            else: "From curiosity to capacity"
-          )}
-        </p>
-        <h2 class="mt-4 max-w-2xl font-serif text-4xl leading-tight">
+        <h2 class="max-w-2xl font-serif text-4xl leading-tight">
           {if(@locale == "fr",
             do: "Gardez une trace privée des gestes que vous posez.",
             else: "Keep a private record of the steps you take."
           )}
         </h2>
-        <p class="mt-5 max-w-2xl text-lg leading-8 text-white/75">
-          {if(@locale == "fr",
-            do:
-              "Créez un compte pour noter une lecture, une conversation, un événement ou une prise de contact. Rien n’est public.",
-            else:
-              "Create an account to record a reading, conversation, event, or representative contact. Nothing is public."
-          )}
-        </p>
       </div>
       <div class="flex items-end lg:justify-end">
         <.link

@@ -34,12 +34,20 @@
         <h2 class="font-heading text-3xl text-stone-950">
           {if(@locale == "fr", do: "Nos liens", else: "Our relationships")}
         </h2><p class="mt-3">
-          {if(@locale == "fr",
-            do:
-              "Nous faisons partie du réseau international PauseAI et collaborons avec des groupes francophones comme Pause IA. Les contenus externes sont identifiés clairement; ce site demeure responsable de son propre contenu canadien.",
-            else:
-              "We are part of the international PauseAI network and collaborate with francophone groups such as Pause IA. External material is clearly identified; this site remains responsible for its Canadian content."
-          )}
+          {if(@locale == "fr", do: "Nous collaborons avec", else: "We collaborate with")}
+          <a
+            class="font-semibold underline decoration-brand underline-offset-4"
+            href="https://pauseai.info/"
+          >PauseAI Global</a>,
+          <a
+            class="font-semibold underline decoration-brand underline-offset-4"
+            href="https://pauseia.fr/fr"
+          >Pause IA</a>
+          {if(@locale == "fr", do: "et", else: "and")}
+          <a
+            class="font-semibold underline decoration-brand underline-offset-4"
+            href="https://www.pauseai-us.org/"
+          >PauseAI US</a>.
         </p>
       </section>
       <section>
@@ -48,14 +56,13 @@
         </h2><p class="mt-3">
           {if(@locale == "fr",
             do:
-              "Vous voulez poser une question, vérifier une source ou participer? Utilisez le formulaire pour rejoindre le réseau et indiquez que vous êtes au Canada.",
-            else:
-              "Want to ask a question, check a source, or participate? Use the network form and indicate that you are in Canada."
+              "Vous souhaitez participer? Rejoignez PauseAI et indiquez que vous êtes au Canada.",
+            else: "Want to participate? Join PauseAI and indicate that you are in Canada."
           )}
         </p><a
           class="mt-4 inline-flex rounded-full bg-brand px-5 py-3 font-semibold text-stone-950"
           href={if(@locale == "fr", do: "https://pauseia.fr/agir", else: ~p"/act/join?locale=en")}
-        >{if(@locale == "fr", do: "Participer en français", else: "Get involved")}</a>
+        >{if(@locale == "fr", do: "Nous rejoindre", else: "Join us")}</a>
       </section>
     </div>
   </article>

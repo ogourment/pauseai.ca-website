@@ -7,10 +7,21 @@ defmodule PauseAiCaWeb.PageControllerTest do
   end
 
   test "English and French information paths are available", %{conn: conn} do
-    assert html_response(get(conn, ~p"/en"), 200) =~ "How far should we let AI advance?"
+    en_html = html_response(get(conn, ~p"/en"), 200)
+    assert en_html =~ "How far should we let AI advance?"
+    refute en_html =~ "Three questions."
+    refute en_html =~ "Your answers stay in this browser"
+    refute en_html =~ "Everything remains available"
+    refute en_html =~ "From curiosity to capacity"
+    refute en_html =~ "Nothing is public"
 
-    assert html_response(get(conn, ~p"/fr"), 200) =~
-             "Jusqu’où devrions-nous laisser l’IA progresser?"
+    fr_html = html_response(get(conn, ~p"/fr"), 200)
+    assert fr_html =~ "Jusqu’où devrions-nous laisser l’IA progresser?"
+    refute fr_html =~ "Trois questions."
+    refute fr_html =~ "Vos réponses restent dans ce navigateur"
+    refute fr_html =~ "Tout reste accessible"
+    refute fr_html =~ "De la curiosité à la capacité"
+    refute fr_html =~ "Rien n’est public"
   end
 
   test "strategy and identity are available without leaving either language", %{conn: conn} do
@@ -21,7 +32,13 @@ defmodule PauseAiCaWeb.PageControllerTest do
     assert fr_html =~ ~s(id="engagement-ladder")
     refute en_html =~ "Proposed engagement ladder"
     refute fr_html =~ "Échelle d'engagement proposée"
-    assert html_response(get(conn, ~p"/en/about"), 200) =~ ~s(id="about")
+    about_en = html_response(get(conn, ~p"/en/about"), 200)
+    assert about_en =~ ~s(id="about")
+    assert about_en =~ "Join us"
+    refute about_en =~ "network form"
+    assert about_en =~ "https://pauseai.info/"
+    assert about_en =~ "https://pauseia.fr/fr"
+    assert about_en =~ "https://www.pauseai-us.org/"
     assert html_response(get(conn, ~p"/fr/a-propos"), 200) =~ ~s(id="about")
   end
 end

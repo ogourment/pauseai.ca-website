@@ -2,6 +2,7 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
   use PauseAiCaWeb, :live_view
 
   alias PauseAiCa.{Accounts, Engagement}
+  alias PauseAiCa.Engagement.Ladder
 
   @impl true
   def mount(_params, _session, socket) do
@@ -37,9 +38,12 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
   end
 
   defp load(socket) do
+    metrics = Engagement.metrics()
+
     socket
     |> assign(:page_title, "Movement metrics")
-    |> assign(:metrics, Engagement.metrics())
+    |> assign(:metrics, metrics)
+    |> assign(:ladder_counts, Ladder.counts(metrics.by_type))
     |> assign(:users, Accounts.list_users())
   end
 
@@ -53,16 +57,6 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
         <p class="mt-4 max-w-3xl text-stone-600">
           First-party database totals from accounts and confirmed private action records. Analytics may complement these figures, but is not their source.
         </p>
-        <nav class="mt-6 flex flex-wrap gap-3" aria-label="Superadmin tools">
-          <a
-            href="/admin/versions"
-            class="rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-semibold text-stone-800 hover:border-brand"
-          >Deployment versions</a>
-          <a
-            href="/admin/acceptance"
-            class="rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-semibold text-stone-800 hover:border-brand"
-          >Acceptance evidence</a>
-        </nav>
         <div class="mt-9 grid gap-4 sm:grid-cols-3">
           <.metric id="metric-users" label="Accounts" value={@metrics.users} />
           <.metric
@@ -72,14 +66,38 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
           />
           <.metric id="metric-actions" label="Confirmed actions" value={@metrics.actions} />
         </div>
-        <section class="mt-10 rounded-3xl border border-stone-200 bg-white p-7">
-          <h2 class="font-heading text-3xl text-stone-950">Progress through the engagement ladder</h2>
-          <ul id="metrics-by-type" class="mt-5 divide-y divide-stone-100">
-            <li :for={{type, count} <- @metrics.by_type} class="flex justify-between py-3">
-              <span>{type}</span><strong>{count}</strong>
+        <section class="mt-10 rounded-[2rem] bg-stone-900 p-8 text-white sm:p-10">
+          <h2 class="font-heading text-3xl">Progress through the engagement ladder</h2>
+          <ol id="metrics-by-type" class="mx-auto mt-8 flex max-w-2xl flex-col-reverse px-2 sm:px-8">
+            <li
+              :for={
+                {{step, count}, i} <-
+                  Enum.zip(Ladder.steps("en"), @ladder_counts) |> Enum.with_index(1)
+              }
+              class="border-x-[8px] border-white/30 px-5 pb-6"
+            >
+              <div class="flex items-start gap-4 border-t-[8px] border-white/30 pt-3">
+                <div class="mr-auto">
+                  <strong class="block">{i}. {step.title}</strong>
+                  <span class="mt-1 block text-sm text-white/70">{step.examples}</span>
+                </div>
+                <span class="rounded-full bg-brand px-3 py-1 text-sm font-bold text-stone-950">
+                  {count} {if(count == 1, do: "action", else: "actions")}
+                </span>
+              </div>
             </li>
-          </ul>
+          </ol>
         </section>
+        <nav class="mt-10 flex flex-wrap gap-3" aria-label="Superadmin tools">
+          <a
+            href="/admin/versions"
+            class="rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-semibold text-stone-800 hover:border-brand"
+          >Deployment versions</a>
+          <a
+            href="/admin/acceptance"
+            class="rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-semibold text-stone-800 hover:border-brand"
+          >Acceptance evidence</a>
+        </nav>
         <section class="mt-10 rounded-3xl border border-stone-200 bg-white p-7">
           <h2 class="font-heading text-3xl text-stone-950">Superadmins</h2>
           <ul id="admin-users" class="mt-5 divide-y divide-stone-100">
