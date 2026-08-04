@@ -14,8 +14,13 @@ defmodule PauseAiCaWeb.PageControllerTest do
   end
 
   test "strategy and identity are available without leaving either language", %{conn: conn} do
-    assert html_response(get(conn, ~p"/en/strategy"), 200) =~ ~s(id="engagement-ladder")
-    assert html_response(get(conn, ~p"/fr/strategie"), 200) =~ ~s(id="engagement-ladder")
+    en_html = html_response(get(conn, ~p"/en/strategy"), 200)
+    fr_html = html_response(get(conn, ~p"/fr/strategie"), 200)
+
+    assert en_html =~ ~s(id="engagement-ladder")
+    assert fr_html =~ ~s(id="engagement-ladder")
+    refute en_html =~ "Proposed engagement ladder"
+    refute fr_html =~ "Échelle d'engagement proposée"
     assert html_response(get(conn, ~p"/en/about"), 200) =~ ~s(id="about")
     assert html_response(get(conn, ~p"/fr/a-propos"), 200) =~ ~s(id="about")
   end

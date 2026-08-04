@@ -78,33 +78,24 @@
       class="mt-12 rounded-[2rem] bg-stone-900 p-8 text-white sm:p-10"
     >
       <h2 class="font-heading text-3xl">
-        {if(@locale == "fr",
-          do: "Échelle d'engagement proposée",
-          else: "Proposed engagement ladder"
-        )}
+        {if(@locale == "fr", do: "Échelle d'engagement", else: "Engagement ladder")}
       </h2>
       <p class="mt-3 text-white/70">
         {if(@locale == "fr",
-          do: "À valider avec les organisatrices, organisateurs et membres.",
-          else: "For validation with organizers and members."
+          do:
+            "Plusieurs chemins sont possibles. Voici des façons courantes d'approfondir son engagement.",
+          else: "There is no single path. These are common ways to deepen your involvement."
         )}
       </p>
-      <ol class="mt-7 grid gap-3 sm:grid-cols-2">
+      <ol class="mx-auto mt-8 flex max-w-2xl flex-col-reverse px-2 sm:px-8">
         <li
-          :for={
-            {en, fr, i} <- [
-              {"Learn", "Comprendre", 1},
-              {"Talk", "En parler", 2},
-              {"Show up", "Participer", 3},
-              {"Influence", "Intervenir", 4},
-              {"Contribute", "Contribuer", 5},
-              {"Organize", "Organiser", 6}
-            ]
-          }
-          class="flex items-center gap-4 rounded-2xl bg-white/10 p-4"
+          :for={{step, i} <- Enum.with_index(PauseAiCa.Engagement.Ladder.steps(@locale), 1)}
+          class="border-x-[8px] border-white/30 px-5 pb-6"
         >
-          <span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand font-bold text-stone-950">{i}</span>
-          <span>{if(@locale == "fr", do: fr, else: en)}</span>
+          <div class="border-t-[8px] border-white/30 pt-3">
+            <strong class="block">{i}. {step.title}</strong>
+            <span class="mt-1 block text-sm text-white/70">{step.examples}</span>
+          </div>
         </li>
       </ol>
     </section>

@@ -46,8 +46,7 @@ defmodule PauseAiCaWeb.UserLive.RegistrationTest do
         render_submit(form)
         |> follow_redirect(conn, ~p"/users/log-in")
 
-      assert html =~
-               ~r/An email was sent to .*, please access it to confirm your account/
+      assert html =~ "Check #{email} for your secure sign-in link."
     end
 
     test "renders errors for duplicated email", %{conn: conn} do

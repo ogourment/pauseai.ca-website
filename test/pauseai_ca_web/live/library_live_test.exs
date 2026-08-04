@@ -50,11 +50,57 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
     test "the Get involved menu offers the three global asks, in a new tab", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/en/learn")
 
+      assert has_element?(view, "#involvement-menu a[href='/en/strategy']", "Strategy")
+
+      assert has_element?(
+               view,
+               "#involvement-menu a[href='/en/strategy#engagement-ladder']",
+               "Engagement ladder"
+             )
+
+      assert has_element?(
+               view,
+               "#involvement-menu a[href='https://pauseai.info/local-organizing']",
+               "Start a group"
+             )
+
       # They route through the app so a departure can be recorded, and open in a
       # new tab so a reader does not lose their place.
       assert has_element?(view, "#act-join[href='/act/join?locale=en'][target='_blank']")
       assert has_element?(view, "#act-sign[href='/act/sign?locale=en'][target='_blank']")
       assert has_element?(view, "#act-actions[href='/act/actions?locale=en'][target='_blank']")
+    end
+
+    test "About follows the involvement menu", %{conn: conn} do
+      html = conn |> get(~p"/en") |> html_response(200)
+
+      assert html =~ ~r/id="involvement-menu".*href="\/en\/about"/s
+
+      assert html =~
+               ~r/href="https:\/\/luma.com\/calendar\/cal-tsYv79s4aTQC16Q".*>Events<\/a>/s
+    end
+
+    test "a signed-in visitor gets one account menu", %{conn: conn} do
+      user = PauseAiCa.AccountsFixtures.user_fixture()
+      {:ok, view, _html} = conn |> log_in_user(user) |> live(~p"/en/learn")
+
+      assert has_element?(view, "#account-menu", user.email)
+      assert has_element?(view, "#account-menu a[href='/en/actions']", "My actions")
+      assert has_element?(view, "#account-menu a[href='/users/settings']", "Settings")
+
+      assert has_element?(
+               view,
+               "#account-menu a[href='/users/settings#password_form']",
+               "Change password"
+             )
+
+      assert has_element?(
+               view,
+               "#account-menu a[href='/fr/comprendre']",
+               "Passer au français"
+             )
+
+      assert has_element?(view, "#account-menu a[href='/users/log-out']", "Log out")
     end
 
     test "the Act menu speaks French on French pages", %{conn: conn} do

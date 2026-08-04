@@ -33,6 +33,7 @@ defmodule PauseAiCaWeb.UserLive.Settings do
       <.form
         for={@password_form}
         id="password_form"
+        class="scroll-mt-24"
         action={~p"/users/update-password"}
         method="post"
         phx-change="validate_password"
@@ -74,10 +75,18 @@ defmodule PauseAiCaWeb.UserLive.Settings do
     socket =
       case Accounts.update_user_email(socket.assigns.current_scope.user, token) do
         {:ok, _user} ->
-          put_flash(socket, :info, "Email changed successfully.")
+          put_flash(
+            socket,
+            :info,
+            "Your email address is updated. · Votre adresse courriel a été mise à jour."
+          )
 
         {:error, _} ->
-          put_flash(socket, :error, "Email change link is invalid or it has expired.")
+          put_flash(
+            socket,
+            :error,
+            "This email-change link is invalid or has expired. · Ce lien de changement d'adresse est invalide ou a expiré."
+          )
       end
 
     {:ok, push_navigate(socket, to: ~p"/users/settings")}
@@ -124,7 +133,9 @@ defmodule PauseAiCaWeb.UserLive.Settings do
           &url(~p"/users/settings/confirm-email/#{&1}")
         )
 
-        info = "A link to confirm your email change has been sent to the new address."
+        info =
+          "Check the new address for a confirmation link. · Consultez la nouvelle adresse pour obtenir le lien de confirmation."
+
         {:noreply, socket |> put_flash(:info, info)}
 
       changeset ->

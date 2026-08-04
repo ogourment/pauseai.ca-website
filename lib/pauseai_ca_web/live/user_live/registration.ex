@@ -88,7 +88,7 @@ defmodule PauseAiCaWeb.UserLive.Registration do
          socket
          |> put_flash(
            :info,
-           "An email was sent to #{user.email}, please access it to confirm your account."
+           "Check #{user.email} for your secure sign-in link. · Consultez #{user.email} pour obtenir votre lien de connexion sécurisé."
          )
          |> push_navigate(to: ~p"/users/log-in")}
 

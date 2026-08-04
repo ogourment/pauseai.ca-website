@@ -9,6 +9,7 @@ defmodule PauseAiCaWeb.DashboardLive do
   def mount(_params, _session, socket) do
     scope = socket.assigns.current_scope
     actions = Engagement.list_actions(scope)
+    confirmed_actions = Enum.reject(actions, &Action.pending?/1)
     locale = if socket.assigns.live_action == :fr, do: "fr", else: "en"
 
     {:ok,
@@ -17,8 +18,9 @@ defmodule PauseAiCaWeb.DashboardLive do
      |> assign(:page_title, if(locale == "fr", do: "Mes actions", else: "My actions"))
      |> assign(
        :recommendation,
-       Ladder.recommendation(Enum.reject(actions, &Action.pending?/1), locale)
+       Ladder.recommendation(confirmed_actions, locale)
      )
+     |> assign(:ladder_position, Ladder.position(confirmed_actions))
      |> assign(:action_count, Enum.count(actions, &(not Action.pending?(&1))))
      |> assign(:pending, Engagement.list_pending_actions(scope))
      |> assign(:editing_id, nil)
@@ -162,7 +164,9 @@ defmodule PauseAiCaWeb.DashboardLive do
       |> Engagement.list_actions()
       |> Enum.reject(&Action.pending?/1)
 
-    assign(socket, :recommendation, Ladder.recommendation(actions, socket.assigns.locale))
+    socket
+    |> assign(:recommendation, Ladder.recommendation(actions, socket.assigns.locale))
+    |> assign(:ladder_position, Ladder.position(actions))
   end
 
   defp unit("flyered"), do: "handed out"
@@ -249,6 +253,48 @@ defmodule PauseAiCaWeb.DashboardLive do
               class="mt-4 inline-flex rounded-full bg-brand px-5 py-2.5 font-semibold text-stone-950 hover:bg-brand-strong"
             >{@recommendation.cta}</.link>
           </div>
+
+          <section
+            id="engagement-ladder"
+            class="mt-8 overflow-hidden rounded-3xl bg-stone-900 p-6 text-white"
+          >
+            <h2 class="font-heading text-2xl">
+              {if(@locale == "fr", do: "D'autres façons d'agir", else: "Other ways to act")}
+            </h2>
+            <p class="mt-2 text-sm leading-6 text-white/70">
+              {if(@locale == "fr",
+                do:
+                  "Votre prochaine étape suggérée n'est qu'une option. Choisissez ce qui vous convient maintenant.",
+                else: "Your suggested next step is only one option. Choose what fits you now."
+              )}
+            </p>
+            <ol class="mt-6 flex flex-col-reverse px-2">
+              <li
+                :for={{step, i} <- Enum.with_index(Ladder.steps(@locale), 1)}
+                id={"ladder-step-#{i}"}
+                data-current={i == @ladder_position}
+                class="relative border-x-[6px] border-white/30 px-4 pb-5"
+              >
+                <div class={[
+                  "relative border-t-[6px] pt-3",
+                  i == @ladder_position && "border-brand",
+                  i != @ladder_position && "border-white/30"
+                ]}>
+                  <span
+                    :if={i == @ladder_position or (@ladder_position == 0 and i == 1)}
+                    class="absolute right-0 top-0 -translate-y-1/2 rounded-full bg-brand px-3 py-1 text-xs font-bold text-stone-950 shadow"
+                  >
+                    ← {if(@ladder_position == 0,
+                      do: if(@locale == "fr", do: "Commencez ici", else: "Start here"),
+                      else: if(@locale == "fr", do: "Vous êtes ici", else: "You are here")
+                    )}
+                  </span>
+                  <strong class="block text-sm">{i}. {step.title}</strong>
+                  <span class="block pr-2 text-sm text-white/70">{step.examples}</span>
+                </div>
+              </li>
+            </ol>
+          </section>
         </div>
 
         <div class="space-y-8">
