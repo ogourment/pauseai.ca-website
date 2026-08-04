@@ -27,7 +27,7 @@ defmodule PauseAiCaWeb.LibraryLive do
      |> assign(:locale, locale)
      |> assign(:page_title, page_title(locale))
      |> assign(:stages, Library.stages())
-     |> assign(:voices, Library.voices())
+     |> assign(:voices, Library.voices(locale))
      |> assign(:signatories, Library.signatories())
      |> assign(:subscribe_form, to_form(%{"email" => "", "consent" => "false"}, as: :subscribe))
      |> assign(:subscribe_state, :idle)}
@@ -293,11 +293,11 @@ defmodule PauseAiCaWeb.LibraryLive do
 
   defp lede("fr"),
     do:
-      "Les gens qui ont construit cette technologie sont parmi les plus inquiets de ce qu'elle devient, et plusieurs d'entre eux travaillent ici. Voici ce qu'ils disent, et les arguments — pour et contre — que vous pouvez examiner vous-même."
+      "Les gens qui ont construit cette technologie sont parmi les plus inquiets de ce qu'elle devient, et plusieurs d'entre eux travaillent au Canada. Leurs positions et les principales réponses possibles méritent un débat public."
 
   defp lede(_locale),
     do:
-      "The people who built this technology are among the most worried about where it is going, and several of them work here. Here is what they say, and the arguments — for and against — you can weigh yourself."
+      "The people who built this technology are among the most worried about where it is going, and several of them work in Canada. Their positions and the main possible responses deserve public debate."
 
   defp voices_heading("fr"), do: "Des voix canadiennes"
   defp voices_heading(_locale), do: "Canadian voices"

@@ -360,8 +360,6 @@ defmodule PauseAiCaWeb.WarningShotLive do
               </li>
             </ul>
           </div>
-
-          <p class="mt-6 max-w-3xl text-sm leading-6 text-stone-500">{@copy.educational_note}</p>
         </section>
 
         <section id="act" class="border-y border-stone-200 bg-white">

@@ -73,6 +73,18 @@ defmodule PauseAiCa.LibraryTest do
       assert Enum.all?(french, &String.starts_with?(&1.url, "https://yoshuabengio.org/fr/"))
     end
 
+    test "the French edition features francophone Senate witnesses in their own words" do
+      french_voices = Library.voices("fr")
+      names = Enum.map(french_voices, & &1.name)
+
+      assert "Tania Saba" in names
+      assert "Chantal Guay" in names
+
+      for voice <- french_voices do
+        assert Enum.any?(voice.quotes, &(&1.language == "fr"))
+      end
+    end
+
     test "every quotation is verbatim and linked to where it was said" do
       for voice <- Library.voices() do
         assert voice.quotes != [], "#{voice.name} has no quotation"

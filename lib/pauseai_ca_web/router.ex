@@ -105,6 +105,7 @@ defmodule PauseAiCaWeb.Router do
       live "/fr/tir-de-semonce", WarningShotLive, :fr
       live "/en/learn", LibraryLive, :en
       live "/fr/comprendre", LibraryLive, :fr
+      live "/fr/learn", LibraryLive, :fr
     end
 
     live_session :current_user,

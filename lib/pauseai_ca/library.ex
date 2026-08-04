@@ -52,6 +52,12 @@ defmodule PauseAiCa.Library do
   @spec voices() :: [Voice.t()]
   def voices, do: all_voices()
 
+  @doc "Canadian voices with at least one original or directly published quotation in `locale`."
+  @spec voices(String.t()) :: [Voice.t()]
+  def voices(locale) do
+    Enum.filter(all_voices(), fn voice -> Enum.any?(voice.quotes, &(&1.language == locale)) end)
+  end
+
   @doc """
   The label for `stage` in `locale`.
   """
@@ -377,12 +383,12 @@ defmodule PauseAiCa.Library do
           "en" => %{
             title: "Who else says this, in their own words",
             summary:
-              "The CEOs of OpenAI, Anthropic and Google DeepMind have all signed a statement putting AI extinction risk alongside pandemics and nuclear war. Here they are, quoted with sources."
+              "The CEOs of OpenAI, Anthropic and Google DeepMind have all signed a statement putting AI extinction risk alongside pandemics and nuclear war."
           },
           "fr" => %{
             title: "Qui d'autre le dit, dans ses propres mots",
             summary:
-              "Les PDG d'OpenAI, d'Anthropic et de Google DeepMind ont tous signé une déclaration plaçant le risque d'extinction lié à l'IA aux côtés des pandémies et de la guerre nucléaire. Les voici, cité·es avec leurs sources."
+              "Les PDG d'OpenAI, d'Anthropic et de Google DeepMind ont tous signé une déclaration plaçant le risque d'extinction lié à l'IA aux côtés des pandémies et de la guerre nucléaire."
           }
         }
       },
@@ -470,7 +476,7 @@ defmodule PauseAiCa.Library do
               "en" =>
                 "Rogue AI may be dangerous for the whole of humanity. Banning powerful AI systems (say beyond the abilities of GPT-4) that are given autonomy and agency would be a good start."
             },
-            source: "PauseAI, quotes with sources",
+            source: "PauseAI",
             url: "https://pauseai.info/quotes",
             said_on: nil,
             language: "en"
@@ -480,7 +486,7 @@ defmodule PauseAiCa.Library do
               "en" =>
                 "It's very hard, in terms of your ego and feeling good about what you do, to accept the idea that the thing you've been working on for decades might actually be very dangerous to humanity."
             },
-            source: "PauseAI, quotes with sources",
+            source: "PauseAI",
             url: "https://pauseai.info/quotes",
             said_on: nil,
             language: "en"
@@ -540,17 +546,27 @@ defmodule PauseAiCa.Library do
               "en" =>
                 "It is inspiring to see Canadian parliamentarians on both sides of the aisle directly confront the risk posed by superintelligence. This is one of the defining challenges of our era, and it will shape the life of every Canadian citizen. It's about time we address it."
             },
-            source: "ControlAI Canada statement",
+            source: "ControlAI Canada",
             url: "https://controlai.org/canada-statement/en",
             said_on: "2026",
             language: "en"
           },
           %{
             text: %{
+              "fr" =>
+                "Il est inspirant de voir des parlementaires canadiens de part et d'autre de la Chambre affronter directement le risque que pose la superintelligence. C'est l'un des défis déterminants de notre époque, et il façonnera la vie de chaque citoyen canadien. Il est grand temps de nous y attaquer."
+            },
+            source: "ControlAI Canada",
+            url: "https://controlai.org/canada-statement/fr",
+            said_on: "2026",
+            language: "fr"
+          },
+          %{
+            text: %{
               "en" =>
                 "If you take the existential risk seriously, as I now do, it might be quite sensible to just stop developing these things any further."
             },
-            source: "PauseAI, quotes with sources",
+            source: "PauseAI",
             url: "https://pauseai.info/quotes",
             said_on: nil,
             language: "en"
@@ -560,7 +576,7 @@ defmodule PauseAiCa.Library do
               "en" =>
                 "The research question is: how do you prevent them from ever wanting to take control? And nobody knows the answer."
             },
-            source: "PauseAI, quotes with sources",
+            source: "PauseAI",
             url: "https://pauseai.info/quotes",
             said_on: nil,
             language: "en"
@@ -578,8 +594,8 @@ defmodule PauseAiCa.Library do
           },
           %Reference{
             label: %{
-              "en" => "More quotations, each with its original source",
-              "fr" => "D'autres citations, chacune avec sa source d'origine"
+              "en" => "More quotations",
+              "fr" => "D'autres citations"
             },
             url: "https://pauseai.info/quotes",
             publisher: "PauseAI",
@@ -600,10 +616,20 @@ defmodule PauseAiCa.Library do
               "en" =>
                 "To proceed towards superintelligent AI without any concrete plan to control it is completely unacceptable. Developers cannot currently comply with any effective regulation because they do not understand what they are building."
             },
-            source: "ControlAI Canada statement",
+            source: "ControlAI Canada",
             url: "https://controlai.org/canada-statement/en",
             said_on: "2026",
             language: "en"
+          },
+          %{
+            text: %{
+              "fr" =>
+                "Avancer vers une IA superintelligente sans aucun plan concret pour la contrôler est totalement inacceptable. Nous avons besoin d'une réglementation efficace qui ramène le risque à un niveau acceptable. À l'heure actuelle, les développeurs ne peuvent se conformer à aucune réglementation efficace, car ils ne comprennent pas ce qu'ils construisent."
+            },
+            source: "ControlAI Canada",
+            url: "https://controlai.org/canada-statement/fr",
+            said_on: "2026",
+            language: "fr"
           },
           %{
             text: %{"en" => "AI is not inevitable."},
@@ -745,6 +771,80 @@ defmodule PauseAiCa.Library do
             url: "https://vectorinstitute.ai/team/gillian-k-hadfield/",
             publisher: "Vector Institute",
             language: "en"
+          }
+        ]
+      },
+      %Voice{
+        id: "saba",
+        name: "Tania Saba",
+        affiliation: %{
+          "en" =>
+            "Interim executive director, International Observatory on the Societal Impacts of AI and Digital Technology (Obvia).",
+          "fr" =>
+            "Directrice générale intérimaire, Observatoire international sur les impacts sociétaux de l'IA et du numérique (Obvia)."
+        },
+        quotes: [
+          %{
+            text: %{
+              "fr" =>
+                "Il est essentiel aujourd'hui de passer d'une éthique essentiellement déclarative à une gouvernance plus opérationnelle de l'intelligence artificielle."
+            },
+            source: "Sénat du Canada",
+            url: "https://sencanada.ca/fr/content/sen/committee/451/soci/29ev-57567-f",
+            said_on: "2026-03-12",
+            language: "fr"
+          },
+          %{
+            text: %{
+              "fr" =>
+                "Ce qui manque dans toutes les initiatives et consultations qui ont été menées au sujet de l'intelligence artificielle, ce sont les voix de la société civile, ainsi que celles des peuples autochtones."
+            },
+            source: "Sénat du Canada",
+            url: "https://sencanada.ca/fr/content/sen/committee/451/soci/29ev-57567-f",
+            said_on: "2026-03-12",
+            language: "fr"
+          }
+        ],
+        references: [
+          %Reference{
+            label: %{
+              "en" => "Her testimony before the Senate committee",
+              "fr" => "Son témoignage devant le comité sénatorial"
+            },
+            url: "https://sencanada.ca/fr/content/sen/committee/451/soci/29ev-57567-f",
+            publisher: "Sénat du Canada",
+            language: "fr"
+          }
+        ]
+      },
+      %Voice{
+        id: "guay",
+        name: "Chantal Guay",
+        affiliation: %{
+          "en" => "Chief executive officer, Standards Council of Canada.",
+          "fr" => "Directrice générale, Conseil canadien des normes."
+        },
+        quotes: [
+          %{
+            text: %{
+              "fr" =>
+                "Il faut commencer par nos alliés. C'est toujours comme cela que l'on travaille. Ce n'est jamais sur le coin de la table. Quand M. Bengio parle de cela, je dis : « Je suis là! » On fait le travail. Pour la normalisation, on est là."
+            },
+            source: "Sénat du Canada",
+            url: "https://sencanada.ca/fr/content/sen/committee/451/soci/29ev-57567-f",
+            said_on: "2026-03-12",
+            language: "fr"
+          }
+        ],
+        references: [
+          %Reference{
+            label: %{
+              "en" => "Her testimony before the Senate committee",
+              "fr" => "Son témoignage devant le comité sénatorial"
+            },
+            url: "https://sencanada.ca/fr/content/sen/committee/451/soci/29ev-57567-f",
+            publisher: "Sénat du Canada",
+            language: "fr"
           }
         ]
       }
