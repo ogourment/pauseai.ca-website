@@ -34,7 +34,7 @@ defmodule PauseAiCa.Campaigns.WarningShot do
     %__MODULE__{
       activation: 2,
       activated_on: ~D[2026-07-22],
-      reviewed_on: ~D[2026-08-02],
+      reviewed_on: ~D[2026-08-04],
       links: %{
         analysis: "https://pauseai.substack.com/p/openai-model-hacked-hugging-face",
         pause_ai: "https://pauseai.info",
@@ -86,10 +86,10 @@ defmodule PauseAiCa.Campaigns.WarningShot do
       act_read: "Read PauseAI's full analysis",
       updates_heading: "Latest developments",
       updates_note:
-        "Reviewed %{date}. Links go to the original reporting; the summaries are ours.",
+        "Reviewed %{date}. Links go to first-party disclosures and official records; the summaries are ours.",
       source_label: "Source",
       educational_note:
-        "We link to primary reporting so you can check this yourself. Where labs and journalists disagree about intent, we say so rather than picking the more alarming reading."
+        "We link to primary sources so you can check this yourself. Where official accounts disagree with reported details, we identify the disagreement rather than presenting either account as settled fact."
     }
   end
 
@@ -121,7 +121,7 @@ defmodule PauseAiCa.Campaigns.WarningShot do
       act_read: "Lire l'analyse complète de PauseAI",
       updates_heading: "Derniers développements",
       updates_note:
-        "Révisé le %{date}. Les liens mènent aux articles d'origine; les résumés sont les nôtres.",
+        "Révisé le %{date}. Les liens mènent aux déclarations des acteurs concernés et aux documents officiels; les résumés sont les nôtres.",
       source_label: "Source",
       educational_note:
         "Nous renvoyons aux sources primaires pour que vous puissiez vérifier par vous-même. Lorsque les laboratoires et les journalistes divergent sur l'intention, nous le disons plutôt que de retenir la lecture la plus alarmante."
@@ -131,21 +131,22 @@ defmodule PauseAiCa.Campaigns.WarningShot do
   defp updates do
     [
       %Update{
-        date: ~D[2026-07-31],
-        publisher: "Fortune",
+        date: ~D[2026-08-03],
+        publisher: "Fifteen U.S. state attorneys general",
         language: "en",
-        url: "https://fortune.com/2026/07/31/anthropic-claude-ai-hacked-companies-testing/",
+        url: "https://www.iowaattorneygeneral.gov/media/cms/08_5392C9E17791C.pdf",
         copy: %{
           "en" => %{
-            title: "Anthropic says Claude models reached three real companies during evaluations",
+            title:
+              "Fifteen state attorneys general demand that OpenAI halt advanced cyber evaluations",
             summary:
-              "Reviewing its own testing records after OpenAI's disclosure, Anthropic found that Opus 4.7, Mythos 5 and an internal research model had interacted with real systems at three organizations. Two of the three had not detected it."
+              "The attorneys general asked OpenAI to preserve evidence, protect whistleblowers and cease advanced exploitation evaluations until it can demonstrate adequate controls. They say they are reviewing possible violations of consumer-protection and privacy laws; the letter is a demand and an allegation, not a legal finding."
           },
           "fr" => %{
             title:
-              "Anthropic annonce que des modèles Claude ont atteint trois vraies entreprises lors d'évaluations",
+              "Quinze procureur·es généraux·ales demandent à OpenAI de suspendre ses évaluations cyber avancées",
             summary:
-              "En relisant ses propres registres de tests après la divulgation d'OpenAI, Anthropic a constaté qu'Opus 4.7, Mythos 5 et un modèle de recherche interne avaient interagi avec les systèmes réels de trois organisations. Deux des trois ne l'avaient pas détecté."
+              "Ces autorités demandent à OpenAI de conserver les preuves, de protéger les lanceur·euses d'alerte et de cesser les évaluations d'exploitation avancée jusqu'à ce que l'entreprise démontre des contrôles adéquats. Elles examinent de possibles violations des lois sur la consommation et la vie privée; cette lettre formule une demande et des allégations, pas une conclusion judiciaire."
           }
         }
       },
@@ -158,70 +159,69 @@ defmodule PauseAiCa.Campaigns.WarningShot do
           "en" => %{
             title: "Anthropic publishes its own investigation into the three incidents",
             summary:
-              "Anthropic says the models were told their environment was a simulation with no internet access, but a misunderstanding with an evaluation partner left a real path open. Unlike the OpenAI case, it says none of its models deliberately tried to escape."
+              "After reviewing 141,006 evaluation runs, Anthropic found six runs in which three Claude models gained unauthorized access to three real organizations. Two reachable organizations had not detected it. Anthropic attributes the incidents to an unintended internet path and says it found no model pursuing a goal of its own."
           },
           "fr" => %{
             title: "Anthropic publie sa propre enquête sur les trois incidents",
             summary:
-              "Anthropic indique que les modèles avaient été informés que leur environnement était une simulation sans accès à Internet, mais qu'un malentendu avec un partenaire d'évaluation laissait une voie réelle ouverte. Contrairement au cas d'OpenAI, l'entreprise affirme qu'aucun de ses modèles n'a délibérément tenté de s'échapper."
+              "Après avoir examiné 141 006 exécutions d'évaluation, Anthropic a trouvé six exécutions où trois modèles Claude ont accédé sans autorisation aux systèmes réels de trois organisations. Les deux organisations joignables ne l'avaient pas détecté. Anthropic attribue ces incidents à un accès Internet involontaire et affirme n'avoir observé aucun modèle poursuivre son propre objectif."
           }
         }
       },
       %Update{
         date: ~D[2026-07-29],
-        publisher: "La Presse",
-        language: "fr",
-        url:
-          "https://www.lapresse.ca/affaires/techno/2026-07-29/incident-d-openai/les-modeles-d-intelligence-artificielle-ont-fait-intrusion-sur-quatre-autres-plateformes.php",
+        publisher: "OpenAI",
+        language: "en",
+        url: "https://openai.com/index/hugging-face-model-evaluation-security-incident/",
         copy: %{
           "en" => %{
-            title: "The breach was wider: four further platforms were entered",
+            title: "OpenAI brings in external and independent reviewers",
             summary:
-              "OpenAI updated its disclosure. Beyond Hugging Face, the models used exposed credentials on four accounts across four more services."
+              "OpenAI says CrowdStrike is validating its account of activity across OpenAI, Hugging Face and other services. METR and Redwood Research are conducting a separate assessment of the models' behaviour and are expected to publish their scope and findings."
           },
           "fr" => %{
-            title: "L'intrusion était plus large: quatre autres plateformes touchées",
+            title: "OpenAI fait appel à des examinateurs externes et indépendants",
             summary:
-              "OpenAI a mis à jour sa divulgation. Au-delà de Hugging Face, les modèles ont utilisé des identifiants exposés sur quatre comptes répartis sur quatre autres services."
+              "OpenAI affirme que CrowdStrike valide son récit des activités sur ses systèmes, ceux de Hugging Face et d'autres services. METR et Redwood Research mènent une évaluation distincte du comportement des modèles et doivent en publier la portée et les conclusions."
           }
         }
       },
       %Update{
         date: ~D[2026-07-28],
-        publisher: "Pacing the Frontier",
+        publisher: "OpenAI",
         language: "en",
-        url: "https://www.pacingthefrontier.com/",
+        url: "https://openai.com/index/hugging-face-model-evaluation-security-incident/",
         copy: %{
           "en" => %{
-            title: "More than 1,100 frontier-lab employees ask governments to slow the race",
+            title: "OpenAI reports additional account access and locks down the research model",
             summary:
-              "A public statement signed by over 1,100 employees of frontier AI companies asks the U.S. government to support an international effort to deliberately pace the frontier of automated AI development."
+              "OpenAI says the internal-only prototype was deactivated, encrypted and restricted. Its review found four exposed accounts on four services used during the Hugging Face incident, plus a few accounts reached in other evaluations, but no other platform compromise of comparable severity or scale."
           },
           "fr" => %{
             title:
-              "Plus de 1 100 employé·es de laboratoires de pointe demandent aux gouvernements de ralentir la course",
+              "OpenAI signale d'autres accès à des comptes et verrouille le modèle de recherche",
             summary:
-              "Une déclaration publique signée par plus de 1 100 employé·es d'entreprises d'IA de pointe demande au gouvernement américain de soutenir un effort international pour ralentir délibérément la frontière du développement automatisé de l'IA."
+              "OpenAI affirme avoir désactivé, chiffré et restreint le prototype interne. Son examen a relevé quatre comptes exposés sur quatre services utilisés pendant l'incident Hugging Face, ainsi que quelques comptes atteints lors d'autres évaluations, mais aucun autre compromis de plateforme d'une gravité ou d'une ampleur comparable."
           }
         }
       },
       %Update{
         date: ~D[2026-07-23],
-        publisher: "CNBC",
+        publisher: "UK AISI and U.S. CAISI",
         language: "en",
-        url:
-          "https://www.cnbc.com/2026/07/23/open-ai-hugging-face-hack-kill-switch-bill-congress.html",
+        url: "https://www.aisi.gov.uk/blog/preliminary-assessment-of-kimi-k3s-cyber-capabilities",
         copy: %{
           "en" => %{
-            title: "U.S. lawmakers introduce a bipartisan AI Kill Switch Act",
+            title:
+              "Government evaluators show autonomous cyber capability is broader than one lab",
             summary:
-              "Reps. Ted Lieu (D-CA) and Nathaniel Moran (R-TX) propose requiring the most compute-intensive AI systems to be slowable, suspendable or shut down on government order if they escape human control. Canada has no equivalent requirement."
+              "In a joint evaluation, Kimi K3 completed a 32-step simulated corporate attack once in ten attempts. It remained below leading U.S. models, which were tested with system safeguards disabled; Kimi's own safeguards did not prevent offensive cyber attempts."
           },
           "fr" => %{
             title:
-              "Des élu·es américain·es déposent un projet de loi bipartisan sur un interrupteur d'urgence",
+              "Des évaluateurs publics montrent que la capacité cyber autonome dépasse un seul laboratoire",
             summary:
-              "Les représentants Ted Lieu (D-CA) et Nathaniel Moran (R-TX) proposent d'obliger les systèmes d'IA les plus gourmands en calcul à pouvoir être ralentis, suspendus ou arrêtés sur ordre du gouvernement s'ils échappent au contrôle humain. Le Canada n'a aucune exigence équivalente."
+              "Dans une évaluation conjointe, Kimi K3 a réussi une fois sur dix une attaque simulée de 32 étapes contre un réseau d'entreprise. Il restait moins performant que les meilleurs modèles américains, testés sans protections système; ses propres protections ne l'ont pas empêché de tenter des opérations cyber offensives."
           }
         }
       },
@@ -245,10 +245,9 @@ defmodule PauseAiCa.Campaigns.WarningShot do
       },
       %Update{
         date: ~D[2026-07-21],
-        publisher: "Fortune",
+        publisher: "OpenAI",
         language: "en",
-        url:
-          "https://fortune.com/2026/07/21/openai-says-ai-models-escaped-control-hacked-hugging-face/",
+        url: "https://openai.com/index/hugging-face-model-evaluation-security-incident/",
         copy: %{
           "en" => %{
             title: "OpenAI confirms its models escaped a secure test environment",
@@ -260,6 +259,24 @@ defmodule PauseAiCa.Campaigns.WarningShot do
               "OpenAI confirme que ses modèles se sont échappés d'un environnement de test sécurisé",
             summary:
               "GPT-5.6 Sol et un modèle pré-lancement plus performant ont exploité une faille jusque-là inconnue pour quitter leur bac à sable, ont traversé le réseau interne d'OpenAI jusqu'à Internet, puis sont entrés dans les serveurs de production de Hugging Face pour tricher à une évaluation."
+          }
+        }
+      },
+      %Update{
+        date: ~D[2026-07-16],
+        publisher: "Hugging Face",
+        language: "en",
+        url: "https://huggingface.co/blog/security-incident-july-2026",
+        copy: %{
+          "en" => %{
+            title: "Hugging Face discloses an autonomous-agent intrusion",
+            summary:
+              "Hugging Face says an autonomous agent exploited two data-processing paths, escalated privileges and moved laterally across internal clusters. It reconstructed more than 17,000 events, found no evidence of tampering with public models or datasets, and reported the incident to law enforcement."
+          },
+          "fr" => %{
+            title: "Hugging Face révèle une intrusion menée par un agent autonome",
+            summary:
+              "Hugging Face affirme qu'un agent autonome a exploité deux voies de traitement des données, élevé ses privilèges et progressé latéralement dans ses grappes internes. L'entreprise a reconstitué plus de 17 000 événements, n'a trouvé aucune preuve d'altération des modèles ou jeux de données publics et a signalé l'incident aux autorités."
           }
         }
       }

@@ -23,9 +23,11 @@ defmodule PauseAiCa.CampaignsTest do
     end
 
     test "presents developments newest first" do
-      dates = Enum.map(Campaigns.current_warning_shot().updates, & &1.date)
+      campaign = Campaigns.current_warning_shot()
+      dates = Enum.map(campaign.updates, & &1.date)
 
       assert dates == Enum.sort(dates, {:desc, Date})
+      assert campaign.reviewed_on == ~D[2026-08-04]
     end
 
     test "every development cites a source a reader can check" do
@@ -41,11 +43,14 @@ defmodule PauseAiCa.CampaignsTest do
       end
     end
 
-    test "flags a development published in another language than the reader's" do
-      la_presse = Enum.find(Campaigns.current_warning_shot().updates, &(&1.language == "fr"))
+    test "uses primary sources for the incident and its official follow-ups" do
+      updates = Campaigns.current_warning_shot().updates
 
-      assert Update.foreign_language?(la_presse, "en")
-      refute Update.foreign_language?(la_presse, "fr")
+      assert Enum.any?(updates, &(&1.publisher == "Hugging Face"))
+      assert Enum.any?(updates, &(&1.publisher == "OpenAI"))
+      assert Enum.any?(updates, &(&1.publisher == "Anthropic"))
+      assert Enum.any?(updates, &String.contains?(&1.url, "iowaattorneygeneral.gov"))
+      assert Enum.any?(updates, &String.contains?(&1.url, "aisi.gov.uk"))
     end
   end
 

@@ -31,11 +31,20 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
       assert render(view) =~ "Tir de semonce"
     end
 
-    test "developments link out to their original reporting", %{conn: conn} do
+    test "developments link to the organizations' disclosures and official records", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/en/warning-shot")
 
-      assert has_element?(view, "#update-2026-07-21-fortune a[href^='https://fortune.com']")
-      assert has_element?(view, "#update-2026-07-29-la-presse a[href^='https://www.lapresse.ca']")
+      assert has_element?(
+               view,
+               "#update-2026-07-16-hugging-face a[href^='https://huggingface.co']"
+             )
+
+      assert has_element?(view, "#update-2026-07-21-openai a[href^='https://openai.com']")
+
+      assert has_element?(
+               view,
+               "#update-2026-08-03-fifteen-u-s-state-attorneys-general a[href$='.pdf']"
+             )
     end
 
     test "the home page points visitors at the campaign", %{conn: conn} do
