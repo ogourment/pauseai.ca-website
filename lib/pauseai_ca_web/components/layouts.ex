@@ -60,21 +60,21 @@ defmodule PauseAiCaWeb.Layouts do
           <span class="font-semibold tracking-tight text-stone-900">PauseAI Canada</span>
         </a>
         <.link
-          class="text-sm font-medium text-stone-700 hover:text-stone-950"
+          class="text-base font-medium text-stone-700 hover:text-stone-950"
           navigate={if(@locale == "fr", do: ~p"/fr/comprendre", else: ~p"/en/learn")}
         >
           {if(@locale == "fr", do: "Comprendre", else: "Learn")}
         </.link>
         <.link
-          class="hidden text-sm font-medium text-stone-700 hover:text-stone-950 lg:inline"
+          class="hidden text-base font-medium text-stone-700 hover:text-stone-950 lg:inline"
           navigate={if(@locale == "fr", do: ~p"/fr/strategie", else: ~p"/en/strategy")}
         >{if(@locale == "fr", do: "Stratégie", else: "Strategy")}</.link>
         <.link
-          class="hidden text-sm font-medium text-stone-700 hover:text-stone-950 lg:inline"
+          class="hidden text-base font-medium text-stone-700 hover:text-stone-950 lg:inline"
           navigate={if(@locale == "fr", do: ~p"/fr/a-propos", else: ~p"/en/about")}
         >{if(@locale == "fr", do: "À propos", else: "About")}</.link>
         <.link
-          class="text-sm font-medium text-brand-ink hover:text-stone-950"
+          class="text-base font-medium text-brand-ink hover:text-stone-950"
           navigate={if(@locale == "fr", do: ~p"/fr/tir-de-semonce", else: ~p"/en/warning-shot")}
         >
           {if(@locale == "fr", do: "Tir de semonce", else: "Warning shot")}
@@ -82,7 +82,7 @@ defmodule PauseAiCaWeb.Layouts do
         <%!-- Everything here leaves for PauseAI Global, so these are plain links
              and the menu is CSS-only: no JavaScript to fail on a slow phone. --%>
         <details class="act-menu relative">
-          <summary class="cursor-pointer list-none text-sm font-medium text-stone-700 hover:text-stone-950">
+          <summary class="cursor-pointer list-none text-base font-medium text-stone-700 hover:text-stone-950">
             {if(@locale == "fr", do: "S'impliquer", else: "Get involved")}
             <span aria-hidden="true" class="text-xs">▾</span>
           </summary>
@@ -104,7 +104,7 @@ defmodule PauseAiCaWeb.Layouts do
         </details>
 
         <a
-          class="text-sm font-medium text-stone-600 hover:text-stone-950"
+          class="text-base font-medium text-stone-600 hover:text-stone-950"
           href={@translated_path || if(@locale == "fr", do: ~p"/en", else: ~p"/fr")}
         >
           {if(@locale == "fr", do: "English", else: "Français")}
@@ -114,18 +114,18 @@ defmodule PauseAiCaWeb.Layouts do
             {@current_scope.user.email}
           </.link>
           <.link
-            class="text-sm font-medium text-stone-700 hover:text-stone-950"
+            class="text-base font-medium text-stone-700 hover:text-stone-950"
             navigate={if(@locale == "fr", do: ~p"/fr/actions", else: ~p"/en/actions")}
           >
             {if(@locale == "fr", do: "Mes actions", else: "My actions")}
           </.link>
           <.link
             :if={@current_scope.user.superadmin}
-            class="text-sm font-medium text-stone-700 hover:text-stone-950"
+            class="text-base font-medium text-stone-700 hover:text-stone-950"
             navigate={~p"/admin/metrics"}
           >Admin</.link>
           <.link
-            class="text-sm font-medium text-stone-600 hover:text-stone-950"
+            class="text-base font-medium text-stone-600 hover:text-stone-950"
             href={~p"/users/log-out"}
             method="delete"
           >
@@ -133,7 +133,7 @@ defmodule PauseAiCaWeb.Layouts do
           </.link>
         <% else %>
           <.link
-            class="rounded-full bg-stone-900 px-4 py-2 text-sm font-semibold text-white hover:bg-stone-700"
+            class="rounded-full bg-stone-900 px-4 py-2 text-base font-semibold text-white hover:bg-stone-700"
             href={~p"/users/log-in"}
           >
             {if(@locale == "fr", do: "Se connecter", else: "Sign in")}
