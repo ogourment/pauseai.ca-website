@@ -15,6 +15,9 @@ defmodule PauseAiCa.Accounts.User do
     field :local_updates, :boolean, default: false
     field :saved_resources, {:array, :string}, default: []
     field :belief_answers, :map, default: %{}
+    field :postal_code, :string
+    field :representative, :map
+    field :custom_resource_urls, {:array, :string}, default: []
 
     timestamps(type: :utc_datetime)
   end
@@ -129,6 +132,27 @@ defmodule PauseAiCa.Accounts.User do
     |> validate_format(:fsa, ~r/^[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJKLMNPRSTVWXYZ]$/,
       message: "must be the first three characters of a Canadian postal code"
     )
+  end
+
+  def profile_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:postal_code, :local_updates])
+    |> update_change(:postal_code, fn value ->
+      value |> String.upcase() |> String.replace(~r/[^A-Z0-9]/, "")
+    end)
+    |> validate_required([:postal_code])
+    |> validate_format(:postal_code, ~r/^[ABCEGHJ-NPRSTVXY]\d[A-Z]\d[A-Z]\d$/,
+      message: "must be a complete Canadian postal code"
+    )
+    |> then(fn changeset ->
+      case get_field(changeset, :postal_code) do
+        value when is_binary(value) and byte_size(value) >= 3 ->
+          put_change(changeset, :fsa, String.slice(value, 0, 3))
+
+        _ ->
+          changeset
+      end
+    end)
   end
 
   @doc """

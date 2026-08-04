@@ -100,7 +100,8 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
       {:ok, view, _html} = conn |> log_in_user(user) |> live(~p"/en/learn")
 
       assert has_element?(view, "#account-menu", user.email)
-      assert has_element?(view, "#account-menu a[href='/en/actions']", "My actions")
+      assert has_element?(view, "#account-menu a[href='/en/dashboard']", "My dashboard")
+      assert has_element?(view, "#account-menu a[href='/en/profile']", "My profile")
       assert has_element?(view, "#account-menu a[href='/users/settings']", "Settings")
 
       assert has_element?(

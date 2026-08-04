@@ -208,6 +208,37 @@ defmodule PauseAiCa.Accounts do
     user |> Ecto.Changeset.change(belief_answers: allowed) |> Repo.update()
   end
 
+  def change_user_profile(%User{} = user, attrs \\ %{}), do: User.profile_changeset(user, attrs)
+
+  def update_user_profile(%User{} = user, attrs, representative) when is_map(representative) do
+    user
+    |> User.profile_changeset(attrs)
+    |> Ecto.Changeset.put_change(:representative, representative)
+    |> Repo.update()
+  end
+
+  def remove_saved_resource(%User{} = user, resource) do
+    user
+    |> Ecto.Changeset.change(saved_resources: List.delete(user.saved_resources, resource))
+    |> Repo.update()
+  end
+
+  def add_custom_resource(%User{} = user, url) when is_binary(url) do
+    with %URI{scheme: scheme, host: host} when scheme in ["http", "https"] and is_binary(host) <-
+           URI.parse(url) do
+      urls = Enum.uniq(user.custom_resource_urls ++ [url])
+      user |> Ecto.Changeset.change(custom_resource_urls: urls) |> Repo.update()
+    else
+      _ -> {:error, :invalid_url}
+    end
+  end
+
+  def remove_custom_resource(%User{} = user, url) do
+    user
+    |> Ecto.Changeset.change(custom_resource_urls: List.delete(user.custom_resource_urls, url))
+    |> Repo.update()
+  end
+
   ## Session
 
   @doc """

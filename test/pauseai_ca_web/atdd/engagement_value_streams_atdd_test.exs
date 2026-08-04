@@ -109,12 +109,14 @@ if System.get_env("ATDD") == "true" do
 
       browser =
         browser
-        |> visit("/fr/actions")
-        |> assert_has("#fsa-reminder", text: "Votre RTA")
-        |> fill_in("RTA (3 premiers caractères du code postal)", with: "H2X")
-        |> check("M’envoyer des nouvelles locales et les nouveaux développements importants")
-        |> click_button("Enregistrer ma région")
-        |> refute_has("#fsa-reminder")
+        |> visit("/fr/profil")
+        |> fill_in("Code postal complet", with: "H2X 1Y4")
+        |> check("M’envoyer des nouvelles locales pertinentes")
+        |> click_button("Trouver mon député")
+        |> assert_has("#mp-result", text: "Steven Guilbeault")
+        |> assert_has("#mp-position", text: "pas encore documentée")
+        |> visit("/fr/tableau-de-bord")
+        |> assert_has("#dashboard-mp", text: "Steven Guilbeault")
         |> assert_has("#action-form")
         |> evaluate("""
         (() => {
@@ -128,7 +130,7 @@ if System.get_env("ATDD") == "true" do
         |> assert_has("#suggested-next-step", text: "En parler à une personne")
 
       browser
-      |> visit("/fr/actions")
+      |> visit("/fr/tableau-de-bord")
       |> assert_has("#suggested-next-step", text: "En parler à une personne")
       |> refute_has("#pending-actions")
       |> capture(

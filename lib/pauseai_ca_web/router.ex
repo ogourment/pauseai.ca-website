@@ -87,6 +87,10 @@ defmodule PauseAiCaWeb.Router do
       live "/dashboard", DashboardLive, :index
       live "/en/actions", DashboardLive, :en
       live "/fr/actions", DashboardLive, :fr
+      live "/en/dashboard", DashboardLive, :en
+      live "/fr/tableau-de-bord", DashboardLive, :fr
+      live "/en/profile", ProfileLive, :en
+      live "/fr/profil", ProfileLive, :fr
       live "/admin/metrics", AdminMetricsLive, :index
       live "/users/settings", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email

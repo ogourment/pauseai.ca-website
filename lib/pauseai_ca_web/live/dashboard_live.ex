@@ -1,7 +1,6 @@
 defmodule PauseAiCaWeb.DashboardLive do
   use PauseAiCaWeb, :live_view
 
-  alias PauseAiCa.Accounts
   alias PauseAiCa.Engagement
   alias PauseAiCa.Engagement.Action
   alias PauseAiCa.Engagement.Ladder
@@ -16,7 +15,7 @@ defmodule PauseAiCaWeb.DashboardLive do
     {:ok,
      socket
      |> assign(:locale, locale)
-     |> assign(:page_title, if(locale == "fr", do: "Mes actions", else: "My actions"))
+     |> assign(:page_title, if(locale == "fr", do: "Mon tableau de bord", else: "My dashboard"))
      |> assign(
        :recommendation,
        Ladder.recommendation(confirmed_actions, locale)
@@ -26,12 +25,10 @@ defmodule PauseAiCaWeb.DashboardLive do
      |> assign(:pending, Engagement.list_pending_actions(scope))
      |> assign(:editing_id, nil)
      |> assign(:selected_type, nil)
-     |> assign(:needs_local_context, is_nil(scope.user.fsa))
+     |> assign(:needs_local_context, is_nil(scope.user.postal_code))
+     |> assign(:representative, scope.user.representative)
      |> assign(:saved_resources, scope.user.saved_resources)
-     |> assign(
-       :local_context_form,
-       to_form(Accounts.change_user_local_context(scope.user), as: "local_context")
-     )
+     |> assign(:custom_resource_urls, scope.user.custom_resource_urls)
      |> assign_form(Engagement.new_action(scope))
      |> stream(:actions, Enum.reject(actions, &Action.pending?/1))}
   end
@@ -47,22 +44,6 @@ defmodule PauseAiCaWeb.DashboardLive do
      socket
      |> assign(:form, to_form(changeset))
      |> assign(:selected_type, params["action_type"])}
-  end
-
-  def handle_event("save-local-context", %{"local_context" => params}, socket) do
-    case Accounts.update_user_local_context(socket.assigns.current_scope.user, params) do
-      {:ok, _user} ->
-        {:noreply,
-         socket
-         |> assign(:needs_local_context, false)
-         |> put_flash(
-           :info,
-           if(socket.assigns.locale == "fr", do: "Région enregistrée.", else: "Region saved.")
-         )}
-
-      {:error, changeset} ->
-        {:noreply, assign(socket, :local_context_form, to_form(changeset, as: "local_context"))}
-    end
   end
 
   def handle_event("save", %{"action" => params}, socket) do
@@ -273,7 +254,7 @@ defmodule PauseAiCaWeb.DashboardLive do
       flash={@flash}
       current_scope={@current_scope}
       locale={@locale}
-      translated_path={if(@locale == "fr", do: ~p"/en/actions", else: ~p"/fr/actions")}
+      translated_path={if(@locale == "fr", do: ~p"/en/dashboard", else: ~p"/fr/tableau-de-bord")}
     >
       <section class="mx-auto grid max-w-6xl gap-10 px-5 py-12 lg:grid-cols-[0.8fr_1.2fr] lg:py-20">
         <div>
@@ -281,10 +262,7 @@ defmodule PauseAiCaWeb.DashboardLive do
             {if(@locale == "fr", do: "Votre espace privé", else: "Your private workspace")}
           </p>
           <h1 class="mt-3 font-serif text-5xl leading-tight text-stone-950">
-            {if(@locale == "fr",
-              do: "Notez ce que vous avez fait et choisissez la suite.",
-              else: "Record what you did and choose what comes next."
-            )}
+            {if(@locale == "fr", do: "Mon tableau de bord", else: "My dashboard")}
           </h1>
 
           <div
@@ -298,44 +276,42 @@ defmodule PauseAiCaWeb.DashboardLive do
             <p class="mt-2 leading-7 text-stone-600">
               {if(@locale == "fr",
                 do:
-                  "Votre RTA nous permet d’identifier votre circonscription et de vous envoyer des nouvelles locales plus pertinentes.",
-                else: "Your FSA lets us identify your riding and send more relevant local updates."
+                  "Ajoutez votre code postal complet à votre profil pour identifier votre circonscription et votre député.",
+                else: "Add your full postal code to your profile to identify your riding and MP."
               )}
             </p>
-            <.form
-              for={@local_context_form}
-              id="local-context-form"
-              phx-submit="save-local-context"
-              class="mt-4 space-y-4"
+            <.link
+              navigate={if(@locale == "fr", do: ~p"/fr/profil", else: ~p"/en/profile")}
+              class="mt-4 inline-flex rounded-full bg-stone-900 px-5 py-3 font-semibold text-white hover:bg-stone-700"
             >
-              <.input
-                field={@local_context_form[:fsa]}
-                type="text"
-                label={
-                  if(@locale == "fr",
-                    do: "RTA (3 premiers caractères du code postal)",
-                    else: "FSA (first 3 postal-code characters)"
-                  )
-                }
-                placeholder={if(@locale == "fr", do: "H2X", else: "K1A")}
-                maxlength="3"
-                autocomplete="postal-code"
-                class="w-full input bg-white text-stone-950 uppercase placeholder:text-stone-400"
-              />
-              <.input
-                field={@local_context_form[:local_updates]}
-                type="checkbox"
-                label={
-                  if(@locale == "fr",
-                    do: "M’envoyer des nouvelles locales et les nouveaux développements importants",
-                    else: "Send me local news and important new developments"
-                  )
-                }
-              />
-              <button class="rounded-full bg-stone-900 px-5 py-3 font-semibold text-white hover:bg-stone-700">
-                {if(@locale == "fr", do: "Enregistrer ma région", else: "Save my region")}
-              </button>
-            </.form>
+              {if(@locale == "fr", do: "Compléter mon profil", else: "Complete my profile")}
+            </.link>
+          </div>
+
+          <div
+            :if={@representative}
+            id="dashboard-mp"
+            class="mt-8 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm"
+          >
+            <h2 class="font-serif text-2xl text-stone-950">
+              {if(@locale == "fr", do: "Mon député", else: "My MP")}
+            </h2>
+            <p class="mt-3 font-heading text-xl font-bold text-stone-950">
+              {@representative["name"]}
+            </p>
+            <p class="text-stone-600">{@representative["district"]} · {@representative["party"]}</p>
+            <p class="mt-3 text-sm text-stone-600">
+              {if(@locale == "fr",
+                do: "Position sur une pause de l’IA avancée : pas encore documentée.",
+                else: "Position on pausing advanced AI: not yet documented."
+              )}
+            </p>
+            <.link
+              navigate={if(@locale == "fr", do: ~p"/fr/profil", else: ~p"/en/profile")}
+              class="mt-3 inline-block text-sm font-semibold underline"
+            >
+              {if(@locale == "fr", do: "Modifier mon profil", else: "Edit my profile")}
+            </.link>
           </div>
           <p class="mt-5 max-w-lg text-lg leading-8 text-stone-600">
             {if(@locale == "fr",
@@ -347,7 +323,7 @@ defmodule PauseAiCaWeb.DashboardLive do
           </p>
 
           <div
-            :if={@saved_resources != []}
+            :if={@saved_resources != [] or @custom_resource_urls != []}
             id="saved-resources"
             class="mt-8 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm"
           >
@@ -363,7 +339,23 @@ defmodule PauseAiCaWeb.DashboardLive do
                   {saved_resource_label(resource, @locale)}
                 </a>
               </li>
+              <li :for={url <- @custom_resource_urls}>
+                <a
+                  class="font-semibold text-stone-700 underline decoration-brand underline-offset-4"
+                  href={url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {url}
+                </a>
+              </li>
             </ul>
+            <.link
+              navigate={if(@locale == "fr", do: ~p"/fr/profil", else: ~p"/en/profile")}
+              class="mt-4 inline-block text-sm font-semibold underline"
+            >
+              {if(@locale == "fr", do: "Gérer mon parcours", else: "Manage my learning path")}
+            </.link>
           </div>
 
           <div class="mt-8 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm">

@@ -5,7 +5,7 @@ defmodule PauseAiCaWeb.DashboardLiveTest do
 
   alias PauseAiCa.Engagement
   alias PauseAiCa.Engagement.Action
-  alias PauseAiCa.{Accounts, Repo}
+  alias PauseAiCa.Accounts
 
   setup :register_and_log_in_user
 
@@ -61,18 +61,10 @@ defmodule PauseAiCaWeb.DashboardLiveTest do
     assert has_element?(view, "#ladder-step-1", "Start here")
   end
 
-  test "stores an FSA and explicit local-update consent", %{conn: conn, user: user} do
+  test "sends members to their profile for riding information", %{conn: conn} do
     {:ok, view, _html} = live(conn, ~p"/dashboard")
-    assert has_element?(view, "#fsa-reminder")
 
-    view
-    |> form("#local-context-form", local_context: %{fsa: "h2x", local_updates: true})
-    |> render_submit()
-
-    refute has_element?(view, "#fsa-reminder")
-    stored = Repo.get!(Accounts.User, user.id)
-    assert stored.fsa == "H2X"
-    assert stored.local_updates
+    assert has_element?(view, "#fsa-reminder a[href='/en/profile']", "Complete my profile")
   end
 
   test "shows saved reading and formats dates for people", %{conn: conn, user: user, scope: scope} do
