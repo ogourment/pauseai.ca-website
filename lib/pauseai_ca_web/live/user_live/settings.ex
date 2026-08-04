@@ -9,63 +9,78 @@ defmodule PauseAiCaWeb.UserLive.Settings do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="text-center">
-        <.header>
-          Account Settings
-          <:subtitle>Manage your account email address and password settings</:subtitle>
-        </.header>
-      </div>
+      <section id="account-settings" class="mx-auto max-w-3xl px-5 py-12 sm:py-16">
+        <div class="text-center">
+          <.header>
+            Account settings · Paramètres du compte
+            <:subtitle>
+              Manage your email and password · Gérez votre adresse courriel et votre mot de passe
+            </:subtitle>
+          </.header>
+        </div>
 
-      <.form for={@email_form} id="email_form" phx-submit="update_email" phx-change="validate_email">
-        <.input
-          field={@email_form[:email]}
-          type="email"
-          label="Email"
-          autocomplete="username"
-          spellcheck="false"
-          required
-        />
-        <.button variant="primary" phx-disable-with="Changing...">Change Email</.button>
-      </.form>
+        <.form
+          for={@email_form}
+          id="email_form"
+          class="mt-10 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8"
+          phx-submit="update_email"
+          phx-change="validate_email"
+        >
+          <h2 class="mb-5 font-heading text-2xl text-stone-950">Email · Adresse courriel</h2>
+          <.input
+            field={@email_form[:email]}
+            type="email"
+            label="Email"
+            autocomplete="username"
+            spellcheck="false"
+            required
+          />
+          <.button variant="primary" phx-disable-with="Changing... · Modification...">
+            Change Email · Modifier l'adresse
+          </.button>
+        </.form>
 
-      <div class="divider" />
-
-      <.form
-        for={@password_form}
-        id="password_form"
-        class="scroll-mt-24"
-        action={~p"/users/update-password"}
-        method="post"
-        phx-change="validate_password"
-        phx-submit="update_password"
-        phx-trigger-action={@trigger_submit}
-      >
-        <input
-          name={@password_form[:email].name}
-          type="hidden"
-          id="hidden_user_email"
-          spellcheck="false"
-          value={@current_email}
-        />
-        <.input
-          field={@password_form[:password]}
-          type="password"
-          label="New password"
-          autocomplete="new-password"
-          spellcheck="false"
-          required
-        />
-        <.input
-          field={@password_form[:password_confirmation]}
-          type="password"
-          label="Confirm new password"
-          autocomplete="new-password"
-          spellcheck="false"
-        />
-        <.button variant="primary" phx-disable-with="Saving...">
-          Save Password
-        </.button>
-      </.form>
+        <.form
+          for={@password_form}
+          id="password_form"
+          class="mt-8 scroll-mt-24 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8"
+          action={~p"/users/update-password"}
+          method="post"
+          phx-change="validate_password"
+          phx-submit="update_password"
+          phx-trigger-action={@trigger_submit}
+        >
+          <h2 class="mb-2 font-heading text-2xl text-stone-950">Password · Mot de passe</h2>
+          <p class="mb-5 text-sm leading-6 text-stone-600">
+            Use at least 12 characters. · Utilisez au moins 12 caractères.
+          </p>
+          <input
+            name={@password_form[:email].name}
+            type="hidden"
+            id="hidden_user_email"
+            spellcheck="false"
+            value={@current_email}
+          />
+          <.input
+            field={@password_form[:password]}
+            type="password"
+            label="New password · Nouveau mot de passe"
+            autocomplete="new-password"
+            spellcheck="false"
+            required
+          />
+          <.input
+            field={@password_form[:password_confirmation]}
+            type="password"
+            label="Confirm new password · Confirmer le nouveau mot de passe"
+            autocomplete="new-password"
+            spellcheck="false"
+          />
+          <.button variant="primary" phx-disable-with="Saving... · Enregistrement...">
+            Save Password · Enregistrer le mot de passe
+          </.button>
+        </.form>
+      </section>
     </Layouts.app>
     """
   end

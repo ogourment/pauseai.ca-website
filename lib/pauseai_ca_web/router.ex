@@ -70,6 +70,13 @@ defmodule PauseAiCaWeb.Router do
 
   ## Authentication routes
 
+  scope "/admin" do
+    pipe_through [:browser, :require_authenticated_user, :require_superadmin_user]
+
+    acceptance_harness("/acceptance")
+    acceptance_harness_versions("/versions")
+  end
+
   scope "/", PauseAiCaWeb do
     pipe_through [:browser, :require_authenticated_user]
 

@@ -53,6 +53,16 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
         <p class="mt-4 max-w-3xl text-stone-600">
           First-party database totals from accounts and confirmed private action records. Analytics may complement these figures, but is not their source.
         </p>
+        <nav class="mt-6 flex flex-wrap gap-3" aria-label="Superadmin tools">
+          <a
+            href="/admin/versions"
+            class="rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-semibold text-stone-800 hover:border-brand"
+          >Deployment versions</a>
+          <a
+            href="/admin/acceptance"
+            class="rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-semibold text-stone-800 hover:border-brand"
+          >Acceptance evidence</a>
+        </nav>
         <div class="mt-9 grid gap-4 sm:grid-cols-3">
           <.metric id="metric-users" label="Accounts" value={@metrics.users} />
           <.metric

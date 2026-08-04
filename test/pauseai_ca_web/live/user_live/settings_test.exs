@@ -90,6 +90,14 @@ defmodule PauseAiCaWeb.UserLive.SettingsTest do
   end
 
   describe "update password form" do
+    test "uses the account card layout", %{conn: conn, user: user} do
+      {:ok, view, _html} = live(log_in_user(conn, user), ~p"/users/settings")
+
+      assert has_element?(view, "#account-settings.max-w-3xl")
+      assert has_element?(view, "#password_form.rounded-3xl")
+      assert has_element?(view, "#password_form", "Mot de passe")
+    end
+
     setup %{conn: conn} do
       user = user_fixture()
       %{conn: log_in_user(conn, user), user: user}

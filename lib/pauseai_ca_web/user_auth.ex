@@ -293,6 +293,20 @@ defmodule PauseAiCaWeb.UserAuth do
     end
   end
 
+  @doc "Restricts browser routes to confirmed superadmin accounts."
+  def require_superadmin_user(conn, _opts) do
+    case conn.assigns.current_scope do
+      %Scope{user: %Accounts.User{superadmin: true, confirmed_at: confirmed_at}}
+      when not is_nil(confirmed_at) ->
+        conn
+
+      _ ->
+        conn
+        |> send_resp(:forbidden, "superadmin required")
+        |> halt()
+    end
+  end
+
   defp maybe_store_return_to(%{method: "GET"} = conn) do
     put_session(conn, :user_return_to, current_path(conn))
   end
