@@ -29,4 +29,14 @@ defmodule PauseAiCa.Engagement.LadderTest do
              %Action{action_type: "organized"}
            ]) == 6
   end
+
+  test "groups action totals into the six visual ladder rungs" do
+    assert Ladder.counts([
+             {"learned", 2},
+             {"event", 3},
+             {"joined", 1},
+             {"contacted_representative", 4},
+             {"organized", 1}
+           ]) == [2, 0, 4, 4, 0, 1]
+  end
 end

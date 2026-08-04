@@ -77,9 +77,7 @@ function initializeBeliefCheck() {
 
   const saveAnswers = () => {
     localStorage.setItem(beliefStorageKey, JSON.stringify(answers))
-    status.textContent = locale === "fr"
-      ? "Enregistré uniquement dans ce navigateur."
-      : "Saved only in this browser."
+    status.textContent = locale === "fr" ? "Réponse enregistrée." : "Answer saved."
   }
 
   check.querySelectorAll(".belief-question").forEach(question => {
@@ -135,11 +133,6 @@ function initializeBeliefCheck() {
   })
 
   renderAnswers()
-  if (Object.keys(answers).length > 0) {
-    status.textContent = locale === "fr"
-      ? "Réponses restaurées depuis ce navigateur."
-      : "Answers restored from this browser."
-  }
 }
 
 document.addEventListener("DOMContentLoaded", initializeBeliefCheck)

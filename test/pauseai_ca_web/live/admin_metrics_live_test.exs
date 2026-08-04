@@ -13,6 +13,8 @@ defmodule PauseAiCaWeb.AdminMetricsLiveTest do
     assert has_element?(view, "#admin-metrics")
     assert has_element?(view, "#metric-users")
     assert has_element?(view, "#metrics-by-type")
+    assert has_element?(view, "#metrics-by-type li", "Learn")
+    assert has_element?(view, "#metrics-by-type li", "Organize")
     assert has_element?(view, "a[href='/admin/versions']", "Deployment versions")
     assert has_element?(view, "a[href='/admin/acceptance']", "Acceptance evidence")
   end

@@ -79,7 +79,7 @@ defmodule PauseAiCaWeb.Layouts do
           </summary>
           <div class="absolute right-0 z-50 mt-2 w-64 overflow-hidden rounded-xl border border-stone-200 bg-white shadow-lg">
             <.link
-              navigate={if(@locale == "fr", do: ~p"/fr/strategie", else: ~p"/en/strategy")}
+              href={if(@locale == "fr", do: ~p"/fr/strategie", else: ~p"/en/strategy")}
               class="block border-b border-stone-100 px-4 py-3 hover:bg-brand-wash"
             >
               <span class="block font-heading text-base font-bold text-stone-950">
@@ -93,7 +93,7 @@ defmodule PauseAiCaWeb.Layouts do
               </span>
             </.link>
             <.link
-              navigate={
+              href={
                 if(@locale == "fr",
                   do: ~p"/fr/strategie#engagement-ladder",
                   else: ~p"/en/strategy#engagement-ladder"
@@ -127,6 +127,19 @@ defmodule PauseAiCaWeb.Layouts do
                 )}
               </span>
             </a>
+            <a
+              href="https://luma.com/calendar/cal-tsYv79s4aTQC16Q"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="block border-b border-stone-100 px-4 py-3 hover:bg-brand-wash"
+            >
+              <span class="block font-heading text-base font-bold text-stone-950">
+                {if(@locale == "fr", do: "Événements", else: "Events")}
+              </span>
+              <span class="block text-xs leading-5 text-stone-500">
+                {if(@locale == "fr", do: "Calendrier canadien", else: "Canada-wide calendar")}
+              </span>
+            </a>
             <%!-- New tab: these leave for another site, and a visitor part-way
                  through reading should not lose their place. --%>
             <a
@@ -145,14 +158,8 @@ defmodule PauseAiCaWeb.Layouts do
 
         <.link
           class="hidden text-base font-medium text-stone-700 hover:text-stone-950 lg:inline"
-          navigate={if(@locale == "fr", do: ~p"/fr/a-propos", else: ~p"/en/about")}
+          href={if(@locale == "fr", do: ~p"/fr/a-propos", else: ~p"/en/about")}
         >{if(@locale == "fr", do: "À propos", else: "About")}</.link>
-        <a
-          class="hidden text-base font-medium text-stone-700 hover:text-stone-950 lg:inline"
-          href="https://luma.com/calendar/cal-tsYv79s4aTQC16Q"
-          target="_blank"
-          rel="noopener noreferrer"
-        >{if(@locale == "fr", do: "Événements", else: "Events")}</a>
 
         <%= if @current_scope do %>
           <details id="account-menu" class="act-menu relative">
@@ -160,32 +167,40 @@ defmodule PauseAiCaWeb.Layouts do
               {@current_scope.user.email}
               <span aria-hidden="true" class="text-xs">▾</span>
             </summary>
-            <div class="absolute right-0 z-50 mt-2 w-64 overflow-hidden rounded-xl border border-stone-200 bg-white shadow-lg">
+            <div class="absolute right-0 z-50 mt-2 w-64 overflow-hidden rounded-xl border border-stone-200 bg-white p-2 shadow-lg">
               <.link
                 navigate={if(@locale == "fr", do: ~p"/fr/actions", else: ~p"/en/actions")}
-                class="block border-b border-stone-100 px-4 py-3 font-semibold text-stone-900 hover:bg-brand-wash"
+                class="block rounded-lg px-3 py-2.5 font-semibold text-stone-900 hover:bg-brand-wash"
               >{if(@locale == "fr", do: "Mes actions", else: "My actions")}</.link>
+              <div role="separator" class="my-2 border-t border-stone-200"></div>
               <.link
                 href={~p"/users/settings"}
-                class="block border-b border-stone-100 px-4 py-3 font-semibold text-stone-900 hover:bg-brand-wash"
+                class="block rounded-lg px-3 py-2.5 font-semibold text-stone-900 hover:bg-brand-wash"
               >{if(@locale == "fr", do: "Paramètres", else: "Settings")}</.link>
               <.link
                 href={~p"/users/settings#password_form"}
-                class="block border-b border-stone-100 px-4 py-3 font-semibold text-stone-900 hover:bg-brand-wash"
+                class="block rounded-lg px-3 py-2.5 font-semibold text-stone-900 hover:bg-brand-wash"
               >{if(@locale == "fr", do: "Changer le mot de passe", else: "Change password")}</.link>
+              <div
+                :if={@current_scope.user.superadmin}
+                role="separator"
+                class="my-2 border-t border-stone-200"
+              >
+              </div>
               <.link
                 :if={@current_scope.user.superadmin}
                 navigate={~p"/admin/metrics"}
-                class="block border-b border-stone-100 px-4 py-3 font-semibold text-stone-900 hover:bg-brand-wash"
+                class="block rounded-lg px-3 py-2.5 font-semibold text-stone-900 hover:bg-brand-wash"
               >Admin</.link>
+              <div role="separator" class="my-2 border-t border-stone-200"></div>
               <a
-                class="block border-b border-stone-100 px-4 py-3 font-semibold text-stone-900 hover:bg-brand-wash"
+                class="block rounded-lg px-3 py-2.5 font-semibold text-stone-900 hover:bg-brand-wash"
                 href={@translated_path || if(@locale == "fr", do: ~p"/en", else: ~p"/fr")}
               >
                 {if(@locale == "fr", do: "Passer à l'anglais", else: "Passer au français")}
               </a>
               <.link
-                class="block px-4 py-3 font-semibold text-stone-700 hover:bg-brand-wash hover:text-stone-950"
+                class="block rounded-lg px-3 py-2.5 font-semibold text-stone-700 hover:bg-brand-wash hover:text-stone-950"
                 href={~p"/users/log-out"}
                 method="delete"
               >

@@ -64,6 +64,12 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
                "Start a group"
              )
 
+      assert has_element?(
+               view,
+               "#involvement-menu a[href='https://luma.com/calendar/cal-tsYv79s4aTQC16Q']",
+               "Events"
+             )
+
       # They route through the app so a departure can be recorded, and open in a
       # new tab so a reader does not lose their place.
       assert has_element?(view, "#act-join[href='/act/join?locale=en'][target='_blank']")
@@ -71,13 +77,11 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
       assert has_element?(view, "#act-actions[href='/act/actions?locale=en'][target='_blank']")
     end
 
-    test "About follows the involvement menu", %{conn: conn} do
+    test "About follows the involvement menu and events are inside it", %{conn: conn} do
       html = conn |> get(~p"/en") |> html_response(200)
 
       assert html =~ ~r/id="involvement-menu".*href="\/en\/about"/s
-
-      assert html =~
-               ~r/href="https:\/\/luma.com\/calendar\/cal-tsYv79s4aTQC16Q".*>Events<\/a>/s
+      refute html =~ ~r/id="involvement-menu".*<\/details>.*href="https:\/\/luma.com\/calendar/s
     end
 
     test "a signed-in visitor gets one account menu", %{conn: conn} do
@@ -101,6 +105,7 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
              )
 
       assert has_element?(view, "#account-menu a[href='/users/log-out']", "Log out")
+      assert has_element?(view, "#account-menu [role='separator']")
     end
 
     test "the Act menu speaks French on French pages", %{conn: conn} do
