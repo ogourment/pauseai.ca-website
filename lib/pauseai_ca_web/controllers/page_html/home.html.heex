@@ -111,6 +111,36 @@
           </button>
           <p id="local-status" class="text-sm text-stone-500" aria-live="polite"></p>
         </div>
+        <div
+          id="save-progress-invitation"
+          class="hidden rounded-3xl border border-brand/40 bg-brand-wash p-6"
+          aria-live="polite"
+        >
+          <p class="font-serif text-2xl text-stone-950">
+            {if(@locale == "fr",
+              do: "Enregistrez vos réponses et retrouvez votre parcours sur un autre appareil.",
+              else: "Save your answers and continue your path on another device."
+            )}
+          </p>
+          <div class="mt-4 flex flex-wrap items-center gap-4">
+            <.link
+              id="save-question-progress"
+              href={~p"/users/register?from=questions"}
+              class="rounded-full bg-stone-900 px-5 py-3 font-semibold text-white hover:bg-stone-700"
+            >
+              {if(@locale == "fr",
+                do: "Créer un compte pour enregistrer votre parcours",
+                else: "Create an account to save your progress"
+              )}
+            </.link>
+            <.link
+              href={if(@locale == "fr", do: ~p"/fr/confidentialite", else: ~p"/en/privacy")}
+              class="text-sm font-semibold text-stone-600 underline underline-offset-4"
+            >
+              {if(@locale == "fr", do: "Politique de confidentialité", else: "Privacy policy")}
+            </.link>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -118,10 +148,7 @@
   <section id="reading-path" class="border-y border-stone-200 bg-white">
     <div class="mx-auto max-w-6xl px-5 py-20">
       <div class="max-w-2xl">
-        <p class="eyebrow">
-          {if(@locale == "fr", do: "Explorer les arguments", else: "Explore the case")}
-        </p>
-        <h2 class="mt-3 font-serif text-4xl text-stone-950">
+        <h2 class="font-serif text-4xl text-stone-950">
           {if(@locale == "fr",
             do: "Commencez là où vous avez des questions.",
             else: "Start where you have questions."
@@ -159,6 +186,8 @@
           cta={
             if(@locale == "fr", do: "Lire la synthèse source", else: "Read the source overview")
           }
+          bookmark="risk"
+          locale={@locale}
         />
         <.resource_card
           id="resource-pause"
@@ -185,6 +214,8 @@
           }
           source={if(@locale == "fr", do: "Pause IA", else: "PauseAI")}
           cta={if(@locale == "fr", do: "Examiner la proposition", else: "Examine the proposal")}
+          bookmark="pause"
+          locale={@locale}
         />
         <.resource_card
           id="resource-coordination"
@@ -211,6 +242,8 @@
           }
           source={if(@locale == "fr", do: "Pause IA", else: "PauseAI")}
           cta={if(@locale == "fr", do: "Explorer les mécanismes", else: "Explore the mechanisms")}
+          bookmark="coordination"
+          locale={@locale}
         />
         <.resource_card
           id="resource-agency"
@@ -232,6 +265,8 @@
           href={if(@locale == "fr", do: ~p"/fr/strategie", else: ~p"/en/strategy")}
           source="PauseAI Canada"
           cta={if(@locale == "fr", do: "Lire le résumé", else: "Read the summary")}
+          bookmark="agency"
+          locale={@locale}
         />
       </div>
     </div>
@@ -262,13 +297,4 @@
       </div>
     </div>
   </section>
-
-  <footer class="border-t border-stone-200">
-    <div class="mx-auto flex max-w-6xl flex-col gap-4 px-5 py-10 text-sm text-stone-500 sm:flex-row sm:items-center">
-      <p class="mr-auto">PauseAI Canada</p>
-      <a class="hover:text-stone-900" href="https://pauseai.info/">PauseAI.info</a>
-      <a class="hover:text-stone-900" href="https://pauseia.fr/fr">Pause IA France</a>
-      <a class="hover:text-stone-900" href="https://github.com/ogourment/pauseai.ca-website">Source</a>
-    </div>
-  </footer>
 </Layouts.app>

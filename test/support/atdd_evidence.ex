@@ -3,6 +3,7 @@ defmodule PauseAiCaWeb.AtddEvidence do
 
   defdelegate reset!(title, scenarios, run_context), to: AcceptanceHarness.Evidence
   defdelegate record_step(name, title, description, metadata), to: AcceptanceHarness.Evidence
+  defdelegate record_scenario_runtime(scenario, duration_ms), to: AcceptanceHarness.Evidence
   defdelegate mark_scenario_success!(scenario), to: AcceptanceHarness.Evidence
   defdelegate finalize!(), to: AcceptanceHarness.Evidence
 end

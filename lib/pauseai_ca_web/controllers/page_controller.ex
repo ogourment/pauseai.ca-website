@@ -8,6 +8,10 @@ defmodule PauseAiCaWeb.PageController do
   def strategy_fr(conn, _params), do: render_content(conn, :strategy, "fr", "Notre stratégie")
   def about_en(conn, _params), do: render_content(conn, :about, "en", "Who we are")
   def about_fr(conn, _params), do: render_content(conn, :about, "fr", "Qui sommes-nous?")
+  def privacy_en(conn, _params), do: render_content(conn, :privacy, "en", "Privacy policy")
+
+  def privacy_fr(conn, _params),
+    do: render_content(conn, :privacy, "fr", "Politique de confidentialité")
 
   defp render_home(conn, locale) do
     Gettext.put_locale(PauseAiCaWeb.Gettext, locale)

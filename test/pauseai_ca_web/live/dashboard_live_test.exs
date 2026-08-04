@@ -5,6 +5,7 @@ defmodule PauseAiCaWeb.DashboardLiveTest do
 
   alias PauseAiCa.Engagement
   alias PauseAiCa.Engagement.Action
+  alias PauseAiCa.{Accounts, Repo}
 
   setup :register_and_log_in_user
 
@@ -58,6 +59,37 @@ defmodule PauseAiCaWeb.DashboardLiveTest do
 
     assert has_element?(view, "#engagement-ladder")
     assert has_element?(view, "#ladder-step-1", "Start here")
+  end
+
+  test "stores an FSA and explicit local-update consent", %{conn: conn, user: user} do
+    {:ok, view, _html} = live(conn, ~p"/dashboard")
+    assert has_element?(view, "#fsa-reminder")
+
+    view
+    |> form("#local-context-form", local_context: %{fsa: "h2x", local_updates: true})
+    |> render_submit()
+
+    refute has_element?(view, "#fsa-reminder")
+    stored = Repo.get!(Accounts.User, user.id)
+    assert stored.fsa == "H2X"
+    assert stored.local_updates
+  end
+
+  test "shows saved reading and formats dates for people", %{conn: conn, user: user, scope: scope} do
+    {:ok, user} = Accounts.save_resource(user, "risk")
+    conn = log_in_user(conn, user)
+
+    {:ok, _action} =
+      Engagement.create_action(scope, %{
+        "action_type" => "learned",
+        "happened_on" => ~D[2026-08-04],
+        "confirmed_at" => DateTime.utc_now(:second)
+      })
+
+    {:ok, view, html} = live(conn, ~p"/en/actions")
+    assert has_element?(view, "#saved-resources", "Understand existential risk")
+    assert html =~ "August 4, 2026"
+    refute html =~ ">2026-08-04<"
   end
 
   test "requires an authenticated user", %{conn: _authenticated_conn} do

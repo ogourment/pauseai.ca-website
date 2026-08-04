@@ -28,6 +28,14 @@ if System.get_env("ATDD") == "true" do
         source_file: __ENV__.file
       },
       %{
+        id: "interest-to-understanding-saved-path",
+        title: "A curious visitor saves a personal path before joining",
+        roles: ["Visitor"],
+        language: "French",
+        device: "Desktop",
+        source_file: __ENV__.file
+      },
+      %{
         id: "warning-shot-to-political-contact",
         title: "A constituent turns a warning shot into a message to their MP",
         roles: ["Constituent"],
@@ -64,11 +72,29 @@ if System.get_env("ATDD") == "true" do
       )
 
       conn
+      |> visit("/fr")
+      |> evaluate("""
+      (() => {
+        document.querySelectorAll(".belief-question").forEach((question) => {
+          question.querySelector('[data-answer="4"]').click()
+        })
+      })()
+      """)
+      |> assert_has("#save-progress-invitation", text: "Créer un compte")
+      |> assert_has("a[href='/users/register?bookmark=risk']", text: "Enregistrer")
+      |> assert_has("a[href='/fr/confidentialite']", text: "Politique de confidentialité")
+      |> capture(
+        "engagement-02-saved-learning-path.png",
+        Enum.at(@scenarios, 2),
+        "After answering the three questions, a visitor can save progress or bookmark one useful argument with only an email account"
+      )
+
+      conn
       |> visit("/fr/tir-de-semonce")
       |> assert_has("#mp-lookup-form")
       |> capture(
-        "engagement-02-warning-shot.png",
-        Enum.at(@scenarios, 2),
+        "engagement-03-warning-shot.png",
+        Enum.at(@scenarios, 3),
         "The Warning Shot offers a concrete route from concern to political contact"
       )
 
@@ -84,6 +110,11 @@ if System.get_env("ATDD") == "true" do
       browser =
         browser
         |> visit("/fr/actions")
+        |> assert_has("#fsa-reminder", text: "Votre RTA")
+        |> fill_in("RTA (3 premiers caractères du code postal)", with: "H2X")
+        |> check("M’envoyer des nouvelles locales et les nouveaux développements importants")
+        |> click_button("Enregistrer ma région")
+        |> refute_has("#fsa-reminder")
         |> assert_has("#action-form")
         |> evaluate("""
         (() => {
@@ -101,7 +132,7 @@ if System.get_env("ATDD") == "true" do
       |> assert_has("#suggested-next-step", text: "En parler à une personne")
       |> refute_has("#pending-actions")
       |> capture(
-        "engagement-03-member-next-step.png",
+        "engagement-04-member-next-step.png",
         Enum.at(@scenarios, 1),
         "A member-recorded learning action still changes the suggested next step after refresh"
       )
@@ -113,8 +144,8 @@ if System.get_env("ATDD") == "true" do
       |> assert_has("#metric-actions")
       |> assert_has("#metrics-by-type")
       |> capture(
-        "engagement-04-admin-metrics.png",
-        Enum.at(@scenarios, 3),
+        "engagement-05-admin-metrics.png",
+        Enum.at(@scenarios, 4),
         "The superadmin sees aggregate movement progress from first-party database records"
       )
 
@@ -123,7 +154,9 @@ if System.get_env("ATDD") == "true" do
     end
 
     defp capture(conn, filename, scenario, description) do
+      started_at = System.monotonic_time(:millisecond)
       conn = BrowserScreenshot.capture(conn, filename, &PhoenixTest.Playwright.screenshot/2)
+      duration_ms = System.monotonic_time(:millisecond) - started_at
 
       AtddEvidence.record_step(filename, scenario.title, description, %{
         "scenario_id" => scenario.id,
@@ -133,8 +166,11 @@ if System.get_env("ATDD") == "true" do
         "language" => scenario.language,
         "device" => scenario.device,
         "user" => hd(scenario.roles),
-        "click_target" => "-"
+        "click_target" => "-",
+        "duration_ms" => duration_ms
       })
+
+      AtddEvidence.record_scenario_runtime(scenario, duration_ms)
 
       conn
     end

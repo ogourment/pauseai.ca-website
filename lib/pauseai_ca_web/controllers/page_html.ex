@@ -43,6 +43,8 @@ defmodule PauseAiCaWeb.PageHTML do
   attr :href, :string, required: true
   attr :source, :string, required: true
   attr :cta, :string, required: true
+  attr :bookmark, :string, required: true
+  attr :locale, :string, required: true
 
   def resource_card(assigns) do
     ~H"""
@@ -63,6 +65,13 @@ defmodule PauseAiCaWeb.PageHTML do
         {@cta} <span aria-hidden="true">&nbsp;↗</span>
       </a>
       <p class="mt-5 text-xs text-stone-400">Source: {@source}</p>
+      <.link
+        href={~p"/users/register?bookmark=#{@bookmark}"}
+        class="mt-5 inline-flex items-center gap-2 rounded-full border border-stone-300 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:border-brand hover:bg-white"
+      >
+        <.icon name="hero-bookmark" class="size-4" />
+        {if(@locale == "fr", do: "Enregistrer", else: "Bookmark")}
+      </.link>
     </article>
     """
   end

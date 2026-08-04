@@ -11,6 +11,10 @@ defmodule PauseAiCa.Accounts.User do
     field :confirmed_at, :utc_datetime
     field :authenticated_at, :utc_datetime, virtual: true
     field :superadmin, :boolean, default: false
+    field :fsa, :string
+    field :local_updates, :boolean, default: false
+    field :saved_resources, {:array, :string}, default: []
+    field :belief_answers, :map, default: %{}
 
     timestamps(type: :utc_datetime)
   end
@@ -113,6 +117,18 @@ defmodule PauseAiCa.Accounts.User do
   def confirm_changeset(user) do
     now = DateTime.utc_now(:second)
     change(user, confirmed_at: now)
+  end
+
+  def local_context_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:fsa, :local_updates])
+    |> update_change(:fsa, fn value ->
+      value |> String.upcase() |> String.replace(~r/\s+/, "") |> String.slice(0, 3)
+    end)
+    |> validate_required([:fsa])
+    |> validate_format(:fsa, ~r/^[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJKLMNPRSTVWXYZ]$/,
+      message: "must be the first three characters of a Canadian postal code"
+    )
   end
 
   @doc """

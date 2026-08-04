@@ -3,6 +3,7 @@ defmodule PauseAiCaWeb.UserLive.RegistrationTest do
 
   import Phoenix.LiveViewTest
   import PauseAiCa.AccountsFixtures
+  alias PauseAiCa.Accounts
 
   describe "Registration page" do
     test "renders registration page", %{conn: conn} do
@@ -47,6 +48,34 @@ defmodule PauseAiCaWeb.UserLive.RegistrationTest do
         |> follow_redirect(conn, ~p"/users/log-in")
 
       assert html =~ "Check #{email} for your secure sign-in link."
+    end
+
+    test "saves the bookmarked argument with the email account", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register?bookmark=risk")
+      email = unique_user_email()
+
+      lv
+      |> form("#registration_form", user: valid_user_attributes(email: email))
+      |> render_submit()
+
+      assert Accounts.get_user_by_email(email).saved_resources == ["risk"]
+    end
+
+    test "saves question progress with the email account", %{conn: conn} do
+      {:ok, lv, _html} =
+        live(conn, ~p"/users/register?from=questions&risk=4&pause=3&coordination=2")
+
+      email = unique_user_email()
+
+      lv
+      |> form("#registration_form", user: valid_user_attributes(email: email))
+      |> render_submit()
+
+      assert Accounts.get_user_by_email(email).belief_answers == %{
+               "risk" => "4",
+               "pause" => "3",
+               "coordination" => "2"
+             }
     end
 
     test "renders errors for duplicated email", %{conn: conn} do
