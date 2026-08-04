@@ -58,7 +58,7 @@ defmodule PauseAiCaWeb.UserSessionControllerTest do
         })
 
       assert redirected_to(conn) == "/foo/bar"
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Welcome back!"
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Welcome back. · Bon retour."
     end
 
     test "redirects to login page with invalid credentials", %{conn: conn, user: user} do
@@ -67,7 +67,9 @@ defmodule PauseAiCaWeb.UserSessionControllerTest do
           "user" => %{"email" => user.email, "password" => "invalid_password"}
         })
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "Invalid email or password"
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) =~
+               "That email and password do not match."
+
       assert redirected_to(conn) == ~p"/users/log-in"
     end
   end
@@ -104,7 +106,9 @@ defmodule PauseAiCaWeb.UserSessionControllerTest do
 
       assert get_session(conn, :user_token)
       assert redirected_to(conn) == ~p"/"
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "User confirmed successfully."
+
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~
+               "You're in — your email is confirmed."
 
       assert Accounts.get_user!(user.id).confirmed_at
 
@@ -122,8 +126,8 @@ defmodule PauseAiCaWeb.UserSessionControllerTest do
           "user" => %{"token" => "invalid"}
         })
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :error) ==
-               "The link is invalid or it has expired."
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) =~
+               "This sign-in link is invalid or has expired."
 
       assert redirected_to(conn) == ~p"/users/log-in"
     end
@@ -134,14 +138,14 @@ defmodule PauseAiCaWeb.UserSessionControllerTest do
       conn = conn |> log_in_user(user) |> delete(~p"/users/log-out")
       assert redirected_to(conn) == ~p"/"
       refute get_session(conn, :user_token)
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Logged out successfully"
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "You're signed out."
     end
 
     test "succeeds even if the user is not logged in", %{conn: conn} do
       conn = delete(conn, ~p"/users/log-out")
       assert redirected_to(conn) == ~p"/"
       refute get_session(conn, :user_token)
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Logged out successfully"
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "You're signed out."
     end
   end
 end

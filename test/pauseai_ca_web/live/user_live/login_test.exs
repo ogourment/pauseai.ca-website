@@ -25,7 +25,7 @@ defmodule PauseAiCaWeb.UserLive.LoginTest do
         |> render_submit()
         |> follow_redirect(conn, ~p"/users/log-in")
 
-      assert html =~ "If your email is in our system"
+      assert html =~ "If that address has an account"
 
       assert PauseAiCa.Repo.get_by!(PauseAiCa.Accounts.UserToken, user_id: user.id).context ==
                "login"
@@ -39,7 +39,7 @@ defmodule PauseAiCaWeb.UserLive.LoginTest do
         |> render_submit()
         |> follow_redirect(conn, ~p"/users/log-in")
 
-      assert html =~ "If your email is in our system"
+      assert html =~ "If that address has an account"
     end
   end
 
@@ -70,7 +70,10 @@ defmodule PauseAiCaWeb.UserLive.LoginTest do
       render_submit(form, %{user: %{remember_me: true}})
 
       conn = follow_trigger_action(form, conn)
-      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "Invalid email or password"
+
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) =~
+               "That email and password do not match."
+
       assert redirected_to(conn) == ~p"/users/log-in"
     end
   end

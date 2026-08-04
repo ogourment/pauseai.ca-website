@@ -56,7 +56,7 @@ if System.get_env("ATDD") == "true" do
 
       conn
       |> visit("/fr/strategie")
-      |> assert_has("#engagement-ladder")
+      |> assert_has("#strategy")
       |> capture(
         "engagement-01-strategy.png",
         Enum.at(@scenarios, 0),

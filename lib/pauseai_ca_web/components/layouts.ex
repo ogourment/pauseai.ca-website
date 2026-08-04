@@ -66,27 +66,67 @@ defmodule PauseAiCaWeb.Layouts do
           {if(@locale == "fr", do: "Comprendre", else: "Learn")}
         </.link>
         <.link
-          class="hidden text-base font-medium text-stone-700 hover:text-stone-950 lg:inline"
-          navigate={if(@locale == "fr", do: ~p"/fr/strategie", else: ~p"/en/strategy")}
-        >{if(@locale == "fr", do: "Stratégie", else: "Strategy")}</.link>
-        <.link
-          class="hidden text-base font-medium text-stone-700 hover:text-stone-950 lg:inline"
-          navigate={if(@locale == "fr", do: ~p"/fr/a-propos", else: ~p"/en/about")}
-        >{if(@locale == "fr", do: "À propos", else: "About")}</.link>
-        <.link
           class="text-base font-medium text-brand-ink hover:text-stone-950"
           navigate={if(@locale == "fr", do: ~p"/fr/tir-de-semonce", else: ~p"/en/warning-shot")}
         >
           {if(@locale == "fr", do: "Tir de semonce", else: "Warning shot")}
         </.link>
-        <%!-- Everything here leaves for PauseAI Global, so these are plain links
-             and the menu is CSS-only: no JavaScript to fail on a slow phone. --%>
-        <details class="act-menu relative">
+        <%!-- The menu is CSS-only, so it still works before JavaScript loads. --%>
+        <details id="involvement-menu" class="act-menu relative">
           <summary class="cursor-pointer list-none text-base font-medium text-stone-700 hover:text-stone-950">
             {if(@locale == "fr", do: "S'impliquer", else: "Get involved")}
             <span aria-hidden="true" class="text-xs">▾</span>
           </summary>
           <div class="absolute right-0 z-50 mt-2 w-64 overflow-hidden rounded-xl border border-stone-200 bg-white shadow-lg">
+            <.link
+              navigate={if(@locale == "fr", do: ~p"/fr/strategie", else: ~p"/en/strategy")}
+              class="block border-b border-stone-100 px-4 py-3 hover:bg-brand-wash"
+            >
+              <span class="block font-heading text-base font-bold text-stone-950">
+                {if(@locale == "fr", do: "Stratégie", else: "Strategy")}
+              </span>
+              <span class="block text-xs leading-5 text-stone-500">
+                {if(@locale == "fr",
+                  do: "Comment passer de l'intérêt à l'action collective",
+                  else: "How concern becomes collective action"
+                )}
+              </span>
+            </.link>
+            <.link
+              navigate={
+                if(@locale == "fr",
+                  do: ~p"/fr/strategie#engagement-ladder",
+                  else: ~p"/en/strategy#engagement-ladder"
+                )
+              }
+              class="block border-b border-stone-100 px-4 py-3 hover:bg-brand-wash"
+            >
+              <span class="block font-heading text-base font-bold text-stone-950">
+                {if(@locale == "fr", do: "Échelle d'engagement", else: "Engagement ladder")}
+              </span>
+              <span class="block text-xs leading-5 text-stone-500">
+                {if(@locale == "fr",
+                  do: "Voir les façons de progresser",
+                  else: "See ways to deepen your involvement"
+                )}
+              </span>
+            </.link>
+            <a
+              href="https://pauseai.info/local-organizing"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="block border-b border-stone-100 px-4 py-3 hover:bg-brand-wash"
+            >
+              <span class="block font-heading text-base font-bold text-stone-950">
+                {if(@locale == "fr", do: "Lancer un groupe", else: "Start a group")}
+              </span>
+              <span class="block text-xs leading-5 text-stone-500">
+                {if(@locale == "fr",
+                  do: "Guide de PauseAI Global",
+                  else: "PauseAI Global's chapter guide"
+                )}
+              </span>
+            </a>
             <%!-- New tab: these leave for another site, and a visitor part-way
                  through reading should not lose their place. --%>
             <a
@@ -103,35 +143,63 @@ defmodule PauseAiCaWeb.Layouts do
           </div>
         </details>
 
+        <.link
+          class="hidden text-base font-medium text-stone-700 hover:text-stone-950 lg:inline"
+          navigate={if(@locale == "fr", do: ~p"/fr/a-propos", else: ~p"/en/about")}
+        >{if(@locale == "fr", do: "À propos", else: "About")}</.link>
         <a
-          class="text-base font-medium text-stone-600 hover:text-stone-950"
-          href={@translated_path || if(@locale == "fr", do: ~p"/en", else: ~p"/fr")}
-        >
-          {if(@locale == "fr", do: "English", else: "Français")}
-        </a>
+          class="hidden text-base font-medium text-stone-700 hover:text-stone-950 lg:inline"
+          href="https://luma.com/calendar/cal-tsYv79s4aTQC16Q"
+          target="_blank"
+          rel="noopener noreferrer"
+        >{if(@locale == "fr", do: "Événements", else: "Events")}</a>
+
         <%= if @current_scope do %>
-          <.link class="hidden text-sm text-stone-500 sm:inline" href={~p"/users/settings"}>
-            {@current_scope.user.email}
-          </.link>
-          <.link
-            class="text-base font-medium text-stone-700 hover:text-stone-950"
-            navigate={if(@locale == "fr", do: ~p"/fr/actions", else: ~p"/en/actions")}
-          >
-            {if(@locale == "fr", do: "Mes actions", else: "My actions")}
-          </.link>
-          <.link
-            :if={@current_scope.user.superadmin}
-            class="text-base font-medium text-stone-700 hover:text-stone-950"
-            navigate={~p"/admin/metrics"}
-          >Admin</.link>
-          <.link
-            class="text-base font-medium text-stone-600 hover:text-stone-950"
-            href={~p"/users/log-out"}
-            method="delete"
-          >
-            {if(@locale == "fr", do: "Déconnexion", else: "Log out")}
-          </.link>
+          <details id="account-menu" class="act-menu relative">
+            <summary class="max-w-48 cursor-pointer list-none truncate text-base font-medium text-stone-700 hover:text-stone-950">
+              {@current_scope.user.email}
+              <span aria-hidden="true" class="text-xs">▾</span>
+            </summary>
+            <div class="absolute right-0 z-50 mt-2 w-64 overflow-hidden rounded-xl border border-stone-200 bg-white shadow-lg">
+              <.link
+                navigate={if(@locale == "fr", do: ~p"/fr/actions", else: ~p"/en/actions")}
+                class="block border-b border-stone-100 px-4 py-3 font-semibold text-stone-900 hover:bg-brand-wash"
+              >{if(@locale == "fr", do: "Mes actions", else: "My actions")}</.link>
+              <.link
+                href={~p"/users/settings"}
+                class="block border-b border-stone-100 px-4 py-3 font-semibold text-stone-900 hover:bg-brand-wash"
+              >{if(@locale == "fr", do: "Paramètres", else: "Settings")}</.link>
+              <.link
+                href={~p"/users/settings#password_form"}
+                class="block border-b border-stone-100 px-4 py-3 font-semibold text-stone-900 hover:bg-brand-wash"
+              >{if(@locale == "fr", do: "Changer le mot de passe", else: "Change password")}</.link>
+              <.link
+                :if={@current_scope.user.superadmin}
+                navigate={~p"/admin/metrics"}
+                class="block border-b border-stone-100 px-4 py-3 font-semibold text-stone-900 hover:bg-brand-wash"
+              >Admin</.link>
+              <a
+                class="block border-b border-stone-100 px-4 py-3 font-semibold text-stone-900 hover:bg-brand-wash"
+                href={@translated_path || if(@locale == "fr", do: ~p"/en", else: ~p"/fr")}
+              >
+                {if(@locale == "fr", do: "Passer à l'anglais", else: "Passer au français")}
+              </a>
+              <.link
+                class="block px-4 py-3 font-semibold text-stone-700 hover:bg-brand-wash hover:text-stone-950"
+                href={~p"/users/log-out"}
+                method="delete"
+              >
+                {if(@locale == "fr", do: "Déconnexion", else: "Log out")}
+              </.link>
+            </div>
+          </details>
         <% else %>
+          <a
+            class="text-base font-medium text-stone-600 hover:text-stone-950"
+            href={@translated_path || if(@locale == "fr", do: ~p"/en", else: ~p"/fr")}
+          >
+            {if(@locale == "fr", do: "English", else: "Français")}
+          </a>
           <.link
             class="rounded-full bg-stone-900 px-4 py-2 text-base font-semibold text-white hover:bg-stone-700"
             href={~p"/users/log-in"}

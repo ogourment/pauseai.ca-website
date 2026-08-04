@@ -5,11 +5,15 @@ defmodule PauseAiCaWeb.UserSessionController do
   alias PauseAiCaWeb.UserAuth
 
   def create(conn, %{"_action" => "confirmed"} = params) do
-    create(conn, params, "User confirmed successfully.")
+    create(
+      conn,
+      params,
+      "You're in — your email is confirmed. · Vous êtes connecté·e — votre adresse courriel est confirmée."
+    )
   end
 
   def create(conn, params) do
-    create(conn, params, "Welcome back!")
+    create(conn, params, "Welcome back. · Bon retour.")
   end
 
   # magic link login
@@ -24,7 +28,10 @@ defmodule PauseAiCaWeb.UserSessionController do
 
       _ ->
         conn
-        |> put_flash(:error, "The link is invalid or it has expired.")
+        |> put_flash(
+          :error,
+          "This sign-in link is invalid or has expired. Request a new one below. · Ce lien de connexion est invalide ou a expiré. Demandez-en un nouveau ci-dessous."
+        )
         |> redirect(to: ~p"/users/log-in")
     end
   end
@@ -40,7 +47,10 @@ defmodule PauseAiCaWeb.UserSessionController do
     else
       # In order to prevent user enumeration attacks, don't disclose whether the email is registered.
       conn
-      |> put_flash(:error, "Invalid email or password")
+      |> put_flash(
+        :error,
+        "That email and password do not match. · Cette adresse courriel et ce mot de passe ne correspondent pas."
+      )
       |> put_flash(:email, String.slice(email, 0, 160))
       |> redirect(to: ~p"/users/log-in")
     end
@@ -56,12 +66,12 @@ defmodule PauseAiCaWeb.UserSessionController do
 
     conn
     |> put_session(:user_return_to, ~p"/users/settings")
-    |> create(params, "Password updated successfully!")
+    |> create(params, "Your password is updated. · Votre mot de passe a été mis à jour.")
   end
 
   def delete(conn, _params) do
     conn
-    |> put_flash(:info, "Logged out successfully.")
+    |> put_flash(:info, "You're signed out. · Vous êtes déconnecté·e.")
     |> UserAuth.log_out_user()
   end
 end

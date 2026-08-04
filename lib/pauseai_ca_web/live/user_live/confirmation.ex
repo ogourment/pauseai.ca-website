@@ -82,7 +82,10 @@ defmodule PauseAiCaWeb.UserLive.Confirmation do
     else
       {:ok,
        socket
-       |> put_flash(:error, "Magic link is invalid or it has expired.")
+       |> put_flash(
+         :error,
+         "This sign-in link is invalid or has expired. Request a new one below. · Ce lien de connexion est invalide ou a expiré. Demandez-en un nouveau ci-dessous."
+       )
        |> push_navigate(to: ~p"/users/log-in")}
     end
   end

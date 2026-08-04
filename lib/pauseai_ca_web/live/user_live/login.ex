@@ -126,7 +126,7 @@ defmodule PauseAiCaWeb.UserLive.Login do
     end
 
     info =
-      "If your email is in our system, you will receive instructions for logging in shortly."
+      "If that address has an account, a secure sign-in link is on its way. · Si cette adresse correspond à un compte, un lien de connexion sécurisé est en route."
 
     {:noreply,
      socket

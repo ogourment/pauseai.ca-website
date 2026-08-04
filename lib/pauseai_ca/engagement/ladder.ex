@@ -13,6 +13,40 @@ defmodule PauseAiCa.Engagement.Ladder do
     {:organize, ~w(organized)}
   ]
 
+  def steps("fr") do
+    [
+      %{title: "Comprendre", examples: "Lire, regarder ou écouter une ressource fiable"},
+      %{title: "En parler", examples: "Discuter des risques de l'IA avec une personne"},
+      %{
+        title: "Participer",
+        examples: "Signer, rejoindre le mouvement ou assister à un événement"
+      },
+      %{title: "Intervenir", examples: "Contacter ou rencontrer une personne élue"},
+      %{title: "Contribuer", examples: "Faire du bénévolat, distribuer ou poser du matériel"},
+      %{title: "Organiser", examples: "Créer une activité ou lancer un groupe local"}
+    ]
+  end
+
+  def steps(_locale) do
+    [
+      %{title: "Learn", examples: "Read, watch, or listen to one reliable resource"},
+      %{title: "Talk", examples: "Discuss AI risk with one person"},
+      %{title: "Show up", examples: "Sign, join the movement, or attend an event"},
+      %{title: "Influence", examples: "Contact or meet an elected representative"},
+      %{title: "Contribute", examples: "Volunteer, flyer, or put up posters"},
+      %{title: "Organize", examples: "Run an activity or start a local group"}
+    ]
+  end
+
+  def position(actions) do
+    Enum.reduce(actions, 0, fn action, highest ->
+      case Enum.find_index(@levels, fn {_level, types} -> action.action_type in types end) do
+        nil -> highest
+        index -> max(highest, index + 1)
+      end
+    end)
+  end
+
   def recommendation(actions, locale) do
     completed = MapSet.new(Enum.map(actions, & &1.action_type))
 

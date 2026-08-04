@@ -45,11 +45,19 @@ defmodule PauseAiCaWeb.DashboardLiveTest do
     |> render_submit()
 
     assert has_element?(view, "#suggested-next-step", "Talk with one person")
+    assert has_element?(view, "#ladder-step-1[data-current]", "You are here")
     assert [%Action{confirmed_at: %DateTime{}}] = Engagement.list_actions(scope)
 
     {:ok, refreshed_view, _html} = live(conn, ~p"/dashboard")
     assert has_element?(refreshed_view, "#suggested-next-step", "Talk with one person")
     refute has_element?(refreshed_view, "#pending-actions")
+  end
+
+  test "the empty journal points to the first ladder rung", %{conn: conn} do
+    {:ok, view, _html} = live(conn, ~p"/dashboard")
+
+    assert has_element?(view, "#engagement-ladder")
+    assert has_element?(view, "#ladder-step-1", "Start here")
   end
 
   test "requires an authenticated user", %{conn: _authenticated_conn} do
