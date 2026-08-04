@@ -93,6 +93,7 @@ defmodule PauseAiCaWeb.Router do
     end
 
     post "/users/update-password", UserSessionController, :update_password
+    post "/bookmarks/:resource", BookmarkController, :create
   end
 
   scope "/", PauseAiCaWeb do

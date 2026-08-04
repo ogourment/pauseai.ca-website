@@ -107,6 +107,27 @@ defmodule PauseAiCaWeb.UserLive.ConfirmationTest do
       assert html =~ "This sign-in link is invalid or has expired."
     end
 
+    test "saves a pending bookmark only after secure sign-in", %{
+      conn: conn,
+      confirmed_user: user
+    } do
+      token =
+        extract_user_token(fn url ->
+          Accounts.deliver_login_instructions(user, url)
+        end)
+
+      {:ok, lv, _html} = live(conn, ~p"/users/log-in/#{token}?bookmark=risk")
+      assert has_element?(lv, "#login_form input[name='user[bookmark]'][value='risk']")
+
+      form =
+        form(lv, "#login_form", %{"user" => %{"token" => token, "bookmark" => "risk"}})
+
+      render_submit(form)
+      _conn = follow_trigger_action(form, conn)
+
+      assert Accounts.get_user!(user.id).saved_resources == ["risk"]
+    end
+
     test "raises error for invalid token", %{conn: conn} do
       {:ok, _lv, html} =
         live(conn, ~p"/users/log-in/invalid-token")

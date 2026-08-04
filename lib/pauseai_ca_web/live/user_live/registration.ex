@@ -80,6 +80,21 @@ defmodule PauseAiCaWeb.UserLive.Registration do
 
   @impl true
   def handle_event("save", %{"user" => user_params}, socket) do
+    case Accounts.get_user_by_email(user_params["email"]) do
+      %User{} = user ->
+        send_existing_user_login(socket, user)
+
+      nil ->
+        register_new_user(socket, user_params)
+    end
+  end
+
+  def handle_event("validate", %{"user" => user_params}, socket) do
+    changeset = Accounts.change_user_email(%User{}, user_params, validate_unique: false)
+    {:noreply, assign_form(socket, Map.put(changeset, :action, :validate))}
+  end
+
+  defp register_new_user(socket, user_params) do
     case Accounts.register_user(user_params) do
       {:ok, user} ->
         if socket.assigns.bookmark, do: Accounts.save_resource(user, socket.assigns.bookmark)
@@ -90,7 +105,7 @@ defmodule PauseAiCaWeb.UserLive.Registration do
         {:ok, _} =
           Accounts.deliver_login_instructions(
             user,
-            &url(~p"/users/log-in/#{&1}")
+            &url(~p"/users/log-in/#{&1}?#{continuation_params(socket)}")
           )
 
         {:noreply,
@@ -106,9 +121,29 @@ defmodule PauseAiCaWeb.UserLive.Registration do
     end
   end
 
-  def handle_event("validate", %{"user" => user_params}, socket) do
-    changeset = Accounts.change_user_email(%User{}, user_params, validate_unique: false)
-    {:noreply, assign_form(socket, Map.put(changeset, :action, :validate))}
+  defp send_existing_user_login(socket, user) do
+    {:ok, _} =
+      Accounts.deliver_login_instructions(
+        user,
+        &url(~p"/users/log-in/#{&1}?#{continuation_params(socket)}")
+      )
+
+    {:noreply,
+     socket
+     |> put_flash(
+       :info,
+       "An account already exists for #{user.email}. Check your email to sign in and continue. · Un compte existe déjà pour #{user.email}. Consultez votre courriel pour vous connecter et continuer."
+     )
+     |> push_navigate(to: ~p"/users/log-in")}
+  end
+
+  defp continuation_params(socket) do
+    socket.assigns.belief_answers
+    |> then(fn params ->
+      if socket.assigns.bookmark,
+        do: Map.put(params, "bookmark", socket.assigns.bookmark),
+        else: params
+    end)
   end
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do

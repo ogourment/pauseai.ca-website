@@ -18,6 +18,9 @@ defmodule PauseAiCa.Engagement.LadderTest do
 
   test "provides French-first recommendations" do
     assert Ladder.recommendation([], "fr").title == "Comprendre un argument"
+
+    assert Enum.at(Ladder.steps("fr"), 4).examples ==
+             "Faire du bénévolat, distribuer des dépliants ou poser des affiches"
   end
 
   test "position is the highest recorded rung" do

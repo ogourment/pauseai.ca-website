@@ -188,6 +188,7 @@
           }
           bookmark="risk"
           locale={@locale}
+          current_scope={@current_scope}
         />
         <.resource_card
           id="resource-pause"
@@ -216,6 +217,7 @@
           cta={if(@locale == "fr", do: "Examiner la proposition", else: "Examine the proposal")}
           bookmark="pause"
           locale={@locale}
+          current_scope={@current_scope}
         />
         <.resource_card
           id="resource-coordination"
@@ -244,6 +246,7 @@
           cta={if(@locale == "fr", do: "Explorer les mécanismes", else: "Explore the mechanisms")}
           bookmark="coordination"
           locale={@locale}
+          current_scope={@current_scope}
         />
         <.resource_card
           id="resource-agency"
@@ -267,6 +270,7 @@
           cta={if(@locale == "fr", do: "Lire le résumé", else: "Read the summary")}
           bookmark="agency"
           locale={@locale}
+          current_scope={@current_scope}
         />
       </div>
     </div>
