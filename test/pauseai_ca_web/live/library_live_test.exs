@@ -7,6 +7,8 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
     test "an English visitor sees every stage and the Canadian voices", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/en/learn")
 
+      assert has_element?(view, "#warning-shot-banner[href='/en/warning-shot']")
+      assert has_element?(view, "#campaign-prompt[data-campaign='warning-shot-2']")
       assert has_element?(view, "#voices")
       assert has_element?(view, "#voice-bengio")
       assert has_element?(view, "#voice-tessari")
