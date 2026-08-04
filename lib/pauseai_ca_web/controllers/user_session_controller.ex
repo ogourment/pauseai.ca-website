@@ -21,6 +21,7 @@ defmodule PauseAiCaWeb.UserSessionController do
     case Accounts.login_user_by_magic_link(token) do
       {:ok, {user, tokens_to_disconnect}} ->
         UserAuth.disconnect_sessions(tokens_to_disconnect)
+        save_continuation(user, user_params)
 
         conn
         |> put_flash(:info, info)
@@ -54,6 +55,13 @@ defmodule PauseAiCaWeb.UserSessionController do
       |> put_flash(:email, String.slice(email, 0, 160))
       |> redirect(to: ~p"/users/log-in")
     end
+  end
+
+  defp save_continuation(user, params) do
+    if params["bookmark"], do: Accounts.save_resource(user, params["bookmark"])
+
+    answers = Map.take(params, ~w(risk pause coordination))
+    if answers != %{}, do: Accounts.save_belief_answers(user, answers)
   end
 
   def update_password(conn, %{"user" => user_params} = params) do

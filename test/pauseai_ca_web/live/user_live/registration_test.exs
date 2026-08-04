@@ -78,19 +78,21 @@ defmodule PauseAiCaWeb.UserLive.RegistrationTest do
              }
     end
 
-    test "renders errors for duplicated email", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/register")
+    test "switches an existing email to secure sign-in and preserves the bookmark", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register?bookmark=risk")
 
       user = user_fixture(%{email: "test@email.com"})
 
-      result =
+      {:ok, _login_live, html} =
         lv
         |> form("#registration_form",
           user: %{"email" => user.email}
         )
         |> render_submit()
+        |> follow_redirect(conn, ~p"/users/log-in")
 
-      assert result =~ "has already been taken"
+      assert html =~ "An account already exists for #{user.email}."
+      refute html =~ "has already been taken"
     end
   end
 

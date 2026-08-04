@@ -40,6 +40,19 @@ defmodule PauseAiCaWeb.PageControllerTest do
     refute home =~ "Pause IA France"
   end
 
+  test "a signed-in reader gets an authenticated bookmark action", %{conn: conn} do
+    user = PauseAiCa.AccountsFixtures.user_fixture()
+
+    html =
+      conn
+      |> log_in_user(user)
+      |> get(~p"/fr")
+      |> html_response(200)
+
+    assert html =~ ~s(href="/bookmarks/risk?locale=fr")
+    refute html =~ ~s(href="/users/register?bookmark=risk")
+  end
+
   test "strategy and identity are available without leaving either language", %{conn: conn} do
     en_html = html_response(get(conn, ~p"/en/strategy"), 200)
     fr_html = html_response(get(conn, ~p"/fr/strategie"), 200)

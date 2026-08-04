@@ -22,7 +22,10 @@ defmodule PauseAiCa.Engagement.Ladder do
         examples: "Signer, rejoindre le mouvement ou assister à un événement"
       },
       %{title: "Intervenir", examples: "Contacter ou rencontrer une personne élue"},
-      %{title: "Contribuer", examples: "Faire du bénévolat, distribuer ou poser du matériel"},
+      %{
+        title: "Contribuer",
+        examples: "Faire du bénévolat, distribuer des dépliants ou poser des affiches"
+      },
       %{title: "Organiser", examples: "Créer une activité ou lancer un groupe local"}
     ]
   end
