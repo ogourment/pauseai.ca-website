@@ -260,8 +260,14 @@ defmodule PauseAiCaWeb.Layouts do
     </main>
 
     <footer class="border-t border-stone-200">
-      <div class="mx-auto flex max-w-6xl flex-col gap-4 px-5 py-10 text-sm text-stone-500 sm:flex-row sm:items-center">
+      <div class="relative mx-auto flex max-w-6xl flex-col gap-4 px-5 py-10 text-sm text-stone-500 sm:flex-row sm:items-center">
         <p class="mr-auto">PauseAI Canada</p>
+        <a
+          class="self-center hover:text-stone-900 sm:absolute sm:left-1/2 sm:-translate-x-1/2"
+          href="https://luma.com/pauseaimtl"
+          target="_blank"
+          rel="noopener noreferrer"
+        >{if(@locale == "fr", do: "Événements à Montréal", else: "Montréal events")}</a>
         <.link
           class="hover:text-stone-900"
           href={if(@locale == "fr", do: ~p"/fr/a-propos", else: ~p"/en/about")}

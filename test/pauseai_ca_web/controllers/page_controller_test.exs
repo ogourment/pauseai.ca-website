@@ -29,15 +29,19 @@ defmodule PauseAiCaWeb.PageControllerTest do
     refute fr_html =~ "Rien n’est public"
   end
 
-  test "privacy pages and the three durable footer links are available", %{conn: conn} do
+  test "privacy pages and durable footer links are available", %{conn: conn} do
     fr_html = html_response(get(conn, ~p"/fr/confidentialite"), 200)
     assert fr_html =~ "Politique de confidentialité"
 
     home = html_response(get(conn, ~p"/fr"), 200)
     assert home =~ "À propos de PauseAI Canada"
+    assert home =~ "Événements à Montréal"
+    assert home =~ ~s(href="https://luma.com/pauseaimtl")
     assert home =~ ~s(href="/fr/confidentialite")
     assert home =~ "Source"
     refute home =~ "Pause IA France"
+
+    assert html_response(get(conn, ~p"/en"), 200) =~ "Montréal events"
   end
 
   test "a signed-in reader gets an authenticated bookmark action", %{conn: conn} do
