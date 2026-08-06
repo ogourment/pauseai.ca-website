@@ -5,17 +5,33 @@ defmodule PauseAiCaWeb.AdminMetricsLiveTest do
   import PauseAiCa.AccountsFixtures
 
   alias PauseAiCa.{Accounts, Repo}
+  alias PauseAiCa.Accounts.Scope
+  alias PauseAiCa.EngagementFixtures
 
   test "a confirmed superadmin sees first-party database metrics", %{conn: conn} do
     admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+
+    EngagementFixtures.action_fixture(Scope.for_user(admin), %{
+      confirmed_at: DateTime.utc_now(:second)
+    })
+
     {:ok, view, _html} = live(log_in_user(conn, admin), ~p"/admin/metrics")
 
     assert has_element?(view, "#admin-metrics")
+    assert has_element?(view, "#metrics-period", "Daily trends")
     assert has_element?(view, "#metric-users svg[role='img']")
+    assert has_element?(view, "#metric-users [data-role='daily-max']")
     assert has_element?(view, "#metric-active svg[role='img']")
     assert has_element?(view, "#metric-actions svg[role='img']")
-    assert has_element?(view, "#metric-visits svg[role='img']", "Visits")
+    refute has_element?(view, "#metric-visits svg[role='img']")
     assert has_element?(view, "#metrics-by-type")
+    assert has_element?(view, "#metrics-by-type [data-role='ladder-trend'][data-label='Learn']")
+
+    refute has_element?(
+             view,
+             "#metrics-by-type [data-role='ladder-trend'][data-label='Organize']"
+           )
+
     assert has_element?(view, "#metrics-by-type li", "Learn")
     assert has_element?(view, "#metrics-by-type li", "Organize")
     assert has_element?(view, "a[href='/admin/versions']", "Deployment versions")

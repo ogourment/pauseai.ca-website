@@ -56,6 +56,16 @@ defmodule PauseAiCa.Engagement.Ladder do
     Enum.map(@levels, fn {_level, types} -> Enum.sum(Enum.map(types, &Map.get(counts, &1, 0))) end)
   end
 
+  def trends(by_type_trends) do
+    days = by_type_trends |> Map.values() |> List.first([]) |> length()
+
+    Enum.map(@levels, fn {_level, types} ->
+      Enum.reduce(types, List.duplicate(0, days), fn type, totals ->
+        Enum.zip_with(totals, Map.get(by_type_trends, type, List.duplicate(0, days)), &+/2)
+      end)
+    end)
+  end
+
   def recommendation(actions, locale) do
     completed = MapSet.new(Enum.map(actions, & &1.action_type))
 

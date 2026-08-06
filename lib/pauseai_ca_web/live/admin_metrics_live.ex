@@ -43,7 +43,9 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
     socket
     |> assign(:page_title, "Movement metrics")
     |> assign(:metrics, metrics)
+    |> assign(:trend_period_label, trend_period_label(metrics.trend_period))
     |> assign(:ladder_counts, Ladder.counts(metrics.by_type))
+    |> assign(:ladder_trends, Ladder.trends(metrics.trends.action_types))
     |> assign(:users, Accounts.list_users())
   end
 
@@ -57,39 +59,50 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
         <p class="mt-4 max-w-3xl text-stone-600">
           First-party database totals from accounts, anonymous daily visits, and confirmed private action records. Analytics may complement these figures, but is not their source.
         </p>
-        <div class="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <p id="metrics-period" class="mt-8 text-xs font-medium text-stone-500">
+          Daily trends · {@trend_period_label} (UTC)
+        </p>
+        <div class="mt-2 grid gap-4 sm:grid-cols-4">
           <.metric
             id="metric-users"
             label="Accounts"
             value={@metrics.users}
             trend={@metrics.trends.users}
+            trend_period={@trend_period_label}
           />
           <.metric
             id="metric-active"
             label="People with a confirmed action"
             value={@metrics.active_people}
             trend={@metrics.trends.active_people}
+            trend_period={@trend_period_label}
           />
           <.metric
             id="metric-actions"
             label="Confirmed actions"
             value={@metrics.actions}
             trend={@metrics.trends.actions}
+            trend_period={@trend_period_label}
           />
           <.metric
             id="metric-visits"
             label="Visits"
             value={@metrics.visits}
             trend={@metrics.trends.visits}
+            trend_period={@trend_period_label}
           />
         </div>
         <section class="mt-10 rounded-[2rem] bg-stone-900 p-8 text-white sm:p-10">
           <h2 class="font-heading text-3xl">Progress through the engagement ladder</h2>
+          <p class="mt-2 text-xs font-medium text-white/60">
+            Daily trends · {@trend_period_label} (UTC)
+          </p>
           <ol id="metrics-by-type" class="mx-auto mt-8 flex max-w-2xl flex-col-reverse px-2 sm:px-8">
             <li
               :for={
-                {{step, count}, i} <-
-                  Enum.zip(Ladder.steps("en"), @ladder_counts) |> Enum.with_index(1)
+                {{step, count, trend}, i} <-
+                  Enum.zip([Ladder.steps("en"), @ladder_counts, @ladder_trends])
+                  |> Enum.with_index(1)
               }
               class="border-x-[8px] border-white/30 px-5 pb-6"
             >
@@ -98,9 +111,16 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
                   <strong class="block">{i}. {step.title}</strong>
                   <span class="mt-1 block text-sm text-white/70">{step.examples}</span>
                 </div>
-                <span class="rounded-full bg-brand px-3 py-1 text-sm font-bold text-stone-950">
-                  {count} {if(count == 1, do: "action", else: "actions")}
-                </span>
+                <div class="flex shrink-0 items-end gap-3">
+                  <.ladder_sparkline
+                    label={step.title}
+                    trend={trend}
+                    trend_period={@trend_period_label}
+                  />
+                  <span class="rounded-full bg-brand px-3 py-1 text-sm font-bold text-stone-950">
+                    {count} {if(count == 1, do: "action", else: "actions")}
+                  </span>
+                </div>
               </div>
             </li>
           </ol>
@@ -148,32 +168,43 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
   attr :label, :string, required: true
   attr :value, :integer, required: true
   attr :trend, :list, required: true
+  attr :trend_period, :string, required: true
 
   defp metric(assigns) do
-    assigns = assign(assigns, :points, sparkline_points(assigns.trend))
+    assigns =
+      assigns
+      |> assign(:points, sparkline_points(assigns.trend))
+      |> assign(:daily_max, Enum.max(assigns.trend, fn -> 0 end))
 
     ~H"""
     <div id={@id} class="rounded-3xl bg-stone-900 p-6 text-white">
       <p class="text-sm text-white/70">{@label}</p>
       <div class="mt-2 flex items-end justify-between gap-4">
         <p class="font-heading text-5xl">{@value}</p>
-        <svg
-          class="h-12 w-24 shrink-0 text-brand"
-          viewBox="0 0 96 48"
-          role="img"
-          aria-label={"#{@label}, daily trend over the last 14 days"}
-        >
-          <title>{@label}, daily trend over the last 14 days</title>
-          <polyline
-            points={@points}
-            fill="none"
-            stroke="currentColor"
-            stroke-width="3"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            vector-effect="non-scaling-stroke"
-          />
-        </svg>
+        <div :if={@daily_max > 0} class="flex shrink-0 flex-col items-end text-brand">
+          <span data-role="daily-max" class="h-4 text-xs font-bold">
+            {if @daily_max > 0, do: @daily_max}
+          </span>
+          <svg
+            class="h-10 w-24"
+            viewBox="0 0 96 48"
+            role="img"
+            aria-label={"#{@label}, daily trend, #{@trend_period}; daily maximum #{@daily_max}"}
+          >
+            <title>
+              {@label}, daily trend, {@trend_period}; daily maximum {@daily_max}
+            </title>
+            <polyline
+              points={@points}
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              vector-effect="non-scaling-stroke"
+            />
+          </svg>
+        </div>
       </div>
     </div>
     """
@@ -190,5 +221,54 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
       y = Float.round(44 - value * 40 / max_value, 1)
       "#{x},#{y}"
     end)
+  end
+
+  attr :label, :string, required: true
+  attr :trend, :list, required: true
+  attr :trend_period, :string, required: true
+
+  defp ladder_sparkline(assigns) do
+    assigns =
+      assigns
+      |> assign(:points, sparkline_points(assigns.trend))
+      |> assign(:daily_max, Enum.max(assigns.trend, fn -> 0 end))
+
+    ~H"""
+    <div
+      :if={@daily_max > 0}
+      data-role="ladder-trend"
+      data-label={@label}
+      class="flex flex-col items-end text-brand"
+    >
+      <span data-role="daily-max" class="h-4 text-xs font-bold">
+        {if @daily_max > 0, do: @daily_max}
+      </span>
+      <svg
+        class="h-8 w-20"
+        viewBox="0 0 96 48"
+        role="img"
+        aria-label={"#{@label}, daily confirmed actions, #{@trend_period}; daily maximum #{@daily_max}"}
+      >
+        <title>
+          {@label}, daily confirmed actions, {@trend_period}; daily maximum {@daily_max}
+        </title>
+        <polyline
+          points={@points}
+          fill="none"
+          stroke="currentColor"
+          stroke-width="3"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          vector-effect="non-scaling-stroke"
+        />
+      </svg>
+    </div>
+    """
+  end
+
+  defp trend_period_label(%{start: start_date, end: end_date}) do
+    start_label = Calendar.strftime(start_date, "%B %-d")
+    end_label = Calendar.strftime(end_date, "%B %-d, %Y")
+    "#{start_label}–#{end_label}"
   end
 end

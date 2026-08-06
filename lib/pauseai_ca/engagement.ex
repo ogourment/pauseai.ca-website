@@ -220,6 +220,7 @@ defmodule PauseAiCa.Engagement do
       active_people: active_people,
       visits: visit_count,
       by_type: by_type,
+      trend_period: %{start: Date.add(today, -(@trend_days - 1)), end: today},
       trends: trends(today)
     }
   end
@@ -243,6 +244,24 @@ defmodule PauseAiCa.Engagement do
           group_by: fragment("date(?)", a.confirmed_at),
           select: {fragment("date(?)", a.confirmed_at), count(a.id)}
       )
+
+    action_type_counts =
+      Repo.all(
+        from a in Action,
+          where: a.confirmed_at >= ^DateTime.new!(first_day, ~T[00:00:00]),
+          group_by: [a.action_type, fragment("date(?)", a.confirmed_at)],
+          select: {a.action_type, fragment("date(?)", a.confirmed_at), count(a.id)}
+      )
+      |> Enum.group_by(fn {action_type, _date, _count} -> action_type end)
+      |> Map.new(fn {action_type, counts} ->
+        counts_by_date = Map.new(counts, fn {_action_type, date, count} -> {date, count} end)
+        {action_type, fill_dates(dates, counts_by_date)}
+      end)
+      |> then(fn counts ->
+        Map.new(Action.action_types(), fn action_type ->
+          {action_type, Map.get(counts, action_type, List.duplicate(0, @trend_days))}
+        end)
+      end)
 
     first_confirmations =
       from a in Action,
@@ -270,6 +289,7 @@ defmodule PauseAiCa.Engagement do
       users: fill_dates(dates, account_counts),
       active_people: fill_dates(dates, active_people_counts),
       actions: fill_dates(dates, action_counts),
+      action_types: action_type_counts,
       visits: fill_dates(dates, visit_counts)
     }
   end

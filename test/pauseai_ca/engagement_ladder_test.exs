@@ -42,4 +42,19 @@ defmodule PauseAiCa.Engagement.LadderTest do
              {"organized", 1}
            ]) == [2, 0, 4, 4, 0, 1]
   end
+
+  test "combines action-type trends into the six visual ladder rungs" do
+    assert Ladder.trends(%{
+             "event" => [1, 0, 2],
+             "joined" => [0, 1, 1],
+             "organized" => [0, 0, 1]
+           }) == [
+             [0, 0, 0],
+             [0, 0, 0],
+             [1, 1, 3],
+             [0, 0, 0],
+             [0, 0, 0],
+             [0, 0, 1]
+           ]
+  end
 end
