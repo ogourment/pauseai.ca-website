@@ -13,6 +13,21 @@ defmodule PauseAiCaWeb.PageController do
   def privacy_fr(conn, _params),
     do: render_content(conn, :privacy, "fr", "Politique de confidentialité")
 
+  def legacy_montreal(conn, _params) do
+    conn
+    |> put_status(:moved_permanently)
+    |> redirect(to: "/en")
+  end
+
+  def not_found(conn, %{"path" => path}) do
+    locale = if List.first(path) == "fr", do: "fr", else: "en"
+    Gettext.put_locale(PauseAiCaWeb.Gettext, locale)
+
+    conn
+    |> put_flash(:error, gettext("The page you requested could not be found."))
+    |> redirect(to: "/#{locale}")
+  end
+
   defp render_home(conn, locale) do
     Gettext.put_locale(PauseAiCaWeb.Gettext, locale)
 

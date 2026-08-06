@@ -46,6 +46,7 @@ defmodule PauseAiCaWeb.Router do
     get "/fr/a-propos", PageController, :about_fr
     get "/en/privacy", PageController, :privacy_en
     get "/fr/confidentialite", PageController, :privacy_fr
+    get "/en/montreal.html", PageController, :legacy_montreal
   end
 
   # Other scopes may use custom stacks.
@@ -124,5 +125,11 @@ defmodule PauseAiCaWeb.Router do
 
     post "/users/log-in", UserSessionController, :create
     delete "/users/log-out", UserSessionController, :delete
+  end
+
+  scope "/", PauseAiCaWeb do
+    pipe_through :browser
+
+    get "/*path", PageController, :not_found
   end
 end

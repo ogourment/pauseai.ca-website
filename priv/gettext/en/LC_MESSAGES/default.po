@@ -747,7 +747,7 @@ msgstr "This summary adapts PauseAI's movement-building analysis to the Canadian
 msgid "Two of the three Turing Award winners for deep learning built their careers in Canada. Both now say the technology they created could escape human control."
 msgstr "Two of the three Turing Award winners for deep learning built their careers in Canada. Both now say the technology they created could escape human control."
 
-#: lib/pauseai_ca_web/controllers/page_controller.ex:21
+#: lib/pauseai_ca_web/controllers/page_controller.ex:36
 #, elixir-autogen, elixir-format
 msgid "Understand and act"
 msgstr "Understand and act"
@@ -1257,3 +1257,8 @@ msgstr "Join Us"
 #, elixir-autogen, elixir-format
 msgid "Want to participate? Join PauseAI Canada."
 msgstr "Want to participate? Join PauseAI Canada."
+
+#: lib/pauseai_ca_web/controllers/page_controller.ex:27
+#, elixir-autogen, elixir-format
+msgid "The page you requested could not be found."
+msgstr "The page you requested could not be found."

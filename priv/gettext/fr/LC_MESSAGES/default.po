@@ -747,7 +747,7 @@ msgstr "Cette synthèse adapte au contexte canadien l'analyse de PauseAI sur la 
 msgid "Two of the three Turing Award winners for deep learning built their careers in Canada. Both now say the technology they created could escape human control."
 msgstr "Deux des trois lauréats du prix Turing pour l'apprentissage profond ont bâti leur carrière au Canada. Tous deux affirment aujourd'hui que la technologie qu'ils ont créée pourrait échapper au contrôle humain."
 
-#: lib/pauseai_ca_web/controllers/page_controller.ex:21
+#: lib/pauseai_ca_web/controllers/page_controller.ex:36
 #, elixir-autogen, elixir-format
 msgid "Understand and act"
 msgstr "Comprendre et agir"
@@ -1257,3 +1257,8 @@ msgstr "Nous rejoindre"
 #, elixir-autogen, elixir-format
 msgid "Want to participate? Join PauseAI Canada."
 msgstr "Vous souhaitez participer? Rejoignez PauseAI Canada."
+
+#: lib/pauseai_ca_web/controllers/page_controller.ex:27
+#, elixir-autogen, elixir-format
+msgid "The page you requested could not be found."
+msgstr "La page demandée est introuvable."

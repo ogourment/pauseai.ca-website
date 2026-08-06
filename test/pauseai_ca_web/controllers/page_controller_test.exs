@@ -6,6 +6,28 @@ defmodule PauseAiCaWeb.PageControllerTest do
     assert html_response(conn, 200) =~ "How far should we let AI advance?"
   end
 
+  test "the legacy Montreal page permanently redirects to the English home page", %{conn: conn} do
+    conn = get(conn, "/en/montreal.html")
+
+    assert conn.status == 301
+    assert redirected_to(conn, 301) == "/en"
+  end
+
+  test "unknown browser pages redirect home with a localized flash", %{conn: conn} do
+    en_conn = get(conn, "/en/no-such-page")
+    assert redirected_to(en_conn) == "/en"
+
+    assert Phoenix.Flash.get(en_conn.assigns.flash, :error) ==
+             "The page you requested could not be found."
+
+    fr_conn = get(recycle(conn), "/fr/page-introuvable")
+    assert redirected_to(fr_conn) == "/fr"
+    assert Phoenix.Flash.get(fr_conn.assigns.flash, :error) == "La page demandée est introuvable."
+
+    other_conn = get(recycle(conn), "/not-a-page")
+    assert redirected_to(other_conn) == "/en"
+  end
+
   test "English and French information paths are available", %{conn: conn} do
     en_html = html_response(get(conn, ~p"/en"), 200)
     assert en_html =~ "How far should we let AI advance?"
