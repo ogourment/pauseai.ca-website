@@ -9,6 +9,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
 
   use PauseAiCaWeb, :live_view
 
+  alias PauseAiCa.Accounts
   alias PauseAiCa.Audit
   alias PauseAiCa.Campaigns
   alias PauseAiCa.Campaigns.Delivery
@@ -242,6 +243,36 @@ defmodule PauseAiCaWeb.WarningShotLive do
     end
   end
 
+  defp persist_profile_context(socket, representative) do
+    case socket.assigns[:current_scope] do
+      %{user: user} = scope ->
+        attrs = %{"postal_code" => socket.assigns.sender["postal_code"]}
+
+        case Accounts.update_user_profile(user, attrs, representative_map(representative)) do
+          {:ok, updated_user} ->
+            assign(socket, :current_scope, %{scope | user: updated_user})
+
+          {:error, _changeset} ->
+            Audit.event(:profile_context_failed, %{locale: socket.assigns.locale})
+            socket
+        end
+
+      _anonymous ->
+        socket
+    end
+  end
+
+  defp representative_map(representative) do
+    %{
+      "name" => representative.name,
+      "district" => representative.district,
+      "party" => representative.party,
+      "email" => representative.email,
+      "profile_url" => representative.profile_url,
+      "position" => "undocumented"
+    }
+  end
+
   defp find_members_of_parliament(socket) do
     case Campaigns.find_members_of_parliament(socket.assigns.sender["postal_code"]) do
       {:ok, []} ->
@@ -258,6 +289,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
          socket
          |> assign(:representatives, representatives)
          |> assign(:lookup_error, nil)
+         |> persist_profile_context(hd(representatives))
          |> constrain_draft_language()
          |> recompose()}
 
@@ -566,13 +598,23 @@ defmodule PauseAiCaWeb.WarningShotLive do
             phx-change="update-letter-options"
             class="mt-8"
           >
-            <fieldset id="draft-language-options">
+            <% language_options = draft_language_options(@locale, @representatives) %>
+            <p
+              :if={length(language_options) == 1}
+              id="letter-language-value"
+              class="text-sm text-stone-800"
+            >
+              <span class="font-semibold">{language_label(@locale)}</span>
+              <span aria-hidden="true"> — </span>
+              <span>{draft_language_label(@sender["draft_language"], language_options)}</span>
+            </p>
+            <fieldset :if={length(language_options) > 1} id="draft-language-options">
               <legend class="mb-2 block text-sm font-semibold text-stone-800">
                 {language_label(@locale)}
               </legend>
               <div class="flex flex-wrap gap-2">
                 <label
-                  :for={{label, value} <- draft_language_options(@locale, @representatives)}
+                  :for={{label, value} <- language_options}
                   class="flex cursor-pointer items-center gap-2 rounded-full border-2 border-stone-300 px-4 py-2.5 text-stone-800 transition has-[:checked]:border-brand has-[:checked]:bg-brand-wash"
                 >
                   <input
@@ -790,6 +832,13 @@ defmodule PauseAiCaWeb.WarningShotLive do
                 class="mt-4 rounded-2xl border border-stone-200 bg-white p-4 leading-7 text-stone-700"
               >
                 {diy_recorded_note(@locale)}
+                <.link
+                  id="diy-dashboard-link"
+                  navigate={dashboard_path(@locale)}
+                  class="font-semibold text-stone-900 underline decoration-brand decoration-2 underline-offset-4"
+                >
+                  {dashboard_link_label(@locale)}
+                </.link>
               </p>
               <div class="mt-4 flex flex-wrap gap-3">
                 <a
@@ -887,6 +936,13 @@ defmodule PauseAiCaWeb.WarningShotLive do
     end)
   end
 
+  defp draft_language_label(value, options) do
+    case Enum.find(options, fn {_label, option_value} -> option_value == value end) do
+      {label, _value} -> label
+      nil -> ""
+    end
+  end
+
   defp gender_options,
     do: [
       {"un·e citoyen·ne", "inclusive"},
@@ -979,10 +1035,12 @@ defmodule PauseAiCaWeb.WarningShotLive do
       )
 
   defp diy_recorded_note(_locale),
-    do:
-      gettext(
-        "We have noted this as unconfirmed in your dashboard. We cannot tell whether you pressed send, so you can confirm it there."
-      )
+    do: gettext("We recorded this as awaiting confirmation.")
+
+  defp dashboard_link_label(_locale), do: gettext("Confirm it in your dashboard after sending.")
+
+  defp dashboard_path("fr"), do: ~p"/fr/tableau-de-bord"
+  defp dashboard_path(_locale), do: ~p"/en/dashboard"
 
   defp rehearsal_note(_locale) do
     environment =
@@ -991,7 +1049,9 @@ defmodule PauseAiCaWeb.WarningShotLive do
         _development -> gettext("Development")
       end
 
-    gettext("%{environment}: no letter will be sent to your MP.", environment: environment)
+    gettext("%{environment} environment: no letter will be sent to your MP.",
+      environment: environment
+    )
   end
 
   defp share_heading(_locale), do: gettext("One more letter counts double")

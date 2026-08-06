@@ -6,6 +6,7 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
 
   import PauseAiCa.AccountsFixtures
 
+  alias PauseAiCa.Accounts
   alias PauseAiCa.Accounts.Scope
   alias PauseAiCa.Campaigns.RateLimit
   alias PauseAiCa.Engagement
@@ -112,11 +113,11 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
 
       assert has_element?(
                english_view,
-               "#draft-language-options input[type='radio'][value='en']:checked"
+               "#letter-language-value",
+               "Letter language — English only"
              )
 
-      refute has_element?(english_view, "#draft-language-options input[value='bilingual']")
-      refute has_element?(english_view, "#draft-language-options input[value='fr']")
+      refute has_element?(english_view, "#draft-language-options")
       refute has_element?(english_view, "#gender-options")
 
       html =
@@ -133,11 +134,11 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
 
       assert has_element?(
                french_view,
-               "#draft-language-options input[type='radio'][value='fr']:checked"
+               "#letter-language-value",
+               "Langue de la lettre — Français seulement"
              )
 
-      refute has_element?(french_view, "#draft-language-options input[value='bilingual']")
-      refute has_element?(french_view, "#draft-language-options input[value='en']")
+      refute has_element?(french_view, "#draft-language-options")
       assert has_element?(french_view, "#gender-options", "un·e citoyen·ne")
     end
 
@@ -151,6 +152,22 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
       assert has_element?(view, "#mp-results")
       assert has_element?(view, "#letter-form")
       assert render(view) =~ "Laurier—Sainte-Marie"
+    end
+
+    test "a signed-in lookup saves the postal code and MP to the profile", %{conn: conn} do
+      user = user_fixture()
+      {:ok, view, _html} = live(log_in_user(conn, user), ~p"/en/warning-shot")
+
+      view
+      |> form("#mp-lookup-form", sender: %{name: "Camille Roy", postal_code: "H2X 1Y4"})
+      |> render_submit()
+
+      stored = Accounts.get_user!(user.id)
+      assert stored.postal_code == "H2X1Y4"
+      assert stored.representative["name"] == "Steven Guilbeault"
+
+      {:ok, dashboard, _html} = live(log_in_user(conn, stored), ~p"/en/dashboard")
+      refute has_element?(dashboard, "#fsa-reminder")
     end
 
     test "choosing French rewrites the letter without a second lookup", %{conn: conn} do
@@ -276,6 +293,7 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
       assert Action.pending?(action)
       assert [^action] = Engagement.list_pending_actions(scope)
       assert has_element?(view, "#diy-handed-over")
+      assert has_element?(view, "#diy-dashboard-link[href='/en/dashboard']")
     end
 
     test "the page says letters are diverted before anyone presses send", %{conn: conn} do
@@ -288,7 +306,7 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
       assert has_element?(
                view,
                "#rehearsal-notice",
-               "Development: no letter will be sent to your MP."
+               "Development environment: no letter will be sent to your MP."
              )
 
       assert has_element?(view, "#send-options", "Send your letter")
