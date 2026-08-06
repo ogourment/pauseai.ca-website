@@ -63,6 +63,12 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
     test "both language pages offer bilingual and single-language letters", %{conn: conn} do
       {:ok, en_view, _html} = live(conn, ~p"/en/warning-shot")
 
+      refute has_element?(en_view, "#draft-language-options")
+
+      en_view
+      |> form("#mp-lookup-form", sender: %{name: "Camille Roy", postal_code: "H2X 1Y4"})
+      |> render_submit()
+
       assert has_element?(
                en_view,
                "#draft-language-options input[type='radio'][value='bilingual']:checked"
@@ -72,6 +78,12 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
       assert has_element?(en_view, "#draft-language-options input[type='radio'][value='fr']")
 
       {:ok, fr_view, _html} = live(conn, ~p"/fr/tir-de-semonce")
+
+      refute has_element?(fr_view, "#draft-language-options")
+
+      fr_view
+      |> form("#mp-lookup-form", sender: %{name: "Camille Roy", postal_code: "H2X 1Y4"})
+      |> render_submit()
 
       assert has_element?(
                fr_view,
@@ -104,9 +116,7 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
 
       html =
         view
-        |> form("#mp-lookup-form",
-          sender: %{name: "Camille Roy", postal_code: "H2X 1Y4", draft_language: "fr"}
-        )
+        |> form("#letter-language-form", draft_language: "fr")
         |> render_change()
 
       assert html =~ "Bonjour Steven Guilbeault,"
@@ -117,7 +127,7 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
       {:ok, view, _html} = live(conn, ~p"/en/warning-shot")
 
       view
-      |> form("#mp-lookup-form", sender: %{postal_code: "H2X 1Y4"})
+      |> form("#mp-lookup-form", sender: %{name: "Camille Roy", postal_code: "H2X 1Y4"})
       |> render_submit()
 
       view
@@ -155,7 +165,7 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
       {:ok, view, _html} = live(conn, ~p"/en/warning-shot")
 
       view
-      |> form("#mp-lookup-form", sender: %{postal_code: "H2X 1Y4"})
+      |> form("#mp-lookup-form", sender: %{name: "Camille Roy", postal_code: "H2X 1Y4"})
       |> render_submit()
 
       html =
@@ -190,7 +200,9 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
 
       {:ok, view, _html} = live(log_in_user(conn, user), ~p"/en/warning-shot")
 
-      view |> form("#mp-lookup-form", sender: %{postal_code: "H2X 1Y4"}) |> render_submit()
+      view
+      |> form("#mp-lookup-form", sender: %{name: "Camille Roy", postal_code: "H2X 1Y4"})
+      |> render_submit()
 
       view
       |> form("#send-form", send: %{email: user.email, consent: "true"})
@@ -207,7 +219,10 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
 
       {:ok, view, _html} = live(log_in_user(conn, user), ~p"/en/warning-shot")
 
-      view |> form("#mp-lookup-form", sender: %{postal_code: "H2X 1Y4"}) |> render_submit()
+      view
+      |> form("#mp-lookup-form", sender: %{name: "Camille Roy", postal_code: "H2X 1Y4"})
+      |> render_submit()
+
       view |> element("#send-mode-diy") |> render_click()
       view |> element("#open-mail-app") |> render_click()
 
@@ -220,12 +235,14 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
     test "the page says letters are diverted before anyone presses send", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/en/warning-shot")
 
-      view |> form("#mp-lookup-form", sender: %{postal_code: "H2X 1Y4"}) |> render_submit()
+      view
+      |> form("#mp-lookup-form", sender: %{name: "Camille Roy", postal_code: "H2X 1Y4"})
+      |> render_submit()
 
       assert has_element?(
                view,
                "#rehearsal-notice",
-               "Preview: no letter will be sent to your MP."
+               "Development: no letter will be sent to your MP."
              )
 
       assert has_element?(view, "#send-options", "Send your letter")
@@ -240,7 +257,9 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
     test "a bot that fills the honeypot is not told it was caught", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/en/warning-shot")
 
-      view |> form("#mp-lookup-form", sender: %{postal_code: "H2X 1Y4"}) |> render_submit()
+      view
+      |> form("#mp-lookup-form", sender: %{name: "Camille Roy", postal_code: "H2X 1Y4"})
+      |> render_submit()
 
       view
       |> form("#send-form",
@@ -255,7 +274,9 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
     test "an over-long letter is refused", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/en/warning-shot")
 
-      view |> form("#mp-lookup-form", sender: %{postal_code: "H2X 1Y4"}) |> render_submit()
+      view
+      |> form("#mp-lookup-form", sender: %{name: "Camille Roy", postal_code: "H2X 1Y4"})
+      |> render_submit()
 
       view
       |> form("#letter-form", letter: %{subject: "Hi", body: String.duplicate("a", 8_001)})
@@ -269,6 +290,25 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
       refute_email_sent()
     end
 
+    test "a letter with an unresolved placeholder is refused", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/en/warning-shot")
+
+      view
+      |> form("#mp-lookup-form", sender: %{name: "Camille Roy", postal_code: "H2X 1Y4"})
+      |> render_submit()
+
+      view
+      |> form("#letter-form", letter: %{subject: "Please act", body: "Sincerely, [your name]"})
+      |> render_change()
+
+      view
+      |> form("#send-form", send: %{email: "camille@example.org", consent: "true"})
+      |> render_submit()
+
+      assert has_element?(view, "#send-error", "Replace the remaining placeholders")
+      refute_email_sent()
+    end
+
     test "a burst of letters from one address is refused", %{conn: conn} do
       RateLimit.reset()
       on_exit(&RateLimit.reset/0)
@@ -276,7 +316,9 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
       for attempt <- 1..5 do
         {:ok, view, _html} = live(conn, ~p"/en/warning-shot")
 
-        view |> form("#mp-lookup-form", sender: %{postal_code: "H2X 1Y4"}) |> render_submit()
+        view
+        |> form("#mp-lookup-form", sender: %{name: "Camille Roy", postal_code: "H2X 1Y4"})
+        |> render_submit()
 
         view
         |> form("#send-form", send: %{email: "flood@example.org", consent: "true"})
@@ -290,12 +332,14 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
       {:ok, view, _html} = live(conn, ~p"/fr/tir-de-semonce")
 
       view
-      |> form("#mp-lookup-form", sender: %{postal_code: "H2X 1Y4"})
+      |> form("#mp-lookup-form", sender: %{name: "Camille Roy", postal_code: "H2X 1Y4"})
       |> render_submit()
 
       html =
         view
-        |> form("#mp-lookup-form", sender: %{postal_code: "H2X 1Y4", gender: "feminine"})
+        |> form("#mp-lookup-form",
+          sender: %{name: "Camille Roy", postal_code: "H2X 1Y4", gender: "feminine"}
+        )
         |> render_change()
 
       assert html =~ "une citoyenne de la circonscription"
@@ -318,7 +362,10 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
     test "the DIY path needs no personal data and sends nothing from us", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/en/warning-shot")
 
-      view |> form("#mp-lookup-form", sender: %{postal_code: "H2X 1Y4"}) |> render_submit()
+      view
+      |> form("#mp-lookup-form", sender: %{name: "Camille Roy", postal_code: "H2X 1Y4"})
+      |> render_submit()
+
       view |> element("#send-mode-diy") |> render_click()
 
       assert has_element?(view, "#open-mail-app[href^='mailto:Steven.Guilbeault@parl.gc.ca?']")
@@ -329,7 +376,9 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
     test "a malformed postal code is explained rather than looked up", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/en/warning-shot")
 
-      view |> form("#mp-lookup-form", sender: %{postal_code: "90210"}) |> render_submit()
+      view
+      |> form("#mp-lookup-form", sender: %{name: "Camille Roy", postal_code: "90210"})
+      |> render_submit()
 
       assert has_element?(view, "#lookup-error")
       refute has_element?(view, "#letter-form")
@@ -338,10 +387,24 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
     test "an unavailable lookup service does not break the page", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/en/warning-shot")
 
-      view |> form("#mp-lookup-form", sender: %{postal_code: "A1A 1A1"}) |> render_submit()
+      view
+      |> form("#mp-lookup-form", sender: %{name: "Camille Roy", postal_code: "A1A 1A1"})
+      |> render_submit()
 
       assert has_element?(view, "#lookup-error")
       assert has_element?(view, "#developments-list")
+    end
+
+    test "a name is required before looking up an MP", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/en/warning-shot")
+
+      view
+      |> form("#mp-lookup-form", sender: %{name: " ", postal_code: "H2X 1Y4"})
+      |> render_submit()
+
+      assert has_element?(view, "#lookup-error", "Enter your name before finding your MP.")
+      refute has_element?(view, "#mp-results")
+      refute has_element?(view, "#letter-form")
     end
   end
 end

@@ -128,6 +128,16 @@ defmodule PauseAiCa.CampaignsTest do
       assert Campaigns.compose_letter([member], :fr, %{name: "  "}).body =~ "[votre nom]"
     end
 
+    test "identifies unresolved placeholders before delivery", %{member: member} do
+      english = Campaigns.compose_letter([member], :en, %{})
+      french = Campaigns.compose_letter([member], :fr, %{name: "  "})
+      complete = Campaigns.compose_letter([member], :en, %{name: "Camille Roy"})
+
+      assert PauseAiCa.Campaigns.Letter.unresolved_placeholders?(english)
+      assert PauseAiCa.Campaigns.Letter.unresolved_placeholders?(french)
+      refute PauseAiCa.Campaigns.Letter.unresolved_placeholders?(complete)
+    end
+
     test "still produces a usable letter when no member was found" do
       letter = Campaigns.compose_letter([], :en, %{})
 

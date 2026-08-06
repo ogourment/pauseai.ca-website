@@ -70,27 +70,21 @@ defmodule PauseAiCaWeb.WarningShotLive do
   def handle_event("find-mp", %{"sender" => params}, socket) do
     socket = put_sender(socket, params)
 
-    case Campaigns.find_members_of_parliament(socket.assigns.sender["postal_code"]) do
-      {:ok, []} ->
-        Audit.event(:mp_lookup_empty, %{locale: socket.assigns.locale})
-        {:noreply, no_representatives(socket, :not_found)}
-
-      {:ok, representatives} ->
-        Audit.event(:mp_lookup_ok, %{
-          locale: socket.assigns.locale,
-          matches: length(representatives)
-        })
-
-        {:noreply,
-         socket
-         |> assign(:representatives, representatives)
-         |> assign(:lookup_error, nil)
-         |> recompose()}
-
-      {:error, reason} ->
-        Audit.event(:mp_lookup_failed, %{locale: socket.assigns.locale, reason: reason})
-        {:noreply, no_representatives(socket, reason)}
+    if blank?(socket.assigns.sender["name"]) do
+      {:noreply, no_representatives(socket, :name_required)}
+    else
+      find_members_of_parliament(socket)
     end
+  end
+
+  def handle_event("choose-draft-language", %{"draft_language" => language}, socket) do
+    sender = Map.put(socket.assigns.sender, "draft_language", draft_language(language))
+
+    {:noreply,
+     socket
+     |> assign(:sender, sender)
+     |> assign(:sender_form, to_form(sender, as: :sender))
+     |> recompose()}
   end
 
   def handle_event("edit-letter", %{"letter" => params}, socket) do
@@ -134,6 +128,10 @@ defmodule PauseAiCaWeb.WarningShotLive do
 
       params["consent"] != "true" ->
         {:noreply, assign(socket, :send_state, {:error, :consent_required})}
+
+      Letter.unresolved_placeholders?(letter) ->
+        Audit.event(:letter_rejected, %{reason: :unresolved_placeholders})
+        {:noreply, assign(socket, :send_state, {:error, :unresolved_placeholders})}
 
       String.length(letter.body) > @max_body_length ->
         Audit.event(:letter_rejected, %{
@@ -239,6 +237,30 @@ defmodule PauseAiCaWeb.WarningShotLive do
     end
   end
 
+  defp find_members_of_parliament(socket) do
+    case Campaigns.find_members_of_parliament(socket.assigns.sender["postal_code"]) do
+      {:ok, []} ->
+        Audit.event(:mp_lookup_empty, %{locale: socket.assigns.locale})
+        {:noreply, no_representatives(socket, :not_found)}
+
+      {:ok, representatives} ->
+        Audit.event(:mp_lookup_ok, %{
+          locale: socket.assigns.locale,
+          matches: length(representatives)
+        })
+
+        {:noreply,
+         socket
+         |> assign(:representatives, representatives)
+         |> assign(:lookup_error, nil)
+         |> recompose()}
+
+      {:error, reason} ->
+        Audit.event(:mp_lookup_failed, %{locale: socket.assigns.locale, reason: reason})
+        {:noreply, no_representatives(socket, reason)}
+    end
+  end
+
   defp send_params(params) do
     %{
       "email" => params["email"] || "",
@@ -264,7 +286,8 @@ defmodule PauseAiCaWeb.WarningShotLive do
     sender = %{
       "name" => params["name"] || "",
       "postal_code" => params["postal_code"] || "",
-      "draft_language" => draft_language(params["draft_language"]),
+      "draft_language" =>
+        draft_language(params["draft_language"] || socket.assigns.sender["draft_language"]),
       "gender" => gender(params["gender"])
     }
 
@@ -286,6 +309,17 @@ defmodule PauseAiCaWeb.WarningShotLive do
   defp recompose(socket) do
     sender = socket.assigns.sender
 
+    if blank?(sender["name"]) do
+      socket
+      |> assign(:letter, nil)
+      |> assign(:letter_form, nil)
+      |> assign(:lookup_error, :name_required)
+    else
+      compose_letter(socket, sender)
+    end
+  end
+
+  defp compose_letter(socket, sender) do
     letter =
       Campaigns.compose_letter(
         socket.assigns.representatives,
@@ -297,8 +331,13 @@ defmodule PauseAiCaWeb.WarningShotLive do
         }
       )
 
-    socket |> assign(:letter, letter) |> assign(:letter_form, to_letter_form(letter))
+    socket
+    |> assign(:letter, letter)
+    |> assign(:letter_form, to_letter_form(letter))
+    |> assign(:lookup_error, nil)
   end
+
+  defp blank?(value), do: not is_binary(value) or String.trim(value) == ""
 
   defp to_letter_form(%Letter{} = letter) do
     to_form(%{"subject" => letter.subject, "body" => letter.body}, as: :letter)
@@ -426,6 +465,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
               type="text"
               label={name_label(@locale)}
               autocomplete="name"
+              required
             />
             <.input
               field={@sender_form[:postal_code]}
@@ -435,28 +475,6 @@ defmodule PauseAiCaWeb.WarningShotLive do
               maxlength="7"
               placeholder="H2X 1Y4"
             />
-            <div class="sm:col-span-2">
-              <fieldset id="draft-language-options" class="mb-4">
-                <legend class="mb-2 block text-sm font-semibold text-stone-800">
-                  {language_label(@locale)}
-                </legend>
-                <div class="flex flex-wrap gap-2">
-                  <label
-                    :for={{label, value} <- draft_language_options(@locale)}
-                    class="flex cursor-pointer items-center gap-2 rounded-full border-2 border-stone-300 px-4 py-2.5 text-stone-800 transition has-[:checked]:border-brand has-[:checked]:bg-brand-wash"
-                  >
-                    <input
-                      type="radio"
-                      name={@sender_form[:draft_language].name}
-                      value={value}
-                      checked={@sender_form[:draft_language].value == value}
-                      class="size-4 accent-stone-900"
-                    />
-                    <span class="font-semibold">{label}</span>
-                  </label>
-                </div>
-              </fieldset>
-            </div>
             <div :if={@locale == "fr"} class="sm:col-span-2">
               <.input
                 field={@sender_form[:gender]}
@@ -507,6 +525,34 @@ defmodule PauseAiCaWeb.WarningShotLive do
             </ul>
             <p class="mt-3 text-sm text-stone-500">{best_match_note(@locale)}</p>
           </div>
+
+          <form
+            :if={@representatives != []}
+            id="letter-language-form"
+            phx-change="choose-draft-language"
+            class="mt-8"
+          >
+            <fieldset id="draft-language-options">
+              <legend class="mb-2 block text-sm font-semibold text-stone-800">
+                {language_label(@locale)}
+              </legend>
+              <div class="flex flex-wrap gap-2">
+                <label
+                  :for={{label, value} <- draft_language_options(@locale)}
+                  class="flex cursor-pointer items-center gap-2 rounded-full border-2 border-stone-300 px-4 py-2.5 text-stone-800 transition has-[:checked]:border-brand has-[:checked]:bg-brand-wash"
+                >
+                  <input
+                    type="radio"
+                    name="draft_language"
+                    value={value}
+                    checked={@sender["draft_language"] == value}
+                    class="size-4 accent-stone-900"
+                  />
+                  <span class="font-semibold">{label}</span>
+                </label>
+              </div>
+            </fieldset>
+          </form>
 
           <.form
             :if={@letter_form}
@@ -839,6 +885,9 @@ defmodule PauseAiCaWeb.WarningShotLive do
   defp send_error_message({:error, :too_fast}, _locale),
     do: gettext("Take a moment to read the letter before sending it.")
 
+  defp send_error_message({:error, :unresolved_placeholders}, _locale),
+    do: gettext("Replace the remaining placeholders before sending.")
+
   defp send_error_message(_state, _locale),
     do: gettext("Sending failed. Try again, or use your email app.")
 
@@ -862,8 +911,15 @@ defmodule PauseAiCaWeb.WarningShotLive do
         "We have noted this as unconfirmed in your dashboard. We cannot tell whether you pressed send, so you can confirm it there."
       )
 
-  defp rehearsal_note(_locale),
-    do: gettext("Preview: no letter will be sent to your MP.")
+  defp rehearsal_note(_locale) do
+    environment =
+      case PauseAiCa.Environment.label() do
+        "STAGING" -> gettext("Staging")
+        _development -> gettext("Development")
+      end
+
+    gettext("%{environment}: no letter will be sent to your MP.", environment: environment)
+  end
 
   defp share_heading(_locale), do: gettext("One more letter counts double")
 
@@ -905,6 +961,9 @@ defmodule PauseAiCaWeb.WarningShotLive do
 
   defp lookup_error_message(:invalid_postal_code, _locale),
     do: gettext("That does not look like a Canadian postal code. Example: H2X 1Y4.")
+
+  defp lookup_error_message(:name_required, _locale),
+    do: gettext("Enter your name before finding your MP.")
 
   defp lookup_error_message(:not_found, _locale), do: gettext("No MP found for that postal code.")
 

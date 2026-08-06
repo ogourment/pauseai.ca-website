@@ -70,6 +70,15 @@ defmodule PauseAiCa.Campaigns.Letter do
     "mailto:" <> URI.encode(draft.to || "") <> "?" <> query
   end
 
+  @doc "True when a draft still contains a template marker that must be replaced."
+  @spec unresolved_placeholders?(t()) :: boolean()
+  def unresolved_placeholders?(%__MODULE__{} = draft) do
+    content = Enum.join([draft.subject, draft.body], "\n")
+
+    String.contains?(content, ["[your name]", "[votre nom]"]) or
+      Regex.match?(~r/\{[a-z_]+\}/i, content)
+  end
+
   @doc "The French self-description for `gender`."
   @spec constituent(gender() | nil) :: String.t()
   def constituent(:feminine), do: "une citoyenne"
