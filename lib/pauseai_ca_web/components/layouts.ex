@@ -135,6 +135,20 @@ defmodule PauseAiCaWeb.Layouts do
                 {gettext("Canada-wide calendar")}
               </span>
             </a>
+            <.link
+              id="act-join"
+              navigate={
+                if(@locale == "fr", do: ~p"/fr/comprendre#updates", else: ~p"/en/learn#updates")
+              }
+              class="block border-b border-stone-100 px-4 py-3 hover:bg-brand-wash"
+            >
+              <span class="block font-heading text-base font-bold text-stone-950">
+                {gettext("Join Us")}
+              </span>
+              <span class="block text-xs leading-5 text-stone-500">
+                {gettext("Join PauseAI Canada")}
+              </span>
+            </.link>
             <%!-- New tab: these leave for another site, and a visitor part-way
                  through reading should not lose their place. --%>
             <a
@@ -283,11 +297,10 @@ defmodule PauseAiCaWeb.Layouts do
     if PauseAiCa.Environment.label() == "STAGING", do: "#b91c1c", else: "#1d4ed8"
   end
 
-  # The three things PauseAI Global asks people to do. They all leave this site,
-  # so each says where it goes rather than pretending to be a local page.
+  # The remaining PauseAI Global actions leave this site, so each says where it
+  # goes rather than pretending to be a local page.
   defp act_items(locale) do
     [
-      {"act-join", gettext("Join"), gettext("PauseAI's global form"), act_path("join", locale)},
       {"act-sign", gettext("Sign"), gettext("The PauseAI statement"), act_path("sign", locale)},
       {"act-actions", gettext("Actions"), gettext("What PauseAI asks people to do"),
        act_path("actions", locale)}

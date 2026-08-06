@@ -48,11 +48,13 @@
         <h2 class="font-heading text-3xl text-stone-950">
           {gettext("Contact us")}
         </h2><p class="mt-3">
-          {gettext("Want to participate? Join PauseAI and indicate that you are in Canada.")}
-        </p><a
+          {gettext("Want to participate? Join PauseAI Canada.")}
+        </p><.link
           class="mt-4 inline-flex rounded-full bg-brand px-5 py-3 font-semibold text-stone-950"
-          href={if(@locale == "fr", do: "https://pauseia.fr/agir", else: ~p"/act/join?locale=en")}
-        >{gettext("Join us")}</a>
+          navigate={
+            if(@locale == "fr", do: ~p"/fr/comprendre#updates", else: ~p"/en/learn#updates")
+          }
+        >{gettext("Join PauseAI Canada")}</.link>
       </section>
     </div>
   </article>

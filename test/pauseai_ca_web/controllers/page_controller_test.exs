@@ -75,7 +75,8 @@ defmodule PauseAiCaWeb.PageControllerTest do
     refute fr_html =~ "Échelle d'engagement proposée"
     about_en = html_response(get(conn, ~p"/en/about"), 200)
     assert about_en =~ ~s(id="about")
-    assert about_en =~ "Join us"
+    assert about_en =~ "Join PauseAI Canada"
+    assert about_en =~ ~s(href="/en/learn#updates")
     refute about_en =~ "network form"
     assert about_en =~ "https://pauseai.info/"
     assert about_en =~ "https://pauseia.fr/fr"
