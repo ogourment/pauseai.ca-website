@@ -83,6 +83,12 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
 
       assert has_element?(view, "#act-join[href='/en/learn#updates']", "Join PauseAI Canada")
 
+      assert has_element?(
+               view,
+               "#act-email-mp[href='/en/warning-shot#letter']",
+               "Email your MP"
+             )
+
       # External actions route through the app so a departure can be recorded,
       # and open in a new tab so a reader does not lose their place.
       assert has_element?(view, "#act-sign[href='/act/sign?locale=en'][target='_blank']")
@@ -130,6 +136,12 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
                "Rejoindre PauseAI Canada"
              )
 
+      assert has_element?(
+               view,
+               "#act-email-mp[href='/fr/tir-de-semonce#letter']",
+               "Écrire à votre député·e"
+             )
+
       assert render(view) =~ "Signer"
     end
 
@@ -173,6 +185,18 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
   end
 
   describe "getting updates" do
+    test "location labels stay concise even though both fields are optional", %{conn: conn} do
+      {:ok, en_view, _html} = live(conn, ~p"/en/learn")
+      assert has_element?(en_view, "#subscribe-form label", "Postal code")
+      assert has_element?(en_view, "#subscribe-form label", "City")
+      refute render(en_view) =~ "(optional)"
+
+      {:ok, fr_view, _html} = live(conn, ~p"/fr/comprendre")
+      assert has_element?(fr_view, "#subscribe-form label", "Code postal")
+      assert has_element?(fr_view, "#subscribe-form label", "Ville")
+      refute render(fr_view) =~ "(facultatif)"
+    end
+
     test "consent links to the confidentiality policy on the same site", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/en/learn")
 

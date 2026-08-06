@@ -136,6 +136,23 @@ defmodule PauseAiCaWeb.Layouts do
               </span>
             </a>
             <.link
+              id="act-email-mp"
+              navigate={
+                if(@locale == "fr",
+                  do: ~p"/fr/tir-de-semonce#letter",
+                  else: ~p"/en/warning-shot#letter"
+                )
+              }
+              class="block border-b border-stone-100 px-4 py-3 hover:bg-brand-wash"
+            >
+              <span class="block font-heading text-base font-bold text-stone-950">
+                {gettext("Email your MP")}
+              </span>
+              <span class="block text-xs leading-5 text-stone-500">
+                {gettext("Send a personal letter in a few minutes")}
+              </span>
+            </.link>
+            <.link
               id="act-join"
               navigate={
                 if(@locale == "fr", do: ~p"/fr/comprendre#updates", else: ~p"/en/learn#updates")

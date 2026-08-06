@@ -138,7 +138,7 @@ defmodule PauseAiCaWeb.ProfileLive do
               <.input
                 field={@profile_form[:city]}
                 type="text"
-                label={gettext("City (optional)")}
+                label={gettext("City")}
                 autocomplete="address-level2"
               />
               <.input

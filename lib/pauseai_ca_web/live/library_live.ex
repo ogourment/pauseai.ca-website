@@ -363,8 +363,8 @@ defmodule PauseAiCaWeb.LibraryLive do
       )
 
   defp email_label(_locale), do: gettext("Your email")
-  defp postal_code_label(_locale), do: gettext("Postal code (optional)")
-  defp city_label(_locale), do: gettext("City (optional)")
+  defp postal_code_label(_locale), do: gettext("Postal code")
+  defp city_label(_locale), do: gettext("City")
 
   defp consent_label(_locale),
     do:
