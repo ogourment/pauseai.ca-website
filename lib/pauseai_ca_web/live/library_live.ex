@@ -269,7 +269,15 @@ defmodule PauseAiCaWeb.LibraryLive do
                 checked={@subscribe_form[:consent].value == "true"}
                 class="mt-1 size-4 shrink-0"
               />
-              <span class="text-sm leading-6 text-stone-700">{consent_label(@locale)}</span>
+              <span class="text-sm leading-6 text-stone-700">
+                {consent_label(@locale)}
+                <.link
+                  navigate={if(@locale == "fr", do: ~p"/fr/confidentialite", else: ~p"/en/privacy")}
+                  class="ml-1 underline decoration-brand decoration-2 underline-offset-4"
+                >
+                  {confidentiality_policy_label(@locale)}
+                </.link>
+              </span>
             </label>
 
             <button
@@ -361,8 +369,10 @@ defmodule PauseAiCaWeb.LibraryLive do
   defp consent_label(_locale),
     do:
       gettext(
-        "I agree to receive emails from PauseAI Canada. My email and optional location are held by Brevo, our sending provider, and are never sold or shared. If I later create an account with this email, the location can be copied into my profile."
+        "I agree to receive emails from PauseAI Canada. My address is never sold or shared."
       )
+
+  defp confidentiality_policy_label(_locale), do: gettext("Confidentiality policy")
 
   defp subscribe_cta(_locale), do: gettext("Sign me up")
 

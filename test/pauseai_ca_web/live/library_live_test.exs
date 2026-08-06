@@ -167,6 +167,16 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
   end
 
   describe "getting updates" do
+    test "consent links to the confidentiality policy on the same site", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/en/learn")
+
+      assert has_element?(
+               view,
+               "#subscribe-form a[href='/en/privacy']",
+               "Confidentiality policy"
+             )
+    end
+
     test "a consenting visitor is subscribed", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/en/learn")
 
