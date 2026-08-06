@@ -57,6 +57,14 @@ defmodule PauseAiCaWeb.PageControllerTest do
     refute html =~ ~s(href="/users/register?bookmark=risk")
   end
 
+  test "authenticated French LiveViews set the Gettext locale", %{conn: conn} do
+    user = PauseAiCa.AccountsFixtures.user_fixture()
+    conn = log_in_user(conn, user)
+
+    assert html_response(get(conn, ~p"/fr/profil"), 200) =~ "Code postal complet"
+    assert html_response(get(conn, ~p"/fr/tableau-de-bord"), 200) =~ "Mon tableau de bord"
+  end
+
   test "strategy and identity are available without leaving either language", %{conn: conn} do
     en_html = html_response(get(conn, ~p"/en/strategy"), 200)
     fr_html = html_response(get(conn, ~p"/fr/strategie"), 200)

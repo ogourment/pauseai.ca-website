@@ -73,7 +73,7 @@ defmodule PauseAiCaWeb.PageHTML do
           class="mt-5 inline-flex items-center gap-2 rounded-full border border-stone-300 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:border-brand hover:bg-white"
         >
           <.icon name="hero-bookmark" class="size-4" />
-          {if(@locale == "fr", do: "Enregistrer", else: "Bookmark")}
+          {gettext("Bookmark")}
         </.link>
       <% else %>
         <.link
@@ -81,31 +81,21 @@ defmodule PauseAiCaWeb.PageHTML do
           class="mt-5 inline-flex items-center gap-2 rounded-full border border-stone-300 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:border-brand hover:bg-white"
         >
           <.icon name="hero-bookmark" class="size-4" />
-          {if(@locale == "fr", do: "Enregistrer", else: "Bookmark")}
+          {gettext("Bookmark")}
         </.link>
       <% end %>
     </article>
     """
   end
 
-  defp answer_options("fr"),
-    do: [
-      {"0", "Incertain"},
-      {"1", "Pas du tout"},
-      {"2", "Peu"},
-      {"3", "Mitigé"},
-      {"4", "Plutôt"},
-      {"5", "Tout à fait"}
-    ]
-
   defp answer_options(_locale),
     do: [
-      {"0", "Unsure"},
-      {"1", "Strongly disagree"},
-      {"2", "Disagree"},
-      {"3", "Mixed"},
-      {"4", "Agree"},
-      {"5", "Strongly agree"}
+      {"0", gettext("Unsure")},
+      {"1", gettext("Strongly disagree")},
+      {"2", gettext("Disagree")},
+      {"3", gettext("Mixed")},
+      {"4", gettext("Agree")},
+      {"5", gettext("Strongly agree")}
     ]
 
   embed_templates "page_html/*"

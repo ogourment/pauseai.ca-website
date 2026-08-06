@@ -16,7 +16,9 @@ defmodule PauseAiCaWeb.ProfileLiveTest do
     {:ok, view, _html} = live(conn, ~p"/en/profile")
 
     view
-    |> form("#profile-form", profile: %{postal_code: "h2x 1y4", local_updates: true})
+    |> form("#profile-form",
+      profile: %{postal_code: "h2x 1y4", city: " Montréal ", local_updates: true}
+    )
     |> render_submit()
 
     assert has_element?(view, "#mp-result", "Steven Guilbeault")
@@ -25,6 +27,7 @@ defmodule PauseAiCaWeb.ProfileLiveTest do
 
     stored = Repo.get!(Accounts.User, user.id)
     assert stored.postal_code == "H2X1Y4"
+    assert stored.city == "Montréal"
     assert stored.fsa == "H2X"
     assert stored.local_updates
     assert stored.representative["name"] == "Steven Guilbeault"

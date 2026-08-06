@@ -16,6 +16,7 @@ defmodule PauseAiCa.Accounts.User do
     field :saved_resources, {:array, :string}, default: []
     field :belief_answers, :map, default: %{}
     field :postal_code, :string
+    field :city, :string
     field :representative, :map
     field :custom_resource_urls, {:array, :string}, default: []
 
@@ -37,6 +38,14 @@ defmodule PauseAiCa.Accounts.User do
     user
     |> cast(attrs, [:email])
     |> validate_email(opts)
+  end
+
+  def registration_changeset(user, attrs) do
+    user
+    |> email_changeset(attrs)
+    |> cast(attrs, [:postal_code, :city])
+    |> update_change(:postal_code, &normalize_postal_code/1)
+    |> update_change(:city, &String.trim/1)
   end
 
   defp validate_email(changeset, opts) do
@@ -136,10 +145,11 @@ defmodule PauseAiCa.Accounts.User do
 
   def profile_changeset(user, attrs) do
     user
-    |> cast(attrs, [:postal_code, :local_updates])
+    |> cast(attrs, [:postal_code, :city, :local_updates])
     |> update_change(:postal_code, fn value ->
       value |> String.upcase() |> String.replace(~r/[^A-Z0-9]/, "")
     end)
+    |> update_change(:city, &String.trim/1)
     |> validate_required([:postal_code])
     |> validate_format(:postal_code, ~r/^[ABCEGHJ-NPRSTVXY]\d[A-Z]\d[A-Z]\d$/,
       message: "must be a complete Canadian postal code"
@@ -153,6 +163,10 @@ defmodule PauseAiCa.Accounts.User do
           changeset
       end
     end)
+  end
+
+  defp normalize_postal_code(value) do
+    value |> String.upcase() |> String.replace(~r/[^A-Z0-9]/, "")
   end
 
   @doc """

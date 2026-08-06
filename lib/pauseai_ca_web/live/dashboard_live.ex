@@ -11,11 +11,12 @@ defmodule PauseAiCaWeb.DashboardLive do
     actions = Engagement.list_actions(scope)
     confirmed_actions = Enum.reject(actions, &Action.pending?/1)
     locale = if socket.assigns.live_action == :fr, do: "fr", else: "en"
+    Gettext.put_locale(PauseAiCaWeb.Gettext, locale)
 
     {:ok,
      socket
      |> assign(:locale, locale)
-     |> assign(:page_title, if(locale == "fr", do: "Mon tableau de bord", else: "My dashboard"))
+     |> assign(:page_title, gettext("My dashboard"))
      |> assign(
        :recommendation,
        Ladder.recommendation(confirmed_actions, locale)
@@ -210,42 +211,22 @@ defmodule PauseAiCaWeb.DashboardLive do
   defp saved_resource_url("agency", "fr"), do: ~p"/fr/strategie"
   defp saved_resource_url("agency", _), do: ~p"/en/strategy"
 
-  defp saved_resource_label("risk", "fr"), do: "Comprendre le risque existentiel"
-  defp saved_resource_label("risk", _), do: "Understand existential risk"
-  defp saved_resource_label("pause", "fr"), do: "Comprendre une pause"
-  defp saved_resource_label("pause", _), do: "Understand a pause"
-  defp saved_resource_label("coordination", "fr"), do: "Tester la coordination"
-  defp saved_resource_label("coordination", _), do: "Test coordination"
-  defp saved_resource_label("agency", "fr"), do: "Passer à l’action"
-  defp saved_resource_label("agency", _), do: "Move toward action"
+  defp saved_resource_label("risk", _), do: gettext("Understand existential risk")
+  defp saved_resource_label("pause", _), do: gettext("Understand a pause")
+  defp saved_resource_label("coordination", _), do: gettext("Test coordination")
+  defp saved_resource_label("agency", _), do: gettext("Move toward action")
 
-  defp action_label(type, "fr") do
-    %{
-      "learned" => "Lu ou regardé une ressource",
-      "conversation" => "Discuté des risques de l'IA",
-      "event" => "Participé à un événement",
-      "contacted_representative" => "Contacté une personne élue",
-      "met_representative" => "Rencontré une personne élue",
-      "joined" => "Rejoint PauseAI",
-      "signed" => "Signé la déclaration",
-      "flyered" => "Distribué des dépliants ou posé des affiches",
-      "volunteered" => "Fait du bénévolat",
-      "organized" => "Organisé une activité",
-      "other" => "Autre action privée"
-    }[type]
-  end
-
-  defp action_label("learned", _locale), do: "Read or watched a resource"
-  defp action_label("conversation", _), do: "Discussed AI risk with someone"
-  defp action_label("event", _), do: "Attended an event"
-  defp action_label("contacted_representative", _), do: "Contacted a representative"
-  defp action_label("met_representative", _), do: "Met a representative"
-  defp action_label("joined", _), do: "Joined PauseAI"
-  defp action_label("signed", _), do: "Signed the PauseAI statement"
-  defp action_label("flyered", _), do: "Handed out flyers or put up posters"
-  defp action_label("volunteered", _), do: "Volunteered"
-  defp action_label("organized", _), do: "Organized an activity"
-  defp action_label("other", _), do: "Other private action"
+  defp action_label("learned", _locale), do: gettext("Read or watched a resource")
+  defp action_label("conversation", _), do: gettext("Discussed AI risk with someone")
+  defp action_label("event", _), do: gettext("Attended an event")
+  defp action_label("contacted_representative", _), do: gettext("Contacted a representative")
+  defp action_label("met_representative", _), do: gettext("Met a representative")
+  defp action_label("joined", _), do: gettext("Joined PauseAI")
+  defp action_label("signed", _), do: gettext("Signed the PauseAI statement")
+  defp action_label("flyered", _), do: gettext("Handed out flyers or put up posters")
+  defp action_label("volunteered", _), do: gettext("Volunteered")
+  defp action_label("organized", _), do: gettext("Organized an activity")
+  defp action_label("other", _), do: gettext("Other private action")
 
   @impl true
   def render(assigns) do
@@ -259,10 +240,10 @@ defmodule PauseAiCaWeb.DashboardLive do
       <section class="mx-auto grid max-w-6xl gap-10 px-5 py-12 lg:grid-cols-[0.8fr_1.2fr] lg:py-20">
         <div>
           <p class="eyebrow">
-            {if(@locale == "fr", do: "Votre espace privé", else: "Your private workspace")}
+            {gettext("Your private workspace")}
           </p>
           <h1 class="mt-3 font-serif text-5xl leading-tight text-stone-950">
-            {if(@locale == "fr", do: "Mon tableau de bord", else: "My dashboard")}
+            {gettext("My dashboard")}
           </h1>
 
           <div
@@ -271,20 +252,16 @@ defmodule PauseAiCaWeb.DashboardLive do
             class="mt-8 rounded-3xl border border-brand/40 bg-brand-wash p-6"
           >
             <h2 class="font-serif text-2xl text-stone-950">
-              {if(@locale == "fr", do: "Que pense votre député?", else: "Where does your MP stand?")}
+              {gettext("Where does your MP stand?")}
             </h2>
             <p class="mt-2 leading-7 text-stone-600">
-              {if(@locale == "fr",
-                do:
-                  "Ajoutez votre code postal complet à votre profil pour identifier votre circonscription et votre député.",
-                else: "Add your full postal code to your profile to identify your riding and MP."
-              )}
+              {gettext("Add your full postal code to your profile to identify your riding and MP.")}
             </p>
             <.link
               navigate={if(@locale == "fr", do: ~p"/fr/profil", else: ~p"/en/profile")}
               class="mt-4 inline-flex rounded-full bg-stone-900 px-5 py-3 font-semibold text-white hover:bg-stone-700"
             >
-              {if(@locale == "fr", do: "Compléter mon profil", else: "Complete my profile")}
+              {gettext("Complete my profile")}
             </.link>
           </div>
 
@@ -294,31 +271,25 @@ defmodule PauseAiCaWeb.DashboardLive do
             class="mt-8 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm"
           >
             <h2 class="font-serif text-2xl text-stone-950">
-              {if(@locale == "fr", do: "Mon député", else: "My MP")}
+              {gettext("My MP")}
             </h2>
             <p class="mt-3 font-heading text-xl font-bold text-stone-950">
               {@representative["name"]}
             </p>
             <p class="text-stone-600">{@representative["district"]} · {@representative["party"]}</p>
             <p class="mt-3 text-sm text-stone-600">
-              {if(@locale == "fr",
-                do: "Position sur une pause de l’IA avancée : pas encore documentée.",
-                else: "Position on pausing advanced AI: not yet documented."
-              )}
+              {gettext("Position on pausing advanced AI: not yet documented.")}
             </p>
             <.link
               navigate={if(@locale == "fr", do: ~p"/fr/profil", else: ~p"/en/profile")}
               class="mt-3 inline-block text-sm font-semibold underline"
             >
-              {if(@locale == "fr", do: "Modifier mon profil", else: "Edit my profile")}
+              {gettext("Edit my profile")}
             </.link>
           </div>
           <p class="mt-5 max-w-lg text-lg leading-8 text-stone-600">
-            {if(@locale == "fr",
-              do:
-                "Votre journal n'est visible que par vous. Seuls des totaux anonymisés servent à suivre la progression du mouvement.",
-              else:
-                "Your log is visible only to you. Only aggregate counts are used to understand movement progress."
+            {gettext(
+              "Your log is visible only to you. Only aggregate counts are used to understand movement progress."
             )}
           </p>
 
@@ -328,7 +299,7 @@ defmodule PauseAiCaWeb.DashboardLive do
             class="mt-8 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm"
           >
             <h2 class="font-serif text-2xl text-stone-950">
-              {if(@locale == "fr", do: "À lire plus tard", else: "Saved for later")}
+              {gettext("Saved for later")}
             </h2>
             <ul class="mt-3 space-y-2">
               <li :for={resource <- @saved_resources}>
@@ -354,20 +325,20 @@ defmodule PauseAiCaWeb.DashboardLive do
               navigate={if(@locale == "fr", do: ~p"/fr/profil", else: ~p"/en/profile")}
               class="mt-4 inline-block text-sm font-semibold underline"
             >
-              {if(@locale == "fr", do: "Gérer mon parcours", else: "Manage my learning path")}
+              {gettext("Manage my learning path")}
             </.link>
           </div>
 
           <div class="mt-8 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm">
             <p class="text-sm font-semibold uppercase tracking-widest text-brand-ink">
-              {@action_count} {if(@locale == "fr", do: "actions consignées", else: "actions recorded")}
+              {@action_count} {gettext("actions recorded")}
             </p>
             <h2 id="suggested-next-step" class="mt-3 font-heading text-2xl text-stone-950">
               {@recommendation.title}
             </h2>
             <p class="mt-2 text-stone-600">{@recommendation.why}</p>
             <p class="mt-3 text-sm text-stone-500">
-              {if(@locale == "fr", do: "Temps estimé", else: "Estimated time")}: {@recommendation.effort}
+              {gettext("Estimated time")}: {@recommendation.effort}
             </p>
             <.link
               href={@recommendation.href}
@@ -380,14 +351,10 @@ defmodule PauseAiCaWeb.DashboardLive do
             class="mt-8 overflow-hidden rounded-3xl bg-stone-900 p-6 text-white"
           >
             <h2 class="font-heading text-2xl">
-              {if(@locale == "fr", do: "D'autres façons d'agir", else: "Other ways to act")}
+              {gettext("Other ways to act")}
             </h2>
             <p class="mt-2 text-sm leading-6 text-white/70">
-              {if(@locale == "fr",
-                do:
-                  "Votre prochaine étape suggérée n'est qu'une option. Choisissez ce qui vous convient maintenant.",
-                else: "Your suggested next step is only one option. Choose what fits you now."
-              )}
+              {gettext("Your suggested next step is only one option. Choose what fits you now.")}
             </p>
             <ol class="mt-6 flex flex-col-reverse px-2">
               <li
@@ -406,8 +373,8 @@ defmodule PauseAiCaWeb.DashboardLive do
                     class="absolute right-0 top-0 -translate-y-1/2 rounded-full bg-brand px-3 py-1 text-xs font-bold text-stone-950 shadow"
                   >
                     ← {if(@ladder_position == 0,
-                      do: if(@locale == "fr", do: "Commencez ici", else: "Start here"),
-                      else: if(@locale == "fr", do: "Vous êtes ici", else: "You are here")
+                      do: gettext("Start here"),
+                      else: gettext("You are here")
                     )}
                   </span>
                   <strong class="block text-sm">{i}. {step.title}</strong>
@@ -425,17 +392,11 @@ defmodule PauseAiCaWeb.DashboardLive do
             class="rounded-3xl border-2 border-brand bg-brand-wash p-6 sm:p-8"
           >
             <h2 class="font-heading text-2xl uppercase tracking-wide text-stone-950">
-              {if(@locale == "fr",
-                do: "Avez-vous réalisé ces actions ?",
-                else: "Did you complete these actions?"
-              )}
+              {gettext("Did you complete these actions?")}
             </h2>
             <p class="mt-2 leading-7 text-stone-700">
-              {if(@locale == "fr",
-                do:
-                  "Nous les avons notées lorsque vous les avez commencées hors de ce journal. Confirmez-nous si vous les avez terminées.",
-                else:
-                  "We recorded these when you started them outside this journal. Please confirm whether you completed them."
+              {gettext(
+                "We recorded these when you started them outside this journal. Please confirm whether you completed them."
               )}
             </p>
 
@@ -458,7 +419,7 @@ defmodule PauseAiCaWeb.DashboardLive do
                   phx-value-id={action.id}
                   class="rounded-full bg-brand px-5 py-2.5 font-heading font-bold text-stone-950 transition hover:bg-brand-strong"
                 >
-                  {if(@locale == "fr", do: "Oui, c'est fait", else: "Yes, I did")}
+                  {gettext("Yes, I did")}
                 </button>
                 <button
                   type="button"
@@ -467,7 +428,7 @@ defmodule PauseAiCaWeb.DashboardLive do
                   phx-value-id={action.id}
                   class="rounded-full px-4 py-2.5 font-semibold text-stone-500 underline-offset-4 hover:text-stone-900 hover:underline"
                 >
-                  {if(@locale == "fr", do: "Non, supprimer", else: "No, remove it")}
+                  {gettext("No, remove it")}
                 </button>
               </li>
             </ul>
@@ -475,10 +436,7 @@ defmodule PauseAiCaWeb.DashboardLive do
 
           <div id="action-editor" class="rounded-3xl bg-stone-900 p-6 text-white shadow-xl sm:p-8">
             <h2 class="font-serif text-3xl">
-              {if(@locale == "fr",
-                do: if(@editing_id, do: "Modifier l'action", else: "Noter une action"),
-                else: if(@editing_id, do: "Edit action", else: "Record an action")
-              )}
+              {if(@editing_id, do: gettext("Edit action"), else: gettext("Record an action"))}
             </h2>
             <.form
               for={@form}
@@ -490,16 +448,16 @@ defmodule PauseAiCaWeb.DashboardLive do
               <.input
                 field={@form[:action_type]}
                 type="select"
-                label={if(@locale == "fr", do: "Qu'avez-vous fait?", else: "What did you do?")}
-                prompt={if(@locale == "fr", do: "Choisir une action", else: "Choose an action")}
+                label={gettext("What did you do?")}
+                prompt={gettext("Choose an action")}
                 options={Enum.map(Action.action_types(), &{action_label(&1, @locale), &1})}
                 class="w-full select bg-white text-stone-950"
               />
               <.input
                 field={@form[:happened_on]}
                 type="date"
-                label={if(@locale == "fr", do: "Quand?", else: "When?")}
-                lang={if(@locale == "fr", do: "fr-CA", else: "en-CA")}
+                label={gettext("When?")}
+                lang={gettext("en-CA")}
                 class="w-full input bg-white text-stone-950"
               />
               <.input
@@ -530,9 +488,9 @@ defmodule PauseAiCaWeb.DashboardLive do
                   id="save-action"
                   class="rounded-full bg-brand px-5 py-3 font-semibold text-white hover:bg-brand-strong"
                 >
-                  {if(@locale == "fr",
-                    do: if(@editing_id, do: "Enregistrer", else: "Noter en privé"),
-                    else: if(@editing_id, do: "Save changes", else: "Record privately")
+                  {if(@editing_id,
+                    do: gettext("Save changes"),
+                    else: gettext("Record privately")
                   )}
                 </button>
                 <button

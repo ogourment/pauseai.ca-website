@@ -7,34 +7,28 @@
   <article id="about" class="mx-auto max-w-4xl px-5 py-16 sm:py-24">
     <p class="eyebrow">PauseAI Canada</p>
     <h1 class="mt-3 font-heading text-5xl text-stone-950">
-      {if(@locale == "fr", do: "Qui sommes-nous?", else: "Who we are")}
+      {gettext("Who we are")}
     </h1>
     <p class="mt-7 text-xl leading-9 text-stone-700">
-      {if(@locale == "fr",
-        do:
-          "PauseAI Canada est un groupe canadien en développement qui sensibilise le public aux risques liés aux systèmes d'IA avancés et défend des mesures de sécurité nationales et internationales.",
-        else:
-          "PauseAI Canada is a developing Canadian group raising public awareness of risks from advanced AI systems and advocating for national and international safeguards."
+      {gettext(
+        "PauseAI Canada is a developing Canadian group raising public awareness of risks from advanced AI systems and advocating for national and international safeguards."
       )}
     </p>
     <div class="mt-10 space-y-8 leading-8 text-stone-600">
       <section>
         <h2 class="font-heading text-3xl text-stone-950">
-          {if(@locale == "fr", do: "Notre rôle", else: "Our role")}
+          {gettext("Our role")}
         </h2><p class="mt-3">
-          {if(@locale == "fr",
-            do:
-              "Nous adaptons les arguments et les possibilités d'action au contexte canadien, dans les deux langues officielles. Nous voulons aider les personnes à se faire une opinion, à communiquer avec leurs représentantes et représentants et à s'organiser.",
-            else:
-              "We adapt the case and opportunities for action to the Canadian context in both official languages. We help people form a view, contact representatives, and organize."
+          {gettext(
+            "We adapt the case and opportunities for action to the Canadian context in both official languages. We help people form a view, contact representatives, and organize."
           )}
         </p>
       </section>
       <section>
         <h2 class="font-heading text-3xl text-stone-950">
-          {if(@locale == "fr", do: "Nos liens", else: "Our relationships")}
+          {gettext("Our relationships")}
         </h2><p class="mt-3">
-          {if(@locale == "fr", do: "Nous collaborons avec", else: "We collaborate with")}
+          {gettext("We collaborate with")}
           <a
             class="font-semibold underline decoration-brand underline-offset-4"
             href="https://pauseai.info/"
@@ -43,7 +37,7 @@
             class="font-semibold underline decoration-brand underline-offset-4"
             href="https://pauseia.fr/fr"
           >Pause IA</a>
-          {if(@locale == "fr", do: "et", else: "and")}
+          {gettext("and")}
           <a
             class="font-semibold underline decoration-brand underline-offset-4"
             href="https://www.pauseai-us.org/"
@@ -52,17 +46,13 @@
       </section>
       <section>
         <h2 class="font-heading text-3xl text-stone-950">
-          {if(@locale == "fr", do: "Nous joindre", else: "Contact us")}
+          {gettext("Contact us")}
         </h2><p class="mt-3">
-          {if(@locale == "fr",
-            do:
-              "Vous souhaitez participer? Rejoignez PauseAI et indiquez que vous êtes au Canada.",
-            else: "Want to participate? Join PauseAI and indicate that you are in Canada."
-          )}
+          {gettext("Want to participate? Join PauseAI and indicate that you are in Canada.")}
         </p><a
           class="mt-4 inline-flex rounded-full bg-brand px-5 py-3 font-semibold text-stone-950"
           href={if(@locale == "fr", do: "https://pauseia.fr/agir", else: ~p"/act/join?locale=en")}
-        >{if(@locale == "fr", do: "Nous rejoindre", else: "Join us")}</a>
+        >{gettext("Join us")}</a>
       </section>
     </div>
   </article>

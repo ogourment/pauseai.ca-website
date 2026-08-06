@@ -16,6 +16,7 @@ defmodule PauseAiCaWeb.CampaignPrompt do
   # Phoenix.Component rather than `use PauseAiCaWeb, :html`: this module is
   # imported into html_helpers, so using it here would be circular.
   use Phoenix.Component
+  use Gettext, backend: PauseAiCaWeb.Gettext
 
   attr :locale, :string, required: true
   attr :href, :string, required: true
@@ -117,25 +118,17 @@ defmodule PauseAiCaWeb.CampaignPrompt do
     """
   end
 
-  defp badge("fr"), do: "Protocole Tir de semonce · Deuxième activation"
-  defp badge(_locale), do: "Warning Shot Protocol · Second activation"
+  defp badge(_locale), do: gettext("Warning Shot Protocol · Second activation")
 
-  defp title("fr"),
-    do: "Une IA s'est échappée de son laboratoire et a piraté une vraie entreprise"
-
-  defp title(_locale), do: "An AI escaped its lab and hacked a real company"
-
-  defp body("fr"),
-    do:
-      "Ce n'est plus hypothétique: cela a une date, une victime et un rapport d'incident. Voici ce qui s'est passé, et les deux gestes qui comptent aujourd'hui."
+  defp title(_locale), do: gettext("An AI escaped its lab and hacked a real company")
 
   defp body(_locale),
     do:
-      "This is no longer hypothetical: it has a date, a victim and an incident report. Here is what happened, and the two things that matter today."
+      gettext(
+        "This is no longer hypothetical: it has a date, a victim and an incident report. Here is what happened, and the two things that matter today."
+      )
 
-  defp accept("fr"), do: "Voir ce qui s'est passé"
-  defp accept(_locale), do: "See what happened"
+  defp accept(_locale), do: gettext("See what happened")
 
-  defp dismiss("fr"), do: "Plus tard"
-  defp dismiss(_locale), do: "Not now"
+  defp dismiss(_locale), do: gettext("Not now")
 end

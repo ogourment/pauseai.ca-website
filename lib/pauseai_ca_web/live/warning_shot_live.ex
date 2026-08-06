@@ -306,8 +306,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
     to_form(%{"subject" => letter.subject, "body" => letter.body}, as: :letter)
   end
 
-  defp default_draft_language("fr"), do: "fr"
-  defp default_draft_language(_locale), do: "bilingual"
+  defp default_draft_language(_locale), do: gettext("bilingual")
 
   defp draft_language(value) when value in @draft_languages, do: value
   defp draft_language(_value), do: "bilingual"
@@ -759,203 +758,140 @@ defmodule PauseAiCaWeb.WarningShotLive do
     "update-#{Date.to_iso8601(update.date)}-#{String.trim(slug, "-")}"
   end
 
-  defp draft_language_options("fr"),
-    do: [{"Bilingue", "bilingual"}, {"Français seulement", "fr"}, {"Anglais seulement", "en"}]
-
   defp draft_language_options(_locale),
-    do: [{"Bilingual", "bilingual"}, {"English only", "en"}, {"French only", "fr"}]
-
-  defp privacy_note("fr"),
-    do:
-      "Votre code postal sert à une seule recherche auprès de Represent (Open North) et n'est pas conservé. La lettre part de votre propre messagerie, pas de ce site."
+    do: [
+      {gettext("Bilingual"), "bilingual"},
+      {gettext("English only"), "en"},
+      {gettext("French only"), "fr"}
+    ]
 
   defp privacy_note(_locale),
     do:
-      "Your postal code is used for a single lookup against Represent (Open North) and is not stored. The letter is sent from your own mail app, not from this site."
+      gettext(
+        "Your postal code is used for a single lookup against Represent (Open North) and is not stored. The letter is sent from your own mail app, not from this site."
+      )
 
-  defp name_label("fr"), do: "Votre nom"
-  defp name_label(_locale), do: "Your name"
+  defp name_label(_locale), do: gettext("Your name")
 
-  defp postal_code_label("fr"), do: "Code postal"
-  defp postal_code_label(_locale), do: "Postal code"
+  defp postal_code_label(_locale), do: gettext("Postal code")
 
-  defp language_label("fr"), do: "Langue de la lettre"
-  defp language_label(_locale), do: "Letter language"
+  defp language_label(_locale), do: gettext("Letter language")
 
-  defp find_mp_label("fr"), do: "Trouver mon député·e"
-  defp find_mp_label(_locale), do: "Find my MP"
+  defp find_mp_label(_locale), do: gettext("Find my MP")
 
-  defp looking_up_label("fr"), do: "Recherche…"
-  defp looking_up_label(_locale), do: "Looking up…"
+  defp looking_up_label(_locale), do: gettext("Looking up…")
 
-  defp mp_heading("fr"), do: "Votre député·e"
-  defp mp_heading(_locale), do: "Your MP"
+  defp mp_heading(_locale), do: gettext("Your MP")
 
-  defp best_match_note("fr"),
-    do: "Il s'agit de la meilleure correspondance. Vérifiez avant d'envoyer."
+  defp best_match_note(_locale), do: gettext("This is a best match. Please check before sending.")
 
-  defp best_match_note(_locale), do: "This is a best match. Please check before sending."
+  defp subject_label(_locale), do: gettext("Subject")
 
-  defp subject_label("fr"), do: "Objet"
-  defp subject_label(_locale), do: "Subject"
-
-  defp body_label("fr"), do: "Message"
-  defp body_label(_locale), do: "Body"
-
-  defp body_hint("fr"),
-    do: "Personnalisez la lettre avant l'envoi. Une phrase à vous compte plus que le modèle."
+  defp body_label(_locale), do: gettext("Body")
 
   defp body_hint(_locale),
     do:
-      "Personalize the letter before sending. One sentence of your own counts for more than the template."
+      gettext(
+        "Personalize the letter before sending. One sentence of your own counts for more than the template."
+      )
 
-  defp send_heading("fr"), do: "Envoyer"
-  defp send_heading(_locale), do: "Send it"
+  defp send_heading(_locale), do: gettext("Send it")
 
-  defp send_modes("fr"),
-    do: [{"assisted", "Envoyez-le pour moi"}, {"diy", "Je l'envoie moi-même"}]
-
-  defp send_modes(_locale), do: [{"assisted", "Send it for me"}, {"diy", "I'll send it myself"}]
-
-  defp assisted_note("fr"),
-    do:
-      "Nous envoyons la lettre depuis PauseAI Canada, avec votre adresse en réponse pour que votre député·e puisse vous répondre directement. Nous ne conservons pas votre adresse."
+  defp send_modes(_locale),
+    do: [{"assisted", gettext("Send it for me")}, {"diy", gettext("I'll send it myself")}]
 
   defp assisted_note(_locale),
     do:
-      "We send the letter from PauseAI Canada with your address as reply-to, so your MP can answer you directly. We do not keep your address."
-
-  defp diy_note("fr"),
-    do:
-      "Ouvrez la lettre dans votre propre messagerie. Rien ne nous est transmis: nous ne verrons ni votre adresse ni le texte final."
+      gettext(
+        "We send the letter from PauseAI Canada with your address as reply-to, so your MP can answer you directly. We do not keep your address."
+      )
 
   defp diy_note(_locale),
     do:
-      "Open the letter in your own mail app. Nothing reaches us: we never see your address or the final text."
+      gettext(
+        "Open the letter in your own mail app. Nothing reaches us: we never see your address or the final text."
+      )
 
-  defp email_label("fr"), do: "Votre courriel"
-  defp email_label(_locale), do: "Your email"
-
-  defp consent_label("fr"),
-    do:
-      "J'autorise PauseAI Canada à envoyer cette lettre en mon nom à mon·ma député·e, avec mon courriel comme adresse de réponse."
+  defp email_label(_locale), do: gettext("Your email")
 
   defp consent_label(_locale),
     do:
-      "I authorize PauseAI Canada to send this letter to my MP on my behalf, with my email as the reply-to address."
+      gettext(
+        "I authorize PauseAI Canada to send this letter to my MP on my behalf, with my email as the reply-to address."
+      )
 
-  defp send_for_me_cta("fr"), do: "Envoyer la lettre"
-  defp send_for_me_cta(_locale), do: "Send the letter"
+  defp send_for_me_cta(_locale), do: gettext("Send the letter")
 
-  defp sending_label("fr"), do: "Envoi…"
-  defp sending_label(_locale), do: "Sending…"
-
-  defp sent_message("fr"),
-    do:
-      "Envoyé. Merci — les réponses des bureaux de député·es arrivent souvent en quelques jours."
+  defp sending_label(_locale), do: gettext("Sending…")
 
   defp sent_message(_locale),
-    do: "Sent. Thank you — replies from MP offices often arrive within a few days."
-
-  defp send_error_message({:error, :consent_required}, "fr"),
-    do: "Cochez la case d'autorisation avant l'envoi."
+    do: gettext("Sent. Thank you — replies from MP offices often arrive within a few days.")
 
   defp send_error_message({:error, :consent_required}, _locale),
-    do: "Please tick the authorization box before sending."
-
-  defp send_error_message({:error, :invalid_email}, "fr"),
-    do: "Ce courriel ne semble pas valide. Votre député·e en a besoin pour vous répondre."
+    do: gettext("Please tick the authorization box before sending.")
 
   defp send_error_message({:error, :invalid_email}, _locale),
-    do: "That email does not look valid. Your MP needs it to reply to you."
-
-  defp send_error_message({:error, :no_recipient}, "fr"),
-    do: "Aucun·e député·e sélectionné·e. Recherchez votre code postal d'abord."
+    do: gettext("That email does not look valid. Your MP needs it to reply to you.")
 
   defp send_error_message({:error, :no_recipient}, _locale),
-    do: "No MP selected. Look up your postal code first."
-
-  defp send_error_message({:error, :rate_limited}, "fr"),
-    do:
-      "Vous avez déjà envoyé plusieurs lettres récemment. Réessayez plus tard, ou utilisez « Je l'envoie moi-même »."
+    do: gettext("No MP selected. Look up your postal code first.")
 
   defp send_error_message({:error, :rate_limited}, _locale),
-    do: "You have sent several letters recently. Try again later, or use \"I'll send it myself\"."
-
-  defp send_error_message({:error, :body_too_long}, "fr"),
-    do: "La lettre est trop longue. Raccourcissez-la avant l'envoi."
+    do:
+      gettext(
+        "You have sent several letters recently. Try again later, or use \"I'll send it myself\"."
+      )
 
   defp send_error_message({:error, :body_too_long}, _locale),
-    do: "The letter is too long. Shorten it before sending."
-
-  defp send_error_message({:error, :too_fast}, "fr"),
-    do: "Prenez un instant pour relire la lettre avant de l'envoyer."
+    do: gettext("The letter is too long. Shorten it before sending.")
 
   defp send_error_message({:error, :too_fast}, _locale),
-    do: "Take a moment to read the letter before sending it."
-
-  defp send_error_message(_state, "fr"),
-    do: "L'envoi a échoué. Réessayez, ou utilisez « Je l'envoie moi-même »."
+    do: gettext("Take a moment to read the letter before sending it.")
 
   defp send_error_message(_state, _locale),
-    do: "Sending failed. Try again, or use \"I'll send it myself\"."
+    do: gettext("Sending failed. Try again, or use \"I'll send it myself\".")
 
-  defp check_inbox_heading("fr"), do: "Vérifiez votre boîte de réception"
-  defp check_inbox_heading(_locale), do: "Check your inbox"
-
-  defp check_inbox_note("fr"),
-    do:
-      "Nous vous avons envoyé la lettre. Cliquez sur le bouton qu'elle contient et elle part vers votre député·e. Nous procédons ainsi parce que votre adresse est celle à laquelle votre député·e répondra."
+  defp check_inbox_heading(_locale), do: gettext("Check your inbox")
 
   defp check_inbox_note(_locale),
     do:
-      "We have emailed you the letter. Click the button in it and the letter goes to your MP. We do this because your address is the one your MP will reply to."
-
-  defp spam_note("fr"),
-    do:
-      "Rien reçu? Regardez dans les indésirables ou les promotions, déplacez le message vers votre boîte de réception et marquez-le « Non indésirable ». Cela aide tout le monde à recevoir nos courriels."
+      gettext(
+        "We have emailed you the letter. Click the button in it and the letter goes to your MP. We do this because your address is the one your MP will reply to."
+      )
 
   defp spam_note(_locale),
     do:
-      "Nothing yet? Look in spam or promotions, move the message to your inbox and mark it \"Not spam\". That is what keeps us out of the spam folder for everyone else."
-
-  defp diy_recorded_note("fr"),
-    do:
-      "Nous avons noté cette action comme « à confirmer » dans votre tableau de bord. Nous ne savons pas si vous avez appuyé sur envoyer — vous pourrez le confirmer là-bas."
+      gettext(
+        "Nothing yet? Look in spam or promotions, move the message to your inbox and mark it \"Not spam\". That is what keeps us out of the spam folder for everyone else."
+      )
 
   defp diy_recorded_note(_locale),
     do:
-      "We have noted this as unconfirmed in your dashboard. We cannot tell whether you pressed send, so you can confirm it there."
-
-  defp rehearsal_note("fr"),
-    do:
-      "Environnement de préversion: la lettre vous sera envoyée à vous, pas à votre député·e. L'objet indiquera à qui elle serait allée sur le site public."
+      gettext(
+        "We have noted this as unconfirmed in your dashboard. We cannot tell whether you pressed send, so you can confirm it there."
+      )
 
   defp rehearsal_note(_locale),
     do:
-      "Preview environment: the letter goes to you, not to your MP. The subject line names who would have received it on the live site."
+      gettext(
+        "Preview environment: the letter goes to you, not to your MP. The subject line names who would have received it on the live site."
+      )
 
-  defp share_heading("fr"), do: "Une lettre de plus compte double"
-  defp share_heading(_locale), do: "One more letter counts double"
-
-  defp share_note("fr"),
-    do:
-      "Les bureaux comptent les lettres, et la plupart des dossiers n'en reçoivent presque aucune. Si une personne de votre entourage écrit aussi, vous venez de doubler l'effet de votre geste."
+  defp share_heading(_locale), do: gettext("One more letter counts double")
 
   defp share_note(_locale),
     do:
-      "Offices count letters, and most files get almost none. If one person you know writes too, you have just doubled what you did."
+      gettext(
+        "Offices count letters, and most files get almost none. If one person you know writes too, you have just doubled what you did."
+      )
 
-  defp share_email_label("fr"), do: "Écrire à un·e ami·e"
-  defp share_email_label(_locale), do: "Email a friend"
-
-  defp share_text("fr"),
-    do:
-      "Une IA s'est échappée de son laboratoire et a piraté une vraie entreprise. Je viens d'écrire à ma députée. Ça prend une minute:"
+  defp share_email_label(_locale), do: gettext("Email a friend")
 
   defp share_text(_locale),
     do:
-      "An AI escaped its lab and hacked a real company. I just wrote to my MP about it. It takes a minute:"
+      gettext(
+        "An AI escaped its lab and hacked a real company. I just wrote to my MP about it. It takes a minute:"
+      )
 
   defp share_link("fr"), do: "https://pauseai.ca/fr/tir-de-semonce"
   defp share_link(_locale), do: "https://pauseai.ca/en/warning-shot"
@@ -966,37 +902,27 @@ defmodule PauseAiCaWeb.WarningShotLive do
   end
 
   defp share_url(:email, locale) do
-    subject = if locale == "fr", do: "Ça vaut une minute", else: "Worth a minute of your time"
+    subject = gettext("Worth a minute of your time")
 
     "mailto:?subject=" <>
       URI.encode_www_form(subject) <>
       "&body=" <> URI.encode_www_form(share_text(locale) <> "\n\n" <> share_link(locale))
   end
 
-  defp open_mail_label("fr"), do: "Ouvrir dans ma messagerie"
-  defp open_mail_label(_locale), do: "Open in my email app"
+  defp open_mail_label(_locale), do: gettext("Open in my email app")
 
-  defp copy_letter_label("fr"), do: "Copier la lettre"
-  defp copy_letter_label(_locale), do: "Copy the letter"
+  defp copy_letter_label(_locale), do: gettext("Copy the letter")
 
-  defp copied_label("fr"), do: "Copié"
-  defp copied_label(_locale), do: "Copied"
-
-  defp lookup_error_message(:invalid_postal_code, "fr"),
-    do: "Ce code postal ne semble pas valide. Exemple: H2X 1Y4."
+  defp copied_label(_locale), do: gettext("Copied")
 
   defp lookup_error_message(:invalid_postal_code, _locale),
-    do: "That does not look like a Canadian postal code. Example: H2X 1Y4."
+    do: gettext("That does not look like a Canadian postal code. Example: H2X 1Y4.")
 
-  defp lookup_error_message(:not_found, "fr"),
-    do: "Aucun·e député·e trouvé·e pour ce code postal."
-
-  defp lookup_error_message(:not_found, _locale), do: "No MP found for that postal code."
-
-  defp lookup_error_message(:unavailable, "fr"),
-    do:
-      "Le service de recherche est indisponible pour le moment. Réessayez, ou écrivez directement à votre député·e."
+  defp lookup_error_message(:not_found, _locale), do: gettext("No MP found for that postal code.")
 
   defp lookup_error_message(:unavailable, _locale),
-    do: "The lookup service is unavailable right now. Try again, or write to your MP directly."
+    do:
+      gettext(
+        "The lookup service is unavailable right now. Try again, or write to your MP directly."
+      )
 end

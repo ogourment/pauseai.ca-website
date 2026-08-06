@@ -29,7 +29,12 @@ defmodule PauseAiCaWeb.LibraryLive do
      |> assign(:stages, Library.stages())
      |> assign(:voices, Library.voices(locale))
      |> assign(:signatories, Library.signatories())
-     |> assign(:subscribe_form, to_form(%{"email" => "", "consent" => "false"}, as: :subscribe))
+     |> assign(
+       :subscribe_form,
+       to_form(%{"email" => "", "postal_code" => "", "city" => "", "consent" => "false"},
+         as: :subscribe
+       )
+     )
      |> assign(:subscribe_state, :idle)}
   end
 
@@ -43,7 +48,7 @@ defmodule PauseAiCaWeb.LibraryLive do
     socket = assign(socket, :subscribe_form, to_form(params, as: :subscribe))
 
     if params["consent"] == "true" do
-      case Subscription.subscribe(params["email"], socket.assigns.locale) do
+      case Subscription.subscribe(params["email"], socket.assigns.locale, params) do
         {:ok, _status} -> {:noreply, assign(socket, :subscribe_state, :subscribed)}
         {:error, reason} -> {:noreply, assign(socket, :subscribe_state, {:error, reason})}
       end
@@ -55,6 +60,8 @@ defmodule PauseAiCaWeb.LibraryLive do
   defp subscribe_params(params) do
     %{
       "email" => params["email"] || "",
+      "postal_code" => params["postal_code"] || "",
+      "city" => params["city"] || "",
       "consent" => if(params["consent"] in ["true", "on"], do: "true", else: "false")
     }
   end
@@ -238,6 +245,20 @@ defmodule PauseAiCaWeb.LibraryLive do
               label={email_label(@locale)}
               autocomplete="email"
             />
+            <div class="grid gap-4 sm:grid-cols-2">
+              <.input
+                field={@subscribe_form[:postal_code]}
+                type="text"
+                label={postal_code_label(@locale)}
+                autocomplete="postal-code"
+              />
+              <.input
+                field={@subscribe_form[:city]}
+                type="text"
+                label={city_label(@locale)}
+                autocomplete="address-level2"
+              />
+            </div>
             <label class="mt-2 flex items-start gap-3">
               <input type="hidden" name="subscribe[consent]" value="false" />
               <input
@@ -283,115 +304,82 @@ defmodule PauseAiCaWeb.LibraryLive do
     """
   end
 
-  defp page_title("fr"), do: "Faut-il ralentir l'IA?"
-  defp page_title(_locale), do: "Should we slow AI down?"
+  defp page_title(_locale), do: gettext("Should we slow AI down?")
 
   defp voice_quotes(voice, locale) do
     local = Enum.filter(voice.quotes, &(&1.language == locale))
     if local == [], do: voice.quotes, else: local
   end
 
-  defp lede("fr"),
-    do:
-      "Les gens qui ont construit cette technologie sont parmi les plus inquiets de ce qu'elle devient, et plusieurs d'entre eux travaillent au Canada. Leurs positions et les principales réponses possibles méritent un débat public."
-
   defp lede(_locale),
     do:
-      "The people who built this technology are among the most worried about where it is going, and several of them work in Canada. Their positions and the main possible responses deserve public debate."
+      gettext(
+        "The people who built this technology are among the most worried about where it is going, and several of them work in Canada. Their positions and the main possible responses deserve public debate."
+      )
 
-  defp voices_heading("fr"), do: "Des voix canadiennes"
-  defp voices_heading(_locale), do: "Canadian voices"
-
-  defp voices_note("fr"),
-    do:
-      "Deux des trois lauréats du prix Turing pour l'apprentissage profond ont bâti leur carrière au Canada. Tous deux affirment aujourd'hui que la technologie qu'ils ont créée pourrait échapper au contrôle humain."
+  defp voices_heading(_locale), do: gettext("Canadian voices")
 
   defp voices_note(_locale),
     do:
-      "Two of the three Turing Award winners for deep learning built their careers in Canada. Both now say the technology they created could escape human control."
+      gettext(
+        "Two of the three Turing Award winners for deep learning built their careers in Canada. Both now say the technology they created could escape human control."
+      )
 
-  defp parliament_heading("fr"), do: "Des parlementaires l'ont déjà signé"
-  defp parliament_heading(_locale), do: "Parliamentarians have already signed"
-
-  defp parliament_note("fr"),
-    do:
-      "Seize député·es et sénateur·rices, de tous les partis et des deux chambres, ont signé la déclaration réclamant un accord international pour interdire l'IA superintelligente. Écrire à votre député·e n'est pas un geste marginal: la question est déjà à Ottawa."
+  defp parliament_heading(_locale), do: gettext("Parliamentarians have already signed")
 
   defp parliament_note(_locale),
     do:
-      "Sixteen MPs and Senators, from every party and both chambers, have signed the statement calling for an international agreement to prohibit superintelligent AI. Writing to your MP is not a fringe act: the question is already in Ottawa."
+      gettext(
+        "Sixteen MPs and Senators, from every party and both chambers, have signed the statement calling for an international agreement to prohibit superintelligent AI. Writing to your MP is not a fringe act: the question is already in Ottawa."
+      )
 
-  defp chamber_label(:commons, "fr"), do: "Chambre des communes"
-  defp chamber_label(:commons, _locale), do: "House of Commons"
-  defp chamber_label(:senate, "fr"), do: "Sénat"
-  defp chamber_label(:senate, _locale), do: "Senate"
+  defp chamber_label(:commons, _locale), do: gettext("House of Commons")
+  defp chamber_label(:senate, _locale), do: gettext("Senate")
 
-  defp parliament_source("fr"), do: "La déclaration et la liste complète des appuis"
-  defp parliament_source(_locale), do: "The statement and the full list of supporters"
+  defp parliament_source(_locale), do: gettext("The statement and the full list of supporters")
 
-  defp reading_heading("fr"), do: "Les arguments"
-  defp reading_heading(_locale), do: "The arguments"
+  defp reading_heading(_locale), do: gettext("The arguments")
 
-  defp further_label("fr"), do: "Pour aller plus loin"
-  defp further_label(_locale), do: "Further reading"
+  defp further_label(_locale), do: gettext("Further reading")
 
-  defp canadian_label("fr"), do: "Canada"
-  defp canadian_label(_locale), do: "Canada"
+  defp canadian_label(_locale), do: gettext("Canada")
 
-  defp read_label("fr"), do: "Lire"
-  defp read_label(_locale), do: "Read it"
+  defp read_label(_locale), do: gettext("Read it")
 
-  defp updates_heading("fr"), do: "Recevoir les mises à jour"
-  defp updates_heading(_locale), do: "Get updates"
-
-  defp updates_note("fr"),
-    do:
-      "Quelques courriels par mois de PauseAI Canada: ce qui bouge au fédéral, les mobilisations, et les moments où votre voix compte le plus. Désabonnement en un clic."
+  defp updates_heading(_locale), do: gettext("Get updates")
 
   defp updates_note(_locale),
     do:
-      "A few emails a month from PauseAI Canada: what is moving federally, mobilisations, and the moments when your voice counts most. One-click unsubscribe."
+      gettext(
+        "A few emails a month from PauseAI Canada: what is moving federally, mobilisations, and the moments when your voice counts most. One-click unsubscribe."
+      )
 
-  defp email_label("fr"), do: "Votre courriel"
-  defp email_label(_locale), do: "Your email"
-
-  defp consent_label("fr"),
-    do:
-      "J'accepte de recevoir les courriels de PauseAI Canada. Mon adresse est conservée chez Brevo, notre fournisseur d'envoi, et n'est jamais vendue ni partagée."
+  defp email_label(_locale), do: gettext("Your email")
+  defp postal_code_label(_locale), do: gettext("Postal code (optional)")
+  defp city_label(_locale), do: gettext("City (optional)")
 
   defp consent_label(_locale),
     do:
-      "I agree to receive emails from PauseAI Canada. My address is held by Brevo, our sending provider, and is never sold or shared."
+      gettext(
+        "I agree to receive emails from PauseAI Canada. My email and optional location are held by Brevo, our sending provider, and are never sold or shared. If I later create an account with this email, the location can be copied into my profile."
+      )
 
-  defp subscribe_cta("fr"), do: "M'inscrire"
-  defp subscribe_cta(_locale), do: "Sign me up"
+  defp subscribe_cta(_locale), do: gettext("Sign me up")
 
-  defp subscribing_label("fr"), do: "Inscription…"
-  defp subscribing_label(_locale), do: "Signing up…"
+  defp subscribing_label(_locale), do: gettext("Signing up…")
 
-  defp subscribed_message("fr"), do: "C'est fait. Merci — vous recevrez le prochain envoi."
-  defp subscribed_message(_locale), do: "Done. Thank you — you will get the next mailing."
-
-  defp subscribe_error_message({:error, :consent_required}, "fr"),
-    do: "Cochez la case de consentement avant de vous inscrire."
+  defp subscribed_message(_locale),
+    do: gettext("Done. Thank you — you will get the next mailing.")
 
   defp subscribe_error_message({:error, :consent_required}, _locale),
-    do: "Please tick the consent box before signing up."
-
-  defp subscribe_error_message({:error, :invalid_email}, "fr"),
-    do: "Ce courriel ne semble pas valide."
+    do: gettext("Please tick the consent box before signing up.")
 
   defp subscribe_error_message({:error, :invalid_email}, _locale),
-    do: "That email does not look valid."
-
-  defp subscribe_error_message({:error, :not_configured}, "fr"),
-    do: "L'infolettre n'est pas encore branchée sur cet environnement."
+    do: gettext("That email does not look valid.")
 
   defp subscribe_error_message({:error, :not_configured}, _locale),
-    do: "The mailing list is not connected in this environment yet."
+    do: gettext("The mailing list is not connected in this environment yet.")
 
-  defp subscribe_error_message(_state, "fr"),
-    do: "L'inscription a échoué. Réessayez dans un moment."
-
-  defp subscribe_error_message(_state, _locale), do: "Sign-up failed. Please try again shortly."
+  defp subscribe_error_message(_state, _locale),
+    do: gettext("Sign-up failed. Please try again shortly.")
 end

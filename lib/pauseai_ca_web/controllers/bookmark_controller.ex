@@ -11,7 +11,7 @@ defmodule PauseAiCaWeb.BookmarkController do
         conn
         |> put_flash(
           :info,
-          if(locale == "fr", do: "Ressource enregistrée.", else: "Resource saved.")
+          gettext("Resource saved.")
         )
         |> redirect(to: "/#{locale}#resource-#{resource}")
 
@@ -19,7 +19,7 @@ defmodule PauseAiCaWeb.BookmarkController do
         conn
         |> put_flash(
           :error,
-          if(locale == "fr", do: "Ressource inconnue.", else: "Unknown resource.")
+          gettext("Unknown resource.")
         )
         |> redirect(to: "/#{locale}")
     end

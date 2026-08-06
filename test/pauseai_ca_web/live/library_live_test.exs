@@ -177,6 +177,23 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
       assert has_element?(view, "#subscribe-success")
     end
 
+    test "optional location is included with the subscription", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/en/learn")
+
+      view
+      |> form("#subscribe-form",
+        subscribe: %{
+          email: "located@example.org",
+          postal_code: "H2X 1Y4",
+          city: "Montréal",
+          consent: "true"
+        }
+      )
+      |> render_submit()
+
+      assert has_element?(view, "#subscribe-success")
+    end
+
     test "nothing is sent without consent", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/en/learn")
 

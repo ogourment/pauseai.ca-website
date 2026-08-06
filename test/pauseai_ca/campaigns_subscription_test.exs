@@ -7,6 +7,19 @@ defmodule PauseAiCa.Campaigns.SubscriptionTest do
     assert {:ok, :subscribed} = Subscription.subscribe("camille@example.org", "fr")
   end
 
+  test "sends optional city and postal code as Brevo attributes" do
+    assert {:ok, :subscribed} =
+             Subscription.subscribe("located@example.org", "fr", %{
+               "postal_code" => "H2X 1Y4",
+               "city" => "Montréal"
+             })
+  end
+
+  test "reads optional location from an existing contact" do
+    assert {:ok, %{postal_code: "H2X 1Y4", city: "Montréal"}} =
+             Subscription.location_for("location@example.org")
+  end
+
   test "treats an address Brevo already knows as success" do
     assert {:ok, :already_subscribed} = Subscription.subscribe("taken@example.org", "en")
   end

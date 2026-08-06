@@ -6,12 +6,13 @@ defmodule PauseAiCaWeb.ProfileLive do
   @impl true
   def mount(_params, _session, socket) do
     locale = if socket.assigns.live_action == :fr, do: "fr", else: "en"
+    Gettext.put_locale(PauseAiCaWeb.Gettext, locale)
     user = socket.assigns.current_scope.user
 
     {:ok,
      socket
      |> assign(:locale, locale)
-     |> assign(:page_title, if(locale == "fr", do: "Mon profil", else: "My profile"))
+     |> assign(:page_title, gettext("My profile"))
      |> assign(:profile_user, user)
      |> assign_profile_form(user)
      |> assign(:resource_form, to_form(%{"url" => ""}, as: "resource"))}
@@ -36,7 +37,7 @@ defmodule PauseAiCaWeb.ProfileLive do
        |> assign_profile_form(user)
        |> put_flash(
          :info,
-         if(socket.assigns.locale == "fr", do: "Profil enregistré.", else: "Profile saved.")
+         gettext("Profile saved.")
        )}
     else
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -63,10 +64,7 @@ defmodule PauseAiCaWeb.ProfileLive do
          put_flash(
            socket,
            :error,
-           if(socket.assigns.locale == "fr",
-             do: "Entrez une adresse web complète.",
-             else: "Enter a complete web address."
-           )
+           gettext("Enter a complete web address.")
          )}
     end
   end
@@ -96,15 +94,13 @@ defmodule PauseAiCaWeb.ProfileLive do
     }
   end
 
-  defp lookup_error(:invalid_postal_code, "fr"), do: "Entrez un code postal canadien complet."
-  defp lookup_error(:invalid_postal_code, _), do: "Enter a complete Canadian postal code."
-  defp lookup_error(:not_found, "fr"), do: "Aucun député fédéral trouvé pour ce code postal."
-  defp lookup_error(:not_found, _), do: "No federal MP was found for that postal code."
+  defp lookup_error(:invalid_postal_code, _),
+    do: gettext("Enter a complete Canadian postal code.")
 
-  defp lookup_error(:unavailable, "fr"),
-    do: "La recherche du député est temporairement indisponible."
+  defp lookup_error(:not_found, _),
+    do: gettext("No federal MP was found for that postal code.")
 
-  defp lookup_error(:unavailable, _), do: "The MP lookup is temporarily unavailable."
+  defp lookup_error(:unavailable, _), do: gettext("The MP lookup is temporarily unavailable.")
 
   @impl true
   def render(assigns) do
@@ -117,13 +113,13 @@ defmodule PauseAiCaWeb.ProfileLive do
     >
       <section id="profile" class="mx-auto max-w-4xl px-5 py-12 sm:py-20">
         <h1 class="font-serif text-5xl text-stone-950">
-          {if(@locale == "fr", do: "Mon profil", else: "My profile")}
+          {gettext("My profile")}
         </h1>
 
         <div class="mt-10 grid gap-8 lg:grid-cols-2">
           <section class="rounded-3xl border border-stone-200 bg-white p-6 shadow-sm">
             <h2 class="font-serif text-3xl text-stone-950">
-              {if(@locale == "fr", do: "Ma circonscription", else: "My riding")}
+              {gettext("My riding")}
             </h2>
             <.form
               for={@profile_form}
@@ -134,23 +130,24 @@ defmodule PauseAiCaWeb.ProfileLive do
               <.input
                 field={@profile_form[:postal_code]}
                 type="text"
-                label={if(@locale == "fr", do: "Code postal complet", else: "Full postal code")}
+                label={gettext("Full postal code")}
                 placeholder="H2X 1Y4"
                 autocomplete="postal-code"
                 class="w-full input bg-white text-stone-950 uppercase placeholder:text-stone-400"
               />
               <.input
+                field={@profile_form[:city]}
+                type="text"
+                label={gettext("City (optional)")}
+                autocomplete="address-level2"
+              />
+              <.input
                 field={@profile_form[:local_updates]}
                 type="checkbox"
-                label={
-                  if(@locale == "fr",
-                    do: "M’envoyer des nouvelles locales pertinentes",
-                    else: "Send me relevant local updates"
-                  )
-                }
+                label={gettext("Send me relevant local updates")}
               />
               <button class="rounded-full bg-stone-900 px-5 py-3 font-semibold text-white">
-                {if(@locale == "fr", do: "Trouver mon député", else: "Find my MP")}
+                {gettext("Find my MP")}
               </button>
             </.form>
 
@@ -165,18 +162,14 @@ defmodule PauseAiCaWeb.ProfileLive do
               <p class="text-stone-600">{@profile_user.representative["district"]}</p>
               <p class="text-sm text-stone-500">{@profile_user.representative["party"]}</p>
               <p id="mp-position" class="mt-4 rounded-2xl bg-stone-100 p-4 text-sm text-stone-700">
-                {if(@locale == "fr",
-                  do:
-                    "Position sur une pause de l’IA avancée : pas encore documentée par PauseAI Canada.",
-                  else: "Position on pausing advanced AI: not yet documented by PauseAI Canada."
-                )}
+                {gettext("Position on pausing advanced AI: not yet documented by PauseAI Canada.")}
               </p>
             </div>
           </section>
 
           <section class="rounded-3xl border border-stone-200 bg-white p-6 shadow-sm">
             <h2 class="font-serif text-3xl text-stone-950">
-              {if(@locale == "fr", do: "Mon parcours d’apprentissage", else: "My learning path")}
+              {gettext("My learning path")}
             </h2>
             <ul id="profile-saved-resources" class="mt-5 space-y-3">
               <li
@@ -190,7 +183,7 @@ defmodule PauseAiCaWeb.ProfileLive do
                   phx-value-resource={resource}
                   class="text-sm underline"
                 >
-                  {if(@locale == "fr", do: "Retirer", else: "Remove")}
+                  {gettext("Remove")}
                 </button>
               </li>
             </ul>
@@ -204,11 +197,11 @@ defmodule PauseAiCaWeb.ProfileLive do
               <.input
                 field={@resource_form[:url]}
                 type="url"
-                label={if(@locale == "fr", do: "Ajouter une ressource", else: "Add a resource")}
+                label={gettext("Add a resource")}
                 placeholder="https://…"
               />
               <button class="rounded-full border border-stone-300 px-4 py-2 font-semibold">
-                {if(@locale == "fr", do: "Ajouter", else: "Add")}
+                {gettext("Add")}
               </button>
             </.form>
             <ul id="custom-resources" class="mt-5 space-y-3">
@@ -223,7 +216,7 @@ defmodule PauseAiCaWeb.ProfileLive do
                   phx-value-url={url}
                   class="text-sm underline"
                 >
-                  {if(@locale == "fr", do: "Retirer", else: "Remove")}
+                  {gettext("Remove")}
                 </button>
               </li>
             </ul>
@@ -234,12 +227,8 @@ defmodule PauseAiCaWeb.ProfileLive do
     """
   end
 
-  defp resource_label("risk", "fr"), do: "Comprendre le risque existentiel"
-  defp resource_label("risk", _), do: "Understand existential risk"
-  defp resource_label("pause", "fr"), do: "Comprendre une pause"
-  defp resource_label("pause", _), do: "Understand a pause"
-  defp resource_label("coordination", "fr"), do: "Tester la coordination"
-  defp resource_label("coordination", _), do: "Test coordination"
-  defp resource_label("agency", "fr"), do: "Passer à l’action"
-  defp resource_label("agency", _), do: "Move toward action"
+  defp resource_label("risk", _), do: gettext("Understand existential risk")
+  defp resource_label("pause", _), do: gettext("Understand a pause")
+  defp resource_label("coordination", _), do: gettext("Test coordination")
+  defp resource_label("agency", _), do: gettext("Move toward action")
 end
