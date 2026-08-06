@@ -77,8 +77,13 @@ defmodule PauseAiCaWeb.WarningShotLive do
     end
   end
 
-  def handle_event("choose-draft-language", %{"draft_language" => language}, socket) do
-    sender = Map.put(socket.assigns.sender, "draft_language", draft_language(language))
+  def handle_event("update-letter-options", params, socket) do
+    language = constrained_draft_language(params["draft_language"], socket)
+
+    sender =
+      socket.assigns.sender
+      |> Map.put("draft_language", language)
+      |> Map.put("gender", gender(params["gender"] || socket.assigns.sender["gender"]))
 
     {:noreply,
      socket
@@ -253,6 +258,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
          socket
          |> assign(:representatives, representatives)
          |> assign(:lookup_error, nil)
+         |> constrain_draft_language()
          |> recompose()}
 
       {:error, reason} ->
@@ -348,6 +354,46 @@ defmodule PauseAiCaWeb.WarningShotLive do
 
   defp draft_language(value) when value in @draft_languages, do: value
   defp draft_language(_value), do: "bilingual"
+
+  defp constrain_draft_language(socket) do
+    language = constrained_draft_language(socket.assigns.sender["draft_language"], socket)
+    assign(socket, :sender, Map.put(socket.assigns.sender, "draft_language", language))
+  end
+
+  defp constrained_draft_language(value, socket) do
+    allowed = allowed_draft_languages(socket.assigns.representatives)
+    candidate = draft_language(value)
+
+    if candidate in allowed,
+      do: candidate,
+      else: preferred_allowed_language(allowed, socket.assigns.locale)
+  end
+
+  defp preferred_allowed_language(allowed, "fr") do
+    Enum.find(["fr", "bilingual", "en"], &(&1 in allowed)) || "fr"
+  end
+
+  defp preferred_allowed_language(allowed, _locale) do
+    Enum.find(["en", "bilingual", "fr"], &(&1 in allowed)) || "en"
+  end
+
+  defp allowed_draft_languages(representatives) do
+    known_languages = Enum.map(representatives, & &1.preferred_languages)
+
+    cond do
+      known_languages != [] and Enum.all?(known_languages, &(:en in &1 and :fr in &1)) ->
+        @draft_languages
+
+      known_languages != [] and Enum.all?(known_languages, &(:en in &1)) ->
+        ["en"]
+
+      known_languages != [] and Enum.all?(known_languages, &(:fr in &1)) ->
+        ["fr"]
+
+      true ->
+        ["en", "fr"]
+    end
+  end
 
   # Mapped rather than String.to_existing_atom/1: the target atoms live in
   # another module which may not be loaded when this runs.
@@ -475,18 +521,6 @@ defmodule PauseAiCaWeb.WarningShotLive do
               maxlength="7"
               placeholder="H2X 1Y4"
             />
-            <div :if={@locale == "fr"} class="sm:col-span-2">
-              <.input
-                field={@sender_form[:gender]}
-                type="select"
-                label="Comment vous décrire dans la lettre"
-                options={[
-                  {"un·e citoyen·ne", "inclusive"},
-                  {"une citoyenne", "feminine"},
-                  {"un citoyen", "masculine"}
-                ]}
-              />
-            </div>
             <div class="sm:col-span-2">
               <button
                 type="submit"
@@ -529,7 +563,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
           <form
             :if={@representatives != []}
             id="letter-language-form"
-            phx-change="choose-draft-language"
+            phx-change="update-letter-options"
             class="mt-8"
           >
             <fieldset id="draft-language-options">
@@ -538,7 +572,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
               </legend>
               <div class="flex flex-wrap gap-2">
                 <label
-                  :for={{label, value} <- draft_language_options(@locale)}
+                  :for={{label, value} <- draft_language_options(@locale, @representatives)}
                   class="flex cursor-pointer items-center gap-2 rounded-full border-2 border-stone-300 px-4 py-2.5 text-stone-800 transition has-[:checked]:border-brand has-[:checked]:bg-brand-wash"
                 >
                   <input
@@ -546,6 +580,31 @@ defmodule PauseAiCaWeb.WarningShotLive do
                     name="draft_language"
                     value={value}
                     checked={@sender["draft_language"] == value}
+                    class="size-4 accent-stone-900"
+                  />
+                  <span class="font-semibold">{label}</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset
+              :if={@sender["draft_language"] in ["bilingual", "fr"]}
+              id="gender-options"
+              class="mt-5"
+            >
+              <legend class="mb-2 block text-sm font-semibold text-stone-800">
+                {gender_label(@locale)}
+              </legend>
+              <div class="flex flex-wrap gap-2">
+                <label
+                  :for={{label, value} <- gender_options()}
+                  class="flex cursor-pointer items-center gap-2 rounded-full border-2 border-stone-300 px-4 py-2.5 text-stone-800 transition has-[:checked]:border-brand has-[:checked]:bg-brand-wash"
+                >
+                  <input
+                    type="radio"
+                    name="gender"
+                    value={value}
+                    checked={@sender["gender"] == value}
                     class="size-4 accent-stone-900"
                   />
                   <span class="font-semibold">{label}</span>
@@ -816,11 +875,23 @@ defmodule PauseAiCaWeb.WarningShotLive do
     "update-#{Date.to_iso8601(update.date)}-#{String.trim(slug, "-")}"
   end
 
-  defp draft_language_options(_locale),
-    do: [
+  defp draft_language_options(_locale, representatives) do
+    options = [
       {gettext("Bilingual"), "bilingual"},
       {gettext("English only"), "en"},
       {gettext("French only"), "fr"}
+    ]
+
+    Enum.filter(options, fn {_label, value} ->
+      value in allowed_draft_languages(representatives)
+    end)
+  end
+
+  defp gender_options,
+    do: [
+      {"un·e citoyen·ne", "inclusive"},
+      {"une citoyenne", "feminine"},
+      {"un citoyen", "masculine"}
     ]
 
   defp name_label(_locale), do: gettext("Your name")
@@ -828,6 +899,8 @@ defmodule PauseAiCaWeb.WarningShotLive do
   defp postal_code_label(_locale), do: gettext("Postal code")
 
   defp language_label(_locale), do: gettext("Letter language")
+
+  defp gender_label(_locale), do: gettext("How should the letter describe you?")
 
   defp find_mp_label(_locale), do: gettext("Find my MP")
 

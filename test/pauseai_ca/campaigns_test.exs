@@ -61,6 +61,17 @@ defmodule PauseAiCa.CampaignsTest do
       assert member.name == "Steven Guilbeault"
       assert member.district == "Laurier—Sainte-Marie"
       assert member.email == "Steven.Guilbeault@parl.gc.ca"
+      assert member.preferred_languages == [:en, :fr]
+    end
+
+    test "reads unilingual MPs' preferred language" do
+      assert {:ok, [english_member]} = Campaigns.find_members_of_parliament("V7A 5J9")
+      assert english_member.name == "Parm Bains"
+      assert english_member.preferred_languages == [:en]
+
+      assert {:ok, [french_member]} = Campaigns.find_members_of_parliament("J3B 6X3")
+      assert french_member.name == "Christine Normandin"
+      assert french_member.preferred_languages == [:fr]
     end
 
     test "ignores representatives who are not in the House of Commons" do

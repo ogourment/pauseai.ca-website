@@ -100,6 +100,45 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
       assert has_element?(fr_view, "#draft-language-options", "Bilingue")
       assert has_element?(fr_view, "#draft-language-options", "Anglais seulement")
       assert has_element?(fr_view, "#draft-language-options", "Français seulement")
+      assert has_element?(fr_view, "#gender-options", "un·e citoyen·ne")
+    end
+
+    test "a unilingual MP is offered only their preferred language", %{conn: conn} do
+      {:ok, english_view, _html} = live(conn, ~p"/en/warning-shot")
+
+      english_view
+      |> form("#mp-lookup-form", sender: %{name: "Camille Roy", postal_code: "V7A 5J9"})
+      |> render_submit()
+
+      assert has_element?(
+               english_view,
+               "#draft-language-options input[type='radio'][value='en']:checked"
+             )
+
+      refute has_element?(english_view, "#draft-language-options input[value='bilingual']")
+      refute has_element?(english_view, "#draft-language-options input[value='fr']")
+      refute has_element?(english_view, "#gender-options")
+
+      html =
+        render_hook(english_view, "update-letter-options", %{"draft_language" => "bilingual"})
+
+      assert html =~ "Dear Parm Bains,"
+      refute html =~ "Bonjour Parm Bains,"
+
+      {:ok, french_view, _html} = live(conn, ~p"/fr/tir-de-semonce")
+
+      french_view
+      |> form("#mp-lookup-form", sender: %{name: "Camille Roy", postal_code: "J3B 6X3"})
+      |> render_submit()
+
+      assert has_element?(
+               french_view,
+               "#draft-language-options input[type='radio'][value='fr']:checked"
+             )
+
+      refute has_element?(french_view, "#draft-language-options input[value='bilingual']")
+      refute has_element?(french_view, "#draft-language-options input[value='en']")
+      assert has_element?(french_view, "#gender-options", "un·e citoyen·ne")
     end
 
     test "a postal code produces an editable letter addressed to the MP", %{conn: conn} do
@@ -123,7 +162,7 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
 
       html =
         view
-        |> form("#letter-language-form", draft_language: "fr")
+        |> form("#letter-language-form", draft_language: "fr", gender: "inclusive")
         |> render_change()
 
       assert html =~ "Bonjour Steven Guilbeault,"
@@ -344,9 +383,7 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
 
       html =
         view
-        |> form("#mp-lookup-form",
-          sender: %{name: "Camille Roy", postal_code: "H2X 1Y4", gender: "feminine"}
-        )
+        |> form("#letter-language-form", draft_language: "fr", gender: "feminine")
         |> render_change()
 
       assert html =~ "une citoyenne de la circonscription"

@@ -93,9 +93,27 @@ defmodule PauseAiCa.Campaigns.Represent do
       district: representative["district_name"],
       email: representative["email"],
       party: blank_to_nil(representative["party_name"]),
-      profile_url: blank_to_nil(representative["url"])
+      profile_url: blank_to_nil(representative["url"]),
+      preferred_languages:
+        preferred_languages(get_in(representative, ["extra", "preferred_languages"]))
     }
   end
+
+  defp preferred_languages(values) do
+    values
+    |> List.wrap()
+    |> Enum.flat_map(fn value ->
+      normalized = value |> to_string() |> String.downcase()
+
+      []
+      |> maybe_add_language(:en, String.contains?(normalized, "english"))
+      |> maybe_add_language(:fr, String.contains?(normalized, "french"))
+    end)
+    |> Enum.uniq()
+  end
+
+  defp maybe_add_language(languages, language, true), do: languages ++ [language]
+  defp maybe_add_language(languages, _language, false), do: languages
 
   defp blank_to_nil(nil), do: nil
   defp blank_to_nil(""), do: nil

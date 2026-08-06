@@ -15,10 +15,44 @@ defmodule PauseAiCa.RepresentStub do
 
   def call(%Plug.Conn{request_path: path} = conn, _opts \\ []) do
     case postal_code(path) do
-      "H2X1Y4" -> json(conn, 200, member_payload())
-      "K1A0A6" -> json(conn, 200, %{"representatives_centroid" => []})
-      "X0A0H0" -> json(conn, 404, %{"error" => "not found"})
-      _other -> json(conn, 500, %{"error" => "unavailable"})
+      "H2X1Y4" ->
+        json(
+          conn,
+          200,
+          member_payload(
+            "Steven Guilbeault",
+            "Laurier—Sainte-Marie",
+            "Steven.Guilbeault@parl.gc.ca",
+            ["French  English"]
+          )
+        )
+
+      "V7A5J9" ->
+        json(
+          conn,
+          200,
+          member_payload("Parm Bains", "Richmond East—Steveston", "parm.bains@parl.gc.ca", [
+            "English"
+          ])
+        )
+
+      "J3B6X3" ->
+        json(
+          conn,
+          200,
+          member_payload("Christine Normandin", "Saint-Jean", "christine.normandin@parl.gc.ca", [
+            "French"
+          ])
+        )
+
+      "K1A0A6" ->
+        json(conn, 200, %{"representatives_centroid" => []})
+
+      "X0A0H0" ->
+        json(conn, 404, %{"error" => "not found"})
+
+      _other ->
+        json(conn, 500, %{"error" => "unavailable"})
     end
   end
 
@@ -32,15 +66,16 @@ defmodule PauseAiCa.RepresentStub do
     |> send_resp(status, Jason.encode!(body))
   end
 
-  defp member_payload do
+  defp member_payload(name, district, email, preferred_languages) do
     %{
       "representatives_centroid" => [
         %{
-          "name" => "Steven Guilbeault",
-          "district_name" => "Laurier—Sainte-Marie",
-          "email" => "Steven.Guilbeault@parl.gc.ca",
+          "name" => name,
+          "district_name" => district,
+          "email" => email,
           "party_name" => "Liberal",
           "url" => "https://www.ourcommons.ca/Members/en/steven-guilbeault(14171)",
+          "extra" => %{"preferred_languages" => preferred_languages},
           "representative_set_name" => "House of Commons"
         },
         %{

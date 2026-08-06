@@ -4,13 +4,14 @@ defmodule PauseAiCa.Campaigns.Representative do
   """
 
   @enforce_keys [:name, :district, :email]
-  defstruct [:name, :district, :email, :party, :profile_url]
+  defstruct [:name, :district, :email, :party, :profile_url, preferred_languages: []]
 
   @type t :: %__MODULE__{
           name: String.t(),
           district: String.t(),
           email: String.t(),
           party: String.t() | nil,
-          profile_url: String.t() | nil
+          profile_url: String.t() | nil,
+          preferred_languages: [:en | :fr]
         }
 end
