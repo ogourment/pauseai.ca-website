@@ -28,7 +28,7 @@ jobs:
           fi
 
   phoenix:
-    uses: ogourment/github-ci-cd-harness/.github/workflows/phoenix.yml@main
+    uses: ogourment/github-ci-cd-harness/.github/workflows/phoenix.yml@agent/github-phoenix-delivery
     with:
       run-acceptance: true
       build-release: true
@@ -40,7 +40,7 @@ jobs:
   delivery:
     if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
     needs: [repository-boundary, phoenix]
-    uses: ogourment/github-ci-cd-harness/.github/workflows/phoenix-delivery.yml@main
+    uses: ogourment/github-ci-cd-harness/.github/workflows/phoenix-delivery.yml@agent/github-phoenix-delivery
     with:
       artifact-name: pauseai-ca-release
       otp-app: pauseai_ca
