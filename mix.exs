@@ -4,7 +4,7 @@ defmodule PauseAiCa.MixProject do
   def project do
     [
       app: :pauseai_ca,
-      version: "0.2.2",
+      version: "0.2.3",
       elixir: "~> 1.17",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -27,7 +27,7 @@ defmodule PauseAiCa.MixProject do
 
   def cli do
     [
-      preferred_envs: [precommit: :test, "test.atdd": :test]
+      preferred_envs: [precommit: :test, "ci.test": :test, "test.atdd": :test]
     ]
   end
 
@@ -105,7 +105,21 @@ defmodule PauseAiCa.MixProject do
         "esbuild pauseai_ca --minify",
         "phx.digest"
       ],
-      precommit: ["compile --warnings-as-errors", "deps.unlock --unused", "format", "test"]
+      "ci.test": [
+        "format --check-formatted",
+        "gettext.extract --check-up-to-date",
+        "i18n.check",
+        "compile --warnings-as-errors",
+        "test"
+      ],
+      precommit: [
+        "format --check-formatted",
+        "gettext.extract --check-up-to-date",
+        "i18n.check",
+        "compile --warnings-as-errors",
+        "deps.unlock --unused",
+        "test"
+      ]
     ]
   end
 

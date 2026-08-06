@@ -18,7 +18,7 @@ defmodule PauseAiCaWeb.PageController do
 
     render(conn, :home,
       locale: locale,
-      page_title: if(locale == "fr", do: "Comprendre et agir", else: "Understand and act")
+      page_title: gettext("Understand and act")
     )
   end
 

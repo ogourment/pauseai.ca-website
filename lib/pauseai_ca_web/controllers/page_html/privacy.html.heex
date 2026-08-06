@@ -6,64 +6,46 @@
 >
   <article id="privacy" class="mx-auto max-w-3xl px-5 py-16 sm:py-24">
     <h1 class="font-serif text-5xl text-stone-950">
-      {if(@locale == "fr", do: "Politique de confidentialité", else: "Privacy policy")}
+      {gettext("Privacy policy")}
     </h1>
     <div class="mt-8 space-y-7 text-lg leading-8 text-stone-700">
       <p>
-        {if(@locale == "fr",
-          do:
-            "PauseAI Canada recueille uniquement les renseignements nécessaires pour fournir les fonctions que vous choisissez d’utiliser.",
-          else:
-            "PauseAI Canada collects only the information needed to provide the features you choose to use."
+        {gettext(
+          "PauseAI Canada collects only the information needed to provide the features you choose to use."
         )}
       </p>
       <section>
         <h2 class="font-heading text-2xl text-stone-950">
-          {if(@locale == "fr", do: "Votre compte", else: "Your account")}
+          {gettext("Your account")}
         </h2>
         <p class="mt-2">
-          {if(@locale == "fr",
-            do:
-              "Votre courriel sert à sécuriser votre compte, à retrouver vos éléments enregistrés et, avec votre accord, à vous envoyer des nouvelles pertinentes. Nous ne vendons pas vos renseignements personnels.",
-            else:
-              "Your email secures your account, retrieves saved items, and—with your consent—delivers relevant updates. We do not sell personal information."
+          {gettext(
+            "Your email secures your account, retrieves saved items, and—with your consent—delivers relevant updates. We do not sell personal information."
           )}
         </p>
       </section>
       <section>
         <h2 class="font-heading text-2xl text-stone-950">
-          {if(@locale == "fr",
-            do: "Vos réponses et vos actions",
-            else: "Your answers and actions"
-          )}
+          {gettext("Your answers and actions")}
         </h2>
         <p class="mt-2">
-          {if(@locale == "fr",
-            do:
-              "Les réponses restent dans votre navigateur jusqu’à ce que vous choisissiez de les enregistrer dans votre compte. Les actions enregistrées dans votre compte sont privées; nous pouvons utiliser des totaux agrégés pour comprendre la progression du mouvement.",
-            else:
-              "Answers remain in your browser until you choose to save them to your account. Actions saved in your account are private; we may use aggregate totals to understand movement progress."
+          {gettext(
+            "Answers remain in your browser until you choose to save them to your account. Actions saved in your account are private; we may use aggregate totals to understand movement progress."
           )}
         </p>
       </section>
       <section>
         <h2 class="font-heading text-2xl text-stone-950">
-          {if(@locale == "fr", do: "Votre profil", else: "Your profile")}
+          {gettext("Your profile")}
         </h2>
         <p class="mt-2">
-          {if(@locale == "fr",
-            do:
-              "Si vous choisissez de compléter votre profil, nous conservons votre code postal, votre préférence concernant les nouvelles locales, les renseignements publics sur votre député et les ressources que vous enregistrez. Vous pouvez modifier ou retirer ces éléments dans Mon profil.",
-            else:
-              "If you choose to complete your profile, we store your postal code, local-update preference, public information about your MP, and resources you save. You can change or remove these items in My profile."
+          {gettext(
+            "If you choose to complete your profile, we store your postal code, local-update preference, public information about your MP, and resources you save. You can change or remove these items in My profile."
           )}
         </p>
       </section>
       <p>
-        {if(@locale == "fr",
-          do: "Pour toute question : info@pauseai.ca",
-          else: "Questions: info@pauseai.ca"
-        )}
+        {gettext("Questions: info@pauseai.ca")}
       </p>
     </div>
   </article>

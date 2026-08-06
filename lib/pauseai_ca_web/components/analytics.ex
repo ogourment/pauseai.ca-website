@@ -20,6 +20,7 @@ defmodule PauseAiCaWeb.Analytics do
   """
 
   use Phoenix.Component
+  use Gettext, backend: PauseAiCaWeb.Gettext
 
   attr :measurement_id, :string, default: nil
   attr :locale, :string, default: "en"
@@ -103,17 +104,13 @@ defmodule PauseAiCaWeb.Analytics do
     """
   end
 
-  defp consent_text("fr"),
-    do:
-      "Acceptez-vous les témoins (cookies) de mesure d'audience? Ils nous aident à voir quelles pages amènent les gens à agir. Refuser n'enlève aucune fonctionnalité."
-
   defp consent_text(_locale),
     do:
-      "Accept analytics cookies? They help us see which pages actually lead people to act. Declining costs you no functionality."
+      gettext(
+        "Accept analytics cookies? They help us see which pages actually lead people to act. Declining costs you no functionality."
+      )
 
-  defp accept_label("fr"), do: "Accepter"
-  defp accept_label(_locale), do: "Accept"
+  defp accept_label(_locale), do: gettext("Accept")
 
-  defp decline_label("fr"), do: "Refuser"
-  defp decline_label(_locale), do: "Decline"
+  defp decline_label(_locale), do: gettext("Decline")
 end

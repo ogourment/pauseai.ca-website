@@ -36,15 +36,9 @@ defmodule PauseAiCaWeb.LetterController do
     if String.starts_with?(conn.request_path, "/fr"), do: "fr", else: "en"
   end
 
-  defp sent_message("fr"),
-    do: "Votre lettre est partie. Merci — les bureaux répondent souvent en quelques jours."
-
   defp sent_message(_locale),
-    do: "Your letter is on its way. Thank you — offices often reply within a few days."
-
-  defp failed_message("fr"),
-    do: "Ce lien n'est plus valide. Les liens expirent après 24 heures et ne servent qu'une fois."
+    do: gettext("Your letter is on its way. Thank you — offices often reply within a few days.")
 
   defp failed_message(_locale),
-    do: "That link is no longer valid. Links expire after 24 hours and work only once."
+    do: gettext("That link is no longer valid. Links expire after 24 hours and work only once.")
 end

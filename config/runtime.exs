@@ -61,6 +61,14 @@ if level = System.get_env("LOG_LEVEL") do
 end
 
 if config_env() == :prod do
+  deployment_history_path = System.fetch_env!("PAUSEAI_CA_DEPLOYMENT_HISTORY_PATH")
+
+  config :acceptance_harness, :deployment,
+    history_path: deployment_history_path,
+    peer_versions_url: System.get_env("PAUSEAI_CA_PEER_VERSIONS_URL"),
+    peer_acceptance_url: System.get_env("PAUSEAI_CA_PEER_ACCEPTANCE_URL"),
+    page_size: 10
+
   database_url =
     System.get_env("DATABASE_URL") ||
       raise """

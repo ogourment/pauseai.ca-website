@@ -2,12 +2,18 @@ name: CI
 
 on:
   workflow_dispatch:
+    inputs:
+      deploy-production:
+        description: Deploy the staging-verified release to protected production
+        required: false
+        default: false
+        type: boolean
   pull_request:
   push:
     branches: [main]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   repository-boundary:
@@ -27,5 +33,32 @@ jobs:
       run-acceptance: true
       build-release: true
       release-artifact-name: pauseai-ca-release
+      release-id-prefix: pauseai-ca
     secrets:
       acceptance-harness-token: ${{ secrets.ACCEPTANCE_HARNESS_TOKEN }}
+
+  delivery:
+    if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+    needs: [repository-boundary, phoenix]
+    uses: ogourment/github-ci-cd-harness/.github/workflows/phoenix-delivery.yml@main
+    with:
+      artifact-name: pauseai-ca-release
+      otp-app: pauseai_ca
+      remote-env-prefix: PAUSEAI_CA
+      deploy-staging: true
+      deploy-production: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy-production }}
+      staging-environment-url: https://staging.pauseai.ca
+      production-environment-url: https://new.pauseai.ca
+    secrets:
+      staging-host: ${{ secrets.STAGING_HOST }}
+      staging-ssh-host: ${{ secrets.STAGING_SSH_HOST }}
+      staging-ssh-user: ${{ secrets.STAGING_SSH_USER }}
+      staging-ssh-private-key: ${{ secrets.STAGING_SSH_PRIVATE_KEY }}
+      staging-ssh-known-hosts: ${{ secrets.STAGING_SSH_KNOWN_HOSTS }}
+      staging-remote-deploy-script: ${{ secrets.STAGING_REMOTE_DEPLOY_SCRIPT }}
+      production-host: ${{ secrets.PRODUCTION_HOST }}
+      production-ssh-host: ${{ secrets.PRODUCTION_SSH_HOST }}
+      production-ssh-user: ${{ secrets.PRODUCTION_SSH_USER }}
+      production-ssh-private-key: ${{ secrets.PRODUCTION_SSH_PRIVATE_KEY }}
+      production-ssh-known-hosts: ${{ secrets.PRODUCTION_SSH_KNOWN_HOSTS }}
+      production-remote-deploy-script: ${{ secrets.PRODUCTION_REMOTE_DEPLOY_SCRIPT }}
