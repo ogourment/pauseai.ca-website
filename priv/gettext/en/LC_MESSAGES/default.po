@@ -11,7 +11,7 @@ msgstr ""
 "Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/pauseai_ca_web/live/library_live.ex:332
+#: lib/pauseai_ca_web/live/library_live.ex:353
 #, elixir-autogen, elixir-format
 msgid "A few emails a month from PauseAI Canada: what is moving federally, mobilisations, and the moments when your voice counts most. One-click unsubscribe."
 msgstr "A few emails a month from PauseAI Canada: what is moving federally, mobilisations, and the moments when your voice counts most. One-click unsubscribe."
@@ -57,12 +57,12 @@ msgstr "Accept analytics cookies? They help us see which pages actually lead peo
 msgid "Actions"
 msgstr "Actions"
 
-#: lib/pauseai_ca_web/live/profile_live.ex:198
+#: lib/pauseai_ca_web/live/profile_live.ex:204
 #, elixir-autogen, elixir-format
 msgid "Add"
 msgstr "Add"
 
-#: lib/pauseai_ca_web/live/profile_live.ex:194
+#: lib/pauseai_ca_web/live/profile_live.ex:200
 #, elixir-autogen, elixir-format
 msgid "Add a resource"
 msgstr "Add a resource"
@@ -110,7 +110,7 @@ msgstr "Body"
 msgid "Bookmark"
 msgstr "Bookmark"
 
-#: lib/pauseai_ca_web/live/library_live.ex:324
+#: lib/pauseai_ca_web/live/library_live.ex:345
 #, elixir-autogen, elixir-format
 msgid "Canada"
 msgstr "Canada"
@@ -120,7 +120,7 @@ msgstr "Canada"
 msgid "Canada-wide calendar"
 msgstr "Canada-wide calendar"
 
-#: lib/pauseai_ca_web/live/library_live.ex:299
+#: lib/pauseai_ca_web/live/library_live.ex:320
 #, elixir-autogen, elixir-format
 msgid "Canadian voices"
 msgstr "Canadian voices"
@@ -185,7 +185,7 @@ msgstr "Decline"
 msgid "Did you complete these actions?"
 msgstr "Did you complete these actions?"
 
-#: lib/pauseai_ca_web/live/library_live.ex:349
+#: lib/pauseai_ca_web/live/library_live.ex:372
 #, elixir-autogen, elixir-format
 msgid "Done. Thank you — you will get the next mailing."
 msgstr "Done. Thank you — you will get the next mailing."
@@ -251,7 +251,7 @@ msgstr "Executive summary"
 msgid "Explore the mechanisms"
 msgstr "Explore the mechanisms"
 
-#: lib/pauseai_ca_web/live/profile_live.ex:144
+#: lib/pauseai_ca_web/live/profile_live.ex:150
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:780
 #, elixir-autogen, elixir-format
 msgid "Find my MP"
@@ -267,7 +267,7 @@ msgstr "Français"
 msgid "Full postal code"
 msgstr "Full postal code"
 
-#: lib/pauseai_ca_web/live/library_live.ex:322
+#: lib/pauseai_ca_web/live/library_live.ex:343
 #, elixir-autogen, elixir-format
 msgid "Further reading"
 msgstr "Further reading"
@@ -277,7 +277,7 @@ msgstr "Further reading"
 msgid "Get involved"
 msgstr "Get involved"
 
-#: lib/pauseai_ca_web/live/library_live.ex:328
+#: lib/pauseai_ca_web/live/library_live.ex:349
 #, elixir-autogen, elixir-format
 msgid "Get updates"
 msgstr "Get updates"
@@ -292,20 +292,10 @@ msgstr "How concern becomes collective action"
 msgid "How far should we let AI advance?"
 msgstr "How far should we let AI advance?"
 
-#: lib/pauseai_ca_web/live/library_live.ex:340
-#, elixir-autogen, elixir-format
-msgid "I agree to receive emails from PauseAI Canada. My address is held by Brevo, our sending provider, and is never sold or shared."
-msgstr "I agree to receive emails from PauseAI Canada. My address is held by Brevo, our sending provider, and is never sold or shared."
-
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:819
 #, elixir-autogen, elixir-format
 msgid "I authorize PauseAI Canada to send this letter to my MP on my behalf, with my email as the reply-to address."
 msgstr "I authorize PauseAI Canada to send this letter to my MP on my behalf, with my email as the reply-to address."
-
-#: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:42
-#, elixir-autogen, elixir-format
-msgid "If you choose to complete your profile, we store your postal code, local-update preference, public information about your MP, and resources you save. You can change or remove these items in My profile."
-msgstr "If you choose to complete your profile, we store your postal code, local-update preference, public information about your MP, and resources you save. You can change or remove these items in My profile."
 
 #: lib/pauseai_ca_web/controllers/page_html/strategy.html.heex:34
 #, elixir-autogen, elixir-format
@@ -359,7 +349,7 @@ msgstr "Montréal events"
 
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:157
 #: lib/pauseai_ca_web/live/dashboard_live.ex:217
-#: lib/pauseai_ca_web/live/profile_live.ex:227
+#: lib/pauseai_ca_web/live/profile_live.ex:233
 #, elixir-autogen, elixir-format
 msgid "Move toward action"
 msgstr "Move toward action"
@@ -376,7 +366,7 @@ msgstr "My MP"
 msgid "My dashboard"
 msgstr "My dashboard"
 
-#: lib/pauseai_ca_web/live/profile_live.ex:166
+#: lib/pauseai_ca_web/live/profile_live.ex:172
 #, elixir-autogen, elixir-format
 msgid "My learning path"
 msgstr "My learning path"
@@ -458,7 +448,7 @@ msgstr "Our role"
 msgid "Our strategy"
 msgstr "Our strategy"
 
-#: lib/pauseai_ca_web/live/library_live.ex:307
+#: lib/pauseai_ca_web/live/library_live.ex:328
 #, elixir-autogen, elixir-format
 msgid "Parliamentarians have already signed"
 msgstr "Parliamentarians have already signed"
@@ -493,7 +483,7 @@ msgstr "Personalize the letter before sending. One sentence of your own counts f
 msgid "Policymakers can be convinced without acting. A credible constituency changes what they can defend."
 msgstr "Policymakers can be convinced without acting. A credible constituency changes what they can defend."
 
-#: lib/pauseai_ca_web/live/profile_live.ex:159
+#: lib/pauseai_ca_web/live/profile_live.ex:165
 #, elixir-autogen, elixir-format
 msgid "Position on pausing advanced AI: not yet documented by PauseAI Canada."
 msgstr "Position on pausing advanced AI: not yet documented by PauseAI Canada."
@@ -534,7 +524,7 @@ msgstr "Profile saved."
 msgid "Questions: info@pauseai.ca"
 msgstr "Questions: info@pauseai.ca"
 
-#: lib/pauseai_ca_web/live/library_live.ex:326
+#: lib/pauseai_ca_web/live/library_live.ex:347
 #, elixir-autogen, elixir-format
 msgid "Read it"
 msgstr "Read it"
@@ -569,8 +559,8 @@ msgstr "Record an action"
 msgid "Record privately"
 msgstr "Record privately"
 
-#: lib/pauseai_ca_web/live/profile_live.ex:180
-#: lib/pauseai_ca_web/live/profile_live.ex:213
+#: lib/pauseai_ca_web/live/profile_live.ex:186
+#: lib/pauseai_ca_web/live/profile_live.ex:219
 #, elixir-autogen, elixir-format
 msgid "Remove"
 msgstr "Remove"
@@ -610,7 +600,7 @@ msgstr "See what happened"
 msgid "Send it"
 msgstr "Send it"
 
-#: lib/pauseai_ca_web/live/profile_live.ex:141
+#: lib/pauseai_ca_web/live/profile_live.ex:147
 #, elixir-autogen, elixir-format
 msgid "Send me relevant local updates"
 msgstr "Send me relevant local updates"
@@ -635,7 +625,7 @@ msgstr "Sent. Thank you — replies from MP offices often arrive within a few da
 msgid "Settings"
 msgstr "Settings"
 
-#: lib/pauseai_ca_web/live/library_live.ex:286
+#: lib/pauseai_ca_web/live/library_live.ex:307
 #, elixir-autogen, elixir-format
 msgid "Should we slow AI down?"
 msgstr "Should we slow AI down?"
@@ -650,17 +640,17 @@ msgstr "Show my suggested path"
 msgid "Sign in"
 msgstr "Sign in"
 
-#: lib/pauseai_ca_web/live/library_live.ex:344
+#: lib/pauseai_ca_web/live/library_live.ex:367
 #, elixir-autogen, elixir-format
 msgid "Sign me up"
 msgstr "Sign me up"
 
-#: lib/pauseai_ca_web/live/library_live.ex:346
+#: lib/pauseai_ca_web/live/library_live.ex:369
 #, elixir-autogen, elixir-format
 msgid "Signing up…"
 msgstr "Signing up…"
 
-#: lib/pauseai_ca_web/live/library_live.ex:311
+#: lib/pauseai_ca_web/live/library_live.ex:332
 #, elixir-autogen, elixir-format
 msgid "Sixteen MPs and Senators, from every party and both chambers, have signed the statement calling for an international agreement to prohibit superintelligent AI. Writing to your MP is not a fringe act: the question is already in Ottawa."
 msgstr "Sixteen MPs and Senators, from every party and both chambers, have signed the statement calling for an international agreement to prohibit superintelligent AI. Writing to your MP is not a fringe act: the question is already in Ottawa."
@@ -702,7 +692,7 @@ msgstr "Subject"
 
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:141
 #: lib/pauseai_ca_web/live/dashboard_live.ex:216
-#: lib/pauseai_ca_web/live/profile_live.ex:226
+#: lib/pauseai_ca_web/live/profile_live.ex:232
 #, elixir-autogen, elixir-format
 msgid "Test coordination"
 msgstr "Test coordination"
@@ -712,7 +702,7 @@ msgstr "Test coordination"
 msgid "That link is no longer valid. Links expire after 24 hours and work only once."
 msgstr "That link is no longer valid. Links expire after 24 hours and work only once."
 
-#: lib/pauseai_ca_web/live/library_live.ex:320
+#: lib/pauseai_ca_web/live/library_live.ex:341
 #, elixir-autogen, elixir-format
 msgid "The arguments"
 msgstr "The arguments"
@@ -722,7 +712,7 @@ msgstr "The arguments"
 msgid "The case involving advanced chips, compute centres, inspection, compliance, and defection."
 msgstr "The case involving advanced chips, compute centres, inspection, compliance, and defection."
 
-#: lib/pauseai_ca_web/live/library_live.ex:295
+#: lib/pauseai_ca_web/live/library_live.ex:316
 #, elixir-autogen, elixir-format
 msgid "The people who built this technology are among the most worried about where it is going, and several of them work in Canada. Their positions and the main possible responses deserve public debate."
 msgstr "The people who built this technology are among the most worried about where it is going, and several of them work in Canada. Their positions and the main possible responses deserve public debate."
@@ -732,7 +722,7 @@ msgstr "The people who built this technology are among the most worried about wh
 msgid "The problem"
 msgstr "The problem"
 
-#: lib/pauseai_ca_web/live/library_live.ex:318
+#: lib/pauseai_ca_web/live/library_live.ex:339
 #, elixir-autogen, elixir-format
 msgid "The statement and the full list of supporters"
 msgstr "The statement and the full list of supporters"
@@ -757,7 +747,7 @@ msgstr "This is no longer hypothetical: it has a date, a victim and an incident 
 msgid "This summary adapts PauseAI's movement-building analysis to the Canadian context. Read the full argument for its evidence and caveats (about 42 minutes)."
 msgstr "This summary adapts PauseAI's movement-building analysis to the Canadian context. Read the full argument for its evidence and caveats (about 42 minutes)."
 
-#: lib/pauseai_ca_web/live/library_live.ex:303
+#: lib/pauseai_ca_web/live/library_live.ex:324
 #, elixir-autogen, elixir-format
 msgid "Two of the three Turing Award winners for deep learning built their careers in Canada. Both now say the technology they created could escape human control."
 msgstr "Two of the three Turing Award winners for deep learning built their careers in Canada. Both now say the technology they created could escape human control."
@@ -908,16 +898,11 @@ msgstr "Your account"
 msgid "Your answers and actions"
 msgstr "Your answers and actions"
 
-#: lib/pauseai_ca_web/live/library_live.ex:336
+#: lib/pauseai_ca_web/live/library_live.ex:357
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:815
 #, elixir-autogen, elixir-format
 msgid "Your email"
 msgstr "Your email"
-
-#: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:22
-#, elixir-autogen, elixir-format
-msgid "Your email secures your account, retrieves saved items, and—with your consent—delivers relevant updates. We do not sell personal information."
-msgstr "Your email secures your account, retrieves saved items, and—with your consent—delivers relevant updates. We do not sell personal information."
 
 #: lib/pauseai_ca_web/controllers/letter_controller.ex:40
 #, elixir-autogen, elixir-format
@@ -1044,7 +1029,7 @@ msgstr "French only"
 msgid "Handed out flyers or put up posters"
 msgstr "Handed out flyers or put up posters"
 
-#: lib/pauseai_ca_web/live/library_live.ex:315
+#: lib/pauseai_ca_web/live/library_live.ex:336
 #, elixir-autogen, elixir-format
 msgid "House of Commons"
 msgstr "House of Commons"
@@ -1104,7 +1089,7 @@ msgstr "PauseAI's global form"
 msgid "Please tick the authorization box before sending."
 msgstr "Please tick the authorization box before sending."
 
-#: lib/pauseai_ca_web/live/library_live.ex:352
+#: lib/pauseai_ca_web/live/library_live.ex:375
 #, elixir-autogen, elixir-format
 msgid "Please tick the consent box before signing up."
 msgstr "Please tick the consent box before signing up."
@@ -1114,7 +1099,7 @@ msgstr "Please tick the consent box before signing up."
 msgid "Read or watched a resource"
 msgstr "Read or watched a resource"
 
-#: lib/pauseai_ca_web/live/library_live.ex:316
+#: lib/pauseai_ca_web/live/library_live.ex:337
 #, elixir-autogen, elixir-format
 msgid "Senate"
 msgstr "Senate"
@@ -1134,7 +1119,7 @@ msgstr "Sending failed. Try again, or use \"I'll send it myself\"."
 msgid "Sign"
 msgstr "Sign"
 
-#: lib/pauseai_ca_web/live/library_live.ex:361
+#: lib/pauseai_ca_web/live/library_live.ex:384
 #, elixir-autogen, elixir-format
 msgid "Sign-up failed. Please try again shortly."
 msgstr "Sign-up failed. Please try again shortly."
@@ -1164,7 +1149,7 @@ msgstr "Take a moment to read the letter before sending it."
 msgid "That does not look like a Canadian postal code. Example: H2X 1Y4."
 msgstr "That does not look like a Canadian postal code. Example: H2X 1Y4."
 
-#: lib/pauseai_ca_web/live/library_live.ex:355
+#: lib/pauseai_ca_web/live/library_live.ex:378
 #, elixir-autogen, elixir-format
 msgid "That email does not look valid."
 msgstr "That email does not look valid."
@@ -1189,19 +1174,19 @@ msgstr "The letter is too long. Shorten it before sending."
 msgid "The lookup service is unavailable right now. Try again, or write to your MP directly."
 msgstr "The lookup service is unavailable right now. Try again, or write to your MP directly."
 
-#: lib/pauseai_ca_web/live/library_live.ex:358
+#: lib/pauseai_ca_web/live/library_live.ex:381
 #, elixir-autogen, elixir-format
 msgid "The mailing list is not connected in this environment yet."
 msgstr "The mailing list is not connected in this environment yet."
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:215
-#: lib/pauseai_ca_web/live/profile_live.ex:225
+#: lib/pauseai_ca_web/live/profile_live.ex:231
 #, elixir-autogen, elixir-format
 msgid "Understand a pause"
 msgstr "Understand a pause"
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:214
-#: lib/pauseai_ca_web/live/profile_live.ex:224
+#: lib/pauseai_ca_web/live/profile_live.ex:230
 #, elixir-autogen, elixir-format
 msgid "Understand existential risk"
 msgstr "Understand existential risk"
@@ -1245,3 +1230,29 @@ msgstr "No federal MP was found for that postal code."
 #, elixir-autogen, elixir-format
 msgid "The MP lookup is temporarily unavailable."
 msgstr "The MP lookup is temporarily unavailable."
+
+#: lib/pauseai_ca_web/live/library_live.ex:359
+#: lib/pauseai_ca_web/live/profile_live.ex:141
+#, elixir-autogen, elixir-format
+msgid "City (optional)"
+msgstr "City (optional)"
+
+#: lib/pauseai_ca_web/live/library_live.ex:363
+#, elixir-autogen, elixir-format
+msgid "I agree to receive emails from PauseAI Canada. My email and optional location are held by Brevo, our sending provider, and are never sold or shared. If I later create an account with this email, the location can be copied into my profile."
+msgstr "I agree to receive emails from PauseAI Canada. My email and optional location are held by Brevo, our sending provider, and are never sold or shared. If I later create an account with this email, the location can be copied into my profile."
+
+#: lib/pauseai_ca_web/live/library_live.ex:358
+#, elixir-autogen, elixir-format
+msgid "Postal code (optional)"
+msgstr "Postal code (optional)"
+
+#: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:42
+#, elixir-autogen, elixir-format
+msgid "If you choose to complete your profile, we store your city, postal code, local-update preference, public information about your MP, and resources you save. You can change or remove these items in My profile."
+msgstr "If you choose to complete your profile, we store your city, postal code, local-update preference, public information about your MP, and resources you save. You can change or remove these items in My profile."
+
+#: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:22
+#, elixir-autogen, elixir-format
+msgid "Your email secures your account and retrieves saved items. If you subscribe for updates, Brevo holds your email and any city or postal code you optionally provide. When you later create an account with the same email, we copy that location into your profile. We do not sell personal information."
+msgstr "Your email secures your account and retrieves saved items. If you subscribe for updates, Brevo holds your email and any city or postal code you optionally provide. When you later create an account with the same email, we copy that location into your profile. We do not sell personal information."

@@ -136,6 +136,12 @@ defmodule PauseAiCaWeb.ProfileLive do
                 class="w-full input bg-white text-stone-950 uppercase placeholder:text-stone-400"
               />
               <.input
+                field={@profile_form[:city]}
+                type="text"
+                label={gettext("City (optional)")}
+                autocomplete="address-level2"
+              />
+              <.input
                 field={@profile_form[:local_updates]}
                 type="checkbox"
                 label={gettext("Send me relevant local updates")}

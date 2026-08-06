@@ -11,7 +11,7 @@ msgstr ""
 "Language: fr\n"
 "Plural-Forms: nplurals=2; plural=(n>1);\n"
 
-#: lib/pauseai_ca_web/live/library_live.ex:332
+#: lib/pauseai_ca_web/live/library_live.ex:353
 #, elixir-autogen, elixir-format
 msgid "A few emails a month from PauseAI Canada: what is moving federally, mobilisations, and the moments when your voice counts most. One-click unsubscribe."
 msgstr "Quelques courriels par mois de PauseAI Canada: ce qui bouge au fédéral, les mobilisations, et les moments où votre voix compte le plus. Désabonnement en un clic."
@@ -57,12 +57,12 @@ msgstr "Acceptez-vous les témoins (cookies) de mesure d'audience? Ils nous aide
 msgid "Actions"
 msgstr "Actions"
 
-#: lib/pauseai_ca_web/live/profile_live.ex:198
+#: lib/pauseai_ca_web/live/profile_live.ex:204
 #, elixir-autogen, elixir-format
 msgid "Add"
 msgstr "Ajouter"
 
-#: lib/pauseai_ca_web/live/profile_live.ex:194
+#: lib/pauseai_ca_web/live/profile_live.ex:200
 #, elixir-autogen, elixir-format
 msgid "Add a resource"
 msgstr "Ajouter une ressource"
@@ -110,7 +110,7 @@ msgstr "Message"
 msgid "Bookmark"
 msgstr "Enregistrer"
 
-#: lib/pauseai_ca_web/live/library_live.ex:324
+#: lib/pauseai_ca_web/live/library_live.ex:345
 #, elixir-autogen, elixir-format
 msgid "Canada"
 msgstr "Canada"
@@ -120,7 +120,7 @@ msgstr "Canada"
 msgid "Canada-wide calendar"
 msgstr "Calendrier canadien"
 
-#: lib/pauseai_ca_web/live/library_live.ex:299
+#: lib/pauseai_ca_web/live/library_live.ex:320
 #, elixir-autogen, elixir-format
 msgid "Canadian voices"
 msgstr "Des voix canadiennes"
@@ -185,7 +185,7 @@ msgstr "Refuser"
 msgid "Did you complete these actions?"
 msgstr "Avez-vous réalisé ces actions ?"
 
-#: lib/pauseai_ca_web/live/library_live.ex:349
+#: lib/pauseai_ca_web/live/library_live.ex:372
 #, elixir-autogen, elixir-format
 msgid "Done. Thank you — you will get the next mailing."
 msgstr "C'est fait. Merci — vous recevrez le prochain envoi."
@@ -251,7 +251,7 @@ msgstr "Résumé"
 msgid "Explore the mechanisms"
 msgstr "Explorer les mécanismes"
 
-#: lib/pauseai_ca_web/live/profile_live.ex:144
+#: lib/pauseai_ca_web/live/profile_live.ex:150
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:780
 #, elixir-autogen, elixir-format
 msgid "Find my MP"
@@ -267,7 +267,7 @@ msgstr "English"
 msgid "Full postal code"
 msgstr "Code postal complet"
 
-#: lib/pauseai_ca_web/live/library_live.ex:322
+#: lib/pauseai_ca_web/live/library_live.ex:343
 #, elixir-autogen, elixir-format
 msgid "Further reading"
 msgstr "Pour aller plus loin"
@@ -277,7 +277,7 @@ msgstr "Pour aller plus loin"
 msgid "Get involved"
 msgstr "S'impliquer"
 
-#: lib/pauseai_ca_web/live/library_live.ex:328
+#: lib/pauseai_ca_web/live/library_live.ex:349
 #, elixir-autogen, elixir-format
 msgid "Get updates"
 msgstr "Recevoir les mises à jour"
@@ -292,20 +292,10 @@ msgstr "Comment passer de l'intérêt à l'action collective"
 msgid "How far should we let AI advance?"
 msgstr "Jusqu’où devrions-nous laisser l’IA progresser?"
 
-#: lib/pauseai_ca_web/live/library_live.ex:340
-#, elixir-autogen, elixir-format
-msgid "I agree to receive emails from PauseAI Canada. My address is held by Brevo, our sending provider, and is never sold or shared."
-msgstr "J'accepte de recevoir les courriels de PauseAI Canada. Mon adresse est conservée chez Brevo, notre fournisseur d'envoi, et n'est jamais vendue ni partagée."
-
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:819
 #, elixir-autogen, elixir-format
 msgid "I authorize PauseAI Canada to send this letter to my MP on my behalf, with my email as the reply-to address."
 msgstr "J'autorise PauseAI Canada à envoyer cette lettre en mon nom à mon·ma député·e, avec mon courriel comme adresse de réponse."
-
-#: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:42
-#, elixir-autogen, elixir-format
-msgid "If you choose to complete your profile, we store your postal code, local-update preference, public information about your MP, and resources you save. You can change or remove these items in My profile."
-msgstr "Si vous choisissez de compléter votre profil, nous conservons votre code postal, votre préférence concernant les nouvelles locales, les renseignements publics sur votre député et les ressources que vous enregistrez. Vous pouvez modifier ou retirer ces éléments dans Mon profil."
 
 #: lib/pauseai_ca_web/controllers/page_html/strategy.html.heex:34
 #, elixir-autogen, elixir-format
@@ -359,7 +349,7 @@ msgstr "Événements à Montréal"
 
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:157
 #: lib/pauseai_ca_web/live/dashboard_live.ex:217
-#: lib/pauseai_ca_web/live/profile_live.ex:227
+#: lib/pauseai_ca_web/live/profile_live.ex:233
 #, elixir-autogen, elixir-format
 msgid "Move toward action"
 msgstr "Passer à l’action"
@@ -376,7 +366,7 @@ msgstr "Mon député"
 msgid "My dashboard"
 msgstr "Mon tableau de bord"
 
-#: lib/pauseai_ca_web/live/profile_live.ex:166
+#: lib/pauseai_ca_web/live/profile_live.ex:172
 #, elixir-autogen, elixir-format
 msgid "My learning path"
 msgstr "Mon parcours d’apprentissage"
@@ -458,7 +448,7 @@ msgstr "Notre rôle"
 msgid "Our strategy"
 msgstr "Notre stratégie"
 
-#: lib/pauseai_ca_web/live/library_live.ex:307
+#: lib/pauseai_ca_web/live/library_live.ex:328
 #, elixir-autogen, elixir-format
 msgid "Parliamentarians have already signed"
 msgstr "Des parlementaires l'ont déjà signé"
@@ -493,7 +483,7 @@ msgstr "Personnalisez la lettre avant l'envoi. Une phrase à vous compte plus qu
 msgid "Policymakers can be convinced without acting. A credible constituency changes what they can defend."
 msgstr "Les décideurs peuvent être convaincus sans agir. Une mobilisation crédible change ce qu’ils peuvent défendre."
 
-#: lib/pauseai_ca_web/live/profile_live.ex:159
+#: lib/pauseai_ca_web/live/profile_live.ex:165
 #, elixir-autogen, elixir-format
 msgid "Position on pausing advanced AI: not yet documented by PauseAI Canada."
 msgstr "Position sur une pause de l’IA avancée : pas encore documentée par PauseAI Canada."
@@ -534,7 +524,7 @@ msgstr "Profil enregistré."
 msgid "Questions: info@pauseai.ca"
 msgstr "Pour toute question : info@pauseai.ca"
 
-#: lib/pauseai_ca_web/live/library_live.ex:326
+#: lib/pauseai_ca_web/live/library_live.ex:347
 #, elixir-autogen, elixir-format
 msgid "Read it"
 msgstr "Lire"
@@ -569,8 +559,8 @@ msgstr "Noter une action"
 msgid "Record privately"
 msgstr "Noter en privé"
 
-#: lib/pauseai_ca_web/live/profile_live.ex:180
-#: lib/pauseai_ca_web/live/profile_live.ex:213
+#: lib/pauseai_ca_web/live/profile_live.ex:186
+#: lib/pauseai_ca_web/live/profile_live.ex:219
 #, elixir-autogen, elixir-format
 msgid "Remove"
 msgstr "Retirer"
@@ -610,7 +600,7 @@ msgstr "Voir ce qui s'est passé"
 msgid "Send it"
 msgstr "Envoyer"
 
-#: lib/pauseai_ca_web/live/profile_live.ex:141
+#: lib/pauseai_ca_web/live/profile_live.ex:147
 #, elixir-autogen, elixir-format
 msgid "Send me relevant local updates"
 msgstr "M’envoyer des nouvelles locales pertinentes"
@@ -635,7 +625,7 @@ msgstr "Envoyé. Merci — les réponses des bureaux de député·es arrivent so
 msgid "Settings"
 msgstr "Paramètres"
 
-#: lib/pauseai_ca_web/live/library_live.ex:286
+#: lib/pauseai_ca_web/live/library_live.ex:307
 #, elixir-autogen, elixir-format
 msgid "Should we slow AI down?"
 msgstr "Faut-il ralentir l'IA?"
@@ -650,17 +640,17 @@ msgstr "Voir mon parcours suggéré"
 msgid "Sign in"
 msgstr "Se connecter"
 
-#: lib/pauseai_ca_web/live/library_live.ex:344
+#: lib/pauseai_ca_web/live/library_live.ex:367
 #, elixir-autogen, elixir-format
 msgid "Sign me up"
 msgstr "M'inscrire"
 
-#: lib/pauseai_ca_web/live/library_live.ex:346
+#: lib/pauseai_ca_web/live/library_live.ex:369
 #, elixir-autogen, elixir-format
 msgid "Signing up…"
 msgstr "Inscription…"
 
-#: lib/pauseai_ca_web/live/library_live.ex:311
+#: lib/pauseai_ca_web/live/library_live.ex:332
 #, elixir-autogen, elixir-format
 msgid "Sixteen MPs and Senators, from every party and both chambers, have signed the statement calling for an international agreement to prohibit superintelligent AI. Writing to your MP is not a fringe act: the question is already in Ottawa."
 msgstr "Seize député·es et sénateur·rices, de tous les partis et des deux chambres, ont signé la déclaration réclamant un accord international pour interdire l'IA superintelligente. Écrire à votre député·e n'est pas un geste marginal: la question est déjà à Ottawa."
@@ -702,7 +692,7 @@ msgstr "Objet"
 
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:141
 #: lib/pauseai_ca_web/live/dashboard_live.ex:216
-#: lib/pauseai_ca_web/live/profile_live.ex:226
+#: lib/pauseai_ca_web/live/profile_live.ex:232
 #, elixir-autogen, elixir-format
 msgid "Test coordination"
 msgstr "Tester la coordination"
@@ -712,7 +702,7 @@ msgstr "Tester la coordination"
 msgid "That link is no longer valid. Links expire after 24 hours and work only once."
 msgstr "Ce lien n'est plus valide. Les liens expirent après 24 heures et ne servent qu'une fois."
 
-#: lib/pauseai_ca_web/live/library_live.ex:320
+#: lib/pauseai_ca_web/live/library_live.ex:341
 #, elixir-autogen, elixir-format
 msgid "The arguments"
 msgstr "Les arguments"
@@ -722,7 +712,7 @@ msgstr "Les arguments"
 msgid "The case involving advanced chips, compute centres, inspection, compliance, and defection."
 msgstr "Les arguments sur les puces avancées, les centres de calcul, l’inspection, la conformité et les défections."
 
-#: lib/pauseai_ca_web/live/library_live.ex:295
+#: lib/pauseai_ca_web/live/library_live.ex:316
 #, elixir-autogen, elixir-format
 msgid "The people who built this technology are among the most worried about where it is going, and several of them work in Canada. Their positions and the main possible responses deserve public debate."
 msgstr "Les gens qui ont construit cette technologie sont parmi les plus inquiets de ce qu'elle devient, et plusieurs d'entre eux travaillent au Canada. Leurs positions et les principales réponses possibles méritent un débat public."
@@ -732,7 +722,7 @@ msgstr "Les gens qui ont construit cette technologie sont parmi les plus inquiet
 msgid "The problem"
 msgstr "Le problème"
 
-#: lib/pauseai_ca_web/live/library_live.ex:318
+#: lib/pauseai_ca_web/live/library_live.ex:339
 #, elixir-autogen, elixir-format
 msgid "The statement and the full list of supporters"
 msgstr "La déclaration et la liste complète des appuis"
@@ -757,7 +747,7 @@ msgstr "Ce n'est plus hypothétique: cela a une date, une victime et un rapport 
 msgid "This summary adapts PauseAI's movement-building analysis to the Canadian context. Read the full argument for its evidence and caveats (about 42 minutes)."
 msgstr "Cette synthèse adapte au contexte canadien l'analyse de PauseAI sur la construction d'un mouvement social. Le texte intégral est en anglais (environ 42 min)."
 
-#: lib/pauseai_ca_web/live/library_live.ex:303
+#: lib/pauseai_ca_web/live/library_live.ex:324
 #, elixir-autogen, elixir-format
 msgid "Two of the three Turing Award winners for deep learning built their careers in Canada. Both now say the technology they created could escape human control."
 msgstr "Deux des trois lauréats du prix Turing pour l'apprentissage profond ont bâti leur carrière au Canada. Tous deux affirment aujourd'hui que la technologie qu'ils ont créée pourrait échapper au contrôle humain."
@@ -908,16 +898,11 @@ msgstr "Votre compte"
 msgid "Your answers and actions"
 msgstr "Vos réponses et vos actions"
 
-#: lib/pauseai_ca_web/live/library_live.ex:336
+#: lib/pauseai_ca_web/live/library_live.ex:357
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:815
 #, elixir-autogen, elixir-format
 msgid "Your email"
 msgstr "Votre courriel"
-
-#: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:22
-#, elixir-autogen, elixir-format
-msgid "Your email secures your account, retrieves saved items, and—with your consent—delivers relevant updates. We do not sell personal information."
-msgstr "Votre courriel sert à sécuriser votre compte, à retrouver vos éléments enregistrés et, avec votre accord, à vous envoyer des nouvelles pertinentes. Nous ne vendons pas vos renseignements personnels."
 
 #: lib/pauseai_ca_web/controllers/letter_controller.ex:40
 #, elixir-autogen, elixir-format
@@ -1044,7 +1029,7 @@ msgstr "Français seulement"
 msgid "Handed out flyers or put up posters"
 msgstr "Distribué des dépliants ou posé des affiches"
 
-#: lib/pauseai_ca_web/live/library_live.ex:315
+#: lib/pauseai_ca_web/live/library_live.ex:336
 #, elixir-autogen, elixir-format
 msgid "House of Commons"
 msgstr "Chambre des communes"
@@ -1104,7 +1089,7 @@ msgstr "Formulaire mondial de PauseAI"
 msgid "Please tick the authorization box before sending."
 msgstr "Cochez la case d'autorisation avant l'envoi."
 
-#: lib/pauseai_ca_web/live/library_live.ex:352
+#: lib/pauseai_ca_web/live/library_live.ex:375
 #, elixir-autogen, elixir-format
 msgid "Please tick the consent box before signing up."
 msgstr "Cochez la case de consentement avant de vous inscrire."
@@ -1114,7 +1099,7 @@ msgstr "Cochez la case de consentement avant de vous inscrire."
 msgid "Read or watched a resource"
 msgstr "Lu ou regardé une ressource"
 
-#: lib/pauseai_ca_web/live/library_live.ex:316
+#: lib/pauseai_ca_web/live/library_live.ex:337
 #, elixir-autogen, elixir-format
 msgid "Senate"
 msgstr "Sénat"
@@ -1134,7 +1119,7 @@ msgstr "L'envoi a échoué. Réessayez, ou utilisez « Je l'envoie moi-même ».
 msgid "Sign"
 msgstr "Signer"
 
-#: lib/pauseai_ca_web/live/library_live.ex:361
+#: lib/pauseai_ca_web/live/library_live.ex:384
 #, elixir-autogen, elixir-format
 msgid "Sign-up failed. Please try again shortly."
 msgstr "L'inscription a échoué. Réessayez dans un moment."
@@ -1164,7 +1149,7 @@ msgstr "Prenez un instant pour relire la lettre avant de l'envoyer."
 msgid "That does not look like a Canadian postal code. Example: H2X 1Y4."
 msgstr "Ce code postal ne semble pas valide. Exemple: H2X 1Y4."
 
-#: lib/pauseai_ca_web/live/library_live.ex:355
+#: lib/pauseai_ca_web/live/library_live.ex:378
 #, elixir-autogen, elixir-format
 msgid "That email does not look valid."
 msgstr "Ce courriel ne semble pas valide."
@@ -1189,19 +1174,19 @@ msgstr "La lettre est trop longue. Raccourcissez-la avant l'envoi."
 msgid "The lookup service is unavailable right now. Try again, or write to your MP directly."
 msgstr "Le service de recherche est indisponible pour le moment. Réessayez, ou écrivez directement à votre député·e."
 
-#: lib/pauseai_ca_web/live/library_live.ex:358
+#: lib/pauseai_ca_web/live/library_live.ex:381
 #, elixir-autogen, elixir-format
 msgid "The mailing list is not connected in this environment yet."
 msgstr "L'infolettre n'est pas encore branchée sur cet environnement."
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:215
-#: lib/pauseai_ca_web/live/profile_live.ex:225
+#: lib/pauseai_ca_web/live/profile_live.ex:231
 #, elixir-autogen, elixir-format
 msgid "Understand a pause"
 msgstr "Comprendre une pause"
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:214
-#: lib/pauseai_ca_web/live/profile_live.ex:224
+#: lib/pauseai_ca_web/live/profile_live.ex:230
 #, elixir-autogen, elixir-format
 msgid "Understand existential risk"
 msgstr "Comprendre le risque existentiel"
@@ -1245,3 +1230,29 @@ msgstr "Aucun député fédéral trouvé pour ce code postal."
 #, elixir-autogen, elixir-format
 msgid "The MP lookup is temporarily unavailable."
 msgstr "La recherche du député est temporairement indisponible."
+
+#: lib/pauseai_ca_web/live/library_live.ex:359
+#: lib/pauseai_ca_web/live/profile_live.ex:141
+#, elixir-autogen, elixir-format
+msgid "City (optional)"
+msgstr "Ville (facultatif)"
+
+#: lib/pauseai_ca_web/live/library_live.ex:363
+#, elixir-autogen, elixir-format
+msgid "I agree to receive emails from PauseAI Canada. My email and optional location are held by Brevo, our sending provider, and are never sold or shared. If I later create an account with this email, the location can be copied into my profile."
+msgstr "J’accepte de recevoir des courriels de PauseAI Canada. Mon adresse courriel et ma localisation facultative sont conservées par Brevo, notre fournisseur d’envoi, et ne sont jamais vendues ni communiquées. Si je crée plus tard un compte avec cette adresse, la localisation pourra être copiée dans mon profil."
+
+#: lib/pauseai_ca_web/live/library_live.ex:358
+#, elixir-autogen, elixir-format
+msgid "Postal code (optional)"
+msgstr "Code postal (facultatif)"
+
+#: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:42
+#, elixir-autogen, elixir-format
+msgid "If you choose to complete your profile, we store your city, postal code, local-update preference, public information about your MP, and resources you save. You can change or remove these items in My profile."
+msgstr "Si vous choisissez de compléter votre profil, nous conservons votre ville, votre code postal, votre préférence concernant les nouvelles locales, les renseignements publics sur votre député et les ressources que vous enregistrez. Vous pouvez modifier ou retirer ces éléments dans Mon profil."
+
+#: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:22
+#, elixir-autogen, elixir-format
+msgid "Your email secures your account and retrieves saved items. If you subscribe for updates, Brevo holds your email and any city or postal code you optionally provide. When you later create an account with the same email, we copy that location into your profile. We do not sell personal information."
+msgstr "Votre adresse courriel sécurise votre compte et permet de retrouver les éléments enregistrés. Si vous vous abonnez aux nouvelles, Brevo conserve votre adresse courriel ainsi que la ville ou le code postal que vous fournissez facultativement. Lorsque vous créez ensuite un compte avec la même adresse, nous copions cette localisation dans votre profil. Nous ne vendons aucun renseignement personnel."

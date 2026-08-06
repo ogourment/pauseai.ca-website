@@ -85,6 +85,18 @@ defmodule PauseAiCa.AccountsTest do
       assert is_nil(user.confirmed_at)
       assert is_nil(user.password)
     end
+
+    test "imports optional location from a matching Brevo contact" do
+      assert {:ok, user} = Accounts.register_user(%{"email" => "location@example.org"})
+      assert user.postal_code == "H2X1Y4"
+      assert user.city == "Montréal"
+    end
+
+    test "registration succeeds when Brevo is unavailable" do
+      assert {:ok, user} = Accounts.register_user(%{"email" => "broken@example.org"})
+      assert is_nil(user.postal_code)
+      assert is_nil(user.city)
+    end
   end
 
   describe "sudo_mode?/2" do

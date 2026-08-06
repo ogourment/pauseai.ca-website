@@ -29,7 +29,12 @@ defmodule PauseAiCaWeb.LibraryLive do
      |> assign(:stages, Library.stages())
      |> assign(:voices, Library.voices(locale))
      |> assign(:signatories, Library.signatories())
-     |> assign(:subscribe_form, to_form(%{"email" => "", "consent" => "false"}, as: :subscribe))
+     |> assign(
+       :subscribe_form,
+       to_form(%{"email" => "", "postal_code" => "", "city" => "", "consent" => "false"},
+         as: :subscribe
+       )
+     )
      |> assign(:subscribe_state, :idle)}
   end
 
@@ -43,7 +48,7 @@ defmodule PauseAiCaWeb.LibraryLive do
     socket = assign(socket, :subscribe_form, to_form(params, as: :subscribe))
 
     if params["consent"] == "true" do
-      case Subscription.subscribe(params["email"], socket.assigns.locale) do
+      case Subscription.subscribe(params["email"], socket.assigns.locale, params) do
         {:ok, _status} -> {:noreply, assign(socket, :subscribe_state, :subscribed)}
         {:error, reason} -> {:noreply, assign(socket, :subscribe_state, {:error, reason})}
       end
@@ -55,6 +60,8 @@ defmodule PauseAiCaWeb.LibraryLive do
   defp subscribe_params(params) do
     %{
       "email" => params["email"] || "",
+      "postal_code" => params["postal_code"] || "",
+      "city" => params["city"] || "",
       "consent" => if(params["consent"] in ["true", "on"], do: "true", else: "false")
     }
   end
@@ -238,6 +245,20 @@ defmodule PauseAiCaWeb.LibraryLive do
               label={email_label(@locale)}
               autocomplete="email"
             />
+            <div class="grid gap-4 sm:grid-cols-2">
+              <.input
+                field={@subscribe_form[:postal_code]}
+                type="text"
+                label={postal_code_label(@locale)}
+                autocomplete="postal-code"
+              />
+              <.input
+                field={@subscribe_form[:city]}
+                type="text"
+                label={city_label(@locale)}
+                autocomplete="address-level2"
+              />
+            </div>
             <label class="mt-2 flex items-start gap-3">
               <input type="hidden" name="subscribe[consent]" value="false" />
               <input
@@ -334,11 +355,13 @@ defmodule PauseAiCaWeb.LibraryLive do
       )
 
   defp email_label(_locale), do: gettext("Your email")
+  defp postal_code_label(_locale), do: gettext("Postal code (optional)")
+  defp city_label(_locale), do: gettext("City (optional)")
 
   defp consent_label(_locale),
     do:
       gettext(
-        "I agree to receive emails from PauseAI Canada. My address is held by Brevo, our sending provider, and is never sold or shared."
+        "I agree to receive emails from PauseAI Canada. My email and optional location are held by Brevo, our sending provider, and are never sold or shared. If I later create an account with this email, the location can be copied into my profile."
       )
 
   defp subscribe_cta(_locale), do: gettext("Sign me up")

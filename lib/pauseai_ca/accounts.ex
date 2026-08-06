@@ -7,6 +7,7 @@ defmodule PauseAiCa.Accounts do
   alias PauseAiCa.Repo
 
   alias PauseAiCa.Accounts.{User, UserToken, UserNotifier}
+  alias PauseAiCa.Campaigns.Subscription
 
   ## Database getters
 
@@ -75,9 +76,27 @@ defmodule PauseAiCa.Accounts do
 
   """
   def register_user(attrs) do
-    %User{}
-    |> User.email_changeset(attrs)
-    |> Repo.insert()
+    changeset = User.email_changeset(%User{}, attrs)
+
+    if changeset.valid? do
+      attrs
+      |> import_subscriber_location(Ecto.Changeset.get_field(changeset, :email))
+      |> then(&User.registration_changeset(%User{}, &1))
+      |> Repo.insert()
+    else
+      {:error, changeset}
+    end
+  end
+
+  defp import_subscriber_location(attrs, email) do
+    case Subscription.location_for(email) do
+      {:ok, location} ->
+        imported = Map.new(location, fn {key, value} -> {Atom.to_string(key), value} end)
+        Map.merge(imported, attrs)
+
+      {:error, _reason} ->
+        attrs
+    end
   end
 
   ## Settings

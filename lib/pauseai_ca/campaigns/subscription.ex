@@ -6,8 +6,9 @@ defmodule PauseAiCa.Campaigns.Subscription do
   keeps one copy of an email address under one set of unsubscribe and retention
   controls rather than two.
 
-  We send the address, the language they read the site in, and the country. We
-  do not send anything they did not type, and the caller must have taken an
+  We send the address, the language they read the site in, the country, and any
+  city or postal code they chose to provide. We do not send anything they did
+  not type, and the caller must have taken an
   explicit opt-in — see `PauseAiCaWeb.SubscribeLive` for the consent wording.
   """
 
@@ -21,20 +22,43 @@ defmodule PauseAiCa.Campaigns.Subscription do
   already knows the address so the caller can show the same friendly message
   either way.
   """
-  @spec subscribe(String.t(), String.t()) ::
+  @spec subscribe(String.t(), String.t(), map()) ::
           {:ok, :subscribed | :already_subscribed}
           | {:error, :invalid_email | :not_configured | :unavailable}
-  def subscribe(email, locale) do
+  def subscribe(email, locale, location \\ %{}) do
     with {:ok, address} <- validate_email(email),
          {:ok, api_key} <- api_key() do
-      request(address, locale, api_key)
+      request(address, locale, location, api_key)
     end
   end
 
-  defp request(address, locale, api_key) do
+  @doc "Returns optional location attributes for an existing Brevo contact."
+  @spec location_for(String.t()) :: {:ok, map()} | {:error, :not_found | :unavailable}
+  def location_for(email) do
+    with {:ok, address} <- validate_email(email),
+         {:ok, api_key} <- api_key() do
+      case Req.get(req(api_key), url: "/contacts/#{address}") do
+        {:ok, %Req.Response{status: 200, body: %{"attributes" => attributes}}} ->
+          {:ok,
+           %{}
+           |> put_present(:postal_code, attributes["POSTAL_CODE"])
+           |> put_present(:city, attributes["CITY"])}
+
+        {:ok, %Req.Response{status: 404}} ->
+          {:error, :not_found}
+
+        _other ->
+          {:error, :unavailable}
+      end
+    else
+      _error -> {:error, :unavailable}
+    end
+  end
+
+  defp request(address, locale, location, api_key) do
     body = %{
       email: address,
-      attributes: %{"LANGUAGE" => language(locale), "COUNTRY" => "Canada"},
+      attributes: attributes(locale, location),
       listIds: list_ids(),
       updateEnabled: true
     }
@@ -53,6 +77,21 @@ defmodule PauseAiCa.Campaigns.Subscription do
         {:error, :unavailable}
     end
   end
+
+  defp attributes(locale, location) do
+    %{"LANGUAGE" => language(locale), "COUNTRY" => "Canada"}
+    |> put_present("POSTAL_CODE", location[:postal_code] || location["postal_code"])
+    |> put_present("CITY", location[:city] || location["city"])
+  end
+
+  defp put_present(map, key, value) when is_binary(value) do
+    case String.trim(value) do
+      "" -> map
+      present -> Map.put(map, key, present)
+    end
+  end
+
+  defp put_present(map, _key, _value), do: map
 
   defp req(api_key) do
     Req.new(
