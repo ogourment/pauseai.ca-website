@@ -78,7 +78,7 @@ msgstr "Ajoutez votre code postal complet à votre profil pour identifier votre 
 msgid "An AI escaped its lab and hacked a real company"
 msgstr "Une IA s’est échappée de son laboratoire et a piraté une vraie entreprise"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:896
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:868
 #, elixir-autogen, elixir-format
 msgid "An AI escaped its lab and hacked a real company. I just wrote to my MP about it. It takes a minute:"
 msgstr "Une IA s'est échappée de son laboratoire et a piraté une vraie entreprise. Je viens d'écrire à ma députée. Ça prend une minute:"
@@ -99,7 +99,7 @@ msgstr "Tentative de reconnexion"
 msgid "Begin · 2 minutes"
 msgstr "Commencer · 2 minutes"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:794
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:781
 #, elixir-autogen, elixir-format
 msgid "Body"
 msgstr "Message"
@@ -130,7 +130,7 @@ msgstr "Des voix canadiennes"
 msgid "Change password"
 msgstr "Changer le mot de passe"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:858
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:833
 #, elixir-autogen, elixir-format
 msgid "Check your inbox"
 msgstr "Vérifiez votre boîte de réception"
@@ -155,12 +155,12 @@ msgstr "Compléter mon profil"
 msgid "Contact us"
 msgstr "Nous joindre"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:920
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:892
 #, elixir-autogen, elixir-format
 msgid "Copied"
 msgstr "Copié"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:918
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:890
 #, elixir-autogen, elixir-format
 msgid "Copy the letter"
 msgstr "Copier la lettre"
@@ -200,7 +200,7 @@ msgstr "Modifier l'action"
 msgid "Edit my profile"
 msgstr "Modifier mon profil"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:892
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:864
 #, elixir-autogen, elixir-format
 msgid "Email a friend"
 msgstr "Écrire à un·e ami·e"
@@ -252,7 +252,7 @@ msgid "Explore the mechanisms"
 msgstr "Explorer les mécanismes"
 
 #: lib/pauseai_ca_web/live/profile_live.ex:150
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:784
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:771
 #, elixir-autogen, elixir-format
 msgid "Find my MP"
 msgstr "Trouver mon député·e"
@@ -292,11 +292,6 @@ msgstr "Comment passer de l'intérêt à l'action collective"
 msgid "How far should we let AI advance?"
 msgstr "Jusqu’où devrions-nous laisser l’IA progresser?"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:823
-#, elixir-autogen, elixir-format
-msgid "I authorize PauseAI Canada to send this letter to my MP on my behalf, with my email as the reply-to address."
-msgstr "J'autorise PauseAI Canada à envoyer cette lettre en mon nom à mon·ma député·e, avec mon courriel comme adresse de réponse."
-
 #: lib/pauseai_ca_web/controllers/page_html/strategy.html.heex:34
 #, elixir-autogen, elixir-format
 msgid "Inform without prescribing a conclusion, offer one attainable first action, then help willing participants talk, show up, contribute, and organize."
@@ -317,7 +312,7 @@ msgstr "Gardez une trace privée des gestes que vous posez."
 msgid "Learn"
 msgstr "Comprendre"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:782
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:769
 #, elixir-autogen, elixir-format
 msgid "Letter language"
 msgstr "Langue de la lettre"
@@ -327,7 +322,7 @@ msgstr "Langue de la lettre"
 msgid "Log out"
 msgstr "Déconnexion"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:786
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:773
 #, elixir-autogen, elixir-format
 msgid "Looking up…"
 msgstr "Recherche…"
@@ -393,30 +388,25 @@ msgstr "Non, supprimer"
 msgid "Not now"
 msgstr "Plus tard"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:868
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:843
 #, elixir-autogen, elixir-format
 msgid "Nothing yet? Look in spam or promotions, move the message to your inbox and mark it \"Not spam\". That is what keeps us out of the spam folder for everyone else."
 msgstr "Rien reçu? Regardez dans les indésirables ou les promotions, déplacez le message vers votre boîte de réception et marquez-le « Non indésirable ». Cela aide tout le monde à recevoir nos courriels."
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:888
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:860
 #, elixir-autogen, elixir-format
 msgid "Offices count letters, and most files get almost none. If one person you know writes too, you have just doubled what you did."
 msgstr "Les bureaux comptent les lettres, et la plupart des dossiers n'en reçoivent presque aucune. Si une personne de votre entourage écrit aussi, vous venez de doubler l'effet de votre geste."
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:884
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:856
 #, elixir-autogen, elixir-format
 msgid "One more letter counts double"
 msgstr "Une lettre de plus compte double"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:916
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:888
 #, elixir-autogen, elixir-format
 msgid "Open in my email app"
 msgstr "Ouvrir dans ma messagerie"
-
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:815
-#, elixir-autogen, elixir-format
-msgid "Open the letter in your own mail app. Nothing reaches us: we never see your address or the final text."
-msgstr "Ouvrez la lettre dans votre propre messagerie. Rien ne nous est transmis: nous ne verrons ni votre adresse ni le texte final."
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:354
 #, elixir-autogen, elixir-format
@@ -468,7 +458,7 @@ msgstr "PauseAI Canada est un groupe canadien en développement qui sensibilise 
 msgid "PauseAI Global's chapter guide"
 msgstr "Guide de PauseAI Global"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:798
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:785
 #, elixir-autogen, elixir-format
 msgid "Personalize the letter before sending. One sentence of your own counts for more than the template."
 msgstr "Personnalisez la lettre avant l'envoi. Une phrase à vous compte plus que le modèle."
@@ -489,15 +479,10 @@ msgid "Position on pausing advanced AI: not yet documented."
 msgstr "Position sur une pause de l’IA avancée : pas encore documentée."
 
 #: lib/pauseai_ca_web/live/library_live.ex:366
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:780
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:767
 #, elixir-autogen, elixir-format
 msgid "Postal code"
 msgstr "Code postal"
-
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:880
-#, elixir-autogen, elixir-format
-msgid "Preview environment: the letter goes to you, not to your MP. The subject line names who would have received it on the live site."
-msgstr "Environnement de préversion: la lettre vous sera envoyée à vous, pas à votre député·e. L'objet indiquera à qui elle serait allée sur le site public."
 
 #: lib/pauseai_ca_web/components/layouts.ex:300
 #, elixir-autogen, elixir-format
@@ -591,27 +576,22 @@ msgstr "Voir les façons de progresser"
 msgid "See what happened"
 msgstr "Voir ce qui s'est passé"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:802
-#, elixir-autogen, elixir-format
-msgid "Send it"
-msgstr "Envoyer"
-
 #: lib/pauseai_ca_web/live/profile_live.ex:147
 #, elixir-autogen, elixir-format
 msgid "Send me relevant local updates"
 msgstr "M’envoyer des nouvelles locales pertinentes"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:827
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:802
 #, elixir-autogen, elixir-format
 msgid "Send the letter"
 msgstr "Envoyer la lettre"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:829
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:804
 #, elixir-autogen, elixir-format
 msgid "Sending…"
 msgstr "Envoi…"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:832
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:807
 #, elixir-autogen, elixir-format
 msgid "Sent. Thank you — replies from MP offices often arrive within a few days."
 msgstr "Envoyé. Merci — les réponses des bureaux de député·es arrivent souvent en quelques jours."
@@ -681,7 +661,7 @@ msgstr "Commencez là où vous avez des questions."
 msgid "Strategy"
 msgstr "Stratégie"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:792
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:779
 #, elixir-autogen, elixir-format
 msgid "Subject"
 msgstr "Objet"
@@ -728,7 +708,7 @@ msgstr "La déclaration et la liste complète des appuis"
 msgid "There is no single path. These are common ways to deepen your involvement."
 msgstr "Plusieurs chemins sont possibles. Voici des façons courantes d'approfondir son engagement."
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:790
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:777
 #, elixir-autogen, elixir-format
 msgid "This is a best match. Please check before sending."
 msgstr "Il s'agit de la meilleure correspondance. Vérifiez avant d'envoyer."
@@ -789,12 +769,12 @@ msgstr "Nous ne trouvons pas la connexion Internet"
 msgid "We collaborate with"
 msgstr "Nous collaborons avec"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:862
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:837
 #, elixir-autogen, elixir-format
 msgid "We have emailed you the letter. Click the button in it and the letter goes to your MP. We do this because your address is the one your MP will reply to."
 msgstr "Nous vous avons envoyé la lettre. Cliquez sur le bouton qu'elle contient et elle part vers votre député·e. Nous procédons ainsi parce que votre adresse est celle à laquelle votre député·e répondra."
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:874
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:849
 #, elixir-autogen, elixir-format
 msgid "We have noted this as unconfirmed in your dashboard. We cannot tell whether you pressed send, so you can confirm it there."
 msgstr "Nous avons noté cette action comme « à confirmer » dans votre tableau de bord. Nous ne savons pas si vous avez appuyé sur envoyer — vous pourrez le confirmer là-bas."
@@ -803,11 +783,6 @@ msgstr "Nous avons noté cette action comme « à confirmer » dans votre tablea
 #, elixir-autogen, elixir-format
 msgid "We recorded these when you started them outside this journal. Please confirm whether you completed them."
 msgstr "Nous les avons notées lorsque vous les avez commencées hors de ce journal. Confirmez-nous si vous les avez terminées."
-
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:809
-#, elixir-autogen, elixir-format
-msgid "We send the letter from PauseAI Canada with your address as reply-to, so your MP can answer you directly. We do not keep your address."
-msgstr "Nous envoyons la lettre depuis PauseAI Canada, avec votre adresse en réponse pour que votre député·e puisse vous répondre directement. Nous ne conservons pas votre adresse."
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:451
 #, elixir-autogen, elixir-format
@@ -874,7 +849,7 @@ msgstr "Oui, c'est fait"
 msgid "You are here"
 msgstr "Vous êtes ici"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:788
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:775
 #, elixir-autogen, elixir-format
 msgid "Your MP"
 msgstr "Votre député·e"
@@ -890,7 +865,7 @@ msgid "Your answers and actions"
 msgstr "Vos réponses et vos actions"
 
 #: lib/pauseai_ca_web/live/library_live.ex:365
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:819
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:797
 #, elixir-autogen, elixir-format
 msgid "Your email"
 msgstr "Votre courriel"
@@ -905,15 +880,10 @@ msgstr "Votre lettre est partie. Merci — les bureaux répondent souvent en que
 msgid "Your log is visible only to you. Only aggregate counts are used to understand movement progress."
 msgstr "Votre journal n'est visible que par vous. Seuls des totaux anonymisés servent à suivre la progression du mouvement."
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:778
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:765
 #, elixir-autogen, elixir-format
 msgid "Your name"
 msgstr "Votre nom"
-
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:774
-#, elixir-autogen, elixir-format
-msgid "Your postal code is used for a single lookup against Represent (Open North) and is not stored. The letter is sent from your own mail app, not from this site."
-msgstr "Votre code postal sert à une seule recherche auprès de Represent (Open North) et n'est pas conservé. La lettre part de votre propre messagerie, pas de ce site."
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:243
 #, elixir-autogen, elixir-format
@@ -945,7 +915,7 @@ msgstr "actions consignées"
 msgid "and"
 msgstr "et"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:309
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:307
 #, elixir-autogen, elixir-format
 msgid "bilingual"
 msgstr "fr"
@@ -985,7 +955,7 @@ msgstr "Plutôt"
 msgid "Attended an event"
 msgstr "Participé à un événement"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:767
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:760
 #, elixir-autogen, elixir-format
 msgid "Bilingual"
 msgstr "Bilingue"
@@ -1005,12 +975,12 @@ msgstr "Peu"
 msgid "Discussed AI risk with someone"
 msgstr "Discuté des risques de l’IA"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:768
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:761
 #, elixir-autogen, elixir-format
 msgid "English only"
 msgstr "Anglais seulement"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:769
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:762
 #, elixir-autogen, elixir-format
 msgid "French only"
 msgstr "Français seulement"
@@ -1024,11 +994,6 @@ msgstr "Distribué des dépliants ou posé des affiches"
 #, elixir-autogen, elixir-format
 msgid "House of Commons"
 msgstr "Chambre des communes"
-
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:805
-#, elixir-autogen, elixir-format
-msgid "I'll send it myself"
-msgstr "Je l'envoie moi-même"
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:224
 #, elixir-autogen, elixir-format
@@ -1045,12 +1010,12 @@ msgstr "Rencontré une personne élue"
 msgid "Mixed"
 msgstr "Mitigé"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:925
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:897
 #, elixir-autogen, elixir-format
 msgid "No MP found for that postal code."
 msgstr "Aucun·e député·e trouvé·e pour ce code postal."
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:841
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:816
 #, elixir-autogen, elixir-format
 msgid "No MP selected. Look up your postal code first."
 msgstr "Aucun·e député·e sélectionné·e. Recherchez votre code postal d'abord."
@@ -1065,7 +1030,7 @@ msgstr "Organisé une activité"
 msgid "Other private action"
 msgstr "Autre action privée"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:835
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:810
 #, elixir-autogen, elixir-format
 msgid "Please tick the authorization box before sending."
 msgstr "Cochez la case d'autorisation avant l'envoi."
@@ -1084,16 +1049,6 @@ msgstr "Lu ou regardé une ressource"
 #, elixir-autogen, elixir-format
 msgid "Senate"
 msgstr "Sénat"
-
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:805
-#, elixir-autogen, elixir-format
-msgid "Send it for me"
-msgstr "Envoyez-le pour moi"
-
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:856
-#, elixir-autogen, elixir-format
-msgid "Sending failed. Try again, or use \"I'll send it myself\"."
-msgstr "L'envoi a échoué. Réessayez, ou utilisez « Je l'envoie moi-même »."
 
 #: lib/pauseai_ca_web/components/layouts.ex:321
 #, elixir-autogen, elixir-format
@@ -1120,12 +1075,12 @@ msgstr "Tout à fait"
 msgid "Strongly disagree"
 msgstr "Pas du tout"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:853
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:828
 #, elixir-autogen, elixir-format
 msgid "Take a moment to read the letter before sending it."
 msgstr "Prenez un instant pour relire la lettre avant de l'envoyer."
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:923
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:895
 #, elixir-autogen, elixir-format
 msgid "That does not look like a Canadian postal code. Example: H2X 1Y4."
 msgstr "Ce code postal ne semble pas valide. Exemple: H2X 1Y4."
@@ -1135,7 +1090,7 @@ msgstr "Ce code postal ne semble pas valide. Exemple: H2X 1Y4."
 msgid "That email does not look valid."
 msgstr "Ce courriel ne semble pas valide."
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:838
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:813
 #, elixir-autogen, elixir-format
 msgid "That email does not look valid. Your MP needs it to reply to you."
 msgstr "Ce courriel ne semble pas valide. Votre député·e en a besoin pour vous répondre."
@@ -1145,12 +1100,12 @@ msgstr "Ce courriel ne semble pas valide. Votre député·e en a besoin pour vou
 msgid "The PauseAI statement"
 msgstr "La déclaration de PauseAI"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:850
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:825
 #, elixir-autogen, elixir-format
 msgid "The letter is too long. Shorten it before sending."
 msgstr "La lettre est trop longue. Raccourcissez-la avant l'envoi."
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:929
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:901
 #, elixir-autogen, elixir-format
 msgid "The lookup service is unavailable right now. Try again, or write to your MP directly."
 msgstr "Le service de recherche est indisponible pour le moment. Réessayez, ou écrivez directement à votre député·e."
@@ -1187,15 +1142,10 @@ msgstr "Fait du bénévolat"
 msgid "What PauseAI asks people to do"
 msgstr "Les actions proposées par PauseAI"
 
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:909
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:881
 #, elixir-autogen, elixir-format
 msgid "Worth a minute of your time"
 msgstr "Ça vaut une minute"
-
-#: lib/pauseai_ca_web/live/warning_shot_live.ex:845
-#, elixir-autogen, elixir-format
-msgid "You have sent several letters recently. Try again later, or use \"I'll send it myself\"."
-msgstr "Vous avez déjà envoyé plusieurs lettres récemment. Réessayez plus tard, ou utilisez « Je l'envoie moi-même »."
 
 #: lib/pauseai_ca_web/live/profile_live.ex:98
 #, elixir-autogen, elixir-format
@@ -1268,3 +1218,38 @@ msgstr "Envoyez une lettre personnelle en quelques minutes"
 #, elixir-autogen, elixir-format
 msgid "City"
 msgstr "Ville"
+
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:800
+#, elixir-autogen, elixir-format
+msgid "I authorize PauseAI Canada to send this letter to my MP."
+msgstr "J’autorise PauseAI Canada à envoyer cette lettre à mon député·e."
+
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:854
+#, elixir-autogen, elixir-format
+msgid "Preview: no letter will be sent to your MP."
+msgstr "Aperçu : aucune lettre ne sera envoyée à votre député·e."
+
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:793
+#, elixir-autogen, elixir-format
+msgid "Send through PauseAI Canada"
+msgstr "Envoyer avec PauseAI Canada"
+
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:789
+#, elixir-autogen, elixir-format
+msgid "Send your letter"
+msgstr "Envoyez votre lettre"
+
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:831
+#, elixir-autogen, elixir-format
+msgid "Sending failed. Try again, or use your email app."
+msgstr "L’envoi a échoué. Réessayez ou utilisez votre application de courriel."
+
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:794
+#, elixir-autogen, elixir-format
+msgid "Use my email app"
+msgstr "Utiliser mon application de courriel"
+
+#: lib/pauseai_ca_web/live/warning_shot_live.ex:820
+#, elixir-autogen, elixir-format
+msgid "You have sent several letters recently. Try again later, or use your email app."
+msgstr "Vous avez déjà envoyé plusieurs lettres récemment. Réessayez plus tard ou utilisez votre application de courriel."

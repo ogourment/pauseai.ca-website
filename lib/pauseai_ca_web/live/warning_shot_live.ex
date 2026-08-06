@@ -3,10 +3,8 @@ defmodule PauseAiCaWeb.WarningShotLive do
   The current Warning Shot activation: what happened, what followed, and the two
   things a visitor can do about it right now.
 
-  A visitor can send the letter two ways. "Send it for me" hands it to Brevo
-  with their address as reply-to; "I'll send it myself" hands it to their own
-  mail client and needs no personal data at all. The postal code is used for a
-  single lookup either way and is never stored.
+  A visitor can send the letter through PauseAI Canada or open it in their own
+  email app.
   """
 
   use PauseAiCaWeb, :live_view
@@ -306,7 +304,8 @@ defmodule PauseAiCaWeb.WarningShotLive do
     to_form(%{"subject" => letter.subject, "body" => letter.body}, as: :letter)
   end
 
-  defp default_draft_language(_locale), do: gettext("bilingual")
+  defp default_draft_language("fr"), do: "fr"
+  defp default_draft_language(_locale), do: "bilingual"
 
   defp draft_language(value) when value in @draft_languages, do: value
   defp draft_language(_value), do: "bilingual"
@@ -415,8 +414,6 @@ defmodule PauseAiCaWeb.WarningShotLive do
           <h2 class="font-heading text-3xl uppercase tracking-wide text-stone-950">
             {@copy.act_letter}
           </h2>
-          <p class="mt-3 max-w-2xl leading-7 text-stone-600">{privacy_note(@locale)}</p>
-
           <.form
             for={@sender_form}
             id="mp-lookup-form"
@@ -439,12 +436,26 @@ defmodule PauseAiCaWeb.WarningShotLive do
               placeholder="H2X 1Y4"
             />
             <div class="sm:col-span-2">
-              <.input
-                field={@sender_form[:draft_language]}
-                type="select"
-                label={language_label(@locale)}
-                options={draft_language_options(@locale)}
-              />
+              <fieldset id="draft-language-options" class="mb-4">
+                <legend class="mb-2 block text-sm font-semibold text-stone-800">
+                  {language_label(@locale)}
+                </legend>
+                <div class="flex flex-wrap gap-2">
+                  <label
+                    :for={{label, value} <- draft_language_options(@locale)}
+                    class="flex cursor-pointer items-center gap-2 rounded-full border-2 border-stone-300 px-4 py-2.5 text-stone-800 transition has-[:checked]:border-brand has-[:checked]:bg-brand-wash"
+                  >
+                    <input
+                      type="radio"
+                      name={@sender_form[:draft_language].name}
+                      value={value}
+                      checked={@sender_form[:draft_language].value == value}
+                      class="size-4 accent-stone-900"
+                    />
+                    <span class="font-semibold">{label}</span>
+                  </label>
+                </div>
+              </fieldset>
             </div>
             <div :if={@locale == "fr"} class="sm:col-span-2">
               <.input
@@ -567,8 +578,6 @@ defmodule PauseAiCaWeb.WarningShotLive do
               >
                 {rehearsal_note(@locale)}
               </p>
-              <p class="leading-7 text-stone-600">{assisted_note(@locale)}</p>
-
               <.form
                 for={@send_form}
                 id="send-form"
@@ -669,7 +678,6 @@ defmodule PauseAiCaWeb.WarningShotLive do
             </div>
 
             <div :if={@send_mode == "diy"} id="send-diy" class="mt-6 max-w-2xl">
-              <p class="leading-7 text-stone-600">{diy_note(@locale)}</p>
               <p
                 :if={@send_state == :handed_over and @current_scope}
                 id="diy-handed-over"
@@ -769,12 +777,6 @@ defmodule PauseAiCaWeb.WarningShotLive do
       {gettext("French only"), "fr"}
     ]
 
-  defp privacy_note(_locale),
-    do:
-      gettext(
-        "Your postal code is used for a single lookup against Represent (Open North) and is not stored. The letter is sent from your own mail app, not from this site."
-      )
-
   defp name_label(_locale), do: gettext("Your name")
 
   defp postal_code_label(_locale), do: gettext("Postal code")
@@ -799,30 +801,18 @@ defmodule PauseAiCaWeb.WarningShotLive do
         "Personalize the letter before sending. One sentence of your own counts for more than the template."
       )
 
-  defp send_heading(_locale), do: gettext("Send it")
+  defp send_heading(_locale), do: gettext("Send your letter")
 
   defp send_modes(_locale),
-    do: [{"assisted", gettext("Send it for me")}, {"diy", gettext("I'll send it myself")}]
-
-  defp assisted_note(_locale),
-    do:
-      gettext(
-        "We send the letter from PauseAI Canada with your address as reply-to, so your MP can answer you directly. We do not keep your address."
-      )
-
-  defp diy_note(_locale),
-    do:
-      gettext(
-        "Open the letter in your own mail app. Nothing reaches us: we never see your address or the final text."
-      )
+    do: [
+      {"assisted", gettext("Send through PauseAI Canada")},
+      {"diy", gettext("Use my email app")}
+    ]
 
   defp email_label(_locale), do: gettext("Your email")
 
   defp consent_label(_locale),
-    do:
-      gettext(
-        "I authorize PauseAI Canada to send this letter to my MP on my behalf, with my email as the reply-to address."
-      )
+    do: gettext("I authorize PauseAI Canada to send this letter to my MP.")
 
   defp send_for_me_cta(_locale), do: gettext("Send the letter")
 
@@ -841,10 +831,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
     do: gettext("No MP selected. Look up your postal code first.")
 
   defp send_error_message({:error, :rate_limited}, _locale),
-    do:
-      gettext(
-        "You have sent several letters recently. Try again later, or use \"I'll send it myself\"."
-      )
+    do: gettext("You have sent several letters recently. Try again later, or use your email app.")
 
   defp send_error_message({:error, :body_too_long}, _locale),
     do: gettext("The letter is too long. Shorten it before sending.")
@@ -853,7 +840,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
     do: gettext("Take a moment to read the letter before sending it.")
 
   defp send_error_message(_state, _locale),
-    do: gettext("Sending failed. Try again, or use \"I'll send it myself\".")
+    do: gettext("Sending failed. Try again, or use your email app.")
 
   defp check_inbox_heading(_locale), do: gettext("Check your inbox")
 
@@ -876,10 +863,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
       )
 
   defp rehearsal_note(_locale),
-    do:
-      gettext(
-        "Preview environment: the letter goes to you, not to your MP. The subject line names who would have received it on the live site."
-      )
+    do: gettext("Preview: no letter will be sent to your MP.")
 
   defp share_heading(_locale), do: gettext("One more letter counts double")
 

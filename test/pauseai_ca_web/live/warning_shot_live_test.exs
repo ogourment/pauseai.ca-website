@@ -60,6 +60,29 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
   end
 
   describe "writing to a member of parliament" do
+    test "both language pages offer bilingual and single-language letters", %{conn: conn} do
+      {:ok, en_view, _html} = live(conn, ~p"/en/warning-shot")
+
+      assert has_element?(
+               en_view,
+               "#draft-language-options input[type='radio'][value='bilingual']:checked"
+             )
+
+      assert has_element?(en_view, "#draft-language-options input[type='radio'][value='en']")
+      assert has_element?(en_view, "#draft-language-options input[type='radio'][value='fr']")
+
+      {:ok, fr_view, _html} = live(conn, ~p"/fr/tir-de-semonce")
+
+      assert has_element?(
+               fr_view,
+               "#draft-language-options input[type='radio'][value='fr']:checked"
+             )
+
+      assert has_element?(fr_view, "#draft-language-options", "Bilingue")
+      assert has_element?(fr_view, "#draft-language-options", "Anglais seulement")
+      assert has_element?(fr_view, "#draft-language-options", "Français seulement")
+    end
+
     test "a postal code produces an editable letter addressed to the MP", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/en/warning-shot")
 
@@ -199,7 +222,19 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
 
       view |> form("#mp-lookup-form", sender: %{postal_code: "H2X 1Y4"}) |> render_submit()
 
-      assert has_element?(view, "#rehearsal-notice")
+      assert has_element?(
+               view,
+               "#rehearsal-notice",
+               "Preview: no letter will be sent to your MP."
+             )
+
+      assert has_element?(view, "#send-options", "Send your letter")
+      assert has_element?(view, "#send-mode-assisted", "Send through PauseAI Canada")
+      assert has_element?(view, "#send-mode-diy", "Use my email app")
+
+      html = render(view)
+      refute html =~ "Represent (Open North)"
+      refute html =~ "reply-to"
     end
 
     test "a bot that fills the honeypot is not told it was caught", %{conn: conn} do
