@@ -34,6 +34,7 @@ jobs:
       build-release: true
       release-artifact-name: pauseai-ca-release
       release-id-prefix: pauseai-ca
+      test-command: mix ci.test
     secrets:
       acceptance-harness-token: ${{ secrets.ACCEPTANCE_HARNESS_TOKEN }}
 
