@@ -11,6 +11,7 @@ defmodule PauseAiCaWeb.DashboardLive do
     actions = Engagement.list_actions(scope)
     confirmed_actions = Enum.reject(actions, &Action.pending?/1)
     locale = if socket.assigns.live_action == :fr, do: "fr", else: "en"
+    Gettext.put_locale(PauseAiCaWeb.Gettext, locale)
 
     {:ok,
      socket

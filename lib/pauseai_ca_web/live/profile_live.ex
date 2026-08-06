@@ -6,6 +6,7 @@ defmodule PauseAiCaWeb.ProfileLive do
   @impl true
   def mount(_params, _session, socket) do
     locale = if socket.assigns.live_action == :fr, do: "fr", else: "en"
+    Gettext.put_locale(PauseAiCaWeb.Gettext, locale)
     user = socket.assigns.current_scope.user
 
     {:ok,
