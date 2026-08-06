@@ -449,7 +449,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
           </div>
         </section>
 
-        <section id="letter" class="mx-auto max-w-5xl px-5 py-16">
+        <section id="letter" class="mx-auto max-w-5xl scroll-mt-32 px-5 py-16">
           <h2 class="font-heading text-3xl uppercase tracking-wide text-stone-950">
             {@copy.act_letter}
           </h2>

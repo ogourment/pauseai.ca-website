@@ -26,6 +26,13 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
       assert render(view) =~ "An AI escaped its lab and hacked a real company"
     end
 
+    test "the letter link leaves its heading visible below the sticky navigation", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/en/warning-shot")
+
+      assert has_element?(view, "#jump-to-letter[href='#letter']")
+      assert has_element?(view, "#letter.scroll-mt-32")
+    end
+
     test "a French visitor gets the same page in French", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/fr/tir-de-semonce")
 
