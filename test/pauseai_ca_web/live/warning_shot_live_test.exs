@@ -20,6 +20,9 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
       assert has_element?(view, "#developments-list")
       assert has_element?(view, "#join-pauseai")
       assert has_element?(view, "#read-analysis")
+      assert has_element?(view, "#warning-shot-page-badge")
+      refute has_element?(view, "#warning-shot-banner")
+      refute has_element?(view, "#campaign-prompt")
       assert render(view) =~ "An AI escaped its lab and hacked a real company"
     end
 

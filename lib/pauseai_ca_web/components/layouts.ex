@@ -37,6 +37,10 @@ defmodule PauseAiCaWeb.Layouts do
     default: nil,
     doc: "where the language switch should go; defaults to the other home page"
 
+  attr :promote_warning_shot, :boolean,
+    default: true,
+    doc: "whether to show the site-wide warning-shot banner and prompt"
+
   slot :inner_block, required: true
 
   def app(assigns) do
@@ -221,6 +225,7 @@ defmodule PauseAiCaWeb.Layouts do
     </header>
 
     <.link
+      :if={@promote_warning_shot}
       id="warning-shot-banner"
       navigate={if(@locale == "fr", do: ~p"/fr/tir-de-semonce", else: ~p"/en/warning-shot")}
       class="sticky top-[var(--header-height)] z-30 block bg-brand px-5 py-3 text-center text-stone-950 transition hover:bg-brand-strong"
@@ -235,6 +240,7 @@ defmodule PauseAiCaWeb.Layouts do
     </.link>
 
     <.campaign_prompt
+      :if={@promote_warning_shot}
       locale={@locale}
       campaign_id="warning-shot-2"
       href={if(@locale == "fr", do: ~p"/fr/tir-de-semonce", else: ~p"/en/warning-shot")}

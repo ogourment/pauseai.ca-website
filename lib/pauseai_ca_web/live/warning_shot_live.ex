@@ -335,10 +335,14 @@ defmodule PauseAiCaWeb.WarningShotLive do
       flash={@flash}
       current_scope={@current_scope}
       locale={@locale}
+      promote_warning_shot={false}
       translated_path={if(@locale == "fr", do: ~p"/en/warning-shot", else: ~p"/fr/tir-de-semonce")}
     >
       <article>
-        <p class="sticky top-[var(--header-height)] z-30 bg-brand px-5 py-3 text-center font-heading text-sm font-bold uppercase tracking-[0.16em] text-stone-950">
+        <p
+          id="warning-shot-page-badge"
+          class="sticky top-[var(--header-height)] z-30 bg-brand px-5 py-3 text-center font-heading text-sm font-bold uppercase tracking-[0.16em] text-stone-950"
+        >
           {@copy.badge}
         </p>
 
