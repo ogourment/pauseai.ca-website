@@ -176,10 +176,27 @@ defmodule PauseAiCa.Engagement do
     %Action{user_id: scope.user.id, happened_on: Date.utc_today()}
   end
 
+  @trend_days 14
+
+  @doc "Record one anonymous visit in a daily aggregate."
+  def record_visit(visited_on \\ Date.utc_today()) do
+    Repo.insert!(
+      %PauseAiCa.Engagement.DailyVisit{visited_on: visited_on, count: 1},
+      on_conflict: [inc: [count: 1]],
+      conflict_target: :visited_on
+    )
+  end
+
   @doc "Aggregate movement-building metrics without exposing supporter records."
-  def metrics do
+  def metrics(today \\ Date.utc_today()) do
     user_count = Repo.aggregate(PauseAiCa.Accounts.User, :count)
     action_count = Repo.aggregate(from(a in Action, where: not is_nil(a.confirmed_at)), :count)
+
+    visit_count =
+      case Repo.aggregate(PauseAiCa.Engagement.DailyVisit, :sum, :count) do
+        nil -> 0
+        count -> Decimal.to_integer(count)
+      end
 
     by_type =
       Repo.all(
@@ -197,6 +214,66 @@ defmodule PauseAiCa.Engagement do
           select: count(a.user_id, :distinct)
       )
 
-    %{users: user_count, actions: action_count, active_people: active_people, by_type: by_type}
+    %{
+      users: user_count,
+      actions: action_count,
+      active_people: active_people,
+      visits: visit_count,
+      by_type: by_type,
+      trends: trends(today)
+    }
   end
+
+  defp trends(today) do
+    dates = Enum.map((@trend_days - 1)..0//-1, &Date.add(today, -&1))
+    first_day = hd(dates)
+
+    account_counts =
+      daily_counts(
+        from u in PauseAiCa.Accounts.User,
+          where: u.inserted_at >= ^DateTime.new!(first_day, ~T[00:00:00]),
+          group_by: fragment("date(?)", u.inserted_at),
+          select: {fragment("date(?)", u.inserted_at), count(u.id)}
+      )
+
+    action_counts =
+      daily_counts(
+        from a in Action,
+          where: a.confirmed_at >= ^DateTime.new!(first_day, ~T[00:00:00]),
+          group_by: fragment("date(?)", a.confirmed_at),
+          select: {fragment("date(?)", a.confirmed_at), count(a.id)}
+      )
+
+    first_confirmations =
+      from a in Action,
+        where: not is_nil(a.confirmed_at),
+        group_by: a.user_id,
+        select: %{user_id: a.user_id, first_confirmed_at: min(a.confirmed_at)}
+
+    active_people_counts =
+      daily_counts(
+        from a in subquery(first_confirmations),
+          where: a.first_confirmed_at >= ^DateTime.new!(first_day, ~T[00:00:00]),
+          group_by: fragment("date(?)", a.first_confirmed_at),
+          select: {fragment("date(?)", a.first_confirmed_at), count(a.user_id)}
+      )
+
+    visit_counts =
+      Repo.all(
+        from v in PauseAiCa.Engagement.DailyVisit,
+          where: v.visited_on >= ^first_day and v.visited_on <= ^today,
+          select: {v.visited_on, v.count}
+      )
+      |> Map.new()
+
+    %{
+      users: fill_dates(dates, account_counts),
+      active_people: fill_dates(dates, active_people_counts),
+      actions: fill_dates(dates, action_counts),
+      visits: fill_dates(dates, visit_counts)
+    }
+  end
+
+  defp daily_counts(query), do: query |> Repo.all() |> Map.new()
+  defp fill_dates(dates, counts), do: Enum.map(dates, &Map.get(counts, &1, 0))
 end

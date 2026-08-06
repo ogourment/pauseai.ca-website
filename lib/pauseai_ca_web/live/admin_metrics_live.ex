@@ -55,16 +55,33 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
         <p class="eyebrow">Superadmin</p>
         <h1 class="mt-3 font-heading text-5xl text-stone-950">Movement metrics</h1>
         <p class="mt-4 max-w-3xl text-stone-600">
-          First-party database totals from accounts and confirmed private action records. Analytics may complement these figures, but is not their source.
+          First-party database totals from accounts, anonymous daily visits, and confirmed private action records. Analytics may complement these figures, but is not their source.
         </p>
-        <div class="mt-9 grid gap-4 sm:grid-cols-3">
-          <.metric id="metric-users" label="Accounts" value={@metrics.users} />
+        <div class="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <.metric
+            id="metric-users"
+            label="Accounts"
+            value={@metrics.users}
+            trend={@metrics.trends.users}
+          />
           <.metric
             id="metric-active"
             label="People with a confirmed action"
             value={@metrics.active_people}
+            trend={@metrics.trends.active_people}
           />
-          <.metric id="metric-actions" label="Confirmed actions" value={@metrics.actions} />
+          <.metric
+            id="metric-actions"
+            label="Confirmed actions"
+            value={@metrics.actions}
+            trend={@metrics.trends.actions}
+          />
+          <.metric
+            id="metric-visits"
+            label="Visits"
+            value={@metrics.visits}
+            trend={@metrics.trends.visits}
+          />
         </div>
         <section class="mt-10 rounded-[2rem] bg-stone-900 p-8 text-white sm:p-10">
           <h2 class="font-heading text-3xl">Progress through the engagement ladder</h2>
@@ -130,13 +147,48 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
   attr :id, :string, required: true
   attr :label, :string, required: true
   attr :value, :integer, required: true
+  attr :trend, :list, required: true
 
   defp metric(assigns) do
+    assigns = assign(assigns, :points, sparkline_points(assigns.trend))
+
     ~H"""
     <div id={@id} class="rounded-3xl bg-stone-900 p-6 text-white">
       <p class="text-sm text-white/70">{@label}</p>
-      <p class="mt-2 font-heading text-5xl">{@value}</p>
+      <div class="mt-2 flex items-end justify-between gap-4">
+        <p class="font-heading text-5xl">{@value}</p>
+        <svg
+          class="h-12 w-24 shrink-0 text-brand"
+          viewBox="0 0 96 48"
+          role="img"
+          aria-label={"#{@label}, daily trend over the last 14 days"}
+        >
+          <title>{@label}, daily trend over the last 14 days</title>
+          <polyline
+            points={@points}
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            vector-effect="non-scaling-stroke"
+          />
+        </svg>
+      </div>
     </div>
     """
+  end
+
+  defp sparkline_points(values) do
+    max_value = max(Enum.max(values, fn -> 0 end), 1)
+    intervals = max(length(values) - 1, 1)
+
+    values
+    |> Enum.with_index()
+    |> Enum.map_join(" ", fn {value, index} ->
+      x = Float.round(index * 96 / intervals, 1)
+      y = Float.round(44 - value * 40 / max_value, 1)
+      "#{x},#{y}"
+    end)
   end
 end

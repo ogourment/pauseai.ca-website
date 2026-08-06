@@ -57,6 +57,10 @@ config :pauseai_ca, :brevo_list_ids, [1]
 
 config :pauseai_ca, :campaign_sender, {"PauseAI Canada", "campaigns@example.org"}
 
+# Most endpoint tests are unrelated to analytics and run concurrently in the
+# SQL sandbox. Visit-tracker tests opt in on their connection.
+config :pauseai_ca, :record_visits, false
+
 # Disable swoosh api client as it is only required for production adapters
 config :swoosh, :api_client, false
 

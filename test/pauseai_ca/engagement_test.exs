@@ -112,4 +112,30 @@ defmodule PauseAiCa.EngagementTest do
       assert %Ecto.Changeset{} = Engagement.change_action(scope, action)
     end
   end
+
+  describe "movement metrics" do
+    import PauseAiCa.AccountsFixtures, only: [user_scope_fixture: 0]
+    import PauseAiCa.EngagementFixtures
+
+    test "returns daily trends and aggregate visit totals" do
+      today = ~D[2026-08-06]
+      scope = user_scope_fixture()
+
+      action_fixture(scope, %{
+        confirmed_at: DateTime.new!(today, ~T[12:00:00])
+      })
+
+      Engagement.record_visit(Date.add(today, -1))
+      Engagement.record_visit(today)
+      Engagement.record_visit(today)
+
+      metrics = Engagement.metrics(today)
+
+      assert metrics.visits == 3
+      assert Enum.take(metrics.trends.visits, -2) == [1, 2]
+      assert List.last(metrics.trends.actions) == 1
+      assert List.last(metrics.trends.active_people) == 1
+      assert length(metrics.trends.users) == 14
+    end
+  end
 end

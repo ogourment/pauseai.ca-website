@@ -11,7 +11,10 @@ defmodule PauseAiCaWeb.AdminMetricsLiveTest do
     {:ok, view, _html} = live(log_in_user(conn, admin), ~p"/admin/metrics")
 
     assert has_element?(view, "#admin-metrics")
-    assert has_element?(view, "#metric-users")
+    assert has_element?(view, "#metric-users svg[role='img']")
+    assert has_element?(view, "#metric-active svg[role='img']")
+    assert has_element?(view, "#metric-actions svg[role='img']")
+    assert has_element?(view, "#metric-visits svg[role='img']", "Visits")
     assert has_element?(view, "#metrics-by-type")
     assert has_element?(view, "#metrics-by-type li", "Learn")
     assert has_element?(view, "#metrics-by-type li", "Organize")

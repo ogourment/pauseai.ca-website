@@ -12,6 +12,7 @@ defmodule PauseAiCaWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :fetch_current_scope_for_user
+    plug PauseAiCaWeb.Plugs.RecordVisit
     # Staging only: closes the site to anyone not signed in. See the plug.
     plug PauseAiCaWeb.Plugs.RequireInvited
   end
