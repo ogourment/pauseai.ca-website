@@ -53,4 +53,18 @@ defmodule PauseAiCaWeb.AdminMetricsLiveTest do
     assert has_element?(view, "#admin-toggle-#{target.id}[disabled]")
     assert {:error, :email_unconfirmed} = Accounts.set_superadmin(admin, target, true)
   end
+
+  test "a superadmin can promote a confirmed account from the dashboard", %{conn: conn} do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    target = user_fixture()
+    {:ok, view, _html} = live(log_in_user(conn, admin), ~p"/admin/metrics")
+
+    view
+    |> element("#admin-toggle-#{target.id}")
+    |> render_click()
+
+    assert Accounts.get_user!(target.id).superadmin
+    assert has_element?(view, "#admin-user-#{target.id}", "Superadmin")
+    assert render(view) =~ "Superadmin role granted."
+  end
 end

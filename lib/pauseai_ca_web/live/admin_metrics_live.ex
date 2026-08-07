@@ -20,9 +20,16 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
   def handle_event("set-superadmin", %{"id" => id, "value" => value}, socket) do
     target = Accounts.get_user!(id)
 
-    case Accounts.set_superadmin(socket.assigns.current_scope.user, target, value == "true") do
+    promote? = value == "true"
+
+    case Accounts.set_superadmin(socket.assigns.current_scope.user, target, promote?) do
       {:ok, _user} ->
-        {:noreply, load(socket)}
+        message = if promote?, do: "Superadmin role granted.", else: "Superadmin role removed."
+
+        {:noreply,
+         socket
+         |> load()
+         |> put_flash(:info, message)}
 
       {:error, :last_superadmin} ->
         {:noreply, put_flash(socket, :error, "The last superadmin cannot be removed.")}
@@ -34,6 +41,9 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
            :error,
            "Confirm this account's email before granting superadmin access."
          )}
+
+      {:error, :unauthorized} ->
+        {:noreply, put_flash(socket, :error, "Superadmin access required.")}
     end
   end
 
