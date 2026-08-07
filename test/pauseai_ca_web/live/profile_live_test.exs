@@ -17,7 +17,12 @@ defmodule PauseAiCaWeb.ProfileLiveTest do
 
     view
     |> form("#profile-form",
-      profile: %{postal_code: "h2x 1y4", city: " Montréal ", local_updates: true}
+      profile: %{
+        name: " Olivier Gourment ",
+        postal_code: "h2x 1y4",
+        city: " Montréal ",
+        local_updates: true
+      }
     )
     |> render_submit()
 
@@ -26,6 +31,7 @@ defmodule PauseAiCaWeb.ProfileLiveTest do
     assert has_element?(view, "#mp-position", "not yet documented")
 
     stored = Repo.get!(Accounts.User, user.id)
+    assert stored.name == "Olivier Gourment"
     assert stored.postal_code == "H2X1Y4"
     assert stored.city == "Montréal"
     assert stored.fsa == "H2X"

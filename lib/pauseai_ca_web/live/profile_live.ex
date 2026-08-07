@@ -128,6 +128,12 @@ defmodule PauseAiCaWeb.ProfileLive do
               class="mt-5 space-y-5"
             >
               <.input
+                field={@profile_form[:name]}
+                type="text"
+                label={gettext("Name")}
+                autocomplete="name"
+              />
+              <.input
                 field={@profile_form[:postal_code]}
                 type="text"
                 label={gettext("Full postal code")}

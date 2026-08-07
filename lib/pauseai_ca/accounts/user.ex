@@ -6,6 +6,7 @@ defmodule PauseAiCa.Accounts.User do
   @foreign_key_type :binary_id
   schema "users" do
     field :email, :string
+    field :name, :string
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
     field :confirmed_at, :utc_datetime
@@ -145,7 +146,9 @@ defmodule PauseAiCa.Accounts.User do
 
   def profile_changeset(user, attrs) do
     user
-    |> cast(attrs, [:postal_code, :city, :local_updates])
+    |> cast(attrs, [:name, :postal_code, :city, :local_updates])
+    |> update_change(:name, &String.trim/1)
+    |> validate_length(:name, max: 160)
     |> update_change(:postal_code, fn value ->
       value |> String.upcase() |> String.replace(~r/[^A-Z0-9]/, "")
     end)
