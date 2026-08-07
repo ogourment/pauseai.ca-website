@@ -18,10 +18,9 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
   end
 
   @impl true
-  def handle_event("set-superadmin", %{"id" => id, "value" => value}, socket) do
+  def handle_event("set-superadmin", %{"id" => id}, socket) do
     target = Accounts.get_user!(id)
-
-    promote? = value == "true"
+    promote? = not target.superadmin
 
     case Accounts.set_superadmin(socket.assigns.current_scope.user, target, promote?) do
       {:ok, user} ->
@@ -176,7 +175,7 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
                 id={"admin-toggle-#{user.id}"}
                 phx-click="set-superadmin"
                 phx-value-id={user.id}
-                phx-value-value={to_string(!user.superadmin)}
+                data-confirm={grant_confirmation(user)}
                 disabled={!user.superadmin and is_nil(user.confirmed_at)}
                 class="rounded-full border border-stone-300 px-4 py-2 text-sm font-semibold text-stone-800 hover:border-brand disabled:cursor-not-allowed disabled:opacity-40"
               >
@@ -188,6 +187,15 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
       </section>
     </Layouts.app>
     """
+  end
+
+  defp grant_confirmation(%{superadmin: true}), do: nil
+
+  defp grant_confirmation(user) do
+    gettext(
+      "Make %{email} a superadmin? They will receive an email with a link to the admin tools.",
+      email: user.email
+    )
   end
 
   attr :id, :string, required: true

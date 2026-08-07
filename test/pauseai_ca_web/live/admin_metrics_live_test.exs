@@ -61,6 +61,8 @@ defmodule PauseAiCaWeb.AdminMetricsLiveTest do
     flush_emails()
     {:ok, view, _html} = live(log_in_user(conn, admin), ~p"/admin/metrics")
 
+    assert has_element?(view, "#admin-toggle-#{target.id}[data-confirm*='will receive an email']")
+
     view
     |> element("#admin-toggle-#{target.id}")
     |> render_click()
@@ -74,6 +76,20 @@ defmodule PauseAiCaWeb.AdminMetricsLiveTest do
       assert email.subject =~ "You are now a PauseAI Canada superadmin"
       assert email.text_body =~ "/admin/metrics"
     end)
+  end
+
+  test "promotion is derived from the current account role, not a browser toggle value", %{
+    conn: conn
+  } do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    target = user_fixture()
+    flush_emails()
+    {:ok, view, _html} = live(log_in_user(conn, admin), ~p"/admin/metrics")
+
+    render_click(view, "set-superadmin", %{"id" => target.id, "value" => ""})
+
+    assert Accounts.get_user!(target.id).superadmin
+    assert render(view) =~ "Superadmin role granted."
   end
 
   defp flush_emails do
