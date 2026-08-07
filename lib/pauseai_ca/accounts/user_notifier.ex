@@ -55,6 +55,27 @@ defmodule PauseAiCa.Accounts.UserNotifier do
   end
 
   @doc """
+  Notify a confirmed account that it has been granted superadmin access.
+  """
+  def deliver_superadmin_granted(user, url) do
+    deliver(
+      user.email,
+      "You are now a PauseAI Canada superadmin · Vous êtes maintenant superadmin de PauseAI Canada",
+      Layout.render(
+        "You are now a PauseAI Canada superadmin",
+        "Vous êtes maintenant superadmin de PauseAI Canada",
+        [
+          {"A PauseAI Canada superadmin granted your account superadmin access. You can now view movement metrics and manage superadmin access.",
+           "Un·e superadmin de PauseAI Canada a accordé à votre compte l'accès superadmin. Vous pouvez maintenant consulter les indicateurs du mouvement et gérer les accès superadmin."},
+          {"If you did not expect this, contact us at info@pauseai.ca.",
+           "Si vous ne vous y attendiez pas, contactez-nous à info@pauseai.ca."}
+        ],
+        {"Open movement metrics", "Ouvrir les indicateurs du mouvement", url}
+      )
+    )
+  end
+
+  @doc """
   Deliver instructions to log in with a magic link.
   """
   def deliver_login_instructions(user, url) do

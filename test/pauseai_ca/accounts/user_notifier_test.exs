@@ -60,6 +60,19 @@ defmodule PauseAiCa.Accounts.UserNotifierTest do
     end)
   end
 
+  test "a new superadmin receives a bilingual role notification" do
+    UserNotifier.deliver_superadmin_granted(@user, "https://pauseai.ca/admin/metrics")
+
+    assert_email_sent(fn email ->
+      assert email.to == [{"", "camille@example.org"}]
+      assert email.subject =~ "superadmin"
+      assert email.subject =~ "superadmin de PauseAI Canada"
+      assert email.html_body =~ "Open movement metrics"
+      assert email.html_body =~ "Ouvrir les indicateurs du mouvement"
+      assert email.text_body =~ "https://pauseai.ca/admin/metrics"
+    end)
+  end
+
   test "user-supplied text cannot inject markup into the HTML body" do
     hostile = %User{email: "a<script>alert(1)</script>@example.org", confirmed_at: nil}
     UserNotifier.deliver_update_email_instructions(hostile, "https://pauseai.ca/x")

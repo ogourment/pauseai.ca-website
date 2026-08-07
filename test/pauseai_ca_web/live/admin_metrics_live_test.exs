@@ -3,6 +3,7 @@ defmodule PauseAiCaWeb.AdminMetricsLiveTest do
 
   import Phoenix.LiveViewTest
   import PauseAiCa.AccountsFixtures
+  import Swoosh.TestAssertions
 
   alias PauseAiCa.{Accounts, Repo}
   alias PauseAiCa.Accounts.Scope
@@ -57,6 +58,7 @@ defmodule PauseAiCaWeb.AdminMetricsLiveTest do
   test "a superadmin can promote a confirmed account from the dashboard", %{conn: conn} do
     admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
     target = user_fixture()
+    flush_emails()
     {:ok, view, _html} = live(log_in_user(conn, admin), ~p"/admin/metrics")
 
     view
@@ -66,5 +68,19 @@ defmodule PauseAiCaWeb.AdminMetricsLiveTest do
     assert Accounts.get_user!(target.id).superadmin
     assert has_element?(view, "#admin-user-#{target.id}", "Superadmin")
     assert render(view) =~ "Superadmin role granted."
+
+    assert_email_sent(fn email ->
+      assert email.to == [{"", target.email}]
+      assert email.subject =~ "You are now a PauseAI Canada superadmin"
+      assert email.text_body =~ "/admin/metrics"
+    end)
+  end
+
+  defp flush_emails do
+    receive do
+      {:email, _email} -> flush_emails()
+    after
+      0 -> :ok
+    end
   end
 end

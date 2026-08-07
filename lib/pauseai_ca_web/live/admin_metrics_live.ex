@@ -2,6 +2,7 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
   use PauseAiCaWeb, :live_view
 
   alias PauseAiCa.{Accounts, Engagement}
+  alias PauseAiCa.Accounts.UserNotifier
   alias PauseAiCa.Engagement.Ladder
 
   @impl true
@@ -23,13 +24,14 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
     promote? = value == "true"
 
     case Accounts.set_superadmin(socket.assigns.current_scope.user, target, promote?) do
-      {:ok, _user} ->
+      {:ok, user} ->
         message = if promote?, do: "Superadmin role granted.", else: "Superadmin role removed."
 
         {:noreply,
          socket
          |> load()
-         |> put_flash(:info, message)}
+         |> put_flash(:info, message)
+         |> notify_new_superadmin(user, promote?)}
 
       {:error, :last_superadmin} ->
         {:noreply, put_flash(socket, :error, "The last superadmin cannot be removed.")}
@@ -44,6 +46,20 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
 
       {:error, :unauthorized} ->
         {:noreply, put_flash(socket, :error, "Superadmin access required.")}
+    end
+  end
+
+  defp notify_new_superadmin(socket, _user, false), do: socket
+
+  defp notify_new_superadmin(socket, user, true) do
+    url = PauseAiCaWeb.Endpoint.url() <> "/admin/metrics"
+
+    case UserNotifier.deliver_superadmin_granted(user, url) do
+      {:ok, _email} ->
+        socket
+
+      {:error, _reason} ->
+        put_flash(socket, :error, "Role granted, but the notification email could not be sent.")
     end
   end
 
