@@ -63,26 +63,3 @@ jobs:
       production-ssh-private-key: ${{ secrets.PRODUCTION_SSH_PRIVATE_KEY }}
       production-ssh-known-hosts: ${{ secrets.PRODUCTION_SSH_KNOWN_HOSTS }}
       production-remote-deploy-script: ${{ secrets.PRODUCTION_REMOTE_DEPLOY_SCRIPT }}
-
-  release_tag:
-    if: ${{ github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy-production }}
-    needs: [repository-boundary, phoenix, delivery]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - name: Create the production release tag
-        shell: bash
-        run: |
-          version="$(sed -nE 's/.*version: "([0-9]+\.[0-9]+\.[0-9]+)".*/\1/p' mix.exs)"
-          tag="v${version}"
-          test -n "$version"
-          if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
-            echo "Tag $tag already exists" >&2
-            exit 1
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag -a "$tag" -m "Release $tag" "$GITHUB_SHA"
-          git push origin "$tag"
