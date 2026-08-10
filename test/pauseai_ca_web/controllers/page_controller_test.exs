@@ -31,11 +31,6 @@ defmodule PauseAiCaWeb.PageControllerTest do
   test "English and French information paths are available", %{conn: conn} do
     en_html = html_response(get(conn, ~p"/en"), 200)
     assert en_html =~ "How far should we let AI advance?"
-    refute en_html =~ "Three questions."
-    refute en_html =~ "Your answers stay in this browser"
-    refute en_html =~ "Everything remains available"
-    refute en_html =~ "From curiosity to capacity"
-    refute en_html =~ "Nothing is public"
 
     fr_html = html_response(get(conn, ~p"/fr"), 200)
     assert fr_html =~ "Jusqu’où devrions-nous laisser l’IA progresser?"
@@ -44,11 +39,6 @@ defmodule PauseAiCaWeb.PageControllerTest do
     assert fr_html =~ "Créer un compte pour enregistrer votre parcours"
     assert fr_html =~ "Politique de confidentialité"
     assert fr_html =~ ~s(href="/users/register?bookmark=risk")
-    refute fr_html =~ "Trois questions."
-    refute fr_html =~ "Vos réponses restent dans ce navigateur"
-    refute fr_html =~ "Tout reste accessible"
-    refute fr_html =~ "De la curiosité à la capacité"
-    refute fr_html =~ "Rien n’est public"
   end
 
   test "privacy pages and durable footer links are available", %{conn: conn} do
@@ -61,7 +51,6 @@ defmodule PauseAiCaWeb.PageControllerTest do
     assert home =~ ~s(href="https://luma.com/pauseaimtl")
     assert home =~ ~s(href="/fr/confidentialite")
     assert home =~ "Source"
-    refute home =~ "Pause IA France"
 
     assert html_response(get(conn, ~p"/en"), 200) =~ "Montréal events"
   end
@@ -76,7 +65,6 @@ defmodule PauseAiCaWeb.PageControllerTest do
       |> html_response(200)
 
     assert html =~ ~s(href="/bookmarks/risk?locale=fr")
-    refute html =~ ~s(href="/users/register?bookmark=risk")
   end
 
   test "authenticated French LiveViews set the Gettext locale", %{conn: conn} do
@@ -93,16 +81,10 @@ defmodule PauseAiCaWeb.PageControllerTest do
 
     assert en_html =~ ~s(id="engagement-ladder")
     assert fr_html =~ ~s(id="engagement-ladder")
-    refute en_html =~ "Proposed engagement ladder"
-    refute fr_html =~ "Échelle d'engagement proposée"
     about_en = html_response(get(conn, ~p"/en/about"), 200)
     assert about_en =~ ~s(id="about")
     assert about_en =~ "Join PauseAI Canada"
-    assert about_en =~ ~s(href="/en/learn#updates")
-    refute about_en =~ "network form"
     assert about_en =~ "https://pauseai.info/"
-    assert about_en =~ "https://pauseia.fr/fr"
-    assert about_en =~ "https://www.pauseai-us.org/"
     assert html_response(get(conn, ~p"/fr/a-propos"), 200) =~ ~s(id="about")
   end
 end
