@@ -65,6 +65,5 @@ linked and summarized rather than copied.
 
 ## Status
 
-The current release is deployed to staging and to the temporary production
-service at `new.pauseai.ca`. The existing `pauseai.ca` site remains unchanged
-until a separately approved production cutover.
+The current release is deployed to staging and production at
+`pauseai.ca`.
