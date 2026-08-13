@@ -219,7 +219,7 @@ defmodule PauseAiCaWeb.Layouts do
               </div>
               <.link
                 :if={@current_scope.user.superadmin}
-                navigate={~p"/admin/metrics"}
+                navigate={~p"/admin/dashboard"}
                 class="block rounded-lg px-3 py-2.5 font-semibold text-stone-900 hover:bg-brand-wash"
               >Admin</.link>
               <div role="separator" class="my-2 border-t border-stone-200"></div>

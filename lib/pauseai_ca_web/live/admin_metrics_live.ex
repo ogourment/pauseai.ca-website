@@ -1,8 +1,7 @@
 defmodule PauseAiCaWeb.AdminMetricsLive do
   use PauseAiCaWeb, :live_view
 
-  alias PauseAiCa.{Accounts, Engagement}
-  alias PauseAiCa.Accounts.UserNotifier
+  alias PauseAiCa.Engagement
   alias PauseAiCa.Engagement.Ladder
 
   @impl true
@@ -18,184 +17,137 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
   end
 
   @impl true
-  def handle_event("set-superadmin", %{"id" => id}, socket) do
-    target = Accounts.get_user!(id)
-    promote? = not target.superadmin
-
-    case Accounts.set_superadmin(socket.assigns.current_scope.user, target, promote?) do
-      {:ok, user} ->
-        message = if promote?, do: "Superadmin role granted.", else: "Superadmin role removed."
-
-        {:noreply,
-         socket
-         |> load()
-         |> put_flash(:info, message)
-         |> notify_new_superadmin(user, promote?)}
-
-      {:error, :last_superadmin} ->
-        {:noreply, put_flash(socket, :error, "The last superadmin cannot be removed.")}
-
-      {:error, :email_unconfirmed} ->
-        {:noreply,
-         put_flash(
-           socket,
-           :error,
-           "Confirm this account's email before granting superadmin access."
-         )}
-
-      {:error, :unauthorized} ->
-        {:noreply, put_flash(socket, :error, "Superadmin access required.")}
-    end
+  def handle_params(_params, _uri, %{assigns: %{live_action: :redirect}} = socket) do
+    {:noreply, push_navigate(socket, to: ~p"/admin/dashboard")}
   end
 
-  defp notify_new_superadmin(socket, _user, false), do: socket
-
-  defp notify_new_superadmin(socket, user, true) do
-    url = PauseAiCaWeb.Endpoint.url() <> "/admin/metrics"
-
-    case UserNotifier.deliver_superadmin_granted(user, url) do
-      {:ok, _email} ->
-        socket
-
-      {:error, _reason} ->
-        put_flash(socket, :error, "Role granted, but the notification email could not be sent.")
-    end
-  end
+  def handle_params(_params, _uri, socket), do: {:noreply, socket}
 
   defp load(socket) do
     metrics = Engagement.metrics()
 
     socket
-    |> assign(:page_title, "Movement metrics")
+    |> assign(:page_title, gettext("Admin dashboard"))
     |> assign(:metrics, metrics)
     |> assign(:trend_period_label, trend_period_label(metrics.trend_period))
     |> assign(:ladder_counts, Ladder.counts(metrics.by_type))
     |> assign(:ladder_trends, Ladder.trends(metrics.trends.action_types))
-    |> assign(:users, Accounts.list_users())
   end
 
   @impl true
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <section id="admin-metrics" class="mx-auto max-w-6xl px-5 py-16">
-        <p class="eyebrow">Superadmin</p>
-        <h1 class="mt-3 font-heading text-5xl text-stone-950">Movement metrics</h1>
-        <p class="mt-4 max-w-3xl text-stone-600">
-          First-party database totals from accounts, anonymous daily visits, and confirmed private action records. Analytics may complement these figures, but is not their source.
-        </p>
-        <p id="metrics-period" class="mt-8 text-xs font-medium text-stone-500">
-          Daily trends · {@trend_period_label} (UTC)
-        </p>
-        <div class="mt-2 grid gap-4 sm:grid-cols-4">
-          <.metric
-            id="metric-users"
-            label="Accounts"
-            value={@metrics.users}
-            trend={@metrics.trends.users}
-            trend_period={@trend_period_label}
-          />
-          <.metric
-            id="metric-active"
-            label="People with a confirmed action"
-            value={@metrics.active_people}
-            trend={@metrics.trends.active_people}
-            trend_period={@trend_period_label}
-          />
-          <.metric
-            id="metric-actions"
-            label="Confirmed actions"
-            value={@metrics.actions}
-            trend={@metrics.trends.actions}
-            trend_period={@trend_period_label}
-          />
-          <.metric
-            id="metric-visits"
-            label="Visits"
-            value={@metrics.visits}
-            trend={@metrics.trends.visits}
-            trend_period={@trend_period_label}
-          />
-        </div>
-        <section class="mt-10 rounded-[2rem] bg-stone-900 p-8 text-white sm:p-10">
-          <h2 class="font-heading text-3xl">Progress through the engagement ladder</h2>
-          <p class="mt-2 text-xs font-medium text-white/60">
+      <section id="admin-dashboard" class="mx-auto max-w-6xl px-5 py-16">
+        <p class="eyebrow">{gettext("Superadmin")}</p>
+        <h1 class="mt-3 font-heading text-5xl text-stone-950">{gettext("Admin dashboard")}</h1>
+        <.admin_navigation current={:dashboard} />
+        <section id="admin-metrics" class="mt-10">
+          <h2 class="font-heading text-3xl text-stone-950">Movement metrics</h2>
+          <p class="mt-4 max-w-3xl text-stone-600">
+            First-party database totals from accounts, anonymous daily visits, and confirmed private action records. Analytics may complement these figures, but is not their source.
+          </p>
+          <p id="metrics-period" class="mt-8 text-xs font-medium text-stone-500">
             Daily trends · {@trend_period_label} (UTC)
           </p>
-          <ol id="metrics-by-type" class="mx-auto mt-8 flex max-w-2xl flex-col-reverse px-2 sm:px-8">
-            <li
-              :for={
-                {{step, count, trend}, i} <-
-                  Enum.zip([Ladder.steps("en"), @ladder_counts, @ladder_trends])
-                  |> Enum.with_index(1)
-              }
-              class="border-x-[8px] border-white/30 px-5 pb-6"
-            >
-              <div class="flex items-start gap-4 border-t-[8px] border-white/30 pt-3">
-                <div class="mr-auto">
-                  <strong class="block">{i}. {step.title}</strong>
-                  <span class="mt-1 block text-sm text-white/70">{step.examples}</span>
-                </div>
-                <div class="flex shrink-0 items-end gap-3">
-                  <.ladder_sparkline
-                    label={step.title}
-                    trend={trend}
-                    trend_period={@trend_period_label}
-                  />
-                  <span class="rounded-full bg-brand px-3 py-1 text-sm font-bold text-stone-950">
-                    {count} {if(count == 1, do: "action", else: "actions")}
-                  </span>
-                </div>
-              </div>
-            </li>
-          </ol>
-        </section>
-        <nav class="mt-10 flex flex-wrap gap-3" aria-label="Superadmin tools">
-          <a
-            href="/admin/versions"
-            class="rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-semibold text-stone-800 hover:border-brand"
-          >Deployment versions</a>
-          <a
-            href="/admin/acceptance"
-            class="rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-semibold text-stone-800 hover:border-brand"
-          >Acceptance evidence</a>
-        </nav>
-        <section class="mt-10 rounded-3xl border border-stone-200 bg-white p-7">
-          <h2 class="font-heading text-3xl text-stone-950">Superadmins</h2>
-          <ul id="admin-users" class="mt-5 divide-y divide-stone-100">
-            <li
-              :for={user <- @users}
-              id={"admin-user-#{user.id}"}
-              class="flex flex-wrap items-center gap-4 py-3"
-            >
-              <span class="mr-auto">{user.email}</span>
-              <span :if={user.superadmin} class="text-sm font-semibold text-brand-ink">Superadmin</span>
-              <span :if={is_nil(user.confirmed_at)} class="text-sm text-stone-500">Email unconfirmed</span>
-              <button
-                id={"admin-toggle-#{user.id}"}
-                phx-click="set-superadmin"
-                phx-value-id={user.id}
-                data-confirm={grant_confirmation(user)}
-                disabled={!user.superadmin and is_nil(user.confirmed_at)}
-                class="rounded-full border border-stone-300 px-4 py-2 text-sm font-semibold text-stone-800 hover:border-brand disabled:cursor-not-allowed disabled:opacity-40"
+          <div class="mt-2 grid gap-4 sm:grid-cols-4">
+            <.metric
+              id="metric-users"
+              label="Accounts"
+              value={@metrics.users}
+              trend={@metrics.trends.users}
+              trend_period={@trend_period_label}
+            />
+            <.metric
+              id="metric-active"
+              label="People with a confirmed action"
+              value={@metrics.active_people}
+              trend={@metrics.trends.active_people}
+              trend_period={@trend_period_label}
+            />
+            <.metric
+              id="metric-actions"
+              label="Confirmed actions"
+              value={@metrics.actions}
+              trend={@metrics.trends.actions}
+              trend_period={@trend_period_label}
+            />
+            <.metric
+              id="metric-visits"
+              label="Visits"
+              value={@metrics.visits}
+              trend={@metrics.trends.visits}
+              trend_period={@trend_period_label}
+            />
+          </div>
+          <section class="mt-10 rounded-[2rem] bg-stone-900 p-8 text-white sm:p-10">
+            <h2 class="font-heading text-3xl">Progress through the engagement ladder</h2>
+            <p class="mt-2 text-xs font-medium text-white/60">
+              Daily trends · {@trend_period_label} (UTC)
+            </p>
+            <ol id="metrics-by-type" class="mx-auto mt-8 flex max-w-2xl flex-col-reverse px-2 sm:px-8">
+              <li
+                :for={
+                  {{step, count, trend}, i} <-
+                    Enum.zip([Ladder.steps("en"), @ladder_counts, @ladder_trends])
+                    |> Enum.with_index(1)
+                }
+                class="border-x-[8px] border-white/30 px-5 pb-6"
               >
-                {if(user.superadmin, do: "Remove role", else: "Make superadmin")}
-              </button>
-            </li>
-          </ul>
+                <div class="flex items-start gap-4 border-t-[8px] border-white/30 pt-3">
+                  <div class="mr-auto">
+                    <strong class="block">{i}. {step.title}</strong>
+                    <span class="mt-1 block text-sm text-white/70">{step.examples}</span>
+                  </div>
+                  <div class="flex shrink-0 items-end gap-3">
+                    <.ladder_sparkline
+                      label={step.title}
+                      trend={trend}
+                      trend_period={@trend_period_label}
+                    />
+                    <span class="rounded-full bg-brand px-3 py-1 text-sm font-bold text-stone-950">
+                      {count} {if(count == 1, do: "action", else: "actions")}
+                    </span>
+                  </div>
+                </div>
+              </li>
+            </ol>
+          </section>
         </section>
       </section>
     </Layouts.app>
     """
   end
 
-  defp grant_confirmation(%{superadmin: true}), do: nil
+  attr :current, :atom, required: true
 
-  defp grant_confirmation(user) do
-    gettext(
-      "Make %{email} a superadmin? They will receive an email with a link to the admin tools.",
-      email: user.email
-    )
+  defp admin_navigation(assigns) do
+    ~H"""
+    <nav class="mt-8 flex flex-wrap gap-3" aria-label={gettext("Superadmin tools")}>
+      <.link
+        navigate={~p"/admin/dashboard"}
+        aria-current={if @current == :dashboard, do: "page"}
+        class={admin_link_class(@current == :dashboard)}
+      >{gettext("Dashboard")}</.link>
+      <.link
+        navigate={~p"/admin/accounts"}
+        aria-current={if @current == :accounts, do: "page"}
+        class={admin_link_class(@current == :accounts)}
+      >{gettext("Accounts")}</.link>
+      <a href="/admin/versions" class={admin_link_class(false)}>{gettext("Deployment versions")}</a>
+      <a href="/admin/acceptance" class={admin_link_class(false)}>{gettext("Acceptance evidence")}</a>
+    </nav>
+    """
+  end
+
+  defp admin_link_class(current?) do
+    [
+      "rounded-full border px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand",
+      if(current?,
+        do: "border-stone-900 bg-stone-900 text-white",
+        else: "border-stone-300 bg-white text-stone-800 hover:border-brand"
+      )
+    ]
   end
 
   attr :id, :string, required: true

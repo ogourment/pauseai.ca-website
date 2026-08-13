@@ -61,7 +61,7 @@ defmodule PauseAiCa.Accounts.UserNotifierTest do
   end
 
   test "a new superadmin receives a bilingual role notification" do
-    UserNotifier.deliver_superadmin_granted(@user, "https://pauseai.ca/admin/metrics")
+    UserNotifier.deliver_superadmin_granted(@user, "https://pauseai.ca/admin/accounts")
 
     assert_email_sent(fn email ->
       assert email.to == [{"", "camille@example.org"}]
@@ -69,7 +69,7 @@ defmodule PauseAiCa.Accounts.UserNotifierTest do
       assert email.subject =~ "superadmin de PauseAI Canada"
       assert email.html_body =~ "Open movement metrics"
       assert email.html_body =~ "Ouvrir les indicateurs du mouvement"
-      assert email.text_body =~ "https://pauseai.ca/admin/metrics"
+      assert email.text_body =~ "https://pauseai.ca/admin/accounts"
     end)
   end
 

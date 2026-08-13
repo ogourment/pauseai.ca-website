@@ -81,6 +81,18 @@ defmodule PauseAiCaWeb.Router do
     acceptance_harness_versions("/versions")
   end
 
+  scope "/admin", PauseAiCaWeb do
+    pipe_through [:browser, :require_authenticated_user, :require_superadmin_user]
+
+    live_session :require_superadmin_user,
+      on_mount: [{PauseAiCaWeb.UserAuth, :require_authenticated}] do
+      live "/", AdminMetricsLive, :redirect
+      live "/dashboard", AdminMetricsLive, :index
+      live "/metrics", AdminMetricsLive, :redirect
+      live "/accounts", AdminAccountsLive, :index
+    end
+  end
+
   scope "/", PauseAiCaWeb do
     pipe_through [:browser, :require_authenticated_user]
 
@@ -93,7 +105,6 @@ defmodule PauseAiCaWeb.Router do
       live "/fr/tableau-de-bord", DashboardLive, :fr
       live "/en/profile", ProfileLive, :en
       live "/fr/profil", ProfileLive, :fr
-      live "/admin/metrics", AdminMetricsLive, :index
       live "/users/settings", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
     end

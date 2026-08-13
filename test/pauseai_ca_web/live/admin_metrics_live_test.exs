@@ -3,9 +3,7 @@ defmodule PauseAiCaWeb.AdminMetricsLiveTest do
 
   import Phoenix.LiveViewTest
   import PauseAiCa.AccountsFixtures
-  import Swoosh.TestAssertions
-
-  alias PauseAiCa.{Accounts, Repo}
+  alias PauseAiCa.Repo
   alias PauseAiCa.Accounts.Scope
   alias PauseAiCa.EngagementFixtures
 
@@ -16,8 +14,9 @@ defmodule PauseAiCaWeb.AdminMetricsLiveTest do
       confirmed_at: DateTime.utc_now(:second)
     })
 
-    {:ok, view, _html} = live(log_in_user(conn, admin), ~p"/admin/metrics")
+    {:ok, view, _html} = live(log_in_user(conn, admin), ~p"/admin/dashboard")
 
+    assert has_element?(view, "#admin-dashboard")
     assert has_element?(view, "#admin-metrics")
     assert has_element?(view, "#metrics-period", "Daily trends")
     assert has_element?(view, "#metric-users svg[role='img']")
@@ -35,68 +34,26 @@ defmodule PauseAiCaWeb.AdminMetricsLiveTest do
 
     assert has_element?(view, "#metrics-by-type li", "Learn")
     assert has_element?(view, "#metrics-by-type li", "Organize")
+    assert has_element?(view, "a[aria-current='page'][href='/admin/dashboard']", "Dashboard")
+    assert has_element?(view, "a[href='/admin/accounts']", "Accounts")
     assert has_element?(view, "a[href='/admin/versions']", "Deployment versions")
     assert has_element?(view, "a[href='/admin/acceptance']", "Acceptance evidence")
   end
 
-  test "a regular account is redirected", %{conn: conn} do
+  test "the admin root and former metrics path redirect to the dashboard", %{conn: conn} do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    conn = log_in_user(conn, admin)
+
+    assert {:error, {:live_redirect, %{to: "/admin/dashboard"}}} = live(conn, ~p"/admin")
+
+    assert {:error, {:live_redirect, %{to: "/admin/dashboard"}}} =
+             live(conn, ~p"/admin/metrics")
+  end
+
+  test "a regular account is forbidden by the superadmin route", %{conn: conn} do
     user = user_fixture()
 
-    assert {:error, {:live_redirect, %{to: "/dashboard"}}} =
-             live(log_in_user(conn, user), ~p"/admin/metrics")
-  end
-
-  test "an unconfirmed account cannot be promoted", %{conn: conn} do
-    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
-    target = unconfirmed_user_fixture()
-    {:ok, view, _html} = live(log_in_user(conn, admin), ~p"/admin/metrics")
-
-    assert has_element?(view, "#admin-toggle-#{target.id}[disabled]")
-    assert {:error, :email_unconfirmed} = Accounts.set_superadmin(admin, target, true)
-  end
-
-  test "a superadmin can promote a confirmed account from the dashboard", %{conn: conn} do
-    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
-    target = user_fixture()
-    flush_emails()
-    {:ok, view, _html} = live(log_in_user(conn, admin), ~p"/admin/metrics")
-
-    assert has_element?(view, "#admin-toggle-#{target.id}[data-confirm*='will receive an email']")
-
-    view
-    |> element("#admin-toggle-#{target.id}")
-    |> render_click()
-
-    assert Accounts.get_user!(target.id).superadmin
-    assert has_element?(view, "#admin-user-#{target.id}", "Superadmin")
-    assert render(view) =~ "Superadmin role granted."
-
-    assert_email_sent(fn email ->
-      assert email.to == [{"", target.email}]
-      assert email.subject =~ "You are now a PauseAI Canada superadmin"
-      assert email.text_body =~ "/admin/metrics"
-    end)
-  end
-
-  test "promotion is derived from the current account role, not a browser toggle value", %{
-    conn: conn
-  } do
-    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
-    target = user_fixture()
-    flush_emails()
-    {:ok, view, _html} = live(log_in_user(conn, admin), ~p"/admin/metrics")
-
-    render_click(view, "set-superadmin", %{"id" => target.id, "value" => ""})
-
-    assert Accounts.get_user!(target.id).superadmin
-    assert render(view) =~ "Superadmin role granted."
-  end
-
-  defp flush_emails do
-    receive do
-      {:email, _email} -> flush_emails()
-    after
-      0 -> :ok
-    end
+    assert conn |> log_in_user(user) |> get(~p"/admin/dashboard") |> response(403) ==
+             "superadmin required"
   end
 end

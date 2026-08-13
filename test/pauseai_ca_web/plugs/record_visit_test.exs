@@ -16,7 +16,7 @@ defmodule PauseAiCaWeb.Plugs.RecordVisitTest do
     admin = PauseAiCa.AccountsFixtures.user_fixture()
     admin = admin |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
 
-    conn |> log_in_user(admin) |> get(~p"/admin/metrics")
+    conn |> log_in_user(admin) |> get(~p"/admin/dashboard")
     refute Repo.get(DailyVisit, Date.utc_today())
   end
 end

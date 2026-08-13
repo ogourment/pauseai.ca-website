@@ -1279,7 +1279,134 @@ msgstr "We recorded this as awaiting confirmation."
 msgid "Name"
 msgstr "Name"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:195
+#: lib/pauseai_ca_web/live/admin_accounts_live.ex:186
 #, elixir-autogen, elixir-format
 msgid "Make %{email} a superadmin? They will receive an email with a link to the admin tools."
 msgstr "Make %{email} a superadmin? They will receive an email with a link to the admin tools."
+
+#: lib/pauseai_ca_web/live/admin_accounts_live.ex:122
+#, elixir-autogen, elixir-format
+msgid "%{count} account"
+msgid_plural "%{count} accounts"
+msgstr[0] "%{count} account"
+msgstr[1] "%{count} accounts"
+
+#: lib/pauseai_ca_web/live/admin_accounts_live.ex:115
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:138
+#, elixir-autogen, elixir-format
+msgid "Acceptance evidence"
+msgstr "Acceptance evidence"
+
+#: lib/pauseai_ca_web/live/admin_accounts_live.ex:160
+#, elixir-autogen, elixir-format
+msgid "Account pages"
+msgstr "Account pages"
+
+#: lib/pauseai_ca_web/live/admin_accounts_live.ex:11
+#: lib/pauseai_ca_web/live/admin_accounts_live.ex:101
+#: lib/pauseai_ca_web/live/admin_accounts_live.ex:113
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:136
+#, elixir-autogen, elixir-format
+msgid "Accounts"
+msgstr "Accounts"
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:30
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:43
+#, elixir-autogen, elixir-format
+msgid "Admin dashboard"
+msgstr "Admin dashboard"
+
+#: lib/pauseai_ca_web/live/admin_accounts_live.ex:54
+#, elixir-autogen, elixir-format
+msgid "Confirm this account's email before granting superadmin access."
+msgstr "Confirm this account's email before granting superadmin access."
+
+#: lib/pauseai_ca_web/live/admin_accounts_live.ex:107
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:131
+#, elixir-autogen, elixir-format
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: lib/pauseai_ca_web/live/admin_accounts_live.ex:114
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:137
+#, elixir-autogen, elixir-format
+msgid "Deployment versions"
+msgstr "Deployment versions"
+
+#: lib/pauseai_ca_web/live/admin_accounts_live.ex:138
+#, elixir-autogen, elixir-format
+msgid "Email unconfirmed"
+msgstr "Email unconfirmed"
+
+#: lib/pauseai_ca_web/live/admin_accounts_live.ex:150
+#, elixir-autogen, elixir-format
+msgid "Make superadmin"
+msgstr "Make superadmin"
+
+#: lib/pauseai_ca_web/live/admin_accounts_live.ex:175
+#, elixir-autogen, elixir-format
+msgid "Next"
+msgstr "Next"
+
+#: lib/pauseai_ca_web/live/admin_accounts_live.ex:169
+#, elixir-autogen, elixir-format
+msgid "Page %{page} of %{page_count}"
+msgstr "Page %{page} of %{page_count}"
+
+#: lib/pauseai_ca_web/live/admin_accounts_live.ex:166
+#, elixir-autogen, elixir-format
+msgid "Previous"
+msgstr "Previous"
+
+#: lib/pauseai_ca_web/live/admin_accounts_live.ex:120
+#, elixir-autogen, elixir-format
+msgid "Registered accounts"
+msgstr "Registered accounts"
+
+#: lib/pauseai_ca_web/live/admin_accounts_live.ex:149
+#, elixir-autogen, elixir-format
+msgid "Remove role"
+msgstr "Remove role"
+
+#: lib/pauseai_ca_web/live/admin_accounts_live.ex:103
+#, elixir-autogen, elixir-format
+msgid "Review registered accounts and manage access to the superadmin tools."
+msgstr "Review registered accounts and manage access to the superadmin tools."
+
+#: lib/pauseai_ca_web/live/admin_accounts_live.ex:83
+#, elixir-autogen, elixir-format
+msgid "Role granted, but the notification email could not be sent."
+msgstr "Role granted, but the notification email could not be sent."
+
+#: lib/pauseai_ca_web/live/admin_accounts_live.ex:100
+#: lib/pauseai_ca_web/live/admin_accounts_live.ex:135
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:42
+#, elixir-autogen, elixir-format
+msgid "Superadmin"
+msgstr "Superadmin"
+
+#: lib/pauseai_ca_web/live/admin_accounts_live.ex:58
+#, elixir-autogen, elixir-format
+msgid "Superadmin access required."
+msgstr "Superadmin access required."
+
+#: lib/pauseai_ca_web/live/admin_accounts_live.ex:37
+#, elixir-autogen, elixir-format
+msgid "Superadmin role granted."
+msgstr "Superadmin role granted."
+
+#: lib/pauseai_ca_web/live/admin_accounts_live.ex:38
+#, elixir-autogen, elixir-format
+msgid "Superadmin role removed."
+msgstr "Superadmin role removed."
+
+#: lib/pauseai_ca_web/live/admin_accounts_live.ex:105
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:126
+#, elixir-autogen, elixir-format
+msgid "Superadmin tools"
+msgstr "Superadmin tools"
+
+#: lib/pauseai_ca_web/live/admin_accounts_live.ex:47
+#, elixir-autogen, elixir-format
+msgid "The last superadmin cannot be removed."
+msgstr "The last superadmin cannot be removed."

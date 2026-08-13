@@ -142,7 +142,7 @@ if System.get_env("ATDD") == "true" do
       _admin = member |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
 
       browser
-      |> visit("/admin/metrics")
+      |> visit("/admin/dashboard")
       |> assert_has("#metric-actions")
       |> assert_has("#metrics-by-type")
       |> capture(

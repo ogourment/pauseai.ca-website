@@ -186,7 +186,19 @@ defmodule PauseAiCa.Accounts do
     |> update_user_and_delete_all_tokens(bootstrap_superadmin?: true)
   end
 
-  def list_users, do: Repo.all(from u in User, order_by: [asc: u.email])
+  def list_users(opts \\ []) do
+    page = Keyword.get(opts, :page, 1)
+    per_page = Keyword.get(opts, :per_page, 25)
+
+    Repo.all(
+      from u in User,
+        order_by: [asc: u.email],
+        limit: ^per_page,
+        offset: ^((page - 1) * per_page)
+    )
+  end
+
+  def count_users, do: Repo.aggregate(User, :count)
 
   def set_superadmin(%User{superadmin: true}, %User{} = target, false) do
     if Repo.aggregate(from(u in User, where: u.superadmin), :count) == 1 and target.superadmin do
