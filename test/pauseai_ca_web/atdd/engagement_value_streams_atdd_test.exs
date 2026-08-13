@@ -50,6 +50,14 @@ if System.get_env("ATDD") == "true" do
         language: "English",
         device: "Desktop",
         source_file: __ENV__.file
+      },
+      %{
+        id: "superadmin-transfers-access",
+        title: "A superadmin transfers administration to a new account",
+        roles: ["Existing superadmin", "New account holder"],
+        language: "English",
+        device: "Desktop",
+        source_file: __ENV__.file
       }
     ]
 
@@ -184,11 +192,88 @@ if System.get_env("ATDD") == "true" do
         "The superadmin sees aggregate movement progress from first-party database records"
       )
 
+      transfer_scenario = Enum.at(@scenarios, 5)
+      newcomer_email = "new-superadmin@example.com"
+
+      browser =
+        browser
+        |> visit("/admin/accounts")
+        |> assert_has("#admin-user-#{member.id}", text: member.email)
+        |> refute_has("#admin-users", text: newcomer_email)
+        |> capture(
+          "engagement-06-accounts-before.png",
+          transfer_scenario,
+          "The existing superadmin sees the account list before the newcomer registers",
+          step: "1/3",
+          user: "Existing superadmin"
+        )
+        |> log_out()
+
+      browser =
+        browser
+        |> visit("/users/register")
+        |> fill_in("Email · Courriel", with: newcomer_email)
+        |> click_button("Create account · Créer le compte")
+        |> assert_path("/users/log-in")
+        |> assert_has("[role='alert']", text: newcomer_email)
+
+      newcomer = PauseAiCa.Accounts.get_user_by_email(newcomer_email)
+      {newcomer_token, _token} = generate_user_magic_link_token(newcomer)
+
+      browser =
+        browser
+        |> visit("/users/log-in/#{newcomer_token}")
+        |> click_button("Confirm and stay logged in")
+        |> assert_path("/")
+        |> log_out()
+
+      {member_token, _token} = generate_user_magic_link_token(member)
+
+      browser =
+        browser
+        |> visit("/users/log-in/#{member_token}")
+        |> click_button("Keep me logged in on this device")
+        |> visit("/admin/accounts")
+        |> assert_has("#admin-user-#{newcomer.id}", text: newcomer_email)
+        |> assert_has("#admin-toggle-#{newcomer.id}", text: "Make superadmin")
+        |> click("#admin-toggle-#{newcomer.id}")
+        |> assert_has("#admin-user-#{newcomer.id}", text: "Superadmin")
+        |> capture(
+          "engagement-07-accounts-new-superadmin.png",
+          transfer_scenario,
+          "After the newcomer creates and confirms an account, the existing superadmin grants access",
+          step: "2/3",
+          user: "Existing superadmin"
+        )
+        |> log_out()
+
+      {promoted_token, _token} = generate_user_magic_link_token(newcomer)
+
+      browser
+      |> visit("/users/log-in/#{promoted_token}")
+      |> click_button("Keep me logged in on this device")
+      |> visit("/admin/accounts")
+      |> assert_has("#admin-user-#{member.id}", text: "Superadmin")
+      |> click("#admin-toggle-#{member.id}")
+      |> assert_has("#admin-toggle-#{member.id}", text: "Make superadmin")
+      |> assert_has("#admin-toggle-#{newcomer.id}", text: "Remove role")
+      |> tap(fn _browser ->
+        refute PauseAiCa.Accounts.get_user!(member.id).superadmin
+        assert PauseAiCa.Accounts.get_user!(newcomer.id).superadmin
+      end)
+      |> capture(
+        "engagement-08-accounts-transfer-complete.png",
+        transfer_scenario,
+        "The new superadmin removes access from the previous superadmin and remains the administrator",
+        step: "3/3",
+        user: "New account holder"
+      )
+
       Enum.each(@scenarios, &AtddEvidence.mark_scenario_success!/1)
       AtddEvidence.finalize!()
     end
 
-    defp capture(conn, filename, scenario, description) do
+    defp capture(conn, filename, scenario, description, opts \\ []) do
       started_at = System.monotonic_time(:millisecond)
       conn = BrowserScreenshot.capture(conn, filename, &PhoenixTest.Playwright.screenshot/2)
       duration_ms = System.monotonic_time(:millisecond) - started_at
@@ -196,11 +281,11 @@ if System.get_env("ATDD") == "true" do
       AtddEvidence.record_step(filename, scenario.title, description, %{
         "scenario_id" => scenario.id,
         "scenario" => scenario.title,
-        "step" => "1/1",
+        "step" => Keyword.get(opts, :step, "1/1"),
         "current_url" => "browser",
         "language" => scenario.language,
         "device" => scenario.device,
-        "user" => hd(scenario.roles),
+        "user" => Keyword.get(opts, :user, hd(scenario.roles)),
         "click_target" => "-",
         "duration_ms" => duration_ms
       })
@@ -208,6 +293,13 @@ if System.get_env("ATDD") == "true" do
       AtddEvidence.record_scenario_runtime(scenario, duration_ms)
 
       conn
+    end
+
+    defp log_out(browser) do
+      browser
+      |> evaluate("document.querySelector('#account-menu').open = true")
+      |> click_link("Log out")
+      |> assert_path("/")
     end
   end
 end
