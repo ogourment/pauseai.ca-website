@@ -50,9 +50,15 @@ if display_env = System.get_env("PAUSEAI_CA_DISPLAY_ENV") do
   config :pauseai_ca, :display_env, display_env
 end
 
-# Google Analytics. Unset means no tracker and no consent banner, which is the
-# default everywhere including production until a measurement id is provided.
-config :pauseai_ca, :ga_measurement_id, System.get_env("GA_MEASUREMENT_ID")
+# Google Analytics. The environment variable remains authoritative. The
+# canonical production hostname has a public fallback so a deployment cannot
+# silently lose collection when provisioning and application releases happen
+# in separate windows. Other hosts remain disabled unless configured.
+ga_measurement_id =
+  System.get_env("GA_MEASUREMENT_ID") ||
+    if System.get_env("PHX_HOST") == "pauseai.ca", do: "G-M9JNKTHYDM"
+
+config :pauseai_ca, :ga_measurement_id, ga_measurement_id
 
 # Audit events are emitted at :info. LOG_LEVEL raises or lowers the floor;
 # set it to debug when diagnosing something.
