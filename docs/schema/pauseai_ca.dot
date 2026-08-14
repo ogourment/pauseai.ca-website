@@ -1,0 +1,253 @@
+digraph Schema {
+  graph [
+    rankdir=TB,
+    bgcolor="transparent",
+    overlap=false,
+    splines=polyline,
+    nodesep=0.65,
+    ranksep=1.0,
+    pad=0.35
+  ];
+  node [shape=plain, fontname="Helvetica"];
+  edge [fontname="Helvetica", fontsize=10, color="#64748b", arrowsize=0.75, penwidth=1.2];
+
+  "public.acceptance_harness_comments" [
+    label=<
+      <TABLE BORDER="2" CELLBORDER="1" CELLPADDING="7" CELLSPACING="0" COLOR="#2563eb">
+        <TR><TD BGCOLOR="#bfdbfe" COLSPAN="2"><FONT POINT-SIZE="16"><B>public.acceptance_harness_comments</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">bigint NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">run_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">scenario_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">step_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">author_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">author_label</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">status</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">kind</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">selected_text</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">context_text</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">comment</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">page_uri</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">anchor</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">screenshot_name</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">metadata</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp with time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp with time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">scenario_key</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">step_sequence</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">bigint</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
+  "public.acceptance_harness_runs" [
+    label=<
+      <TABLE BORDER="2" CELLBORDER="1" CELLPADDING="7" CELLSPACING="0" COLOR="#2563eb">
+        <TR><TD BGCOLOR="#bfdbfe" COLSPAN="2"><FONT POINT-SIZE="16"><B>public.acceptance_harness_runs</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">title</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">app</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">runner</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timing</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">artifacts</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">source_dir</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">source_url</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">generated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp with time zone</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">started_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp with time zone</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">finalized_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp with time zone</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp with time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp with time zone NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
+  "public.acceptance_harness_scenarios" [
+    label=<
+      <TABLE BORDER="2" CELLBORDER="1" CELLPADDING="7" CELLSPACING="0" COLOR="#2563eb">
+        <TR><TD BGCOLOR="#bfdbfe" COLSPAN="2"><FONT POINT-SIZE="16"><B>public.acceptance_harness_scenarios</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">bigint NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">run_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">scenario_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">title</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">status</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">scenario_order</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">integer</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">duration_ms</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">bigint</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">documented_step_ms</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">bigint</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">undocumented_ms</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">bigint</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">devices</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">themes</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">languages</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">users</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">metadata</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp with time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp with time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">tags</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">failure</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">jsonb</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
+  "public.acceptance_harness_statuses" [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.acceptance_harness_statuses</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">bigint NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">scenario_key</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">step_sequence</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">bigint NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">status</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp with time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp with time zone NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
+  "public.acceptance_harness_steps" [
+    label=<
+      <TABLE BORDER="2" CELLBORDER="1" CELLPADDING="7" CELLSPACING="0" COLOR="#2563eb">
+        <TR><TD BGCOLOR="#bfdbfe" COLSPAN="2"><FONT POINT-SIZE="16"><B>public.acceptance_harness_steps</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">run_id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">scenario_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">title</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">description</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">sequence</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">bigint</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">screenshot</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">surface</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">artifacts</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">metadata</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp with time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp with time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">page_text</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">page_html</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
+  "public.actions" [
+    label=<
+      <TABLE BORDER="2" CELLBORDER="1" CELLPADDING="7" CELLSPACING="0" COLOR="#2563eb">
+        <TR><TD BGCOLOR="#bfdbfe" COLSPAN="2"><FONT POINT-SIZE="16"><B>public.actions</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">action_type</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">happened_on</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">date NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">notes</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">user_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp without time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp without time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">confirmed_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp without time zone</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">location</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">character varying</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">quantity</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">integer</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
+  "public.daily_visits" [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.daily_visits</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">visited_on PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">date NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">count</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">bigint NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
+  "public.learning_signals" [
+    label=<
+      <TABLE BORDER="2" CELLBORDER="1" CELLPADDING="7" CELLSPACING="0" COLOR="#2563eb">
+        <TR><TD BGCOLOR="#bfdbfe" COLSPAN="2"><FONT POINT-SIZE="16"><B>public.learning_signals</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">bigint NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">visitor_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">user_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">uuid</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">kind</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">subject</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">value</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">character varying</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp without time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp without time zone NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
+  "public.pending_letters" [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.pending_letters</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">token</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">bytea NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">sender_name</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">sender_email</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">recipients</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">subject</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">body</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">locale</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">expires_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
+  "public.schema_migrations" [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.schema_migrations</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">version PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">bigint NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
+  "public.users" [
+    label=<
+      <TABLE BORDER="2" CELLBORDER="1" CELLPADDING="7" CELLSPACING="0" COLOR="#2563eb">
+        <TR><TD BGCOLOR="#bfdbfe" COLSPAN="2"><FONT POINT-SIZE="16"><B>public.users</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">email</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">citext NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">hashed_password</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">character varying</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">confirmed_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp without time zone</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp without time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp without time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">superadmin</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">boolean NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">fsa</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">character varying</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">local_updates</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">boolean NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">saved_resources</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">_varchar NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">belief_answers</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">postal_code</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">character varying</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">representative</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">jsonb</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">custom_resource_urls</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">_varchar NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">city</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">character varying</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">name</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">character varying</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
+  "public.users_tokens" [
+    label=<
+      <TABLE BORDER="2" CELLBORDER="1" CELLPADDING="7" CELLSPACING="0" COLOR="#2563eb">
+        <TR><TD BGCOLOR="#bfdbfe" COLSPAN="2"><FONT POINT-SIZE="16"><B>public.users_tokens</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">user_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">token</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">bytea NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">context</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">sent_to</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">character varying</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">authenticated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp without time zone</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp without time zone NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
+  "public.acceptance_harness_comments" -> "public.acceptance_harness_runs" [label="run_id -> id"];
+  "public.acceptance_harness_scenarios" -> "public.acceptance_harness_runs" [label="run_id -> id"];
+  "public.acceptance_harness_steps" -> "public.acceptance_harness_runs" [label="run_id -> id"];
+  "public.actions" -> "public.users" [label="user_id -> id"];
+  "public.learning_signals" -> "public.users" [label="user_id -> id"];
+  "public.users_tokens" -> "public.users" [label="user_id -> id"];
+}

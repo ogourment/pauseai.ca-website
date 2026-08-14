@@ -30,8 +30,18 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
     |> assign(:page_title, gettext("Admin dashboard"))
     |> assign(:metrics, metrics)
     |> assign(:trend_period_label, trend_period_label(metrics.trend_period))
-    |> assign(:ladder_counts, Ladder.counts(metrics.by_type))
-    |> assign(:ladder_trends, Ladder.trends(metrics.trends.action_types))
+    |> assign(
+      :ladder_counts,
+      List.replace_at(Ladder.counts(metrics.by_type), 0, metrics.learning_people)
+    )
+    |> assign(
+      :ladder_trends,
+      List.replace_at(
+        Ladder.trends(metrics.trends.action_types),
+        0,
+        List.duplicate(0, length(metrics.trends.visits))
+      )
+    )
   end
 
   @impl true
@@ -105,7 +115,15 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
                       trend={trend}
                       trend_period={@trend_period_label}
                     />
-                    <span class="rounded-full bg-brand px-3 py-1 text-sm font-bold text-stone-950">
+                    <.learning_breakdown
+                      :if={i == 1}
+                      count={count}
+                      breakdown={@metrics.learning_breakdown}
+                    />
+                    <span
+                      :if={i != 1}
+                      class="rounded-full bg-brand px-3 py-1 text-sm font-bold text-stone-950"
+                    >
                       {count} {if(count == 1, do: "action", else: "actions")}
                     </span>
                   </div>
@@ -116,6 +134,71 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
         </section>
       </section>
     </Layouts.app>
+    """
+  end
+
+  attr :count, :integer, required: true
+  attr :breakdown, :map, required: true
+
+  defp learning_breakdown(assigns) do
+    ~H"""
+    <details id="learning-breakdown" class="group relative">
+      <summary class="cursor-pointer list-none rounded-full bg-brand px-3 py-1 text-sm font-bold text-stone-950 outline-none ring-brand focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900">
+        {@count} {if(@count == 1, do: "person", else: "people")}
+        <span aria-hidden="true" class="ml-1">ⓘ</span>
+      </summary>
+      <div class="absolute right-0 z-20 mt-2 w-72 rounded-2xl border border-stone-200 bg-white p-4 text-stone-900 shadow-2xl">
+        <p class="font-bold">Distinct learning signals</p>
+        <p class="mt-1 text-xs leading-5 text-stone-500">
+          A person may appear in several rows but counts once in the total.
+        </p>
+        <dl class="mt-3 space-y-2 text-sm">
+          <.breakdown_row
+            id="questions-answered"
+            label="Answered a homepage question"
+            value={@breakdown.question_answers}
+          />
+          <.breakdown_row
+            id="questionnaire-completed"
+            label="Completed all homepage questions"
+            value={@breakdown.questionnaires_completed}
+          />
+          <.breakdown_row
+            id="learn-visited"
+            label="Visited Learn"
+            value={@breakdown.learn_page_visitors}
+          />
+          <.breakdown_row
+            id="resource-opened"
+            label="Opened a resource"
+            value={@breakdown.resources_opened}
+          />
+          <.breakdown_row
+            id="resource-bookmarked"
+            label="Bookmarked a resource"
+            value={@breakdown.resources_bookmarked}
+          />
+          <.breakdown_row
+            id="learning-self-reported"
+            label="Self-reported learning"
+            value={@breakdown.self_reported}
+          />
+        </dl>
+      </div>
+    </details>
+    """
+  end
+
+  attr :id, :string, required: true
+  attr :label, :string, required: true
+  attr :value, :integer, required: true
+
+  defp breakdown_row(assigns) do
+    ~H"""
+    <div id={@id} class="flex items-baseline justify-between gap-4">
+      <dt>{@label}</dt>
+      <dd class="font-bold">{@value}</dd>
+    </div>
     """
   end
 

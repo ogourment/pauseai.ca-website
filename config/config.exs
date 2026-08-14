@@ -62,6 +62,13 @@ config :acceptance_harness, :health,
   otp_app: :pauseai_ca,
   env_prefix: "PAUSEAI_CA"
 
+config :acceptance_harness, :schema_diagram,
+  repo: PauseAiCa.Repo,
+  output: "docs/schema/pauseai_ca",
+  schemas: ["public"],
+  domains_file: "docs/schema/domains.exs",
+  domains_output: "docs/schema/domains"
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.25.4",

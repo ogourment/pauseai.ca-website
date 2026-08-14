@@ -1,0 +1,38 @@
+digraph identity {
+  graph [rankdir=TB, bgcolor="white", pad=0.35, nodesep=0.6, ranksep=0.9, fontname="Helvetica"];
+  node [shape=plain, fontname="Helvetica"];
+  edge [fontname="Helvetica", fontsize=10, arrowsize=0.7];
+  labelloc="t";
+  label=< <B>Identity</B><BR/><FONT POINT-SIZE="12">Local tables show every column. Amber dashed arrows cross a domain boundary.</FONT> >;
+
+  subgraph cluster_local {
+    label="Identity";
+    color="#94a3b8";
+    penwidth=1.5;
+    style="rounded";
+  "users" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.users</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">email</TD><TD ALIGN="LEFT">citext NOT NULL</TD></TR><TR><TD ALIGN="LEFT">hashed_password</TD><TD ALIGN="LEFT">character varying NULL</TD></TR><TR><TD ALIGN="LEFT">confirmed_at</TD><TD ALIGN="LEFT">timestamp without time zone NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">superadmin</TD><TD ALIGN="LEFT">boolean NOT NULL</TD></TR><TR><TD ALIGN="LEFT">fsa</TD><TD ALIGN="LEFT">character varying NULL</TD></TR><TR><TD ALIGN="LEFT">local_updates</TD><TD ALIGN="LEFT">boolean NOT NULL</TD></TR><TR><TD ALIGN="LEFT">saved_resources</TD><TD ALIGN="LEFT">_varchar NOT NULL</TD></TR><TR><TD ALIGN="LEFT">belief_answers</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">postal_code</TD><TD ALIGN="LEFT">character varying NULL</TD></TR><TR><TD ALIGN="LEFT">representative</TD><TD ALIGN="LEFT">jsonb NULL</TD></TR><TR><TD ALIGN="LEFT">custom_resource_urls</TD><TD ALIGN="LEFT">_varchar NOT NULL</TD></TR><TR><TD ALIGN="LEFT">city</TD><TD ALIGN="LEFT">character varying NULL</TD></TR><TR><TD ALIGN="LEFT">name</TD><TD ALIGN="LEFT">character varying NULL</TD></TR>
+    </TABLE>
+  >];
+
+  "users_tokens" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.users_tokens</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">user_id</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">token</TD><TD ALIGN="LEFT">bytea NOT NULL</TD></TR><TR><TD ALIGN="LEFT">context</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">sent_to</TD><TD ALIGN="LEFT">character varying NULL</TD></TR><TR><TD ALIGN="LEFT">authenticated_at</TD><TD ALIGN="LEFT">timestamp without time zone NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
+  }
+
+  subgraph cluster_external {
+    label="External-domain references — other relationships are intentionally omitted";
+    color="#cbd5e1";
+    penwidth=1;
+    style="rounded";
+
+  }
+
+  "users_tokens" -> "users" [label="user_id -> id", color="#64748b"];
+}

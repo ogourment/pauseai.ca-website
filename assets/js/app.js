@@ -87,12 +87,25 @@ function initializeBeliefCheck() {
     status.textContent = locale === "fr" ? "Réponse enregistrée." : "Answer saved."
   }
 
+  const recordAnswer = question => {
+    const csrfToken = document.querySelector("meta[name='csrf-token']")?.content
+    const complete = ["risk", "pause", "coordination"].every(key => answers[key] !== undefined)
+
+    fetch(`/learning/questions/${question}`, {
+      method: "POST",
+      headers: {"content-type": "application/json", "x-csrf-token": csrfToken},
+      keepalive: true,
+      body: JSON.stringify({answer: answers[question], complete})
+    }).catch(() => {})
+  }
+
   check.querySelectorAll(".belief-question").forEach(question => {
     question.querySelectorAll("[data-answer]").forEach(button => {
       button.addEventListener("click", () => {
         answers[question.dataset.question] = button.dataset.answer
         renderAnswers()
         saveAnswers()
+        recordAnswer(question.dataset.question)
       })
     })
   })
@@ -145,6 +158,21 @@ function initializeBeliefCheck() {
 
 document.addEventListener("DOMContentLoaded", initializeBeliefCheck)
 window.addEventListener("phx:page-loading-stop", initializeBeliefCheck)
+initializeBeliefCheck()
+
+document.addEventListener("keydown", event => {
+  if (event.key !== "Escape") return
+  const details = document.querySelector("#learning-breakdown[open]")
+  if (!details) return
+
+  details.removeAttribute("open")
+  details.querySelector("summary")?.focus()
+})
+
+document.addEventListener("click", event => {
+  const details = document.querySelector("#learning-breakdown[open]")
+  if (details && !details.contains(event.target)) details.removeAttribute("open")
+})
 
 // The lines below enable quality of life phoenix_live_reload
 // development features:

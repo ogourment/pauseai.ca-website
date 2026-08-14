@@ -38,8 +38,29 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
     test "French-language sources are offered to French readers", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/fr/comprendre")
 
-      assert has_element?(view, "#resource-pauseia-faq a[href^='https://pauseia.fr']")
+      assert has_element?(view, "#resource-pauseia-faq a[href='/learning/resources/pauseia-faq']")
       assert has_element?(view, "#resource-pauseia-propositions")
+    end
+
+    test "every reviewed resource can be bookmarked", %{conn: conn} do
+      {:ok, anonymous_view, _html} = live(conn, ~p"/en/learn")
+
+      for resource <- PauseAiCa.Library.resources() do
+        assert has_element?(
+                 anonymous_view,
+                 "#resource-#{resource.id} a[href='/users/register?bookmark=#{resource.id}']"
+               )
+      end
+
+      user = PauseAiCa.AccountsFixtures.user_fixture()
+      {:ok, signed_in_view, _html} = conn |> log_in_user(user) |> live(~p"/en/learn")
+
+      for resource <- PauseAiCa.Library.resources() do
+        assert has_element?(
+                 signed_in_view,
+                 "#resource-#{resource.id} a[href='/bookmarks/#{resource.id}?locale=en']"
+               )
+      end
     end
 
     test "the header links to the library and the campaign", %{conn: conn} do

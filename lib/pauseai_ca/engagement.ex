@@ -6,7 +6,7 @@ defmodule PauseAiCa.Engagement do
   import Ecto.Query, warn: false
   alias PauseAiCa.Repo
 
-  alias PauseAiCa.Engagement.Action
+  alias PauseAiCa.Engagement.{Action, LearningSignal}
   alias PauseAiCa.Accounts.Scope
 
   @doc """
@@ -187,6 +187,78 @@ defmodule PauseAiCa.Engagement do
     )
   end
 
+  @doc "Records a durable learning signal once per browser, kind, and subject."
+  def record_learning_signal(visitor_id, user, kind, subject \\ "", value \\ nil) do
+    attrs = %{
+      visitor_id: visitor_id,
+      user_id: user && user.id,
+      kind: kind,
+      subject: subject,
+      value: value
+    }
+
+    %LearningSignal{}
+    |> LearningSignal.changeset(attrs)
+    |> Repo.insert(
+      on_conflict: {:replace, [:user_id, :value, :updated_at]},
+      conflict_target: [:visitor_id, :kind, :subject]
+    )
+  end
+
+  @doc "Associates signals recorded in this browser before sign-in with its account."
+  def associate_learning_visitor(visitor_id, user_id) do
+    from(signal in LearningSignal, where: signal.visitor_id == ^visitor_id)
+    |> Repo.update_all(set: [user_id: user_id])
+  end
+
+  @learning_kinds [
+    {"question_answered", :question_answers},
+    {"questionnaire_completed", :questionnaires_completed},
+    {"learn_page_visited", :learn_page_visitors},
+    {"resource_opened", :resources_opened},
+    {"resource_bookmarked", :resources_bookmarked}
+  ]
+
+  @doc "Distinct people who produced each learning signal and across the whole learning funnel."
+  def learning_metrics do
+    identities_by_kind =
+      Repo.all(
+        from signal in LearningSignal, select: {signal.kind, signal.user_id, signal.visitor_id}
+      )
+      |> Enum.group_by(
+        fn {kind, _user_id, _visitor_id} -> kind end,
+        fn {_kind, user_id, visitor_id} -> learning_identity(user_id, visitor_id) end
+      )
+      |> Map.new(fn {kind, identities} -> {kind, MapSet.new(identities)} end)
+
+    self_reported =
+      Repo.all(
+        from action in Action,
+          where: action.action_type == "learned" and not is_nil(action.confirmed_at),
+          select: action.user_id
+      )
+      |> MapSet.new(&"user:#{&1}")
+
+    signal_identities =
+      identities_by_kind
+      |> Map.values()
+      |> Enum.reduce(MapSet.new(), &MapSet.union/2)
+
+    breakdown =
+      Map.new(@learning_kinds, fn {kind, key} ->
+        {key, identities_by_kind |> Map.get(kind, MapSet.new()) |> MapSet.size()}
+      end)
+      |> Map.put(:self_reported, MapSet.size(self_reported))
+
+    %{
+      people: signal_identities |> MapSet.union(self_reported) |> MapSet.size(),
+      breakdown: breakdown
+    }
+  end
+
+  defp learning_identity(user_id, _visitor_id) when is_binary(user_id), do: "user:#{user_id}"
+  defp learning_identity(nil, visitor_id), do: "visitor:#{visitor_id}"
+
   @doc "Aggregate movement-building metrics without exposing supporter records."
   def metrics(today \\ Date.utc_today()) do
     user_count = Repo.aggregate(PauseAiCa.Accounts.User, :count)
@@ -214,11 +286,15 @@ defmodule PauseAiCa.Engagement do
           select: count(a.user_id, :distinct)
       )
 
+    learning = learning_metrics()
+
     %{
       users: user_count,
       actions: action_count,
       active_people: active_people,
       visits: visit_count,
+      learning_people: learning.people,
+      learning_breakdown: learning.breakdown,
       by_type: by_type,
       trend_period: %{start: Date.add(today, -(@trend_days - 1)), end: today},
       trends: trends(today)

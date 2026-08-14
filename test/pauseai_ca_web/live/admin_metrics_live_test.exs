@@ -25,7 +25,10 @@ defmodule PauseAiCaWeb.AdminMetricsLiveTest do
     assert has_element?(view, "#metric-actions svg[role='img']")
     refute has_element?(view, "#metric-visits svg[role='img']")
     assert has_element?(view, "#metrics-by-type")
-    assert has_element?(view, "#metrics-by-type [data-role='ladder-trend'][data-label='Learn']")
+    refute has_element?(view, "#metrics-by-type [data-role='ladder-trend'][data-label='Learn']")
+    assert has_element?(view, "#learning-breakdown")
+    assert has_element?(view, "#learning-breakdown summary")
+    assert has_element?(view, "#learning-breakdown", "Visited Learn")
 
     refute has_element?(
              view,

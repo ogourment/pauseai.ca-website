@@ -4,7 +4,7 @@ defmodule PauseAiCa.MixProject do
   def project do
     [
       app: :pauseai_ca,
-      version: "0.2.19",
+      version: "0.3.0",
       elixir: "~> 1.17",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -94,6 +94,7 @@ defmodule PauseAiCa.MixProject do
       "test.atdd": [
         "ecto.create --quiet",
         "ecto.migrate --quiet",
+        "acceptance.schema_diagram",
         "assets.build",
         "cmd env ATDD=true mix test --only atdd --max-cases 1"
       ],
@@ -113,6 +114,9 @@ defmodule PauseAiCa.MixProject do
         "test"
       ],
       precommit: [
+        "ecto.create --quiet",
+        "ecto.migrate --quiet",
+        "acceptance.schema_diagram",
         "format --check-formatted",
         "gettext.extract --check-up-to-date",
         "i18n.check",
@@ -129,7 +133,7 @@ defmodule PauseAiCa.MixProject do
         {:acceptance_harness, path: Path.expand(path), override: true}
 
       _unset ->
-        {:acceptance_harness, git: acceptance_harness_git_url(), tag: "v0.6.1"}
+        {:acceptance_harness, git: acceptance_harness_git_url(), tag: "v0.7.6"}
     end
   end
 

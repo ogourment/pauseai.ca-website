@@ -5,7 +5,7 @@ if System.get_env("ATDD") == "true" do
     import PauseAiCa.AccountsFixtures
 
     alias AcceptanceHarness.BrowserScreenshot
-    alias PauseAiCa.Repo
+    alias PauseAiCa.{Engagement, Repo}
     alias PauseAiCaWeb.AtddEvidence
 
     @moduletag :atdd
@@ -29,7 +29,7 @@ if System.get_env("ATDD") == "true" do
       },
       %{
         id: "interest-to-understanding-saved-path",
-        title: "A curious visitor saves a personal path before joining",
+        title: "Anonymous learning signals become one distinct learner after sign-in",
         roles: ["Visitor"],
         language: "French",
         device: "Desktop",
@@ -73,13 +73,25 @@ if System.get_env("ATDD") == "true" do
 
       conn
       |> visit("/fr")
-      |> evaluate("""
-      (() => {
-        document.querySelectorAll(".belief-question").forEach((question) => {
-          question.querySelector('[data-answer="4"]').click()
-        })
-      })()
-      """)
+      |> click_button(~s([data-question="risk"]), "Plutôt")
+      |> assert_has("#local-status", text: "Réponse enregistrée.")
+      |> click_button(~s([data-question="pause"]), "Plutôt")
+      |> click_button(~s([data-question="coordination"]), "Plutôt")
+      |> evaluate(
+        """
+        (() => {
+          const csrfToken = document.querySelector("meta[name='csrf-token']").content
+          return Promise.all(["risk", "pause", "coordination"].map((question, index) =>
+            fetch(`/learning/questions/${question}`, {
+              method: "POST",
+              headers: {"content-type": "application/json", "x-csrf-token": csrfToken},
+              body: JSON.stringify({answer: "4", complete: index === 2})
+            })
+          )).then(responses => responses.map(response => response.status))
+        })()
+        """,
+        &assert(&1 == [200, 200, 200])
+      )
       |> assert_has("#save-progress-invitation", text: "Créer un compte")
       |> assert_has("a[href='/users/register?bookmark=risk']", text: "Enregistrer")
       |> assert_has("a[href='/fr/confidentialite']", text: "Politique de confidentialité")
@@ -87,6 +99,11 @@ if System.get_env("ATDD") == "true" do
         "engagement-02-saved-learning-path.png",
         Enum.at(@scenarios, 2),
         "After answering the three questions, a visitor can save progress or bookmark one useful argument with only an email account"
+      )
+      |> visit("/fr/comprendre")
+      |> assert_has(
+        "#resource-pauseai-learn a[href='/users/register?bookmark=pauseai-learn']",
+        text: "Enregistrer"
       )
 
       conn
@@ -139,12 +156,28 @@ if System.get_env("ATDD") == "true" do
         "A member-recorded learning action still changes the suggested next step after refresh"
       )
 
+      assert %{
+               people: 1,
+               breakdown: %{
+                 question_answers: 1,
+                 questionnaires_completed: 1,
+                 learn_page_visitors: 1,
+                 self_reported: 1
+               }
+             } = Engagement.learning_metrics()
+
       _admin = member |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
 
       browser
       |> visit("/admin/dashboard")
       |> assert_has("#metric-actions")
       |> assert_has("#metrics-by-type")
+      |> assert_has("#learning-breakdown summary", text: "1 person")
+      |> evaluate("document.querySelector('#learning-breakdown').open = true")
+      |> assert_has("#questions-answered", text: "1")
+      |> assert_has("#questionnaire-completed", text: "1")
+      |> assert_has("#learn-visited", text: "1")
+      |> assert_has("#learning-self-reported", text: "1")
       |> capture(
         "engagement-05-admin-metrics.png",
         Enum.at(@scenarios, 4),

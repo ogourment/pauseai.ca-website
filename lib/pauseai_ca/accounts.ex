@@ -225,14 +225,16 @@ defmodule PauseAiCa.Accounts do
     user |> User.local_context_changeset(attrs) |> Repo.update()
   end
 
-  @saved_resources ~w(risk pause coordination agency)
+  @legacy_saved_resources ~w(risk pause coordination agency)
 
-  def save_resource(%User{} = user, resource) when resource in @saved_resources do
-    saved_resources = Enum.uniq(user.saved_resources ++ [resource])
-    user |> Ecto.Changeset.change(saved_resources: saved_resources) |> Repo.update()
+  def save_resource(%User{} = user, resource) do
+    if resource in @legacy_saved_resources or PauseAiCa.Library.resource(resource) do
+      saved_resources = Enum.uniq(user.saved_resources ++ [resource])
+      user |> Ecto.Changeset.change(saved_resources: saved_resources) |> Repo.update()
+    else
+      {:error, :unknown_resource}
+    end
   end
-
-  def save_resource(%User{}, _resource), do: {:error, :unknown_resource}
 
   def save_belief_answers(%User{} = user, answers) when is_map(answers) do
     allowed = answers |> Map.take(~w(risk pause coordination)) |> Enum.into(%{})

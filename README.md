@@ -44,11 +44,15 @@ mix precommit
 
 ## Privacy boundary
 
-Anonymous onboarding answers use browser `localStorage`. They are not sent to
-the Phoenix application. Account action records are private to their owner.
-Account data is stored by the application and governed by the published privacy
-policy. Deployment, retention, backup, and incident-response requirements are
-documented in the private operating guide.
+Anonymous onboarding answers use browser `localStorage` for the suggested path
+and are also recorded against a random first-party browser identifier for
+aggregate learning metrics. Learn visits, resource opens, and bookmarks use the
+same identifier; no IP address or user agent is retained. If the browser later
+signs in, its learning signals are associated with that account to reduce
+double-counting. Account action records remain private to their owner. Account
+data is governed by the published privacy policy. Deployment, retention,
+backup, and incident-response requirements are documented in the private
+operating guide.
 
 ## Human contribution workflow
 

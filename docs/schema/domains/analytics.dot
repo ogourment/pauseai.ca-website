@@ -1,0 +1,31 @@
+digraph analytics {
+  graph [rankdir=TB, bgcolor="white", pad=0.35, nodesep=0.6, ranksep=0.9, fontname="Helvetica"];
+  node [shape=plain, fontname="Helvetica"];
+  edge [fontname="Helvetica", fontsize=10, arrowsize=0.7];
+  labelloc="t";
+  label=< <B>First-party analytics</B><BR/><FONT POINT-SIZE="12">Local tables show every column. Amber dashed arrows cross a domain boundary.</FONT> >;
+
+  subgraph cluster_local {
+    label="First-party analytics";
+    color="#94a3b8";
+    penwidth=1.5;
+    style="rounded";
+  "daily_visits" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.daily_visits</B></TD></TR>
+      <TR><TD ALIGN="LEFT">visited_on PK</TD><TD ALIGN="LEFT">date NOT NULL</TD></TR><TR><TD ALIGN="LEFT">count</TD><TD ALIGN="LEFT">bigint NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
+  }
+
+  subgraph cluster_external {
+    label="External-domain references — other relationships are intentionally omitted";
+    color="#cbd5e1";
+    penwidth=1;
+    style="rounded";
+
+  }
+
+
+}

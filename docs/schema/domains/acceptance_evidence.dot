@@ -1,0 +1,61 @@
+digraph acceptance_evidence {
+  graph [rankdir=TB, bgcolor="white", pad=0.35, nodesep=0.6, ranksep=0.9, fontname="Helvetica"];
+  node [shape=plain, fontname="Helvetica"];
+  edge [fontname="Helvetica", fontsize=10, arrowsize=0.7];
+  labelloc="t";
+  label=< <B>Acceptance evidence</B><BR/><FONT POINT-SIZE="12">Local tables show every column. Amber dashed arrows cross a domain boundary.</FONT> >;
+
+  subgraph cluster_local {
+    label="Acceptance evidence";
+    color="#94a3b8";
+    penwidth=1.5;
+    style="rounded";
+  "acceptance_harness_comments" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.acceptance_harness_comments</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">bigint NOT NULL</TD></TR><TR><TD ALIGN="LEFT">run_id</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">scenario_id</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">step_id</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">author_id</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">author_label</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">status</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">kind</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">selected_text</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">context_text</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">comment</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">page_uri</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">anchor</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">screenshot_name</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">metadata</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp with time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp with time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">scenario_key</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">step_sequence</TD><TD ALIGN="LEFT">bigint NULL</TD></TR>
+    </TABLE>
+  >];
+
+  "acceptance_harness_runs" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.acceptance_harness_runs</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">title</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">app</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">runner</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">timing</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">artifacts</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">source_dir</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">source_url</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">generated_at</TD><TD ALIGN="LEFT">timestamp with time zone NULL</TD></TR><TR><TD ALIGN="LEFT">started_at</TD><TD ALIGN="LEFT">timestamp with time zone NULL</TD></TR><TR><TD ALIGN="LEFT">finalized_at</TD><TD ALIGN="LEFT">timestamp with time zone NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp with time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp with time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
+  "acceptance_harness_scenarios" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.acceptance_harness_scenarios</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">bigint NOT NULL</TD></TR><TR><TD ALIGN="LEFT">run_id</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">scenario_id</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">title</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">status</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">scenario_order</TD><TD ALIGN="LEFT">integer NULL</TD></TR><TR><TD ALIGN="LEFT">duration_ms</TD><TD ALIGN="LEFT">bigint NULL</TD></TR><TR><TD ALIGN="LEFT">documented_step_ms</TD><TD ALIGN="LEFT">bigint NULL</TD></TR><TR><TD ALIGN="LEFT">undocumented_ms</TD><TD ALIGN="LEFT">bigint NULL</TD></TR><TR><TD ALIGN="LEFT">devices</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">themes</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">languages</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">users</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">metadata</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp with time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp with time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">tags</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">failure</TD><TD ALIGN="LEFT">jsonb NULL</TD></TR>
+    </TABLE>
+  >];
+
+  "acceptance_harness_statuses" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.acceptance_harness_statuses</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">bigint NOT NULL</TD></TR><TR><TD ALIGN="LEFT">scenario_key</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">step_sequence</TD><TD ALIGN="LEFT">bigint NOT NULL</TD></TR><TR><TD ALIGN="LEFT">status</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp with time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp with time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
+  "acceptance_harness_steps" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.acceptance_harness_steps</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">run_id PK</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">scenario_id</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">title</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">description</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">sequence</TD><TD ALIGN="LEFT">bigint NULL</TD></TR><TR><TD ALIGN="LEFT">screenshot</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">surface</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">artifacts</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">metadata</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp with time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp with time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">page_text</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">page_html</TD><TD ALIGN="LEFT">text NULL</TD></TR>
+    </TABLE>
+  >];
+
+  }
+
+  subgraph cluster_external {
+    label="External-domain references — other relationships are intentionally omitted";
+    color="#cbd5e1";
+    penwidth=1;
+    style="rounded";
+
+  }
+
+  "acceptance_harness_comments" -> "acceptance_harness_runs" [label="run_id -> id", color="#64748b"];
+  "acceptance_harness_scenarios" -> "acceptance_harness_runs" [label="run_id -> id", color="#64748b"];
+  "acceptance_harness_steps" -> "acceptance_harness_runs" [label="run_id -> id", color="#64748b"];
+}

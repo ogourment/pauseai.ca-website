@@ -35,6 +35,9 @@ defmodule PauseAiCa.Library do
     Enum.filter(all_resources(), &(&1.stage == stage))
   end
 
+  @doc "Finds a reviewed resource by its stable bookmark identifier."
+  def resource(id), do: Enum.find(resources(), &(&1.id == id))
+
   @doc """
   Canadian parliamentarians who signed the ControlAI Canada statement.
 

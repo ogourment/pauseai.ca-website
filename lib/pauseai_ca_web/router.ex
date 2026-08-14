@@ -12,6 +12,8 @@ defmodule PauseAiCaWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :fetch_current_scope_for_user
+    plug PauseAiCaWeb.Plugs.LearningIdentity
+    plug PauseAiCaWeb.Plugs.RecordLearningVisit
     plug PauseAiCaWeb.Plugs.RecordVisit
     # Staging only: closes the site to anyone not signed in. See the plug.
     plug PauseAiCaWeb.Plugs.RequireInvited
@@ -48,6 +50,8 @@ defmodule PauseAiCaWeb.Router do
     get "/en/privacy", PageController, :privacy_en
     get "/fr/confidentialite", PageController, :privacy_fr
     get "/en/montreal.html", PageController, :legacy_montreal
+    post "/learning/questions/:question", LearningSignalController, :question
+    get "/learning/resources/:resource", LearningResourceController, :open
   end
 
   # Other scopes may use custom stacks.

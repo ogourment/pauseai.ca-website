@@ -210,11 +210,19 @@ defmodule PauseAiCaWeb.DashboardLive do
   defp saved_resource_url("coordination", _), do: "https://pauseai.info/feasibility"
   defp saved_resource_url("agency", "fr"), do: ~p"/fr/strategie"
   defp saved_resource_url("agency", _), do: ~p"/en/strategy"
+  defp saved_resource_url(resource, _locale), do: PauseAiCa.Library.resource(resource).url
 
   defp saved_resource_label("risk", _), do: gettext("Understand existential risk")
   defp saved_resource_label("pause", _), do: gettext("Understand a pause")
   defp saved_resource_label("coordination", _), do: gettext("Test coordination")
   defp saved_resource_label("agency", _), do: gettext("Move toward action")
+
+  defp saved_resource_label(resource, locale) do
+    resource
+    |> PauseAiCa.Library.resource()
+    |> PauseAiCa.Library.Resource.copy(locale)
+    |> Map.fetch!(:title)
+  end
 
   defp action_label("learned", _locale), do: gettext("Read or watched a resource")
   defp action_label("conversation", _), do: gettext("Discussed AI risk with someone")

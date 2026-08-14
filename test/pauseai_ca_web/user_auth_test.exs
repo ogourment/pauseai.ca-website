@@ -34,6 +34,17 @@ defmodule PauseAiCaWeb.UserAuthTest do
       refute get_session(conn, :to_be_removed)
     end
 
+    test "preserves the anonymous learning identity across sign-in", %{conn: conn, user: user} do
+      visitor_id = Ecto.UUID.generate()
+
+      conn =
+        conn
+        |> put_session(:learning_visitor_id, visitor_id)
+        |> UserAuth.log_in_user(user)
+
+      assert get_session(conn, :learning_visitor_id) == visitor_id
+    end
+
     test "keeps session when re-authenticating", %{conn: conn, user: user} do
       conn =
         conn

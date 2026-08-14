@@ -3,6 +3,7 @@ defmodule PauseAiCaWeb.UserLive.Registration do
 
   alias PauseAiCa.Accounts
   alias PauseAiCa.Accounts.User
+  alias PauseAiCa.Engagement
 
   @impl true
   def render(assigns) do
@@ -68,12 +69,13 @@ defmodule PauseAiCaWeb.UserLive.Registration do
     {:ok, redirect(socket, to: PauseAiCaWeb.UserAuth.signed_in_path(socket))}
   end
 
-  def mount(params, _session, socket) do
+  def mount(params, session, socket) do
     changeset = Accounts.change_user_email(%User{}, %{}, validate_unique: false)
 
     {:ok,
      socket
      |> assign(:bookmark, params["bookmark"])
+     |> assign(:learning_visitor_id, session["learning_visitor_id"])
      |> assign(:belief_answers, Map.take(params, ~w(risk pause coordination)))
      |> assign_form(changeset), temporary_assigns: [form: nil]}
   end
@@ -97,7 +99,16 @@ defmodule PauseAiCaWeb.UserLive.Registration do
   defp register_new_user(socket, user_params) do
     case Accounts.register_user(user_params) do
       {:ok, user} ->
-        if socket.assigns.bookmark, do: Accounts.save_resource(user, socket.assigns.bookmark)
+        if socket.assigns.bookmark do
+          Accounts.save_resource(user, socket.assigns.bookmark)
+
+          Engagement.record_learning_signal(
+            socket.assigns.learning_visitor_id,
+            user,
+            "resource_bookmarked",
+            socket.assigns.bookmark
+          )
+        end
 
         if socket.assigns.belief_answers != %{},
           do: Accounts.save_belief_answers(user, socket.assigns.belief_answers)

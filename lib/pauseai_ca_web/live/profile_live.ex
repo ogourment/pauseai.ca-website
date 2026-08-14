@@ -237,4 +237,11 @@ defmodule PauseAiCaWeb.ProfileLive do
   defp resource_label("pause", _), do: gettext("Understand a pause")
   defp resource_label("coordination", _), do: gettext("Test coordination")
   defp resource_label("agency", _), do: gettext("Move toward action")
+
+  defp resource_label(resource, locale) do
+    resource
+    |> PauseAiCa.Library.resource()
+    |> PauseAiCa.Library.Resource.copy(locale)
+    |> Map.fetch!(:title)
+  end
 end

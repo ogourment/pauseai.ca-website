@@ -138,4 +138,37 @@ defmodule PauseAiCa.EngagementTest do
       assert length(metrics.trends.users) == 14
     end
   end
+
+  describe "learning metrics" do
+    test "counts distinct anonymous and account-linked people across signals" do
+      user = PauseAiCa.AccountsFixtures.user_fixture()
+      first_browser = Ecto.UUID.generate()
+      second_browser = Ecto.UUID.generate()
+
+      assert {:ok, _} =
+               Engagement.record_learning_signal(
+                 first_browser,
+                 nil,
+                 "question_answered",
+                 "risk",
+                 "4"
+               )
+
+      assert {:ok, _} =
+               Engagement.record_learning_signal(first_browser, nil, "learn_page_visited")
+
+      assert {:ok, _} =
+               Engagement.record_learning_signal(
+                 second_browser,
+                 user,
+                 "resource_opened",
+                 "pauseai-learn"
+               )
+
+      assert %{people: 2, breakdown: breakdown} = Engagement.learning_metrics()
+      assert breakdown.question_answers == 1
+      assert breakdown.learn_page_visitors == 1
+      assert breakdown.resources_opened == 1
+    end
+  end
 end

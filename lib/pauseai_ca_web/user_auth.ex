@@ -111,11 +111,19 @@ defmodule PauseAiCaWeb.UserAuth do
   defp create_or_extend_session(conn, user, params) do
     token = Accounts.generate_user_session_token(user)
     remember_me = get_session(conn, :user_remember_me)
+    learning_visitor_id = get_session(conn, :learning_visitor_id)
 
     conn
     |> renew_session(user)
+    |> maybe_restore_learning_visitor(learning_visitor_id)
     |> put_token_in_session(token)
     |> maybe_write_remember_me_cookie(token, params, remember_me)
+  end
+
+  defp maybe_restore_learning_visitor(conn, nil), do: conn
+
+  defp maybe_restore_learning_visitor(conn, visitor_id) do
+    put_session(conn, :learning_visitor_id, visitor_id)
   end
 
   # Do not renew session if the user is already logged in

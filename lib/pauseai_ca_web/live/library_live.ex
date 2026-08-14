@@ -214,12 +214,31 @@ defmodule PauseAiCaWeb.LibraryLive do
                 </span>
               </p>
               <a
-                href={resource.url}
+                href={~p"/learning/resources/#{resource.id}"}
+                target="_blank"
                 rel="noreferrer"
                 class="mt-4 inline-flex font-semibold text-stone-900 underline decoration-brand decoration-2 underline-offset-4"
               >
                 {read_label(@locale)} <span aria-hidden="true">↗</span>
               </a>
+              <%= if @current_scope do %>
+                <.link
+                  href={~p"/bookmarks/#{resource.id}?locale=#{@locale}"}
+                  method="post"
+                  class="mt-4 inline-flex w-fit items-center gap-2 rounded-full border border-stone-300 px-4 py-2 text-sm font-semibold text-stone-700 hover:border-brand"
+                >
+                  <.icon name="hero-bookmark" class="size-4" />
+                  {bookmark_label(@locale)}
+                </.link>
+              <% else %>
+                <.link
+                  href={~p"/users/register?bookmark=#{resource.id}"}
+                  class="mt-4 inline-flex w-fit items-center gap-2 rounded-full border border-stone-300 px-4 py-2 text-sm font-semibold text-stone-700 hover:border-brand"
+                >
+                  <.icon name="hero-bookmark" class="size-4" />
+                  {bookmark_label(@locale)}
+                </.link>
+              <% end %>
             </li>
           </ul>
         </div>
@@ -311,6 +330,8 @@ defmodule PauseAiCaWeb.LibraryLive do
     </Layouts.app>
     """
   end
+
+  defp bookmark_label(_locale), do: gettext("Bookmark")
 
   defp page_title(_locale), do: gettext("Should we slow AI down?")
 

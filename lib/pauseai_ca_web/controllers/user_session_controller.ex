@@ -1,7 +1,7 @@
 defmodule PauseAiCaWeb.UserSessionController do
   use PauseAiCaWeb, :controller
 
-  alias PauseAiCa.Accounts
+  alias PauseAiCa.{Accounts, Engagement}
   alias PauseAiCaWeb.UserAuth
 
   def create(conn, %{"_action" => "confirmed"} = params) do
@@ -21,7 +21,7 @@ defmodule PauseAiCaWeb.UserSessionController do
     case Accounts.login_user_by_magic_link(token) do
       {:ok, {user, tokens_to_disconnect}} ->
         UserAuth.disconnect_sessions(tokens_to_disconnect)
-        save_continuation(user, user_params)
+        save_continuation(conn, user, user_params)
 
         conn
         |> put_flash(:info, info)
@@ -57,8 +57,17 @@ defmodule PauseAiCaWeb.UserSessionController do
     end
   end
 
-  defp save_continuation(user, params) do
-    if params["bookmark"], do: Accounts.save_resource(user, params["bookmark"])
+  defp save_continuation(conn, user, params) do
+    if params["bookmark"] do
+      Accounts.save_resource(user, params["bookmark"])
+
+      Engagement.record_learning_signal(
+        conn.assigns.learning_visitor_id,
+        user,
+        "resource_bookmarked",
+        params["bookmark"]
+      )
+    end
 
     answers = Map.take(params, ~w(risk pause coordination))
     if answers != %{}, do: Accounts.save_belief_answers(user, answers)
