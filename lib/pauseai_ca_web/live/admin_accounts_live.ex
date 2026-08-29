@@ -111,6 +111,9 @@ defmodule PauseAiCaWeb.AdminAccountsLive do
             aria-current="page"
             class={admin_link_class(true)}
           >{gettext("Accounts")}</.link>
+          <.link navigate={~p"/admin/contact-imports"} class={admin_link_class(false)}>
+            {gettext("Contact imports")}
+          </.link>
           <a href="/admin/versions" class={admin_link_class(false)}>{gettext("Deployment versions")}</a>
           <a href="/admin/acceptance" class={admin_link_class(false)}>{gettext("Acceptance evidence")}</a>
         </nav>

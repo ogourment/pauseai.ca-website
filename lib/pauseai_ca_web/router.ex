@@ -94,6 +94,7 @@ defmodule PauseAiCaWeb.Router do
       live "/dashboard", AdminMetricsLive, :index
       live "/metrics", AdminMetricsLive, :redirect
       live "/accounts", AdminAccountsLive, :index
+      live "/contact-imports", AdminContactImportLive, :index
     end
   end
 
