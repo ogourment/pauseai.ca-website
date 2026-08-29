@@ -27,7 +27,7 @@ defmodule PauseAiCa.CampaignsTest do
       dates = Enum.map(campaign.updates, & &1.date)
 
       assert dates == Enum.sort(dates, {:desc, Date})
-      assert campaign.reviewed_on == ~D[2026-08-04]
+      assert campaign.reviewed_on == ~D[2026-08-29]
     end
 
     test "every development cites a source a reader can check" do
@@ -51,6 +51,13 @@ defmodule PauseAiCa.CampaignsTest do
       assert Enum.any?(updates, &(&1.publisher == "Anthropic"))
       assert Enum.any?(updates, &String.contains?(&1.url, "iowaattorneygeneral.gov"))
       assert Enum.any?(updates, &String.contains?(&1.url, "aisi.gov.uk"))
+    end
+
+    test "includes the broader August loss-of-control reporting" do
+      assert Enum.any?(Campaigns.current_warning_shot().updates, fn update ->
+               update.publisher == "The Guardian" and update.date == ~D[2026-08-29] and
+                 String.contains?(update.url, "sharp-rise-in-incidents")
+             end)
     end
   end
 

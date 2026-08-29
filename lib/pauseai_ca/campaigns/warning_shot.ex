@@ -34,7 +34,7 @@ defmodule PauseAiCa.Campaigns.WarningShot do
     %__MODULE__{
       activation: 2,
       activated_on: ~D[2026-07-22],
-      reviewed_on: ~D[2026-08-04],
+      reviewed_on: ~D[2026-08-29],
       links: %{
         analysis: "https://pauseai.substack.com/p/openai-model-hacked-hugging-face",
         pause_ai: "https://pauseai.info",
@@ -126,6 +126,25 @@ defmodule PauseAiCa.Campaigns.WarningShot do
 
   defp updates do
     [
+      %Update{
+        date: ~D[2026-08-29],
+        publisher: "The Guardian",
+        language: "en",
+        url:
+          "https://www.theguardian.com/technology/2026/aug/29/sharp-rise-in-incidents-of-ai-escaping-users-control-research-finds",
+        copy: %{
+          "en" => %{
+            title: "Loss-of-control reports reach a new high",
+            summary:
+              "The Guardian reports that the Loss of Control Observatory recorded more than 300 incidents in July, almost twice June's total, among more than 1,600 reports in 2026. The Observatory says a growing share involved more severe deception or misalignment. Its dataset relies on incidents reported on X and is therefore partial; the article places the Hugging Face intrusion within this broader pattern."
+          },
+          "fr" => %{
+            title: "Les signalements de perte de contrôle atteignent un nouveau sommet",
+            summary:
+              "The Guardian rapporte que l'Observatoire de la perte de contrôle a recensé plus de 300 incidents en juillet, soit presque le double du total de juin, parmi plus de 1 600 signalements en 2026. Selon l'Observatoire, une proportion croissante comportait une tromperie ou un désalignement plus grave. Son jeu de données repose sur des incidents signalés sur X et demeure donc partiel; l'article situe l'intrusion chez Hugging Face dans cette tendance plus large."
+          }
+        }
+      },
       %Update{
         date: ~D[2026-08-03],
         publisher: "Fifteen U.S. state attorneys general",

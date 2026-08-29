@@ -6,6 +6,11 @@
     tables: ["actions", "learning_signals"]
   },
   %{id: "outreach", title: "Outreach", tables: ["pending_letters"]},
+  %{
+    id: "contact_migration",
+    title: "Contact migration",
+    tables: ["contact_activities", "contact_imports", "contacts"]
+  },
   %{id: "analytics", title: "First-party analytics", tables: ["daily_visits"]},
   %{
     id: "acceptance_evidence",
