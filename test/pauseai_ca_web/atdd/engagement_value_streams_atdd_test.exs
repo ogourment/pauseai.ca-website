@@ -233,6 +233,7 @@ if System.get_env("ATDD") == "true" do
         browser
         |> visit("/users/log-in/#{member_token}")
         |> click_button("Keep me logged in on this device")
+        |> assert_path("/")
         |> visit("/admin/accounts")
         |> assert_has("#admin-user-#{newcomer.id}", text: newcomer_email)
         |> assert_has("#admin-toggle-#{newcomer.id}", text: "Make superadmin")
@@ -252,6 +253,7 @@ if System.get_env("ATDD") == "true" do
       browser
       |> visit("/users/log-in/#{promoted_token}")
       |> click_button("Keep me logged in on this device")
+      |> assert_path("/")
       |> visit("/admin/accounts")
       |> assert_has("#admin-user-#{member.id}", text: "Superadmin")
       |> click("#admin-toggle-#{member.id}")
