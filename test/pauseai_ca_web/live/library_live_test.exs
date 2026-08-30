@@ -7,7 +7,9 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
     test "an English visitor sees every stage and the Canadian voices", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/en/learn")
 
+      assert has_element?(view, "#montreal-protest-banner[href='https://luma.com/d40dp5ed']")
       assert has_element?(view, "#warning-shot-banner[href='/en/warning-shot']")
+      assert render(view) =~ "Saturday, September 26 · 1–2 p.m. EDT"
       assert has_element?(view, "#campaign-prompt[data-campaign='warning-shot-2']")
       assert has_element?(view, "#voices")
       assert has_element?(view, "#voice-bengio")
@@ -22,10 +24,14 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
     test "a French visitor gets the page in French", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/fr/comprendre")
 
+      assert has_element?(view, "#announcement-banners > #montreal-protest-banner:first-child")
+      assert has_element?(view, "#announcement-banners > #warning-shot-banner:last-child")
       assert has_element?(view, "#voices")
       assert has_element?(view, "#voice-saba")
       assert has_element?(view, "#voice-guay")
-      assert render(view) =~ "Des voix canadiennes"
+      html = render(view)
+      assert html =~ "Samedi 26 septembre · 13 h–14 h HAE"
+      assert html =~ "Des voix canadiennes"
     end
 
     test "the legacy French learn route opens the French-first edition", %{conn: conn} do

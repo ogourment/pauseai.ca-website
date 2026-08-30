@@ -255,20 +255,36 @@ defmodule PauseAiCaWeb.Layouts do
       </nav>
     </header>
 
-    <.link
-      :if={@promote_warning_shot}
-      id="warning-shot-banner"
-      navigate={if(@locale == "fr", do: ~p"/fr/tir-de-semonce", else: ~p"/en/warning-shot")}
-      class="sticky top-[var(--header-height)] z-30 block bg-brand px-5 py-3 text-center text-stone-950 transition hover:bg-brand-strong"
-    >
-      <span class="font-heading text-sm font-bold uppercase tracking-[0.16em]">
-        {gettext("Warning Shot Protocol · Second activation")}
-      </span>
-      <span class="ml-2 text-sm underline underline-offset-4">
-        {gettext("An AI escaped its lab and hacked a real company")}
-        <span aria-hidden="true">→</span>
-      </span>
-    </.link>
+    <div id="announcement-banners" class="sticky top-[var(--header-height)] z-30">
+      <a
+        id="montreal-protest-banner"
+        href="https://luma.com/d40dp5ed"
+        class="block bg-stone-950 px-5 py-3 text-center text-white transition hover:bg-stone-800 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-white"
+      >
+        <span class="font-heading text-sm font-bold uppercase tracking-[0.16em]">
+          {gettext("Montréal · Public protest")}
+        </span>
+        <span class="ml-2 text-sm underline underline-offset-4">
+          {gettext("Saturday, September 26 · 1–2 p.m. EDT")}
+          <span aria-hidden="true">→</span>
+        </span>
+      </a>
+
+      <.link
+        :if={@promote_warning_shot}
+        id="warning-shot-banner"
+        navigate={if(@locale == "fr", do: ~p"/fr/tir-de-semonce", else: ~p"/en/warning-shot")}
+        class="block bg-brand px-5 py-3 text-center text-stone-950 transition hover:bg-brand-strong"
+      >
+        <span class="font-heading text-sm font-bold uppercase tracking-[0.16em]">
+          {gettext("Warning Shot Protocol · Second activation")}
+        </span>
+        <span class="ml-2 text-sm underline underline-offset-4">
+          {gettext("An AI escaped its lab and hacked a real company")}
+          <span aria-hidden="true">→</span>
+        </span>
+      </.link>
+    </div>
 
     <.campaign_prompt
       :if={@promote_warning_shot}
