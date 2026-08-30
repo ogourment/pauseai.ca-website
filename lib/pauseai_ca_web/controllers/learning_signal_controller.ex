@@ -30,4 +30,19 @@ defmodule PauseAiCaWeb.LearningSignalController do
   end
 
   def question(conn, _params), do: conn |> put_status(:unprocessable_entity) |> json(%{ok: false})
+
+  def event_link(conn, %{"event" => "montreal-protest-2026-09-26" = event}) do
+    user = conn.assigns[:current_scope] && conn.assigns.current_scope.user
+
+    Engagement.record_learning_signal(
+      conn.assigns.learning_visitor_id,
+      user,
+      "event_link_opened",
+      event
+    )
+
+    send_resp(conn, :no_content, "")
+  end
+
+  def event_link(conn, _params), do: send_resp(conn, :unprocessable_entity, "")
 end

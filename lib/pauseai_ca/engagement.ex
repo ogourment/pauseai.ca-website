@@ -259,6 +259,17 @@ defmodule PauseAiCa.Engagement do
   defp learning_identity(user_id, _visitor_id) when is_binary(user_id), do: "user:#{user_id}"
   defp learning_identity(nil, visitor_id), do: "visitor:#{visitor_id}"
 
+  @doc "Distinct people who opened a tracked event link."
+  def event_link_people(subject) do
+    Repo.all(
+      from signal in LearningSignal,
+        where: signal.kind == "event_link_opened" and signal.subject == ^subject,
+        select: {signal.user_id, signal.visitor_id}
+    )
+    |> MapSet.new(fn {user_id, visitor_id} -> learning_identity(user_id, visitor_id) end)
+    |> MapSet.size()
+  end
+
   @doc "Aggregate movement-building metrics without exposing supporter records."
   def metrics(today \\ Date.utc_today()) do
     user_count = Repo.aggregate(PauseAiCa.Accounts.User, :count)
@@ -293,6 +304,7 @@ defmodule PauseAiCa.Engagement do
       actions: action_count,
       active_people: active_people,
       visits: visit_count,
+      montreal_protest_interest: event_link_people("montreal-protest-2026-09-26"),
       learning_people: learning.people,
       learning_breakdown: learning.breakdown,
       by_type: by_type,

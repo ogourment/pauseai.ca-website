@@ -60,7 +60,7 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
           <p id="metrics-period" class="mt-8 text-xs font-medium text-stone-500">
             Daily trends · {@trend_period_label} (UTC)
           </p>
-          <div class="mt-2 grid gap-4 sm:grid-cols-4">
+          <div class="mt-2 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             <.metric
               id="metric-users"
               label="Accounts"
@@ -87,6 +87,13 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
               label="Visits"
               value={@metrics.visits}
               trend={@metrics.trends.visits}
+              trend_period={@trend_period_label}
+            />
+            <.metric
+              id="metric-montreal-protest-interest"
+              label="People who opened the Sept. 26 RSVP"
+              value={@metrics.montreal_protest_interest}
+              trend={[]}
               trend_period={@trend_period_label}
             />
           </div>

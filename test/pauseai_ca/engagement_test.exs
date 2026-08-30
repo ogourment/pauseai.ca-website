@@ -171,4 +171,31 @@ defmodule PauseAiCa.EngagementTest do
       assert breakdown.resources_opened == 1
     end
   end
+
+  describe "event link metrics" do
+    test "counts distinct browsers and linked accounts" do
+      user = PauseAiCa.AccountsFixtures.user_fixture()
+      first_browser = Ecto.UUID.generate()
+      second_browser = Ecto.UUID.generate()
+
+      assert {:ok, _} =
+               Engagement.record_learning_signal(
+                 first_browser,
+                 nil,
+                 "event_link_opened",
+                 "montreal-protest-2026-09-26"
+               )
+
+      assert {:ok, _} =
+               Engagement.record_learning_signal(
+                 second_browser,
+                 user,
+                 "event_link_opened",
+                 "montreal-protest-2026-09-26"
+               )
+
+      assert Engagement.event_link_people("montreal-protest-2026-09-26") == 2
+      assert Engagement.metrics().montreal_protest_interest == 2
+    end
+  end
 end

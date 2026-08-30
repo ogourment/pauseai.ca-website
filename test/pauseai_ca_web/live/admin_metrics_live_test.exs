@@ -14,6 +14,13 @@ defmodule PauseAiCaWeb.AdminMetricsLiveTest do
       confirmed_at: DateTime.utc_now(:second)
     })
 
+    PauseAiCa.Engagement.record_learning_signal(
+      Ecto.UUID.generate(),
+      nil,
+      "event_link_opened",
+      "montreal-protest-2026-09-26"
+    )
+
     {:ok, view, _html} = live(log_in_user(conn, admin), ~p"/admin/dashboard")
 
     assert has_element?(view, "#admin-dashboard")
@@ -24,6 +31,8 @@ defmodule PauseAiCaWeb.AdminMetricsLiveTest do
     assert has_element?(view, "#metric-active svg[role='img']")
     assert has_element?(view, "#metric-actions svg[role='img']")
     refute has_element?(view, "#metric-visits svg[role='img']")
+    assert has_element?(view, "#metric-montreal-protest-interest", "1")
+    assert has_element?(view, "#metric-montreal-protest-interest", "Sept. 26 RSVP")
     assert has_element?(view, "#metrics-by-type")
     refute has_element?(view, "#metrics-by-type [data-role='ladder-trend'][data-label='Learn']")
     assert has_element?(view, "#learning-breakdown")

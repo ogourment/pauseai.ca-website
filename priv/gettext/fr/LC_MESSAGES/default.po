@@ -36,7 +36,7 @@ msgstr "L’IA pose un véritable risque existentiel."
 msgid "About"
 msgstr "À propos"
 
-#: lib/pauseai_ca_web/components/layouts.ex:312
+#: lib/pauseai_ca_web/components/layouts.ex:338
 #, elixir-autogen, elixir-format
 msgid "About PauseAI Canada"
 msgstr "À propos de PauseAI Canada"
@@ -52,7 +52,7 @@ msgid "Accept analytics cookies? They help us see which pages actually lead peop
 msgstr "Acceptez-vous les témoins (cookies) de mesure d'audience? Ils nous aident à voir quelles pages amènent les gens à agir. Refuser n'enlève aucune fonctionnalité."
 
 #: lib/pauseai_ca_web/components/core_components.ex:375
-#: lib/pauseai_ca_web/components/layouts.ex:338
+#: lib/pauseai_ca_web/components/layouts.ex:364
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr "Actions"
@@ -73,7 +73,7 @@ msgid "Add your full postal code to your profile to identify your riding and MP.
 msgstr "Ajoutez votre code postal complet à votre profil pour identifier votre circonscription et votre député."
 
 #: lib/pauseai_ca_web/components/campaign_prompt.ex:123
-#: lib/pauseai_ca_web/components/layouts.ex:283
+#: lib/pauseai_ca_web/components/layouts.ex:309
 #, elixir-autogen, elixir-format
 msgid "An AI escaped its lab and hacked a real company"
 msgstr "Une IA s’est échappée de son laboratoire et a piraté une vraie entreprise"
@@ -83,8 +83,8 @@ msgstr "Une IA s’est échappée de son laboratoire et a piraté une vraie entr
 msgid "An AI escaped its lab and hacked a real company. I just wrote to my MP about it. It takes a minute:"
 msgstr "Une IA s'est échappée de son laboratoire et a piraté une vraie entreprise. Je viens d'écrire à ma députée. Ça prend une minute:"
 
-#: lib/pauseai_ca_web/components/layouts.ex:372
-#: lib/pauseai_ca_web/components/layouts.ex:387
+#: lib/pauseai_ca_web/components/layouts.ex:398
+#: lib/pauseai_ca_web/components/layouts.ex:413
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
 msgstr "Tentative de reconnexion"
@@ -328,7 +328,7 @@ msgstr "Recherche…"
 msgid "Manage my learning path"
 msgstr "Gérer mon parcours"
 
-#: lib/pauseai_ca_web/components/layouts.ex:308
+#: lib/pauseai_ca_web/components/layouts.ex:334
 #, elixir-autogen, elixir-format
 msgid "Montréal events"
 msgstr "Événements à Montréal"
@@ -480,7 +480,7 @@ msgstr "Position sur une pause de l’IA avancée : pas encore documentée."
 msgid "Postal code"
 msgstr "Code postal"
 
-#: lib/pauseai_ca_web/components/layouts.ex:316
+#: lib/pauseai_ca_web/components/layouts.ex:342
 #, elixir-autogen, elixir-format
 msgid "Privacy"
 msgstr "Confidentialité"
@@ -627,7 +627,7 @@ msgstr "Inscription…"
 msgid "Sixteen MPs and Senators, from every party and both chambers, have signed the statement calling for an international agreement to prohibit superintelligent AI. Writing to your MP is not a fringe act: the question is already in Ottawa."
 msgstr "Seize député·es et sénateur·rices, de tous les partis et des deux chambres, ont signé la déclaration réclamant un accord international pour interdire l'IA superintelligente. Écrire à votre député·e n'est pas un geste marginal: la question est déjà à Ottawa."
 
-#: lib/pauseai_ca_web/components/layouts.ex:379
+#: lib/pauseai_ca_web/components/layouts.ex:405
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
 msgstr "Un problème est survenu !"
@@ -740,7 +740,7 @@ msgid "Unknown resource."
 msgstr "Ressource inconnue."
 
 #: lib/pauseai_ca_web/components/campaign_prompt.ex:121
-#: lib/pauseai_ca_web/components/layouts.ex:280
+#: lib/pauseai_ca_web/components/layouts.ex:306
 #, elixir-autogen, elixir-format
 msgid "Warning Shot Protocol · Second activation"
 msgstr "Protocole Tir de semonce · Deuxième activation"
@@ -755,7 +755,7 @@ msgstr "Tir de semonce"
 msgid "We adapt the case and opportunities for action to the Canadian context in both official languages. We help people form a view, contact representatives, and organize."
 msgstr "Nous adaptons les arguments et les possibilités d'action au contexte canadien, dans les deux langues officielles. Nous voulons aider les personnes à se faire une opinion, à communiquer avec leurs représentantes et représentants et à s'organiser."
 
-#: lib/pauseai_ca_web/components/layouts.ex:364
+#: lib/pauseai_ca_web/components/layouts.ex:390
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
 msgstr "Nous ne trouvons pas la connexion Internet"
@@ -1031,7 +1031,7 @@ msgstr "Lu ou regardé une ressource"
 msgid "Senate"
 msgstr "Sénat"
 
-#: lib/pauseai_ca_web/components/layouts.ex:337
+#: lib/pauseai_ca_web/components/layouts.ex:363
 #, elixir-autogen, elixir-format
 msgid "Sign"
 msgstr "Signer"
@@ -1076,7 +1076,7 @@ msgstr "Ce courriel ne semble pas valide."
 msgid "That email does not look valid. Your MP needs it to reply to you."
 msgstr "Ce courriel ne semble pas valide. Votre député·e en a besoin pour vous répondre."
 
-#: lib/pauseai_ca_web/components/layouts.ex:337
+#: lib/pauseai_ca_web/components/layouts.ex:363
 #, elixir-autogen, elixir-format
 msgid "The PauseAI statement"
 msgstr "La déclaration de PauseAI"
@@ -1118,7 +1118,7 @@ msgstr "Incertain"
 msgid "Volunteered"
 msgstr "Fait du bénévolat"
 
-#: lib/pauseai_ca_web/components/layouts.ex:338
+#: lib/pauseai_ca_web/components/layouts.ex:364
 #, elixir-autogen, elixir-format
 msgid "What PauseAI asks people to do"
 msgstr "Les actions proposées par PauseAI"
@@ -1290,7 +1290,7 @@ msgstr[1] "%{count} comptes"
 
 #: lib/pauseai_ca_web/live/admin_accounts_live.ex:118
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:287
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:224
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:231
 #, elixir-autogen, elixir-format
 msgid "Acceptance evidence"
 msgstr "Preuves d’acceptation"
@@ -1304,7 +1304,7 @@ msgstr "Pages des comptes"
 #: lib/pauseai_ca_web/live/admin_accounts_live.ex:101
 #: lib/pauseai_ca_web/live/admin_accounts_live.ex:113
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:280
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:219
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:226
 #, elixir-autogen, elixir-format
 msgid "Accounts"
 msgstr "Comptes"
@@ -1322,14 +1322,14 @@ msgstr "Confirmez l’adresse courriel de ce compte avant de lui accorder l’ac
 
 #: lib/pauseai_ca_web/live/admin_accounts_live.ex:107
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:279
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:214
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:221
 #, elixir-autogen, elixir-format
 msgid "Dashboard"
 msgstr "Tableau de bord"
 
 #: lib/pauseai_ca_web/live/admin_accounts_live.ex:117
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:286
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:223
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:230
 #, elixir-autogen, elixir-format
 msgid "Deployment versions"
 msgstr "Versions déployées"
@@ -1406,7 +1406,7 @@ msgstr "Le rôle de superadmin a été retiré."
 
 #: lib/pauseai_ca_web/live/admin_accounts_live.ex:105
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:278
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:209
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:216
 #, elixir-autogen, elixir-format
 msgid "Superadmin tools"
 msgstr "Outils de superadministration"
@@ -1467,7 +1467,7 @@ msgstr "Contact"
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:11
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:272
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:285
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:221
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:228
 #, elixir-autogen, elixir-format
 msgid "Contact imports"
 msgstr "Importation de contacts"
@@ -1645,12 +1645,12 @@ msgstr "Page %{page} sur %{pages} · %{total} contacts"
 msgid "Rows per page"
 msgstr "Lignes par page"
 
-#: lib/pauseai_ca_web/components/layouts.ex:265
+#: lib/pauseai_ca_web/components/layouts.ex:267
 #, elixir-autogen, elixir-format
 msgid "Montréal · Public protest"
 msgstr "Montréal · Manifestation publique"
 
-#: lib/pauseai_ca_web/components/layouts.ex:268
+#: lib/pauseai_ca_web/components/layouts.ex:270
 #, elixir-autogen, elixir-format
 msgid "Saturday, September 26 · 1–2 p.m. EDT"
 msgstr "Samedi 26 septembre · 13 h–14 h HAE"

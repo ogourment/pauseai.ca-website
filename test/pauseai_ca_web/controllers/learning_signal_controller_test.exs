@@ -36,4 +36,24 @@ defmodule PauseAiCaWeb.LearningSignalControllerTest do
     assert redirected_to(conn) == "https://pauseai.info/learn"
     assert Repo.get_by!(LearningSignal, kind: "resource_opened", subject: "pauseai-learn")
   end
+
+  test "opening the Montréal event link counts an anonymous browser once", %{conn: conn} do
+    path = ~p"/engagement/event-links/montreal-protest-2026-09-26"
+
+    conn = post(conn, path)
+    assert response(conn, 204)
+    assert conn |> recycle() |> post(path) |> response(204)
+
+    assert Repo.aggregate(LearningSignal, :count) == 1
+
+    assert Repo.get_by!(LearningSignal,
+             kind: "event_link_opened",
+             subject: "montreal-protest-2026-09-26"
+           )
+  end
+
+  test "unknown event links are not recorded", %{conn: conn} do
+    assert conn |> post(~p"/engagement/event-links/unknown-event") |> response(422)
+    refute Repo.one(LearningSignal)
+  end
 end

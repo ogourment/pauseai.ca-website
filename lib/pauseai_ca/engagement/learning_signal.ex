@@ -2,7 +2,7 @@ defmodule PauseAiCa.Engagement.LearningSignal do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @kinds ~w(question_answered questionnaire_completed learn_page_visited resource_opened resource_bookmarked)
+  @kinds ~w(question_answered questionnaire_completed learn_page_visited resource_opened resource_bookmarked event_link_opened)
 
   schema "learning_signals" do
     field :visitor_id, Ecto.UUID

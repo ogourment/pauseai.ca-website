@@ -259,6 +259,8 @@ defmodule PauseAiCaWeb.Layouts do
       <a
         id="montreal-protest-banner"
         href="https://luma.com/d40dp5ed"
+        phx-hook=".TrackOutbound"
+        data-event="montreal-protest-2026-09-26"
         class="block bg-stone-950 px-5 py-3 text-center text-white transition hover:bg-stone-800 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-white"
       >
         <span class="font-heading text-sm font-bold uppercase tracking-[0.16em]">
@@ -269,6 +271,30 @@ defmodule PauseAiCaWeb.Layouts do
           <span aria-hidden="true">→</span>
         </span>
       </a>
+
+      <script :type={Phoenix.LiveView.ColocatedHook} name=".TrackOutbound">
+        export default {
+          mounted() {
+            this.el.addEventListener("click", () => {
+              const event = this.el.dataset.event
+              const csrfToken = document.querySelector("meta[name='csrf-token']")?.content
+
+              fetch(`/engagement/event-links/${event}`, {
+                method: "POST",
+                headers: {"x-csrf-token": csrfToken},
+                keepalive: true
+              }).catch(() => {})
+
+              if (window.gtag) {
+                window.gtag("event", "select_content", {
+                  content_type: "event_rsvp",
+                  content_id: event
+                })
+              }
+            })
+          }
+        }
+      </script>
 
       <.link
         :if={@promote_warning_shot}
