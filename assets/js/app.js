@@ -19,6 +19,7 @@
 
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
 import "phoenix_html"
+import "./signup_analytics"
 // Establish Phoenix Socket and LiveView configuration.
 import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
@@ -39,6 +40,16 @@ window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
 
 // connect if there are any LiveViews on the page
 liveSocket.connect()
+
+// Controllers have no LiveView to mount shared page hooks. Reuse their exact
+// implementations rather than duplicating consent and outbound tracking.
+if (!document.querySelector('[data-phx-main]')) {
+  document.querySelectorAll('[phx-hook]').forEach(el => {
+    const name = el.getAttribute('phx-hook')
+    const shared = ['PauseAiCaWeb.Analytics.Analytics', 'PauseAiCaWeb.Layouts.TrackOutbound', 'PauseAiCaWeb.Layouts.SignupSuccess']
+    if (shared.includes(name)) colocatedHooks[name]?.mounted.call({el})
+  })
+}
 
 // expose liveSocket on window for web console debug logs and latency simulation:
 // >> liveSocket.enableDebug()
@@ -85,7 +96,7 @@ function initializeBeliefCheck() {
   let answers = {}
 
   try {
-    answers = JSON.parse(localStorage.getItem(beliefStorageKey) || "{}")
+    answers = JSON.parse(check.dataset.accountAnswers || localStorage.getItem(beliefStorageKey) || "{}")
   } catch (_error) {
     answers = {}
   }
@@ -101,9 +112,9 @@ function initializeBeliefCheck() {
     })
     const complete = ["risk", "pause", "coordination"].every(key => answers[key] !== undefined)
     document.querySelector("#save-progress-invitation")?.classList.toggle("hidden", !complete)
-    const saveLink = document.querySelector("#save-question-progress")
+  const saveLink = document.querySelector("#save-question-progress")
     if (saveLink && complete) {
-      const params = new URLSearchParams({from: "questions", ...answers})
+      const params = new URLSearchParams({from: "questions", locale})
       saveLink.href = `/users/register?${params.toString()}`
     }
   }
@@ -117,13 +128,22 @@ function initializeBeliefCheck() {
     const csrfToken = document.querySelector("meta[name='csrf-token']")?.content
     const complete = ["risk", "pause", "coordination"].every(key => answers[key] !== undefined)
 
-    fetch(`/learning/questions/${question}`, {
+    const write = fetch(`/learning/questions/${question}`, {
       method: "POST",
       headers: {"content-type": "application/json", "x-csrf-token": csrfToken},
       keepalive: true,
       body: JSON.stringify({answer: answers[question], complete})
     }).catch(() => {})
+    pendingWrites.push(write)
   }
+
+  const pendingWrites = []
+  document.querySelector("#save-question-progress")?.addEventListener("click", async event => {
+    event.preventDefault()
+    const destination = event.currentTarget.href
+    await Promise.all(pendingWrites)
+    window.location.assign(destination)
+  })
 
   check.querySelectorAll(".belief-question").forEach(question => {
     question.querySelectorAll("[data-answer]").forEach(button => {

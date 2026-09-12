@@ -27,7 +27,7 @@ defmodule PauseAiCa.CampaignsTest do
       dates = Enum.map(campaign.updates, & &1.date)
 
       assert dates == Enum.sort(dates, {:desc, Date})
-      assert campaign.reviewed_on == ~D[2026-08-29]
+      assert campaign.reviewed_on == ~D[2026-09-12]
     end
 
     test "every development cites a source a reader can check" do
@@ -41,6 +41,20 @@ defmodule PauseAiCa.CampaignsTest do
           assert copy.summary != ""
         end
       end
+    end
+
+    test "political demands and attributed researcher warnings are not incident evidence" do
+      updates = Campaigns.current_warning_shot().updates
+
+      for update <-
+            Enum.filter(
+              updates,
+              &(&1.publisher in ["PauseAI", "WIRED", "Fifteen U.S. state attorneys general"])
+            ) do
+        assert update.category == :public_response
+      end
+
+      assert Enum.find(updates, &(&1.publisher == "Hugging Face")).category == :incident
     end
 
     test "uses primary sources for the incident and its official follow-ups" do

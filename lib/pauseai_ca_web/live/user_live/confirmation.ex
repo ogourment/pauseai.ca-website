@@ -6,7 +6,7 @@ defmodule PauseAiCaWeb.UserLive.Confirmation do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash} current_scope={@current_scope}>
+    <Layouts.app flash={@flash} current_scope={@current_scope} locale={@locale}>
       <div class="mx-auto max-w-sm">
         <div class="text-center">
           <.header>Welcome {@user.email}</.header>
@@ -29,10 +29,10 @@ defmodule PauseAiCaWeb.UserLive.Confirmation do
             phx-disable-with="Confirming..."
             class="btn btn-primary w-full"
           >
-            Confirm and stay logged in
+            {gettext("Confirm and stay logged in")}
           </.button>
           <.button phx-disable-with="Confirming..." class="btn btn-primary btn-soft w-full mt-2">
-            Confirm and log in only this time
+            {gettext("Confirm and log in only this time")}
           </.button>
         </.form>
 
@@ -49,7 +49,7 @@ defmodule PauseAiCaWeb.UserLive.Confirmation do
           <.continuation_fields continuation={@continuation} />
           <%= if @current_scope do %>
             <.button phx-disable-with="Logging in..." class="btn btn-primary w-full">
-              Log in
+              {gettext("Log in")}
             </.button>
           <% else %>
             <.button
@@ -58,10 +58,10 @@ defmodule PauseAiCaWeb.UserLive.Confirmation do
               phx-disable-with="Logging in..."
               class="btn btn-primary w-full"
             >
-              Keep me logged in on this device
+              {gettext("Keep me logged in on this device")}
             </.button>
             <.button phx-disable-with="Logging in..." class="btn btn-primary btn-soft w-full mt-2">
-              Log me in only this time
+              {gettext("Log me in only this time")}
             </.button>
           <% end %>
         </.form>
@@ -76,6 +76,10 @@ defmodule PauseAiCaWeb.UserLive.Confirmation do
 
   @impl true
   def mount(%{"token" => token} = params, _session, socket) do
+    locale = if params["locale"] == "fr", do: "fr", else: "en"
+    Gettext.put_locale(PauseAiCaWeb.Gettext, locale)
+    socket = assign(socket, :locale, locale)
+
     if user = Accounts.get_user_by_magic_link_token(token) do
       form = to_form(%{"token" => token}, as: "user")
 
@@ -83,7 +87,7 @@ defmodule PauseAiCaWeb.UserLive.Confirmation do
        assign(socket,
          user: user,
          form: form,
-         continuation: Map.take(params, ~w(bookmark risk pause coordination)),
+         continuation: Map.take(params, ~w(flow bookmark risk pause coordination)),
          trigger_submit: false
        ), temporary_assigns: [form: nil]}
     else
@@ -93,7 +97,7 @@ defmodule PauseAiCaWeb.UserLive.Confirmation do
          :error,
          "This sign-in link is invalid or has expired. Request a new one below. · Ce lien de connexion est invalide ou a expiré. Demandez-en un nouveau ci-dessous."
        )
-       |> push_navigate(to: ~p"/users/log-in")}
+       |> push_navigate(to: ~p"/users/log-in?#{Map.take(params, ~w(flow locale))}")}
     end
   end
 

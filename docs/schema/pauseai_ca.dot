@@ -275,6 +275,7 @@ digraph Schema {
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">custom_resource_urls</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">_varchar NOT NULL</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">city</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">character varying</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">name</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">character varying</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">signup_entry_point</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">character varying</FONT></TD></TR>
       </TABLE>
     >
   ];

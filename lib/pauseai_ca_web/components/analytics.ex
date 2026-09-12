@@ -67,6 +67,10 @@ defmodule PauseAiCaWeb.Analytics do
             const id = this.el.dataset.ga
             const banner = this.el.querySelector("#consent-banner")
 
+            // Private routes can carry ownership links and personal context.
+            // Success events are queued locally and flushed on a public page.
+            if (!window.pauseaiSignupAnalytics.publicPage()) return
+
             const load = () => {
               if (document.getElementById("ga-script")) return
               const s = document.createElement("script")
@@ -80,7 +84,17 @@ defmodule PauseAiCaWeb.Analytics do
               gtag("js", new Date())
               // No advertising signals, and IPs truncated: we want to know which
               // pages help, not who read them.
-              gtag("config", id, { anonymize_ip: true, allow_google_signals: false })
+              gtag("config", id, {
+                anonymize_ip: true, allow_google_signals: false,
+                send_page_view: false,
+                page_location: location.origin + location.pathname,
+                page_referrer: location.origin,
+              })
+              gtag("event", "page_view", {
+                page_location: location.origin + location.pathname,
+                page_referrer: location.origin,
+              })
+              window.pauseaiSignupAnalytics.flush()
             }
 
             const decide = (value) => {

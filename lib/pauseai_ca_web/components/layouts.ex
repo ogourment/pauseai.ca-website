@@ -46,7 +46,10 @@ defmodule PauseAiCaWeb.Layouts do
   def app(assigns) do
     ~H"""
     <header class="sticky top-0 z-40 border-b border-stone-200/80 bg-[#f8f5ed]/95 backdrop-blur">
-      <nav class="mx-auto flex max-w-6xl items-center gap-5 px-5 py-4" aria-label="Main navigation">
+      <nav
+        class="mx-auto flex max-w-6xl items-center gap-2 px-3 py-4 sm:gap-5 sm:px-5"
+        aria-label="Main navigation"
+      >
         <a
           href={if(@locale == "fr", do: ~p"/fr", else: ~p"/en")}
           class="mr-auto flex items-center gap-3"
@@ -67,16 +70,16 @@ defmodule PauseAiCaWeb.Layouts do
               {PauseAiCa.Environment.label()}
             </span>
           </span>
-          <span class="font-semibold tracking-tight text-stone-900">PauseAI Canada</span>
+          <span class="hidden font-semibold tracking-tight text-stone-900 sm:inline">PauseAI Canada</span>
         </a>
         <.link
-          class="text-base font-medium text-stone-700 hover:text-stone-950"
+          class="hidden text-base font-medium text-stone-700 hover:text-stone-950 md:inline"
           navigate={if(@locale == "fr", do: ~p"/fr/comprendre", else: ~p"/en/learn")}
         >
           {gettext("Learn")}
         </.link>
         <.link
-          class="text-base font-medium text-brand-ink hover:text-stone-950"
+          class="hidden text-base font-medium text-brand-ink hover:text-stone-950 md:inline"
           navigate={if(@locale == "fr", do: ~p"/fr/tir-de-semonce", else: ~p"/en/warning-shot")}
         >
           {gettext("Warning shot")}
@@ -88,6 +91,14 @@ defmodule PauseAiCaWeb.Layouts do
             <span aria-hidden="true" class="text-xs">▾</span>
           </summary>
           <div class="absolute right-0 z-50 mt-2 w-64 overflow-hidden rounded-xl border border-stone-200 bg-white shadow-lg">
+            <.link
+              navigate={if(@locale == "fr", do: ~p"/fr/comprendre", else: ~p"/en/learn")}
+              class="block px-4 py-3 font-semibold hover:bg-brand-wash md:hidden"
+            >{gettext("Learn")}</.link>
+            <.link
+              navigate={if(@locale == "fr", do: ~p"/fr/tir-de-semonce", else: ~p"/en/warning-shot")}
+              class="block px-4 py-3 font-semibold hover:bg-brand-wash md:hidden"
+            >{gettext("Warning shot")}</.link>
             <.link
               href={if(@locale == "fr", do: ~p"/fr/strategie", else: ~p"/en/strategy")}
               class="block border-b border-stone-100 px-4 py-3 hover:bg-brand-wash"
@@ -195,7 +206,7 @@ defmodule PauseAiCaWeb.Layouts do
 
         <%= if @current_scope do %>
           <details id="account-menu" class="act-menu relative">
-            <summary class="max-w-48 cursor-pointer list-none truncate text-base font-medium text-stone-700 hover:text-stone-950">
+            <summary class="max-w-24 cursor-pointer list-none truncate text-base font-medium text-stone-700 hover:text-stone-950 sm:max-w-48">
               {@current_scope.user.email}
               <span aria-hidden="true" class="text-xs">▾</span>
             </summary>
@@ -252,10 +263,11 @@ defmodule PauseAiCaWeb.Layouts do
             {gettext("Français")}
           </a>
           <.link
-            class="rounded-full bg-stone-900 px-4 py-2 text-base font-semibold text-white hover:bg-stone-700"
-            href={~p"/users/log-in"}
+            id="account-entry"
+            class="whitespace-nowrap rounded-full bg-stone-900 px-3 py-2 text-sm font-semibold text-white hover:bg-stone-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand sm:px-4 sm:text-base"
+            href={~p"/users/log-in?#{%{from: "header", locale: @locale}}"}
           >
-            {gettext("Sign in")}
+            {gettext("Sign in / Sign up")}
           </.link>
         <% end %>
       </nav>
@@ -352,6 +364,21 @@ defmodule PauseAiCaWeb.Layouts do
 
     <.flash_group flash={@flash} />
     <.analytics measurement_id={analytics_id()} locale={@locale} />
+    <div
+      :if={Phoenix.Flash.get(@flash, :signup_metric)}
+      id="signup-success-event"
+      phx-hook=".SignupSuccess"
+      phx-update="ignore"
+      hidden
+      data-event={Phoenix.Flash.get(@flash, :signup_metric)}
+    />
+    <script :type={Phoenix.LiveView.ColocatedHook} name=".SignupSuccess">
+      export default {
+        mounted() {
+          try { window.pauseaiSignupAnalytics.queue(JSON.parse(this.el.dataset.event)) } catch (_e) {}
+        }
+      }
+    </script>
     """
   end
 

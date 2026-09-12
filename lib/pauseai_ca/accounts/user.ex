@@ -10,6 +10,7 @@ defmodule PauseAiCa.Accounts.User do
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
     field :confirmed_at, :utc_datetime
+    field :signup_entry_point, :string
     field :authenticated_at, :utc_datetime, virtual: true
     field :superadmin, :boolean, default: false
     field :fsa, :string

@@ -21,6 +21,7 @@ config :pauseai_ca, PauseAiCa.Repo,
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
 config :pauseai_ca, PauseAiCaWeb.Endpoint,
+  url: [host: "127.0.0.1", port: atdd_port, scheme: "http"],
   http: [ip: {127, 0, 0, 1}, port: atdd_port],
   check_origin: ["//127.0.0.1:#{atdd_port}"],
   secret_key_base: "5Vkv9MzGeaVJ8q0JxD/hSW9dy6yp4ICThE+njQukPZmS5oWfYq0KFVadquCale9t",

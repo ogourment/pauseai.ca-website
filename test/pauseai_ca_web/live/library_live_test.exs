@@ -54,7 +54,7 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
       for resource <- PauseAiCa.Library.resources() do
         assert has_element?(
                  anonymous_view,
-                 "#resource-#{resource.id} a[href='/users/register?bookmark=#{resource.id}']"
+                 "#resource-#{resource.id} a[href='/users/register?bookmark=#{resource.id}&locale=en']"
                )
       end
 

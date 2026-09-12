@@ -4,7 +4,6 @@ if System.get_env("ATDD") == "true" do
 
     import PauseAiCa.AccountsFixtures
 
-    alias AcceptanceHarness.BrowserScreenshot
     alias PauseAiCa.{Engagement, Repo}
     alias PauseAiCaWeb.AtddEvidence
 
@@ -110,7 +109,7 @@ if System.get_env("ATDD") == "true" do
       )
       |> visit("/fr/comprendre")
       |> assert_has(
-        "#resource-pauseai-learn a[href='/users/register?bookmark=pauseai-learn']",
+        "#resource-pauseai-learn a[href='/users/register?bookmark=pauseai-learn&locale=fr']",
         text: "Enregistrer"
       )
 
@@ -212,10 +211,10 @@ if System.get_env("ATDD") == "true" do
       browser =
         browser
         |> visit("/users/register")
-        |> fill_in("Email · Courriel", with: newcomer_email)
-        |> click_button("Create account · Créer le compte")
-        |> assert_path("/users/log-in")
-        |> assert_has("[role='alert']", text: newcomer_email)
+        |> fill_in("Email", with: newcomer_email)
+        |> click_button("Email me a secure link")
+        |> assert_path("/users/register")
+        |> assert_has("#account-email-pending", text: "Check your email")
 
       newcomer = PauseAiCa.Accounts.get_user_by_email(newcomer_email)
       {newcomer_token, _token} = generate_user_magic_link_token(newcomer)
@@ -277,7 +276,7 @@ if System.get_env("ATDD") == "true" do
 
     defp capture(conn, filename, scenario, description, opts \\ []) do
       started_at = System.monotonic_time(:millisecond)
-      conn = BrowserScreenshot.capture(conn, filename, &PhoenixTest.Playwright.screenshot/2)
+      conn = AtddEvidence.capture_full_page(conn, filename)
       duration_ms = System.monotonic_time(:millisecond) - started_at
 
       AtddEvidence.record_step(filename, scenario.title, description, %{

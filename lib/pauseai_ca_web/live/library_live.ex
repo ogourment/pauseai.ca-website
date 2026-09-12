@@ -228,11 +228,14 @@ defmodule PauseAiCaWeb.LibraryLive do
                   class="mt-4 inline-flex w-fit items-center gap-2 rounded-full border border-stone-300 px-4 py-2 text-sm font-semibold text-stone-700 hover:border-brand"
                 >
                   <.icon name="hero-bookmark" class="size-4" />
-                  {bookmark_label(@locale)}
+                  {if(resource.id in @current_scope.user.saved_resources,
+                    do: gettext("Saved"),
+                    else: bookmark_label(@locale)
+                  )}
                 </.link>
               <% else %>
                 <.link
-                  href={~p"/users/register?bookmark=#{resource.id}"}
+                  href={~p"/users/register?#{%{bookmark: resource.id, locale: @locale}}"}
                   class="mt-4 inline-flex w-fit items-center gap-2 rounded-full border border-stone-300 px-4 py-2 text-sm font-semibold text-stone-700 hover:border-brand"
                 >
                   <.icon name="hero-bookmark" class="size-4" />

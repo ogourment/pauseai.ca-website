@@ -26,7 +26,12 @@ defmodule PauseAiCaWeb.AuthLayout do
 
         <div class="p-7 sm:p-8">
           <h1 class="font-heading text-3xl leading-tight text-stone-950">{@title_en}</h1>
-          <p class="mt-1 font-heading text-xl leading-tight text-stone-500">{@title_fr}</p>
+          <p
+            :if={@title_fr != @title_en}
+            class="mt-1 font-heading text-xl leading-tight text-stone-500"
+          >
+            {@title_fr}
+          </p>
 
           <div :if={@subtitle != []} class="mt-4 leading-7 text-stone-600">
             {render_slot(@subtitle)}

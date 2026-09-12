@@ -872,6 +872,9 @@ defmodule PauseAiCaWeb.WarningShotLive do
             <p class="mt-3 text-sm text-stone-500">
               {String.replace(@copy.updates_note, "%{date}", Date.to_iso8601(@campaign.reviewed_on))}
             </p>
+            <p id="mainstream-safety-context" class="mt-5 max-w-3xl leading-7 text-stone-700">
+              {@copy.mainstream_note}
+            </p>
 
             <ol id="developments-list" class="mt-8 border-l-2 border-stone-200">
               <li
@@ -889,6 +892,11 @@ defmodule PauseAiCaWeb.WarningShotLive do
                 >
                   {Date.to_iso8601(update.date)}
                 </time>
+                <span class="ml-2 rounded-full bg-stone-100 px-2 py-1 text-xs font-semibold text-stone-700">
+                  {if update.category == :public_response,
+                    do: gettext("Public and political response"),
+                    else: gettext("Incident evidence")}
+                </span>
                 <h3 class="mt-1 font-heading text-2xl leading-snug text-stone-950">
                   <a
                     href={update.url}

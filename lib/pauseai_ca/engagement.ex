@@ -178,6 +178,106 @@ defmodule PauseAiCa.Engagement do
 
   @trend_days 14
 
+  @doc "Recruitment stages for one creation cohort, excluding current superadmins."
+  def signup_funnel(params \\ %{}) do
+    today = Date.utc_today()
+    to = parse_cohort_date(params["to"], today)
+    requested_from = parse_cohort_date(params["from"], Date.add(to, -13))
+
+    from_date =
+      cond do
+        Date.compare(requested_from, to) == :gt -> to
+        Date.compare(requested_from, Date.add(to, -365)) == :lt -> Date.add(to, -365)
+        true -> requested_from
+      end
+
+    source =
+      if params["source"] in PauseAiCa.Accounts.Onboarding.sources(),
+        do: params["source"],
+        else: "all"
+
+    starts_at = DateTime.new!(from_date, ~T[00:00:00])
+    ends_at = DateTime.new!(Date.add(to, 1), ~T[00:00:00])
+    as_of = DateTime.utc_now(:second)
+
+    first_actions =
+      from a in Action,
+        where: not is_nil(a.confirmed_at) and a.confirmed_at <= ^as_of,
+        group_by: a.user_id,
+        select: %{user_id: a.user_id, first_action_at: min(a.confirmed_at)}
+
+    query =
+      from u in PauseAiCa.Accounts.User,
+        left_join: a in subquery(first_actions),
+        on: a.user_id == u.id,
+        where: not u.superadmin and u.inserted_at >= ^starts_at and u.inserted_at < ^ends_at,
+        select: %{
+          created_at: u.inserted_at,
+          confirmed_at: u.confirmed_at,
+          source: u.signup_entry_point,
+          first_action_at: a.first_action_at
+        }
+
+    query =
+      case source do
+        "all" ->
+          query
+
+        "unknown" ->
+          from [u, _a] in query,
+            where: is_nil(u.signup_entry_point) or u.signup_entry_point == "unknown"
+
+        value ->
+          from [u, _a] in query, where: u.signup_entry_point == ^value
+      end
+
+    rows = Repo.all(query)
+
+    confirmed? = fn row ->
+      row.confirmed_at && DateTime.compare(row.confirmed_at, as_of) != :gt
+    end
+
+    active? = fn row -> confirmed?.(row) && not is_nil(row.first_action_at) end
+    dates = Date.range(from_date, to) |> Enum.to_list()
+
+    trend = fn predicate ->
+      Enum.map(dates, fn day ->
+        Enum.count(rows, &(DateTime.to_date(&1.created_at) == day and predicate.(&1)))
+      end)
+    end
+
+    confirmed = Enum.count(rows, confirmed?)
+
+    %{
+      from: from_date,
+      to: to,
+      source: source,
+      as_of: as_of,
+      created: length(rows),
+      confirmed: confirmed,
+      pending: length(rows) - confirmed,
+      first_action: Enum.count(rows, active?),
+      sources:
+        Enum.map(PauseAiCa.Accounts.Onboarding.sources(), fn key ->
+          {key, Enum.count(rows, &((&1.source || "unknown") == key))}
+        end),
+      trends: %{
+        created: trend.(fn _ -> true end),
+        confirmed: trend.(confirmed?),
+        first_action: trend.(active?)
+      }
+    }
+  end
+
+  defp parse_cohort_date(value, fallback) when is_binary(value) do
+    case Date.from_iso8601(value) do
+      {:ok, date} -> date
+      _ -> fallback
+    end
+  end
+
+  defp parse_cohort_date(_, fallback), do: fallback
+
   @doc "Record one anonymous visit in a daily aggregate."
   def record_visit(visited_on \\ Date.utc_today()) do
     Repo.insert!(

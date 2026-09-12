@@ -1,112 +1,63 @@
 defmodule PauseAiCaWeb.UserLive.RegistrationTest do
   use PauseAiCaWeb.ConnCase, async: true
-
   import Phoenix.LiveViewTest
   import PauseAiCa.AccountsFixtures
   alias PauseAiCa.Accounts
 
-  describe "Registration page" do
-    test "renders registration page", %{conn: conn} do
-      {:ok, _lv, html} = live(conn, ~p"/users/register")
-
-      assert html =~ "Create an account"
-      assert html =~ "Sign in"
-    end
-
-    test "redirects if already logged in", %{conn: conn} do
-      result =
-        conn
-        |> log_in_user(user_fixture())
-        |> live(~p"/users/register")
-        |> follow_redirect(conn, ~p"/")
-
-      assert {:ok, _conn} = result
-    end
-
-    test "renders errors for invalid data", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/register")
-
-      result =
-        lv
-        |> element("#registration_form")
-        |> render_change(user: %{"email" => "with spaces"})
-
-      assert result =~ "Create an account"
-      assert result =~ "must have the @ sign and no spaces"
-    end
+  test "registration shares the recoverable email entry", %{conn: conn} do
+    {:ok, view, _} = live(conn, ~p"/users/register")
+    assert has_element?(view, "#registration_form")
+    assert render(view) =~ "Create an account"
   end
 
-  describe "register user" do
-    test "creates account but does not log in", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/register")
+  test "already logged-in users do not create a second account", %{conn: conn} do
+    result =
+      conn
+      |> log_in_user(user_fixture())
+      |> live(~p"/users/register")
+      |> follow_redirect(conn, ~p"/")
 
-      email = unique_user_email()
-      form = form(lv, "#registration_form", user: valid_user_attributes(email: email))
-
-      {:ok, _lv, html} =
-        render_submit(form)
-        |> follow_redirect(conn, ~p"/users/log-in")
-
-      assert html =~ "Check #{email} for your secure sign-in link."
-    end
-
-    test "saves the bookmarked argument with the email account", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/register?bookmark=risk")
-      email = unique_user_email()
-
-      lv
-      |> form("#registration_form", user: valid_user_attributes(email: email))
-      |> render_submit()
-
-      assert Accounts.get_user_by_email(email).saved_resources == ["risk"]
-    end
-
-    test "saves question progress with the email account", %{conn: conn} do
-      {:ok, lv, _html} =
-        live(conn, ~p"/users/register?from=questions&risk=4&pause=3&coordination=2")
-
-      email = unique_user_email()
-
-      lv
-      |> form("#registration_form", user: valid_user_attributes(email: email))
-      |> render_submit()
-
-      assert Accounts.get_user_by_email(email).belief_answers == %{
-               "risk" => "4",
-               "pause" => "3",
-               "coordination" => "2"
-             }
-    end
-
-    test "switches an existing email to secure sign-in and preserves the bookmark", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/register?bookmark=risk")
-
-      user = user_fixture(%{email: "test@email.com"})
-
-      {:ok, _login_live, html} =
-        lv
-        |> form("#registration_form",
-          user: %{"email" => user.email}
-        )
-        |> render_submit()
-        |> follow_redirect(conn, ~p"/users/log-in")
-
-      assert html =~ "An account already exists for #{user.email}."
-      refute html =~ "has already been taken"
-    end
+    assert {:ok, _conn} = result
   end
 
-  describe "registration navigation" do
-    test "redirects to login page when the Log in button is clicked", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/register")
+  test "invalid submission retains the email and task", %{conn: conn} do
+    {:ok, view, _} = live(conn, ~p"/users/register?bookmark=risk")
+    view |> form("#registration_form", user: %{email: "with spaces"}) |> render_submit()
+    assert has_element?(view, "#registration_form", "must have the @ sign")
+    assert has_element?(view, "#registration_form_email[value='with spaces']")
+  end
 
-      {:ok, _login_live, login_html} =
-        lv
-        |> element("main a", "Sign in")
-        |> render_click()
-        |> follow_redirect(conn, ~p"/users/log-in")
+  test "delivered confirmation resumes the task, without applying it before ownership", %{
+    conn: conn
+  } do
+    {:ok, view, _} = live(conn, ~p"/users/register?bookmark=risk&locale=fr")
+    email = unique_user_email()
+    view |> form("#registration_form", user: %{email: email}) |> render_submit()
+    assert has_element?(view, "#account-email-pending")
+    assert Accounts.get_user_by_email(email).saved_resources == []
+    assert_receive {:email, delivered}
+    [link] = Regex.run(~r{https?://[^\s]+/users/log-in/[^\s]+}, delivered.text_body)
+    uri = URI.parse(link)
+    params = URI.decode_query(uri.query)
+    token = uri.path |> String.split("/") |> List.last()
+    conn = post(conn, ~p"/users/log-in", user: %{token: token, flow: params["flow"]})
+    assert redirected_to(conn) == "/fr/comprendre"
+    assert Accounts.get_user_by_email(email).saved_resources == ["risk"]
+    assert Accounts.get_user_by_email(email).confirmed_at
+  end
 
-      assert login_html =~ "Sign in"
-    end
+  test "existing address receives generic feedback and keeps its original resources", %{
+    conn: conn
+  } do
+    user = user_fixture()
+    assert_receive {:email, _fixture_confirmation}
+    {:ok, user} = Accounts.save_resource(user, "pause")
+    {:ok, view, _} = live(conn, ~p"/users/register?bookmark=risk")
+    view |> form("#registration_form", user: %{email: user.email}) |> render_submit()
+    assert has_element?(view, "#account-email-pending")
+    assert Accounts.get_user_by_email(user.email).saved_resources == ["pause"]
+    refute render(view) =~ "already exists"
+    assert_receive {:email, delivered}
+    assert delivered.subject =~ "Your sign-in link"
   end
 end

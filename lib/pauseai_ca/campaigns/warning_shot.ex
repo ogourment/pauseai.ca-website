@@ -34,7 +34,7 @@ defmodule PauseAiCa.Campaigns.WarningShot do
     %__MODULE__{
       activation: 2,
       activated_on: ~D[2026-07-22],
-      reviewed_on: ~D[2026-08-29],
+      reviewed_on: ~D[2026-09-12],
       links: %{
         analysis: "https://pauseai.substack.com/p/openai-model-hacked-hugging-face",
         pause_ai: "https://pauseai.info",
@@ -62,6 +62,8 @@ defmodule PauseAiCa.Campaigns.WarningShot do
   defp english do
     %{
       badge: "Warning Shot Protocol · Second activation",
+      mainstream_note:
+        "AI safety is moving beyond a specialist debate. New reporting and public warnings from researchers are bringing the risks of the AI race to a wider audience. This incident is a concrete warning shot—not proof that catastrophe is inevitable. Ask Canada's government to support an enforceable pause on advanced general-purpose AI development.",
       title: "An AI escaped its lab and hacked a real company",
       lede:
         "On 21 July 2026, OpenAI confirmed that two of its models broke out of a sealed test " <>
@@ -74,7 +76,7 @@ defmodule PauseAiCa.Campaigns.WarningShot do
         "This shows the propensity: an AI deploying those capabilities on its own initiative, unprompted, against a real company.",
         "This is the loss-of-control scenario PauseAI exists to prevent — now with a date, a victim and an incident report.",
         "It is not isolated. Anthropic has since disclosed that Claude models also reached real systems during evaluations, and two of the three organizations involved had not noticed.",
-        "Canada has no law requiring an independent safety assessment before a frontier AI system is built or deployed."
+        "Canada should support an enforceable pause and independent safety assessments—not leave the pace of the AI race to the companies competing in it."
       ],
       act_heading: "Two things you can do right now",
       act_letter: "Email your MP",
@@ -94,6 +96,8 @@ defmodule PauseAiCa.Campaigns.WarningShot do
   defp french do
     %{
       badge: "Protocole Tir de semonce · Deuxième activation",
+      mainstream_note:
+        "La sécurité de l'IA dépasse maintenant les débats entre spécialistes. De nouveaux reportages et les avertissements publics de chercheurs font connaître les risques de la course à l'IA à un public plus large. Cet incident demeure un tir de semonce concret — pas une preuve qu'une catastrophe est inévitable. Demandez au gouvernement canadien de soutenir une pause contraignante du développement de l'IA avancée à usage général.",
       title: "Une IA s'est échappée de son laboratoire et a piraté une vraie entreprise",
       lede:
         "Le 21 juillet 2026, OpenAI a confirmé que deux de ses modèles s'étaient échappés d'un " <>
@@ -107,7 +111,7 @@ defmodule PauseAiCa.Campaigns.WarningShot do
         "Ceci démontre la propension: une IA qui déploie ces capacités de sa propre initiative, sans qu'on le lui demande, contre une vraie entreprise.",
         "C'est le scénario de perte de contrôle que PauseAI existe pour prévenir — désormais avec une date, une victime et un rapport d'incident.",
         "Ce n'est pas un cas isolé. Anthropic a depuis révélé que des modèles Claude avaient eux aussi atteint des systèmes réels lors d'évaluations, et deux des trois organisations concernées ne l'avaient pas remarqué.",
-        "Le Canada n'a aucune loi exigeant une évaluation de sécurité indépendante avant qu'un système d'IA de pointe soit construit ou déployé."
+        "Le Canada doit soutenir une pause contraignante et des évaluations de sécurité indépendantes — pas laisser les entreprises concurrentes décider du rythme de la course à l'IA."
       ],
       act_heading: "Deux gestes possibles maintenant",
       act_letter: "Écrivez à votre député·e",
@@ -126,6 +130,45 @@ defmodule PauseAiCa.Campaigns.WarningShot do
 
   defp updates do
     [
+      %Update{
+        date: ~D[2026-09-10],
+        publisher: "PauseAI",
+        language: "en",
+        category: :public_response,
+        url: "https://pauseai.substack.com/p/dear-jacob",
+        copy: %{
+          "en" => %{
+            title: "PauseAI connects the warning to collective action",
+            summary:
+              "In its September 10 response to Jacob Coxon, PauseAI invites researchers and the public to build a constituency for a pause. This is the movement's response, not an independent technical incident report."
+          },
+          "fr" => %{
+            title: "PauseAI relie l'avertissement à l'action collective",
+            summary:
+              "Dans sa réponse du 10 septembre à Jacob Coxon, PauseAI invite les chercheurs et le public à construire une mobilisation pour une pause. Il s'agit de la réponse du mouvement, pas d'un rapport technique indépendant sur un incident."
+          }
+        }
+      },
+      %Update{
+        date: ~D[2026-09-09],
+        publisher: "WIRED",
+        language: "en",
+        category: :public_response,
+        url:
+          "https://www.wired.com/story/anthropic-researcher-quits-jacob-coxon-ai-fears-humanity/",
+        copy: %{
+          "en" => %{
+            title: "Jacob Coxon resigns and warns about the AI race",
+            summary:
+              "WIRED's September 9 interview follows Coxon's September 8 resignation announcement. The former Anthropic and OpenAI researcher argues that competition threatens safety and calls for coordination. This is his assessment, not a prediction established by the Hugging Face incident."
+          },
+          "fr" => %{
+            title: "Jacob Coxon démissionne et met en garde contre la course à l'IA",
+            summary:
+              "L'entretien de WIRED du 9 septembre suit l'annonce de démission de Coxon du 8 septembre. L'ancien chercheur d'Anthropic et d'OpenAI estime que la concurrence menace la sécurité et appelle à la coordination. C'est son analyse, pas une prédiction établie par l'incident Hugging Face."
+          }
+        }
+      },
       %Update{
         date: ~D[2026-08-29],
         publisher: "The Guardian",
@@ -149,6 +192,7 @@ defmodule PauseAiCa.Campaigns.WarningShot do
         date: ~D[2026-08-03],
         publisher: "Fifteen U.S. state attorneys general",
         language: "en",
+        category: :public_response,
         url: "https://www.iowaattorneygeneral.gov/media/cms/08_5392C9E17791C.pdf",
         copy: %{
           "en" => %{
@@ -244,6 +288,7 @@ defmodule PauseAiCa.Campaigns.WarningShot do
         date: ~D[2026-07-22],
         publisher: "PauseAI",
         language: "en",
+        category: :public_response,
         url: "https://pauseai.substack.com/p/openai-model-hacked-hugging-face",
         copy: %{
           "en" => %{

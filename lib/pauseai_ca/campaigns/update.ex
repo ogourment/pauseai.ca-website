@@ -8,7 +8,7 @@ defmodule PauseAiCa.Campaigns.Update do
   """
 
   @enforce_keys [:date, :publisher, :language, :url, :copy]
-  defstruct [:date, :publisher, :language, :url, :copy]
+  defstruct [:date, :publisher, :language, :url, :copy, category: :incident]
 
   @type locale :: String.t()
 

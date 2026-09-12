@@ -75,13 +75,14 @@ defmodule PauseAiCa.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def register_user(attrs) do
+  def register_user(attrs, opts \\ []) do
     changeset = User.email_changeset(%User{}, attrs)
 
     if changeset.valid? do
       attrs
       |> import_subscriber_location(Ecto.Changeset.get_field(changeset, :email))
       |> then(&User.registration_changeset(%User{}, &1))
+      |> Ecto.Changeset.put_change(:signup_entry_point, Keyword.get(opts, :signup_entry_point))
       |> Repo.insert()
     else
       {:error, changeset}
@@ -324,30 +325,32 @@ defmodule PauseAiCa.Accounts do
      `mix help phx.gen.auth`.
   """
   def login_user_by_magic_link(token) do
-    {:ok, query} = UserToken.verify_magic_link_token_query(token)
+    with {:ok, query} <- UserToken.verify_magic_link_token_query(token) do
+      case Repo.one(query) do
+        # Prevent session fixation attacks by disallowing magic links for unconfirmed users with password
+        {%User{confirmed_at: nil, hashed_password: hash}, _token} when not is_nil(hash) ->
+          raise """
+          magic link log in is not allowed for unconfirmed users with a password set!
 
-    case Repo.one(query) do
-      # Prevent session fixation attacks by disallowing magic links for unconfirmed users with password
-      {%User{confirmed_at: nil, hashed_password: hash}, _token} when not is_nil(hash) ->
-        raise """
-        magic link log in is not allowed for unconfirmed users with a password set!
+          This cannot happen with the default implementation, which indicates that you
+          might have adapted the code to a different use case. Please make sure to read the
+          "Mixing magic link and password registration" section of `mix help phx.gen.auth`.
+          """
 
-        This cannot happen with the default implementation, which indicates that you
-        might have adapted the code to a different use case. Please make sure to read the
-        "Mixing magic link and password registration" section of `mix help phx.gen.auth`.
-        """
+        {%User{confirmed_at: nil} = user, _token} ->
+          user
+          |> User.confirm_changeset()
+          |> update_user_and_delete_all_tokens()
 
-      {%User{confirmed_at: nil} = user, _token} ->
-        user
-        |> User.confirm_changeset()
-        |> update_user_and_delete_all_tokens()
+        {user, token} ->
+          Repo.delete!(token)
+          {:ok, {user, []}}
 
-      {user, token} ->
-        Repo.delete!(token)
-        {:ok, {user, []}}
-
-      nil ->
-        {:error, :not_found}
+        nil ->
+          {:error, :not_found}
+      end
+    else
+      _ -> {:error, :not_found}
     end
   end
 

@@ -2,6 +2,7 @@ defmodule PauseAiCaWeb.UserSessionController do
   use PauseAiCaWeb, :controller
 
   alias PauseAiCa.{Accounts, Engagement}
+  alias PauseAiCa.Accounts.Onboarding
   alias PauseAiCaWeb.UserAuth
 
   def create(conn, %{"_action" => "confirmed"} = params) do
@@ -18,13 +19,25 @@ defmodule PauseAiCaWeb.UserSessionController do
 
   # magic link login
   defp create(conn, %{"user" => %{"token" => token} = user_params}, info) do
+    before = Accounts.get_user_by_magic_link_token(token)
+
     case Accounts.login_user_by_magic_link(token) do
       {:ok, {user, tokens_to_disconnect}} ->
         UserAuth.disconnect_sessions(tokens_to_disconnect)
-        save_continuation(conn, user, user_params)
+        context = Onboarding.restore(user_params["flow"], user)
+
+        conn =
+          if context == %{},
+            do: conn,
+            else: put_session(conn, :user_return_to, context["return_to"])
+
+        if context == %{},
+          do: save_continuation(conn, user, user_params),
+          else: Onboarding.apply_context(user, context, conn.assigns.learning_visitor_id)
 
         conn
         |> put_flash(:info, info)
+        |> confirmation_metric(before, user)
         |> UserAuth.log_in_user(user, user_params)
 
       _ ->
@@ -33,7 +46,7 @@ defmodule PauseAiCaWeb.UserSessionController do
           :error,
           "This sign-in link is invalid or has expired. Request a new one below. · Ce lien de connexion est invalide ou a expiré. Demandez-en un nouveau ci-dessous."
         )
-        |> redirect(to: ~p"/users/log-in")
+        |> redirect(to: ~p"/users/log-in?#{Map.take(user_params, ~w(flow))}")
     end
   end
 
@@ -72,6 +85,16 @@ defmodule PauseAiCaWeb.UserSessionController do
     answers = Map.take(params, ~w(risk pause coordination))
     if answers != %{}, do: Accounts.save_belief_answers(user, answers)
   end
+
+  defp confirmation_metric(conn, %{confirmed_at: nil}, user) do
+    put_flash(
+      conn,
+      :signup_metric,
+      Jason.encode!(%{event: "account_confirmed", source: user.signup_entry_point || "unknown"})
+    )
+  end
+
+  defp confirmation_metric(conn, _before, _user), do: conn
 
   def update_password(conn, %{"user" => user_params} = params) do
     user = conn.assigns.current_scope.user

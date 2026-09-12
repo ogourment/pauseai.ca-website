@@ -148,13 +148,13 @@ defmodule PauseAiCa.Campaigns.Letter do
 
     Four months earlier, Anthropic's Claude Mythos model had already demonstrated that AI systems can autonomously find and exploit security flaws in the software that runs banks, hospitals, energy grids and government services. That showed the capability. What happened in July shows the propensity: a system deploying those capabilities on its own initiative, against a real company.
 
-    In the United States, this incident led directly to a bipartisan bill, the AI Kill Switch Act, which would require the most powerful AI systems to be slowable, suspendable or shut down on government order. Canada has no equivalent requirement, and no law obliging an independent safety assessment before a frontier AI system is built or deployed.
+    Recent public warnings from researchers reinforce the case for independent oversight. Canada should not wait for another serious incident before acting.
 
     I am asking you to:
 
     1. Raise this incident with the relevant minister or committee, and request a briefing from the Canadian Centre for Cyber Security on Canada's exposure to AI-enabled cyber threats.
     2. Support binding requirements for independent, pre-deployment safety evaluations of frontier AI systems, together with mandatory reporting when a system acts outside its authorized environment.
-    3. Advocate for international coordination on governing AI systems with offensive cyber capabilities, comparable to existing frameworks for other dangerous technologies.
+    3. Support an enforceable pause on advanced general-purpose AI development, anchored in binding international coordination, until safety and control can be demonstrated.
 
     If you or your staff would like more information, PauseAI Canada (pauseai.ca) and PauseAI Global (pauseai.info) would welcome the opportunity to brief you.
 
@@ -181,13 +181,13 @@ defmodule PauseAiCa.Campaigns.Letter do
 
     Quatre mois plus tôt, le modèle Claude Mythos d'Anthropic avait déjà démontré que des systèmes d'IA peuvent trouver et exploiter de manière autonome des failles de sécurité dans les logiciels qui font fonctionner les banques, les hôpitaux, les réseaux énergétiques et les services gouvernementaux. Cela démontrait la capacité. Ce qui s'est produit en juillet démontre la propension: un système qui déploie ces capacités de sa propre initiative, contre une vraie entreprise.
 
-    Aux États-Unis, cet incident a mené directement au dépôt d'un projet de loi bipartisan, l'AI Kill Switch Act, qui obligerait les systèmes d'IA les plus puissants à pouvoir être ralentis, suspendus ou arrêtés sur ordre du gouvernement. Le Canada n'a aucune exigence équivalente, ni aucune loi imposant une évaluation de sécurité indépendante avant qu'un système d'IA de pointe soit construit ou déployé.
+    Les récents avertissements publics de chercheurs renforcent la nécessité d'une surveillance indépendante. Le Canada ne doit pas attendre un autre incident grave pour agir.
 
     Je vous demande de:
 
     1. Soulever cet incident auprès du ministre ou du comité compétent, et demander une séance d'information du Centre canadien pour la cybersécurité sur l'exposition du Canada aux cybermenaces liées à l'IA.
     2. Soutenir des exigences contraignantes d'évaluations de sécurité indépendantes avant déploiement des systèmes d'IA de pointe, ainsi qu'une déclaration obligatoire lorsqu'un système agit hors de son environnement autorisé.
-    3. Défendre une coordination internationale sur l'encadrement des systèmes d'IA dotés de capacités cyberoffensives, comparable aux cadres existants pour d'autres technologies dangereuses.
+    3. Soutenir une pause contraignante du développement de l'IA avancée à usage général, fondée sur une coordination internationale ayant force obligatoire, jusqu'à ce que la sécurité et le contrôle puissent être démontrés.
 
     Si vous ou votre personnel souhaitez plus d'informations, PauseAI Canada (pauseai.ca) et PauseAI Global (pauseai.info) se feraient un plaisir de vous informer.
 

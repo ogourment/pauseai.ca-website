@@ -6,6 +6,20 @@
       <h1 class="max-w-4xl font-serif text-5xl leading-[1.02] tracking-tight text-stone-950 sm:text-7xl">
         {gettext("How far should we let AI advance?")}
       </h1>
+      <p id="latest-safety-context" class="mt-6 max-w-2xl text-lg leading-8 text-stone-700">
+        {gettext(
+          "AI safety is reaching a wider public. Read the latest evidence and researchers' warnings, then take a concrete action in Canada."
+        )}
+        <a
+          href={
+            if(@locale == "fr",
+              do: ~p"/fr/tir-de-semonce#developments",
+              else: ~p"/en/warning-shot#developments"
+            )
+          }
+          class="font-semibold underline decoration-brand decoration-2 underline-offset-4"
+        >{gettext("Latest developments")}</a>
+      </p>
       <a
         href="#questions"
         class="mt-9 inline-flex rounded-full bg-stone-900 px-6 py-3 font-semibold text-white transition hover:-translate-y-0.5 hover:bg-stone-700"
@@ -26,7 +40,14 @@
         </h2>
       </div>
 
-      <div id="belief-check" data-locale={@locale} class="space-y-6">
+      <div
+        id="belief-check"
+        data-locale={@locale}
+        data-account-answers={
+          if @current_scope, do: Jason.encode!(@current_scope.user.belief_answers), else: ""
+        }
+        class="space-y-6"
+      >
         <.belief_question
           id="risk"
           number="01"
@@ -77,7 +98,7 @@
           <div class="mt-4 flex flex-wrap items-center gap-4">
             <.link
               id="save-question-progress"
-              href={~p"/users/register?from=questions"}
+              href={~p"/users/register?#{%{from: "questions", locale: @locale}}"}
               class="rounded-full bg-stone-900 px-5 py-3 font-semibold text-white hover:bg-stone-700"
             >
               {gettext("Create an account to save your progress")}
@@ -181,7 +202,12 @@
       </div>
       <div class="flex items-end lg:justify-end">
         <.link
-          href={if(@current_scope, do: ~p"/dashboard", else: ~p"/users/register")}
+          href={
+            if(@current_scope,
+              do: ~p"/dashboard",
+              else: ~p"/users/register?#{%{from: "home_footer", locale: @locale}}"
+            )
+          }
           class="inline-flex rounded-full bg-white px-6 py-3 font-semibold text-stone-900 hover:bg-[#f8d7cc]"
         >
           {cond do
