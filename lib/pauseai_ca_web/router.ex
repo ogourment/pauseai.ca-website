@@ -14,7 +14,6 @@ defmodule PauseAiCaWeb.Router do
     plug :fetch_current_scope_for_user
     plug PauseAiCaWeb.Plugs.LearningIdentity
     plug PauseAiCaWeb.Plugs.RecordLearningVisit
-    plug PauseAiCaWeb.Plugs.RecordVisit
     # Staging only: closes the site to anyone not signed in. See the plug.
     plug PauseAiCaWeb.Plugs.RequireInvited
   end
@@ -52,6 +51,7 @@ defmodule PauseAiCaWeb.Router do
     get "/en/montreal.html", PageController, :legacy_montreal
     post "/learning/questions/:question", LearningSignalController, :question
     post "/engagement/event-links/:event", LearningSignalController, :event_link
+    post "/engagement/visits", LearningSignalController, :visit
     get "/learning/resources/:resource", LearningResourceController, :open
   end
 

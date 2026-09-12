@@ -3,6 +3,12 @@ defmodule PauseAiCaWeb.LearningSignalController do
 
   alias PauseAiCa.Engagement
 
+  def visit(conn, _params) do
+    conn
+    |> PauseAiCaWeb.Plugs.RecordVisit.call([])
+    |> send_resp(:no_content, "")
+  end
+
   @questions ~w(risk pause coordination)
   @answers ~w(0 1 2 3 4 5)
 

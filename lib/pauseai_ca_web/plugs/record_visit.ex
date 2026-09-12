@@ -1,6 +1,9 @@
 defmodule PauseAiCaWeb.Plugs.RecordVisit do
   @moduledoc """
-  Counts one first-party visit per browser and UTC day.
+  Counts a CSRF-protected browser POST once per signed session and UTC day.
+
+  Public GET requests never increment this counter. JavaScript-capable bots
+  can still emit signals; this is not a verified-human or unique-person count.
 
   Only the daily aggregate is stored. The application does not retain an IP,
   user agent, path, account, or other visitor identifier.
@@ -12,16 +15,17 @@ defmodule PauseAiCaWeb.Plugs.RecordVisit do
 
   alias PauseAiCa.Engagement
 
-  @session_key :visit_recorded_on
-  @excluded_prefixes ["/admin", "/dev", "/health"]
+  # Never reuse the old GET counter's marker: old cookies must not suppress
+  # their first signal after the measurement cutover.
+  @session_key :browser_visit_recorded_on
 
   def init(opts), do: opts
 
-  def call(%Plug.Conn{method: "GET"} = conn, _opts) do
+  def call(%Plug.Conn{method: "POST", request_path: "/engagement/visits"} = conn, _opts) do
     today = Date.utc_today()
     marker = Date.to_iso8601(today)
 
-    if disabled?(conn) or excluded?(conn.request_path) or
+    if disabled?(conn) or superadmin?(conn) or
          get_session(conn, @session_key) == marker do
       conn
     else
@@ -31,8 +35,12 @@ defmodule PauseAiCaWeb.Plugs.RecordVisit do
 
   def call(conn, _opts), do: conn
 
-  defp excluded?(path),
-    do: Enum.any?(@excluded_prefixes, &String.starts_with?(path, &1))
+  defp superadmin?(conn) do
+    case conn.assigns[:current_scope] do
+      %{user: %{superadmin: true}} -> true
+      _ -> false
+    end
+  end
 
   defp disabled?(conn) do
     not Application.get_env(:pauseai_ca, :record_visits, true) and

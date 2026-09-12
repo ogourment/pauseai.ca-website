@@ -1290,7 +1290,7 @@ msgstr[1] "%{count} accounts"
 
 #: lib/pauseai_ca_web/live/admin_accounts_live.ex:118
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:287
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:231
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:238
 #, elixir-autogen, elixir-format
 msgid "Acceptance evidence"
 msgstr "Acceptance evidence"
@@ -1304,7 +1304,7 @@ msgstr "Account pages"
 #: lib/pauseai_ca_web/live/admin_accounts_live.ex:101
 #: lib/pauseai_ca_web/live/admin_accounts_live.ex:113
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:280
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:226
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:233
 #, elixir-autogen, elixir-format
 msgid "Accounts"
 msgstr "Accounts"
@@ -1322,14 +1322,14 @@ msgstr "Confirm this account's email before granting superadmin access."
 
 #: lib/pauseai_ca_web/live/admin_accounts_live.ex:107
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:279
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:221
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:228
 #, elixir-autogen, elixir-format
 msgid "Dashboard"
 msgstr "Dashboard"
 
 #: lib/pauseai_ca_web/live/admin_accounts_live.ex:117
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:286
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:230
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:237
 #, elixir-autogen, elixir-format
 msgid "Deployment versions"
 msgstr "Deployment versions"
@@ -1406,7 +1406,7 @@ msgstr "Superadmin role removed."
 
 #: lib/pauseai_ca_web/live/admin_accounts_live.ex:105
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:278
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:216
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:223
 #, elixir-autogen, elixir-format
 msgid "Superadmin tools"
 msgstr "Superadmin tools"
@@ -1467,7 +1467,7 @@ msgstr "Contact"
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:11
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:272
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:285
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:228
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:235
 #, elixir-autogen, elixir-format
 msgid "Contact imports"
 msgstr "Contact imports"
@@ -1654,3 +1654,18 @@ msgstr "Montréal · Public protest"
 #, elixir-autogen, elixir-format
 msgid "Saturday, September 26 · 1–2 p.m. EDT"
 msgstr "Saturday, September 26 · 1–2 p.m. EDT"
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:63
+#, elixir-autogen, elixir-format
+msgid "Browser visits count visible public pages after JavaScript runs, once per browser session per UTC day. Superadmins are excluded. Reloads, page navigation, and LiveView heartbeats do not add visits. JavaScript-capable bots may still count; totals are browser-days, not unique people."
+msgstr "Browser visits count visible public pages after JavaScript runs, once per browser session per UTC day. Superadmins are excluded. Reloads, page navigation, and LiveView heartbeats do not add visits. JavaScript-capable bots may still count; totals are browser-days, not unique people."
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:94
+#, elixir-autogen, elixir-format
+msgid "Daily browser visits"
+msgstr "Daily browser visits"
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:58
+#, elixir-autogen, elixir-format
+msgid "First-party database totals from accounts, browser activity, and confirmed private action records. Google Analytics is a separate measurement source."
+msgstr "First-party database totals from accounts, browser activity, and confirmed private action records. Google Analytics is a separate measurement source."

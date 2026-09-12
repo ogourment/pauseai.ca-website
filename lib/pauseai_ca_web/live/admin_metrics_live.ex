@@ -55,7 +55,14 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
         <section id="admin-metrics" class="mt-10">
           <h2 class="font-heading text-3xl text-stone-950">Movement metrics</h2>
           <p class="mt-4 max-w-3xl text-stone-600">
-            First-party database totals from accounts, anonymous daily visits, and confirmed private action records. Analytics may complement these figures, but is not their source.
+            {gettext(
+              "First-party database totals from accounts, browser activity, and confirmed private action records. Google Analytics is a separate measurement source."
+            )}
+          </p>
+          <p id="visit-measurement-note" class="mt-3 max-w-3xl text-sm text-stone-600">
+            {gettext(
+              "Browser visits count visible public pages after JavaScript runs, once per browser session per UTC day. Superadmins are excluded. Reloads, page navigation, and LiveView heartbeats do not add visits. JavaScript-capable bots may still count; totals are browser-days, not unique people."
+            )}
           </p>
           <p id="metrics-period" class="mt-8 text-xs font-medium text-stone-500">
             Daily trends · {@trend_period_label} (UTC)
@@ -84,7 +91,7 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
             />
             <.metric
               id="metric-visits"
-              label="Visits"
+              label={gettext("Daily browser visits")}
               value={@metrics.visits}
               trend={@metrics.trends.visits}
               trend_period={@trend_period_label}
@@ -256,11 +263,11 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
       |> assign(:daily_max, Enum.max(assigns.trend, fn -> 0 end))
 
     ~H"""
-    <div id={@id} class="rounded-3xl bg-stone-900 p-6 text-white">
+    <div id={@id} class="min-w-0 overflow-hidden rounded-3xl bg-stone-900 p-6 text-white">
       <p class="text-sm text-white/70">{@label}</p>
-      <div class="mt-2 flex items-end justify-between gap-4">
-        <p class="font-heading text-5xl">{@value}</p>
-        <div :if={@daily_max > 0} class="flex shrink-0 flex-col items-end text-brand">
+      <div class="mt-2 flex min-w-0 flex-col">
+        <p class="font-heading text-5xl leading-none">{@value}</p>
+        <div :if={@daily_max > 0} class="mt-2 flex max-w-full flex-col items-end self-end text-brand">
           <span data-role="daily-max" class="h-4 text-xs font-bold">
             {if @daily_max > 0, do: @daily_max}
           </span>
@@ -296,7 +303,7 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
     values
     |> Enum.with_index()
     |> Enum.map_join(" ", fn {value, index} ->
-      x = Float.round(index * 96 / intervals, 1)
+      x = Float.round(2 + index * 92 / intervals, 1)
       y = Float.round(44 - value * 40 / max_value, 1)
       "#{x},#{y}"
     end)

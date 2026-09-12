@@ -46,6 +46,32 @@ liveSocket.connect()
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
 
+// A visible public page signals browser activity, not verified human presence.
+// Server-side session deduplication limits it to one count per UTC day.
+let browserVisitInFlight = false
+let browserVisitRecordedOn = null
+
+function recordBrowserVisit() {
+  const today = new Date().toISOString().slice(0, 10)
+  const privatePaths = ["/admin", "/dev", "/health", "/users"]
+  if (browserVisitInFlight || browserVisitRecordedOn === today ||
+      document.visibilityState !== "visible" ||
+      privatePaths.some(path => location.pathname.startsWith(path))) return
+
+  browserVisitInFlight = true
+  fetch("/engagement/visits", {
+    method: "POST",
+    headers: {"x-csrf-token": document.querySelector("meta[name='csrf-token']").content},
+    keepalive: true,
+  }).then(response => {
+    if (response.ok) browserVisitRecordedOn = today
+  }).catch(() => {}).finally(() => { browserVisitInFlight = false })
+}
+
+recordBrowserVisit()
+window.addEventListener("phx:page-loading-stop", recordBrowserVisit)
+document.addEventListener("visibilitychange", recordBrowserVisit)
+
 const beliefStorageKey = "pauseai-ca:beliefs:v1"
 
 function initializeBeliefCheck() {
