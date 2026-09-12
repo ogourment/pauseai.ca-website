@@ -52,7 +52,7 @@ defmodule PauseAiCaWeb.Layouts do
           class="mr-auto flex items-center gap-3"
         >
           <span class="relative inline-flex">
-            <img src={~p"/images/pauseai-ca.png"} alt="" width="36" height="36" class="size-9" />
+            <img src={~p"/images/pauseai-canada-logo.png"} alt="" width="36" height="36" class="size-9" />
             <span
               :if={PauseAiCa.Environment.badged?()}
               class="pointer-events-none absolute -right-3 top-1/4 -translate-y-1/2 rotate-[-12deg] rounded-[3px] px-1.5 py-0.5 text-[10px] font-black uppercase leading-none tracking-wide text-white shadow-sm"
