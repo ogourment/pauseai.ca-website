@@ -114,6 +114,7 @@ defmodule PauseAiCa.MixProject do
         "test"
       ],
       precommit: [
+        "acceptance.update_agents --check",
         "ecto.create --quiet",
         "ecto.migrate --quiet",
         "acceptance.schema_diagram",
@@ -133,7 +134,7 @@ defmodule PauseAiCa.MixProject do
         {:acceptance_harness, path: Path.expand(path), override: true}
 
       _unset ->
-        {:acceptance_harness, git: acceptance_harness_git_url(), tag: "v0.9.0"}
+        {:acceptance_harness, git: acceptance_harness_git_url(), tag: "v0.10.5"}
     end
   end
 

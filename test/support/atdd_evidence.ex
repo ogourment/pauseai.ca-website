@@ -7,7 +7,16 @@ defmodule PauseAiCaWeb.AtddEvidence do
   defdelegate record_step(name, title, description, metadata), to: AcceptanceHarness.Evidence
   defdelegate record_scenario_runtime(scenario, duration_ms), to: AcceptanceHarness.Evidence
   defdelegate mark_scenario_success!(scenario), to: AcceptanceHarness.Evidence
-  defdelegate finalize!(), to: AcceptanceHarness.Evidence
+
+  def finalize! do
+    AcceptanceHarness.Evidence.finalize!()
+
+    if root = System.get_env("PAUSEAI_ATDD_PHASE_ROOT") do
+      evidence = "tmp/atdd/evidence.json" |> File.read!() |> Jason.decode!()
+      destination = Path.join(root, get_in(evidence, ["run", "id"]))
+      File.cp_r!("tmp/atdd", destination)
+    end
+  end
 
   def capture_full_page(conn, filename) do
     conn =

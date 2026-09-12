@@ -16,10 +16,8 @@
     id: "acceptance_evidence",
     title: "Acceptance evidence",
     tables: [
-      "acceptance_harness_comments",
       "acceptance_harness_runs",
       "acceptance_harness_scenarios",
-      "acceptance_harness_statuses",
       "acceptance_harness_steps"
     ]
   },

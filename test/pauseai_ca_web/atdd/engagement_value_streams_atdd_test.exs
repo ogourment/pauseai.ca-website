@@ -1,6 +1,6 @@
 if System.get_env("ATDD") == "true" do
   defmodule PauseAiCaWeb.Atdd.EngagementValueStreamsTest do
-    use PhoenixTest.Playwright.Case, async: false
+    use AcceptanceHarness.Playwright.Case, async: false
 
     import PauseAiCa.AccountsFixtures
 

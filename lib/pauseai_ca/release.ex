@@ -13,7 +13,53 @@ defmodule PauseAiCa.Release do
         Ecto.Migrator.with_repo(repo, fn repo ->
           Ecto.Migrator.run(repo, :up, all: true)
           AcceptanceHarness.AdminStore.install!(repo: repo)
+          import_acceptance_evidence(repo)
         end)
+    end
+  end
+
+  @doc "Imports evidence packaged with this exact release without starting HTTP or workers."
+  def import_acceptance_evidence(repo, evidence_dir \\ nil) do
+    dir = evidence_dir || Application.app_dir(@app, "priv/acceptance_evidence")
+    path = Path.join(dir, "evidence.json")
+
+    if File.regular?(path) do
+      retained_dir = retain_acceptance_evidence(dir)
+      retained_path = Path.join(retained_dir, "evidence.json")
+
+      AcceptanceHarness.AdminStore.import_evidence!(retained_path,
+        repo: repo,
+        source_dir: retained_dir
+      )
+
+      IO.puts("Imported packaged acceptance evidence from #{path}")
+    else
+      IO.puts("No packaged acceptance evidence (local build).")
+    end
+  end
+
+  defp retain_acceptance_evidence(dir) do
+    case System.get_env("PAUSEAI_CA_DEPLOYMENT_HISTORY_PATH") do
+      nil ->
+        dir
+
+      history_path ->
+        evidence = dir |> Path.join("evidence.json") |> File.read!() |> Jason.decode!()
+        run_id = get_in(evidence, ["run", "id"])
+
+        unless is_binary(run_id) and Regex.match?(~r/\A[a-zA-Z0-9._-]+\z/, run_id),
+          do: raise("Invalid acceptance run identity")
+
+        destination = Path.join([Path.dirname(history_path), "acceptance_evidence", run_id])
+        manifest = Path.join(destination, "evidence.json")
+
+        if File.exists?(manifest) and
+             File.read!(manifest) != File.read!(Path.join(dir, "evidence.json")),
+           do: raise("Acceptance run identity collision")
+
+        File.mkdir_p!(destination)
+        File.cp_r!(dir, destination)
+        destination
     end
   end
 

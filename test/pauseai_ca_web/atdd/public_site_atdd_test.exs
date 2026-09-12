@@ -1,6 +1,6 @@
 if System.get_env("ATDD") == "true" do
   defmodule PauseAiCaWeb.Atdd.PublicSiteTest do
-    use PhoenixTest.Playwright.Case, async: false
+    use AcceptanceHarness.Playwright.Case, async: false
 
     alias AcceptanceHarness.BrowserScreenshot
     alias PauseAiCaWeb.AtddEvidence
