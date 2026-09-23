@@ -53,7 +53,9 @@ defmodule PauseAiCaWeb.PageHTML do
       id={@id}
       class="resource-card group relative rounded-3xl border border-stone-200 bg-[#f8f5ed] p-7 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
     >
-      <span class="recommendation-badge hidden rounded-full bg-brand px-3 py-1 text-xs font-bold uppercase tracking-wider text-stone-950">Suggested first</span>
+      <span class="recommendation-badge hidden rounded-full bg-brand px-3 py-1 text-xs font-bold uppercase tracking-wider text-stone-950">{gettext(
+        "Suggested first"
+      )}</span>
       <p class="mt-3 text-xs font-bold uppercase tracking-[0.18em] text-brand-ink">{@stage}</p>
       <h3 class="mt-3 font-serif text-3xl leading-tight text-stone-950">{@title}</h3>
       <p class="mt-4 leading-7 text-stone-600">{@body}</p>

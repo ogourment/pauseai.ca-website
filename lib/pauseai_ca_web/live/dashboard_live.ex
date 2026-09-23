@@ -66,7 +66,7 @@ defmodule PauseAiCaWeb.DashboardLive do
      |> assign(:action_count, socket.assigns.action_count + 1)
      |> stream_insert(:actions, action)
      |> refresh_recommendation()
-     |> put_flash(:info, "Recorded. Thank you for following through.")}
+     |> put_flash(:info, gettext("Recorded. Thank you for following through."))}
   end
 
   def handle_event("discard-action", %{"id" => id}, socket) do
@@ -78,7 +78,7 @@ defmodule PauseAiCaWeb.DashboardLive do
      socket
      |> assign(:pending, Engagement.list_pending_actions(scope))
      |> stream_delete(:actions, action)
-     |> put_flash(:info, "Removed. Nothing recorded.")}
+     |> put_flash(:info, gettext("Removed. Nothing recorded."))}
   end
 
   def handle_event("edit", %{"id" => id}, socket) do
@@ -121,7 +121,7 @@ defmodule PauseAiCaWeb.DashboardLive do
       {:ok, action} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Action recorded privately.")
+         |> put_flash(:info, gettext("Action recorded privately."))
          |> update(:action_count, &(&1 + 1))
          |> stream_insert(:actions, action, at: 0)
          |> assign_form(Engagement.new_action(socket.assigns.current_scope))
@@ -139,7 +139,7 @@ defmodule PauseAiCaWeb.DashboardLive do
       {:ok, action} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Action updated.")
+         |> put_flash(:info, gettext("Action updated."))
          |> assign(:editing_id, nil)
          |> assign(:selected_type, nil)
          |> stream_insert(:actions, action)
@@ -174,16 +174,16 @@ defmodule PauseAiCaWeb.DashboardLive do
     |> assign(:ladder_position, Ladder.position(actions))
   end
 
-  defp unit("flyered"), do: "handed out"
-  defp unit("conversation"), do: "people"
-  defp unit(_type), do: "people"
+  defp unit("flyered"), do: gettext("handed out")
+  defp unit("conversation"), do: gettext("people")
+  defp unit(_type), do: gettext("people")
 
   # What a number means depends entirely on what was done.
-  defp quantity_label("event"), do: "Roughly how many people were there?"
-  defp quantity_label("organized"), do: "Roughly how many people came?"
-  defp quantity_label("flyered"), do: "Roughly how many did you hand out or put up?"
-  defp quantity_label("conversation"), do: "How many people did you talk with?"
-  defp quantity_label(_type), do: "How many?"
+  defp quantity_label("event"), do: gettext("Roughly how many people were there?")
+  defp quantity_label("organized"), do: gettext("Roughly how many people came?")
+  defp quantity_label("flyered"), do: gettext("Roughly how many did you hand out or put up?")
+  defp quantity_label("conversation"), do: gettext("How many people did you talk with?")
+  defp quantity_label(_type), do: gettext("How many?")
 
   defp format_date(%Date{} = date, "fr") do
     months =
@@ -204,9 +204,9 @@ defmodule PauseAiCaWeb.DashboardLive do
       "https://yoshuabengio.org/fr/blogue/questions-frequentes-sur-les-risques-catastrophiques-lies-lia"
 
   defp saved_resource_url("risk", _), do: "https://pauseai.info/xrisk"
-  defp saved_resource_url("pause", "fr"), do: "https://pauseia.fr/propositions"
+  defp saved_resource_url("pause", "fr"), do: "https://pauseia.fr/fr/propositions"
   defp saved_resource_url("pause", _), do: "https://pauseai.info/proposal"
-  defp saved_resource_url("coordination", "fr"), do: "https://pauseia.fr/faq"
+  defp saved_resource_url("coordination", "fr"), do: "https://pauseai.info/feasibility"
   defp saved_resource_url("coordination", _), do: "https://pauseai.info/feasibility"
   defp saved_resource_url("agency", "fr"), do: ~p"/fr/strategie"
   defp saved_resource_url("agency", _), do: ~p"/en/strategy"
@@ -472,7 +472,7 @@ defmodule PauseAiCaWeb.DashboardLive do
                 :if={Action.location?(@selected_type)}
                 field={@form[:location]}
                 type="text"
-                label="Where?"
+                label={gettext("Where?")}
                 placeholder="Montréal, Concordia University, Rue Sainte-Catherine…"
                 class="w-full input bg-white text-stone-950 placeholder:text-stone-500"
               />
@@ -487,8 +487,8 @@ defmodule PauseAiCaWeb.DashboardLive do
               <.input
                 field={@form[:notes]}
                 type="textarea"
-                label="Private note (optional)"
-                placeholder="What did you learn? What might you try next?"
+                label={gettext("Private note (optional)")}
+                placeholder={gettext("What did you learn? What might you try next?")}
                 class="w-full textarea bg-white text-stone-950 placeholder:text-stone-500"
               />
               <div class="flex gap-3">
@@ -507,7 +507,7 @@ defmodule PauseAiCaWeb.DashboardLive do
                   phx-click="cancel"
                   class="rounded-full border border-white/30 px-5 py-3 font-semibold"
                 >
-                  Cancel
+                  {gettext("Cancel")}
                 </button>
               </div>
             </.form>
@@ -518,7 +518,7 @@ defmodule PauseAiCaWeb.DashboardLive do
               id="actions-empty"
               class="hidden rounded-3xl border border-dashed border-stone-300 p-8 text-center text-stone-500 only:block"
             >
-              No actions yet. Record the first thing you have already done.
+              {gettext("No actions yet. Record the first thing you have already done.")}
             </div>
             <article
               :for={{id, action} <- @streams.actions}
@@ -530,9 +530,9 @@ defmodule PauseAiCaWeb.DashboardLive do
                   <p class="font-semibold text-stone-900">
                     {action_label(action.action_type, @locale)}
                   </p>
-                  <time class="mt-1 block text-sm text-stone-500">{Calendar.strftime(
+                  <time class="mt-1 block text-sm text-stone-500">{format_date(
                     action.happened_on,
-                    "%B %-d, %Y"
+                    @locale
                   )}</time>
                   <p
                     :if={action.location not in [nil, ""] or action.quantity}
@@ -554,14 +554,14 @@ defmodule PauseAiCaWeb.DashboardLive do
                     phx-click="edit"
                     phx-value-id={action.id}
                     class="text-sm font-medium text-stone-600 hover:text-stone-950"
-                  >Edit</button>
+                  >{gettext("Edit")}</button>
                   <button
                     phx-click="delete"
                     phx-value-id={action.id}
-                    data-confirm="Delete this private action?"
+                    data-confirm={gettext("Delete this private action?")}
                     class="text-sm font-medium text-red-700 hover:text-red-900"
                   >
-                    Delete
+                    {gettext("Delete")}
                   </button>
                 </div>
               </div>

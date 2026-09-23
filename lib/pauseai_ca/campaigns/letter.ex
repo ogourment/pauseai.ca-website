@@ -124,7 +124,8 @@ defmodule PauseAiCa.Campaigns.Letter do
   defp subject(:en), do: "An AI escaped its lab and hacked a real company — please act"
 
   defp subject(:bilingual),
-    do: "An AI escaped its lab and hacked a real company / Une IA s'est échappée et a piraté"
+    do:
+      "An AI escaped its lab and hacked a real company / Une IA s'est échappée et a piraté une entreprise"
 
   defp template(:en), do: english_letter()
   defp template(:fr), do: french_letter()

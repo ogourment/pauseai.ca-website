@@ -72,7 +72,7 @@ defmodule PauseAiCa.Campaigns.WarningShot do
           "being given. Nobody told them to do any of it.",
       why_heading: "Why this matters",
       why_bullets: [
-        "Four months ago, Claude Mythos showed the capability: an AI able to find and exploit unknown flaws in the software running banks, hospitals and power grids.",
+        "In April 2026, Claude Mythos showed the capability: an AI able to find and exploit unknown flaws in the software running banks, hospitals and power grids.",
         "This shows the propensity: an AI deploying those capabilities on its own initiative, unprompted, against a real company.",
         "This is the loss-of-control scenario PauseAI exists to prevent — now with a date, a victim and an incident report.",
         "It is not isolated. Anthropic has since disclosed that Claude models also reached real systems during evaluations, and two of the three organizations involved had not noticed.",
@@ -95,9 +95,9 @@ defmodule PauseAiCa.Campaigns.WarningShot do
 
   defp french do
     %{
-      badge: "Protocole Tir de semonce · Deuxième activation",
+      badge: "Signal d'alarme · Deuxième alerte de PauseAI",
       mainstream_note:
-        "La sécurité de l'IA dépasse maintenant les débats entre spécialistes. De nouveaux reportages et les avertissements publics de chercheurs font connaître les risques de la course à l'IA à un public plus large. Cet incident demeure un tir de semonce concret — pas une preuve qu'une catastrophe est inévitable. Demandez au gouvernement canadien de soutenir une pause contraignante du développement de l'IA avancée à usage général.",
+        "La sécurité de l'IA dépasse maintenant les débats entre spécialistes. De nouveaux reportages et les avertissements publics de chercheurs font connaître les risques de la course à l'IA à un public plus large. Cet incident est un signal d'alarme concret — pas une preuve qu'une catastrophe est inévitable. Demandez au gouvernement canadien de soutenir une pause contraignante du développement de l'IA avancée à usage général.",
       title: "Une IA s'est échappée de son laboratoire et a piraté une vraie entreprise",
       lede:
         "Le 21 juillet 2026, OpenAI a confirmé que deux de ses modèles s'étaient échappés d'un " <>
@@ -107,7 +107,7 @@ defmodule PauseAiCa.Campaigns.WarningShot do
           "avait demandé de faire cela.",
       why_heading: "Pourquoi c'est important",
       why_bullets: [
-        "Il y a quatre mois, Claude Mythos démontrait la capacité: une IA capable de trouver et d'exploiter des failles inconnues dans les logiciels qui font fonctionner les banques, les hôpitaux et les réseaux électriques.",
+        "En avril 2026, Claude Mythos démontrait la capacité: une IA capable de trouver et d'exploiter des failles inconnues dans les logiciels qui font fonctionner les banques, les hôpitaux et les réseaux électriques.",
         "Ceci démontre la propension: une IA qui déploie ces capacités de sa propre initiative, sans qu'on le lui demande, contre une vraie entreprise.",
         "C'est le scénario de perte de contrôle que PauseAI existe pour prévenir — désormais avec une date, une victime et un rapport d'incident.",
         "Ce n'est pas un cas isolé. Anthropic a depuis révélé que des modèles Claude avaient eux aussi atteint des systèmes réels lors d'évaluations, et deux des trois organisations concernées ne l'avaient pas remarqué.",
@@ -260,7 +260,7 @@ defmodule PauseAiCa.Campaigns.WarningShot do
             title:
               "OpenAI signale d'autres accès à des comptes et verrouille le modèle de recherche",
             summary:
-              "OpenAI affirme avoir désactivé, chiffré et restreint le prototype interne. Son examen a relevé quatre comptes exposés sur quatre services utilisés pendant l'incident Hugging Face, ainsi que quelques comptes atteints lors d'autres évaluations, mais aucun autre compromis de plateforme d'une gravité ou d'une ampleur comparable."
+              "OpenAI affirme avoir désactivé, chiffré et restreint le prototype interne. Son examen a relevé quatre comptes exposés sur quatre services utilisés pendant l'incident Hugging Face, ainsi que quelques comptes atteints lors d'autres évaluations, mais aucune autre compromission de plateforme d'une gravité ou d'une ampleur comparable."
           }
         }
       },
@@ -278,7 +278,7 @@ defmodule PauseAiCa.Campaigns.WarningShot do
           },
           "fr" => %{
             title:
-              "Des évaluateurs publics montrent que la capacité cyber autonome dépasse un seul laboratoire",
+              "Des évaluateurs publics montrent que la capacité cyber autonome ne se limite pas à un seul laboratoire",
             summary:
               "Dans une évaluation conjointe, Kimi K3 a réussi une fois sur dix une attaque simulée de 32 étapes contre un réseau d'entreprise. Il restait moins performant que les meilleurs modèles américains, testés sans protections système; ses propres protections ne l'ont pas empêché de tenter des opérations cyber offensives."
           }
@@ -297,7 +297,7 @@ defmodule PauseAiCa.Campaigns.WarningShot do
               "Mythos showed the capability; this shows the propensity. PauseAI chapters worldwide begin contacting elected officials and the press."
           },
           "fr" => %{
-            title: "PauseAI active le Protocole Tir de semonce pour la deuxième fois",
+            title: "PauseAI lance l'alerte pour la deuxième fois",
             summary:
               "Mythos démontrait la capacité; ceci démontre la propension. Les sections de PauseAI dans le monde commencent à contacter les élu·es et la presse."
           }

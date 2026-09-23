@@ -239,7 +239,7 @@ defmodule PauseAiCa.Library do
               "Bengio walks through how a system with goals of its own could actually arise from the training methods in use today. Technical, but written to be followed."
           },
           "fr" => %{
-            title: "Comment des IA malveillantes peuvent apparaître",
+            title: "Comment des IA nocives pourraient apparaître",
             summary:
               "Bengio explique comment un système doté de ses propres objectifs pourrait réellement émerger des méthodes d'entraînement actuelles. Technique, mais écrit pour être suivi."
           }
@@ -262,7 +262,7 @@ defmodule PauseAiCa.Library do
           "fr" => %{
             title: "Ce qu'une pause arrêterait, et ce qu'elle n'arrêterait pas",
             summary:
-              "Pas une interdiction de l'IA. Un plafond sur les entraînements dépassant un seuil de calcul, jusqu'à ce que la sécurité rattrape. L'IA médicale, la traduction et le reste continuent."
+              "Pas une interdiction de l'IA. Un plafond sur les entraînements dépassant un seuil de calcul, jusqu'à ce que les méthodes de sécurité rattrapent leur retard. L'IA médicale, la traduction et le reste continuent."
           }
         }
       },
@@ -271,7 +271,7 @@ defmodule PauseAiCa.Library do
         stage: :responses,
         format: :article,
         language: "fr",
-        url: "https://pauseia.fr/propositions",
+        url: "https://pauseia.fr/fr/propositions",
         publisher: "Pause IA",
         reviewed_on: @reviewed,
         copy: %{
@@ -509,7 +509,7 @@ defmodule PauseAiCa.Library do
           %Reference{
             label: %{
               "en" => "How rogue AIs may arise — his own account of changing his mind",
-              "fr" => "Comment des IA malveillantes peuvent apparaître — son propre récit"
+              "fr" => "Comment des IA nocives pourraient apparaître — son propre récit"
             },
             url:
               "https://yoshuabengio.org/fr/2023/05/30/comment-des-ia-nocives-pourraient-apparaitre/",

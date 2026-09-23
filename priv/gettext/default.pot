@@ -99,8 +99,8 @@ msgstr ""
 msgid "Body"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html.ex:76
-#: lib/pauseai_ca_web/controllers/page_html.ex:84
+#: lib/pauseai_ca_web/controllers/page_html.ex:78
+#: lib/pauseai_ca_web/controllers/page_html.ex:86
 #: lib/pauseai_ca_web/live/library_live.ex:337
 #, elixir-autogen, elixir-format
 msgid "Bookmark"
@@ -625,11 +625,6 @@ msgstr ""
 msgid "Signing up…"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/library_live.ex:364
-#, elixir-autogen, elixir-format
-msgid "Sixteen MPs and Senators, from every party and both chambers, have signed the statement calling for an international agreement to prohibit superintelligent AI. Writing to your MP is not a fringe act: the question is already in Ottawa."
-msgstr ""
-
 #: lib/pauseai_ca_web/components/layouts.ex:438
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
@@ -930,7 +925,7 @@ msgstr ""
 msgid "https://pauseai.info/xrisk"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html.ex:97
+#: lib/pauseai_ca_web/controllers/page_html.ex:99
 #, elixir-autogen, elixir-format
 msgid "Agree"
 msgstr ""
@@ -950,7 +945,7 @@ msgstr ""
 msgid "Contacted a representative"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html.ex:95
+#: lib/pauseai_ca_web/controllers/page_html.ex:97
 #, elixir-autogen, elixir-format
 msgid "Disagree"
 msgstr ""
@@ -990,7 +985,7 @@ msgstr ""
 msgid "Met a representative"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html.ex:96
+#: lib/pauseai_ca_web/controllers/page_html.ex:98
 #, elixir-autogen, elixir-format
 msgid "Mixed"
 msgstr ""
@@ -1050,12 +1045,12 @@ msgstr ""
 msgid "Signed the PauseAI statement"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html.ex:98
+#: lib/pauseai_ca_web/controllers/page_html.ex:100
 #, elixir-autogen, elixir-format
 msgid "Strongly agree"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html.ex:94
+#: lib/pauseai_ca_web/controllers/page_html.ex:96
 #, elixir-autogen, elixir-format
 msgid "Strongly disagree"
 msgstr ""
@@ -1112,7 +1107,7 @@ msgstr ""
 msgid "Understand existential risk"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html.ex:93
+#: lib/pauseai_ca_web/controllers/page_html.ex:95
 #, elixir-autogen, elixir-format
 msgid "Unsure"
 msgstr ""
@@ -1879,4 +1874,110 @@ msgstr ""
 #: lib/pauseai_ca_web/live/library_live.ex:232
 #, elixir-autogen, elixir-format
 msgid "Saved"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/dashboard_live.ex:124
+#, elixir-autogen, elixir-format
+msgid "Action recorded privately."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/dashboard_live.ex:142
+#, elixir-autogen, elixir-format
+msgid "Action updated."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/dashboard_live.ex:510
+#, elixir-autogen, elixir-format
+msgid "Cancel"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/dashboard_live.ex:564
+#, elixir-autogen, elixir-format
+msgid "Delete"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/dashboard_live.ex:561
+#, elixir-autogen, elixir-format
+msgid "Delete this private action?"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/dashboard_live.ex:557
+#, elixir-autogen, elixir-format
+msgid "Edit"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/dashboard_live.ex:185
+#, elixir-autogen, elixir-format
+msgid "How many people did you talk with?"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/dashboard_live.ex:186
+#, elixir-autogen, elixir-format
+msgid "How many?"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/dashboard_live.ex:521
+#, elixir-autogen, elixir-format
+msgid "No actions yet. Record the first thing you have already done."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/dashboard_live.ex:490
+#, elixir-autogen, elixir-format
+msgid "Private note (optional)"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/dashboard_live.ex:69
+#, elixir-autogen, elixir-format
+msgid "Recorded. Thank you for following through."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/dashboard_live.ex:81
+#, elixir-autogen, elixir-format
+msgid "Removed. Nothing recorded."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/dashboard_live.ex:184
+#, elixir-autogen, elixir-format
+msgid "Roughly how many did you hand out or put up?"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/dashboard_live.ex:183
+#, elixir-autogen, elixir-format
+msgid "Roughly how many people came?"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/dashboard_live.ex:182
+#, elixir-autogen, elixir-format
+msgid "Roughly how many people were there?"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/library_live.ex:364
+#, elixir-autogen, elixir-format
+msgid "Sixteen MPs and Senators, from several parties and both chambers, have signed the statement calling for an international agreement to prohibit superintelligent AI. Writing to your MP is not a fringe act: the question is already in Ottawa."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/page_html.ex:56
+#, elixir-autogen, elixir-format
+msgid "Suggested first"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/dashboard_live.ex:491
+#, elixir-autogen, elixir-format
+msgid "What did you learn? What might you try next?"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/dashboard_live.ex:475
+#, elixir-autogen, elixir-format
+msgid "Where?"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/dashboard_live.ex:177
+#, elixir-autogen, elixir-format
+msgid "handed out"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/dashboard_live.ex:178
+#: lib/pauseai_ca_web/live/dashboard_live.ex:179
+#, elixir-autogen, elixir-format
+msgid "people"
 msgstr ""

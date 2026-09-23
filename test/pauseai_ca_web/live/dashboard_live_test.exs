@@ -84,6 +84,32 @@ defmodule PauseAiCaWeb.DashboardLiveTest do
     refute html =~ ">2026-08-04<"
   end
 
+  test "a French member sees the journal in French", %{conn: conn, scope: scope} do
+    {:ok, _action} =
+      Engagement.create_action(scope, %{
+        "action_type" => "event",
+        "happened_on" => ~D[2026-08-04],
+        "quantity" => 40,
+        "confirmed_at" => DateTime.utc_now(:second)
+      })
+
+    {:ok, view, html} = live(conn, ~p"/fr/tableau-de-bord")
+
+    assert html =~ "4 août 2026"
+    refute html =~ "August 4, 2026"
+    assert html =~ "40 personnes"
+    assert has_element?(view, "#actions article button[phx-click=edit]", "Modifier")
+    assert has_element?(view, "#actions article button[phx-click=delete]", "Supprimer")
+
+    html =
+      view
+      |> form("#action-form", action: %{action_type: "learned", happened_on: "2026-08-05"})
+      |> render_submit()
+
+    assert html =~ "Action notée en privé."
+    refute html =~ "Action recorded privately."
+  end
+
   test "requires an authenticated user", %{conn: _authenticated_conn} do
     conn = Phoenix.ConnTest.build_conn()
     assert {:error, {:redirect, %{to: "/users/log-in"}}} = live(conn, ~p"/dashboard")
