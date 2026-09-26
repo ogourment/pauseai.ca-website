@@ -114,7 +114,7 @@ if System.get_env("ATDD") == "true" do
       )
 
       conn
-      |> visit("/fr/tir-de-semonce")
+      |> visit("/fr/signal-d-alarme")
       |> assert_has("#mp-lookup-form")
       |> capture(
         "engagement-03-warning-shot.png",

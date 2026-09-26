@@ -13,6 +13,21 @@ defmodule PauseAiCaWeb.PageControllerTest do
     assert redirected_to(conn, 301) == "/en"
   end
 
+  test "the old French campaign URL permanently redirects and retains query parameters", %{
+    conn: conn
+  } do
+    for query <- ["", "?utm_source=newsletter&ref=a%2Fb"] do
+      response = get(conn, "/fr/tir-de-semonce" <> query)
+      assert redirected_to(response, 301) == "/fr/signal-d-alarme" <> query
+    end
+  end
+
+  test "French navigation points to the renamed campaign", %{conn: conn} do
+    html = conn |> get(~p"/fr") |> html_response(200)
+    assert html =~ ~s(href="/fr/signal-d-alarme")
+    assert html =~ ~s(href="/fr/signal-d-alarme#developments")
+  end
+
   test "unknown browser pages redirect home with a localized flash", %{conn: conn} do
     en_conn = get(conn, "/en/no-such-page")
     assert redirected_to(en_conn) == "/en"

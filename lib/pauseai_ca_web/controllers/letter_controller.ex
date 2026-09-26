@@ -29,7 +29,7 @@ defmodule PauseAiCaWeb.LetterController do
     end
   end
 
-  defp campaign_path("fr"), do: ~p"/fr/tir-de-semonce"
+  defp campaign_path("fr"), do: ~p"/fr/signal-d-alarme"
   defp campaign_path(_locale), do: ~p"/en/warning-shot"
 
   defp locale_from(conn) do

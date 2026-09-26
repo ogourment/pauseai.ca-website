@@ -13,6 +13,15 @@ defmodule PauseAiCaWeb.PageController do
   def privacy_fr(conn, _params),
     do: render_content(conn, :privacy, "fr", "Politique de confidentialité")
 
+  def legacy_warning_shot(conn, _params) do
+    path = ~p"/fr/signal-d-alarme"
+    destination = if conn.query_string == "", do: path, else: path <> "?" <> conn.query_string
+
+    conn
+    |> put_status(:moved_permanently)
+    |> redirect(to: destination)
+  end
+
   def legacy_montreal(conn, _params) do
     conn
     |> put_status(:moved_permanently)

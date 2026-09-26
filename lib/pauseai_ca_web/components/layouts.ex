@@ -80,7 +80,7 @@ defmodule PauseAiCaWeb.Layouts do
         </.link>
         <.link
           class="hidden text-base font-medium text-brand-ink hover:text-stone-950 md:inline"
-          navigate={if(@locale == "fr", do: ~p"/fr/tir-de-semonce", else: ~p"/en/warning-shot")}
+          navigate={if(@locale == "fr", do: ~p"/fr/signal-d-alarme", else: ~p"/en/warning-shot")}
         >
           {gettext("Warning shot")}
         </.link>
@@ -96,7 +96,7 @@ defmodule PauseAiCaWeb.Layouts do
               class="block px-4 py-3 font-semibold hover:bg-brand-wash md:hidden"
             >{gettext("Learn")}</.link>
             <.link
-              navigate={if(@locale == "fr", do: ~p"/fr/tir-de-semonce", else: ~p"/en/warning-shot")}
+              navigate={if(@locale == "fr", do: ~p"/fr/signal-d-alarme", else: ~p"/en/warning-shot")}
               class="block px-4 py-3 font-semibold hover:bg-brand-wash md:hidden"
             >{gettext("Warning shot")}</.link>
             <.link
@@ -156,7 +156,7 @@ defmodule PauseAiCaWeb.Layouts do
               id="act-email-mp"
               navigate={
                 if(@locale == "fr",
-                  do: ~p"/fr/tir-de-semonce#letter",
+                  do: ~p"/fr/signal-d-alarme#letter",
                   else: ~p"/en/warning-shot#letter"
                 )
               }
@@ -317,7 +317,7 @@ defmodule PauseAiCaWeb.Layouts do
       <.link
         :if={@promote_warning_shot}
         id="warning-shot-banner"
-        navigate={if(@locale == "fr", do: ~p"/fr/tir-de-semonce", else: ~p"/en/warning-shot")}
+        navigate={if(@locale == "fr", do: ~p"/fr/signal-d-alarme", else: ~p"/en/warning-shot")}
         class="block bg-brand px-5 py-3 text-center text-stone-950 transition hover:bg-brand-strong"
       >
         <span class="font-heading text-sm font-bold uppercase tracking-[0.16em]">
@@ -334,7 +334,7 @@ defmodule PauseAiCaWeb.Layouts do
       :if={@promote_warning_shot}
       locale={@locale}
       campaign_id="warning-shot-2"
-      href={if(@locale == "fr", do: ~p"/fr/tir-de-semonce", else: ~p"/en/warning-shot")}
+      href={if(@locale == "fr", do: ~p"/fr/signal-d-alarme", else: ~p"/en/warning-shot")}
     />
 
     <main>

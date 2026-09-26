@@ -452,7 +452,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
       current_scope={@current_scope}
       locale={@locale}
       promote_warning_shot={false}
-      translated_path={if(@locale == "fr", do: ~p"/en/warning-shot", else: ~p"/fr/tir-de-semonce")}
+      translated_path={if(@locale == "fr", do: ~p"/en/warning-shot", else: ~p"/fr/signal-d-alarme")}
     >
       <article>
         <p
@@ -1078,7 +1078,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
         "An AI escaped its lab and hacked a real company. I just wrote to my MP about it. It takes a minute:"
       )
 
-  defp share_link("fr"), do: "https://pauseai.ca/fr/tir-de-semonce"
+  defp share_link("fr"), do: "https://pauseai.ca/fr/signal-d-alarme"
   defp share_link(_locale), do: "https://pauseai.ca/en/warning-shot"
 
   defp share_url(:bluesky, locale) do

@@ -35,7 +35,7 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
     end
 
     test "a French visitor gets the same page in French", %{conn: conn} do
-      {:ok, view, _html} = live(conn, ~p"/fr/tir-de-semonce")
+      {:ok, view, _html} = live(conn, ~p"/fr/signal-d-alarme")
 
       assert has_element?(view, "#act")
       assert has_element?(view, "#developments-list")
@@ -86,7 +86,7 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
       assert has_element?(en_view, "#draft-language-options input[type='radio'][value='en']")
       assert has_element?(en_view, "#draft-language-options input[type='radio'][value='fr']")
 
-      {:ok, fr_view, _html} = live(conn, ~p"/fr/tir-de-semonce")
+      {:ok, fr_view, _html} = live(conn, ~p"/fr/signal-d-alarme")
 
       refute has_element?(fr_view, "#draft-language-options")
 
@@ -127,7 +127,7 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
       assert html =~ "Dear Parm Bains,"
       refute html =~ "Bonjour Parm Bains,"
 
-      {:ok, french_view, _html} = live(conn, ~p"/fr/tir-de-semonce")
+      {:ok, french_view, _html} = live(conn, ~p"/fr/signal-d-alarme")
 
       french_view
       |> form("#mp-lookup-form", sender: %{name: "Camille Roy", postal_code: "J3B 6X3"})
@@ -394,7 +394,7 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
     end
 
     test "a French sender chooses how to describe themselves", %{conn: conn} do
-      {:ok, view, _html} = live(conn, ~p"/fr/tir-de-semonce")
+      {:ok, view, _html} = live(conn, ~p"/fr/signal-d-alarme")
 
       view
       |> form("#mp-lookup-form", sender: %{name: "Camille Roy", postal_code: "H2X 1Y4"})

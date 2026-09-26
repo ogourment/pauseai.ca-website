@@ -188,7 +188,7 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
 
       assert has_element?(
                view,
-               "#act-email-mp[href='/fr/tir-de-semonce#letter']",
+               "#act-email-mp[href='/fr/signal-d-alarme#letter']",
                "Écrire à votre député·e"
              )
 

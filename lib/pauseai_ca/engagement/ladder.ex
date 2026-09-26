@@ -100,7 +100,7 @@ defmodule PauseAiCa.Engagement.Ladder do
       title: "Participer à une action",
       why: "Passer de l'intérêt à une action visible aide le mouvement à grandir.",
       effort: "30 min",
-      href: "/fr/tir-de-semonce",
+      href: "/fr/signal-d-alarme",
       cta: "Écrire à ma députée ou mon député"
     }
 
@@ -110,7 +110,7 @@ defmodule PauseAiCa.Engagement.Ladder do
       why:
         "Les responsables politiques prêtent attention aux demandes personnelles de leurs électeurs.",
       effort: "10 min",
-      href: "/fr/tir-de-semonce",
+      href: "/fr/signal-d-alarme",
       cta: "Préparer un message"
     }
 

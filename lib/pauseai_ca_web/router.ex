@@ -49,6 +49,7 @@ defmodule PauseAiCaWeb.Router do
     get "/en/privacy", PageController, :privacy_en
     get "/fr/confidentialite", PageController, :privacy_fr
     get "/en/montreal.html", PageController, :legacy_montreal
+    get "/fr/tir-de-semonce", PageController, :legacy_warning_shot
     post "/learning/questions/:question", LearningSignalController, :question
     post "/engagement/event-links/:event", LearningSignalController, :event_link
     post "/engagement/visits", LearningSignalController, :visit
@@ -128,7 +129,7 @@ defmodule PauseAiCaWeb.Router do
     live_session :public_content,
       on_mount: [{PauseAiCaWeb.UserAuth, :require_invited}] do
       live "/en/warning-shot", WarningShotLive, :en
-      live "/fr/tir-de-semonce", WarningShotLive, :fr
+      live "/fr/signal-d-alarme", WarningShotLive, :fr
       live "/en/learn", LibraryLive, :en
       live "/fr/comprendre", LibraryLive, :fr
       live "/fr/learn", LibraryLive, :fr
