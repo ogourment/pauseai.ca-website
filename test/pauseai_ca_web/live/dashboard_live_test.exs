@@ -84,6 +84,92 @@ defmodule PauseAiCaWeb.DashboardLiveTest do
     refute html =~ ">2026-08-04<"
   end
 
+  test "a French member sees the journal in French", %{conn: conn, scope: scope} do
+    {:ok, _action} =
+      Engagement.create_action(scope, %{
+        "action_type" => "event",
+        "happened_on" => ~D[2026-08-04],
+        "quantity" => 40,
+        "confirmed_at" => DateTime.utc_now(:second)
+      })
+
+    {:ok, view, html} = live(conn, ~p"/fr/tableau-de-bord")
+
+    assert html =~ "4 août 2026"
+    refute html =~ "August 4, 2026"
+    assert html =~ "40 personnes"
+    assert has_element?(view, "#actions article button[phx-click=edit]", "Modifier")
+    assert has_element?(view, "#actions article button[phx-click=delete]", "Supprimer")
+
+    html =
+      view
+      |> form("#action-form", action: %{action_type: "learned", happened_on: "2026-08-05"})
+      |> render_submit()
+
+    assert html =~ "Action notée en privé."
+    refute html =~ "Action recorded privately."
+  end
+
+  for {locale, route, people, flyers} <- [
+        {"en", "/en/dashboard", ["1 person", "2 people"], ["1 handed out", "2 handed out"]},
+        {"fr", "/fr/tableau-de-bord", ["1 personne", "2 personnes"],
+         ["1 distribué", "2 distribués"]}
+      ],
+      {action_type, expected_counts} <- [{"conversation", people}, {"flyered", flyers}] do
+    @quantity_route route
+    @quantity_type action_type
+    @expected_counts expected_counts
+    test "#{locale} journal uses singular and plural quantities for #{action_type}", %{
+      conn: conn,
+      scope: scope
+    } do
+      {:ok, view, _html} = live(conn, @quantity_route)
+
+      for quantity <- [1, 2] do
+        view
+        |> form("#action-form", action: %{action_type: @quantity_type})
+        |> render_change()
+
+        view
+        |> form("#action-form",
+          action: %{
+            action_type: @quantity_type,
+            happened_on: "2026-08-04",
+            quantity: quantity
+          }
+        )
+        |> render_submit()
+      end
+
+      assert length(Engagement.list_actions(scope)) == 2
+
+      {:ok, refreshed, _html} = live(conn, @quantity_route)
+
+      for action <- Engagement.list_actions(scope) do
+        text =
+          refreshed
+          |> element("#action-quantity-#{action.id}")
+          |> render()
+          |> LazyHTML.from_fragment()
+          |> LazyHTML.text()
+          |> String.trim()
+
+        assert text == Enum.at(@expected_counts, action.quantity - 1)
+      end
+    end
+  end
+
+  test "French saved coordination link identifies its English source", %{conn: conn, user: user} do
+    {:ok, user} = Accounts.save_resource(user, "coordination")
+    {:ok, view, _html} = conn |> log_in_user(user) |> live(~p"/fr/tableau-de-bord")
+
+    assert has_element?(
+             view,
+             "#saved-resources a[href='https://pauseai.info/feasibility']",
+             "en anglais"
+           )
+  end
+
   test "requires an authenticated user", %{conn: _authenticated_conn} do
     conn = Phoenix.ConnTest.build_conn()
     assert {:error, {:redirect, %{to: "/users/log-in"}}} = live(conn, ~p"/dashboard")

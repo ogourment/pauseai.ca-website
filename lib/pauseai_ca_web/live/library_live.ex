@@ -362,7 +362,7 @@ defmodule PauseAiCaWeb.LibraryLive do
   defp parliament_note(_locale),
     do:
       gettext(
-        "Sixteen MPs and Senators, from every party and both chambers, have signed the statement calling for an international agreement to prohibit superintelligent AI. Writing to your MP is not a fringe act: the question is already in Ottawa."
+        "Current and former Canadian parliamentarians, from several parties and both chambers, have signed the statement calling for an international agreement to prohibit superintelligent AI. Writing to your MP is not a fringe act: the question is already in Ottawa."
       )
 
   defp chamber_label(:commons, _locale), do: gettext("House of Commons")

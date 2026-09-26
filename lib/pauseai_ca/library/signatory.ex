@@ -1,11 +1,11 @@
 defmodule PauseAiCa.Library.Signatory do
   @moduledoc """
-  A Canadian parliamentarian who signed the ControlAI Canada statement calling
+  A current or former Canadian parliamentarian who signed the ControlAI Canada statement calling
   for an international agreement to prohibit superintelligent AI.
 
   This exists because "politicians don't care about this" is the most common
-  reason people give for not writing to their MP. Sixteen of them, from every
-  party and both chambers, have already put their name to it.
+  reason people give for not writing to their MP. Signatories from several
+  parties and both chambers have already put their name to it.
   """
 
   @enforce_keys [:name, :chamber, :party]

@@ -124,7 +124,8 @@ defmodule PauseAiCa.Campaigns.Letter do
   defp subject(:en), do: "An AI escaped its lab and hacked a real company — please act"
 
   defp subject(:bilingual),
-    do: "An AI escaped its lab and hacked a real company / Une IA s'est échappée et a piraté"
+    do:
+      "An AI escaped its lab and hacked a real company / Une IA s'est échappée et a piraté une entreprise"
 
   defp template(:en), do: english_letter()
   defp template(:fr), do: french_letter()
@@ -146,7 +147,7 @@ defmodule PauseAiCa.Campaigns.Letter do
 
     Nine days later, Anthropic disclosed that its own models had reached the real systems of three organizations during safety evaluations. Two of those three organizations had not detected the activity.
 
-    Four months earlier, Anthropic's Claude Mythos model had already demonstrated that AI systems can autonomously find and exploit security flaws in the software that runs banks, hospitals, energy grids and government services. That showed the capability. What happened in July shows the propensity: a system deploying those capabilities on its own initiative, against a real company.
+    In April 2026, Anthropic's Claude Mythos model had already demonstrated that AI systems can autonomously find and exploit security flaws in the software that runs banks, hospitals, energy grids and government services. That showed the capability. What happened in July shows the propensity: a system deploying those capabilities on its own initiative, against a real company.
 
     Recent public warnings from researchers reinforce the case for independent oversight. Canada should not wait for another serious incident before acting.
 
@@ -179,7 +180,7 @@ defmodule PauseAiCa.Campaigns.Letter do
 
     Neuf jours plus tard, Anthropic a révélé que ses propres modèles avaient atteint les systèmes réels de trois organisations lors d'évaluations de sécurité. Deux de ces trois organisations n'avaient pas détecté l'activité.
 
-    Quatre mois plus tôt, le modèle Claude Mythos d'Anthropic avait déjà démontré que des systèmes d'IA peuvent trouver et exploiter de manière autonome des failles de sécurité dans les logiciels qui font fonctionner les banques, les hôpitaux, les réseaux énergétiques et les services gouvernementaux. Cela démontrait la capacité. Ce qui s'est produit en juillet démontre la propension: un système qui déploie ces capacités de sa propre initiative, contre une vraie entreprise.
+    En avril 2026, le modèle Claude Mythos d'Anthropic avait déjà démontré que des systèmes d'IA peuvent trouver et exploiter de manière autonome des failles de sécurité dans les logiciels qui font fonctionner les banques, les hôpitaux, les réseaux énergétiques et les services gouvernementaux. Cela démontrait la capacité. Ce qui s'est produit en juillet démontre la propension: un système qui déploie ces capacités de sa propre initiative, contre une vraie entreprise.
 
     Les récents avertissements publics de chercheurs renforcent la nécessité d'une surveillance indépendante. Le Canada ne doit pas attendre un autre incident grave pour agir.
 

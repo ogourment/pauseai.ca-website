@@ -34,6 +34,29 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
       assert html =~ "Des voix canadiennes"
     end
 
+    test "the statement roster includes new supporters and identifies former MPs", %{conn: conn} do
+      for {route, former, former_female} <- [
+            {"/en/learn", "Former MP", "Former MP"},
+            {"/fr/comprendre", "Ancien député", "Ancienne députée"}
+          ] do
+        {:ok, view, _html} = live(conn, route)
+
+        for name <- ["Grant Jackson", "Tracy Muggli", "Jeremy Patzer", "Julie Miville-Dechêne"] do
+          assert has_element?(view, "#parliament li", name)
+        end
+
+        for {name, label} <- [
+              {"Jonathan Wilkinson", former},
+              {"Steven Guilbeault", former},
+              {"Simon-Pierre Savard-Tremblay", former},
+              {"Cathay Wagantall", former_female}
+            ] do
+          row = view |> element("#parliament li", name) |> render()
+          assert row =~ label
+        end
+      end
+    end
+
     test "the legacy French learn route opens the French-first edition", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/fr/learn")
 

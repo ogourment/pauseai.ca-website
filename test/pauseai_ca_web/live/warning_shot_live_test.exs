@@ -39,7 +39,8 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
 
       assert has_element?(view, "#act")
       assert has_element?(view, "#developments-list")
-      assert render(view) =~ "Tir de semonce"
+      assert render(view) =~ "Deuxième alerte de PauseAI"
+      refute render(view) =~ "Tir de semonce"
     end
 
     test "developments link to the organizations' disclosures and official records", %{conn: conn} do
