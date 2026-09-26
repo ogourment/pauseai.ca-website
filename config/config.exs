@@ -102,3 +102,13 @@ config :phoenix, :json_library, Jason
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
+
+# Organizer sheets and personal drafts must not appear in parameter logs.
+config :phoenix, :filter_parameters, [
+  "password",
+  "token",
+  "signup",
+  "profile",
+  "account",
+  "paste"
+]

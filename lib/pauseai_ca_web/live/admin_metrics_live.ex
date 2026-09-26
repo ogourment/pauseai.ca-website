@@ -265,6 +265,7 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
     )
   end
 
+  defp signup_source_label("volunteer_signup"), do: gettext("Volunteer signup")
   defp signup_source_label("header"), do: gettext("Header")
   defp signup_source_label("home_questions"), do: gettext("Homepage questions")
   defp signup_source_label("resource_bookmark"), do: gettext("Resource bookmark")

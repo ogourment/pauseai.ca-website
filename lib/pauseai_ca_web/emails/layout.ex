@@ -26,8 +26,16 @@ defmodule PauseAiCaWeb.Emails.Layout do
   def render(title_en, title_fr, blocks, action \\ nil, opts \\ []) do
     notice? = Keyword.get(opts, :notice, false)
 
-    {html(title_en, title_fr, blocks, action, notice?),
-     text(title_en, title_fr, blocks, action, notice?)}
+    footer =
+      Keyword.get(
+        opts,
+        :footer,
+        {"You are receiving this because someone asked to sign in with this address.",
+         "Vous recevez ce message parce qu'une connexion a été demandée avec cette adresse."}
+      )
+
+    {html(title_en, title_fr, blocks, action, notice?, footer),
+     text(title_en, title_fr, blocks, action, notice?, footer)}
   end
 
   @doc """
@@ -43,7 +51,7 @@ defmodule PauseAiCaWeb.Emails.Layout do
      "Ce message est-il arrivé dans les indésirables ou les promotions? Déplacez-le vers votre boîte de réception et marquez-le « Non indésirable ». Cela prend une seconde, et c'est ainsi que nous évitons le dossier spam pour tout le monde."}
   end
 
-  defp html(title_en, title_fr, blocks, action, notice?) do
+  defp html(title_en, title_fr, blocks, action, notice?, {footer_en, footer_fr}) do
     """
     <!DOCTYPE html>
     <html lang="en">
@@ -77,8 +85,8 @@ defmodule PauseAiCaWeb.Emails.Layout do
                   <td style="padding:18px 28px 26px;border-top:1px solid #eceae4;
                              font-family:Georgia,serif;font-size:12px;line-height:1.55;color:#8a8378;">
                     pauseai.ca · info@pauseai.ca<br />
-                    You are receiving this because someone asked to sign in with this address.<br />
-                    Vous recevez ce message parce qu'une connexion a été demandée avec cette adresse.
+                    #{esc(footer_en)}<br />
+                    #{esc(footer_fr)}
                   </td>
                 </tr>
               </table>
@@ -141,7 +149,7 @@ defmodule PauseAiCaWeb.Emails.Layout do
     """
   end
 
-  defp text(title_en, title_fr, blocks, action, notice?) do
+  defp text(title_en, title_fr, blocks, action, notice?, {footer_en, footer_fr}) do
     body =
       Enum.map_join(blocks, "\n\n", fn {en, fr} -> "#{en}\n\n#{fr}" end)
 
@@ -170,8 +178,8 @@ defmodule PauseAiCaWeb.Emails.Layout do
     #{body}#{action_text}#{notice_text}
     --
     pauseai.ca · info@pauseai.ca
-    You are receiving this because someone asked to sign in with this address.
-    Vous recevez ce message parce qu'une connexion a été demandée avec cette adresse.
+    #{footer_en}
+    #{footer_fr}
     """
   end
 

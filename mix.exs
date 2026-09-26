@@ -134,7 +134,7 @@ defmodule PauseAiCa.MixProject do
         {:acceptance_harness, path: Path.expand(path), override: true}
 
       _unset ->
-        {:acceptance_harness, git: acceptance_harness_git_url(), tag: "v0.10.5"}
+        {:acceptance_harness, git: acceptance_harness_git_url(), tag: "v0.10.6"}
     end
   end
 

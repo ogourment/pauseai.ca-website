@@ -11,6 +11,19 @@
     title: "Contact migration",
     tables: ["contact_activities", "contact_imports", "contacts"]
   },
+  %{
+    id: "volunteers",
+    title: "Volunteer signup and profiles",
+    tables: [
+      "volunteer_groups",
+      "volunteer_group_managers",
+      "volunteer_batches",
+      "volunteer_profiles",
+      "volunteer_signups",
+      "volunteer_invitations",
+      "volunteer_events"
+    ]
+  },
   %{id: "analytics", title: "First-party analytics", tables: ["daily_visits"]},
   %{
     id: "acceptance_evidence",

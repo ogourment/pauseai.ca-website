@@ -42,7 +42,7 @@ defmodule PauseAiCaWeb.AtddEvidence do
         conn,
         """
         ({width:document.documentElement.scrollWidth,height:document.documentElement.scrollHeight,
-          boxes:[...document.querySelectorAll('#account-entry,#account-email-pending,#account-email-error,#save-progress-invitation,#signup-funnel,#mainstream-safety-context,#delivered-email')]
+          boxes:[...document.querySelectorAll('#account-entry,#account-email-pending,#account-email-error,#save-progress-invitation,#signup-funnel,#mainstream-safety-context,#delivered-email,#signup-grid,#row-details,#signup-review,#batch-result,#volunteer-profile-form,#csv-mapping,#group-management')]
           .filter(el=>el.getBoundingClientRect().height>0).map(el=>{const r=el.getBoundingClientRect();return {selector:'#'+el.id,x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:r.height}})})
         """,
         &Process.put(:evidence_geometry, &1)

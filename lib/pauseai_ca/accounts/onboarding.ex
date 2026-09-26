@@ -13,6 +13,7 @@ defmodule PauseAiCa.Accounts.Onboarding do
   @answers ~w(0 1 2 3 4 5)
 
   def sources, do: @sources
+  def account_sources, do: @sources ++ ["volunteer_signup"]
 
   def context(params, visitor_id) do
     locale = if params["locale"] == "fr", do: "fr", else: "en"

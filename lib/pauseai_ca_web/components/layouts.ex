@@ -219,6 +219,10 @@ defmodule PauseAiCaWeb.Layouts do
                 navigate={if(@locale == "fr", do: ~p"/fr/profil", else: ~p"/en/profile")}
                 class="block rounded-lg px-3 py-2.5 font-semibold text-stone-900 hover:bg-brand-wash"
               >{gettext("My profile")}</.link>
+              <.link
+                navigate={~p"/volunteer-profile?locale=#{@locale}"}
+                class="block rounded-lg px-3 py-2.5 font-semibold text-stone-900 hover:bg-brand-wash"
+              >{gettext("Volunteer profile")}</.link>
               <div role="separator" class="my-2 border-t border-stone-200"></div>
               <.link
                 href={~p"/users/settings"}
@@ -229,16 +233,23 @@ defmodule PauseAiCaWeb.Layouts do
                 class="block rounded-lg px-3 py-2.5 font-semibold text-stone-900 hover:bg-brand-wash"
               >{gettext("Change password")}</.link>
               <div
-                :if={@current_scope.user.superadmin}
-                role="separator"
-                class="my-2 border-t border-stone-200"
+                :if={PauseAiCa.Volunteers.allowed?(@current_scope)}
+                id="account-management-links"
+                class="my-2 border-t border-stone-200 pt-2"
               >
+                <p class="px-3 py-1 text-xs font-semibold uppercase tracking-wide text-stone-500">
+                  {gettext("Management")}
+                </p>
+                <.link
+                  navigate={~p"/manage/accounts?locale=#{@locale}"}
+                  class="block rounded-lg px-3 py-2.5 font-semibold text-stone-900 hover:bg-brand-wash"
+                >{gettext("Accounts")}</.link>
+                <.link
+                  :if={@current_scope.user.superadmin}
+                  navigate={~p"/admin/dashboard"}
+                  class="block rounded-lg px-3 py-2.5 font-semibold text-stone-900 hover:bg-brand-wash"
+                >{gettext("Admin dashboard")}</.link>
               </div>
-              <.link
-                :if={@current_scope.user.superadmin}
-                navigate={~p"/admin/dashboard"}
-                class="block rounded-lg px-3 py-2.5 font-semibold text-stone-900 hover:bg-brand-wash"
-              >Admin</.link>
               <div role="separator" class="my-2 border-t border-stone-200"></div>
               <a
                 class="block rounded-lg px-3 py-2.5 font-semibold text-stone-900 hover:bg-brand-wash"

@@ -84,3 +84,5 @@ config :pauseai_ca, :campaign_rehearsal, true
 
 # Tests submit instantly; the human-pace check is exercised explicitly.
 config :pauseai_ca, :campaign_min_seconds, 0
+
+config :pauseai_ca, :volunteer_dispatcher, false

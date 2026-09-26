@@ -5,6 +5,8 @@ defmodule PauseAiCa.ContactMigration.CSV do
 
   def source_headers, do: @known
 
+  def decode(contents) when is_binary(contents), do: rows(contents)
+
   def parse(contents) when is_binary(contents) do
     with {:ok, [headers | data]} <- rows(contents),
          normalized = Enum.map(headers, &normalize_header/1),

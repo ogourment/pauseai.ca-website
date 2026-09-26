@@ -29,6 +29,34 @@ defmodule PauseAiCa.Accounts.UserNotifier do
     end
   end
 
+  def deliver_volunteer_invitation(user, url),
+    do: user |> volunteer_invitation(url) |> Mailer.deliver()
+
+  def volunteer_invitation(user, url) do
+    {html, text} =
+      Layout.render(
+        "Welcome to PauseAI Canada",
+        "Bienvenue à PauseAI Canada",
+        [
+          {"Thank you for offering to help PauseAI Canada. An organizer created or linked your account from a volunteer signup sheet. Sign in to confirm your email and review your profile.",
+           "Merci d’avoir proposé votre aide à PauseAI Canada. Une personne de l’équipe a créé ou associé votre compte à partir d’une feuille d’inscription bénévole. Connectez-vous pour confirmer votre adresse courriel et consulter votre profil."},
+          {"If this was unexpected, contact info@pauseai.ca. Your account does not subscribe you to a mailing list or enroll you in a group.",
+           "Si vous ne vous y attendiez pas, contactez info@pauseai.ca. Votre compte ne vous inscrit à aucune liste de diffusion ni à aucun groupe."}
+        ],
+        {"Sign in", "Se connecter", url},
+        footer:
+          {"You received this invitation because an organizer entered your volunteer signup.",
+           "Vous recevez cette invitation parce qu’une personne de l’équipe a saisi votre inscription bénévole."}
+      )
+
+    new()
+    |> to(user.email)
+    |> from(sender())
+    |> subject("Welcome to PauseAI Canada · Bienvenue à PauseAI Canada")
+    |> html_body(html)
+    |> text_body(text)
+  end
+
   defp sender do
     Application.get_env(:pauseai_ca, :campaign_sender, @default_sender)
   end

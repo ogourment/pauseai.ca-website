@@ -443,7 +443,7 @@ if System.get_env("ATDD") == "true" do
         |> assert_has("#action-editor")
         |> click("#flash-info button")
         |> click("#account-menu summary")
-        |> click_link("Admin")
+        |> click_link("Admin dashboard")
         |> assert_has("#signup-created", text: "4")
         |> assert_has("#signup-confirmed", text: "3")
         |> assert_has("#signup-first-action", text: "1")

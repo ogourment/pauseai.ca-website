@@ -258,7 +258,7 @@ defmodule PauseAiCa.Engagement do
       pending: length(rows) - confirmed,
       first_action: Enum.count(rows, active?),
       sources:
-        Enum.map(PauseAiCa.Accounts.Onboarding.sources(), fn key ->
+        Enum.map(PauseAiCa.Accounts.Onboarding.account_sources(), fn key ->
           {key, Enum.count(rows, &((&1.source || "unknown") == key))}
         end),
       trends: %{
