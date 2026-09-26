@@ -42,6 +42,14 @@ Before proposing a change:
 mix precommit
 ```
 
+## Acceptance-test harness
+
+The shared [AcceptanceHarness repository on GitHub](https://github.com/ogourment/acceptance_harness)
+is a **public code mirror**. It includes the harness implementation and
+documentation for inspecting the acceptance-test tooling and contributing
+improvements. This website's dependency versions are pinned in `mix.exs` and
+`mix.lock`.
+
 ## Privacy boundary
 
 Anonymous onboarding answers use browser `localStorage` for the suggested path

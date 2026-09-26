@@ -41,7 +41,8 @@ defmodule PauseAiCa.Library do
   @doc """
   Canadian parliamentarians who signed the ControlAI Canada statement.
 
-  Verified against controlai.org/canada-statement on 2026-08-02.
+  Verified against controlai.org/canada-statement/en on 2026-09-25.
+  Former-member labels follow that source.
   """
   @spec signatories() :: [Signatory.t()]
   def signatories, do: all_signatories()
@@ -860,11 +861,28 @@ defmodule PauseAiCa.Library do
 
     [
       %Signatory{name: "Hon. Judy A. Sgro", chamber: :commons, party: liberal},
-      %Signatory{name: "Hon. Jonathan Wilkinson", chamber: :commons, party: liberal},
-      %Signatory{name: "Hon. Steven Guilbeault", chamber: :commons, party: liberal},
+      %Signatory{
+        name: "Hon. Jonathan Wilkinson",
+        chamber: :commons,
+        party: liberal,
+        note: %{"en" => "Former MP", "fr" => "Ancien député"}
+      },
+      %Signatory{
+        name: "Hon. Steven Guilbeault",
+        chamber: :commons,
+        party: liberal,
+        note: %{"en" => "Former MP", "fr" => "Ancien député"}
+      },
       %Signatory{name: "William Stevenson", chamber: :commons, party: conservative},
+      %Signatory{name: "Grant Jackson", chamber: :commons, party: conservative},
+      %Signatory{name: "Jeremy Patzer", chamber: :commons, party: conservative},
       %Signatory{name: "Joël Godin", chamber: :commons, party: conservative},
-      %Signatory{name: "Cathay Wagantall", chamber: :commons, party: conservative},
+      %Signatory{
+        name: "Cathay Wagantall",
+        chamber: :commons,
+        party: conservative,
+        note: %{"en" => "Former MP", "fr" => "Ancienne députée"}
+      },
       %Signatory{name: "Arnold Viersen", chamber: :commons, party: conservative},
       %Signatory{
         name: "Martin Champoux",
@@ -878,7 +896,8 @@ defmodule PauseAiCa.Library do
       %Signatory{
         name: "Simon-Pierre Savard-Tremblay",
         chamber: :commons,
-        party: %{"en" => "Independent", "fr" => "Indépendant"}
+        party: %{"en" => "Independent", "fr" => "Indépendant"},
+        note: %{"en" => "Former MP", "fr" => "Ancien député"}
       },
       %Signatory{
         name: "Hon. Colin Deacon",
@@ -898,6 +917,16 @@ defmodule PauseAiCa.Library do
       },
       %Signatory{
         name: "Hon. Judy A. White",
+        chamber: :senate,
+        party: %{"en" => "PSG", "fr" => "GPS"}
+      },
+      %Signatory{
+        name: "Hon. Tracy Muggli",
+        chamber: :senate,
+        party: %{"en" => "PSG", "fr" => "GPS"}
+      },
+      %Signatory{
+        name: "Hon. Julie Miville-Dechêne",
         chamber: :senate,
         party: %{"en" => "PSG", "fr" => "GPS"}
       },

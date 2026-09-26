@@ -110,6 +110,66 @@ defmodule PauseAiCaWeb.DashboardLiveTest do
     refute html =~ "Action recorded privately."
   end
 
+  for {locale, route, people, flyers} <- [
+        {"en", "/en/dashboard", ["1 person", "2 people"], ["1 handed out", "2 handed out"]},
+        {"fr", "/fr/tableau-de-bord", ["1 personne", "2 personnes"],
+         ["1 distribué", "2 distribués"]}
+      ],
+      {action_type, expected_counts} <- [{"conversation", people}, {"flyered", flyers}] do
+    @quantity_route route
+    @quantity_type action_type
+    @expected_counts expected_counts
+    test "#{locale} journal uses singular and plural quantities for #{action_type}", %{
+      conn: conn,
+      scope: scope
+    } do
+      {:ok, view, _html} = live(conn, @quantity_route)
+
+      for quantity <- [1, 2] do
+        view
+        |> form("#action-form", action: %{action_type: @quantity_type})
+        |> render_change()
+
+        view
+        |> form("#action-form",
+          action: %{
+            action_type: @quantity_type,
+            happened_on: "2026-08-04",
+            quantity: quantity
+          }
+        )
+        |> render_submit()
+      end
+
+      assert length(Engagement.list_actions(scope)) == 2
+
+      {:ok, refreshed, _html} = live(conn, @quantity_route)
+
+      for action <- Engagement.list_actions(scope) do
+        text =
+          refreshed
+          |> element("#action-quantity-#{action.id}")
+          |> render()
+          |> LazyHTML.from_fragment()
+          |> LazyHTML.text()
+          |> String.trim()
+
+        assert text == Enum.at(@expected_counts, action.quantity - 1)
+      end
+    end
+  end
+
+  test "French saved coordination link identifies its English source", %{conn: conn, user: user} do
+    {:ok, user} = Accounts.save_resource(user, "coordination")
+    {:ok, view, _html} = conn |> log_in_user(user) |> live(~p"/fr/tableau-de-bord")
+
+    assert has_element?(
+             view,
+             "#saved-resources a[href='https://pauseai.info/feasibility']",
+             "en anglais"
+           )
+  end
+
   test "requires an authenticated user", %{conn: _authenticated_conn} do
     conn = Phoenix.ConnTest.build_conn()
     assert {:error, {:redirect, %{to: "/users/log-in"}}} = live(conn, ~p"/dashboard")

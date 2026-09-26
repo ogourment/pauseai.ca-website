@@ -174,9 +174,11 @@ defmodule PauseAiCaWeb.DashboardLive do
     |> assign(:ladder_position, Ladder.position(actions))
   end
 
-  defp unit("flyered"), do: gettext("handed out")
-  defp unit("conversation"), do: gettext("people")
-  defp unit(_type), do: gettext("people")
+  defp quantity_summary("flyered", count),
+    do: ngettext("%{count} handed out", "%{count} handed out", count)
+
+  defp quantity_summary(_type, count),
+    do: ngettext("%{count} person", "%{count} people", count)
 
   # What a number means depends entirely on what was done.
   defp quantity_label("event"), do: gettext("Roughly how many people were there?")
@@ -214,7 +216,7 @@ defmodule PauseAiCaWeb.DashboardLive do
 
   defp saved_resource_label("risk", _), do: gettext("Understand existential risk")
   defp saved_resource_label("pause", _), do: gettext("Understand a pause")
-  defp saved_resource_label("coordination", _), do: gettext("Test coordination")
+  defp saved_resource_label("coordination", _), do: gettext("Test coordination (English source)")
   defp saved_resource_label("agency", _), do: gettext("Move toward action")
 
   defp saved_resource_label(resource, locale) do
@@ -540,7 +542,10 @@ defmodule PauseAiCaWeb.DashboardLive do
                   >
                     <span :if={action.location not in [nil, ""]}>{action.location}</span>
                     <span :if={action.location not in [nil, ""] and action.quantity}> · </span>
-                    <span :if={action.quantity}>{action.quantity} {unit(action.action_type)}</span>
+                    <span :if={action.quantity} id={"action-quantity-#{action.id}"}>{quantity_summary(
+                      action.action_type,
+                      action.quantity
+                    )}</span>
                   </p>
                   <p
                     :if={action.notes not in [nil, ""]}
