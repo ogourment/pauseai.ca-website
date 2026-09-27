@@ -53,17 +53,22 @@ defmodule PauseAiCaWeb.ProtestRecapLive do
             class="mt-5 inline-block font-semibold underline decoration-brand decoration-2 underline-offset-4"
           >{gettext("Read PauseAI Canada's press release")}</.link>
           <figure class="mt-10">
-            <img
-              id="protest-photo-3"
-              src={~p"/images/protest-2026-09-26/clara-lacasse-3.webp"}
-              srcset={"#{~p"/images/protest-2026-09-26/clara-lacasse-3-small.webp"} 640w, #{~p"/images/protest-2026-09-26/clara-lacasse-3.webp"} 1200w"}
-              sizes="(min-width: 1024px) 984px, calc(100vw - 40px)"
-              width="1200"
-              height="960"
-              fetchpriority="high"
-              alt={gettext("Demonstrators holding a PauseAI banner and signs at Phillips Square")}
-              class="h-auto w-full rounded-xl"
-            />
+            <picture>
+              <source
+                type="image/webp"
+                srcset={"#{~p"/images/protest-2026-09-26/clara-lacasse-3-small.webp"} 640w, #{~p"/images/protest-2026-09-26/clara-lacasse-3.webp"} 1200w"}
+                sizes="(min-width: 1024px) 984px, calc(100vw - 40px)"
+              />
+              <img
+                id="protest-photo-3"
+                src={~p"/images/protest-2026-09-26/clara-lacasse-3.jpg"}
+                width="1200"
+                height="960"
+                fetchpriority="high"
+                alt={gettext("Demonstrators holding a PauseAI banner and signs at Phillips Square")}
+                class="h-auto w-full rounded-xl"
+              />
+            </picture>
             <figcaption class="mt-3 text-sm text-stone-600">
               {gettext("At Phillips Square, Montréal. Photo: Clara Lacasse.")}
             </figcaption>
@@ -130,37 +135,47 @@ defmodule PauseAiCaWeb.ProtestRecapLive do
         <section id="protest-photos" class="mx-auto max-w-5xl px-5 pt-12">
           <div class="grid items-start gap-8 md:grid-cols-[3fr_2fr]">
             <figure>
-              <img
-                id="protest-photo-7"
-                src={~p"/images/protest-2026-09-26/clara-lacasse-7.webp"}
-                srcset={"#{~p"/images/protest-2026-09-26/clara-lacasse-7-small.webp"} 640w, #{~p"/images/protest-2026-09-26/clara-lacasse-7.webp"} 1200w"}
-                sizes="(min-width: 768px) 580px, calc(100vw - 40px)"
-                width="1200"
-                height="960"
-                loading="lazy"
-                decoding="async"
-                alt={gettext("Demonstrators holding signs calling for a worldwide pause on AI")}
-                class="h-auto w-full rounded-xl"
-              />
+              <picture>
+                <source
+                  type="image/webp"
+                  srcset={"#{~p"/images/protest-2026-09-26/clara-lacasse-7-small.webp"} 640w, #{~p"/images/protest-2026-09-26/clara-lacasse-7.webp"} 1200w"}
+                  sizes="(min-width: 768px) 580px, calc(100vw - 40px)"
+                />
+                <img
+                  id="protest-photo-7"
+                  src={~p"/images/protest-2026-09-26/clara-lacasse-7.jpg"}
+                  width="1200"
+                  height="960"
+                  loading="lazy"
+                  decoding="async"
+                  alt={gettext("Demonstrators holding signs calling for a worldwide pause on AI")}
+                  class="h-auto w-full rounded-xl"
+                />
+              </picture>
               <figcaption class="mt-3 text-sm text-stone-600">
                 {gettext("Calling for a global pause. Photo: Clara Lacasse.")}
               </figcaption>
             </figure>
             <figure>
-              <img
-                id="protest-photo-14"
-                src={~p"/images/protest-2026-09-26/clara-lacasse-14.webp"}
-                srcset={"#{~p"/images/protest-2026-09-26/clara-lacasse-14-small.webp"} 512w, #{~p"/images/protest-2026-09-26/clara-lacasse-14.webp"} 960w"}
-                sizes="(min-width: 768px) 400px, calc(100vw - 40px)"
-                width="960"
-                height="1200"
-                loading="lazy"
-                decoding="async"
-                alt={
-                  gettext("Jeremy Eliosoff wearing a yellow PauseAI shirt at the Montréal protest")
-                }
-                class="h-auto w-full rounded-xl"
-              />
+              <picture>
+                <source
+                  type="image/webp"
+                  srcset={"#{~p"/images/protest-2026-09-26/clara-lacasse-14-small.webp"} 512w, #{~p"/images/protest-2026-09-26/clara-lacasse-14.webp"} 960w"}
+                  sizes="(min-width: 768px) 400px, calc(100vw - 40px)"
+                />
+                <img
+                  id="protest-photo-14"
+                  src={~p"/images/protest-2026-09-26/clara-lacasse-14.jpg"}
+                  width="960"
+                  height="1200"
+                  loading="lazy"
+                  decoding="async"
+                  alt={
+                    gettext("Jeremy Eliosoff wearing a yellow PauseAI shirt at the Montréal protest")
+                  }
+                  class="h-auto w-full rounded-xl"
+                />
+              </picture>
               <figcaption class="mt-3 text-sm text-stone-600">
                 {gettext("Jeremy Eliosoff. Photo: Clara Lacasse.")}
               </figcaption>

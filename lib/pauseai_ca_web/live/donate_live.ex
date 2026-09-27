@@ -94,15 +94,20 @@ defmodule PauseAiCaWeb.DonateLive do
             </p>
           </div>
           <figure>
-            <img
-              src={~p"/images/protest-2026-09-26/clara-lacasse-7.webp"}
-              srcset={"#{~p"/images/protest-2026-09-26/clara-lacasse-7-small.webp"} 640w, #{~p"/images/protest-2026-09-26/clara-lacasse-7.webp"} 1200w"}
-              sizes="(min-width: 768px) 580px, calc(100vw - 40px)"
-              width="1200"
-              height="960"
-              alt={gettext("Demonstrators holding signs calling for a worldwide pause on AI")}
-              class="h-auto w-full rounded-xl"
-            />
+            <picture>
+              <source
+                type="image/webp"
+                srcset={"#{~p"/images/protest-2026-09-26/clara-lacasse-7-small.webp"} 640w, #{~p"/images/protest-2026-09-26/clara-lacasse-7.webp"} 1200w"}
+                sizes="(min-width: 768px) 580px, calc(100vw - 40px)"
+              />
+              <img
+                src={~p"/images/protest-2026-09-26/clara-lacasse-7.jpg"}
+                width="1200"
+                height="960"
+                alt={gettext("Demonstrators holding signs calling for a worldwide pause on AI")}
+                class="h-auto w-full rounded-xl"
+              />
+            </picture>
             <figcaption class="mt-2 text-sm text-stone-600">
               {gettext("Montréal, September 26. Photo: Clara Lacasse.")}
             </figcaption>

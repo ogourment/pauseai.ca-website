@@ -114,15 +114,20 @@ defmodule PauseAiCaWeb.ProtestPressReleaseLive do
             </footer>
           </blockquote>
           <div>
-            <img
-              src={~p"/images/protest-2026-09-26/clara-lacasse-14.webp"}
-              srcset={"#{~p"/images/protest-2026-09-26/clara-lacasse-14-small.webp"} 512w, #{~p"/images/protest-2026-09-26/clara-lacasse-14.webp"} 960w"}
-              sizes="(min-width: 768px) 400px, calc(100vw - 40px)"
-              width="960"
-              height="1200"
-              alt={gettext("Jeremy Eliosoff at the Montréal protest")}
-              class="h-auto w-full rounded-lg"
-            />
+            <picture>
+              <source
+                type="image/webp"
+                srcset={"#{~p"/images/protest-2026-09-26/clara-lacasse-14-small.webp"} 512w, #{~p"/images/protest-2026-09-26/clara-lacasse-14.webp"} 960w"}
+                sizes="(min-width: 768px) 400px, calc(100vw - 40px)"
+              />
+              <img
+                src={~p"/images/protest-2026-09-26/clara-lacasse-14.jpg"}
+                width="960"
+                height="1200"
+                alt={gettext("Jeremy Eliosoff at the Montréal protest")}
+                class="h-auto w-full rounded-lg"
+              />
+            </picture>
             <figcaption class="mt-2 text-xs text-stone-600">
               {gettext("Photo: Clara Lacasse.")}
             </figcaption>
