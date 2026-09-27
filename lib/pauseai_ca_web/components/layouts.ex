@@ -382,10 +382,12 @@ defmodule PauseAiCaWeb.Layouts do
     </main>
 
     <footer class="border-t border-stone-200">
-      <div class="relative mx-auto flex max-w-6xl flex-col gap-4 px-5 py-10 text-sm text-stone-500 sm:flex-row sm:items-center">
-        <p class="mr-auto">{gettext("PauseAI Canada")}</p>
+      <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-5 gap-y-3 px-5 py-8 text-sm text-stone-500">
+        <p class="w-full text-center sm:mr-auto sm:w-auto sm:text-left">
+          {gettext("PauseAI Canada")}
+        </p>
         <a
-          class="self-center hover:text-stone-900 sm:absolute sm:left-1/2 sm:-translate-x-1/2"
+          class="hover:text-stone-900"
           href="https://luma.com/pauseaimtl"
           target="_blank"
           rel="noopener noreferrer"
@@ -398,19 +400,12 @@ defmodule PauseAiCaWeb.Layouts do
           class="hover:text-stone-900"
           href={if(@locale == "fr", do: ~p"/fr/confidentialite", else: ~p"/en/privacy")}
         >{gettext("Privacy")}</.link>
-        <a class="hover:text-stone-900" href="https://github.com/ogourment/pauseai.ca-website">Source</a>
-      </div>
-      <p class="mx-auto max-w-6xl px-5 pb-6 text-center text-sm text-stone-500">
         <.link
           id="hosting-location"
-          href={
-            if(@locale == "fr", do: ~p"/fr/confidentialite#hosting", else: ~p"/en/privacy#hosting")
-          }
-          class="underline underline-offset-4"
-        >
-          {gettext("Website and application database hosted in Canada")}
-        </.link>
-      </p>
+          href={if(@locale == "fr", do: ~p"/fr/a-propos#technical", else: ~p"/en/about#technical")}
+          class="whitespace-nowrap hover:text-stone-900"
+        >{gettext("Made in Canada")} <span aria-hidden="true">🇨🇦</span></.link>
+      </div>
     </footer>
 
     <.flash_group flash={@flash} />

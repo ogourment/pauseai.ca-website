@@ -66,6 +66,56 @@
           }
         >{gettext("Join Us")}</.link>
       </section>
+      <section id="technical" class="scroll-mt-32 border-t border-stone-200 pt-8">
+        <h2 class="font-heading text-3xl text-stone-950">
+          {gettext("Technical details and contributions")}
+        </h2>
+        <p class="mt-3">
+          {gettext(
+            "The website application runs on an OVHcloud server in Beauharnois, Québec, Canada, where its application database is also hosted."
+          )}
+        </p>
+        <p class="mt-3">
+          {gettext(
+            "The site uses Elixir, Phoenix LiveView and PostgreSQL. Its source code is public on GitHub."
+          )}
+        </p>
+        <p class="mt-3">
+          {gettext(
+            "You can report a problem, suggest clearer wording, improve translations or contribute code."
+          )}
+        </p>
+        <ul class="mt-3 list-disc space-y-2 pl-5">
+          <li>
+            <a class="underline" href="https://github.com/ogourment/pauseai.ca-website">{gettext(
+              "Source code on GitHub"
+            )}</a>
+          </li>
+          <li>
+            <a
+              class="underline"
+              href="https://github.com/ogourment/pauseai.ca-website/blob/main/CONTRIBUTING.md"
+            >{gettext("How to contribute")}</a>
+          </li>
+          <li>
+            <a class="underline" href="https://github.com/ogourment/pauseai.ca-website/issues">{gettext(
+              "Report a problem or suggest a change"
+            )}</a>
+          </li>
+        </ul>
+        <p class="mt-3">
+          {gettext("Email delivery uses Brevo; optional analytics use Google Analytics.")}
+          <.link
+            class="underline"
+            href={
+              if(@locale == "fr",
+                do: ~p"/fr/confidentialite#hosting",
+                else: ~p"/en/privacy#hosting"
+              )
+            }
+          >{gettext("Read our privacy policy.")}</.link>
+        </p>
+      </section>
     </div>
   </article>
 </Layouts.app>
