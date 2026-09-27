@@ -7,6 +7,8 @@ defmodule PauseAiCaWeb.Router do
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
+    plug PauseAiCaWeb.Site
+    plug PauseAiCaWeb.Plugs.VisitPreferences
     plug :fetch_live_flash
     plug :put_root_layout, html: {PauseAiCaWeb.Layouts, :root}
     plug :protect_from_forgery
@@ -90,6 +92,8 @@ defmodule PauseAiCaWeb.Router do
   scope "/admin", PauseAiCaWeb do
     pipe_through [:browser, :require_authenticated_user, :require_superadmin_user]
 
+    post "/visit-preferences", VisitPreferencesController, :update
+
     live_session :require_superadmin_user,
       on_mount: [{PauseAiCaWeb.UserAuth, :require_authenticated}] do
       live "/", AdminMetricsLive, :redirect
@@ -104,6 +108,8 @@ defmodule PauseAiCaWeb.Router do
   scope "/", PauseAiCaWeb do
     pipe_through [:browser, :require_authenticated_user]
 
+    get "/volunteer-profile", VolunteerProfileRedirectController, :index
+
     live_session :require_authenticated_user,
       on_mount: [{PauseAiCaWeb.UserAuth, :require_authenticated}] do
       live "/manage/accounts", ManagedAccountsLive, :index
@@ -111,7 +117,6 @@ defmodule PauseAiCaWeb.Router do
       live "/manage/accounts/import", VolunteerSignupsLive, :index
       live "/manage/accounts/:id", ManagedAccountsLive, :show
       live "/volunteer-signups", VolunteerSignupsLive, :index
-      live "/volunteer-profile", VolunteerProfileLive, :index
       live "/dashboard", DashboardLive, :index
       live "/en/actions", DashboardLive, :en
       live "/fr/actions", DashboardLive, :fr

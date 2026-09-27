@@ -10,7 +10,12 @@ defmodule PauseAiCaWeb.DashboardLive do
     scope = socket.assigns.current_scope
     actions = Engagement.list_actions(scope)
     confirmed_actions = Enum.reject(actions, &Action.pending?/1)
-    locale = if socket.assigns.live_action == :fr, do: "fr", else: "en"
+
+    locale =
+      if socket.assigns.live_action in [:fr, :en],
+        do: Atom.to_string(socket.assigns.live_action),
+        else: socket.assigns.locale
+
     Gettext.put_locale(PauseAiCaWeb.Gettext, locale)
 
     {:ok,

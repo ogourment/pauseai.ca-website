@@ -6,7 +6,7 @@ defmodule PauseAiCaWeb.ManagedAccountsLive do
 
   @impl true
   def mount(params, _, socket) do
-    locale = if params["locale"] == "fr", do: "fr", else: "en"
+    locale = PauseAiCaWeb.Site.locale(params, socket)
     Gettext.put_locale(PauseAiCaWeb.Gettext, locale)
 
     if Volunteers.allowed?(socket.assigns.current_scope) do

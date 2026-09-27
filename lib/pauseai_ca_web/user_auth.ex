@@ -151,11 +151,13 @@ defmodule PauseAiCaWeb.UserAuth do
   defp renew_session(conn, _user) do
     delete_csrf_token()
     browser_visit_recorded_on_toronto = get_session(conn, :browser_visit_recorded_on_toronto)
+    site_locale = get_session(conn, :site_locale)
 
     conn
     |> configure_session(renew: true)
     |> clear_session()
     |> put_session(:browser_visit_recorded_on_toronto, browser_visit_recorded_on_toronto)
+    |> put_session(:site_locale, site_locale)
   end
 
   defp maybe_write_remember_me_cookie(conn, token, %{"remember_me" => "true"}, _),

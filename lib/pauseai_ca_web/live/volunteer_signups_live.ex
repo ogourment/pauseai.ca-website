@@ -6,7 +6,7 @@ defmodule PauseAiCaWeb.VolunteerSignupsLive do
 
   @impl true
   def mount(params, _session, socket) do
-    locale = if params["locale"] == "fr", do: "fr", else: "en"
+    locale = PauseAiCaWeb.Site.locale(params, socket)
     Gettext.put_locale(PauseAiCaWeb.Gettext, locale)
     socket = assign(socket, :locale, locale)
     scope = socket.assigns.current_scope

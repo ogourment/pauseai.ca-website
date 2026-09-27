@@ -5,7 +5,9 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
   alias PauseAiCa.Engagement.Ladder
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
+    socket = assign(socket, :exclude_browser_visits, session["exclude_browser_visits"] == true)
+
     if socket.assigns.current_scope.user.superadmin do
       {:ok, load(socket)}
     else
@@ -61,6 +63,32 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
         <p class="eyebrow">{gettext("Superadmin")}</p>
         <h1 class="mt-3 font-heading text-5xl text-stone-950">{gettext("Admin dashboard")}</h1>
         <.admin_navigation current={:dashboard} />
+        <section id="visit-preferences" class="mt-6 rounded-xl border p-5">
+          <h2 class="font-heading text-xl">{gettext("My visits")}</h2>
+          <p class="mt-2">
+            {gettext("Signed-in superadmins are excluded from browser visit counts.")}
+          </p>
+          <p id="browser-visit-exclusion-status" role="status">
+            {if @exclude_browser_visits,
+              do: gettext("This browser is also excluded when signed out."),
+              else: gettext("Signed-out visits from this browser can count.")}
+          </p>
+          <.form for={%{}} action={~p"/admin/visit-preferences"} method="post" class="mt-3">
+            <input
+              type="hidden"
+              name="excluded"
+              value={if @exclude_browser_visits, do: "false", else: "true"}
+            />
+            <.button>{if @exclude_browser_visits,
+              do: gettext("Include this browser"),
+              else: gettext("Exclude this browser")}</.button>
+          </.form>
+          <p class="mt-2 text-sm text-stone-600">
+            {gettext(
+              "Applies to this browser on this domain for one year, including after sign-out. Clearing cookies removes it. Set it on both domains if you use both. Earlier totals cannot be corrected."
+            )}
+          </p>
+        </section>
         <section id="admin-metrics" class="mt-10">
           <h2 class="font-heading text-3xl text-stone-950">Movement metrics</h2>
           <p class="mt-4 max-w-3xl text-stone-600">

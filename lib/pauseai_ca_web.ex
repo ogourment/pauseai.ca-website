@@ -51,6 +51,7 @@ defmodule PauseAiCaWeb do
   def live_view do
     quote do
       use Phoenix.LiveView
+      on_mount {PauseAiCaWeb.Site, :default}
 
       unquote(html_helpers())
     end

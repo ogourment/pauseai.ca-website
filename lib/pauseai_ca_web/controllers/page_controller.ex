@@ -1,7 +1,15 @@
 defmodule PauseAiCaWeb.PageController do
   use PauseAiCaWeb, :controller
 
-  def index(conn, _params), do: render_home(conn, "en")
+  def index(conn, _params) do
+    if PauseAiCaWeb.Site.default_locale(conn.host) == "fr" do
+      suffix = if conn.query_string == "", do: "", else: "?" <> conn.query_string
+      redirect(conn, to: "/fr" <> suffix)
+    else
+      render_home(conn, "en")
+    end
+  end
+
   def en(conn, _params), do: render_home(conn, "en")
   def fr(conn, _params), do: render_home(conn, "fr")
   def strategy_en(conn, _params), do: render_content(conn, :strategy, "en", "Our strategy")

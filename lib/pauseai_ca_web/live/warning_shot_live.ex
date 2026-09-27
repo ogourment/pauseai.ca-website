@@ -204,7 +204,8 @@ defmodule PauseAiCaWeb.WarningShotLive do
     end
   end
 
-  defp confirm_url(socket, token), do: url(socket, ~p"/letters/confirm/#{token}")
+  defp confirm_url(socket, token),
+    do: PauseAiCaWeb.Site.url(socket.assigns.locale, ~p"/letters/confirm/#{token}")
 
   defp verified_sender?(socket, email) do
     case socket.assigns[:current_scope] do
@@ -1075,8 +1076,8 @@ defmodule PauseAiCaWeb.WarningShotLive do
         "An AI escaped its lab and hacked a real company. I just wrote to my MP about it. It takes a minute:"
       )
 
-  defp share_link("fr"), do: "https://pauseai.ca/fr/signal-d-alarme"
-  defp share_link(_locale), do: "https://pauseai.ca/en/warning-shot"
+  defp share_link("fr"), do: PauseAiCaWeb.Site.url("fr", "/fr/signal-d-alarme")
+  defp share_link(_locale), do: PauseAiCaWeb.Site.url("en", "/en/warning-shot")
 
   defp share_url(:bluesky, locale) do
     "https://bsky.app/intent/compose?text=" <>

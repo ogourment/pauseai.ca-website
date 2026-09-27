@@ -25,7 +25,7 @@ defmodule PauseAiCaWeb.Plugs.RecordVisit do
     today = PauseAiCa.ReportingCalendar.today()
     marker = Date.to_iso8601(today)
 
-    if disabled?(conn) or superadmin?(conn) or
+    if disabled?(conn) or superadmin?(conn) or conn.assigns[:exclude_browser_visits] == true or
          get_session(conn, @session_key) == marker do
       conn
     else

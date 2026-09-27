@@ -5,7 +5,7 @@ defmodule PauseAiCaWeb.AdminDonationPledgesLive do
 
   @impl true
   def mount(params, _, socket) do
-    locale = if params["locale"] == "fr", do: "fr", else: "en"
+    locale = PauseAiCaWeb.Site.locale(params, socket)
     Gettext.put_locale(PauseAiCaWeb.Gettext, locale)
 
     {:ok,

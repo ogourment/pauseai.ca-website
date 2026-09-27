@@ -131,6 +131,7 @@ defmodule PauseAiCaWeb.UserLive.Login do
 
   @impl true
   def mount(params, session, socket) do
+    params = Map.put_new(params, "locale", socket.assigns.locale)
     original = Onboarding.context(params, session["learning_visitor_id"])
     decoded = Onboarding.decode(params["flow"])
     context = if decoded == %{}, do: original, else: decoded
@@ -171,13 +172,22 @@ defmodule PauseAiCaWeb.UserLive.Login do
       # Reauthentication must never become signup or trust a forged readonly email.
       user = socket.assigns.current_scope.user
 
-      case Accounts.deliver_login_instructions(user, &url(~p"/users/log-in/#{&1}")) do
+      case Accounts.deliver_login_instructions(
+             user,
+             &PauseAiCaWeb.Site.url(
+               socket.assigns.locale,
+               ~p"/users/log-in/#{&1}?locale=#{socket.assigns.locale}"
+             )
+           ) do
         {:ok, _} -> {:noreply, assign(socket, pending?: true, delivery_error?: false)}
         {:error, _} -> {:noreply, assign(socket, delivery_error?: true)}
       end
     else
       case Onboarding.request(email, socket.assigns.context, fn token, flow ->
-             url(~p"/users/log-in/#{token}?#{%{flow: flow, locale: socket.assigns.locale}}")
+             PauseAiCaWeb.Site.url(
+               socket.assigns.locale,
+               ~p"/users/log-in/#{token}?#{%{flow: flow, locale: socket.assigns.locale}}"
+             )
            end) do
         {:ok, user, created?, flow} ->
           {:noreply,

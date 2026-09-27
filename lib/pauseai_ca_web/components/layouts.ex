@@ -31,7 +31,7 @@ defmodule PauseAiCaWeb.Layouts do
     default: nil,
     doc: "the current [scope](https://phoenix.hexdocs.pm/scopes.html)"
 
-  attr :locale, :string, default: "en"
+  attr :locale, :string, default: nil
 
   attr :translated_path, :string,
     default: nil,
@@ -44,6 +44,8 @@ defmodule PauseAiCaWeb.Layouts do
   slot :inner_block, required: true
 
   def app(assigns) do
+    assigns = assign(assigns, :locale, assigns.locale || Gettext.get_locale(PauseAiCaWeb.Gettext))
+
     ~H"""
     <header class="sticky top-0 z-40 border-b border-stone-200/80 bg-[#f8f5ed]/95 backdrop-blur">
       <nav
@@ -243,10 +245,6 @@ defmodule PauseAiCaWeb.Layouts do
                 navigate={if(@locale == "fr", do: ~p"/fr/profil", else: ~p"/en/profile")}
                 class="block rounded-lg px-3 py-2.5 font-semibold text-stone-900 hover:bg-brand-wash"
               >{gettext("My profile")}</.link>
-              <.link
-                navigate={~p"/volunteer-profile?locale=#{@locale}"}
-                class="block rounded-lg px-3 py-2.5 font-semibold text-stone-900 hover:bg-brand-wash"
-              >{gettext("Volunteer profile")}</.link>
               <div role="separator" class="my-2 border-t border-stone-200"></div>
               <.link
                 href={~p"/users/settings"}

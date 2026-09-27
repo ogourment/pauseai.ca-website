@@ -66,6 +66,15 @@ if level = System.get_env("LOG_LEVEL") do
   config :logger, level: String.to_existing_atom(level)
 end
 
+if config_env() == :dev do
+  preview_port = System.get_env("PORT", "4013")
+
+  config :pauseai_ca, :public_origins, %{
+    "en" => "http://localhost:#{preview_port}",
+    "fr" => "http://pauseia.localhost:#{preview_port}"
+  }
+end
+
 if config_env() == :prod do
   deployment_history_path = System.fetch_env!("PAUSEAI_CA_DEPLOYMENT_HISTORY_PATH")
 
@@ -106,10 +115,24 @@ if config_env() == :prod do
 
   host = System.get_env("PHX_HOST") || "example.com"
 
+  french_host =
+    System.get_env("PHX_FRENCH_HOST") ||
+      case host do
+        "pauseai.ca" -> "pauseia.ca"
+        "staging.pauseai.ca" -> "staging.pauseia.ca"
+        _ -> host
+      end
+
+  config :pauseai_ca, :public_origins, %{
+    "en" => "https://#{host}",
+    "fr" => "https://#{french_host}"
+  }
+
   config :pauseai_ca, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
   config :pauseai_ca, PauseAiCaWeb.Endpoint,
     url: [host: host, port: 443, scheme: "https"],
+    check_origin: Enum.uniq(["https://#{host}", "https://#{french_host}"]),
     http: [
       # Enable IPv6 and bind on all interfaces.
       # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
