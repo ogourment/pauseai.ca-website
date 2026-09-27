@@ -8,6 +8,23 @@ defmodule PauseAiCaWeb.ProtestPressReleaseLiveTest do
     {:ok, english, _} = live(conn, "/en/montreal-protest-2026-09-26/press-release")
     assert has_element?(english, "#protest-press-release-page", "around 40")
     assert has_element?(english, "#protest-press-release-page blockquote", "Jeremy Eliosoff")
+    assert has_element?(english, "#canada-policy-update", "Mark Carney")
+
+    assert has_element?(
+             english,
+             "#canada-policy-update",
+             "more than 30 Canadian MPs and senators"
+           )
+
+    assert has_element?(
+             english,
+             "#canada-policy-update a[href$='a-call-for-control-of-frontier-ai-models-final.pdf']"
+           )
+
+    assert has_element?(
+             english,
+             "#canada-policy-update a[href='https://controlai.org/canada-statement/en']"
+           )
 
     assert has_element?(
              english,
@@ -19,6 +36,8 @@ defmodule PauseAiCaWeb.ProtestPressReleaseLiveTest do
 
     {:ok, french, _} = live(conn, "/fr/manifestation-montreal-2026-09-26/communique")
     assert has_element?(french, "#protest-press-release-page", "une quarantaine")
+    assert has_element?(french, "#canada-policy-update", "Mark Carney")
+    assert has_element?(french, "#canada-policy-update", "plus de 30 députés et sénateurs")
     assert has_element?(french, "#protest-press-release-page", "PauseIA Canada")
     assert has_element?(french, "#protest-press-release-page figcaption", "Clara Lacasse")
     assert has_element?(french, "a[href='/fr/manifestation-montreal-2026-09-26']", "compte rendu")

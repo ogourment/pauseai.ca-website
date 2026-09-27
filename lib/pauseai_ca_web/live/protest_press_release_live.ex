@@ -40,6 +40,28 @@ defmodule PauseAiCaWeb.ProtestPressReleaseLive do
             "MONTRÉAL, September 26, 2026 — PauseAI Canada organized a demonstration attended by around 40 people. We call on the Canadian government to recognize the development of artificial superintelligence as a national security threat and support an international treaty banning its development."
           )}
         </p>
+        <section id="canada-policy-update" class="mt-10 border-l-4 border-brand bg-brand-wash p-6">
+          <h2 class="font-heading text-2xl text-stone-950">
+            {gettext("Canada's next step")}
+          </h2>
+          <p class="mt-3 leading-8 text-stone-800">
+            {gettext(
+              "Prime Minister Mark Carney joined other leaders in calling for stronger oversight of frontier AI models, including independent evaluations, coordinated standards and consideration of an international institution. We welcome this step. We now ask him to go further and join the more than 30 Canadian MPs and senators whom ControlAI says support recognizing superintelligent AI as a national security threat and negotiating an international prohibition on its development."
+            )}
+          </p>
+          <div class="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold">
+            <a
+              href="https://www.regjeringen.no/contentassets/35b2ea6933304966bd739ff4b8107300/a-call-for-control-of-frontier-ai-models-final.pdf"
+              rel="noreferrer"
+              class="underline decoration-brand decoration-2 underline-offset-4"
+            >{gettext("Read the leaders' call (PDF)")}</a>
+            <a
+              href="https://controlai.org/canada-statement/en"
+              rel="noreferrer"
+              class="underline decoration-brand decoration-2 underline-offset-4"
+            >{gettext("Read ControlAI's Canada statement")}</a>
+          </div>
+        </section>
         <div class="mt-10 space-y-6 leading-8 text-stone-800">
           <p>
             {gettext(

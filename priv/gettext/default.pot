@@ -37,7 +37,7 @@ msgid "About"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/layouts.ex:380
-#: lib/pauseai_ca_web/live/protest_press_release_live.ex:103
+#: lib/pauseai_ca_web/live/protest_press_release_live.ex:125
 #, elixir-autogen, elixir-format
 msgid "About PauseAI Canada"
 msgstr ""
@@ -3260,12 +3260,12 @@ msgstr ""
 msgid "The protest in pictures"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/protest_press_release_live.ex:64
+#: lib/pauseai_ca_web/live/protest_press_release_live.ex:86
 #, elixir-autogen, elixir-format
 msgid "Australian Prime Minister, September 24, 2026"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/protest_press_release_live.ex:56
+#: lib/pauseai_ca_web/live/protest_press_release_live.ex:78
 #, elixir-autogen, elixir-format
 msgid "Background on the reported incidents:"
 msgstr ""
@@ -3330,17 +3330,17 @@ msgstr ""
 msgid "Hold welcoming local meetings where residents can plan actions and build the Montréal community. We can report how many gatherings took place."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/protest_press_release_live.ex:81
+#: lib/pauseai_ca_web/live/protest_press_release_live.ex:103
 #, elixir-autogen, elixir-format
 msgid "In just a few years, AI systems have gone from clumsy chatbots to systems capable of hacking some of the most sophisticated computer networks. Where is this trajectory taking us? We need to give ourselves more time to learn how to control AI systems before making them even more powerful. A pause is necessary."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/protest_press_release_live.ex:94
+#: lib/pauseai_ca_web/live/protest_press_release_live.ex:116
 #, elixir-autogen, elixir-format
 msgid "Jeremy Eliosoff at the Montréal protest"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/protest_press_release_live.ex:86
+#: lib/pauseai_ca_web/live/protest_press_release_live.ex:108
 #, elixir-autogen, elixir-format
 msgid "Jeremy Eliosoff, National Leader, PauseAI Canada"
 msgstr ""
@@ -3365,7 +3365,7 @@ msgstr ""
 msgid "Manage social media"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/protest_press_release_live.ex:110
+#: lib/pauseai_ca_web/live/protest_press_release_live.ex:132
 #, elixir-autogen, elixir-format
 msgid "Media inquiries"
 msgstr ""
@@ -3375,7 +3375,7 @@ msgstr ""
 msgid "Montréal, September 26. Photo: Clara Lacasse."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/protest_press_release_live.ex:50
+#: lib/pauseai_ca_web/live/protest_press_release_live.ex:72
 #, elixir-autogen, elixir-format
 msgid "No country or developer can act alone without risking an advantage for less careful actors. International coordination is needed to reduce the gravest risks, from biological misuse to a loss of control. Canada can draw on its AI safety research community and its international relationships to help lead that work."
 msgstr ""
@@ -3386,7 +3386,7 @@ msgstr ""
 msgid "PauseAI Canada calls for international action after Montréal demonstration"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/protest_press_release_live.ex:98
+#: lib/pauseai_ca_web/live/protest_press_release_live.ex:120
 #, elixir-autogen, elixir-format
 msgid "Photo: Clara Lacasse."
 msgstr ""
@@ -3416,7 +3416,7 @@ msgstr ""
 msgid "Read PauseAI Canada's press release"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/protest_press_release_live.ex:45
+#: lib/pauseai_ca_web/live/protest_press_release_live.ex:67
 #, elixir-autogen, elixir-format
 msgid "Recent reported incidents show AI agents attempting unauthorized access to government and company websites and coordinating through online forums. These incidents strengthen the case for slowing the development of increasingly capable systems while safety and control remain unresolved."
 msgstr ""
@@ -3436,7 +3436,7 @@ msgstr ""
 msgid "See the Montréal protest"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/protest_press_release_live.ex:121
+#: lib/pauseai_ca_web/live/protest_press_release_live.ex:143
 #, elixir-autogen, elixir-format
 msgid "See the protest recap and photos"
 msgstr ""
@@ -3446,7 +3446,7 @@ msgstr ""
 msgid "Suggested pledge selected: $%{amount} CAD"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/protest_press_release_live.ex:105
+#: lib/pauseai_ca_web/live/protest_press_release_live.ex:127
 #, elixir-autogen, elixir-format
 msgid "The Canadian branch of the international PauseAI movement, PauseAI Canada is a citizens’ group campaigning for an international treaty to pause the development of frontier artificial intelligence until it can be done safely."
 msgstr ""
@@ -3456,7 +3456,7 @@ msgstr ""
 msgid "These are suggested pledge sizes, not prices for a specific activity. You can enter any amount in the form. We will share actual costs as plans are confirmed."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/protest_press_release_live.ex:73
+#: lib/pauseai_ca_web/live/protest_press_release_live.ex:95
 #, elixir-autogen, elixir-format
 msgid "Transluce incident research, September 2026"
 msgstr ""
@@ -3494,4 +3494,24 @@ msgstr ""
 #: lib/pauseai_ca_web/controllers/page_html/about.html.heex:44
 #, elixir-autogen, elixir-format
 msgid "See the Montréal protest and photos"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/protest_press_release_live.ex:45
+#, elixir-autogen, elixir-format
+msgid "Canada's next step"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/protest_press_release_live.ex:48
+#, elixir-autogen, elixir-format
+msgid "Prime Minister Mark Carney joined other leaders in calling for stronger oversight of frontier AI models, including independent evaluations, coordinated standards and consideration of an international institution. We welcome this step. We now ask him to go further and join the more than 30 Canadian MPs and senators whom ControlAI says support recognizing superintelligent AI as a national security threat and negotiating an international prohibition on its development."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/protest_press_release_live.ex:62
+#, elixir-autogen, elixir-format
+msgid "Read ControlAI's Canada statement"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/protest_press_release_live.ex:57
+#, elixir-autogen, elixir-format
+msgid "Read the leaders' call (PDF)"
 msgstr ""
