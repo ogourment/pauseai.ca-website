@@ -1081,17 +1081,19 @@ if System.get_env("ATDD") == "true" do
     defp record_action(browser, "fr"),
       do:
         browser
-        |> assert_has("[data-phx-main].phx-connected")
+        |> assert_has("[data-phx-main].phx-connected #action-form")
         |> select("Qu'avez-vous fait?", option: "Lu ou regardé une ressource", exact: false)
         |> click_button("Noter en privé")
+        |> assert_has("#actions > article")
         |> assert_has("#suggested-next-step")
 
     defp record_action(browser, _),
       do:
         browser
-        |> assert_has("[data-phx-main].phx-connected")
+        |> assert_has("[data-phx-main].phx-connected #action-form")
         |> select("What did you do?", option: "Read or watched a resource", exact: false)
         |> click_button("Record privately")
+        |> assert_has("#actions > article")
         |> assert_has("#suggested-next-step")
 
     defp assert_ga_events(browser, expected) do
