@@ -115,9 +115,11 @@ defmodule PauseAiCaWeb.ProtestPressReleaseLive do
           </blockquote>
           <div>
             <img
-              src={~p"/images/protest-2026-09-26/clara-lacasse-14.jpg"}
-              width="2400"
-              height="3000"
+              src={~p"/images/protest-2026-09-26/clara-lacasse-14.webp"}
+              srcset={"#{~p"/images/protest-2026-09-26/clara-lacasse-14-small.webp"} 512w, #{~p"/images/protest-2026-09-26/clara-lacasse-14.webp"} 960w"}
+              sizes="(min-width: 768px) 400px, calc(100vw - 40px)"
+              width="960"
+              height="1200"
               alt={gettext("Jeremy Eliosoff at the Montréal protest")}
               class="h-auto w-full rounded-lg"
             />

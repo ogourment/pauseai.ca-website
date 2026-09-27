@@ -174,7 +174,7 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
       assert has_element?(
                view,
                "#account-menu a[href='/fr/comprendre']",
-               "Passer au français"
+               "Français"
              )
 
       assert has_element?(view, "#account-menu a[href='/users/log-out']", "Log out")

@@ -278,8 +278,10 @@ defmodule PauseAiCaWeb.Layouts do
               <a
                 class="block rounded-lg px-3 py-2.5 font-semibold text-stone-900 hover:bg-brand-wash"
                 href={@translated_path || if(@locale == "fr", do: ~p"/en", else: ~p"/fr")}
+                lang={if @locale == "fr", do: "en", else: "fr"}
+                hreflang={if @locale == "fr", do: "en", else: "fr"}
               >
-                {gettext("Passer au français")}
+                {gettext("Français")}
               </a>
               <.link
                 class="block rounded-lg px-3 py-2.5 font-semibold text-stone-700 hover:bg-brand-wash hover:text-stone-950"
@@ -294,6 +296,8 @@ defmodule PauseAiCaWeb.Layouts do
           <a
             class="text-base font-medium text-stone-600 hover:text-stone-950"
             href={@translated_path || if(@locale == "fr", do: ~p"/en", else: ~p"/fr")}
+            lang={if @locale == "fr", do: "en", else: "fr"}
+            hreflang={if @locale == "fr", do: "en", else: "fr"}
           >
             {gettext("Français")}
           </a>

@@ -95,9 +95,11 @@ defmodule PauseAiCaWeb.DonateLive do
           </div>
           <figure>
             <img
-              src={~p"/images/protest-2026-09-26/clara-lacasse-7.jpg"}
-              width="3000"
-              height="2400"
+              src={~p"/images/protest-2026-09-26/clara-lacasse-7.webp"}
+              srcset={"#{~p"/images/protest-2026-09-26/clara-lacasse-7-small.webp"} 640w, #{~p"/images/protest-2026-09-26/clara-lacasse-7.webp"} 1200w"}
+              sizes="(min-width: 768px) 580px, calc(100vw - 40px)"
+              width="1200"
+              height="960"
               alt={gettext("Demonstrators holding signs calling for a worldwide pause on AI")}
               class="h-auto w-full rounded-xl"
             />

@@ -55,9 +55,11 @@ defmodule PauseAiCaWeb.ProtestRecapLive do
           <figure class="mt-10">
             <img
               id="protest-photo-3"
-              src={~p"/images/protest-2026-09-26/clara-lacasse-3.jpg"}
-              width="3000"
-              height="2400"
+              src={~p"/images/protest-2026-09-26/clara-lacasse-3.webp"}
+              srcset={"#{~p"/images/protest-2026-09-26/clara-lacasse-3-small.webp"} 640w, #{~p"/images/protest-2026-09-26/clara-lacasse-3.webp"} 1200w"}
+              sizes="(min-width: 1024px) 984px, calc(100vw - 40px)"
+              width="1200"
+              height="960"
               fetchpriority="high"
               alt={gettext("Demonstrators holding a PauseAI banner and signs at Phillips Square")}
               class="h-auto w-full rounded-xl"
@@ -130,9 +132,11 @@ defmodule PauseAiCaWeb.ProtestRecapLive do
             <figure>
               <img
                 id="protest-photo-7"
-                src={~p"/images/protest-2026-09-26/clara-lacasse-7.jpg"}
-                width="3000"
-                height="2400"
+                src={~p"/images/protest-2026-09-26/clara-lacasse-7.webp"}
+                srcset={"#{~p"/images/protest-2026-09-26/clara-lacasse-7-small.webp"} 640w, #{~p"/images/protest-2026-09-26/clara-lacasse-7.webp"} 1200w"}
+                sizes="(min-width: 768px) 580px, calc(100vw - 40px)"
+                width="1200"
+                height="960"
                 loading="lazy"
                 decoding="async"
                 alt={gettext("Demonstrators holding signs calling for a worldwide pause on AI")}
@@ -145,9 +149,11 @@ defmodule PauseAiCaWeb.ProtestRecapLive do
             <figure>
               <img
                 id="protest-photo-14"
-                src={~p"/images/protest-2026-09-26/clara-lacasse-14.jpg"}
-                width="2400"
-                height="3000"
+                src={~p"/images/protest-2026-09-26/clara-lacasse-14.webp"}
+                srcset={"#{~p"/images/protest-2026-09-26/clara-lacasse-14-small.webp"} 512w, #{~p"/images/protest-2026-09-26/clara-lacasse-14.webp"} 960w"}
+                sizes="(min-width: 768px) 400px, calc(100vw - 40px)"
+                width="960"
+                height="1200"
                 loading="lazy"
                 decoding="async"
                 alt={

@@ -319,7 +319,7 @@ if System.get_env("ATDD") == "true" do
       b =
         open_workspace(c.conn, manager, id)
         |> account_menu()
-        |> click_link("Passer au français")
+        |> click_link("Français")
         |> assert_has("h1", text: "Ajouter plusieurs comptes")
 
       b =
