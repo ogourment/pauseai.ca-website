@@ -22,11 +22,11 @@ msgid "AI poses a genuine existential risk."
 msgstr ""
 
 #: lib/pauseai_ca_web/components/layouts.ex:231
+#: lib/pauseai_ca_web/components/layouts.ex:391
 #, elixir-autogen, elixir-format
 msgid "About"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/layouts.ex:400
 #: lib/pauseai_ca_web/live/protest_press_release_live.ex:137
 #, elixir-autogen, elixir-format
 msgid "About PauseAI Canada"
@@ -43,7 +43,7 @@ msgid "Accept analytics cookies? They help us see which pages actually lead peop
 msgstr ""
 
 #: lib/pauseai_ca_web/components/core_components.ex:375
-#: lib/pauseai_ca_web/components/layouts.ex:445
+#: lib/pauseai_ca_web/components/layouts.ex:442
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr ""
@@ -74,8 +74,8 @@ msgstr ""
 msgid "An AI escaped its lab and hacked a real company. I just wrote to my MP about it. It takes a minute:"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/layouts.ex:479
-#: lib/pauseai_ca_web/components/layouts.ex:494
+#: lib/pauseai_ca_web/components/layouts.ex:476
+#: lib/pauseai_ca_web/components/layouts.ex:491
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
 msgstr ""
@@ -296,7 +296,7 @@ msgstr ""
 msgid "Manage my learning path"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/layouts.ex:396
+#: lib/pauseai_ca_web/components/layouts.ex:397
 #, elixir-autogen, elixir-format
 msgid "Montréal events"
 msgstr ""
@@ -414,7 +414,7 @@ msgstr ""
 msgid "Postal code"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/layouts.ex:404
+#: lib/pauseai_ca_web/components/layouts.ex:401
 #: lib/pauseai_ca_web/live/donate_live.ex:300
 #, elixir-autogen, elixir-format
 msgid "Privacy"
@@ -556,7 +556,7 @@ msgstr ""
 msgid "Signing up…"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/layouts.ex:486
+#: lib/pauseai_ca_web/components/layouts.ex:483
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
 msgstr ""
@@ -660,7 +660,7 @@ msgstr ""
 msgid "Warning shot"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/layouts.ex:471
+#: lib/pauseai_ca_web/components/layouts.ex:468
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
 msgstr ""
@@ -927,7 +927,7 @@ msgstr ""
 msgid "Senate"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/layouts.ex:444
+#: lib/pauseai_ca_web/components/layouts.ex:441
 #, elixir-autogen, elixir-format
 msgid "Sign"
 msgstr ""
@@ -972,7 +972,7 @@ msgstr ""
 msgid "That email does not look valid. Your MP needs it to reply to you."
 msgstr ""
 
-#: lib/pauseai_ca_web/components/layouts.ex:444
+#: lib/pauseai_ca_web/components/layouts.ex:441
 #, elixir-autogen, elixir-format
 msgid "The PauseAI statement"
 msgstr ""
@@ -1014,7 +1014,7 @@ msgstr ""
 msgid "Volunteered"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/layouts.ex:445
+#: lib/pauseai_ca_web/components/layouts.ex:442
 #, elixir-autogen, elixir-format
 msgid "What PauseAI asks people to do"
 msgstr ""
@@ -2929,7 +2929,7 @@ msgstr ""
 
 #: lib/pauseai_ca_web/components/auth_layout.ex:20
 #: lib/pauseai_ca_web/components/layouts.ex:75
-#: lib/pauseai_ca_web/components/layouts.ex:389
+#: lib/pauseai_ca_web/components/layouts.ex:391
 #: lib/pauseai_ca_web/components/layouts/root.html.heex:12
 #: lib/pauseai_ca_web/components/layouts/root.html.heex:13
 #: lib/pauseai_ca_web/controllers/page_html/about.html.heex:8
@@ -3414,12 +3414,12 @@ msgstr ""
 msgid "Hosting"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/layouts.ex:542
+#: lib/pauseai_ca_web/components/layouts.ex:539
 #, elixir-autogen, elixir-format
 msgid "Learn about the risks"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/layouts.ex:540
+#: lib/pauseai_ca_web/components/layouts.ex:537
 #, elixir-autogen, elixir-format
 msgid "Take the test"
 msgstr ""
@@ -3597,7 +3597,7 @@ msgstr ""
 msgid "I agree to receive emails from PauseAI Canada. We do not sell your address."
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/about.html.heex:111
+#: lib/pauseai_ca_web/controllers/page_html/about.html.heex:110
 #: lib/pauseai_ca_web/live/library_live.ex:461
 #: lib/pauseai_ca_web/live/user_live/login.ex:77
 #, elixir-autogen, elixir-format
@@ -3609,17 +3609,12 @@ msgstr ""
 msgid "Use the email address you want for your account. We will send a link to confirm it and sign you in."
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/about.html.heex:102
-#, elixir-autogen, elixir-format
-msgid "Email delivery uses Brevo; optional analytics use Google Analytics."
-msgstr ""
-
 #: lib/pauseai_ca_web/controllers/page_html/about.html.heex:93
 #, elixir-autogen, elixir-format
 msgid "How to contribute"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/layouts.ex:409
+#: lib/pauseai_ca_web/components/layouts.ex:406
 #, elixir-autogen, elixir-format
 msgid "Made in Canada"
 msgstr ""
@@ -3636,7 +3631,7 @@ msgstr ""
 
 #: lib/pauseai_ca_web/controllers/page_html/about.html.heex:71
 #, elixir-autogen, elixir-format
-msgid "Technical details and contributions"
+msgid "This website"
 msgstr ""
 
 #: lib/pauseai_ca_web/controllers/page_html/about.html.heex:79

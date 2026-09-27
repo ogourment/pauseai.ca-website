@@ -128,7 +128,7 @@ if System.get_env("ATDD") == "true" do
 
       browser =
         conn
-        |> visit("/users/log-in/#{login_token}")
+        |> visit("/users/log-in/#{login_token}?locale=en")
         |> click_button("Keep me logged in on this device")
         |> assert_path("/")
 
@@ -177,7 +177,7 @@ if System.get_env("ATDD") == "true" do
       _admin = member |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
 
       browser
-      |> visit("/admin/dashboard")
+      |> visit("/admin/dashboard?locale=en")
       |> assert_has("#metric-actions")
       |> assert_has("#metrics-by-type")
       |> assert_has("#learning-breakdown summary", text: "1 person")
@@ -223,7 +223,7 @@ if System.get_env("ATDD") == "true" do
 
       browser =
         browser
-        |> visit("/users/log-in/#{newcomer_token}")
+        |> visit("/users/log-in/#{newcomer_token}?locale=en")
         |> click_button("Confirm and stay logged in")
         |> assert_path("/")
         |> log_out()
@@ -232,7 +232,7 @@ if System.get_env("ATDD") == "true" do
 
       browser =
         browser
-        |> visit("/users/log-in/#{member_token}")
+        |> visit("/users/log-in/#{member_token}?locale=en")
         |> click_button("Keep me logged in on this device")
         |> assert_path("/")
         |> visit("/admin/accounts")
@@ -253,7 +253,7 @@ if System.get_env("ATDD") == "true" do
       {promoted_token, _token} = generate_user_magic_link_token(newcomer)
 
       browser
-      |> visit("/users/log-in/#{promoted_token}")
+      |> visit("/users/log-in/#{promoted_token}?locale=en")
       |> click_button("Keep me logged in on this device")
       |> assert_path("/")
       |> visit("/admin/accounts")

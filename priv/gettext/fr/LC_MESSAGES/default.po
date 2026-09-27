@@ -22,11 +22,11 @@ msgid "AI poses a genuine existential risk."
 msgstr "L’IA pose un véritable risque existentiel."
 
 #: lib/pauseai_ca_web/components/layouts.ex:231
+#: lib/pauseai_ca_web/components/layouts.ex:391
 #, elixir-autogen, elixir-format
 msgid "About"
 msgstr "À propos"
 
-#: lib/pauseai_ca_web/components/layouts.ex:400
 #: lib/pauseai_ca_web/live/protest_press_release_live.ex:137
 #, elixir-autogen, elixir-format
 msgid "About PauseAI Canada"
@@ -46,7 +46,7 @@ msgstr ""
 "fonctionnalité."
 
 #: lib/pauseai_ca_web/components/core_components.ex:375
-#: lib/pauseai_ca_web/components/layouts.ex:445
+#: lib/pauseai_ca_web/components/layouts.ex:442
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr "Actions"
@@ -82,8 +82,8 @@ msgstr ""
 "Une IA s'est échappée de son laboratoire et a piraté une vraie entreprise. "
 "Je viens d'écrire à ma députée. Ça prend une minute:"
 
-#: lib/pauseai_ca_web/components/layouts.ex:479
-#: lib/pauseai_ca_web/components/layouts.ex:494
+#: lib/pauseai_ca_web/components/layouts.ex:476
+#: lib/pauseai_ca_web/components/layouts.ex:491
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
 msgstr "Tentative de reconnexion"
@@ -306,7 +306,7 @@ msgstr "Recherche…"
 msgid "Manage my learning path"
 msgstr "Gérer mon parcours"
 
-#: lib/pauseai_ca_web/components/layouts.ex:396
+#: lib/pauseai_ca_web/components/layouts.ex:397
 #, elixir-autogen, elixir-format
 msgid "Montréal events"
 msgstr "Événements à Montréal"
@@ -429,7 +429,7 @@ msgstr "Position sur une pause de l’IA avancée : pas encore documentée."
 msgid "Postal code"
 msgstr "Code postal"
 
-#: lib/pauseai_ca_web/components/layouts.ex:404
+#: lib/pauseai_ca_web/components/layouts.ex:401
 #: lib/pauseai_ca_web/live/donate_live.ex:300
 #, elixir-autogen, elixir-format
 msgid "Privacy"
@@ -574,7 +574,7 @@ msgstr "M'inscrire"
 msgid "Signing up…"
 msgstr "Inscription…"
 
-#: lib/pauseai_ca_web/components/layouts.ex:486
+#: lib/pauseai_ca_web/components/layouts.ex:483
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
 msgstr "Un problème est survenu !"
@@ -688,7 +688,7 @@ msgstr "Signal d'alarme · Deuxième alerte de PauseIA"
 msgid "Warning shot"
 msgstr "Signal d'alarme"
 
-#: lib/pauseai_ca_web/components/layouts.ex:471
+#: lib/pauseai_ca_web/components/layouts.ex:468
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
 msgstr "Nous ne trouvons pas la connexion Internet"
@@ -970,7 +970,7 @@ msgstr "Lu ou regardé une ressource"
 msgid "Senate"
 msgstr "Sénat"
 
-#: lib/pauseai_ca_web/components/layouts.ex:444
+#: lib/pauseai_ca_web/components/layouts.ex:441
 #, elixir-autogen, elixir-format
 msgid "Sign"
 msgstr "Signer"
@@ -1017,7 +1017,7 @@ msgstr ""
 "Ce courriel ne semble pas valide. Votre député·e en a besoin pour vous "
 "répondre."
 
-#: lib/pauseai_ca_web/components/layouts.ex:444
+#: lib/pauseai_ca_web/components/layouts.ex:441
 #, elixir-autogen, elixir-format
 msgid "The PauseAI statement"
 msgstr "La déclaration de PauseIA"
@@ -1061,7 +1061,7 @@ msgstr "Je ne sais pas"
 msgid "Volunteered"
 msgstr "Fait du bénévolat"
 
-#: lib/pauseai_ca_web/components/layouts.ex:445
+#: lib/pauseai_ca_web/components/layouts.ex:442
 #, elixir-autogen, elixir-format
 msgid "What PauseAI asks people to do"
 msgstr "Les actions proposées par PauseIA"
@@ -3077,7 +3077,7 @@ msgstr "Pagination"
 
 #: lib/pauseai_ca_web/components/auth_layout.ex:20
 #: lib/pauseai_ca_web/components/layouts.ex:75
-#: lib/pauseai_ca_web/components/layouts.ex:389
+#: lib/pauseai_ca_web/components/layouts.ex:391
 #: lib/pauseai_ca_web/components/layouts/root.html.heex:12
 #: lib/pauseai_ca_web/components/layouts/root.html.heex:13
 #: lib/pauseai_ca_web/controllers/page_html/about.html.heex:8
@@ -3669,12 +3669,12 @@ msgstr "Pourquoi mobiliser le public"
 msgid "Hosting"
 msgstr "Hébergement"
 
-#: lib/pauseai_ca_web/components/layouts.ex:542
+#: lib/pauseai_ca_web/components/layouts.ex:539
 #, elixir-autogen, elixir-format
 msgid "Learn about the risks"
 msgstr "Comprendre les risques"
 
-#: lib/pauseai_ca_web/components/layouts.ex:540
+#: lib/pauseai_ca_web/components/layouts.ex:537
 #, elixir-autogen, elixir-format
 msgid "Take the test"
 msgstr "Faire le test"
@@ -3929,7 +3929,7 @@ msgstr ""
 "J’accepte de recevoir des courriels de PauseIA Canada. Nous ne vendons pas "
 "votre adresse."
 
-#: lib/pauseai_ca_web/controllers/page_html/about.html.heex:111
+#: lib/pauseai_ca_web/controllers/page_html/about.html.heex:110
 #: lib/pauseai_ca_web/live/library_live.ex:461
 #: lib/pauseai_ca_web/live/user_live/login.ex:77
 #, elixir-autogen, elixir-format
@@ -3943,19 +3943,12 @@ msgstr ""
 "Utilisez l’adresse courriel souhaitée pour votre compte. Nous vous enverrons"
 " un lien pour la confirmer et vous connecter."
 
-#: lib/pauseai_ca_web/controllers/page_html/about.html.heex:102
-#, elixir-autogen, elixir-format
-msgid "Email delivery uses Brevo; optional analytics use Google Analytics."
-msgstr ""
-"Les courriels sont envoyés par Brevo; les statistiques facultatives "
-"utilisent Google Analytics."
-
 #: lib/pauseai_ca_web/controllers/page_html/about.html.heex:93
 #, elixir-autogen, elixir-format
 msgid "How to contribute"
 msgstr "Comment contribuer"
 
-#: lib/pauseai_ca_web/components/layouts.ex:409
+#: lib/pauseai_ca_web/components/layouts.ex:406
 #, elixir-autogen, elixir-format
 msgid "Made in Canada"
 msgstr "Fait au Canada"
@@ -3972,8 +3965,8 @@ msgstr "Code source sur GitHub"
 
 #: lib/pauseai_ca_web/controllers/page_html/about.html.heex:71
 #, elixir-autogen, elixir-format
-msgid "Technical details and contributions"
-msgstr "Détails techniques et contributions"
+msgid "This website"
+msgstr "Ce site"
 
 #: lib/pauseai_ca_web/controllers/page_html/about.html.heex:79
 #, elixir-autogen, elixir-format

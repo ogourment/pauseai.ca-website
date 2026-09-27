@@ -23,7 +23,7 @@ config :pauseai_ca, PauseAiCa.Repo,
 config :pauseai_ca, PauseAiCaWeb.Endpoint,
   url: [host: "127.0.0.1", port: atdd_port, scheme: "http"],
   http: [ip: {127, 0, 0, 1}, port: atdd_port],
-  check_origin: ["//127.0.0.1:#{atdd_port}"],
+  check_origin: ["//127.0.0.1:#{atdd_port}", "//fr.localhost:#{atdd_port}"],
   secret_key_base: "5Vkv9MzGeaVJ8q0JxD/hSW9dy6yp4ICThE+njQukPZmS5oWfYq0KFVadquCale9t",
   server: false
 

@@ -13,7 +13,7 @@ English and French.
 6. Open a pull request explaining the visitor-facing change.
 
 No AI assistant, agent configuration, or proprietary development tool is
-required. Do not commit `AGENTS.md` or `CLAUDE.md`.
+required.
 
 ## Editorial changes
 

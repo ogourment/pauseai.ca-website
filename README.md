@@ -1,24 +1,44 @@
 # PauseAI Canada website
 
-A bilingual information and organizing platform for PauseAI Canada.
+The English and French website for PauseAI Canada / PauseIA Canada: information
+about AI risks, ways to take action, and tools for volunteers and organizers.
 
-The first product loop helps a visitor:
+**English:** <https://pauseai.ca> · **Français:** <https://pauseia.ca>
 
-1. reflect on AI existential risk, pausing, and international coordination;
-2. receive a transparent reading suggestion stored only in their browser;
-3. explore reviewed English and French source material;
-4. create an account;
-5. keep a private log of actions they have taken.
+Both domains serve the same application.
+
+## What people can do
+
+- Answer three questions and explore suggested readings about AI risks, a pause
+  in development, and international coordination.
+- Read campaign updates, protest reports, press releases, and the movement's
+  strategy.
+- Create an account to save resources, keep track of actions, and find their
+  member of Parliament.
+- Prepare a message to their MP through the Warning Shot campaign.
+- Subscribe to updates or pledge a one-time or monthly contribution. Pledges
+  record an intention to give; the site does not collect payments yet.
+
+## Organizing and administration
+
+Authorized organizers can create accounts individually or in batches by pasting
+spreadsheet rows or uploading CSV files. They can assign a group for the batch,
+override it for an individual row, save drafts, review the recipients, and send
+invitations. Account management includes group assignments and recorded email
+history, with access limited by role and group.
+
+Superadmins can review donation pledges and site activity. Browser-visit totals
+use Toronto calendar days; signed-in superadmins and explicitly excluded
+browsers do not count. These are browser-visit measurements, not a count of people.
 
 ## Stack
 
 - Elixir 1.20.2 / Erlang OTP 29
-- Phoenix 1.8.9
-- Phoenix LiveView 1.2.8
+- Phoenix 1.8 and Phoenix LiveView 1.2
 - PostgreSQL 18
 - Tailwind CSS 4 through Phoenix's Tailwind integration
 
-Exact package versions are recorded in `mix.lock`.
+Exact package versions are recorded in [`mix.lock`](mix.lock).
 
 ## Local development
 
@@ -29,7 +49,8 @@ mix setup
 mix phx.server
 ```
 
-Visit <http://localhost:4013>. Development email is available at
+Open <http://localhost:4013>. The French-domain entry point is
+<http://pauseia.localhost:4013>. Development email is captured locally at
 <http://localhost:4013/dev/mailbox>.
 
 The development server listens on all interfaces, so you can also open
@@ -42,40 +63,39 @@ Before proposing a change:
 mix precommit
 ```
 
+Browser acceptance tests additionally need Node.js 22 and Playwright's Chromium
+browser. Run the suite with:
+
+```bash
+mix test.atdd
+```
+
+Use a separate `MIX_TEST_PARTITION` and `ATDD_PORT` when running concurrent
+checkouts. Development and test mail must remain isolated from live delivery.
+
 ## Acceptance-test harness
 
 The shared [AcceptanceHarness repository on GitHub](https://github.com/ogourment/acceptance_harness)
-is a **public code mirror**. It includes the harness implementation and
-documentation for inspecting the acceptance-test tooling and contributing
-improvements. This website's dependency versions are pinned in `mix.exs` and
-`mix.lock`.
+is a public code mirror containing the harness implementation and documentation.
+The website pins its dependency in `mix.exs` and `mix.lock`. Acceptance evidence
+records completed journeys and visible coverage gaps; an unfinished journey is
+not reported as passed.
 
-## Privacy boundary
+## Privacy
 
-Anonymous onboarding answers use browser `localStorage` for the suggested path
-and are also recorded against a random first-party browser identifier for
-aggregate learning metrics. Learn visits, resource opens, and bookmarks use the
-same identifier; no IP address or user agent is retained. If the browser later
-signs in, its learning signals are associated with that account to reduce
-double-counting. Account action records remain private to their owner. Account
-data is governed by the published privacy policy. Deployment, retention,
-backup, and incident-response requirements are documented in the private
-operating guide.
+Questionnaire answers are kept in browser storage and associated with a random
+first-party browser identifier for learning metrics. Learning visits, resource
+opens, and bookmarks use that identifier. Signing in associates those signals
+with the account to reduce double-counting. Account action records are private
+to their owner. Browser-visit counts store daily aggregates without retaining
+IP addresses or user agents.
 
-## Human contribution workflow
+See the [privacy policy](https://pauseai.ca/en/privacy) for data handling,
+service providers, and choices. The website application and its database are
+hosted in Canada.
 
-This repository deliberately contains no committed `AGENTS.md` or `CLAUDE.md`.
-It can be understood, developed, tested, and reviewed with ordinary human
-tools. See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+## Contributing
 
-## Content
-
-Initial cards summarize and link to material from
-[PauseAI](https://pauseai.info/), [Pause IA](https://pauseia.fr/fr), and the
-movement-strategy article that motivates the organizing path. Material is
-linked and summarized rather than copied.
-
-## Status
-
-The current release is deployed to staging and production at
-`pauseai.ca`.
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for development and editorial guidance.
+Contributions can include clearer wording, translations, source corrections,
+accessibility improvements, and code.
