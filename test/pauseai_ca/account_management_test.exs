@@ -55,4 +55,58 @@ defmodule PauseAiCa.AccountManagementTest do
     assert Repo.get!(User, account.id).name == "Corrected"
     assert Enum.any?(AccountManagement.list(scope), &(&1.user.id == admin.id))
   end
+
+  test "group corrections support non-import accounts, preserve source, and revoke old batch access" do
+    admin = user_fixture() |> change(superadmin: true) |> Repo.update!()
+    scope = Scope.for_user(admin)
+    {:ok, first} = Volunteers.create_group(scope, %{"name" => "Montréal"})
+    {:ok, second} = Volunteers.create_group(scope, %{"name" => "Québec"})
+    manager = user_fixture()
+    {:ok, role} = Volunteers.assign_manager(scope, first.id, manager.email)
+    manager_scope = Scope.for_user(manager)
+    plain = user_fixture()
+
+    assert {:ok, assigned} =
+             AccountManagement.update(scope, plain.id, %{
+               "group_id" => first.id,
+               "notes" => "Context"
+             })
+
+    assert assigned.organizer_notes == "Context"
+    assert Repo.aggregate(Signup, :count) == 0
+
+    assert {:error, %{"group_id" => :unauthorized_group}} =
+             AccountManagement.update(manager_scope, plain.id, %{"group_id" => second.id})
+
+    assert {:error, %{"group_id" => :unauthorized_group}} =
+             AccountManagement.update(manager_scope, plain.id, %{"group_id" => ""})
+
+    {:ok, _} = Volunteers.assign_manager(scope, second.id, manager.email)
+
+    assert {:ok, moved} =
+             AccountManagement.update(manager_scope, plain.id, %{"group_id" => second.id})
+
+    assert moved.organizing_group_id == second.id
+    row = Input.normalize(%{"email" => "transfer@example.org", "selected" => true})
+
+    {:ok, batch} =
+      Volunteers.save_draft(manager_scope, nil, %{"default_group_id" => first.id, "rows" => [row]})
+
+    {:ok, _} = Volunteers.confirm(manager_scope, batch.id)
+    signup = Repo.one!(Signup)
+    assert {:ok, _} = AccountManagement.update(scope, signup.user_id, %{"group_id" => ""})
+    assert {:error, :unauthorized} = AccountManagement.get(manager_scope, signup.user_id)
+    assert {:error, :unauthorized} = Volunteers.get_batch(manager_scope, batch.id)
+    assert Repo.get!(Signup, signup.id).batch_id == batch.id
+    assert Repo.aggregate(PauseAiCa.Volunteers.Invitation, :count) == 1
+    Volunteers.revoke_manager(scope, role.id)
+
+    assert {:error, %{"group_id" => :unauthorized_group}} =
+             AccountManagement.update(manager_scope, plain.id, %{"group_id" => first.id})
+
+    assert Enum.any?(
+             Repo.all(PauseAiCa.Volunteers.Event),
+             &(&1.details["old_group_id"] == first.id and &1.details["new_group_id"] == second.id)
+           )
+  end
 end

@@ -180,7 +180,7 @@ defmodule PauseAiCa.Engagement do
 
   @doc "Recruitment stages for one creation cohort, excluding current superadmins."
   def signup_funnel(params \\ %{}) do
-    today = Date.utc_today()
+    today = PauseAiCa.ReportingCalendar.today()
     to = parse_cohort_date(params["to"], today)
     requested_from = parse_cohort_date(params["from"], Date.add(to, -13))
 
@@ -196,8 +196,8 @@ defmodule PauseAiCa.Engagement do
         do: params["source"],
         else: "all"
 
-    starts_at = DateTime.new!(from_date, ~T[00:00:00])
-    ends_at = DateTime.new!(Date.add(to, 1), ~T[00:00:00])
+    starts_at = PauseAiCa.ReportingCalendar.starts_at(from_date)
+    ends_at = PauseAiCa.ReportingCalendar.starts_at(Date.add(to, 1))
     as_of = DateTime.utc_now(:second)
 
     first_actions =
@@ -213,6 +213,8 @@ defmodule PauseAiCa.Engagement do
         where: not u.superadmin and u.inserted_at >= ^starts_at and u.inserted_at < ^ends_at,
         select: %{
           created_at: u.inserted_at,
+          created_on:
+            fragment("date(timezone('America/Toronto', timezone('UTC', ?)))", u.inserted_at),
           confirmed_at: u.confirmed_at,
           source: u.signup_entry_point,
           first_action_at: a.first_action_at
@@ -242,7 +244,7 @@ defmodule PauseAiCa.Engagement do
 
     trend = fn predicate ->
       Enum.map(dates, fn day ->
-        Enum.count(rows, &(DateTime.to_date(&1.created_at) == day and predicate.(&1)))
+        Enum.count(rows, &(&1.created_on == day and predicate.(&1)))
       end)
     end
 
@@ -279,11 +281,11 @@ defmodule PauseAiCa.Engagement do
   defp parse_cohort_date(_, fallback), do: fallback
 
   @doc "Record one anonymous visit in a daily aggregate."
-  def record_visit(visited_on \\ Date.utc_today()) do
+  def record_visit(visited_on \\ PauseAiCa.ReportingCalendar.today()) do
     Repo.insert!(
       %PauseAiCa.Engagement.DailyVisit{visited_on: visited_on, count: 1},
       on_conflict: [inc: [count: 1]],
-      conflict_target: :visited_on
+      conflict_target: [:visited_on, :reporting_timezone]
     )
   end
 
@@ -371,7 +373,7 @@ defmodule PauseAiCa.Engagement do
   end
 
   @doc "Aggregate movement-building metrics without exposing supporter records."
-  def metrics(today \\ Date.utc_today()) do
+  def metrics(today \\ PauseAiCa.ReportingCalendar.today()) do
     user_count = Repo.aggregate(PauseAiCa.Accounts.User, :count)
     action_count = Repo.aggregate(from(a in Action, where: not is_nil(a.confirmed_at)), :count)
 
@@ -420,25 +422,37 @@ defmodule PauseAiCa.Engagement do
     account_counts =
       daily_counts(
         from u in PauseAiCa.Accounts.User,
-          where: u.inserted_at >= ^DateTime.new!(first_day, ~T[00:00:00]),
-          group_by: fragment("date(?)", u.inserted_at),
-          select: {fragment("date(?)", u.inserted_at), count(u.id)}
+          where: u.inserted_at >= ^PauseAiCa.ReportingCalendar.starts_at(first_day),
+          group_by:
+            fragment("date(timezone('America/Toronto', timezone('UTC', ?)))", u.inserted_at),
+          select:
+            {fragment("date(timezone('America/Toronto', timezone('UTC', ?)))", u.inserted_at),
+             count(u.id)}
       )
 
     action_counts =
       daily_counts(
         from a in Action,
-          where: a.confirmed_at >= ^DateTime.new!(first_day, ~T[00:00:00]),
-          group_by: fragment("date(?)", a.confirmed_at),
-          select: {fragment("date(?)", a.confirmed_at), count(a.id)}
+          where: a.confirmed_at >= ^PauseAiCa.ReportingCalendar.starts_at(first_day),
+          group_by:
+            fragment("date(timezone('America/Toronto', timezone('UTC', ?)))", a.confirmed_at),
+          select:
+            {fragment("date(timezone('America/Toronto', timezone('UTC', ?)))", a.confirmed_at),
+             count(a.id)}
       )
 
     action_type_counts =
       Repo.all(
         from a in Action,
-          where: a.confirmed_at >= ^DateTime.new!(first_day, ~T[00:00:00]),
-          group_by: [a.action_type, fragment("date(?)", a.confirmed_at)],
-          select: {a.action_type, fragment("date(?)", a.confirmed_at), count(a.id)}
+          where: a.confirmed_at >= ^PauseAiCa.ReportingCalendar.starts_at(first_day),
+          group_by: [
+            a.action_type,
+            fragment("date(timezone('America/Toronto', timezone('UTC', ?)))", a.confirmed_at)
+          ],
+          select:
+            {a.action_type,
+             fragment("date(timezone('America/Toronto', timezone('UTC', ?)))", a.confirmed_at),
+             count(a.id)}
       )
       |> Enum.group_by(fn {action_type, _date, _count} -> action_type end)
       |> Map.new(fn {action_type, counts} ->
@@ -460,15 +474,25 @@ defmodule PauseAiCa.Engagement do
     active_people_counts =
       daily_counts(
         from a in subquery(first_confirmations),
-          where: a.first_confirmed_at >= ^DateTime.new!(first_day, ~T[00:00:00]),
-          group_by: fragment("date(?)", a.first_confirmed_at),
-          select: {fragment("date(?)", a.first_confirmed_at), count(a.user_id)}
+          where: a.first_confirmed_at >= ^PauseAiCa.ReportingCalendar.starts_at(first_day),
+          group_by:
+            fragment(
+              "date(timezone('America/Toronto', timezone('UTC', ?)))",
+              a.first_confirmed_at
+            ),
+          select:
+            {fragment(
+               "date(timezone('America/Toronto', timezone('UTC', ?)))",
+               a.first_confirmed_at
+             ), count(a.user_id)}
       )
 
     visit_counts =
       Repo.all(
         from v in PauseAiCa.Engagement.DailyVisit,
-          where: v.visited_on >= ^first_day and v.visited_on <= ^today,
+          where:
+            v.reporting_timezone == "America/Toronto" and v.visited_on >= ^first_day and
+              v.visited_on <= ^today,
           select: {v.visited_on, v.count}
       )
       |> Map.new()
@@ -478,7 +502,14 @@ defmodule PauseAiCa.Engagement do
       active_people: fill_dates(dates, active_people_counts),
       actions: fill_dates(dates, action_counts),
       action_types: action_type_counts,
-      visits: fill_dates(dates, visit_counts)
+      visits:
+        fill_dates(
+          Enum.filter(dates, fn date ->
+            map_size(visit_counts) > 0 and
+              Date.compare(date, Enum.min(Map.keys(visit_counts), Date)) != :lt
+          end),
+          visit_counts
+        )
     }
   end
 

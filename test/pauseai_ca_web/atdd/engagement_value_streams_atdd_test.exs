@@ -8,6 +8,7 @@ if System.get_env("ATDD") == "true" do
     alias PauseAiCaWeb.AtddEvidence
 
     @moduletag :atdd
+    @moduletag accept_dialogs: true
 
     @scenarios [
       %{
@@ -196,9 +197,10 @@ if System.get_env("ATDD") == "true" do
 
       browser =
         browser
-        |> visit("/admin/accounts")
-        |> assert_has("#admin-user-#{member.id}", text: member.email)
-        |> refute_has("#admin-users", text: newcomer_email)
+        |> click_link("Accounts")
+        |> assert_path("/manage/accounts")
+        |> assert_has("#managed-accounts", text: member.email)
+        |> refute_has("#managed-accounts", text: newcomer_email)
         |> capture(
           "engagement-06-accounts-before.png",
           transfer_scenario,
@@ -234,10 +236,11 @@ if System.get_env("ATDD") == "true" do
         |> click_button("Keep me logged in on this device")
         |> assert_path("/")
         |> visit("/admin/accounts")
-        |> assert_has("#admin-user-#{newcomer.id}", text: newcomer_email)
-        |> assert_has("#admin-toggle-#{newcomer.id}", text: "Make superadmin")
-        |> click("#admin-toggle-#{newcomer.id}")
-        |> assert_has("#admin-user-#{newcomer.id}", text: "Superadmin")
+        |> assert_path("/manage/accounts")
+        |> click_link(newcomer_email)
+        |> click("#account-access summary")
+        |> grant_superadmin()
+        |> assert_has("#flash-info", text: "Superadmin role granted")
         |> capture(
           "engagement-07-accounts-new-superadmin.png",
           transfer_scenario,
@@ -254,10 +257,13 @@ if System.get_env("ATDD") == "true" do
       |> click_button("Keep me logged in on this device")
       |> assert_path("/")
       |> visit("/admin/accounts")
-      |> assert_has("#admin-user-#{member.id}", text: "Superadmin")
-      |> click("#admin-toggle-#{member.id}")
-      |> assert_has("#admin-toggle-#{member.id}", text: "Make superadmin")
-      |> assert_has("#admin-toggle-#{newcomer.id}", text: "Remove role")
+      |> click_link(member.email)
+      |> click("#account-access summary")
+      |> click_button("Remove role")
+      |> assert_has("#flash-info", text: "Superadmin role removed")
+      |> visit("/manage/accounts/#{member.id}")
+      |> click("#account-access summary")
+      |> assert_has("#account-superadmin", text: "Make superadmin")
       |> tap(fn _browser ->
         refute PauseAiCa.Accounts.get_user!(member.id).superadmin
         assert PauseAiCa.Accounts.get_user!(newcomer.id).superadmin
@@ -272,6 +278,13 @@ if System.get_env("ATDD") == "true" do
 
       Enum.each(@scenarios, &AtddEvidence.mark_scenario_success!/1)
       AtddEvidence.finalize!()
+    end
+
+    defp grant_superadmin(browser) do
+      browser
+      |> click_button("Make superadmin")
+      |> assert_has("#role-confirmation", text: "send the account an email notification")
+      |> click_button("Grant access and notify")
     end
 
     defp capture(conn, filename, scenario, description, opts \\ []) do

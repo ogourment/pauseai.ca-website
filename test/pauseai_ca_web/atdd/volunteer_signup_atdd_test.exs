@@ -12,6 +12,11 @@ if System.get_env("ATDD") == "true" do
     @moduletag accept_dialogs: true
     @scenarios Enum.map(
                  [
+                   {"ACC-01", "Unified Accounts and reserved administrative actions", "English"},
+                   {"ACC-02", "Existing account group reassignment and fresh permissions",
+                    "French"},
+                   {"ACC-03", "Scoped transactional and campaign history with partial failure",
+                    "English"},
                    {"VOL-10", "Accounts directory, single creation and scoped management",
                     "English"},
                    {"VOL-01", "Sheet to account and first sign-in", "English"},
@@ -823,6 +828,9 @@ if System.get_env("ATDD") == "true" do
         )
         |> click_link("single@example.org")
         |> assert_has("#managed-account-form", text: "Private organizer notes")
+        |> assert_has("select[name='account[group_id]']", selected: "Montréal")
+        |> assert_has("#account-email-history")
+        |> refute_has("#account-access")
         |> fill_in("Name", with: "Updated Exemple")
         |> click_button("Save account")
         |> assert_has("body", text: "Account saved")
@@ -857,6 +865,179 @@ if System.get_env("ATDD") == "true" do
       |> assert_has("#managed-accounts", text: "single@example.org")
 
       finish(id)
+    end
+
+    test "ACC-01 both entry points, scoped directory and superadmin role lifecycle", c do
+      id = "ACC-01"
+      target = user_fixture(%{email: "new-admin@example.org"})
+      flush_emails()
+
+      b =
+        open_accounts(c.conn, c.admin, id)
+        |> visit("/admin/dashboard")
+        |> click_link("Accounts")
+        |> assert_path("/manage/accounts")
+        |> assert_has("#account-count", text: "2 accounts")
+        |> click_link(target.email)
+        |> click("#account-access summary")
+        |> grant_superadmin()
+        |> assert_has("#flash-info", text: "Superadmin role granted")
+        |> capture(
+          id,
+          "Grant access from the unified detail",
+          "The confirmed account becomes a superadmin"
+        )
+
+      assert Accounts.get_user!(target.id).superadmin
+      assert_receive {:email, notification}
+      assert notification.subject =~ "superadmin"
+      assert notification.text_body =~ "/manage/accounts"
+
+      open_accounts(new_device(c), Accounts.get_user!(target.id), id)
+      |> assert_has("#managed-accounts", text: c.admin.email)
+      |> capture(id, "New admin signs in", "The granted role gives real administrative access")
+
+      b
+      |> visit("/admin/accounts?locale=en&page=1")
+      |> assert_path("/manage/accounts", query_params: %{locale: "en", page: "1"})
+
+      manager_user = manager(c, [c.montreal])
+      open_accounts(new_device(c), manager_user, id) |> refute_has("#account-access")
+      finish(id)
+    end
+
+    test "ACC-02 account group correction, reload and revoked permission", c do
+      id = "ACC-02"
+      target = user_fixture(%{email: "registered@example.org"})
+      manager_user = manager(c, [c.montreal, c.quebec])
+
+      b =
+        open_accounts(c.conn, c.admin, id)
+        |> click_link(target.email)
+        |> select("Incubator / group", option: "Montréal")
+        |> click_button("Save account")
+        |> assert_has("body", text: "Account saved")
+        |> visit("/manage/accounts/#{target.id}?locale=fr")
+        |> assert_has("select[name='account[group_id]']", selected: "Montréal")
+        |> capture(
+          id,
+          "Assign a registered account and reload in French",
+          "Persisted group without creating an import batch"
+        )
+
+      assert Repo.aggregate(Batch, :count) == 0
+
+      manager_browser =
+        open_accounts(new_device(c), manager_user, id)
+        |> click_link(target.email)
+        |> select("Incubator / group", option: "Québec")
+        |> click_button("Save account")
+        |> assert_has("body", text: "Account saved")
+        |> capture(
+          id,
+          "Manager moves within assigned groups",
+          "Server and directory use the new group"
+        )
+
+      assert Accounts.get_user!(target.id).organizing_group_id == c.quebec.id
+
+      b
+      |> visit("/manage/accounts/#{target.id}?locale=en")
+      |> select("Incubator / group", option: "Unassigned")
+      |> click_button("Save account")
+      |> assert_has("body", text: "Account saved")
+
+      manager_browser
+      |> fill_in("Name", with: "Preserve this correction")
+      |> click_button("Save account")
+      |> assert_has("body", text: "Changes not saved")
+      |> assert_has("input[value='Preserve this correction']")
+      |> click_button("Refresh history")
+      |> assert_has("body", text: "You no longer have access")
+      |> visit("/manage/accounts/#{target.id}")
+      |> assert_has("body", text: "Account unavailable")
+      |> capture(
+        id,
+        "Access changes while the form is open",
+        "Stale writes and mail-history reads are refused"
+      )
+
+      assert Repo.aggregate(Invitation, :count) == 0
+      finish(id)
+    end
+
+    test "ACC-03 Brevo metadata, no-send refresh and partial outage preserve editing", c do
+      id = "ACC-03"
+
+      Application.put_env(:pauseai_ca, :brevo_history_req_options,
+        plug: &PauseAiCa.BrevoHistoryStub.call/2
+      )
+
+      Application.put_env(:pauseai_ca, :history_test_process, self())
+
+      on_exit(fn ->
+        Application.delete_env(:pauseai_ca, :brevo_history_req_options)
+        Application.delete_env(:pauseai_ca, :history_test_process)
+        Application.delete_env(:pauseai_ca, :history_test_failure)
+      end)
+
+      target = user_fixture(%{email: "history@example.org"})
+      flush_emails()
+
+      b =
+        open_accounts(c.conn, c.admin, id)
+        |> click_link(target.email)
+        |> fill_in("Name", with: "Unsaved correction")
+        |> click_button("Refresh history")
+        |> assert_has("#history-transactional", text: "Your sign-in link")
+        |> assert_has("#history-transactional", text: "Delivered")
+        |> assert_has("#history-campaigns", text: "September update")
+        |> assert_has("#history-campaigns", text: "Opened")
+        |> refute_has("#account-email-history", text: "secret.example")
+        |> refute_has("#account-email-history", text: "Other organization")
+        |> assert_has("input[value='Unsaved correction']")
+        |> capture(
+          id,
+          "Refresh both sources",
+          "Synthetic Brevo transaction and campaign events without private links"
+        )
+
+      Application.put_env(:pauseai_ca, :history_test_failure, true)
+
+      b
+      |> click_button("Refresh history")
+      |> assert_has("#history-campaigns", text: "Brevo is limiting requests")
+      |> assert_has("#history-campaigns", text: "September update")
+      |> click_button("Save account")
+      |> assert_has("body", text: "Account saved")
+      |> assert_has("#history-campaigns", text: "Brevo is limiting requests")
+      |> assert_has("#history-campaigns", text: "September update")
+      |> capture(
+        id,
+        "One source fails while editing",
+        "Cached campaign history is marked stale and account edits still save"
+      )
+
+      assert Accounts.get_user!(target.id).name == "Unsaved correction"
+      assert Repo.aggregate(Invitation, :count) == 0
+      refute_receive {:email, _}
+      assert_received {:history_request, "GET", _}
+      finish(id)
+    end
+
+    defp grant_superadmin(browser) do
+      browser
+      |> click_button("Make superadmin")
+      |> assert_has("#role-confirmation", text: "send the account an email notification")
+      |> click_button("Grant access and notify")
+    end
+
+    defp flush_emails do
+      receive do
+        {:email, _} -> flush_emails()
+      after
+        0 -> :ok
+      end
     end
 
     defp manager(c, groups, email \\ "manager@example.org") do
@@ -1041,7 +1222,7 @@ if System.get_env("ATDD") == "true" do
         "user" => "Organizer / volunteer",
         "click_target" => trigger,
         "external_systems" =>
-          "Isolated Swoosh transport; local database; no Catalyse configured or called"
+          "Isolated Swoosh transport; synthetic Brevo history fixtures for ACC-03; local database; no Catalyse configured or called"
       }
 
       AcceptanceHarness.Evidence.record_pending_step(

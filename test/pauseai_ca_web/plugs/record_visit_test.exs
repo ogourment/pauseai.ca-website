@@ -4,29 +4,45 @@ defmodule PauseAiCaWeb.VisitRecordingTest do
   alias PauseAiCa.Engagement.DailyVisit
   alias PauseAiCa.Repo
 
-  test "a browser signal counts once per browser and UTC day", %{conn: conn} do
+  test "a browser signal counts once per browser and Toronto day", %{conn: conn} do
     conn = conn |> put_private(:record_visits, true) |> post(~p"/engagement/visits")
-    assert Repo.get!(DailyVisit, Date.utc_today()).count == 1
+
+    assert Repo.get_by!(DailyVisit,
+             visited_on: PauseAiCa.ReportingCalendar.today(),
+             reporting_timezone: "America/Toronto"
+           ).count == 1
 
     conn |> recycle() |> put_private(:record_visits, true) |> post(~p"/engagement/visits")
-    assert Repo.get!(DailyVisit, Date.utc_today()).count == 1
+
+    assert Repo.get_by!(DailyVisit,
+             visited_on: PauseAiCa.ReportingCalendar.today(),
+             reporting_timezone: "America/Toronto"
+           ).count == 1
   end
 
   test "raw page requests do not count as browser visits", %{conn: conn} do
     conn |> put_private(:record_visits, true) |> get(~p"/en")
-    refute Repo.get(DailyVisit, Date.utc_today())
+
+    refute Repo.get_by(DailyVisit,
+             visited_on: PauseAiCa.ReportingCalendar.today(),
+             reporting_timezone: "America/Toronto"
+           )
   end
 
-  test "a new browser and a new UTC day contribute separate daily counts", %{conn: conn} do
-    yesterday = Date.utc_today() |> Date.add(-1) |> Date.to_iso8601()
+  test "a new browser and a new Toronto day contribute separate daily counts", %{conn: conn} do
+    yesterday = PauseAiCa.ReportingCalendar.today() |> Date.add(-1) |> Date.to_iso8601()
 
     conn
-    |> Phoenix.ConnTest.init_test_session(%{browser_visit_recorded_on: yesterday})
+    |> Phoenix.ConnTest.init_test_session(%{browser_visit_recorded_on_toronto: yesterday})
     |> put_private(:record_visits, true)
     |> post(~p"/engagement/visits")
 
     build_conn() |> put_private(:record_visits, true) |> post(~p"/engagement/visits")
-    assert Repo.get!(DailyVisit, Date.utc_today()).count == 2
+
+    assert Repo.get_by!(DailyVisit,
+             visited_on: PauseAiCa.ReportingCalendar.today(),
+             reporting_timezone: "America/Toronto"
+           ).count == 2
   end
 
   test "superadmin browser signals are excluded", %{conn: conn} do
@@ -38,12 +54,19 @@ defmodule PauseAiCaWeb.VisitRecordingTest do
     |> put_private(:record_visits, true)
     |> post(~p"/engagement/visits")
 
-    refute Repo.get(DailyVisit, Date.utc_today())
+    refute Repo.get_by(DailyVisit,
+             visited_on: PauseAiCa.ReportingCalendar.today(),
+             reporting_timezone: "America/Toronto"
+           )
   end
 
   test "recording can be disabled", %{conn: conn} do
     post(conn, ~p"/engagement/visits")
-    refute Repo.get(DailyVisit, Date.utc_today())
+
+    refute Repo.get_by(DailyVisit,
+             visited_on: PauseAiCa.ReportingCalendar.today(),
+             reporting_timezone: "America/Toronto"
+           )
   end
 
   test "a signal without CSRF protection cannot increment the count", %{conn: conn} do
@@ -54,16 +77,24 @@ defmodule PauseAiCaWeb.VisitRecordingTest do
       |> post(~p"/engagement/visits")
     end
 
-    refute Repo.get(DailyVisit, Date.utc_today())
+    refute Repo.get_by(DailyVisit,
+             visited_on: PauseAiCa.ReportingCalendar.today(),
+             reporting_timezone: "America/Toronto"
+           )
   end
 
   test "an old raw-GET marker does not suppress a new browser signal", %{conn: conn} do
     conn
-    |> Phoenix.ConnTest.init_test_session(%{visit_recorded_on: Date.to_iso8601(Date.utc_today())})
+    |> Phoenix.ConnTest.init_test_session(%{
+      visit_recorded_on: Date.to_iso8601(PauseAiCa.ReportingCalendar.today())
+    })
     |> put_private(:record_visits, true)
     |> post(~p"/engagement/visits")
 
-    assert Repo.get!(DailyVisit, Date.utc_today()).count == 1
+    assert Repo.get_by!(DailyVisit,
+             visited_on: PauseAiCa.ReportingCalendar.today(),
+             reporting_timezone: "America/Toronto"
+           ).count == 1
   end
 
   test "signing in preserves today's anonymous visit marker", %{conn: conn} do
@@ -75,6 +106,10 @@ defmodule PauseAiCaWeb.VisitRecordingTest do
     conn = conn |> recycle() |> post(~p"/users/log-in", %{user: %{token: token}})
 
     conn |> recycle() |> put_private(:record_visits, true) |> post(~p"/engagement/visits")
-    assert Repo.get!(DailyVisit, Date.utc_today()).count == 1
+
+    assert Repo.get_by!(DailyVisit,
+             visited_on: PauseAiCa.ReportingCalendar.today(),
+             reporting_timezone: "America/Toronto"
+           ).count == 1
   end
 end

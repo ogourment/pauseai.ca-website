@@ -52,7 +52,7 @@ defmodule PauseAiCaWeb.Layouts do
       >
         <a
           href={if(@locale == "fr", do: ~p"/fr", else: ~p"/en")}
-          class="mr-auto flex items-center gap-3"
+          class="mr-auto flex shrink-0 items-center gap-3"
         >
           <span class="relative inline-flex">
             <img
@@ -84,11 +84,19 @@ defmodule PauseAiCaWeb.Layouts do
         >
           {gettext("Warning shot")}
         </.link>
+        <.link
+          id="donate-link"
+          navigate={if @locale == "fr", do: ~p"/fr/faire-un-don", else: ~p"/en/donate"}
+          class="shrink-0 whitespace-nowrap rounded-full bg-brand px-3 py-2 text-sm font-bold text-stone-950 hover:bg-brand-strong sm:px-4"
+        >
+          {gettext("Donate")}
+        </.link>
         <%!-- The menu is CSS-only, so it still works before JavaScript loads. --%>
         <details id="involvement-menu" class="act-menu relative">
           <summary class="cursor-pointer list-none text-base font-medium text-stone-700 hover:text-stone-950">
-            {gettext("Get involved")}
-            <span aria-hidden="true" class="text-xs">▾</span>
+            <span class="sr-only sm:not-sr-only">{gettext("Get involved")}</span>
+            <.icon name="hero-bars-3" class="size-6 sm:hidden" />
+            <span aria-hidden="true" class="hidden text-xs sm:inline">▾</span>
           </summary>
           <div class="absolute right-0 z-50 mt-2 w-64 overflow-hidden rounded-xl border border-stone-200 bg-white shadow-lg">
             <.link
@@ -278,7 +286,8 @@ defmodule PauseAiCaWeb.Layouts do
             class="whitespace-nowrap rounded-full bg-stone-900 px-3 py-2 text-sm font-semibold text-white hover:bg-stone-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand sm:px-4 sm:text-base"
             href={~p"/users/log-in?#{%{from: "header", locale: @locale}}"}
           >
-            {gettext("Sign in / Sign up")}
+            <span class="sm:hidden">{gettext("Account")}</span>
+            <span class="hidden sm:inline">{gettext("Sign in / Sign up")}</span>
           </.link>
         <% end %>
       </nav>
@@ -287,7 +296,11 @@ defmodule PauseAiCaWeb.Layouts do
     <div id="announcement-banners" class="sticky top-[var(--header-height)] z-30">
       <a
         id="montreal-protest-banner"
-        href="https://luma.com/d40dp5ed"
+        href={
+          if @locale == "fr",
+            do: ~p"/fr/manifestation-montreal-2026-09-26",
+            else: ~p"/en/montreal-protest-2026-09-26"
+        }
         phx-hook=".TrackOutbound"
         data-event="montreal-protest-2026-09-26"
         class="block bg-stone-950 px-5 py-3 text-center text-white transition hover:bg-stone-800 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-white"
@@ -296,7 +309,7 @@ defmodule PauseAiCaWeb.Layouts do
           {gettext("Montréal · Public protest")}
         </span>
         <span class="ml-2 text-sm underline underline-offset-4">
-          {gettext("Saturday, September 26 · 1–2 p.m. EDT")}
+          {gettext("September 26 · Read the recap")}
           <span aria-hidden="true">→</span>
         </span>
       </a>
@@ -316,7 +329,7 @@ defmodule PauseAiCaWeb.Layouts do
 
               if (window.gtag) {
                 window.gtag("event", "select_content", {
-                  content_type: "event_rsvp",
+                  content_type: "event_recap",
                   content_id: event
                 })
               }

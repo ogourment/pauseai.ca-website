@@ -24,6 +24,7 @@
       "volunteer_events"
     ]
   },
+  %{id: "donations", title: "Donation pledges", tables: ["donation_pledges"]},
   %{id: "analytics", title: "First-party analytics", tables: ["daily_visits"]},
   %{
     id: "acceptance_evidence",

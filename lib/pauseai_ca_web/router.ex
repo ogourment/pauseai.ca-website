@@ -96,6 +96,7 @@ defmodule PauseAiCaWeb.Router do
       live "/dashboard", AdminMetricsLive, :index
       live "/metrics", AdminMetricsLive, :redirect
       live "/accounts", AdminAccountsLive, :index
+      live "/donation-pledges", AdminDonationPledgesLive, :index
       live "/contact-imports", AdminContactImportLive, :index
     end
   end
@@ -134,6 +135,10 @@ defmodule PauseAiCaWeb.Router do
     # closes them on staging only. The sign-in routes below must not carry it.
     live_session :public_content,
       on_mount: [{PauseAiCaWeb.UserAuth, :require_invited}] do
+      live "/en/donate", DonateLive, :en
+      live "/fr/faire-un-don", DonateLive, :fr
+      live "/en/montreal-protest-2026-09-26", ProtestRecapLive, :en
+      live "/fr/manifestation-montreal-2026-09-26", ProtestRecapLive, :fr
       live "/en/warning-shot", WarningShotLive, :en
       live "/fr/signal-d-alarme", WarningShotLive, :fr
       live "/en/learn", LibraryLive, :en

@@ -445,6 +445,11 @@ defmodule PauseAiCa.Volunteers do
         |> change(name: blank_nil(row["name"]), signup_entry_point: "volunteer_signup")
         |> Repo.insert!()
 
+    user =
+      user
+      |> change(organizing_group_id: group && group.id, organizer_notes: row["notes"])
+      |> Repo.update!()
+
     signup =
       Repo.insert!(%Signup{
         email: row["email"],
@@ -565,6 +570,14 @@ defmodule PauseAiCa.Volunteers do
     else
       _ -> Repo.rollback(:unauthorized)
     end
+  end
+
+  defp authorized_batch?(scope, %{state: "confirmed", id: id}) do
+    superadmin?(scope) or
+      Enum.all?(
+        Repo.all(from s in Signup, where: s.batch_id == ^id, select: s.group_id),
+        &authorized_group?(scope, &1)
+      )
   end
 
   defp authorized_batch?(scope, batch) do

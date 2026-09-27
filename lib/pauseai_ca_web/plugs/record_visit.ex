@@ -1,6 +1,6 @@
 defmodule PauseAiCaWeb.Plugs.RecordVisit do
   @moduledoc """
-  Counts a CSRF-protected browser POST once per signed session and UTC day.
+  Counts a CSRF-protected browser POST once per signed session and America/Toronto day.
 
   Public GET requests never increment this counter. JavaScript-capable bots
   can still emit signals; this is not a verified-human or unique-person count.
@@ -17,12 +17,12 @@ defmodule PauseAiCaWeb.Plugs.RecordVisit do
 
   # Never reuse the old GET counter's marker: old cookies must not suppress
   # their first signal after the measurement cutover.
-  @session_key :browser_visit_recorded_on
+  @session_key :browser_visit_recorded_on_toronto
 
   def init(opts), do: opts
 
   def call(%Plug.Conn{method: "POST", request_path: "/engagement/visits"} = conn, _opts) do
-    today = Date.utc_today()
+    today = PauseAiCa.ReportingCalendar.today()
     marker = Date.to_iso8601(today)
 
     if disabled?(conn) or superadmin?(conn) or

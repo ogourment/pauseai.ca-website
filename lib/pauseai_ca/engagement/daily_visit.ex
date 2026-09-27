@@ -3,6 +3,7 @@ defmodule PauseAiCa.Engagement.DailyVisit do
 
   @primary_key {:visited_on, :date, autogenerate: false}
   schema "daily_visits" do
+    field :reporting_timezone, :string, primary_key: true, default: "America/Toronto"
     field :count, :integer
   end
 end

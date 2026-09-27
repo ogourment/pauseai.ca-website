@@ -7,6 +7,8 @@ defmodule PauseAiCa.Accounts.User do
   schema "users" do
     field :email, :string
     field :name, :string
+    belongs_to :organizing_group, PauseAiCa.Volunteers.Group
+    field :organizer_notes, :string, default: "", redact: true
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
     field :confirmed_at, :utc_datetime

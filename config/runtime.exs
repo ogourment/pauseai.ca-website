@@ -129,6 +129,13 @@ if config_env() == :prod do
     config :pauseai_ca, :brevo_api_key, brevo_api_key
 
     config :pauseai_ca,
+           :brevo_history_sender_domains,
+           System.get_env("BREVO_HISTORY_SENDER_DOMAINS", "pauseai.ca")
+           |> String.downcase()
+           |> String.split(",", trim: true)
+           |> Enum.map(&String.trim/1)
+
+    config :pauseai_ca,
            :brevo_list_ids,
            "BREVO_LIST_IDS"
            |> System.get_env("")

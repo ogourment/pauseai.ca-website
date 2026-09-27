@@ -7,9 +7,13 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
     test "an English visitor sees every stage and the Canadian voices", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/en/learn")
 
-      assert has_element?(view, "#montreal-protest-banner[href='https://luma.com/d40dp5ed']")
+      assert has_element?(
+               view,
+               "#montreal-protest-banner[href='/en/montreal-protest-2026-09-26']"
+             )
+
       assert has_element?(view, "#warning-shot-banner[href='/en/warning-shot']")
-      assert render(view) =~ "Saturday, September 26 · 1–2 p.m. EDT"
+      assert render(view) =~ "September 26 · Read the recap"
       assert has_element?(view, "#campaign-prompt[data-campaign='warning-shot-2']")
       assert has_element?(view, "#voices")
       assert has_element?(view, "#voice-bengio")
@@ -30,7 +34,7 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
       assert has_element?(view, "#voice-saba")
       assert has_element?(view, "#voice-guay")
       html = render(view)
-      assert html =~ "Samedi 26 septembre · 13 h–14 h HAE"
+      assert html =~ "26 septembre · Lire le compte rendu"
       assert html =~ "Des voix canadiennes"
     end
 

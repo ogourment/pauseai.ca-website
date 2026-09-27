@@ -277,7 +277,7 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
         </p>
         <nav class="mt-8 flex flex-wrap gap-3" aria-label={gettext("Superadmin tools")}>
           <.link navigate={~p"/admin/dashboard"} class={admin_link_class(false)}>{gettext("Dashboard")}</.link>
-          <.link navigate={~p"/admin/accounts"} class={admin_link_class(false)}>{gettext("Accounts")}</.link>
+          <.link navigate={~p"/manage/accounts"} class={admin_link_class(false)}>{gettext("Accounts")}</.link>
           <.link
             navigate={~p"/admin/contact-imports"}
             aria-current="page"

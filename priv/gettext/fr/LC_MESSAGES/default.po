@@ -1,11 +1,11 @@
-## "msgid"s in this file come from POT (.pot) files.
-###
-### Do not add, change, or remove "msgid"s manually here as
-### they're tied to the ones in the corresponding POT file
-### (with the same domain).
-###
-### Use "mix gettext.extract --merge" or "mix gettext.merge"
-### to merge POT files into PO files.
+#  "msgid"s in this file come from POT (.pot) files.
+# #
+# # Do not add, change, or remove "msgid"s manually here as
+# # they're tied to the ones in the corresponding POT file
+# # (with the same domain).
+# #
+# # Use "mix gettext.extract --merge" or "mix gettext.merge"
+# # to merge POT files into PO files.
 msgid ""
 msgstr ""
 "Language: fr\n"
@@ -13,8 +13,14 @@ msgstr ""
 
 #: lib/pauseai_ca_web/live/library_live.ex:385
 #, elixir-autogen, elixir-format
-msgid "A few emails a month from PauseAI Canada: what is moving federally, mobilisations, and the moments when your voice counts most. One-click unsubscribe."
-msgstr "Quelques courriels par mois de PauseAI Canada: ce qui bouge au fédéral, les mobilisations, et les moments où votre voix compte le plus. Désabonnement en un clic."
+msgid ""
+"A few emails a month from PauseAI Canada: what is moving federally, "
+"mobilisations, and the moments when your voice counts most. One-click "
+"unsubscribe."
+msgstr ""
+"Quelques courriels par mois de PauseAI Canada: ce qui bouge au fédéral, les "
+"mobilisations, et les moments où votre voix compte le plus. Désabonnement en"
+" un clic."
 
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:60
 #, elixir-autogen, elixir-format
@@ -23,20 +29,24 @@ msgstr "Une pause ou un traité pourrait réduire sensiblement ce risque."
 
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:133
 #, elixir-autogen, elixir-format
-msgid "A starting point on loss of control, uncertainty, and why the risk deserves serious attention."
-msgstr "Un point de départ sur la perte de contrôle, l’incertitude et les raisons de prendre le risque au sérieux."
+msgid ""
+"A starting point on loss of control, uncertainty, and why the risk deserves "
+"serious attention."
+msgstr ""
+"Un point de départ sur la perte de contrôle, l’incertitude et les raisons de"
+" prendre le risque au sérieux."
 
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:54
 #, elixir-autogen, elixir-format
 msgid "AI poses a genuine existential risk."
 msgstr "L’IA pose un véritable risque existentiel."
 
-#: lib/pauseai_ca_web/components/layouts.ex:205
+#: lib/pauseai_ca_web/components/layouts.ex:213
 #, elixir-autogen, elixir-format
 msgid "About"
 msgstr "À propos"
 
-#: lib/pauseai_ca_web/components/layouts.ex:367
+#: lib/pauseai_ca_web/components/layouts.ex:380
 #, elixir-autogen, elixir-format
 msgid "About PauseAI Canada"
 msgstr "À propos de PauseAI Canada"
@@ -48,11 +58,16 @@ msgstr "Accepter"
 
 #: lib/pauseai_ca_web/components/analytics.ex:123
 #, elixir-autogen, elixir-format
-msgid "Accept analytics cookies? They help us see which pages actually lead people to act. Declining costs you no functionality."
-msgstr "Acceptez-vous les témoins (cookies) de mesure d'audience? Ils nous aident à voir quelles pages amènent les gens à agir. Refuser n'enlève aucune fonctionnalité."
+msgid ""
+"Accept analytics cookies? They help us see which pages actually lead people "
+"to act. Declining costs you no functionality."
+msgstr ""
+"Acceptez-vous les témoins (cookies) de mesure d'audience? Ils nous aident à "
+"voir quelles pages amènent les gens à agir. Refuser n'enlève aucune "
+"fonctionnalité."
 
 #: lib/pauseai_ca_web/components/core_components.ex:375
-#: lib/pauseai_ca_web/components/layouts.ex:408
+#: lib/pauseai_ca_web/components/layouts.ex:421
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr "Actions"
@@ -69,22 +84,30 @@ msgstr "Ajouter une ressource"
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:268
 #, elixir-autogen, elixir-format
-msgid "Add your full postal code to your profile to identify your riding and MP."
-msgstr "Ajoutez votre code postal complet à votre profil pour identifier votre circonscription et votre député."
+msgid ""
+"Add your full postal code to your profile to identify your riding and MP."
+msgstr ""
+"Ajoutez votre code postal complet à votre profil pour identifier votre "
+"circonscription et votre député."
 
 #: lib/pauseai_ca_web/components/campaign_prompt.ex:123
-#: lib/pauseai_ca_web/components/layouts.ex:338
+#: lib/pauseai_ca_web/components/layouts.ex:351
 #, elixir-autogen, elixir-format
 msgid "An AI escaped its lab and hacked a real company"
-msgstr "Une IA s’est échappée de son laboratoire et a piraté une vraie entreprise"
+msgstr ""
+"Une IA s’est échappée de son laboratoire et a piraté une vraie entreprise"
 
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:1077
 #, elixir-autogen, elixir-format
-msgid "An AI escaped its lab and hacked a real company. I just wrote to my MP about it. It takes a minute:"
-msgstr "Une IA s'est échappée de son laboratoire et a piraté une vraie entreprise. Je viens d'écrire à ma députée. Ça prend une minute:"
+msgid ""
+"An AI escaped its lab and hacked a real company. I just wrote to my MP about"
+" it. It takes a minute:"
+msgstr ""
+"Une IA s'est échappée de son laboratoire et a piraté une vraie entreprise. "
+"Je viens d'écrire à ma députée. Ça prend une minute:"
 
-#: lib/pauseai_ca_web/components/layouts.ex:442
-#: lib/pauseai_ca_web/components/layouts.ex:457
+#: lib/pauseai_ca_web/components/layouts.ex:455
+#: lib/pauseai_ca_web/components/layouts.ex:470
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
 msgstr "Tentative de reconnexion"
@@ -111,7 +134,7 @@ msgstr "Enregistrer"
 msgid "Canada"
 msgstr "Canada"
 
-#: lib/pauseai_ca_web/components/layouts.ex:152
+#: lib/pauseai_ca_web/components/layouts.ex:160
 #, elixir-autogen, elixir-format
 msgid "Canada-wide calendar"
 msgstr "Calendrier canadien"
@@ -121,7 +144,7 @@ msgstr "Calendrier canadien"
 msgid "Canadian voices"
 msgstr "Des voix canadiennes"
 
-#: lib/pauseai_ca_web/components/layouts.ex:234
+#: lib/pauseai_ca_web/components/layouts.ex:242
 #, elixir-autogen, elixir-format
 msgid "Change password"
 msgstr "Changer le mot de passe"
@@ -147,6 +170,7 @@ msgid "Complete my profile"
 msgstr "Compléter mon profil"
 
 #: lib/pauseai_ca_web/controllers/page_html/about.html.heex:40
+#: lib/pauseai_ca_web/live/donate_live.ex:93
 #, elixir-autogen, elixir-format
 msgid "Contact us"
 msgstr "Nous joindre"
@@ -201,7 +225,7 @@ msgstr "Modifier mon profil"
 msgid "Email a friend"
 msgstr "Écrire à un·e ami·e"
 
-#: lib/pauseai_ca_web/components/layouts.ex:123
+#: lib/pauseai_ca_web/components/layouts.ex:131
 #: lib/pauseai_ca_web/controllers/page_html/strategy.html.heex:66
 #, elixir-autogen, elixir-format
 msgid "Engagement ladder"
@@ -224,10 +248,17 @@ msgstr "Évaluer les réponses"
 
 #: lib/pauseai_ca_web/controllers/page_html/strategy.html.heex:24
 #, elixir-autogen, elixir-format
-msgid "Even persuaded policymakers hesitate to defend costly measures without visible support. A political window may open suddenly, but that is too late to build the trust, teams, and networks it requires."
-msgstr "Même des responsables politiques convaincus hésitent à défendre une mesure coûteuse sans appui visible. Une fenêtre politique peut s'ouvrir soudainement, mais il est alors trop tard pour bâtir la confiance, les équipes et les réseaux nécessaires."
+msgid ""
+"Even persuaded policymakers hesitate to defend costly measures without "
+"visible support. A political window may open suddenly, but that is too late "
+"to build the trust, teams, and networks it requires."
+msgstr ""
+"Même des responsables politiques convaincus hésitent à défendre une mesure "
+"coûteuse sans appui visible. Une fenêtre politique peut s'ouvrir "
+"soudainement, mais il est alors trop tard pour bâtir la confiance, les "
+"équipes et les réseaux nécessaires."
 
-#: lib/pauseai_ca_web/components/layouts.ex:149
+#: lib/pauseai_ca_web/components/layouts.ex:157
 #, elixir-autogen, elixir-format
 msgid "Events"
 msgstr "Événements"
@@ -253,7 +284,7 @@ msgstr "Explorer les mécanismes"
 msgid "Find my MP"
 msgstr "Trouver mon député·e"
 
-#: lib/pauseai_ca_web/components/layouts.ex:274
+#: lib/pauseai_ca_web/components/layouts.ex:282
 #, elixir-autogen, elixir-format
 msgid "Français"
 msgstr "English"
@@ -268,7 +299,7 @@ msgstr "Code postal complet"
 msgid "Further reading"
 msgstr "Pour aller plus loin"
 
-#: lib/pauseai_ca_web/components/layouts.ex:90
+#: lib/pauseai_ca_web/components/layouts.ex:97
 #, elixir-autogen, elixir-format
 msgid "Get involved"
 msgstr "S'impliquer"
@@ -278,7 +309,7 @@ msgstr "S'impliquer"
 msgid "Get updates"
 msgstr "Recevoir les mises à jour"
 
-#: lib/pauseai_ca_web/components/layouts.ex:110
+#: lib/pauseai_ca_web/components/layouts.ex:118
 #, elixir-autogen, elixir-format
 msgid "How concern becomes collective action"
 msgstr "Comment passer de l'intérêt à l'action collective"
@@ -290,13 +321,22 @@ msgstr "Jusqu’où devrions-nous laisser l’IA progresser?"
 
 #: lib/pauseai_ca_web/controllers/page_html/strategy.html.heex:34
 #, elixir-autogen, elixir-format
-msgid "Inform without prescribing a conclusion, offer one attainable first action, then help willing participants talk, show up, contribute, and organize."
-msgstr "Informer sans imposer une conclusion, proposer une première action réalisable, puis aider les personnes qui le souhaitent à parler, participer, contribuer et organiser."
+msgid ""
+"Inform without prescribing a conclusion, offer one attainable first action, "
+"then help willing participants talk, show up, contribute, and organize."
+msgstr ""
+"Informer sans imposer une conclusion, proposer une première action "
+"réalisable, puis aider les personnes qui le souhaitent à parler, participer,"
+" contribuer et organiser."
 
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:67
 #, elixir-autogen, elixir-format
-msgid "International coordination is politically achievable—countries can agree, comply, and enforce it."
-msgstr "La coordination internationale est politiquement réalisable : les pays peuvent s’entendre, respecter l’accord et le faire appliquer."
+msgid ""
+"International coordination is politically achievable—countries can agree, "
+"comply, and enforce it."
+msgstr ""
+"La coordination internationale est politiquement réalisable : les pays "
+"peuvent s’entendre, respecter l’accord et le faire appliquer."
 
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:200
 #, elixir-autogen, elixir-format
@@ -304,7 +344,7 @@ msgid "Keep a private record of the steps you take."
 msgstr "Gardez une trace privée des gestes que vous posez."
 
 #: lib/pauseai_ca_web/components/layouts.ex:79
-#: lib/pauseai_ca_web/components/layouts.ex:97
+#: lib/pauseai_ca_web/components/layouts.ex:105
 #, elixir-autogen, elixir-format
 msgid "Learn"
 msgstr "Comprendre"
@@ -314,7 +354,7 @@ msgstr "Comprendre"
 msgid "Letter language"
 msgstr "Langue de la lettre"
 
-#: lib/pauseai_ca_web/components/layouts.ex:265
+#: lib/pauseai_ca_web/components/layouts.ex:273
 #, elixir-autogen, elixir-format
 msgid "Log out"
 msgstr "Déconnexion"
@@ -329,7 +369,7 @@ msgstr "Recherche…"
 msgid "Manage my learning path"
 msgstr "Gérer mon parcours"
 
-#: lib/pauseai_ca_web/components/layouts.ex:363
+#: lib/pauseai_ca_web/components/layouts.ex:376
 #, elixir-autogen, elixir-format
 msgid "Montréal events"
 msgstr "Événements à Montréal"
@@ -346,7 +386,7 @@ msgstr "Passer à l’action"
 msgid "My MP"
 msgstr "Mon député"
 
-#: lib/pauseai_ca_web/components/layouts.ex:217
+#: lib/pauseai_ca_web/components/layouts.ex:225
 #: lib/pauseai_ca_web/live/dashboard_live.ex:19
 #: lib/pauseai_ca_web/live/dashboard_live.ex:256
 #, elixir-autogen, elixir-format
@@ -358,7 +398,7 @@ msgstr "Mon tableau de bord"
 msgid "My learning path"
 msgstr "Mon parcours d’apprentissage"
 
-#: lib/pauseai_ca_web/components/layouts.ex:221
+#: lib/pauseai_ca_web/components/layouts.ex:229
 #: lib/pauseai_ca_web/live/profile_live.ex:15
 #: lib/pauseai_ca_web/live/profile_live.ex:116
 #: lib/pauseai_ca_web/live/volunteer_profile_live.ex:156
@@ -373,8 +413,13 @@ msgstr "Ma circonscription"
 
 #: lib/pauseai_ca_web/controllers/page_html/strategy.html.heex:54
 #, elixir-autogen, elixir-format
-msgid "No leaderboards, streak pressure, or claim that one path fits everyone. Progress is used to offer a next step, not to score people."
-msgstr "Pas de classement, de pression à maintenir une série ou de prétention qu'un parcours convient à tout le monde. La progression sert à proposer une prochaine étape, pas à noter les personnes."
+msgid ""
+"No leaderboards, streak pressure, or claim that one path fits everyone. "
+"Progress is used to offer a next step, not to score people."
+msgstr ""
+"Pas de classement, de pression à maintenir une série ou de prétention qu'un "
+"parcours convient à tout le monde. La progression sert à proposer une "
+"prochaine étape, pas à noter les personnes."
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:441
 #, elixir-autogen, elixir-format
@@ -388,13 +433,24 @@ msgstr "Plus tard"
 
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:1041
 #, elixir-autogen, elixir-format
-msgid "Nothing yet? Look in spam or promotions, move the message to your inbox and mark it \"Not spam\". That is what keeps us out of the spam folder for everyone else."
-msgstr "Rien reçu? Regardez dans les indésirables ou les promotions, déplacez le message vers votre boîte de réception et marquez-le « Non indésirable ». Cela aide tout le monde à recevoir nos courriels."
+msgid ""
+"Nothing yet? Look in spam or promotions, move the message to your inbox and "
+"mark it \"Not spam\". That is what keeps us out of the spam folder for "
+"everyone else."
+msgstr ""
+"Rien reçu? Regardez dans les indésirables ou les promotions, déplacez le "
+"message vers votre boîte de réception et marquez-le « Non indésirable ». "
+"Cela aide tout le monde à recevoir nos courriels."
 
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:1069
 #, elixir-autogen, elixir-format
-msgid "Offices count letters, and most files get almost none. If one person you know writes too, you have just doubled what you did."
-msgstr "Les bureaux comptent les lettres, et la plupart des dossiers n'en reçoivent presque aucune. Si une personne de votre entourage écrit aussi, vous venez de doubler l'effet de votre geste."
+msgid ""
+"Offices count letters, and most files get almost none. If one person you "
+"know writes too, you have just doubled what you did."
+msgstr ""
+"Les bureaux comptent les lettres, et la plupart des dossiers n'en reçoivent "
+"presque aucune. Si une personne de votre entourage écrit aussi, vous venez "
+"de doubler l'effet de votre geste."
 
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:1065
 #, elixir-autogen, elixir-format
@@ -436,40 +492,60 @@ msgstr "Notre stratégie"
 msgid "Parliamentarians have already signed"
 msgstr "Des parlementaires l'ont déjà signée"
 
-#: lib/pauseai_ca_web/components/layouts.ex:258
+#: lib/pauseai_ca_web/components/layouts.ex:266
 #, elixir-autogen, elixir-format
 msgid "Passer au français"
 msgstr "Passer à l'anglais"
 
 #: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:13
 #, elixir-autogen, elixir-format
-msgid "PauseAI Canada collects only the information needed to provide the features you choose to use."
-msgstr "PauseAI Canada recueille uniquement les renseignements nécessaires pour fournir les fonctions que vous choisissez d’utiliser."
+msgid ""
+"PauseAI Canada collects only the information needed to provide the features "
+"you choose to use."
+msgstr ""
+"PauseAI Canada recueille uniquement les renseignements nécessaires pour "
+"fournir les fonctions que vous choisissez d’utiliser."
 
 #: lib/pauseai_ca_web/controllers/page_html/about.html.heex:13
 #, elixir-autogen, elixir-format
-msgid "PauseAI Canada is a developing Canadian group raising public awareness of risks from advanced AI systems and advocating for national and international safeguards."
-msgstr "PauseAI Canada est un groupe canadien en développement qui sensibilise le public aux risques liés aux systèmes d'IA avancés et défend des mesures de sécurité nationales et internationales."
+msgid ""
+"PauseAI Canada is a developing Canadian group raising public awareness of "
+"risks from advanced AI systems and advocating for national and international"
+" safeguards."
+msgstr ""
+"PauseAI Canada est un groupe canadien en développement qui sensibilise le "
+"public aux risques liés aux systèmes d'IA avancés et défend des mesures de "
+"sécurité nationales et internationales."
 
-#: lib/pauseai_ca_web/components/layouts.ex:139
+#: lib/pauseai_ca_web/components/layouts.ex:147
 #, elixir-autogen, elixir-format
 msgid "PauseAI Global's chapter guide"
 msgstr "Guide de PauseAI Global"
 
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:983
 #, elixir-autogen, elixir-format
-msgid "Personalize the letter before sending. One sentence of your own counts for more than the template."
-msgstr "Personnalisez la lettre avant l'envoi. Une phrase à vous compte plus que le modèle."
+msgid ""
+"Personalize the letter before sending. One sentence of your own counts for "
+"more than the template."
+msgstr ""
+"Personnalisez la lettre avant l'envoi. Une phrase à vous compte plus que le "
+"modèle."
 
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:181
 #, elixir-autogen, elixir-format
-msgid "Policymakers can be convinced without acting. A credible constituency changes what they can defend."
-msgstr "Les décideurs peuvent être convaincus sans agir. Une mobilisation crédible change ce qu’ils peuvent défendre."
+msgid ""
+"Policymakers can be convinced without acting. A credible constituency "
+"changes what they can defend."
+msgstr ""
+"Les décideurs peuvent être convaincus sans agir. Une mobilisation crédible "
+"change ce qu’ils peuvent défendre."
 
 #: lib/pauseai_ca_web/live/profile_live.ex:171
 #, elixir-autogen, elixir-format
 msgid "Position on pausing advanced AI: not yet documented by PauseAI Canada."
-msgstr "Position sur une pause de l’IA avancée : pas encore documentée par PauseAI Canada."
+msgstr ""
+"Position sur une pause de l’IA avancée : pas encore documentée par PauseAI "
+"Canada."
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:291
 #, elixir-autogen, elixir-format
@@ -478,7 +554,7 @@ msgstr "Position sur une pause de l’IA avancée : pas encore documentée."
 
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:133
 #: lib/pauseai_ca_web/live/library_live.ex:390
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:140
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:406
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:930
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:972
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:963
@@ -486,7 +562,8 @@ msgstr "Position sur une pause de l’IA avancée : pas encore documentée."
 msgid "Postal code"
 msgstr "Code postal"
 
-#: lib/pauseai_ca_web/components/layouts.ex:371
+#: lib/pauseai_ca_web/components/layouts.ex:384
+#: lib/pauseai_ca_web/live/donate_live.ex:138
 #, elixir-autogen, elixir-format
 msgid "Privacy"
 msgstr "Confidentialité"
@@ -503,7 +580,7 @@ msgstr "Politique de confidentialité"
 msgid "Profile saved."
 msgstr "Profil enregistré."
 
-#: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:48
+#: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:56
 #, elixir-autogen, elixir-format
 msgid "Questions: info@pauseai.ca"
 msgstr "Pour toute question : info@pauseai.ca"
@@ -530,8 +607,14 @@ msgstr "Lire le résumé"
 
 #: lib/pauseai_ca_web/controllers/page_html/strategy.html.heex:44
 #, elixir-autogen, elixir-format
-msgid "Real actions that indicate progress: learning, conversations, participation, political contact, volunteering, and organizing. Each person's activity log remains private."
-msgstr "Les gestes réels qui indiquent une progression: ressources consultées, conversations, participation, contacts politiques, bénévolat et organisation. Le journal personnel reste privé."
+msgid ""
+"Real actions that indicate progress: learning, conversations, participation,"
+" political contact, volunteering, and organizing. Each person's activity log"
+" remains private."
+msgstr ""
+"Les gestes réels qui indiquent une progression: ressources consultées, "
+"conversations, participation, contacts politiques, bénévolat et "
+"organisation. Le journal personnel reste privé."
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:449
 #, elixir-autogen, elixir-format
@@ -543,6 +626,7 @@ msgstr "Noter une action"
 msgid "Record privately"
 msgstr "Noter en privé"
 
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:465
 #: lib/pauseai_ca_web/live/profile_live.ex:192
 #: lib/pauseai_ca_web/live/profile_live.ex:225
 #, elixir-autogen, elixir-format
@@ -562,14 +646,15 @@ msgstr "Enregistrer les modifications"
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:96
 #, elixir-autogen, elixir-format
 msgid "Save your answers and continue your path on another device."
-msgstr "Enregistrez vos réponses et retrouvez votre parcours sur un autre appareil."
+msgstr ""
+"Enregistrez vos réponses et retrouvez votre parcours sur un autre appareil."
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:312
 #, elixir-autogen, elixir-format
 msgid "Saved for later"
 msgstr "À lire plus tard"
 
-#: lib/pauseai_ca_web/components/layouts.ex:126
+#: lib/pauseai_ca_web/components/layouts.ex:134
 #, elixir-autogen, elixir-format
 msgid "See ways to deepen your involvement"
 msgstr "Voir les façons de progresser"
@@ -597,10 +682,13 @@ msgstr "Envoi…"
 
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:1005
 #, elixir-autogen, elixir-format
-msgid "Sent. Thank you — replies from MP offices often arrive within a few days."
-msgstr "Envoyé. Merci — les réponses des bureaux de député·es arrivent souvent en quelques jours."
+msgid ""
+"Sent. Thank you — replies from MP offices often arrive within a few days."
+msgstr ""
+"Envoyé. Merci — les réponses des bureaux de député·es arrivent souvent en "
+"quelques jours."
 
-#: lib/pauseai_ca_web/components/layouts.ex:230
+#: lib/pauseai_ca_web/components/layouts.ex:238
 #, elixir-autogen, elixir-format
 msgid "Settings"
 msgstr "Paramètres"
@@ -631,17 +719,24 @@ msgstr "M'inscrire"
 msgid "Signing up…"
 msgstr "Inscription…"
 
-#: lib/pauseai_ca_web/components/layouts.ex:449
+#: lib/pauseai_ca_web/components/layouts.ex:462
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
 msgstr "Un problème est survenu !"
 
 #: lib/pauseai_ca_web/controllers/page_html/strategy.html.heex:13
 #, elixir-autogen, elixir-format
-msgid "Sound policy is not enough if nobody builds the public support needed to enact it. PauseAI Canada aims to help informed people act together before a crisis forces governments to improvise."
-msgstr "Des politiques solides ne suffisent pas si personne ne crée le soutien public nécessaire pour les faire adopter. PauseAI Canada veut aider des personnes informées à agir ensemble, avant qu'une crise ne force les gouvernements à improviser."
+msgid ""
+"Sound policy is not enough if nobody builds the public support needed to "
+"enact it. PauseAI Canada aims to help informed people act together before a "
+"crisis forces governments to improvise."
+msgstr ""
+"Des politiques solides ne suffisent pas si personne ne crée le soutien "
+"public nécessaire pour les faire adopter. PauseAI Canada veut aider des "
+"personnes informées à agir ensemble, avant qu'une crise ne force les "
+"gouvernements à improviser."
 
-#: lib/pauseai_ca_web/components/layouts.ex:136
+#: lib/pauseai_ca_web/components/layouts.ex:144
 #, elixir-autogen, elixir-format
 msgid "Start a group"
 msgstr "Lancer un groupe"
@@ -656,11 +751,12 @@ msgstr "Commencez ici"
 msgid "Start where you have questions."
 msgstr "Commencez là où vous avez des questions."
 
-#: lib/pauseai_ca_web/components/layouts.ex:107
+#: lib/pauseai_ca_web/components/layouts.ex:115
 #, elixir-autogen, elixir-format
 msgid "Strategy"
 msgstr "Stratégie"
 
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:561
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:977
 #, elixir-autogen, elixir-format
 msgid "Subject"
@@ -674,8 +770,12 @@ msgstr "Tester la coordination"
 
 #: lib/pauseai_ca_web/controllers/letter_controller.ex:43
 #, elixir-autogen, elixir-format
-msgid "That link is no longer valid. Links expire after 24 hours and work only once."
-msgstr "Ce lien n'est plus valide. Les liens expirent après 24 heures et ne servent qu'une fois."
+msgid ""
+"That link is no longer valid. Links expire after 24 hours and work only "
+"once."
+msgstr ""
+"Ce lien n'est plus valide. Les liens expirent après 24 heures et ne servent "
+"qu'une fois."
 
 #: lib/pauseai_ca_web/live/library_live.ex:373
 #, elixir-autogen, elixir-format
@@ -684,13 +784,23 @@ msgstr "Les arguments"
 
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:165
 #, elixir-autogen, elixir-format
-msgid "The case involving advanced chips, compute centres, inspection, compliance, and defection."
-msgstr "Les arguments sur les puces avancées, les centres de calcul, l’inspection, la conformité et les défections."
+msgid ""
+"The case involving advanced chips, compute centres, inspection, compliance, "
+"and defection."
+msgstr ""
+"Les arguments sur les puces avancées, les centres de calcul, l’inspection, "
+"la conformité et les défections."
 
 #: lib/pauseai_ca_web/live/library_live.ex:348
 #, elixir-autogen, elixir-format
-msgid "The people who built this technology are among the most worried about where it is going, and several of them work in Canada. Their positions and the main possible responses deserve public debate."
-msgstr "Les gens qui ont construit cette technologie sont parmi les plus inquiets de ce qu'elle devient, et plusieurs d'entre eux travaillent au Canada. Leurs positions et les principales réponses possibles méritent un débat public."
+msgid ""
+"The people who built this technology are among the most worried about where "
+"it is going, and several of them work in Canada. Their positions and the "
+"main possible responses deserve public debate."
+msgstr ""
+"Les gens qui ont construit cette technologie sont parmi les plus inquiets de"
+" ce qu'elle devient, et plusieurs d'entre eux travaillent au Canada. Leurs "
+"positions et les principales réponses possibles méritent un débat public."
 
 #: lib/pauseai_ca_web/controllers/page_html/strategy.html.heex:21
 #, elixir-autogen, elixir-format
@@ -704,8 +814,11 @@ msgstr "La déclaration et la liste complète des appuis"
 
 #: lib/pauseai_ca_web/controllers/page_html/strategy.html.heex:69
 #, elixir-autogen, elixir-format
-msgid "There is no single path. These are common ways to deepen your involvement."
-msgstr "Plusieurs chemins sont possibles. Voici des façons courantes d'approfondir son engagement."
+msgid ""
+"There is no single path. These are common ways to deepen your involvement."
+msgstr ""
+"Plusieurs chemins sont possibles. Voici des façons courantes d'approfondir "
+"son engagement."
 
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:975
 #, elixir-autogen, elixir-format
@@ -714,18 +827,35 @@ msgstr "Il s'agit de la meilleure correspondance. Vérifiez avant d'envoyer."
 
 #: lib/pauseai_ca_web/components/campaign_prompt.ex:127
 #, elixir-autogen, elixir-format
-msgid "This is no longer hypothetical: it has a date, a victim and an incident report. Here is what happened, and the two things that matter today."
-msgstr "Ce n'est plus hypothétique: cela a une date, une victime et un rapport d'incident. Voici ce qui s'est passé, et les deux gestes qui comptent aujourd'hui."
+msgid ""
+"This is no longer hypothetical: it has a date, a victim and an incident "
+"report. Here is what happened, and the two things that matter today."
+msgstr ""
+"Ce n'est plus hypothétique: cela a une date, une victime et un rapport "
+"d'incident. Voici ce qui s'est passé, et les deux gestes qui comptent "
+"aujourd'hui."
 
 #: lib/pauseai_ca_web/controllers/page_html/strategy.html.heex:85
 #, elixir-autogen, elixir-format
-msgid "This summary adapts PauseAI's movement-building analysis to the Canadian context. Read the full argument for its evidence and caveats (about 42 minutes)."
-msgstr "Cette synthèse adapte au contexte canadien l'analyse de PauseAI sur la construction d'un mouvement social. Le texte intégral est en anglais (environ 42 min)."
+msgid ""
+"This summary adapts PauseAI's movement-building analysis to the Canadian "
+"context. Read the full argument for its evidence and caveats (about 42 "
+"minutes)."
+msgstr ""
+"Cette synthèse adapte au contexte canadien l'analyse de PauseAI sur la "
+"construction d'un mouvement social. Le texte intégral est en anglais "
+"(environ 42 min)."
 
 #: lib/pauseai_ca_web/live/library_live.ex:356
 #, elixir-autogen, elixir-format
-msgid "Two of the three Turing Award winners for deep learning built their careers in Canada. Both now say the technology they created could escape human control."
-msgstr "Deux des trois lauréats du prix Turing pour l'apprentissage profond ont bâti leur carrière au Canada. Tous deux affirment aujourd'hui que la technologie qu'ils ont créée pourrait échapper au contrôle humain."
+msgid ""
+"Two of the three Turing Award winners for deep learning built their careers "
+"in Canada. Both now say the technology they created could escape human "
+"control."
+msgstr ""
+"Deux des trois lauréats du prix Turing pour l'apprentissage profond ont bâti"
+" leur carrière au Canada. Tous deux affirment aujourd'hui que la technologie"
+" qu'ils ont créée pourrait échapper au contrôle humain."
 
 #: lib/pauseai_ca_web/controllers/page_controller.ex:45
 #, elixir-autogen, elixir-format
@@ -743,23 +873,30 @@ msgid "Unknown resource."
 msgstr "Ressource inconnue."
 
 #: lib/pauseai_ca_web/components/campaign_prompt.ex:121
-#: lib/pauseai_ca_web/components/layouts.ex:335
+#: lib/pauseai_ca_web/components/layouts.ex:348
 #, elixir-autogen, elixir-format
 msgid "Warning Shot Protocol · Second activation"
 msgstr "Signal d'alarme · Deuxième alerte de PauseAI"
 
 #: lib/pauseai_ca_web/components/layouts.ex:85
-#: lib/pauseai_ca_web/components/layouts.ex:101
+#: lib/pauseai_ca_web/components/layouts.ex:109
 #, elixir-autogen, elixir-format
 msgid "Warning shot"
 msgstr "Signal d'alarme"
 
 #: lib/pauseai_ca_web/controllers/page_html/about.html.heex:22
 #, elixir-autogen, elixir-format
-msgid "We adapt the case and opportunities for action to the Canadian context in both official languages. We help people form a view, contact representatives, and organize."
-msgstr "Nous adaptons les arguments et les possibilités d'action au contexte canadien, dans les deux langues officielles. Nous voulons aider les personnes à se faire une opinion, à communiquer avec leurs représentantes et représentants et à s'organiser."
+msgid ""
+"We adapt the case and opportunities for action to the Canadian context in "
+"both official languages. We help people form a view, contact "
+"representatives, and organize."
+msgstr ""
+"Nous adaptons les arguments et les possibilités d'action au contexte "
+"canadien, dans les deux langues officielles. Nous voulons aider les "
+"personnes à se faire une opinion, à communiquer avec leurs représentantes et"
+" représentants et à s'organiser."
 
-#: lib/pauseai_ca_web/components/layouts.ex:434
+#: lib/pauseai_ca_web/components/layouts.ex:447
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
 msgstr "Nous ne trouvons pas la connexion Internet"
@@ -771,13 +908,23 @@ msgstr "Nous collaborons avec"
 
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:1035
 #, elixir-autogen, elixir-format
-msgid "We have emailed you the letter. Click the button in it and the letter goes to your MP. We do this because your address is the one your MP will reply to."
-msgstr "Nous vous avons envoyé la lettre. Cliquez sur le bouton qu'elle contient et elle part vers votre député·e. Nous procédons ainsi parce que votre adresse est celle à laquelle votre député·e répondra."
+msgid ""
+"We have emailed you the letter. Click the button in it and the letter goes "
+"to your MP. We do this because your address is the one your MP will reply "
+"to."
+msgstr ""
+"Nous vous avons envoyé la lettre. Cliquez sur le bouton qu'elle contient et "
+"elle part vers votre député·e. Nous procédons ainsi parce que votre adresse "
+"est celle à laquelle votre député·e répondra."
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:408
 #, elixir-autogen, elixir-format
-msgid "We recorded these when you started them outside this journal. Please confirm whether you completed them."
-msgstr "Nous les avons notées lorsque vous les avez commencées hors de ce journal. Confirmez-nous si vous les avez terminées."
+msgid ""
+"We recorded these when you started them outside this journal. Please confirm"
+" whether you completed them."
+msgstr ""
+"Nous les avons notées lorsque vous les avez commencées hors de ce journal. "
+"Confirmez-nous si vous les avez terminées."
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:461
 #, elixir-autogen, elixir-format
@@ -801,8 +948,12 @@ msgstr "Que signifie réellement « faire une pause »?"
 
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:149
 #, elixir-autogen, elixir-format
-msgid "What would pause, what would continue, and how a pause differs from a blanket ban on AI."
-msgstr "Ce qui serait mis en pause, ce qui continuerait, et comment une pause diffère d’une interdiction générale de l’IA."
+msgid ""
+"What would pause, what would continue, and how a pause differs from a "
+"blanket ban on AI."
+msgstr ""
+"Ce qui serait mis en pause, ce qui continuerait, et comment une pause "
+"diffère d’une interdiction générale de l’IA."
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:469
 #, elixir-autogen, elixir-format
@@ -867,13 +1018,21 @@ msgstr "Votre courriel"
 
 #: lib/pauseai_ca_web/controllers/letter_controller.ex:40
 #, elixir-autogen, elixir-format
-msgid "Your letter is on its way. Thank you — offices often reply within a few days."
-msgstr "Votre lettre est partie. Merci — les bureaux répondent souvent en quelques jours."
+msgid ""
+"Your letter is on its way. Thank you — offices often reply within a few "
+"days."
+msgstr ""
+"Votre lettre est partie. Merci — les bureaux répondent souvent en quelques "
+"jours."
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:301
 #, elixir-autogen, elixir-format
-msgid "Your log is visible only to you. Only aggregate counts are used to understand movement progress."
-msgstr "Votre journal n'est visible que par vous. Seuls des totaux anonymisés servent à suivre la progression du mouvement."
+msgid ""
+"Your log is visible only to you. Only aggregate counts are used to "
+"understand movement progress."
+msgstr ""
+"Votre journal n'est visible que par vous. Seuls des totaux anonymisés "
+"servent à suivre la progression du mouvement."
 
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:961
 #, elixir-autogen, elixir-format
@@ -898,7 +1057,9 @@ msgstr "Votre point de départ"
 #: lib/pauseai_ca_web/live/dashboard_live.ex:367
 #, elixir-autogen, elixir-format
 msgid "Your suggested next step is only one option. Choose what fits you now."
-msgstr "Votre prochaine étape suggérée n'est qu'une option. Choisissez ce qui vous convient maintenant."
+msgstr ""
+"Votre prochaine étape suggérée n'est qu'une option. Choisissez ce qui vous "
+"convient maintenant."
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:344
 #, elixir-autogen, elixir-format
@@ -928,7 +1089,9 @@ msgstr "https://pauseia.fr/fr/propositions"
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:137
 #, elixir-autogen, elixir-format
 msgid "https://pauseai.info/xrisk"
-msgstr "https://yoshuabengio.org/fr/blogue/questions-frequentes-sur-les-risques-catastrophiques-lies-lia"
+msgstr ""
+"https://yoshuabengio.org/fr/blogue/questions-frequentes-sur-les-risques-"
+"catastrophiques-lies-lia"
 
 #: lib/pauseai_ca_web/controllers/page_html.ex:99
 #, elixir-autogen, elixir-format
@@ -1035,7 +1198,7 @@ msgstr "Lu ou regardé une ressource"
 msgid "Senate"
 msgstr "Sénat"
 
-#: lib/pauseai_ca_web/components/layouts.ex:407
+#: lib/pauseai_ca_web/components/layouts.ex:420
 #, elixir-autogen, elixir-format
 msgid "Sign"
 msgstr "Signer"
@@ -1078,9 +1241,11 @@ msgstr "Ce courriel ne semble pas valide."
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:1011
 #, elixir-autogen, elixir-format
 msgid "That email does not look valid. Your MP needs it to reply to you."
-msgstr "Ce courriel ne semble pas valide. Votre député·e en a besoin pour vous répondre."
+msgstr ""
+"Ce courriel ne semble pas valide. Votre député·e en a besoin pour vous "
+"répondre."
 
-#: lib/pauseai_ca_web/components/layouts.ex:407
+#: lib/pauseai_ca_web/components/layouts.ex:420
 #, elixir-autogen, elixir-format
 msgid "The PauseAI statement"
 msgstr "La déclaration de PauseAI"
@@ -1092,8 +1257,12 @@ msgstr "La lettre est trop longue. Raccourcissez-la avant l'envoi."
 
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:1113
 #, elixir-autogen, elixir-format
-msgid "The lookup service is unavailable right now. Try again, or write to your MP directly."
-msgstr "Le service de recherche est indisponible pour le moment. Réessayez, ou écrivez directement à votre député·e."
+msgid ""
+"The lookup service is unavailable right now. Try again, or write to your MP "
+"directly."
+msgstr ""
+"Le service de recherche est indisponible pour le moment. Réessayez, ou "
+"écrivez directement à votre député·e."
 
 #: lib/pauseai_ca_web/live/library_live.ex:415
 #, elixir-autogen, elixir-format
@@ -1122,7 +1291,7 @@ msgstr "Incertain"
 msgid "Volunteered"
 msgstr "Fait du bénévolat"
 
-#: lib/pauseai_ca_web/components/layouts.ex:408
+#: lib/pauseai_ca_web/components/layouts.ex:421
 #, elixir-autogen, elixir-format
 msgid "What PauseAI asks people to do"
 msgstr "Les actions proposées par PauseAI"
@@ -1150,13 +1319,30 @@ msgstr "La recherche du député est temporairement indisponible."
 
 #: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:42
 #, elixir-autogen, elixir-format
-msgid "If you choose to complete your profile, we store your city, postal code, local-update preference, public information about your MP, and resources you save. You can change or remove these items in My profile."
-msgstr "Si vous choisissez de compléter votre profil, nous conservons votre ville, votre code postal, votre préférence concernant les nouvelles locales, les renseignements publics sur votre député et les ressources que vous enregistrez. Vous pouvez modifier ou retirer ces éléments dans Mon profil."
+msgid ""
+"If you choose to complete your profile, we store your city, postal code, "
+"local-update preference, public information about your MP, and resources you"
+" save. You can change or remove these items in My profile."
+msgstr ""
+"Si vous choisissez de compléter votre profil, nous conservons votre ville, "
+"votre code postal, votre préférence concernant les nouvelles locales, les "
+"renseignements publics sur votre député et les ressources que vous "
+"enregistrez. Vous pouvez modifier ou retirer ces éléments dans Mon profil."
 
 #: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:22
 #, elixir-autogen, elixir-format
-msgid "Your email secures your account and retrieves saved items. If you subscribe for updates, Brevo holds your email and any city or postal code you optionally provide. When you later create an account with the same email, we copy that location into your profile. We do not sell personal information."
-msgstr "Votre adresse courriel sécurise votre compte et permet de retrouver les éléments enregistrés. Si vous vous abonnez aux nouvelles, Brevo conserve votre adresse courriel ainsi que la ville ou le code postal que vous fournissez facultativement. Lorsque vous créez ensuite un compte avec la même adresse, nous copions cette localisation dans votre profil. Nous ne vendons aucun renseignement personnel."
+msgid ""
+"Your email secures your account and retrieves saved items. If you subscribe "
+"for updates, Brevo holds your email and any city or postal code you "
+"optionally provide. When you later create an account with the same email, we"
+" copy that location into your profile. We do not sell personal information."
+msgstr ""
+"Votre adresse courriel sécurise votre compte et permet de retrouver les "
+"éléments enregistrés. Si vous vous abonnez aux nouvelles, Brevo conserve "
+"votre adresse courriel ainsi que la ville ou le code postal que vous "
+"fournissez facultativement. Lorsque vous créez ensuite un compte avec la "
+"même adresse, nous copions cette localisation dans votre profil. Nous ne "
+"vendons aucun renseignement personnel."
 
 #: lib/pauseai_ca_web/live/library_live.ex:399
 #, elixir-autogen, elixir-format
@@ -1165,16 +1351,20 @@ msgstr "Politique de confidentialité"
 
 #: lib/pauseai_ca_web/live/library_live.ex:395
 #, elixir-autogen, elixir-format
-msgid "I agree to receive emails from PauseAI Canada. My address is never sold or shared."
-msgstr "J’accepte de recevoir des courriels de PauseAI Canada. Mon adresse n’est jamais vendue ni communiquée."
+msgid ""
+"I agree to receive emails from PauseAI Canada. My address is never sold or "
+"shared."
+msgstr ""
+"J’accepte de recevoir des courriels de PauseAI Canada. Mon adresse n’est "
+"jamais vendue ni communiquée."
 
-#: lib/pauseai_ca_web/components/layouts.ex:183
+#: lib/pauseai_ca_web/components/layouts.ex:191
 #: lib/pauseai_ca_web/controllers/page_html/about.html.heex:48
 #, elixir-autogen, elixir-format
 msgid "Join PauseAI Canada"
 msgstr "Rejoindre PauseAI Canada"
 
-#: lib/pauseai_ca_web/components/layouts.ex:180
+#: lib/pauseai_ca_web/components/layouts.ex:188
 #, elixir-autogen, elixir-format
 msgid "Join Us"
 msgstr "Nous rejoindre"
@@ -1189,12 +1379,12 @@ msgstr "Vous souhaitez participer? Rejoignez PauseAI Canada."
 msgid "The page you requested could not be found."
 msgstr "La page demandée est introuvable."
 
-#: lib/pauseai_ca_web/components/layouts.ex:166
+#: lib/pauseai_ca_web/components/layouts.ex:174
 #, elixir-autogen, elixir-format
 msgid "Email your MP"
 msgstr "Écrire à votre député·e"
 
-#: lib/pauseai_ca_web/components/layouts.ex:169
+#: lib/pauseai_ca_web/components/layouts.ex:177
 #, elixir-autogen, elixir-format
 msgid "Send a personal letter in a few minutes"
 msgstr "Envoyez une lettre personnelle en quelques minutes"
@@ -1203,7 +1393,7 @@ msgstr "Envoyez une lettre personnelle en quelques minutes"
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:134
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:386
 #: lib/pauseai_ca_web/live/library_live.ex:391
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:145
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:411
 #: lib/pauseai_ca_web/live/profile_live.ex:147
 #, elixir-autogen, elixir-format
 msgid "City"
@@ -1227,7 +1417,8 @@ msgstr "Envoyez votre lettre"
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:1029
 #, elixir-autogen, elixir-format
 msgid "Sending failed. Try again, or use your email app."
-msgstr "L’envoi a échoué. Réessayez ou utilisez votre application de courriel."
+msgstr ""
+"L’envoi a échoué. Réessayez ou utilisez votre application de courriel."
 
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:992
 #, elixir-autogen, elixir-format
@@ -1236,8 +1427,12 @@ msgstr "Utiliser mon application de courriel"
 
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:1017
 #, elixir-autogen, elixir-format
-msgid "You have sent several letters recently. Try again later, or use your email app."
-msgstr "Vous avez déjà envoyé plusieurs lettres récemment. Réessayez plus tard ou utilisez votre application de courriel."
+msgid ""
+"You have sent several letters recently. Try again later, or use your email "
+"app."
+msgstr ""
+"Vous avez déjà envoyé plusieurs lettres récemment. Réessayez plus tard ou "
+"utilisez votre application de courriel."
 
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:1057
 #, elixir-autogen, elixir-format
@@ -1267,7 +1462,9 @@ msgstr "Comment la lettre devrait-elle vous décrire?"
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:1060
 #, elixir-autogen, elixir-format
 msgid "%{environment} environment: no letter will be sent to your MP."
-msgstr "Environnement de %{environment} : aucune lettre ne sera envoyée à votre député·e."
+msgstr ""
+"Environnement de %{environment} : aucune lettre ne sera envoyée à votre "
+"député·e."
 
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:1048
 #, elixir-autogen, elixir-format
@@ -1280,8 +1477,9 @@ msgid "We recorded this as awaiting confirmation."
 msgstr "Nous l’avons enregistrée comme étant en attente de confirmation."
 
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:131
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:135
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:199
+#: lib/pauseai_ca_web/live/donate_live.ex:103
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:393
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:643
 #: lib/pauseai_ca_web/live/profile_live.ex:133
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:928
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:952
@@ -1289,83 +1487,69 @@ msgstr "Nous l’avons enregistrée comme étant en attente de confirmation."
 msgid "Name"
 msgstr "Nom"
 
-#: lib/pauseai_ca_web/live/admin_accounts_live.ex:189
-#, elixir-autogen, elixir-format
-msgid "Make %{email} a superadmin? They will receive an email with a link to the admin tools."
-msgstr "Accorder l'accès superadmin à %{email}? Cette personne recevra un courriel avec un lien vers les outils d'administration."
-
-#: lib/pauseai_ca_web/live/admin_accounts_live.ex:125
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:628
 #, elixir-autogen, elixir-format
 msgid "%{count} account"
 msgid_plural "%{count} accounts"
 msgstr[0] "%{count} compte"
 msgstr[1] "%{count} comptes"
 
-#: lib/pauseai_ca_web/live/admin_accounts_live.ex:118
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:287
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:359
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:373
 #, elixir-autogen, elixir-format
 msgid "Acceptance evidence"
 msgstr "Preuves d’acceptation"
 
-#: lib/pauseai_ca_web/live/admin_accounts_live.ex:163
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:220
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:664
 #, elixir-autogen, elixir-format
 msgid "Account pages"
 msgstr "Pages des comptes"
 
-#: lib/pauseai_ca_web/components/layouts.ex:246
-#: lib/pauseai_ca_web/live/admin_accounts_live.ex:11
-#: lib/pauseai_ca_web/live/admin_accounts_live.ex:101
-#: lib/pauseai_ca_web/live/admin_accounts_live.ex:113
+#: lib/pauseai_ca_web/components/layouts.ex:254
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:280
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:354
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:15
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:115
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:365
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:16
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:372
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:537
 #, elixir-autogen, elixir-format
 msgid "Accounts"
 msgstr "Comptes"
 
-#: lib/pauseai_ca_web/components/layouts.ex:251
+#: lib/pauseai_ca_web/components/layouts.ex:259
+#: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:54
 #: lib/pauseai_ca_web/live/admin_metrics_live.ex:38
 #: lib/pauseai_ca_web/live/admin_metrics_live.ex:62
 #, elixir-autogen, elixir-format
 msgid "Admin dashboard"
 msgstr "Tableau de bord d’administration"
 
-#: lib/pauseai_ca_web/live/admin_accounts_live.ex:54
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:218
 #, elixir-autogen, elixir-format
 msgid "Confirm this account's email before granting superadmin access."
-msgstr "Confirmez l’adresse courriel de ce compte avant de lui accorder l’accès superadmin."
+msgstr ""
+"Confirmez l’adresse courriel de ce compte avant de lui accorder l’accès "
+"superadmin."
 
-#: lib/pauseai_ca_web/live/admin_accounts_live.ex:107
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:279
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:349
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:360
 #, elixir-autogen, elixir-format
 msgid "Dashboard"
 msgstr "Tableau de bord"
 
-#: lib/pauseai_ca_web/live/admin_accounts_live.ex:117
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:286
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:358
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:372
 #, elixir-autogen, elixir-format
 msgid "Deployment versions"
 msgstr "Versions déployées"
 
-#: lib/pauseai_ca_web/live/admin_accounts_live.ex:141
-#, elixir-autogen, elixir-format
-msgid "Email unconfirmed"
-msgstr "Adresse courriel non confirmée"
-
-#: lib/pauseai_ca_web/live/admin_accounts_live.ex:153
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:442
 #, elixir-autogen, elixir-format
 msgid "Make superadmin"
 msgstr "Accorder l’accès superadmin"
 
-#: lib/pauseai_ca_web/live/admin_accounts_live.ex:178
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:586
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:229
+#: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:94
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:676
 #: lib/pauseai_ca_web/live/volunteer_profile_live.ex:138
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:744
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:1074
@@ -1373,78 +1557,84 @@ msgstr "Accorder l’accès superadmin"
 msgid "Next"
 msgstr "Suivant"
 
-#: lib/pauseai_ca_web/live/admin_accounts_live.ex:172
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:669
 #, elixir-autogen, elixir-format
 msgid "Page %{page} of %{page_count}"
 msgstr "Page %{page} sur %{page_count}"
 
-#: lib/pauseai_ca_web/live/admin_accounts_live.ex:169
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:579
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:224
+#: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:89
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:668
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:1067
 #, elixir-autogen, elixir-format
 msgid "Previous"
 msgstr "Précédent"
 
-#: lib/pauseai_ca_web/live/admin_accounts_live.ex:123
-#, elixir-autogen, elixir-format
-msgid "Registered accounts"
-msgstr "Comptes inscrits"
-
-#: lib/pauseai_ca_web/live/admin_accounts_live.ex:152
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:441
 #, elixir-autogen, elixir-format
 msgid "Remove role"
 msgstr "Retirer le rôle"
 
-#: lib/pauseai_ca_web/live/admin_accounts_live.ex:103
-#, elixir-autogen, elixir-format
-msgid "Review registered accounts and manage access to the superadmin tools."
-msgstr "Consultez les comptes inscrits et gérez l’accès aux outils de superadministration."
-
-#: lib/pauseai_ca_web/live/admin_accounts_live.ex:83
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:184
 #, elixir-autogen, elixir-format
 msgid "Role granted, but the notification email could not be sent."
-msgstr "Le rôle a été accordé, mais le courriel de notification n’a pas pu être envoyé."
+msgstr ""
+"Le rôle a été accordé, mais le courriel de notification n’a pas pu être "
+"envoyé."
 
-#: lib/pauseai_ca_web/live/admin_accounts_live.ex:100
-#: lib/pauseai_ca_web/live/admin_accounts_live.ex:138
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:271
 #: lib/pauseai_ca_web/live/admin_metrics_live.ex:61
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:430
 #, elixir-autogen, elixir-format
 msgid "Superadmin"
 msgstr "Superadmin"
 
-#: lib/pauseai_ca_web/live/admin_accounts_live.ex:58
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:162
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:221
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:252
 #, elixir-autogen, elixir-format
 msgid "Superadmin access required."
 msgstr "L’accès superadmin est requis."
 
-#: lib/pauseai_ca_web/live/admin_accounts_live.ex:37
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:188
 #, elixir-autogen, elixir-format
 msgid "Superadmin role granted."
 msgstr "Le rôle de superadmin a été accordé."
 
-#: lib/pauseai_ca_web/live/admin_accounts_live.ex:38
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:189
 #, elixir-autogen, elixir-format
 msgid "Superadmin role removed."
 msgstr "Le rôle de superadmin a été retiré."
 
-#: lib/pauseai_ca_web/live/admin_accounts_live.ex:105
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:278
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:344
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:355
 #, elixir-autogen, elixir-format
 msgid "Superadmin tools"
 msgstr "Outils de superadministration"
 
-#: lib/pauseai_ca_web/live/admin_accounts_live.ex:47
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:215
 #, elixir-autogen, elixir-format
 msgid "The last superadmin cannot be removed."
 msgstr "Le rôle du dernier superadmin ne peut pas être retiré."
 
 #: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:32
 #, elixir-autogen, elixir-format
-msgid "Your answers remain in your browser for your own suggested path. We also record them with a random browser identifier so anonymous answers, Learn visits, opened resources, and bookmarks can contribute to aggregate learning metrics. We do not attach an IP address or user agent. If you sign in later, that browser's learning signals are associated with your account to avoid counting you twice. Actions saved in your account remain private."
-msgstr "Vos réponses restent dans votre navigateur pour établir votre parcours suggéré. Nous les enregistrons aussi avec un identifiant de navigateur aléatoire afin que les réponses anonymes, les visites de la page Comprendre, les ressources ouvertes et les signets contribuent aux mesures agrégées d’apprentissage. Nous n’y joignons ni adresse IP ni agent utilisateur. Si vous vous connectez plus tard, les signaux d’apprentissage de ce navigateur sont associés à votre compte afin d’éviter de vous compter deux fois. Les actions enregistrées dans votre compte restent privées."
+msgid ""
+"Your answers remain in your browser for your own suggested path. We also "
+"record them with a random browser identifier so anonymous answers, Learn "
+"visits, opened resources, and bookmarks can contribute to aggregate learning"
+" metrics. We do not attach an IP address or user agent. If you sign in "
+"later, that browser's learning signals are associated with your account to "
+"avoid counting you twice. Actions saved in your account remain private."
+msgstr ""
+"Vos réponses restent dans votre navigateur pour établir votre parcours "
+"suggéré. Nous les enregistrons aussi avec un identifiant de navigateur "
+"aléatoire afin que les réponses anonymes, les visites de la page Comprendre,"
+" les ressources ouvertes et les signets contribuent aux mesures agrégées "
+"d’apprentissage. Nous n’y joignons ni adresse IP ni agent utilisateur. Si "
+"vous vous connectez plus tard, les signaux d’apprentissage de ce navigateur "
+"sont associés à votre compte afin d’éviter de vous compter deux fois. Les "
+"actions enregistrées dans votre compte restent privées."
 
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:367
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:917
@@ -1490,11 +1680,10 @@ msgstr "Effacer la sélection"
 msgid "Contact"
 msgstr "Contact"
 
-#: lib/pauseai_ca_web/live/admin_accounts_live.ex:115
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:11
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:272
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:285
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:356
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:367
 #, elixir-autogen, elixir-format
 msgid "Contact imports"
 msgstr "Importation de contacts"
@@ -1553,8 +1742,12 @@ msgstr "Prêt pour la révision"
 
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:274
 #, elixir-autogen, elixir-format
-msgid "Review contacts before they enter PauseAI Canada. Importing does not send email or create accounts."
-msgstr "Révisez les contacts avant leur entrée dans PauseAI Canada. L’importation n’envoie aucun courriel et ne crée aucun compte."
+msgid ""
+"Review contacts before they enter PauseAI Canada. Importing does not send "
+"email or create accounts."
+msgstr ""
+"Révisez les contacts avant leur entrée dans PauseAI Canada. L’importation "
+"n’envoie aucun courriel et ne crée aucun compte."
 
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:387
 #, elixir-autogen, elixir-format
@@ -1608,7 +1801,8 @@ msgstr "Libellé de la source"
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:186
 #, elixir-autogen, elixir-format
 msgid "The CSV could not be read. Check its formatting and try again."
-msgstr "Le fichier CSV n’a pas pu être lu. Vérifiez son formatage et réessayez."
+msgstr ""
+"Le fichier CSV n’a pas pu être lu. Vérifiez son formatage et réessayez."
 
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:179
 #, elixir-autogen, elixir-format
@@ -1618,7 +1812,8 @@ msgstr "Le fichier CSV doit contenir une colonne email."
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:133
 #, elixir-autogen, elixir-format
 msgid "The import could not be saved. No contacts were changed."
-msgstr "L’importation n’a pas pu être enregistrée. Aucun contact n’a été modifié."
+msgstr ""
+"L’importation n’a pas pu être enregistrée. Aucun contact n’a été modifié."
 
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:488
 #, elixir-autogen, elixir-format
@@ -1649,8 +1844,13 @@ msgstr "Non fourni"
 
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:324
 #, elixir-autogen, elixir-format
-msgid "Required column: Email. The 15 standard onboarding columns and 3 Montréal columns are preserved. Nothing is saved during preview."
-msgstr "Colonne requise : Email. Les 15 colonnes standard d’accueil et les 3 colonnes montréalaises sont conservées. Rien n’est enregistré pendant la prévisualisation."
+msgid ""
+"Required column: Email. The 15 standard onboarding columns and 3 Montréal "
+"columns are preserved. Nothing is saved during preview."
+msgstr ""
+"Colonne requise : Email. Les 15 colonnes standard d’accueil et les 3 "
+"colonnes montréalaises sont conservées. Rien n’est enregistré pendant la "
+"prévisualisation."
 
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:418
 #, elixir-autogen, elixir-format
@@ -1677,70 +1877,68 @@ msgstr "Page %{page} sur %{pages} · %{total} contacts"
 msgid "Rows per page"
 msgstr "Lignes par page"
 
-#: lib/pauseai_ca_web/components/layouts.ex:296
+#: lib/pauseai_ca_web/components/layouts.ex:309
 #, elixir-autogen, elixir-format
 msgid "Montréal · Public protest"
 msgstr "Montréal · Manifestation publique"
 
-#: lib/pauseai_ca_web/components/layouts.ex:299
-#, elixir-autogen, elixir-format
-msgid "Saturday, September 26 · 1–2 p.m. EDT"
-msgstr "Samedi 26 septembre · 13 h–14 h HAE"
-
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:72
-#, elixir-autogen, elixir-format
-msgid "Browser visits count visible public pages after JavaScript runs, once per browser session per UTC day. Superadmins are excluded. Reloads, page navigation, and LiveView heartbeats do not add visits. JavaScript-capable bots may still count; totals are browser-days, not unique people."
-msgstr "Les visites sont comptées sur les pages publiques visibles après l’exécution de JavaScript, une fois par session de navigateur et par jour UTC. Les superadmins sont exclus. Les rechargements, la navigation et les signaux de maintien de connexion LiveView n’ajoutent pas de visites. Les robots capables d’exécuter JavaScript peuvent encore être comptés : les totaux représentent des jours-navigateurs, pas des personnes uniques."
-
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:103
-#, elixir-autogen, elixir-format
-msgid "Daily browser visits"
-msgstr "Visites quotidiennes de navigateurs"
-
 #: lib/pauseai_ca_web/live/admin_metrics_live.ex:67
 #, elixir-autogen, elixir-format
-msgid "First-party database totals from accounts, browser activity, and confirmed private action records. Google Analytics is a separate measurement source."
-msgstr "Totaux de la base de données issus des comptes, de l’activité des navigateurs et des actions privées confirmées. Google Analytics constitue une source de mesure distincte."
+msgid ""
+"First-party database totals from accounts, browser activity, and confirmed "
+"private action records. Google Analytics is a separate measurement source."
+msgstr ""
+"Totaux de la base de données issus des comptes, de l’activité des "
+"navigateurs et des actions privées confirmées. Google Analytics constitue "
+"une source de mesure distincte."
 
 #: lib/pauseai_ca_web/live/user_live/login.ex:70
 #, elixir-autogen, elixir-format
-msgid "A new email creates an account awaiting confirmation. An existing email signs you in. Your address is never sold or shared."
-msgstr "Une nouvelle adresse crée un compte en attente de confirmation. Une adresse existante vous connecte. Votre adresse n’est jamais vendue ni partagée."
+msgid ""
+"A new email creates an account awaiting confirmation. An existing email "
+"signs you in. Your address is never sold or shared."
+msgstr ""
+"Une nouvelle adresse crée un compte en attente de confirmation. Une adresse "
+"existante vous connecte. Votre adresse n’est jamais vendue ni partagée."
 
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:10
 #, elixir-autogen, elixir-format
-msgid "AI safety is reaching a wider public. Read the latest evidence and researchers' warnings, then take a concrete action in Canada."
-msgstr "La sécurité de l’IA touche un public plus large. Consultez les sources récentes et les avertissements des chercheurs, puis posez un geste concret au Canada."
+msgid ""
+"AI safety is reaching a wider public. Read the latest evidence and "
+"researchers' warnings, then take a concrete action in Canada."
+msgstr ""
+"La sécurité de l’IA touche un public plus large. Consultez les sources "
+"récentes et les avertissements des chercheurs, puis posez un geste concret "
+"au Canada."
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:122
-#, elixir-autogen, elixir-format
-msgid "Accounts created in the selected UTC cohort, completed as of the report time. Superadmins are excluded. Email confirmation proves email control, not a unique person, attendance or incubator membership."
-msgstr "Comptes créés dans la cohorte UTC sélectionnée, avec les étapes franchies à l’heure du rapport. Les superadmins sont exclus. La confirmation prouve le contrôle du courriel, pas une personne unique, une présence ou une adhésion à un incubateur."
-
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:147
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:155
 #, elixir-autogen, elixir-format
 msgid "All sources"
 msgstr "Toutes les sources"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:157
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:165
 #, elixir-autogen, elixir-format
 msgid "Apply filters"
 msgstr "Appliquer les filtres"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:162
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:170
 #, elixir-autogen, elixir-format
 msgid "As of"
 msgstr "Au"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:190
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:198
 #, elixir-autogen, elixir-format
 msgid "Awaiting email confirmation"
 msgstr "En attente de confirmation du courriel"
 
 #: lib/pauseai_ca_web/live/user_live/login.ex:57
 #, elixir-autogen, elixir-format
-msgid "Check your email for the next step. You can keep browsing while you wait, or request another link below."
-msgstr "Consultez votre courriel pour la prochaine étape. Vous pouvez continuer à naviguer en attendant ou demander un autre lien ci-dessous."
+msgid ""
+"Check your email for the next step. You can keep browsing while you wait, or"
+" request another link below."
+msgstr ""
+"Consultez votre courriel pour la prochaine étape. Vous pouvez continuer à "
+"naviguer en attendant ou demander un autre lien ci-dessous."
 
 #: lib/pauseai_ca_web/live/user_live/login.ex:13
 #, elixir-autogen, elixir-format
@@ -1757,29 +1955,39 @@ msgstr "Continuer à naviguer"
 msgid "Create an account"
 msgstr "Créer un compte"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:169
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:177
 #, elixir-autogen, elixir-format
 msgid "Created accounts"
 msgstr "Comptes créés"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:132
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:140
 #, elixir-autogen, elixir-format
 msgid "Created from"
 msgstr "Créés à partir du"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:138
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:146
 #, elixir-autogen, elixir-format
 msgid "Created through"
 msgstr "Créés jusqu’au"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:205
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:213
 #, elixir-autogen, elixir-format
-msgid "Database counts do not depend on GA consent. GA sees only consenting browsers; signup events wait for the next non-sensitive page and may never be delivered. Historical sources remain unknown. Browser-days are not a visitor-to-account conversion denominator."
-msgstr "Les comptes en base de données ne dépendent pas du consentement à GA. GA ne voit que les navigateurs consentants; les événements d’inscription attendent la prochaine page non sensible et peuvent ne jamais être transmis. Les sources historiques restent inconnues. Les jours-navigateurs ne permettent pas de calculer un taux de conversion des visiteurs en comptes."
+msgid ""
+"Database counts do not depend on GA consent. GA sees only consenting "
+"browsers; signup events wait for the next non-sensitive page and may never "
+"be delivered. Historical sources remain unknown. Browser-days are not a "
+"visitor-to-account conversion denominator."
+msgstr ""
+"Les comptes en base de données ne dépendent pas du consentement à GA. GA ne "
+"voit que les navigateurs consentants; les événements d’inscription attendent"
+" la prochaine page non sensible et peuvent ne jamais être transmis. Les "
+"sources historiques restent inconnues. Les jours-navigateurs ne permettent "
+"pas de calculer un taux de conversion des visiteurs en comptes."
 
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:21
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:132
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:199
+#: lib/pauseai_ca_web/live/donate_live.ex:106
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:643
 #: lib/pauseai_ca_web/live/user_live/login.ex:34
 #: lib/pauseai_ca_web/live/user_live/login.ex:104
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:929
@@ -1793,27 +2001,27 @@ msgstr "Courriel"
 msgid "Email me a secure link"
 msgstr "Envoyez-moi un lien sécurisé"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:176
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:184
 #, elixir-autogen, elixir-format
 msgid "Email-confirmed accounts"
 msgstr "Comptes au courriel confirmé"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:183
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:191
 #, elixir-autogen, elixir-format
 msgid "First recorded member action"
 msgstr "Première action de membre consignée"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:269
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:280
 #, elixir-autogen, elixir-format
 msgid "Header"
 msgstr "En-tête"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:272
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:283
 #, elixir-autogen, elixir-format
 msgid "Homepage footer"
 msgstr "Bas de la page d’accueil"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:270
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:281
 #, elixir-autogen, elixir-format
 msgid "Homepage questions"
 msgstr "Questions de la page d’accueil"
@@ -1825,8 +2033,13 @@ msgstr "Éléments sur les incidents"
 
 #: lib/pauseai_ca_web/live/user_live/login.ex:15
 #, elixir-autogen, elixir-format
-msgid "Keep your answers, saved resources and progress when you return. We email you a secure link; no password is required."
-msgstr "Retrouvez vos réponses, vos ressources enregistrées et vos progrès à votre retour. Nous vous envoyons un lien sécurisé; aucun mot de passe n’est nécessaire."
+msgid ""
+"Keep your answers, saved resources and progress when you return. We email "
+"you a secure link; no password is required."
+msgstr ""
+"Retrouvez vos réponses, vos ressources enregistrées et vos progrès à votre "
+"retour. Nous vous envoyons un lien sécurisé; aucun mot de passe n’est "
+"nécessaire."
 
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:21
 #, elixir-autogen, elixir-format
@@ -1848,41 +2061,51 @@ msgstr "Vous préférez un mot de passe?"
 msgid "Public and political response"
 msgstr "Réponse publique et politique"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:120
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:128
 #, elixir-autogen, elixir-format
 msgid "Recruitment funnel"
 msgstr "Parcours de recrutement"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:271
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:282
 #, elixir-autogen, elixir-format
 msgid "Resource bookmark"
 msgstr "Ressource enregistrée"
 
-#: lib/pauseai_ca_web/components/layouts.ex:281
+#: lib/pauseai_ca_web/components/layouts.ex:290
 #: lib/pauseai_ca_web/live/user_live/login.ex:149
 #, elixir-autogen, elixir-format
 msgid "Sign in / Sign up"
 msgstr "Connexion / Inscription"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:144
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:152
 #, elixir-autogen, elixir-format
 msgid "Signup source"
 msgstr "Source d’inscription"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:193
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:201
 #, elixir-autogen, elixir-format
-msgid "Sparklines group results by account creation day. Restored answers and bookmarks are not recorded member actions. Date ranges are limited to 366 days."
-msgstr "Les mini-graphiques regroupent les résultats par jour de création des comptes. Les réponses et ressources restaurées ne sont pas des actions de membre consignées. Les périodes sont limitées à 366 jours."
+msgid ""
+"Sparklines group results by account creation day. Restored answers and "
+"bookmarks are not recorded member actions. Date ranges are limited to 366 "
+"days."
+msgstr ""
+"Les mini-graphiques regroupent les résultats par jour de création des "
+"comptes. Les réponses et ressources restaurées ne sont pas des actions de "
+"membre consignées. Les périodes sont limitées à 366 jours."
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:273
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:284
 #, elixir-autogen, elixir-format
 msgid "Unknown / historical"
 msgstr "Inconnue / historique"
 
 #: lib/pauseai_ca_web/live/user_live/login.ex:67
 #, elixir-autogen, elixir-format
-msgid "We could not send your link. Your progress is still available. Please try again."
-msgstr "Nous n’avons pas pu envoyer votre lien. Vos progrès sont toujours disponibles. Veuillez réessayer."
+msgid ""
+"We could not send your link. Your progress is still available. Please try "
+"again."
+msgstr ""
+"Nous n’avons pas pu envoyer votre lien. Vos progrès sont toujours "
+"disponibles. Veuillez réessayer."
 
 #: lib/pauseai_ca_web/live/user_live/confirmation.ex:35
 #, elixir-autogen, elixir-format
@@ -1959,7 +2182,9 @@ msgstr "Combien?"
 #: lib/pauseai_ca_web/live/dashboard_live.ex:523
 #, elixir-autogen, elixir-format
 msgid "No actions yet. Record the first thing you have already done."
-msgstr "Aucune action pour l'instant. Notez la première chose que vous avez déjà faite."
+msgstr ""
+"Aucune action pour l'instant. Notez la première chose que vous avez déjà "
+"faite."
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:492
 #, elixir-autogen, elixir-format
@@ -2022,8 +2247,16 @@ msgstr[1] "%{count} personnes"
 
 #: lib/pauseai_ca_web/live/library_live.ex:364
 #, elixir-autogen, elixir-format
-msgid "Current and former Canadian parliamentarians, from several parties and both chambers, have signed the statement calling for an international agreement to prohibit superintelligent AI. Writing to your MP is not a fringe act: the question is already in Ottawa."
-msgstr "Des parlementaires canadiens, en fonction ou non, de plusieurs partis et des deux chambres, ont signé la déclaration réclamant un accord international pour interdire l'IA superintelligente. Écrire à votre député·e n'est pas un geste marginal: la question est déjà à Ottawa."
+msgid ""
+"Current and former Canadian parliamentarians, from several parties and both "
+"chambers, have signed the statement calling for an international agreement "
+"to prohibit superintelligent AI. Writing to your MP is not a fringe act: the"
+" question is already in Ottawa."
+msgstr ""
+"Des parlementaires canadiens, en fonction ou non, de plusieurs partis et des"
+" deux chambres, ont signé la déclaration réclamant un accord international "
+"pour interdire l'IA superintelligente. Écrire à votre député·e n'est pas un "
+"geste marginal: la question est déjà à Ottawa."
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:219
 #, elixir-autogen, elixir-format
@@ -2059,8 +2292,8 @@ msgstr "À mon sujet"
 msgid "Accepted by email provider"
 msgstr "Acceptée par le fournisseur de courriel"
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:124
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:213
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:381
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:657
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:649
 #, elixir-autogen, elixir-format
 msgid "Account created · email unconfirmed"
@@ -2081,6 +2314,7 @@ msgstr "Ajouter une ligne"
 msgid "An administrator must review this row."
 msgstr "Un administrateur doit vérifier cette ligne."
 
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:480
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:595
 #, elixir-autogen, elixir-format
 msgid "Assign manager"
@@ -2137,7 +2371,7 @@ msgstr "Choisissez un fichier CSV UTF-8 valide de 1 000 lignes au maximum."
 msgid "Choose one of the contact methods."
 msgstr "Choisissez une méthode de contact."
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:245
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:692
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:626
 #, elixir-autogen, elixir-format
 msgid "Confirmed"
@@ -2145,8 +2379,12 @@ msgstr "Confirmé"
 
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:788
 #, elixir-autogen, elixir-format
-msgid "Confirming creates or matches these accounts and sends their invitations now."
-msgstr "La confirmation crée ou associe ces comptes et envoie immédiatement les invitations."
+msgid ""
+"Confirming creates or matches these accounts and sends their invitations "
+"now."
+msgstr ""
+"La confirmation crée ou associe ces comptes et envoie immédiatement les "
+"invitations."
 
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:56
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:143
@@ -2205,7 +2443,7 @@ msgstr "Supprimer ce brouillon non envoyé?"
 msgid "Do not contact. Invitation excluded."
 msgstr "Ne pas contacter. Invitation exclue."
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:241
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:688
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:622
 #, elixir-autogen, elixir-format
 msgid "Draft"
@@ -2214,7 +2452,9 @@ msgstr "Brouillon"
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:387
 #, elixir-autogen, elixir-format
 msgid "Draft not saved. Keep this page open, check access and retry."
-msgstr "Brouillon non enregistré. Gardez cette page ouverte, vérifiez votre accès et réessayez."
+msgstr ""
+"Brouillon non enregistré. Gardez cette page ouverte, vérifiez votre accès et"
+" réessayez."
 
 #: lib/pauseai_ca_web/live/volunteer_profile_live.ex:81
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:373
@@ -2227,8 +2467,8 @@ msgstr "Brouillon enregistré. Vous pourrez reprendre après connexion."
 msgid "Duplicate email in this sheet. Keep one row."
 msgstr "Courriel en double dans cette feuille. Conservez une seule ligne."
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:123
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:212
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:380
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:656
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:648
 #, elixir-autogen, elixir-format
 msgid "Email confirmed"
@@ -2236,8 +2476,13 @@ msgstr "Courriel confirmé"
 
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:906
 #, elixir-autogen, elixir-format
-msgid "Email is required. Add names and locations when available. Row overrides stay unchanged when the default group changes."
-msgstr "Le courriel est obligatoire. Ajoutez les noms et lieux disponibles. Les groupes propres à chaque ligne restent inchangés lorsque le groupe par défaut change."
+msgid ""
+"Email is required. Add names and locations when available. Row overrides "
+"stay unchanged when the default group changes."
+msgstr ""
+"Le courriel est obligatoire. Ajoutez les noms et lieux disponibles. Les "
+"groupes propres à chaque ligne restent inchangés lorsque le groupe par "
+"défaut change."
 
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:86
 #, elixir-autogen, elixir-format
@@ -2256,8 +2501,12 @@ msgstr "Saisissez un nombre entier de 0 à 168."
 
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:543
 #, elixir-autogen, elixir-format
-msgid "Enter volunteer signup sheets, review the accounts and send individual sign-in invitations."
-msgstr "Saisissez les feuilles d’inscription bénévole, vérifiez les comptes et envoyez des invitations individuelles à se connecter."
+msgid ""
+"Enter volunteer signup sheets, review the accounts and send individual sign-"
+"in invitations."
+msgstr ""
+"Saisissez les feuilles d’inscription bénévole, vérifiez les comptes et "
+"envoyez des invitations individuelles à se connecter."
 
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:177
 #, elixir-autogen, elixir-format
@@ -2284,6 +2533,7 @@ msgstr "Par exemple : Organisation / Animation: advanced"
 msgid "Group name"
 msgstr "Nom du groupe"
 
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:477
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:584
 #, elixir-autogen, elixir-format
 msgid "Group to manage"
@@ -2306,8 +2556,8 @@ msgid "Ignore column"
 msgstr "Ignorer la colonne"
 
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:136
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:126
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:200
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:399
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:644
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:899
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:930
 #, elixir-autogen, elixir-format
@@ -2344,7 +2594,9 @@ msgstr "Associer les colonnes CSV"
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:167
 #, elixir-autogen, elixir-format
 msgid "Map Email once and use each destination column at most once."
-msgstr "Associez le courriel une fois et chaque colonne de destination au maximum une fois."
+msgstr ""
+"Associez le courriel une fois et chaque colonne de destination au maximum "
+"une fois."
 
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:956
 #, elixir-autogen, elixir-format
@@ -2354,7 +2606,8 @@ msgstr "Nom manquant"
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:821
 #, elixir-autogen, elixir-format
 msgid "Name, email, postal code, group, notes — separated by tabs"
-msgstr "Nom, courriel, code postal, groupe, notes — séparés par des tabulations"
+msgstr ""
+"Nom, courriel, code postal, groupe, notes — séparés par des tabulations"
 
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:180
 #, elixir-autogen, elixir-format
@@ -2372,14 +2625,19 @@ msgid "New batch"
 msgstr "Nouveau lot"
 
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:20
+#: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:72
 #, elixir-autogen, elixir-format
 msgid "Not specified"
 msgstr "Non précisé"
 
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:775
 #, elixir-autogen, elixir-format
-msgid "One individual bilingual email per selected volunteer, with a private sign-in link. Organizer notes stay private."
-msgstr "Un courriel bilingue individuel par bénévole sélectionné, avec un lien de connexion privé. Les notes d’organisation restent privées."
+msgid ""
+"One individual bilingual email per selected volunteer, with a private sign-"
+"in link. Organizer notes stay private."
+msgstr ""
+"Un courriel bilingue individuel par bénévole sélectionné, avec un lien de "
+"connexion privé. Les notes d’organisation restent privées."
 
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:862
 #, elixir-autogen, elixir-format
@@ -2393,7 +2651,7 @@ msgstr "Ouvrir les lignes modifiables"
 msgid "Optional details"
 msgstr "Renseignements facultatifs"
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:27
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:38
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:49
 #, elixir-autogen, elixir-format
 msgid "Organizer access required."
@@ -2437,7 +2695,7 @@ msgid "Previously imported. No automatic resend."
 msgstr "Déjà importé. Aucun renvoi automatique."
 
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:137
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:152
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:417
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:652
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:931
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:1005
@@ -2557,12 +2815,18 @@ msgstr "Envoi en cours"
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:635
 #, elixir-autogen, elixir-format
 msgid "Sending invitations. You can return to this batch to see the result."
-msgstr "Envoi des invitations. Vous pouvez revenir à ce lot pour consulter le résultat."
+msgstr ""
+"Envoi des invitations. Vous pouvez revenir à ce lot pour consulter le "
+"résultat."
 
 #: lib/pauseai_ca_web/live/volunteer_profile_live.ex:109
 #, elixir-autogen, elixir-format
-msgid "Share what helps us organize together. Optional details can be completed later."
-msgstr "Indiquez ce qui nous aide à nous organiser ensemble. Les renseignements facultatifs peuvent être complétés plus tard."
+msgid ""
+"Share what helps us organize together. Optional details can be completed "
+"later."
+msgstr ""
+"Indiquez ce qui nous aide à nous organiser ensemble. Les renseignements "
+"facultatifs peuvent être complétés plus tard."
 
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:610
 #, elixir-autogen, elixir-format
@@ -2578,7 +2842,8 @@ msgstr "Compétences et niveaux"
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:311
 #, elixir-autogen, elixir-format
 msgid "The selection changed or is not authorized. Review the rows again."
-msgstr "La sélection a changé ou n’est pas autorisée. Vérifiez à nouveau les lignes."
+msgstr ""
+"La sélection a changé ou n’est pas autorisée. Vérifiez à nouveau les lignes."
 
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:64
 #, elixir-autogen, elixir-format
@@ -2611,7 +2876,7 @@ msgstr "Cette valeur est trop longue."
 msgid "Unsaved changes — save before leaving"
 msgstr "Modifications non enregistrées — enregistrez avant de quitter"
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:238
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:685
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:619
 #, elixir-autogen, elixir-format
 msgid "Untitled batch"
@@ -2629,22 +2894,26 @@ msgstr "Utiliser le groupe par défaut"
 
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:155
 #, elixir-autogen, elixir-format
-msgid "Use one skill per line: category / skill: beginner, intermediate, advanced or expert."
-msgstr "Une compétence par ligne : catégorie / compétence: beginner, intermediate, advanced ou expert (débutant, intermédiaire, avancé ou expert)."
+msgid ""
+"Use one skill per line: category / skill: beginner, intermediate, advanced "
+"or expert."
+msgstr ""
+"Une compétence par ligne : catégorie / compétence: beginner, intermediate, "
+"advanced ou expert (débutant, intermédiaire, avancé ou expert)."
 
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:691
 #, elixir-autogen, elixir-format
 msgid "Verified provider outcome"
 msgstr "Résultat vérifié du fournisseur"
 
-#: lib/pauseai_ca_web/components/layouts.ex:225
+#: lib/pauseai_ca_web/components/layouts.ex:233
 #: lib/pauseai_ca_web/live/volunteer_profile_live.ex:15
 #: lib/pauseai_ca_web/live/volunteer_profile_live.ex:107
 #, elixir-autogen, elixir-format
 msgid "Volunteer profile"
 msgstr "Profil bénévole"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:268
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:279
 #, elixir-autogen, elixir-format
 msgid "Volunteer signup"
 msgstr "Inscription bénévole"
@@ -2675,22 +2944,22 @@ msgstr "Résultat du fournisseur vérifié"
 msgid "Provider reference"
 msgstr "Référence du fournisseur"
 
-#: lib/pauseai_ca_web/components/layouts.ex:241
+#: lib/pauseai_ca_web/components/layouts.ex:249
 #, elixir-autogen, elixir-format
 msgid "Management"
 msgstr "Gestion"
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:176
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:617
 #, elixir-autogen, elixir-format
 msgid "Account actions"
 msgstr "Actions sur les comptes"
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:87
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:142
 #, elixir-autogen, elixir-format
 msgid "Account saved."
 msgstr "Compte enregistré."
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:50
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:89
 #, elixir-autogen, elixir-format
 msgid "Account unavailable."
 msgstr "Ce compte n’est pas accessible."
@@ -2700,7 +2969,7 @@ msgstr "Ce compte n’est pas accessible."
 msgid "Account updated"
 msgstr "Compte mis à jour"
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:180
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:621
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:540
 #, elixir-autogen, elixir-format
 msgid "Add account"
@@ -2711,58 +2980,775 @@ msgstr "Ajouter un compte"
 msgid "Add accounts"
 msgstr "Ajouter des comptes"
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:184
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:625
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:540
 #, elixir-autogen, elixir-format
 msgid "Add multiple accounts"
 msgstr "Ajouter plusieurs comptes"
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:117
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:374
 #, elixir-autogen, elixir-format
 msgid "Back to accounts"
 msgstr "Retour aux comptes"
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:100
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:155
 #, elixir-autogen, elixir-format
 msgid "Changes not saved. Check the fields and your access."
-msgstr "Modifications non enregistrées. Vérifiez les champs et vos droits d’accès."
+msgstr ""
+"Modifications non enregistrées. Vérifiez les champs et vos droits d’accès."
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:158
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:599
 #, elixir-autogen, elixir-format
 msgid "Invitations"
 msgstr "Invitations"
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:219
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:663
 #, elixir-autogen, elixir-format
 msgid "No accounts found."
 msgstr "Aucun compte trouvé."
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:233
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:680
 #, elixir-autogen, elixir-format
 msgid "No saved batches yet."
 msgstr "Aucun lot enregistré pour le moment."
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:155
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:420
 #, elixir-autogen, elixir-format
 msgid "Save account"
 msgstr "Enregistrer le compte"
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:232
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:679
 #, elixir-autogen, elixir-format
 msgid "Saved batches and invitations"
 msgstr "Lots enregistrés et invitations"
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:191
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:635
 #, elixir-autogen, elixir-format
 msgid "Search accounts"
 msgstr "Rechercher des comptes"
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:201
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:645
 #, elixir-autogen, elixir-format
 msgid "Status"
 msgstr "État"
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:173
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:614
 #, elixir-autogen, elixir-format
 msgid "View batch and invitation actions"
 msgstr "Voir le lot et les actions d’invitation"
+
+#: lib/pauseai_ca_web/live/protest_recap_live.ex:84
+#, elixir-autogen, elixir-format
+msgid "A day of conversations"
+msgstr "Une journée de rencontres et de discussions"
+
+#: lib/pauseai_ca_web/live/protest_recap_live.ex:74
+#, elixir-autogen, elixir-format
+msgid ""
+"A public conversation about the risks, the choices ahead and the role of "
+"elected representatives."
+msgstr ""
+"Une discussion publique sur les risques, les choix à faire et le rôle des "
+"personnes élues."
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:733
+#, elixir-autogen, elixir-format
+msgid "Accepted"
+msgstr "Accepté"
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:429
+#, elixir-autogen, elixir-format
+msgid "Access"
+msgstr "Accès"
+
+#: lib/pauseai_ca_web/components/layouts.ex:289
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:431
+#, elixir-autogen, elixir-format
+msgid "Account"
+msgstr "Compte"
+
+#: lib/pauseai_ca_web/live/protest_recap_live.ex:66
+#, elixir-autogen, elixir-format
+msgid ""
+"An international agreement, with Canada taking part, to pause development "
+"until AI can be made safe and democratically controlled."
+msgstr ""
+"Un accord international, auquel le Canada participerait, pour suspendre le "
+"développement de l’IA jusqu’à ce que sa sécurité et son contrôle "
+"démocratique soient assurés."
+
+#: lib/pauseai_ca_web/live/protest_recap_live.ex:156
+#, elixir-autogen, elixir-format
+msgid ""
+"Ask your elected representative to support international cooperation and "
+"meaningful safeguards for advanced AI."
+msgstr ""
+"Demandez à votre député ou députée de soutenir la coopération internationale"
+" et des mesures de protection efficaces face à l’IA avancée."
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:748
+#, elixir-autogen, elixir-format
+msgid "Blocked"
+msgstr "Bloqué"
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:709
+#, elixir-autogen, elixir-format
+msgid "Brevo history is not configured."
+msgstr "L’historique Brevo n’est pas configuré."
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:711
+#, elixir-autogen, elixir-format
+msgid "Brevo is limiting requests. Retry shortly."
+msgstr "Brevo limite les requêtes. Réessayez dans un instant."
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:536
+#, elixir-autogen, elixir-format
+msgid "Campaigns"
+msgstr "Campagnes"
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:522
+#, elixir-autogen, elixir-format
+msgid ""
+"Choose up to 90 days. Each page contains up to 100 transactional events and "
+"10 campaigns. Older pages may contain further events for the same message."
+msgstr ""
+"Choisissez une période d’au plus 90 jours. Chaque page contient jusqu’à 100 "
+"événements transactionnels et 10 campagnes. Les pages suivantes peuvent "
+"contenir d’autres événements liés au même message."
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:705
+#, elixir-autogen, elixir-format
+msgid ""
+"Choose valid dates spanning at most 90 days, ending no later than today, and"
+" a valid page."
+msgstr ""
+"Choisissez des dates valides couvrant au plus 90 jours, se terminant au plus"
+" tard aujourd’hui, et un numéro de page valide."
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:737
+#, elixir-autogen, elixir-format
+msgid "Clicked"
+msgstr "Clic enregistré"
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:750
+#, elixir-autogen, elixir-format
+msgid "Complaint"
+msgstr "Plainte"
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:747
+#, elixir-autogen, elixir-format
+msgid "Deferred"
+msgstr "Différé"
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:735
+#, elixir-autogen, elixir-format
+msgid "Delivered"
+msgstr "Livré"
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:484
+#, elixir-autogen, elixir-format
+msgid "Email history"
+msgstr "Historique des courriels"
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:712
+#, elixir-autogen, elixir-format
+msgid "Email history could not refresh. Retry shortly."
+msgstr ""
+"Impossible d’actualiser l’historique des courriels. Réessayez dans un "
+"instant."
+
+#: lib/pauseai_ca_web/live/protest_recap_live.ex:173
+#, elixir-autogen, elixir-format
+msgid "Find upcoming gatherings and ways to take part with PauseAI Montréal."
+msgstr ""
+"Découvrez les prochaines rencontres et les façons de participer avec PauseAI"
+" Montréal."
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:500
+#, elixir-autogen, elixir-format
+msgid "From date"
+msgstr "Date de début"
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:449
+#, elixir-autogen, elixir-format
+msgid "Grant superadmin access and send the account an email notification?"
+msgstr ""
+"Accorder le rôle de superadmin et envoyer une notification par courriel à "
+"cette personne ?"
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:741
+#, elixir-autogen, elixir-format
+msgid "Hard bounce"
+msgstr "Rejet permanent"
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:516
+#, elixir-autogen, elixir-format
+msgid "History page"
+msgstr "Page de l’historique"
+
+#: lib/pauseai_ca_web/live/protest_recap_live.ex:150
+#, elixir-autogen, elixir-format
+msgid "Keep the conversation going"
+msgstr "Poursuivons la conversation"
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:539
+#, elixir-autogen, elixir-format
+msgid "Last successful refresh"
+msgstr "Dernière actualisation réussie"
+
+#: lib/pauseai_ca_web/live/protest_recap_live.ex:87
+#, elixir-autogen, elixir-format
+msgid ""
+"Le Devoir describes demonstrators chanting, handing out brochures and "
+"speaking with passersby along Sainte-Catherine Street. Organizer Étienne "
+"Langlois called for countries to act together, while the movement’s national"
+" leader urged people to listen to experts about AI risks."
+msgstr ""
+"Le Devoir décrit les slogans, la distribution de brochures et les "
+"conversations avec les passants sur la rue Sainte-Catherine. L’organisateur "
+"Étienne Langlois a appelé les pays à agir ensemble, tandis que le "
+"responsable national du mouvement a invité le public à écouter les experts "
+"au sujet des risques de l’IA."
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:751
+#, elixir-autogen, elixir-format
+msgid "Loaded by proxy"
+msgstr "Chargé par un serveur mandataire"
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:526
+#, elixir-autogen, elixir-format
+msgid "Loading email history…"
+msgstr "Chargement de l’historique des courriels…"
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:462
+#, elixir-autogen, elixir-format
+msgid "Managed groups"
+msgstr "Groupes gérés"
+
+#: lib/pauseai_ca_web/live/protest_recap_live.ex:171
+#, elixir-autogen, elixir-format
+msgid "Meet the Montréal community"
+msgstr "Rencontrez la communauté montréalaise"
+
+#: lib/pauseai_ca_web/live/protest_recap_live.ex:14
+#: lib/pauseai_ca_web/live/protest_recap_live.ex:39
+#, elixir-autogen, elixir-format
+msgid "Montréal calls for a coordinated pause on AI"
+msgstr "Montréal réclame une pause coordonnée du développement de l’IA"
+
+#: lib/pauseai_ca_web/live/protest_recap_live.ex:35
+#, elixir-autogen, elixir-format
+msgid "Montréal · September 26, 2026"
+msgstr "Montréal · 26 septembre 2026"
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:594
+#, elixir-autogen, elixir-format
+msgid "More history is available on the next page."
+msgstr ""
+"D’autres éléments de l’historique sont disponibles à la page suivante."
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:555
+#, elixir-autogen, elixir-format
+msgid "No matching emails in this range and page."
+msgstr "Aucun courriel correspondant pour cette période et cette page."
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:458
+#, elixir-autogen, elixir-format
+msgid ""
+"Only confirmed accounts can become superadmins. The last superadmin must "
+"retain access."
+msgstr ""
+"Seuls les comptes confirmés peuvent devenir superadmins. Le dernier "
+"superadmin doit conserver son accès."
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:736
+#, elixir-autogen, elixir-format
+msgid "Opened"
+msgstr "Ouverture enregistrée"
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:752
+#, elixir-autogen, elixir-format
+msgid "Other provider event"
+msgstr "Autre événement du fournisseur"
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:552
+#, elixir-autogen, elixir-format
+msgid ""
+"Partial history: some sender or campaign metadata could not be verified."
+msgstr ""
+"Historique partiel : certaines données d’expéditeur ou de campagne n’ont pas"
+" pu être vérifiées."
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:486
+#, elixir-autogen, elixir-format
+msgid ""
+"PauseAI transactional emails and campaigns recorded by Brevo. Availability "
+"depends on provider retention. Delivered means accepted by the receiving "
+"mail server; opens and clicks are separate observations."
+msgstr ""
+"Courriels transactionnels et campagnes de PauseAI enregistrés par Brevo. La "
+"disponibilité dépend de la durée de conservation du fournisseur. « Livré » "
+"signifie accepté par le serveur destinataire ; les ouvertures et les clics "
+"sont des observations distinctes."
+
+#: lib/pauseai_ca_web/live/protest_recap_live.ex:168
+#, elixir-autogen, elixir-format
+msgid "Prepare your letter"
+msgstr "Préparez votre lettre"
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:547
+#, elixir-autogen, elixir-format
+msgid "Previously retrieved results, if any, are shown below."
+msgstr "Les résultats déjà récupérés, s’il y en a, figurent ci-dessous."
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:562
+#, elixir-autogen, elixir-format
+msgid "Provider events"
+msgstr "Événements du fournisseur"
+
+#: lib/pauseai_ca_web/live/protest_recap_live.ex:106
+#, elixir-autogen, elixir-format
+msgid "Read the report in Le Devoir (French)"
+msgstr "Lire le reportage du Devoir"
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:519
+#, elixir-autogen, elixir-format
+msgid "Refresh history"
+msgstr "Actualiser l’historique"
+
+#: lib/pauseai_ca_web/live/protest_recap_live.ex:97
+#, elixir-autogen, elixir-format
+msgid ""
+"Reporting summary: Mathilde Beaulieu-Lépine, Le Devoir, September 26, 2026. "
+"The newspaper estimated around thirty people present; the attendance count "
+"above is PauseAI Canada's."
+msgstr ""
+"Résumé du reportage de Mathilde Beaulieu-Lépine, Le Devoir, 26 septembre "
+"2026. Le journal estimait à une trentaine le nombre de personnes présentes ;"
+" le décompte indiqué ci-dessus est celui de PauseAI Canada."
+
+#: lib/pauseai_ca_web/live/protest_recap_live.ex:71
+#, elixir-autogen, elixir-format
+msgid ""
+"Rigorous international rules, with oversight that makes them effective."
+msgstr ""
+"Des règles internationales rigoureuses, accompagnées d’une surveillance qui "
+"les rend efficaces."
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:561
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:734
+#, elixir-autogen, elixir-format
+msgid "Sent"
+msgstr "Envoyé"
+
+#: lib/pauseai_ca_web/components/layouts.ex:312
+#, elixir-autogen, elixir-format
+msgid "September 26 · Read the recap"
+msgstr "26 septembre · Lire le compte rendu"
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:745
+#, elixir-autogen, elixir-format
+msgid "Soft bounce"
+msgstr "Rejet temporaire"
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:571
+#, elixir-autogen, elixir-format
+msgid "Subject unavailable"
+msgstr "Objet indisponible"
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:242
+#, elixir-autogen, elixir-format
+msgid "Superadmin access and a confirmed account are required."
+msgstr "L’accès superadmin et un compte confirmé sont requis."
+
+#: lib/pauseai_ca_web/live/protest_recap_live.ex:62
+#, elixir-autogen, elixir-format
+msgid "The call from Montréal"
+msgstr "L’appel de Montréal"
+
+#: lib/pauseai_ca_web/live/protest_recap_live.ex:92
+#, elixir-autogen, elixir-format
+msgid ""
+"The exchanges included disagreement and curiosity. One passerby who "
+"challenged the protest left after a courteous conversation and a handshake, "
+"taking a brochure with him. Participants argued that international "
+"cooperation would give society time to decide how AI should develop."
+msgstr ""
+"Les échanges ont mêlé désaccord et curiosité. Un passant qui contestait la "
+"manifestation est reparti avec une brochure après une discussion courtoise "
+"et une poignée de main. Des personnes présentes ont souligné que la "
+"coopération internationale donnerait à la société le temps de choisir "
+"comment l’IA devrait se développer."
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:729
+#, elixir-autogen, elixir-format
+msgid "Time unavailable"
+msgstr "Heure indisponible"
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:507
+#, elixir-autogen, elixir-format
+msgid "To date"
+msgstr "Date de fin"
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:535
+#, elixir-autogen, elixir-format
+msgid "Transactional emails"
+msgstr "Courriels transactionnels"
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:400
+#, elixir-autogen, elixir-format
+msgid "Unassigned"
+msgstr "Non attribué"
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:749
+#, elixir-autogen, elixir-format
+msgid "Unsubscribed"
+msgstr "Désabonnement"
+
+#: lib/pauseai_ca_web/live/protest_recap_live.ex:179
+#, elixir-autogen, elixir-format
+msgid "Upcoming events"
+msgstr "Prochains événements"
+
+#: lib/pauseai_ca_web/live/protest_recap_live.ex:42
+#, elixir-autogen, elixir-format
+msgid ""
+"Well over 50 people came together at Phillips Square on September 26 to call"
+" for a global, coordinated pause in AI development, according to PauseAI "
+"Canada's count."
+msgstr ""
+"Bien plus de 50 personnes se sont rassemblées au square Phillips le 26 "
+"septembre pour demander une pause mondiale et coordonnée du développement de"
+" l’IA, selon le décompte de PauseAI Canada."
+
+#: lib/pauseai_ca_web/live/protest_recap_live.ex:154
+#, elixir-autogen, elixir-format
+msgid "Write to your MP"
+msgstr "Écrivez à votre député ou députée"
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:710
+#, elixir-autogen, elixir-format
+msgid "You no longer have access to this account."
+msgstr "Vous n’avez plus accès à ce compte."
+
+#: lib/pauseai_ca_web/live/donate_live.ex:113
+#, elixir-autogen, elixir-format
+msgid "Amount you intend to give (CAD, optional)"
+msgstr "Montant que vous souhaitez donner (CAD, facultatif)"
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:111
+#, elixir-autogen, elixir-format
+msgid "Browser visits — all time"
+msgstr "Visites de navigateurs — total cumulé"
+
+#: lib/pauseai_ca_web/live/donate_live.ex:143
+#, elixir-autogen, elixir-format
+msgid "Business Number"
+msgstr "Numéro d’entreprise"
+
+#: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:57
+#, elixir-autogen, elixir-format
+msgid ""
+"Contact permission applies to the pledge. No payment has been collected and "
+"no email is sent from this page."
+msgstr ""
+"L’autorisation de contact concerne la promesse de don. Aucun paiement n’a "
+"été perçu et cette page n’envoie aucun courriel."
+
+#: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:77
+#, elixir-autogen, elixir-format
+msgid "Contact permission recorded"
+msgstr "Autorisation de contact enregistrée"
+
+#: lib/pauseai_ca_web/live/donate_live.ex:143
+#, elixir-autogen, elixir-format
+msgid "Corporation number"
+msgstr "Numéro de société"
+
+#: lib/pauseai_ca_web/live/donate_live.ex:69
+#, elixir-autogen, elixir-format
+msgid "Designing and printing flyers and posters"
+msgstr "Conception et impression de dépliants et d’affiches"
+
+#: lib/pauseai_ca_web/components/layouts.ex:92
+#: lib/pauseai_ca_web/live/donate_live.ex:13
+#, elixir-autogen, elixir-format
+msgid "Donate"
+msgstr "Faire un don"
+
+#: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:48
+#: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:14
+#: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:55
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:369
+#, elixir-autogen, elixir-format
+msgid "Donation pledges"
+msgstr "Promesses de don"
+
+#: lib/pauseai_ca_web/live/donate_live.ex:55
+#, elixir-autogen, elixir-format
+msgid "Help build PauseAI Canada"
+msgstr "Soutenez le développement de PauseIA Canada"
+
+#: lib/pauseai_ca_web/live/donate_live.ex:89
+#, elixir-autogen, elixir-format
+msgid ""
+"If you had already made a pledge with this email, your earlier details have "
+"been kept. Contact us to change them."
+msgstr ""
+"Si vous aviez déjà fait une promesse de don avec cette adresse courriel, vos"
+" renseignements précédents ont été conservés. Contactez-nous pour les "
+"modifier."
+
+#: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:74
+#, elixir-autogen, elixir-format
+msgid "Language"
+msgstr "Langue"
+
+#: lib/pauseai_ca_web/live/donate_live.ex:60
+#, elixir-autogen, elixir-format
+msgid "Make a pledge today"
+msgstr "Faites une promesse de don dès aujourd’hui"
+
+#: lib/pauseai_ca_web/live/donate_live.ex:72
+#, elixir-autogen, elixir-format
+msgid "Managing social media"
+msgstr "Gestion des réseaux sociaux"
+
+#: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:61
+#, elixir-autogen, elixir-format
+msgid "No pledges on this page."
+msgstr "Aucune promesse de don sur cette page."
+
+#: lib/pauseai_ca_web/live/donate_live.ex:120
+#, elixir-autogen, elixir-format
+msgid "Notes (optional)"
+msgstr "Commentaires (facultatif)"
+
+#: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:90
+#, elixir-autogen, elixir-format
+msgid "Page %{page}"
+msgstr "Page %{page}"
+
+#: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:85
+#, elixir-autogen, elixir-format
+msgid "Pagination"
+msgstr "Pagination"
+
+#: lib/pauseai_ca_web/live/donate_live.ex:143
+#, elixir-autogen, elixir-format
+msgid "PauseAI Canada"
+msgstr "PauseIA Canada"
+
+#: lib/pauseai_ca_web/live/donate_live.ex:73
+#, elixir-autogen, elixir-format
+msgid "Photography, articles and other content"
+msgstr "Photographie, rédaction d’articles et création de contenu"
+
+#: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:70
+#, elixir-autogen, elixir-format
+msgid "Pledged amount"
+msgstr "Montant promis"
+
+#: lib/pauseai_ca_web/live/donate_live.ex:71
+#, elixir-autogen, elixir-format
+msgid "Policy research"
+msgstr "Recherche sur les politiques publiques"
+
+#: lib/pauseai_ca_web/live/donate_live.ex:70
+#, elixir-autogen, elixir-format
+msgid "Renting meeting space"
+msgstr "Location de salles de réunion"
+
+#: lib/pauseai_ca_web/live/donate_live.ex:140
+#, elixir-autogen, elixir-format
+msgid "Save my pledge"
+msgstr "Enregistrer ma promesse de don"
+
+#: lib/pauseai_ca_web/live/donate_live.ex:140
+#, elixir-autogen, elixir-format
+msgid "Saving…"
+msgstr "Enregistrement…"
+
+#: lib/pauseai_ca_web/live/donate_live.ex:82
+#, elixir-autogen, elixir-format
+msgid "Thank you for your support"
+msgstr "Merci de votre soutien"
+
+#: lib/pauseai_ca_web/live/donate_live.ex:134
+#, elixir-autogen, elixir-format
+msgid "This does not subscribe you to a mailing list."
+msgstr "Cette démarche ne vous inscrit pas à une liste de diffusion."
+
+#: lib/pauseai_ca_web/live/donate_live.ex:62
+#, elixir-autogen, elixir-format
+msgid ""
+"We are preparing our bank account. No payment is collected here. Leave your "
+"contact information and, if you wish, an amount you intend to give. We will "
+"contact you when we can receive donations."
+msgstr ""
+"Nous préparons l’ouverture de notre compte bancaire. Aucun paiement n’est "
+"perçu ici. Laissez vos coordonnées et, si vous le souhaitez, le montant que "
+"vous comptez donner. Nous vous contacterons lorsque nous pourrons recevoir "
+"des dons."
+
+#: lib/pauseai_ca_web/live/donate_live.ex:39
+#, elixir-autogen, elixir-format
+msgid "We could not save your pledge right now. Please try again later."
+msgstr ""
+"Nous n’avons pas pu enregistrer votre promesse de don. Veuillez réessayer "
+"plus tard."
+
+#: lib/pauseai_ca_web/live/donate_live.ex:74
+#, elixir-autogen, elixir-format
+msgid "Website development, operations and systems integration"
+msgstr "Développement du site web, exploitation et intégration des systèmes"
+
+#: lib/pauseai_ca_web/live/donate_live.ex:67
+#, elixir-autogen, elixir-format
+msgid "What your support makes possible"
+msgstr "Ce que votre soutien rend possible"
+
+#: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:37
+#, elixir-autogen, elixir-format
+msgid "You do not have access to this page."
+msgstr "Vous n’avez pas accès à cette page."
+
+#: lib/pauseai_ca_web/live/donate_live.ex:130
+#, elixir-autogen, elixir-format
+msgid "You may contact me about this pledge."
+msgstr "Vous pouvez me contacter au sujet de cette promesse de don."
+
+#: lib/pauseai_ca_web/live/donate_live.ex:84
+#, elixir-autogen, elixir-format
+msgid ""
+"Your interest is recorded. We will contact you about your pledge when "
+"donations can be received. No payment has been taken."
+msgstr ""
+"Votre intention est enregistrée. Nous vous contacterons au sujet de votre "
+"promesse de don lorsque nous pourrons recevoir des dons. Aucun paiement n’a "
+"été perçu."
+
+#: lib/pauseai_ca_web/live/donate_live.ex:57
+#, elixir-autogen, elixir-format
+msgid ""
+"Your support helps turn public concern about AI into informed, organized "
+"action."
+msgstr ""
+"Votre soutien aide à transformer les préoccupations du public face à l’IA en"
+" actions éclairées et organisées."
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:130
+#, elixir-autogen, elixir-format
+msgid ""
+"Accounts created in the selected Toronto-time cohort, completed as of the "
+"report time. Superadmins are excluded. Email confirmation proves email "
+"control, not a unique person, attendance or incubator membership."
+msgstr ""
+"Comptes créés pendant la période sélectionnée, selon l’heure de Toronto, et "
+"étapes réalisées au moment du rapport. Les superadmins sont exclus. La "
+"confirmation du courriel établit le contrôle de l’adresse, sans établir "
+"l’unicité d’une personne, sa présence à un événement ou son appartenance à "
+"un incubateur."
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:72
+#, elixir-autogen, elixir-format
+msgid ""
+"Browser visits count visible public pages after JavaScript runs, once per "
+"browser session per Toronto calendar day. Superadmins are excluded. Reloads,"
+" page navigation, and LiveView heartbeats do not add visits. JavaScript-"
+"capable bots may still count; totals are browser-days, not unique people."
+msgstr ""
+"Les visites comptent les pages publiques visibles après l’exécution de "
+"JavaScript, une fois par session de navigateur et par jour civil à Toronto. "
+"Les superadmins sont exclus. Les rechargements, la navigation et les signaux"
+" LiveView n’ajoutent pas de visites. Les robots capables d’exécuter "
+"JavaScript peuvent être comptés; le total représente des journées de "
+"navigateur, et non des personnes distinctes."
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:82
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:221
+#, elixir-autogen, elixir-format
+msgid "Daily trends"
+msgstr "Tendances quotidiennes"
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:118
+#, elixir-autogen, elixir-format
+msgid "People who opened the September 26 event link"
+msgstr "Personnes ayant ouvert le lien de l’événement du 26 septembre"
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:77
+#, elixir-autogen, elixir-format
+msgid ""
+"The visit total includes earlier UTC daily aggregates. The browser-visit "
+"chart starts with Toronto-time collection; earlier visits have no individual"
+" timestamps to recalculate."
+msgstr ""
+"Le total des visites inclut les anciens totaux quotidiens en UTC. Le "
+"graphique des visites commence avec la collecte selon l’heure de Toronto; "
+"les visites antérieures n’ont pas d’horodatage individuel permettant de les "
+"recalculer."
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:83
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:222
+#, elixir-autogen, elixir-format
+msgid ""
+"Today is incomplete. Days end at midnight Eastern time, with daylight saving"
+" changes."
+msgstr ""
+"La journée en cours est incomplète. Les jours se terminent à minuit, heure "
+"de l’Est, en tenant compte des changements d’heure."
+
+#: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:50
+#, elixir-autogen, elixir-format
+msgid ""
+"When you make a pledge, we store your name, email, optional amount and "
+"notes, preferred language, and permission to contact you about the pledge. "
+"Superadmins use these details for follow-up. No payment information is "
+"collected, and making a pledge does not create an account or subscribe you "
+"to updates. Contact info@pauseai.ca to correct or remove your pledge."
+msgstr ""
+"Lorsque vous faites une promesse de don, nous conservons votre nom, votre "
+"courriel, le montant et les commentaires facultatifs, votre langue de "
+"préférence et votre autorisation de contact au sujet de cette promesse. Les "
+"superadmins utilisent ces renseignements pour le suivi. Aucune information "
+"de paiement n’est recueillie; cette démarche ne crée pas de compte et ne "
+"vous inscrit pas aux nouvelles. Contactez info@pauseai.ca pour corriger ou "
+"supprimer votre promesse de don."
+
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:455
+#, elixir-autogen, elixir-format
+msgid "Grant access and notify"
+msgstr "Accorder l’accès et envoyer l’avis"
+
+#: lib/pauseai_ca_web/live/protest_recap_live.ex:57
+msgid "At Phillips Square, Montréal. Photo: Clara Lacasse."
+msgstr "Au square Phillips, à Montréal. Photo : Clara Lacasse."
+
+#: lib/pauseai_ca_web/live/protest_recap_live.ex:126
+msgid "Calling for a global pause. Photo: Clara Lacasse."
+msgstr "Pour une pause mondiale. Photo : Clara Lacasse."
+
+#: lib/pauseai_ca_web/live/protest_recap_live.ex:53
+msgid "Demonstrators holding a PauseAI banner and signs at Phillips Square"
+msgstr ""
+"Des manifestants portent une bannière PauseAI et des pancartes au square "
+"Phillips"
+
+#: lib/pauseai_ca_web/live/protest_recap_live.ex:122
+msgid "Demonstrators holding signs calling for a worldwide pause on AI"
+msgstr ""
+"Des manifestants portent des pancartes appelant à une pause mondiale de l’IA"
+
+#: lib/pauseai_ca_web/live/protest_recap_live.ex:138
+msgid "Jeremy Eliosoff wearing a yellow PauseAI shirt at the Montréal protest"
+msgstr ""
+"Jeremy Eliosoff porte un chandail jaune PauseAI à la manifestation de "
+"Montréal"
+
+#: lib/pauseai_ca_web/live/protest_recap_live.ex:143
+msgid "Jeremy Eliosoff. Photo: Clara Lacasse."
+msgstr "Jeremy Eliosoff. Photo : Clara Lacasse."
+
+#: lib/pauseai_ca_web/live/protest_recap_live.ex:111
+msgid "The protest in pictures"
+msgstr "La manifestation en images"

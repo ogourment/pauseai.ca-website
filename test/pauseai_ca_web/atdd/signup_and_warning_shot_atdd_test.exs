@@ -21,7 +21,11 @@ if System.get_env("ATDD") == "true" do
                     "Desktop"},
                    {"WARN-01", "Read current evidence and send an edited MP letter", "French",
                     "Desktop"},
-                   {"WARN-02", "New attention leads to a Montréal action", "English", "Mobile"}
+                   {"WARN-02", "Protest recap leads to continued engagement", "English / French",
+                    "Mobile"},
+                   {"DON-01", "Bilingual donation pledge without payment", "English / French",
+                    "Mobile"},
+                   {"DON-02", "Superadmin follows up on a real pledge", "English", "Desktop"}
                  ],
                  fn {id, title, language, device} ->
                    %{
@@ -205,7 +209,7 @@ if System.get_env("ATDD") == "true" do
         context.conn
         |> visit("/fr")
         |> click("#consent-decline")
-        |> assert_has("#account-entry", text: "Connexion / Inscription")
+        |> assert_has("#account-entry", text: "Compte")
         |> capture(
           id,
           "Browse then choose compact entry",
@@ -454,7 +458,7 @@ if System.get_env("ATDD") == "true" do
           "Actual journey-derived counts; explicit historical fixture is unknown, admin excluded"
         )
 
-      today = Date.to_iso8601(Date.utc_today())
+      today = Date.to_iso8601(PauseAiCa.ReportingCalendar.today())
 
       browser =
         browser
@@ -475,6 +479,16 @@ if System.get_env("ATDD") == "true" do
       |> assert_has("#signup-created", text: "2")
 
       assert_sparkline_bounds(browser)
+
+      browser
+      |> click_link("Accounts")
+      |> assert_path("/manage/accounts")
+      |> assert_has("#managed-accounts")
+      |> capture(
+        id,
+        "Open the unified Accounts directory",
+        "Dashboard and account menu share the same scoped destination"
+      )
 
       mobile =
         new_device(context, viewport: %{width: 390, height: 844})
@@ -697,7 +711,7 @@ if System.get_env("ATDD") == "true" do
     end
 
     @tag browser_context_opts: [viewport: %{width: 390, height: 844}]
-    test "WARN-02 mobile information → tracked Montréal RSVP link → contextual saved progress",
+    test "WARN-02 mobile information → bilingual Montréal recap → contextual saved progress",
          context do
       id = "WARN-02"
 
@@ -715,12 +729,40 @@ if System.get_env("ATDD") == "true" do
         |> click("#montreal-protest-banner")
         |> capture(
           id,
-          "Open Sept. 26 announcement",
-          "Real banner click requests existing Luma target; no fabricated RSVP or attendance"
+          "Open Sept. 26 recap",
+          "Local bilingual recap credits reporting and all three Clara Lacasse photographs"
         )
+        |> assert_path("/en/montreal-protest-2026-09-26")
+        |> assert_has("#protest-attendance", text: "Well over 50")
+        |> assert_has("#protest-report-source[href*='ledevoir.com']")
+        |> assert_has("figcaption", text: "Clara Lacasse", count: 3)
+        |> assert_has("figcaption", text: "Jeremy Eliosoff")
 
-      browser
-      |> evaluate("window.__externalRequests.at(-1)", &assert(&1 == "https://luma.com/d40dp5ed"))
+      for number <- [3, 7, 14] do
+        browser
+        |> evaluate(
+          "document.querySelector('#protest-photo-#{number}').src",
+          &assert(String.ends_with?(&1, "clara-lacasse-#{number}.jpg"))
+        )
+      end
+
+      browser =
+        browser
+        |> click_link("Français")
+        |> assert_path("/fr/manifestation-montreal-2026-09-26")
+        |> visit("/fr/manifestation-montreal-2026-09-26")
+        |> assert_has("#protest-attendance", text: "50")
+        |> assert_has("figcaption", text: "Clara Lacasse", count: 3)
+        |> capture(
+          id,
+          "Switch to French and reload",
+          "French recap retains the three credited photographs and Jeremy Eliosoff caption"
+        )
+        |> click("#protest-write-mp")
+        |> assert_path("/fr/signal-d-alarme")
+        |> assert_has("#letter")
+        |> capture(id, "Prepare a letter", "French Warning Shot letter form is available")
+        |> click_link("English")
 
       assert Repo.aggregate(
                from(s in Engagement.LearningSignal, where: s.kind == "event_link_opened"),
@@ -747,6 +789,188 @@ if System.get_env("ATDD") == "true" do
 
       assert_no_overflow(browser)
       assert Repo.aggregate(User, :count) == 0
+      finish(id)
+    end
+
+    @tag browser_context_opts: [viewport: %{width: 390, height: 844}]
+    test "DON-01 bilingual pledge → validation → save → reload and duplicate", context do
+      id = "DON-01"
+
+      for {locale, donate, name, email_label, amount, notes, consent, save, acknowledgement} <- [
+            {"en", "Donate", "Name", "Email", "Amount you intend to give (CAD, optional)",
+             "Notes (optional)", "You may contact me about this pledge.", "Save my pledge",
+             "No payment has been taken"},
+            {"fr", "Faire un don", "Nom", "Courriel",
+             "Montant que vous souhaitez donner (CAD, facultatif)", "Commentaires (facultatif)",
+             "Vous pouvez me contacter au sujet de cette promesse de don.",
+             "Enregistrer ma promesse de don", "Aucun paiement"}
+          ] do
+        email = "pledge-#{locale}@example.org"
+
+        b =
+          context.conn
+          |> visit("/#{locale}")
+          |> capture(id, "Open #{locale} learning page", "Donate is available in the header")
+          |> click_link(donate)
+          |> assert_has("#donate-page ul li", count: 6)
+          |> assert_has("#donate-page", text: "1819452-1")
+          |> assert_has("#donate-page", text: "791107246")
+          |> capture(
+            id,
+            "Open #{locale} Donate",
+            "Bank account pending; six funding uses and a short contact form"
+          )
+          |> fill_in(name, with: "Camille Example")
+          |> fill_in(email_label, with: "invalid@example")
+          |> assert_has("#pledge_email.input-error")
+          |> assert_has("#pledge_name[value='Camille Example']")
+          |> capture(id, "Enter an invalid email", "Inline error preserves the entered name")
+          |> fill_in(email_label, with: email)
+          |> fill_in(amount, with: "50.25")
+          |> fill_in(notes, with: "Please contact me in #{locale}")
+          |> check(consent)
+          |> capture(
+            id,
+            "Enter contact details and permission",
+            "Optional amount and notes ready for submission"
+          )
+          |> click_button(save)
+          |> assert_has("#pledge-saved", text: acknowledgement)
+          |> capture(
+            id,
+            "Save the pledge",
+            "Acknowledgement explains follow-up and confirms no payment"
+          )
+
+        pledge = Repo.get_by!(PauseAiCa.Donations.Pledge, email: email)
+        assert pledge.locale == locale and pledge.consented_at != nil
+        assert Decimal.equal?(pledge.amount_cad, Decimal.new("50.25"))
+        assert Repo.aggregate(User, :count) == 0
+        refute_receive {:email, _}
+        path = if locale == "fr", do: "/fr/faire-un-don", else: "/en/donate"
+
+        b =
+          b
+          |> visit(path)
+          |> fill_in(name, with: "Repeated submission")
+          |> fill_in(email_label, with: email)
+          |> check(consent)
+          |> click_button(save)
+          |> assert_has("#pledge-saved")
+          |> capture(
+            id,
+            "Reload and submit the same email again",
+            "Generic acknowledgement preserves the original pledge"
+          )
+
+        assert Repo.get_by!(PauseAiCa.Donations.Pledge, email: email).name == "Camille Example"
+        assert_no_overflow(b)
+      end
+
+      assert Repo.aggregate(PauseAiCa.Donations.Pledge, :count) == 2
+      finish(id)
+    end
+
+    test "DON-02 real pledge → superadmin follow-up → manager and visitor denial", context do
+      id = "DON-02"
+
+      context.conn
+      |> visit("/en")
+      |> click("#consent-decline")
+      |> capture(id, "Start as a visitor", "Donate is available without an account")
+      |> click_link("Donate")
+      |> fill_in("Name", with: "Camille Example")
+      |> fill_in("Email", with: "followup@example.org")
+      |> fill_in("Amount you intend to give (CAD, optional)", with: "125")
+      |> fill_in("Notes (optional)", with: "For printing")
+      |> check("You may contact me about this pledge.")
+      |> click_button("Save my pledge")
+      |> assert_has("#pledge-saved")
+      |> capture(
+        id,
+        "Submit contact permission and pledge",
+        "A real saved pledge will appear in admin tools"
+      )
+
+      assert Repo.aggregate(User, :count) == 0
+      refute_receive {:email, _}
+
+      admin =
+        user_fixture()
+        |> Ecto.Changeset.change(superadmin: true, confirmed_at: DateTime.utc_now(:second))
+        |> Repo.update!()
+
+      # Consume only the fixture account confirmation; pledge operations send nothing.
+      receive_email(admin.email)
+      scope = PauseAiCa.Accounts.Scope.for_user(admin)
+      {token, _} = generate_user_magic_link_token(admin)
+
+      b =
+        new_device(context)
+        |> visit("/users/log-in/#{token}")
+        |> click_button("Keep me logged in on this device")
+        |> assert_has("#account-menu")
+        |> click("#flash-info button")
+        |> click("#account-menu summary")
+        |> capture(
+          id,
+          "Open superadmin account menu",
+          "Admin dashboard is available to the superadmin"
+        )
+        |> click_link("Admin dashboard")
+        |> capture(id, "Open admin tools", "Donation pledges is available from the dashboard")
+        |> click_link("Donation pledges")
+        |> assert_has("#donation-pledges", text: "followup@example.org")
+        |> assert_has("#donation-pledges", text: "125")
+        |> assert_has("#donation-pledges", text: "For printing")
+        |> assert_has("#donation-pledges", text: "Contact permission recorded")
+        |> capture(
+          id,
+          "Open the pledge list",
+          "Contact, amount, notes and recorded time belong to the submitted pledge"
+        )
+
+      assert_no_overflow(b)
+
+      manager =
+        user_fixture()
+        |> Ecto.Changeset.change(confirmed_at: DateTime.utc_now(:second))
+        |> Repo.update!()
+
+      receive_email(manager.email)
+      {:ok, group} = PauseAiCa.Volunteers.create_group(scope, %{"name" => "Montréal"})
+      {:ok, _} = PauseAiCa.Volunteers.assign_manager(scope, group.id, manager.email)
+      {token, _} = generate_user_magic_link_token(manager)
+
+      new_device(context)
+      |> visit("/users/log-in/#{token}")
+      |> click_button("Keep me logged in on this device")
+      |> assert_has("#account-menu")
+      |> click("#flash-info button")
+      |> click("#account-menu summary")
+      |> refute_has("#account-menu", text: "Admin dashboard")
+      |> capture(
+        id,
+        "Open group manager menu",
+        "Personal and Accounts tools do not expose superadmin pledge access"
+      )
+      |> visit("/admin/donation-pledges")
+      |> assert_has("body", text: "superadmin required")
+      |> capture(id, "Attempt the restricted direct URL", "Server denies group manager access")
+
+      new_device(context)
+      |> visit("/en")
+      |> refute_has("a", text: "Donation pledges")
+      |> visit("/admin/donation-pledges")
+      |> refute_has("#donation-pledges")
+      |> capture(
+        id,
+        "Attempt the same URL signed out",
+        "Visitor is redirected to sign-in without pledge details"
+      )
+
+      assert Repo.aggregate(PauseAiCa.Donations.Pledge, :count) == 1
+      refute_receive {:email, _}
       finish(id)
     end
 
@@ -888,6 +1112,15 @@ if System.get_env("ATDD") == "true" do
         )
 
     defp capture(browser, id, trigger, outcome) do
+      if id == "WARN-02" do
+        evaluate(
+          browser,
+          "async () => { for (const img of document.querySelectorAll('#protest-recap img')) {img.scrollIntoView(); await img.decode();} window.scrollTo(0, 0); return true; }",
+          [is_function: true],
+          &assert(&1)
+        )
+      end
+
       scenario = Enum.find(@scenarios, &(&1.id == id))
       step = Process.get({:step, id}, 0) + 1
       Process.put({:step, id}, step)

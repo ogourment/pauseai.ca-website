@@ -5,7 +5,7 @@ defmodule PauseAiCa.Engagement.SignupFunnelTest do
   alias PauseAiCa.Accounts.Scope
 
   test "creation cohort owns late confirmations and counts people once per stage" do
-    yesterday = Date.add(Date.utc_today(), -1)
+    yesterday = Date.add(PauseAiCa.ReportingCalendar.today(), -1)
     user = user_fixture()
 
     Repo.update!(
@@ -24,7 +24,9 @@ defmodule PauseAiCa.Engagement.SignupFunnelTest do
     })
 
     assert %{created: 0, confirmed: 0, first_action: 0} =
-             Engagement.signup_funnel(%{"from" => Date.to_iso8601(Date.utc_today())})
+             Engagement.signup_funnel(%{
+               "from" => Date.to_iso8601(PauseAiCa.ReportingCalendar.today())
+             })
 
     assert %{created: 1, confirmed: 1, first_action: 1, trends: %{first_action: [1]}} =
              Engagement.signup_funnel(%{
@@ -53,7 +55,7 @@ defmodule PauseAiCa.Engagement.SignupFunnelTest do
     assert %{source: "all", to: today} =
              Engagement.signup_funnel(%{"source" => "forged", "to" => "invalid"})
 
-    assert today == Date.utc_today()
+    assert today == PauseAiCa.ReportingCalendar.today()
     assert %{from: from, to: to} = Engagement.signup_funnel(%{"from" => "1900-01-01"})
     assert Date.diff(to, from) == 365
   end

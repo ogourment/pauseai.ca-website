@@ -160,6 +160,25 @@ digraph Schema {
         <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.daily_visits</B></FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">visited_on PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">date NOT NULL</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">count</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">bigint NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">reporting_timezone PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
+  "public.donation_pledges" [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.donation_pledges</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">name</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">email</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">amount_cad</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">numeric</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">notes</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">locale</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">consented_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
       </TABLE>
     >
   ];
@@ -233,6 +252,8 @@ digraph Schema {
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">city</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">character varying</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">name</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">character varying</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">signup_entry_point</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">character varying</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">organizing_group_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">uuid</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">organizer_notes</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text NOT NULL</FONT></TD></TR>
       </TABLE>
     >
   ];
@@ -308,12 +329,12 @@ digraph Schema {
 
   "public.volunteer_groups" [
     label=<
-      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
-        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.volunteer_groups</B></FONT></TD></TR>
-  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
-  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">name</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
-  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
-  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+      <TABLE BORDER="2" CELLBORDER="1" CELLPADDING="7" CELLSPACING="0" COLOR="#2563eb">
+        <TR><TD BGCOLOR="#bfdbfe" COLSPAN="2"><FONT POINT-SIZE="16"><B>public.volunteer_groups</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">name</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp without time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp without time zone NOT NULL</FONT></TD></TR>
       </TABLE>
     >
   ];
@@ -379,6 +400,7 @@ digraph Schema {
   "public.contacts" -> "public.contact_imports" [label="last_import_id -> id"];
   "public.contacts" -> "public.users" [label="user_id -> id"];
   "public.learning_signals" -> "public.users" [label="user_id -> id"];
+  "public.users" -> "public.volunteer_groups" [label="organizing_group_id -> id"];
   "public.users_tokens" -> "public.users" [label="user_id -> id"];
   "public.volunteer_batches" -> "public.volunteer_groups" [label="default_group_id -> id"];
   "public.volunteer_batches" -> "public.users" [label="owner_id -> id"];

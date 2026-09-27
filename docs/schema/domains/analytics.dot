@@ -13,7 +13,7 @@ digraph analytics {
   "daily_visits" [label=<
     <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
       <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.daily_visits</B></TD></TR>
-      <TR><TD ALIGN="LEFT">visited_on PK</TD><TD ALIGN="LEFT">date NOT NULL</TD></TR><TR><TD ALIGN="LEFT">count</TD><TD ALIGN="LEFT">bigint NOT NULL</TD></TR>
+      <TR><TD ALIGN="LEFT">visited_on PK</TD><TD ALIGN="LEFT">date NOT NULL</TD></TR><TR><TD ALIGN="LEFT">count</TD><TD ALIGN="LEFT">bigint NOT NULL</TD></TR><TR><TD ALIGN="LEFT">reporting_timezone PK</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR>
     </TABLE>
   >];
 

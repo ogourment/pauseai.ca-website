@@ -58,12 +58,12 @@ if (!document.querySelector('[data-phx-main]')) {
 window.liveSocket = liveSocket
 
 // A visible public page signals browser activity, not verified human presence.
-// Server-side session deduplication limits it to one count per UTC day.
+// Server-side session deduplication limits it to one count per America/Toronto day.
 let browserVisitInFlight = false
 let browserVisitRecordedOn = null
 
 function recordBrowserVisit() {
-  const today = new Date().toISOString().slice(0, 10)
+  const today = new Intl.DateTimeFormat("en-CA", {timeZone: "America/Toronto", year: "numeric", month: "2-digit", day: "2-digit"}).format(new Date())
   const privatePaths = ["/admin", "/dev", "/health", "/users"]
   if (browserVisitInFlight || browserVisitRecordedOn === today ||
       document.visibilityState !== "visible" ||

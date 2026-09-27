@@ -70,11 +70,19 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
           </p>
           <p id="visit-measurement-note" class="mt-3 max-w-3xl text-sm text-stone-600">
             {gettext(
-              "Browser visits count visible public pages after JavaScript runs, once per browser session per UTC day. Superadmins are excluded. Reloads, page navigation, and LiveView heartbeats do not add visits. JavaScript-capable bots may still count; totals are browser-days, not unique people."
+              "Browser visits count visible public pages after JavaScript runs, once per browser session per Toronto calendar day. Superadmins are excluded. Reloads, page navigation, and LiveView heartbeats do not add visits. JavaScript-capable bots may still count; totals are browser-days, not unique people."
+            )}
+          </p>
+          <p class="mt-3 text-sm text-stone-600">
+            {gettext(
+              "The visit total includes earlier UTC daily aggregates. The browser-visit chart starts with Toronto-time collection; earlier visits have no individual timestamps to recalculate."
             )}
           </p>
           <p id="metrics-period" class="mt-8 text-xs font-medium text-stone-500">
-            Daily trends · {@trend_period_label} (UTC)
+            {gettext("Daily trends")} · {@trend_period_label} · America/Toronto<br />
+            {gettext(
+              "Today is incomplete. Days end at midnight Eastern time, with daylight saving changes."
+            )}
           </p>
           <div class="mt-2 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             <.metric
@@ -100,14 +108,14 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
             />
             <.metric
               id="metric-visits"
-              label={gettext("Daily browser visits")}
+              label={gettext("Browser visits — all time")}
               value={@metrics.visits}
               trend={@metrics.trends.visits}
-              trend_period={@trend_period_label}
+              trend_period="America/Toronto"
             />
             <.metric
               id="metric-montreal-protest-interest"
-              label="People who opened the Sept. 26 RSVP"
+              label={gettext("People who opened the September 26 event link")}
               value={@metrics.montreal_protest_interest}
               trend={[]}
               trend_period={@trend_period_label}
@@ -120,7 +128,7 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
             <h2 class="font-heading text-3xl text-stone-950">{gettext("Recruitment funnel")}</h2>
             <p class="mt-3 max-w-3xl text-sm leading-6 text-stone-600">
               {gettext(
-                "Accounts created in the selected UTC cohort, completed as of the report time. Superadmins are excluded. Email confirmation proves email control, not a unique person, attendance or incubator membership."
+                "Accounts created in the selected Toronto-time cohort, completed as of the report time. Superadmins are excluded. Email confirmation proves email control, not a unique person, attendance or incubator membership."
               )}
             </p>
             <.form
@@ -159,7 +167,7 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
               )}</button>
             </.form>
             <p id="signup-cohort-note" class="mt-4 text-xs text-stone-500">
-              {Date.to_iso8601(@signup_funnel.from)} – {Date.to_iso8601(@signup_funnel.to)} · UTC · {gettext(
+              {Date.to_iso8601(@signup_funnel.from)} – {Date.to_iso8601(@signup_funnel.to)} · America/Toronto · {gettext(
                 "As of"
               )} {Calendar.strftime(@signup_funnel.as_of, "%Y-%m-%d %H:%M")} UTC
             </p>
@@ -169,21 +177,21 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
                 label={gettext("Created accounts")}
                 value={@signup_funnel.created}
                 trend={@signup_funnel.trends.created}
-                trend_period="Creation cohort · UTC"
+                trend_period="Creation cohort · America/Toronto"
               />
               <.metric
                 id="signup-confirmed"
                 label={gettext("Email-confirmed accounts")}
                 value={@signup_funnel.confirmed}
                 trend={@signup_funnel.trends.confirmed}
-                trend_period="Creation cohort · UTC"
+                trend_period="Creation cohort · America/Toronto"
               />
               <.metric
                 id="signup-first-action"
                 label={gettext("First recorded member action")}
                 value={@signup_funnel.first_action}
                 trend={@signup_funnel.trends.first_action}
-                trend_period="Creation cohort · UTC"
+                trend_period="Creation cohort · America/Toronto"
               />
             </div>
             <p id="signup-pending" class="mt-4 text-sm text-stone-700">
@@ -210,7 +218,10 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
           <section class="mt-10 rounded-[2rem] bg-stone-900 p-8 text-white sm:p-10">
             <h2 class="font-heading text-3xl">Progress through the engagement ladder</h2>
             <p class="mt-2 text-xs font-medium text-white/60">
-              Daily trends · {@trend_period_label} (UTC)
+              {gettext("Daily trends")} · {@trend_period_label} · America/Toronto<br />
+              {gettext(
+                "Today is incomplete. Days end at midnight Eastern time, with daylight saving changes."
+              )}
             </p>
             <ol id="metrics-by-type" class="mx-auto mt-8 flex max-w-2xl flex-col-reverse px-2 sm:px-8">
               <li
@@ -348,13 +359,16 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
         class={admin_link_class(@current == :dashboard)}
       >{gettext("Dashboard")}</.link>
       <.link
-        navigate={~p"/admin/accounts"}
+        navigate={~p"/manage/accounts"}
         aria-current={if @current == :accounts, do: "page"}
         class={admin_link_class(@current == :accounts)}
       >{gettext("Accounts")}</.link>
       <.link navigate={~p"/admin/contact-imports"} class={admin_link_class(false)}>
         {gettext("Contact imports")}
       </.link>
+      <.link navigate={~p"/admin/donation-pledges"} class={admin_link_class(false)}>{gettext(
+        "Donation pledges"
+      )}</.link>
       <a href="/admin/versions" class={admin_link_class(false)}>{gettext("Deployment versions")}</a>
       <a href="/admin/acceptance" class={admin_link_class(false)}>{gettext("Acceptance evidence")}</a>
     </nav>
