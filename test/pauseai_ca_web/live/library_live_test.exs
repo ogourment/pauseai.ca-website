@@ -257,7 +257,7 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
       assert has_element?(
                view,
                "#subscribe-form a[href='/en/privacy']",
-               "Confidentiality policy"
+               "Read our privacy policy."
              )
     end
 

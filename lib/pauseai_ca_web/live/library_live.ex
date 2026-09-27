@@ -456,12 +456,9 @@ defmodule PauseAiCaWeb.LibraryLive do
   defp city_label(_locale), do: gettext("City")
 
   defp consent_label(_locale),
-    do:
-      gettext(
-        "I agree to receive emails from PauseAI Canada. We do not sell your address. Read our privacy policy."
-      )
+    do: gettext("I agree to receive emails from PauseAI Canada. We do not sell your address.")
 
-  defp confidentiality_policy_label(_locale), do: gettext("Confidentiality policy")
+  defp confidentiality_policy_label(_locale), do: gettext("Read our privacy policy.")
 
   defp subscribe_cta(_locale), do: gettext("Sign me up")
 

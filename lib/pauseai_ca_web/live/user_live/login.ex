@@ -68,15 +68,14 @@ defmodule PauseAiCaWeb.UserLive.Login do
         </p>
         <p :if={!@current_scope} class="mt-6 text-sm leading-6 text-stone-600">
           {gettext(
-            "Use the email address you want for your account. We will send a link to confirm it and sign you in. Read our privacy policy to learn how we use your address."
+            "Use the email address you want for your account. We will send a link to confirm it and sign you in."
           )}
+          <.link
+            id="account-privacy"
+            href={if(@locale == "fr", do: ~p"/fr/confidentialite", else: ~p"/en/privacy")}
+            class="underline"
+          >{gettext("Read our privacy policy.")}</.link>
         </p>
-        <.link
-          :if={!@current_scope}
-          id="account-privacy"
-          href={if(@locale == "fr", do: ~p"/fr/confidentialite", else: ~p"/en/privacy")}
-          class="mt-2 block w-fit text-sm underline"
-        >{gettext("Privacy")}</.link>
         <.link
           :if={!@current_scope}
           id="continue-browsing"

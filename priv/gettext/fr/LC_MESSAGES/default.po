@@ -433,7 +433,6 @@ msgstr "Code postal"
 
 #: lib/pauseai_ca_web/components/layouts.ex:400
 #: lib/pauseai_ca_web/live/donate_live.ex:293
-#: lib/pauseai_ca_web/live/user_live/login.ex:79
 #, elixir-autogen, elixir-format
 msgid "Privacy"
 msgstr "Confidentialité"
@@ -561,8 +560,8 @@ msgstr "Faut-il ralentir l'IA?"
 msgid "Show my suggested path"
 msgstr "Voir mon parcours suggéré"
 
-#: lib/pauseai_ca_web/live/user_live/login.ex:89
-#: lib/pauseai_ca_web/live/user_live/login.ex:125
+#: lib/pauseai_ca_web/live/user_live/login.ex:88
+#: lib/pauseai_ca_web/live/user_live/login.ex:124
 #, elixir-autogen, elixir-format
 msgid "Sign in"
 msgstr "Se connecter"
@@ -1106,11 +1105,6 @@ msgstr ""
 "fournissez facultativement. Lorsque vous créez ensuite un compte avec la "
 "même adresse, nous copions cette localisation dans votre profil. Nous ne "
 "vendons aucun renseignement personnel."
-
-#: lib/pauseai_ca_web/live/library_live.ex:464
-#, elixir-autogen, elixir-format
-msgid "Confidentiality policy"
-msgstr "Politique de confidentialité"
 
 #: lib/pauseai_ca_web/components/layouts.ex:207
 #, elixir-autogen, elixir-format
@@ -1659,7 +1653,7 @@ msgstr ""
 msgid "Confirm it is you before changing your account."
 msgstr "Confirmez votre identité avant de modifier votre compte."
 
-#: lib/pauseai_ca_web/live/user_live/login.ex:86
+#: lib/pauseai_ca_web/live/user_live/login.ex:85
 #, elixir-autogen, elixir-format
 msgid "Continue browsing"
 msgstr "Continuer à naviguer"
@@ -1700,7 +1694,7 @@ msgstr ""
 #: lib/pauseai_ca_web/live/donate_live.ex:245
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:643
 #: lib/pauseai_ca_web/live/user_live/login.ex:34
-#: lib/pauseai_ca_web/live/user_live/login.ex:110
+#: lib/pauseai_ca_web/live/user_live/login.ex:109
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:929
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:962
 #, elixir-autogen, elixir-format
@@ -1755,12 +1749,12 @@ msgstr ""
 msgid "Latest developments"
 msgstr "Derniers développements"
 
-#: lib/pauseai_ca_web/live/user_live/login.ex:117
+#: lib/pauseai_ca_web/live/user_live/login.ex:116
 #, elixir-autogen, elixir-format
 msgid "Password"
 msgstr "Mot de passe"
 
-#: lib/pauseai_ca_web/live/user_live/login.ex:95
+#: lib/pauseai_ca_web/live/user_live/login.ex:94
 #, elixir-autogen, elixir-format
 msgid "Prefer a password?"
 msgstr "Vous préférez un mot de passe?"
@@ -1781,7 +1775,7 @@ msgid "Resource bookmark"
 msgstr "Ressource enregistrée"
 
 #: lib/pauseai_ca_web/components/layouts.ex:306
-#: lib/pauseai_ca_web/live/user_live/login.ex:155
+#: lib/pauseai_ca_web/live/user_live/login.ex:154
 #, elixir-autogen, elixir-format
 msgid "Sign in / Sign up"
 msgstr "Connexion / Inscription"
@@ -3714,11 +3708,6 @@ msgstr "Soutenez PauseIA Canada"
 msgid "Take part"
 msgstr "Participez"
 
-#: lib/pauseai_ca_web/live/user_live/login.ex:70
-#, elixir-autogen, elixir-format
-msgid "Use the email address you want for your account. We will send a link to confirm it and sign you in. Read our privacy policy to learn how we use your address."
-msgstr "Utilisez l’adresse courriel souhaitée pour votre compte. Nous vous enverrons un lien pour la confirmer et vous connecter. Notre politique de confidentialité explique comment nous utilisons votre adresse."
-
 #: lib/pauseai_ca_web/components/layouts.ex:147
 #: lib/pauseai_ca_web/controllers/page_html/strategy.html.heex:55
 #, elixir-autogen, elixir-format
@@ -3765,11 +3754,6 @@ msgstr "Vérifiez votre dossier de courriels indésirables ou de promotions."
 msgid "Founded by Yoshua Bengio"
 msgstr "Fondé par Yoshua Bengio"
 
-#: lib/pauseai_ca_web/live/library_live.ex:460
-#, elixir-autogen, elixir-format
-msgid "I agree to receive emails from PauseAI Canada. We do not sell your address. Read our privacy policy."
-msgstr "J’accepte de recevoir des courriels de PauseIA Canada. Nous ne vendons pas votre adresse. Consultez notre politique de confidentialité."
-
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:983
 #, elixir-autogen, elixir-format
 msgid "Personalize the letter before sending. Explain in your own words why this matters to you."
@@ -3794,3 +3778,19 @@ msgstr "Nous lui demandons maintenant d’aller plus loin et de se joindre aux p
 #, elixir-autogen, elixir-format
 msgid "This policy explains how PauseAI Canada uses information from site visits, accounts, subscriptions, recorded activities and donation pledges."
 msgstr "Cette politique explique comment PauseIA Canada utilise les renseignements liés aux visites du site, aux comptes, aux abonnements, aux activités enregistrées et aux promesses de don."
+
+#: lib/pauseai_ca_web/live/library_live.ex:460
+#, elixir-autogen, elixir-format
+msgid "I agree to receive emails from PauseAI Canada. We do not sell your address."
+msgstr "J’accepte de recevoir des courriels de PauseIA Canada. Nous ne vendons pas votre adresse."
+
+#: lib/pauseai_ca_web/live/library_live.ex:464
+#: lib/pauseai_ca_web/live/user_live/login.ex:77
+#, elixir-autogen, elixir-format
+msgid "Read our privacy policy."
+msgstr "Consultez notre politique de confidentialité."
+
+#: lib/pauseai_ca_web/live/user_live/login.ex:70
+#, elixir-autogen, elixir-format
+msgid "Use the email address you want for your account. We will send a link to confirm it and sign you in."
+msgstr "Utilisez l’adresse courriel souhaitée pour votre compte. Nous vous enverrons un lien pour la confirmer et vous connecter."

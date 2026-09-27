@@ -420,7 +420,6 @@ msgstr ""
 
 #: lib/pauseai_ca_web/components/layouts.ex:400
 #: lib/pauseai_ca_web/live/donate_live.ex:293
-#: lib/pauseai_ca_web/live/user_live/login.ex:79
 #, elixir-autogen, elixir-format
 msgid "Privacy"
 msgstr ""
@@ -545,8 +544,8 @@ msgstr ""
 msgid "Show my suggested path"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/user_live/login.ex:89
-#: lib/pauseai_ca_web/live/user_live/login.ex:125
+#: lib/pauseai_ca_web/live/user_live/login.ex:88
+#: lib/pauseai_ca_web/live/user_live/login.ex:124
 #, elixir-autogen, elixir-format
 msgid "Sign in"
 msgstr ""
@@ -1053,11 +1052,6 @@ msgstr ""
 #: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:35
 #, elixir-autogen, elixir-format
 msgid "Your email secures your account and retrieves saved items. If you subscribe for updates, Brevo holds your email and any city or postal code you optionally provide. When you later create an account with the same email, we copy that location into your profile. We do not sell personal information."
-msgstr ""
-
-#: lib/pauseai_ca_web/live/library_live.ex:464
-#, elixir-autogen, elixir-format
-msgid "Confidentiality policy"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/layouts.ex:207
@@ -1580,7 +1574,7 @@ msgstr ""
 msgid "Confirm it is you before changing your account."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/user_live/login.ex:86
+#: lib/pauseai_ca_web/live/user_live/login.ex:85
 #, elixir-autogen, elixir-format
 msgid "Continue browsing"
 msgstr ""
@@ -1616,7 +1610,7 @@ msgstr ""
 #: lib/pauseai_ca_web/live/donate_live.ex:245
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:643
 #: lib/pauseai_ca_web/live/user_live/login.ex:34
-#: lib/pauseai_ca_web/live/user_live/login.ex:110
+#: lib/pauseai_ca_web/live/user_live/login.ex:109
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:929
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:962
 #, elixir-autogen, elixir-format
@@ -1668,12 +1662,12 @@ msgstr ""
 msgid "Latest developments"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/user_live/login.ex:117
+#: lib/pauseai_ca_web/live/user_live/login.ex:116
 #, elixir-autogen, elixir-format
 msgid "Password"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/user_live/login.ex:95
+#: lib/pauseai_ca_web/live/user_live/login.ex:94
 #, elixir-autogen, elixir-format
 msgid "Prefer a password?"
 msgstr ""
@@ -1694,7 +1688,7 @@ msgid "Resource bookmark"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/layouts.ex:306
-#: lib/pauseai_ca_web/live/user_live/login.ex:155
+#: lib/pauseai_ca_web/live/user_live/login.ex:154
 #, elixir-autogen, elixir-format
 msgid "Sign in / Sign up"
 msgstr ""
@@ -3536,11 +3530,6 @@ msgstr ""
 msgid "Take part"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/user_live/login.ex:70
-#, elixir-autogen, elixir-format
-msgid "Use the email address you want for your account. We will send a link to confirm it and sign you in. Read our privacy policy to learn how we use your address."
-msgstr ""
-
 #: lib/pauseai_ca_web/components/layouts.ex:147
 #: lib/pauseai_ca_web/controllers/page_html/strategy.html.heex:55
 #, elixir-autogen, elixir-format
@@ -3587,11 +3576,6 @@ msgstr ""
 msgid "Founded by Yoshua Bengio"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/library_live.ex:460
-#, elixir-autogen, elixir-format
-msgid "I agree to receive emails from PauseAI Canada. We do not sell your address. Read our privacy policy."
-msgstr ""
-
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:983
 #, elixir-autogen, elixir-format
 msgid "Personalize the letter before sending. Explain in your own words why this matters to you."
@@ -3615,4 +3599,20 @@ msgstr ""
 #: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:13
 #, elixir-autogen, elixir-format
 msgid "This policy explains how PauseAI Canada uses information from site visits, accounts, subscriptions, recorded activities and donation pledges."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/library_live.ex:460
+#, elixir-autogen, elixir-format
+msgid "I agree to receive emails from PauseAI Canada. We do not sell your address."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/library_live.ex:464
+#: lib/pauseai_ca_web/live/user_live/login.ex:77
+#, elixir-autogen, elixir-format
+msgid "Read our privacy policy."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/user_live/login.ex:70
+#, elixir-autogen, elixir-format
+msgid "Use the email address you want for your account. We will send a link to confirm it and sign you in."
 msgstr ""
