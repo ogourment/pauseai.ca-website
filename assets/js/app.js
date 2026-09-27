@@ -257,14 +257,14 @@ if (process.env.NODE_ENV === "development") {
 
 // A <details> dropdown stays open until its own summary is clicked again, which
 // is not what anyone expects from a menu. Close it on an outside click, on
-// Escape, and when another one opens.
+// Escape, after selecting a link, and when another one opens.
 //
 // Delegated from the document rather than bound per-element: the header is
 // rendered by both LiveViews and plain controllers, and LiveView replaces the
 // DOM underneath us on navigation.
 document.addEventListener("click", (event) => {
   document.querySelectorAll("details.act-menu[open]").forEach((menu) => {
-    if (!menu.contains(event.target)) menu.open = false
+    if (!menu.contains(event.target) || event.target.closest("a[href]")) menu.open = false
   })
 })
 
@@ -286,3 +286,23 @@ document.addEventListener("toggle", (event) => {
     if (menu !== opened) menu.open = false
   })
 }, true)
+
+// Mouse users expect a dropdown to disappear when they leave it. Touch users
+// keep tap-to-toggle; keyboard users retain summary/Enter/Escape navigation.
+// Allow a short crossing interval for the gap between summary and panel.
+const menuCloseTimers = new WeakMap()
+const mouseMenus = window.matchMedia("(hover: hover) and (pointer: fine)")
+document.addEventListener("pointerover", (event) => {
+  if (event.pointerType !== "mouse" || !mouseMenus.matches) return
+  const menu = event.target.closest("details.act-menu")
+  if (!menu) return
+  clearTimeout(menuCloseTimers.get(menu))
+})
+
+document.addEventListener("pointerout", (event) => {
+  if (event.pointerType !== "mouse" || !mouseMenus.matches) return
+  const menu = event.target.closest("details.act-menu")
+  if (!menu || menu.contains(event.relatedTarget)) return
+  clearTimeout(menuCloseTimers.get(menu))
+  menuCloseTimers.set(menu, setTimeout(() => { menu.open = false }, 150))
+})
