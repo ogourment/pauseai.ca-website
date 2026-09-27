@@ -40,7 +40,7 @@ defmodule PauseAiCaWeb.ProtestRecapLive do
           </h1>
           <p id="protest-attendance" class="mt-7 max-w-3xl text-xl leading-9 text-stone-700">
             {gettext(
-              "Well over 50 people came together at Phillips Square on September 26 to call for a global, coordinated pause in AI development, according to PauseAI Canada's count."
+              "Around 40 people came together at Phillips Square on September 26 to call for a global, coordinated pause in AI development, according to PauseAI Canada's count."
             )}
           </p>
           <figure class="mt-10">
@@ -104,6 +104,17 @@ defmodule PauseAiCaWeb.ProtestRecapLive do
               rel="noreferrer"
               class="mt-4 inline-block font-semibold underline decoration-brand decoration-2 underline-offset-4"
             >{gettext("Read the report in Le Devoir (French)")} ↗</a>
+            <p class="mt-5">
+              <.link
+                id="protest-press-release"
+                navigate={
+                  if @locale == "fr",
+                    do: ~p"/fr/manifestation-montreal-2026-09-26/communique",
+                    else: ~p"/en/montreal-protest-2026-09-26/press-release"
+                }
+                class="font-semibold underline decoration-brand decoration-2 underline-offset-4"
+              >{gettext("Read PauseAI Canada's press release")}</.link>
+            </p>
           </div>
         </section>
         <section id="protest-photos" class="mx-auto max-w-5xl px-5 pt-12">

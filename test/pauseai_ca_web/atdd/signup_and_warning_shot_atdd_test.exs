@@ -733,7 +733,7 @@ if System.get_env("ATDD") == "true" do
           "Local bilingual recap credits reporting and all three Clara Lacasse photographs"
         )
         |> assert_path("/en/montreal-protest-2026-09-26")
-        |> assert_has("#protest-attendance", text: "Well over 50")
+        |> assert_has("#protest-attendance", text: "Around 40")
         |> assert_has("#protest-report-source[href*='ledevoir.com']")
         |> assert_has("figcaption", text: "Clara Lacasse", count: 3)
         |> assert_has("figcaption", text: "Jeremy Eliosoff")
@@ -751,7 +751,7 @@ if System.get_env("ATDD") == "true" do
         |> click_link("Français")
         |> assert_path("/fr/manifestation-montreal-2026-09-26")
         |> visit("/fr/manifestation-montreal-2026-09-26")
-        |> assert_has("#protest-attendance", text: "50")
+        |> assert_has("#protest-attendance", text: "une quarantaine")
         |> assert_has("figcaption", text: "Clara Lacasse", count: 3)
         |> capture(
           id,

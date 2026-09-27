@@ -70,4 +70,37 @@ defmodule PauseAiCaWeb.DonateLiveTest do
     admin |> Ecto.Changeset.change(superadmin: false) |> Repo.update!()
     assert {:error, :unauthorized} = Donations.list(scope)
   end
+
+  test "suggested pledge amount updates the short form without losing contact details", %{
+    conn: conn
+  } do
+    {:ok, view, _} = live(conn, "/en/donate")
+
+    assert has_element?(view, "#funding-themes > section:nth-child(4)")
+    refute has_element?(view, "#funding-themes > section:nth-child(5)")
+
+    assert has_element?(view, "#donate-page figcaption", "Clara Lacasse")
+    assert has_element?(view, "#pledge-suggestions", "not prices for a specific activity")
+
+    view
+    |> form("#pledge-form", pledge: %{name: "Alex Example", email: "alex@example.org"})
+    |> render_change()
+
+    view |> element("#pledge-suggestions button[phx-value-amount='100']") |> render_click()
+    assert has_element?(view, "#pledge_amount_cad[value='100']")
+    assert has_element?(view, "#pledge_name[value='Alex Example']")
+    assert has_element?(view, "#pledge_email[value='alex@example.org']")
+
+    assert has_element?(
+             view,
+             "#pledge-suggestions button[phx-value-amount='100'][aria-pressed='true']"
+           )
+
+    view
+    |> form("#pledge-form", pledge: %{contact_consent: "true"})
+    |> render_submit()
+
+    assert has_element?(view, "#pledge-saved")
+    assert Decimal.equal?(Repo.one!(Pledge).amount_cad, Decimal.new("100"))
+  end
 end

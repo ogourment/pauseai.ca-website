@@ -26,6 +26,25 @@
       </section>
       <section>
         <h2 class="font-heading text-3xl text-stone-950">
+          {gettext("Our recent action")}
+        </h2>
+        <p class="mt-3">
+          {gettext(
+            "Around 40 people joined our September 26 Montréal demonstration for a coordinated pause in advanced AI development."
+          )}
+        </p>
+        <.link
+          id="about-protest-link"
+          class="mt-3 inline-block font-semibold underline decoration-brand decoration-2 underline-offset-4"
+          navigate={
+            if @locale == "fr",
+              do: ~p"/fr/manifestation-montreal-2026-09-26",
+              else: ~p"/en/montreal-protest-2026-09-26"
+          }
+        >{gettext("See the Montréal protest and photos")}</.link>
+      </section>
+      <section>
+        <h2 class="font-heading text-3xl text-stone-950">
           {gettext("Our relationships")}
         </h2><p class="mt-3">
           {gettext("We collaborate with")}
