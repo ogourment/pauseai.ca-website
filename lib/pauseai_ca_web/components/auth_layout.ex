@@ -1,15 +1,11 @@
 defmodule PauseAiCaWeb.AuthLayout do
   @moduledoc """
-  Shared chrome for the sign-in pages.
-
-  These routes are not locale-prefixed — a magic link has to work whichever
-  language the person was reading in — so rather than guessing, they show both
-  languages the way the account emails do: English, then French beneath it in a
-  lighter weight. It is the pattern federal sites use, and it means the page a
-  link lands on reads the same as the email it came from.
+  Shared account-page layout. Branding follows the active Gettext locale.
+  Callers may provide matching localized headings or separate bilingual headings.
   """
 
   use Phoenix.Component
+  use Gettext, backend: PauseAiCaWeb.Gettext
 
   attr :title_en, :string, required: true
   attr :title_fr, :string, required: true
@@ -21,7 +17,7 @@ defmodule PauseAiCaWeb.AuthLayout do
     <div class="mx-auto max-w-md px-5 py-12 sm:py-16">
       <div class="overflow-hidden rounded-2xl border border-stone-200 bg-white">
         <p class="bg-brand px-5 py-3 text-center font-heading text-xs font-bold uppercase tracking-[0.16em] text-stone-950">
-          PauseAI Canada
+          {gettext("PauseAI Canada")}
         </p>
 
         <div class="p-7 sm:p-8">

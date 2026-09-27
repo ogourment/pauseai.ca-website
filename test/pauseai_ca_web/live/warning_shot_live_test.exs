@@ -39,7 +39,7 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
 
       assert has_element?(view, "#act")
       assert has_element?(view, "#developments-list")
-      assert render(view) =~ "Deuxième alerte de PauseAI"
+      assert render(view) =~ "Deuxième alerte de PauseIA"
       refute render(view) =~ "Tir de semonce"
     end
 

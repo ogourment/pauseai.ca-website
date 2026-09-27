@@ -8,7 +8,7 @@
       </h1>
       <p id="latest-safety-context" class="mt-6 max-w-2xl text-lg leading-8 text-stone-700">
         {gettext(
-          "AI safety is reaching a wider public. Read the latest evidence and researchers' warnings, then take a concrete action in Canada."
+          "What risks could advanced AI pose, and what can Canada do about them? Explore the research, proposals for a pause, and ways to get involved."
         )}
         <a
           href={
@@ -131,7 +131,7 @@
           title={gettext("Why do researchers discuss existential risk?")}
           body={
             gettext(
-              "A starting point on loss of control, uncertainty, and why the risk deserves serious attention."
+              "How could people lose control of an AI system? Read an introduction to the risks researchers are studying."
             )
           }
           href={gettext("https://pauseai.info/xrisk")}
@@ -151,7 +151,7 @@
             )
           }
           href={gettext("https://pauseai.info/proposal")}
-          source={if(@locale == "fr", do: "Pause IA", else: "PauseAI")}
+          source={gettext("PauseAI")}
           cta={gettext("Examine the proposal")}
           bookmark="pause"
           locale={@locale}
@@ -163,11 +163,11 @@
           title={gettext("Could a global treaty be verified?")}
           body={
             gettext(
-              "The case involving advanced chips, compute centres, inspection, compliance, and defection."
+              "How inspections of advanced chips and data centres could help countries verify an agreement."
             )
           }
           href={gettext("https://pauseai.info/feasibility")}
-          source={if(@locale == "fr", do: "PauseAI (en anglais)", else: "PauseAI")}
+          source={gettext("PauseAI (in English)")}
           cta={gettext("Explore the mechanisms")}
           bookmark="coordination"
           locale={@locale}
@@ -176,14 +176,14 @@
         <.resource_card
           id="resource-agency"
           stage={gettext("Move toward action")}
-          title={gettext("Why a visible constituency matters")}
+          title={gettext("Why public support matters")}
           body={
             gettext(
-              "Policymakers can be convinced without acting. A credible constituency changes what they can defend."
+              "Letters, meetings and public events can show elected representatives that people want action on AI risks."
             )
           }
           href={if(@locale == "fr", do: ~p"/fr/strategie", else: ~p"/en/strategy")}
-          source="PauseAI Canada"
+          source={gettext("PauseAI Canada")}
           cta={gettext("Read the summary")}
           bookmark="agency"
           locale={@locale}

@@ -80,6 +80,13 @@ defmodule PauseAiCaWeb.LibraryLive do
           {page_title(@locale)}
         </h1>
         <p class="mt-6 max-w-3xl text-xl leading-9 text-stone-700">{lede(@locale)}</p>
+        <.link
+          id="learn-self-assessment"
+          navigate={if(@locale == "fr", do: ~p"/fr#questions", else: ~p"/en#questions")}
+          class="mt-5 inline-flex font-semibold underline decoration-brand decoration-2 underline-offset-4"
+        >
+          {gettext("Where do I stand?")}
+        </.link>
       </section>
 
       <section id="voices" class="border-y border-stone-200 bg-white">
@@ -112,7 +119,7 @@ defmodule PauseAiCaWeb.LibraryLive do
                     href={quotation.url}
                     rel="noreferrer"
                     class="underline decoration-brand decoration-2 underline-offset-4"
-                  >{quotation.source}</a><span :if={quotation.said_on}>, {quotation.said_on}</span><span
+                  >{publisher_name(quotation.source)}</a><span :if={quotation.said_on}>, {quotation.said_on}</span><span
                     :if={quotation.language != @locale}
                     class="ml-2 rounded border border-stone-300 px-1.5 py-0.5 text-xs uppercase"
                   >{quotation.language}</span>
@@ -130,7 +137,7 @@ defmodule PauseAiCaWeb.LibraryLive do
                       rel="noreferrer"
                       class="text-stone-900 underline decoration-brand decoration-2 underline-offset-4"
                     >{Reference.label(reference, @locale)}</a>
-                    <span class="text-sm text-stone-500">· {reference.publisher}</span>
+                    <span class="text-sm text-stone-500">· {publisher_name(reference.publisher)}</span>
                   </li>
                 </ul>
               </div>
@@ -189,16 +196,16 @@ defmodule PauseAiCaWeb.LibraryLive do
             <li
               :for={resource <- Library.resources(stage)}
               id={"resource-#{resource.id}"}
-              class="flex flex-col rounded-2xl border border-stone-200 bg-white p-6 transition hover:shadow-md"
+              class="relative flex flex-col rounded-2xl border border-stone-200 bg-white p-6 transition hover:shadow-md"
             >
-              <h4 class="font-heading text-xl leading-snug text-stone-950">
+              <h4 class="pr-10 font-heading text-xl leading-snug text-stone-950">
                 {Resource.copy(resource, @locale).title}
               </h4>
               <p class="mt-3 leading-7 text-stone-600">
                 {Resource.copy(resource, @locale).summary}
               </p>
               <p class="mt-4 flex flex-wrap items-center gap-2 text-sm text-stone-500">
-                <span>{resource.publisher}</span>
+                <span>{publisher_name(resource.publisher)}</span>
                 <span :if={resource.author}>· {resource.author}</span>
                 <span
                   :if={resource.canadian}
@@ -221,113 +228,167 @@ defmodule PauseAiCaWeb.LibraryLive do
               >
                 {read_label(@locale)} <span aria-hidden="true">↗</span>
               </a>
-              <%= if @current_scope do %>
-                <.link
-                  href={~p"/bookmarks/#{resource.id}?locale=#{@locale}"}
-                  method="post"
-                  class="mt-4 inline-flex w-fit items-center gap-2 rounded-full border border-stone-300 px-4 py-2 text-sm font-semibold text-stone-700 hover:border-brand"
-                >
-                  <.icon name="hero-bookmark" class="size-4" />
-                  {if(resource.id in @current_scope.user.saved_resources,
+              <.link
+                href={
+                  if @current_scope,
+                    do: ~p"/bookmarks/#{resource.id}?locale=#{@locale}",
+                    else: ~p"/users/register?#{%{bookmark: resource.id, locale: @locale}}"
+                }
+                method={if @current_scope, do: "post", else: "get"}
+                aria-label={
+                  gettext("%{action}: %{title}",
+                    action:
+                      if(@current_scope && resource.id in @current_scope.user.saved_resources,
+                        do: gettext("Saved"),
+                        else: bookmark_label(@locale)
+                      ),
+                    title: Resource.copy(resource, @locale).title
+                  )
+                }
+                class="group absolute right-3 top-3 inline-flex size-11 items-center justify-center rounded-full text-stone-700 hover:bg-brand-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+              >
+                <.icon
+                  name={
+                    if @current_scope && resource.id in @current_scope.user.saved_resources,
+                      do: "hero-bookmark-solid",
+                      else: "hero-bookmark"
+                  }
+                  class="size-5"
+                />
+                <span class="pointer-events-none absolute right-0 top-full z-10 w-max max-w-56 rounded bg-stone-900 px-2 py-1 text-sm text-white opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100">
+                  {if @current_scope && resource.id in @current_scope.user.saved_resources,
                     do: gettext("Saved"),
-                    else: bookmark_label(@locale)
-                  )}
-                </.link>
-              <% else %>
-                <.link
-                  href={~p"/users/register?#{%{bookmark: resource.id, locale: @locale}}"}
-                  class="mt-4 inline-flex w-fit items-center gap-2 rounded-full border border-stone-300 px-4 py-2 text-sm font-semibold text-stone-700 hover:border-brand"
-                >
-                  <.icon name="hero-bookmark" class="size-4" />
-                  {bookmark_label(@locale)}
-                </.link>
-              <% end %>
+                    else: bookmark_label(@locale)}
+                </span>
+              </.link>
             </li>
           </ul>
         </div>
       </section>
 
       <section id="updates" class="border-t border-stone-200 bg-white">
-        <div class="mx-auto max-w-3xl px-5 py-14">
+        <div class="mx-auto max-w-5xl px-5 py-14">
           <h2 class="font-heading text-3xl uppercase tracking-wide text-stone-950">
             {updates_heading(@locale)}
           </h2>
-          <p class="mt-3 leading-7 text-stone-600">{updates_note(@locale)}</p>
+          <div class="mt-8 grid gap-10 md:grid-cols-2">
+            <section aria-labelledby="newsletter-heading">
+              <h3 id="newsletter-heading" class="font-heading text-2xl">{gettext("Newsletter")}</h3>
+              <p class="mt-3 leading-7 text-stone-600">{updates_note(@locale)}</p>
+              <.form
+                for={@subscribe_form}
+                id="subscribe-form"
+                phx-change="update-subscribe"
+                phx-submit="subscribe"
+                class="mt-6"
+              >
+                <.input
+                  field={@subscribe_form[:email]}
+                  type="email"
+                  label={email_label(@locale)}
+                  autocomplete="email"
+                />
+                <div class="grid gap-4 sm:grid-cols-2">
+                  <.input
+                    field={@subscribe_form[:postal_code]}
+                    type="text"
+                    label={postal_code_label(@locale)}
+                    autocomplete="postal-code"
+                  />
+                  <.input
+                    field={@subscribe_form[:city]}
+                    type="text"
+                    label={city_label(@locale)}
+                    autocomplete="address-level2"
+                  />
+                </div>
+                <label class="mt-2 flex items-start gap-3">
+                  <input type="hidden" name="subscribe[consent]" value="false" />
+                  <input
+                    type="checkbox"
+                    id="subscribe-consent"
+                    name="subscribe[consent]"
+                    value="true"
+                    checked={@subscribe_form[:consent].value == "true"}
+                    class="mt-1 size-4 shrink-0"
+                  />
+                  <span class="text-sm leading-6 text-stone-700">
+                    {consent_label(@locale)}
+                    <.link
+                      navigate={
+                        if(@locale == "fr", do: ~p"/fr/confidentialite", else: ~p"/en/privacy")
+                      }
+                      class="ml-1 underline decoration-brand decoration-2 underline-offset-4"
+                    >
+                      {confidentiality_policy_label(@locale)}
+                    </.link>
+                  </span>
+                </label>
 
-          <.form
-            for={@subscribe_form}
-            id="subscribe-form"
-            phx-change="update-subscribe"
-            phx-submit="subscribe"
-            class="mt-6"
-          >
-            <.input
-              field={@subscribe_form[:email]}
-              type="email"
-              label={email_label(@locale)}
-              autocomplete="email"
-            />
-            <div class="grid gap-4 sm:grid-cols-2">
-              <.input
-                field={@subscribe_form[:postal_code]}
-                type="text"
-                label={postal_code_label(@locale)}
-                autocomplete="postal-code"
-              />
-              <.input
-                field={@subscribe_form[:city]}
-                type="text"
-                label={city_label(@locale)}
-                autocomplete="address-level2"
-              />
-            </div>
-            <label class="mt-2 flex items-start gap-3">
-              <input type="hidden" name="subscribe[consent]" value="false" />
-              <input
-                type="checkbox"
-                id="subscribe-consent"
-                name="subscribe[consent]"
-                value="true"
-                checked={@subscribe_form[:consent].value == "true"}
-                class="mt-1 size-4 shrink-0"
-              />
-              <span class="text-sm leading-6 text-stone-700">
-                {consent_label(@locale)}
-                <.link
-                  navigate={if(@locale == "fr", do: ~p"/fr/confidentialite", else: ~p"/en/privacy")}
-                  class="ml-1 underline decoration-brand decoration-2 underline-offset-4"
+                <button
+                  type="submit"
+                  id="subscribe"
+                  phx-disable-with={subscribing_label(@locale)}
+                  class="mt-5 rounded-full bg-brand px-6 py-3 font-heading text-lg font-bold text-stone-950 transition hover:-translate-y-0.5 hover:bg-brand-strong"
                 >
-                  {confidentiality_policy_label(@locale)}
-                </.link>
-              </span>
-            </label>
+                  {subscribe_cta(@locale)}
+                </button>
+              </.form>
 
-            <button
-              type="submit"
-              id="subscribe"
-              phx-disable-with={subscribing_label(@locale)}
-              class="mt-5 rounded-full bg-brand px-6 py-3 font-heading text-lg font-bold text-stone-950 transition hover:-translate-y-0.5 hover:bg-brand-strong"
-            >
-              {subscribe_cta(@locale)}
-            </button>
-          </.form>
-
-          <p
-            :if={@subscribe_state == :subscribed}
-            id="subscribe-success"
-            role="status"
-            class="mt-5 font-semibold text-green-800"
-          >
-            {subscribed_message(@locale)}
-          </p>
-          <p
-            :if={match?({:error, _reason}, @subscribe_state)}
-            id="subscribe-error"
-            role="alert"
-            class="mt-5 font-semibold text-red-700"
-          >
-            {subscribe_error_message(@subscribe_state, @locale)}
-          </p>
+              <p
+                :if={@subscribe_state == :subscribed}
+                id="subscribe-success"
+                role="status"
+                class="mt-5 font-semibold text-green-800"
+              >
+                {subscribed_message(@locale)}
+              </p>
+              <p
+                :if={match?({:error, _reason}, @subscribe_state)}
+                id="subscribe-error"
+                role="alert"
+                class="mt-5 font-semibold text-red-700"
+              >
+                {subscribe_error_message(@subscribe_state, @locale)}
+              </p>
+            </section>
+            <section aria-labelledby="join-account-heading">
+              <h3 id="join-account-heading" class="font-heading text-2xl">
+                {gettext("Your account")}
+              </h3>
+              <p class="mt-3 leading-7 text-stone-600">
+                {gettext("Keep a record of your actions and save resources to return to later.")}
+              </p>
+              <.link
+                :if={!@current_scope}
+                id="join-create-account"
+                navigate={~p"/users/register?#{%{locale: @locale}}"}
+                class="mt-5 inline-flex rounded-full bg-brand px-6 py-3 font-heading text-lg font-bold text-stone-950 hover:bg-brand-strong"
+              >
+                {gettext("Create an account")}
+              </.link>
+              <.link
+                :if={@current_scope}
+                id="join-my-account"
+                navigate={if(@locale == "fr", do: ~p"/fr/tableau-de-bord", else: ~p"/en/dashboard")}
+                class="mt-5 inline-flex rounded-full bg-brand px-6 py-3 font-heading text-lg font-bold text-stone-950 hover:bg-brand-strong"
+              >
+                {gettext("My dashboard")}
+              </.link>
+              <p class="mt-4 text-sm text-stone-600">
+                {gettext("Creating an account does not subscribe you to the newsletter.")}
+              </p>
+              <p class="mt-8 leading-7 text-stone-600">
+                {gettext("Meet other people at our gatherings and find ways to act together.")}
+              </p>
+              <a
+                href="https://luma.com/calendar/cal-tsYv79s4aTQC16Q"
+                class="mt-3 inline-block font-semibold underline decoration-brand decoration-2 underline-offset-4"
+                target="_blank"
+                rel="noopener noreferrer"
+              >{gettext("Upcoming events")}</a>
+            </section>
+          </div>
         </div>
       </section>
     </Layouts.app>
@@ -378,12 +439,12 @@ defmodule PauseAiCaWeb.LibraryLive do
 
   defp read_label(_locale), do: gettext("Read it")
 
-  defp updates_heading(_locale), do: gettext("Get updates")
+  defp updates_heading(_locale), do: gettext("Join Us")
 
   defp updates_note(_locale),
     do:
       gettext(
-        "A few emails a month from PauseAI Canada: what is moving federally, mobilisations, and the moments when your voice counts most. One-click unsubscribe."
+        "News about AI policy in Canada, meetings and ways to take part. Unsubscribe at any time."
       )
 
   defp email_label(_locale), do: gettext("Your email")

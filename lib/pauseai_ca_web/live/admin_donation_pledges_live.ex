@@ -71,6 +71,11 @@ defmodule PauseAiCaWeb.AdminDonationPledgesLive do
               do: "#{Decimal.to_string(pledge.amount_cad, :normal)} CAD",
               else: gettext("Not specified")}
           </p>
+          <p>
+            {gettext("Contribution frequency")}: {if pledge.frequency == "monthly",
+              do: gettext("Monthly"),
+              else: gettext("One-time")}
+          </p>
           <p>{gettext("Language")}: {pledge.locale}</p>
           <p class="whitespace-pre-wrap">{pledge.notes}</p>
           <p>

@@ -70,14 +70,23 @@ defmodule PauseAiCaWeb.Layouts do
               {PauseAiCa.Environment.label()}
             </span>
           </span>
-          <span class="hidden font-semibold tracking-tight text-stone-900 sm:inline">PauseAI Canada</span>
+          <span class="hidden font-semibold tracking-tight text-stone-900 sm:inline">{gettext(
+            "PauseAI Canada"
+          )}</span>
         </a>
-        <.link
-          class="hidden text-base font-medium text-stone-700 hover:text-stone-950 md:inline"
-          navigate={if(@locale == "fr", do: ~p"/fr/comprendre", else: ~p"/en/learn")}
-        >
-          {gettext("Learn")}
-        </.link>
+        <details id="learn-menu" class="act-menu relative hidden md:block">
+          <summary class="cursor-pointer list-none text-base font-medium text-stone-700 hover:text-stone-950">
+            {gettext("Learn")} <span aria-hidden="true" class="text-xs">▾</span>
+          </summary>
+          <div class="absolute left-0 z-50 mt-2 w-64 overflow-hidden rounded-xl border border-stone-200 bg-white shadow-lg">
+            <.link
+              :for={{id, label, href} <- learn_items(@locale)}
+              id={"learn-#{id}"}
+              navigate={href}
+              class="block px-4 py-3 font-semibold hover:bg-brand-wash"
+            >{label}</.link>
+          </div>
+        </details>
         <.link
           class="hidden text-base font-medium text-brand-ink hover:text-stone-950 md:inline"
           navigate={if(@locale == "fr", do: ~p"/fr/signal-d-alarme", else: ~p"/en/warning-shot")}
@@ -98,11 +107,18 @@ defmodule PauseAiCaWeb.Layouts do
             <.icon name="hero-bars-3" class="size-6 sm:hidden" />
             <span aria-hidden="true" class="hidden text-xs sm:inline">▾</span>
           </summary>
-          <div class="absolute right-0 z-50 mt-2 w-64 overflow-hidden rounded-xl border border-stone-200 bg-white shadow-lg">
-            <.link
-              navigate={if(@locale == "fr", do: ~p"/fr/comprendre", else: ~p"/en/learn")}
-              class="block px-4 py-3 font-semibold hover:bg-brand-wash md:hidden"
-            >{gettext("Learn")}</.link>
+          <div class="fixed left-3 right-3 top-16 z-50 max-h-[75vh] overflow-y-auto rounded-xl border border-stone-200 bg-white shadow-lg md:absolute md:left-auto md:right-0 md:top-auto md:mt-2 md:w-64">
+            <div class="border-b border-stone-100 md:hidden">
+              <p class="px-4 pt-3 text-xs font-semibold uppercase text-stone-500">
+                {gettext("Learn")}
+              </p>
+              <.link
+                :for={{id, label, href} <- learn_items(@locale)}
+                id={"mobile-learn-#{id}"}
+                navigate={href}
+                class="block px-4 py-3 font-semibold hover:bg-brand-wash"
+              >{label}</.link>
+            </div>
             <.link
               navigate={if(@locale == "fr", do: ~p"/fr/signal-d-alarme", else: ~p"/en/warning-shot")}
               class="block px-4 py-3 font-semibold hover:bg-brand-wash md:hidden"
@@ -174,7 +190,7 @@ defmodule PauseAiCaWeb.Layouts do
                 {gettext("Email your MP")}
               </span>
               <span class="block text-xs leading-5 text-stone-500">
-                {gettext("Send a personal letter in a few minutes")}
+                {gettext("Send a personal letter")}
               </span>
             </.link>
             <.link
@@ -367,7 +383,7 @@ defmodule PauseAiCaWeb.Layouts do
 
     <footer class="border-t border-stone-200">
       <div class="relative mx-auto flex max-w-6xl flex-col gap-4 px-5 py-10 text-sm text-stone-500 sm:flex-row sm:items-center">
-        <p class="mr-auto">PauseAI Canada</p>
+        <p class="mr-auto">{gettext("PauseAI Canada")}</p>
         <a
           class="self-center hover:text-stone-900 sm:absolute sm:left-1/2 sm:-translate-x-1/2"
           href="https://luma.com/pauseaimtl"
@@ -384,6 +400,17 @@ defmodule PauseAiCaWeb.Layouts do
         >{gettext("Privacy")}</.link>
         <a class="hover:text-stone-900" href="https://github.com/ogourment/pauseai.ca-website">Source</a>
       </div>
+      <p class="mx-auto max-w-6xl px-5 pb-6 text-center text-sm text-stone-500">
+        <.link
+          id="hosting-location"
+          href={
+            if(@locale == "fr", do: ~p"/fr/confidentialite#hosting", else: ~p"/en/privacy#hosting")
+          }
+          class="underline underline-offset-4"
+        >
+          {gettext("Website and application database hosted in Canada")}
+        </.link>
+      </p>
     </footer>
 
     <.flash_group flash={@flash} />
@@ -509,5 +536,14 @@ defmodule PauseAiCaWeb.Layouts do
       </button>
     </div>
     """
+  end
+
+  defp learn_items(locale) do
+    [
+      {"test", gettext("Take the test"),
+       if(locale == "fr", do: ~p"/fr#questions", else: ~p"/en#questions")},
+      {"risks", gettext("Learn about the risks"),
+       if(locale == "fr", do: ~p"/fr/comprendre", else: ~p"/en/learn")}
+    ]
   end
 end

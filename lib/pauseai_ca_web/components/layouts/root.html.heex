@@ -8,7 +8,11 @@
     <meta name="csrf-token" content={get_csrf_token()} />
     <%!-- Non-production deployments are reachable but must never be indexed. --%>
     <meta :if={PauseAiCa.Environment.badged?()} name="robots" content="noindex, nofollow" />
-    <.live_title default="PauseAI Canada" suffix=" · PauseAI Canada" phx-no-format>{assigns[:page_title]}</.live_title>
+    <.live_title
+      default={gettext("PauseAI Canada")}
+      suffix={" · " <> gettext("PauseAI Canada")}
+      phx-no-format
+    >{assigns[:page_title]}</.live_title>
     <link rel="icon" href={PauseAiCa.Environment.favicon_path()} type="image/svg+xml" />
     <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>

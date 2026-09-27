@@ -54,7 +54,7 @@ defmodule PauseAiCaWeb.DonateLive do
       socket.assigns.form.source
       |> Ecto.Changeset.apply_changes()
       |> Map.from_struct()
-      |> Map.take([:name, :email, :amount_cad, :notes, :contact_consent, :locale])
+      |> Map.take([:name, :email, :amount_cad, :notes, :contact_consent, :locale, :frequency])
       |> Map.put(:amount_cad, amount)
 
     {:noreply,
@@ -92,14 +92,6 @@ defmodule PauseAiCaWeb.DonateLive do
                 "On September 26, around 40 people gathered in Montréal to call for a coordinated pause in advanced AI development. Help us carry that call into neighbourhoods, community meetings and policy discussions."
               )}
             </p>
-            <.link
-              navigate={
-                if @locale == "fr",
-                  do: ~p"/fr/manifestation-montreal-2026-09-26",
-                  else: ~p"/en/montreal-protest-2026-09-26"
-              }
-              class="mt-5 inline-block font-semibold underline decoration-brand decoration-2 underline-offset-4"
-            >{gettext("See the Montréal protest")}</.link>
           </div>
           <figure>
             <img
@@ -125,7 +117,7 @@ defmodule PauseAiCaWeb.DonateLive do
             href="#pledge-form"
             class="mt-4 inline-block font-semibold underline decoration-brand decoration-2 underline-offset-4"
           >
-            {gettext("Go to the pledge form")}
+            {gettext("Go to form")}
           </a>
         </div>
         <h2 class="mt-10 font-heading text-3xl">{gettext("What your support makes possible")}</h2>
@@ -147,11 +139,13 @@ defmodule PauseAiCaWeb.DonateLive do
             <h3 class="font-heading text-2xl">{gettext("Bring people together")}</h3>
             <p class="mt-2 leading-7 text-stone-700">
               {gettext(
-                "Hold welcoming local meetings where residents can plan actions and build the Montréal community. We can report how many gatherings took place."
+                "Bring people together to learn, plan actions and build local communities across Canada, through meetings and practical workshops."
               )}
             </p>
-            <ul class="mt-3 list-disc pl-5 text-sm leading-6 text-stone-600">
+            <ul class="mt-3 list-disc space-y-1 pl-5 text-sm leading-6 text-stone-600">
               <li>{gettext("Rent meeting space and support accessible gatherings")}</li>
+              <li>{gettext("Design and facilitate workshops")}</li>
+              <li>{gettext("Cover travel costs to reach more communities across Canada")}</li>
             </ul>
           </section>
           <section class="rounded-xl border border-stone-200 bg-white p-6">
@@ -174,6 +168,11 @@ defmodule PauseAiCaWeb.DonateLive do
             </p>
             <ul class="mt-3 list-disc pl-5 text-sm leading-6 text-stone-600">
               <li>{gettext("Develop and operate the website and connect the tools it needs")}</li>
+              <li>
+                {gettext(
+                  "Pay for video conferencing and software for communication, design and organizing"
+                )}
+              </li>
             </ul>
           </section>
         </div>
@@ -181,7 +180,7 @@ defmodule PauseAiCaWeb.DonateLive do
           <h2 class="font-heading text-3xl">{gettext("Choose an amount that works for you")}</h2>
           <p class="mt-3 max-w-2xl leading-7 text-stone-700">
             {gettext(
-              "These are suggested pledge sizes, not prices for a specific activity. You can enter any amount in the form. We will share actual costs as plans are confirmed."
+              "These are suggested pledge sizes, not prices for a specific activity. You can enter any amount in the form."
             )}
           </p>
           <div class="mt-5 grid gap-3 sm:grid-cols-2">
@@ -257,12 +256,28 @@ defmodule PauseAiCaWeb.DonateLive do
             required
           />
           <.input
+            field={@form[:frequency]}
+            label={gettext("Contribution frequency")}
+            type="select"
+            options={[{gettext("One-time"), "one_time"}, {gettext("Monthly"), "monthly"}]}
+            required
+          />
+          <.input
             field={@form[:amount_cad]}
             label={gettext("Amount you intend to give (CAD, optional)")}
             type="number"
             min="0.01"
             step="0.01"
           />
+          <p
+            :if={@form[:frequency].value == "monthly"}
+            id="monthly-pledge-help"
+            class="text-sm text-stone-600"
+          >
+            {gettext(
+              "For a monthly pledge, enter the amount you intend to give each month. No recurring payment is set up here."
+            )}
+          </p>
           <.input
             field={@form[:notes]}
             label={gettext("Notes (optional)")}
@@ -285,7 +300,7 @@ defmodule PauseAiCaWeb.DonateLive do
               class="ml-1 underline"
             >{gettext("Privacy")}</a>
           </p>
-          <.button phx-disable-with={gettext("Saving…")}>{gettext("Save my pledge")}</.button>
+          <.button phx-disable-with={gettext("Saving…")}>{gettext("Save")}</.button>
         </.form>
         <p class="mt-10 text-sm text-stone-600">
           {gettext("PauseAI Canada")} · {gettext("Corporation number")}: 1819452-1 · {gettext(

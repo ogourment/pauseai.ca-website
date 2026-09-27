@@ -190,7 +190,7 @@ defmodule PauseAiCa.Campaigns.Letter do
     2. Soutenir des exigences contraignantes d'évaluations de sécurité indépendantes avant déploiement des systèmes d'IA de pointe, ainsi qu'une déclaration obligatoire lorsqu'un système agit hors de son environnement autorisé.
     3. Soutenir une pause contraignante du développement de l'IA avancée à usage général, fondée sur une coordination internationale ayant force obligatoire, jusqu'à ce que la sécurité et le contrôle puissent être démontrés.
 
-    Si vous ou votre personnel souhaitez plus d'informations, PauseAI Canada (pauseai.ca) et PauseAI Global (pauseai.info) se feraient un plaisir de vous informer.
+    Si vous ou votre personnel souhaitez plus d'informations, PauseIA Canada (pauseai.ca) et PauseIA Global (pauseai.info) se feraient un plaisir de vous informer.
 
     Merci pour votre temps.
 

@@ -475,6 +475,11 @@ defmodule PauseAiCaWeb.CoreComponents do
     )
   end
 
+  @doc "Localizes the movement name in publisher and source labels."
+  def publisher_name("PauseAI"), do: gettext("PauseAI")
+  def publisher_name("Pause IA"), do: gettext("PauseAI")
+  def publisher_name(name), do: name
+
   @doc """
   Translates an error message using gettext.
   """

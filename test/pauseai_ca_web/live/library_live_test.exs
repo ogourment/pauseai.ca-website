@@ -187,7 +187,7 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
       assert has_element?(
                view,
                "#act-join[href='/fr/comprendre#updates']",
-               "Rejoindre PauseAI Canada"
+               "Rejoindre PauseIA Canada"
              )
 
       assert has_element?(

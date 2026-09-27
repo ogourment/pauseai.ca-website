@@ -79,6 +79,13 @@
           </div>
         </li>
       </ol>
+      <.link
+        id="strategy-join"
+        navigate={
+          if(@locale == "fr", do: ~p"/fr/comprendre#updates", else: ~p"/en/learn#updates")
+        }
+        class="mt-6 inline-flex rounded-full bg-brand px-5 py-3 font-semibold text-stone-950 hover:bg-brand-strong"
+      >{gettext("Join Us")}</.link>
     </section>
 
     <p class="mt-10 text-sm leading-6 text-stone-500">

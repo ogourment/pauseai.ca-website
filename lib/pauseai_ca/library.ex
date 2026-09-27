@@ -328,7 +328,7 @@ defmodule PauseAiCa.Library do
           "fr" => %{
             title: "Pourquoi une pause pourrait ne pas fonctionner",
             summary:
-              "La Chine ne s'arrêtera pas. La technologie est déjà sortie. La réglementation ne punit que les prudents. Les réponses de PauseAI aux objections les plus fréquentes, y compris celles qu'elle concède."
+              "La Chine ne s'arrêtera pas. La technologie est déjà sortie. La réglementation ne punit que les prudents. Les réponses de PauseIA aux objections les plus fréquentes, y compris celles qu'elle concède."
           }
         }
       },
@@ -413,7 +413,7 @@ defmodule PauseAiCa.Library do
           "fr" => %{
             title: "Ce qui fait vraiment bouger un gouvernement",
             summary:
-              "Les élu·es comptent les lettres. La plupart des dossiers n'en reçoivent presque aucune. La liste d'actions de PauseAI, du courriel de cinq minutes au groupe local."
+              "Les élu·es comptent les lettres. La plupart des dossiers n'en reçoivent presque aucune. La liste d'actions de PauseIA, du courriel de cinq minutes au groupe local."
           }
         }
       },

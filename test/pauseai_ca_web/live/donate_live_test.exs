@@ -18,6 +18,7 @@ defmodule PauseAiCaWeb.DonateLiveTest do
       name: "Camille Exemple",
       email: "camille@example.org",
       amount_cad: "50.25",
+      frequency: "monthly",
       notes: "Français",
       contact_consent: "false"
     }
@@ -29,6 +30,7 @@ defmodule PauseAiCaWeb.DonateLiveTest do
     assert has_element?(view, "#pledge-saved", "Aucun paiement")
     pledge = Repo.one!(Pledge)
     assert pledge.locale == "fr"
+    assert pledge.frequency == "monthly"
     assert pledge.consented_at
     assert Decimal.equal?(pledge.amount_cad, Decimal.new("50.25"))
     assert Repo.aggregate(User, :count) == 0
@@ -43,6 +45,7 @@ defmodule PauseAiCaWeb.DonateLiveTest do
     assert has_element?(retry, "#pledge-saved")
     assert Repo.aggregate(Pledge, :count) == 1
     assert Repo.one!(Pledge).name == "Camille Exemple"
+    assert Repo.one!(Pledge).frequency == "monthly"
   end
 
   test "pledges are visible only to fresh superadmin authority", %{conn: conn} do
@@ -58,6 +61,7 @@ defmodule PauseAiCaWeb.DonateLiveTest do
     scope = Scope.for_user(admin)
     {:ok, view, _} = live(log_in_user(conn, admin), "/admin/donation-pledges")
     assert has_element?(view, "#donation-pledges", "pledge@example.org")
+    assert has_element?(view, "#donation-pledges", "One-time")
     manager = user_fixture()
     {:ok, group} = Volunteers.create_group(scope, %{"name" => "Montréal"})
     {:ok, _} = Volunteers.assign_manager(scope, group.id, manager.email)
@@ -83,11 +87,14 @@ defmodule PauseAiCaWeb.DonateLiveTest do
     assert has_element?(view, "#pledge-suggestions", "not prices for a specific activity")
 
     view
-    |> form("#pledge-form", pledge: %{name: "Alex Example", email: "alex@example.org"})
+    |> form("#pledge-form",
+      pledge: %{name: "Alex Example", email: "alex@example.org", frequency: "monthly"}
+    )
     |> render_change()
 
     view |> element("#pledge-suggestions button[phx-value-amount='100']") |> render_click()
     assert has_element?(view, "#pledge_amount_cad[value='100']")
+    assert has_element?(view, "#pledge_frequency option[value='monthly'][selected]")
     assert has_element?(view, "#pledge_name[value='Alex Example']")
     assert has_element?(view, "#pledge_email[value='alex@example.org']")
 
@@ -102,5 +109,20 @@ defmodule PauseAiCaWeb.DonateLiveTest do
 
     assert has_element?(view, "#pledge-saved")
     assert Decimal.equal?(Repo.one!(Pledge).amount_cad, Decimal.new("100"))
+    assert Repo.one!(Pledge).frequency == "monthly"
+  end
+
+  test "invalid pledge frequencies are rejected without recording a promise" do
+    attrs = %{
+      "name" => "Example",
+      "email" => "invalid-frequency@example.org",
+      "locale" => "en",
+      "contact_consent" => true,
+      "frequency" => "weekly"
+    }
+
+    assert {:error, changeset} = Donations.pledge(attrs)
+    assert Keyword.has_key?(changeset.errors, :frequency)
+    assert Repo.aggregate(Pledge, :count) == 0
   end
 end

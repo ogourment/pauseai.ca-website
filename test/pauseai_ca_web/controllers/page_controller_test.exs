@@ -61,7 +61,7 @@ defmodule PauseAiCaWeb.PageControllerTest do
     assert fr_html =~ "Politique de confidentialité"
 
     home = html_response(get(conn, ~p"/fr"), 200)
-    assert home =~ "À propos de PauseAI Canada"
+    assert home =~ "À propos de PauseIA Canada"
     assert home =~ "Événements à Montréal"
     assert home =~ ~s(href="https://luma.com/pauseaimtl")
     assert home =~ ~s(href="/fr/confidentialite")

@@ -5,7 +5,7 @@
   translated_path={if(@locale == "fr", do: ~p"/en/about", else: ~p"/fr/a-propos")}
 >
   <article id="about" class="mx-auto max-w-4xl px-5 py-16 sm:py-24">
-    <p class="eyebrow">PauseAI Canada</p>
+    <p class="eyebrow">{gettext("PauseAI Canada")}</p>
     <h1 class="mt-3 font-heading text-5xl text-stone-950">
       {gettext("Who we are")}
     </h1>
@@ -51,7 +51,7 @@
           <a
             class="font-semibold underline decoration-brand underline-offset-4"
             href="https://pauseai.info/"
-          >PauseAI Global</a>
+          >{gettext("PauseAI Global")}</a>
         </p>
       </section>
       <section>
@@ -64,7 +64,7 @@
           navigate={
             if(@locale == "fr", do: ~p"/fr/comprendre#updates", else: ~p"/en/learn#updates")
           }
-        >{gettext("Join PauseAI Canada")}</.link>
+        >{gettext("Join Us")}</.link>
       </section>
     </div>
   </article>

@@ -125,7 +125,7 @@ defmodule PauseAiCaWeb.CampaignPrompt do
   defp body(_locale),
     do:
       gettext(
-        "This is no longer hypothetical: it has a date, a victim and an incident report. Here is what happened, and the two things that matter today."
+        "This is no longer hypothetical: AIs are now regularly escaping their labs and causing real harm. Here is what happened and what you can do today."
       )
 
   defp accept(_locale), do: gettext("See what happened")

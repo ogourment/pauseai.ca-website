@@ -6,6 +6,7 @@ defmodule PauseAiCa.Donations.Pledge do
     field :name, :string, redact: true
     field :email, :string, redact: true
     field :amount_cad, :decimal
+    field :frequency, :string, default: "one_time"
     field :notes, :string, redact: true, default: ""
     field :locale, :string
     field :consented_at, :utc_datetime
@@ -15,10 +16,10 @@ defmodule PauseAiCa.Donations.Pledge do
 
   def changeset(pledge, attrs) do
     pledge
-    |> cast(attrs, [:name, :email, :amount_cad, :notes, :contact_consent, :locale])
+    |> cast(attrs, [:name, :email, :amount_cad, :notes, :contact_consent, :locale, :frequency])
     |> update_change(:name, &String.trim/1)
     |> update_change(:email, &String.downcase(String.trim(&1)))
-    |> validate_required([:name, :email, :locale])
+    |> validate_required([:name, :email, :locale, :frequency])
     |> validate_length(:name, max: 160)
     |> validate_length(:email, max: 160)
     |> validate_format(:email, ~r/^[^@,;\s]+@[^@,;\s]+\.[^@,;\s]+$/)
@@ -30,6 +31,7 @@ defmodule PauseAiCa.Donations.Pledge do
         else: [{field, "must have at most two decimal places"}]
     end)
     |> validate_inclusion(:locale, ~w(en fr))
+    |> validate_inclusion(:frequency, ~w(one_time monthly))
     |> validate_acceptance(:contact_consent)
     |> unique_constraint(:email)
   end

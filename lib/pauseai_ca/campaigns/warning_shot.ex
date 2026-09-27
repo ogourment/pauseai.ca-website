@@ -95,7 +95,7 @@ defmodule PauseAiCa.Campaigns.WarningShot do
 
   defp french do
     %{
-      badge: "Signal d'alarme · Deuxième alerte de PauseAI",
+      badge: "Signal d'alarme · Deuxième alerte de PauseIA",
       mainstream_note:
         "La sécurité de l'IA dépasse maintenant les débats entre spécialistes. De nouveaux reportages et les avertissements publics de chercheurs font connaître les risques de la course à l'IA à un public plus large. Cet incident est un signal d'alarme concret — pas une preuve qu'une catastrophe est inévitable. Demandez au gouvernement canadien de soutenir une pause contraignante du développement de l'IA avancée à usage général.",
       title: "Une IA s'est échappée de son laboratoire et a piraté une vraie entreprise",
@@ -109,7 +109,7 @@ defmodule PauseAiCa.Campaigns.WarningShot do
       why_bullets: [
         "En avril 2026, Claude Mythos démontrait la capacité: une IA capable de trouver et d'exploiter des failles inconnues dans les logiciels qui font fonctionner les banques, les hôpitaux et les réseaux électriques.",
         "Ceci démontre la propension: une IA qui déploie ces capacités de sa propre initiative, sans qu'on le lui demande, contre une vraie entreprise.",
-        "C'est le scénario de perte de contrôle que PauseAI existe pour prévenir — désormais avec une date, une victime et un rapport d'incident.",
+        "C'est le scénario de perte de contrôle que PauseIA existe pour prévenir — désormais avec une date, une victime et un rapport d'incident.",
         "Ce n'est pas un cas isolé. Anthropic a depuis révélé que des modèles Claude avaient eux aussi atteint des systèmes réels lors d'évaluations, et deux des trois organisations concernées ne l'avaient pas remarqué.",
         "Le Canada doit soutenir une pause contraignante et des évaluations de sécurité indépendantes — pas laisser les entreprises concurrentes décider du rythme de la course à l'IA."
       ],
@@ -117,10 +117,10 @@ defmodule PauseAiCa.Campaigns.WarningShot do
       act_letter: "Écrivez à votre député·e",
       act_letter_note:
         "Environ une minute. Entrez votre code postal, nous trouvons votre député·e et préparons une lettre que vous pouvez modifier avant l'envoi.",
-      act_join: "Rejoignez PauseAI Canada",
+      act_join: "Rejoignez PauseIA Canada",
       act_join_note:
-        "Le formulaire d'adhésion mondial de PauseAI. Indiquez le Canada, et un·e organisateur·rice canadien·ne prend le relais.",
-      act_read: "Lire l'analyse complète de PauseAI",
+        "Le formulaire d'adhésion mondial de PauseIA. Indiquez le Canada, et un·e organisateur·rice canadien·ne prend le relais.",
+      act_read: "Lire l'analyse complète de PauseIA",
       updates_heading: "Derniers développements",
       updates_note: "Mis à jour le %{date}.",
       source_label: "Source",
@@ -143,9 +143,9 @@ defmodule PauseAiCa.Campaigns.WarningShot do
               "In its September 10 response to Jacob Coxon, PauseAI invites researchers and the public to build a constituency for a pause. This is the movement's response, not an independent technical incident report."
           },
           "fr" => %{
-            title: "PauseAI relie l'avertissement à l'action collective",
+            title: "PauseIA relie l'avertissement à l'action collective",
             summary:
-              "Dans sa réponse du 10 septembre à Jacob Coxon, PauseAI invite les chercheurs et le public à construire une mobilisation pour une pause. Il s'agit de la réponse du mouvement, pas d'un rapport technique indépendant sur un incident."
+              "Dans sa réponse du 10 septembre à Jacob Coxon, PauseIA invite les chercheurs et le public à construire une mobilisation pour une pause. Il s'agit de la réponse du mouvement, pas d'un rapport technique indépendant sur un incident."
           }
         }
       },
@@ -297,9 +297,9 @@ defmodule PauseAiCa.Campaigns.WarningShot do
               "Mythos showed the capability; this shows the propensity. PauseAI chapters worldwide begin contacting elected officials and the press."
           },
           "fr" => %{
-            title: "PauseAI lance l'alerte pour la deuxième fois",
+            title: "PauseIA lance l'alerte pour la deuxième fois",
             summary:
-              "Mythos démontrait la capacité; ceci démontre la propension. Les sections de PauseAI dans le monde commencent à contacter les élu·es et la presse."
+              "Mythos démontrait la capacité; ceci démontre la propension. Les sections de PauseIA dans le monde commencent à contacter les élu·es et la presse."
           }
         }
       },

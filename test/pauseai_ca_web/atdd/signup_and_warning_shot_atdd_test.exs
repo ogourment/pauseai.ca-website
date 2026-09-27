@@ -798,32 +798,41 @@ if System.get_env("ATDD") == "true" do
 
       for {locale, donate, name, email_label, amount, notes, consent, save, acknowledgement} <- [
             {"en", "Donate", "Name", "Email", "Amount you intend to give (CAD, optional)",
-             "Notes (optional)", "You may contact me about this pledge.", "Save my pledge",
+             "Notes (optional)", "You may contact me about this pledge.", "Save",
              "No payment has been taken"},
             {"fr", "Faire un don", "Nom", "Courriel",
              "Montant que vous souhaitez donner (CAD, facultatif)", "Commentaires (facultatif)",
-             "Vous pouvez me contacter au sujet de cette promesse de don.",
-             "Enregistrer ma promesse de don", "Aucun paiement"}
+             "Vous pouvez me contacter au sujet de cette promesse de don.", "Enregistrer",
+             "Aucun paiement"}
           ] do
         email = "pledge-#{locale}@example.org"
+
+        frequency_label =
+          if locale == "fr", do: "Fréquence de la contribution", else: "Contribution frequency"
+
+        monthly_label = if locale == "fr", do: "Mensuelle", else: "Monthly"
+        one_time_label = if locale == "fr", do: "Ponctuelle", else: "One-time"
 
         b =
           context.conn
           |> visit("/#{locale}")
           |> capture(id, "Open #{locale} learning page", "Donate is available in the header")
           |> click_link(donate)
-          |> assert_has("#donate-page ul li", count: 6)
+          |> assert_has("#donate-page ul li", count: 9)
           |> assert_has("#donate-page", text: "1819452-1")
           |> assert_has("#donate-page", text: "791107246")
           |> capture(
             id,
             "Open #{locale} Donate",
-            "Bank account pending; six funding uses and a short contact form"
+            "Bank account pending; nine funding uses and a short contact form"
           )
+          |> assert_has("#pledge_frequency", selected: one_time_label)
+          |> select(frequency_label, option: monthly_label, exact: false)
           |> fill_in(name, with: "Camille Example")
           |> fill_in(email_label, with: "invalid@example")
           |> assert_has("#pledge_email.input-error")
           |> assert_has("#pledge_name[value='Camille Example']")
+          |> assert_has("#pledge_frequency", selected: monthly_label)
           |> capture(id, "Enter an invalid email", "Inline error preserves the entered name")
           |> fill_in(email_label, with: email)
           |> fill_in(amount, with: "50.25")
@@ -832,7 +841,7 @@ if System.get_env("ATDD") == "true" do
           |> capture(
             id,
             "Enter contact details and permission",
-            "Optional amount and notes ready for submission"
+            "Monthly amount and notes ready for submission"
           )
           |> click_button(save)
           |> assert_has("#pledge-saved", text: acknowledgement)
@@ -844,6 +853,7 @@ if System.get_env("ATDD") == "true" do
 
         pledge = Repo.get_by!(PauseAiCa.Donations.Pledge, email: email)
         assert pledge.locale == locale and pledge.consented_at != nil
+        assert pledge.frequency == "monthly"
         assert Decimal.equal?(pledge.amount_cad, Decimal.new("50.25"))
         assert Repo.aggregate(User, :count) == 0
         refute_receive {:email, _}
@@ -864,6 +874,7 @@ if System.get_env("ATDD") == "true" do
           )
 
         assert Repo.get_by!(PauseAiCa.Donations.Pledge, email: email).name == "Camille Example"
+        assert Repo.get_by!(PauseAiCa.Donations.Pledge, email: email).frequency == "monthly"
         assert_no_overflow(b)
       end
 
@@ -881,10 +892,11 @@ if System.get_env("ATDD") == "true" do
       |> click_link("Donate")
       |> fill_in("Name", with: "Camille Example")
       |> fill_in("Email", with: "followup@example.org")
+      |> select("Contribution frequency", option: "Monthly", exact: false)
       |> fill_in("Amount you intend to give (CAD, optional)", with: "125")
       |> fill_in("Notes (optional)", with: "For printing")
       |> check("You may contact me about this pledge.")
-      |> click_button("Save my pledge")
+      |> click_button("Save")
       |> assert_has("#pledge-saved")
       |> capture(
         id,
@@ -922,13 +934,17 @@ if System.get_env("ATDD") == "true" do
         |> click_link("Donation pledges")
         |> assert_has("#donation-pledges", text: "followup@example.org")
         |> assert_has("#donation-pledges", text: "125")
+        |> assert_has("#donation-pledges", text: "Monthly")
         |> assert_has("#donation-pledges", text: "For printing")
         |> assert_has("#donation-pledges", text: "Contact permission recorded")
         |> capture(
           id,
           "Open the pledge list",
-          "Contact, amount, notes and recorded time belong to the submitted pledge"
+          "Contact, monthly amount, notes and recorded time belong to the submitted pledge"
         )
+
+      assert Repo.get_by!(PauseAiCa.Donations.Pledge, email: "followup@example.org").frequency ==
+               "monthly"
 
       assert_no_overflow(b)
 

@@ -908,7 +908,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
                 </h3>
                 <p class="mt-2 leading-7 text-stone-700">{Update.copy(update, @locale).summary}</p>
                 <p class="mt-2 text-sm text-stone-500">
-                  {@copy.source_label}: {update.publisher}<span
+                  {@copy.source_label}: {publisher_name(update.publisher)}<span
                     :if={Update.foreign_language?(update, @locale)}
                     class="ml-2 rounded border border-stone-300 px-1.5 py-0.5 text-xs uppercase"
                   >{update.language}</span>

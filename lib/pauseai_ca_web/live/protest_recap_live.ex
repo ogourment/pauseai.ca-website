@@ -40,9 +40,18 @@ defmodule PauseAiCaWeb.ProtestRecapLive do
           </h1>
           <p id="protest-attendance" class="mt-7 max-w-3xl text-xl leading-9 text-stone-700">
             {gettext(
-              "Around 40 people came together at Phillips Square on September 26 to call for a global, coordinated pause in AI development, according to PauseAI Canada's count."
+              "Around 40 people came together at Phillips Square in Montréal on September 26 to call for a global, coordinated pause in advanced AI development."
             )}
           </p>
+          <.link
+            id="protest-press-release"
+            navigate={
+              if @locale == "fr",
+                do: ~p"/fr/manifestation-montreal-2026-09-26/communique",
+                else: ~p"/en/montreal-protest-2026-09-26/press-release"
+            }
+            class="mt-5 inline-block font-semibold underline decoration-brand decoration-2 underline-offset-4"
+          >{gettext("Read PauseAI Canada's press release")}</.link>
           <figure class="mt-10">
             <img
               id="protest-photo-3"
@@ -57,6 +66,11 @@ defmodule PauseAiCaWeb.ProtestRecapLive do
               {gettext("At Phillips Square, Montréal. Photo: Clara Lacasse.")}
             </figcaption>
           </figure>
+          <p id="protest-event-summary" class="mt-8 leading-8 text-stone-700">
+            {gettext(
+              "A protest organized by PauseAI Montr\u00e9al brought together around 40 people to draw attention to the risks of uncontrolled and uncontrollable AI. Scheduled from 1 to 2 p.m., the protest remained peaceful throughout, with several people joining during the event. Others engaged in many conversations with the organizers, and around a hundred educational brochures were distributed."
+            )}
+          </p>
           <div class="mt-10 border-l-4 border-brand bg-brand-wash p-7">
             <h2 class="font-heading text-2xl uppercase tracking-wide text-stone-950">
               {gettext("The call from Montréal")}
@@ -64,15 +78,17 @@ defmodule PauseAiCaWeb.ProtestRecapLive do
             <ul class="mt-4 list-disc space-y-3 pl-5 leading-7 text-stone-800">
               <li>
                 {gettext(
-                  "An international agreement, with Canada taking part, to pause development until AI can be made safe and democratically controlled."
+                  "Recognize the development of artificial superintelligence as a national security threat."
                 )}
               </li>
               <li>
-                {gettext("Rigorous international rules, with oversight that makes them effective.")}
+                {gettext(
+                  "Support an international treaty banning the development of superintelligent AI."
+                )}
               </li>
               <li>
                 {gettext(
-                  "A public conversation about the risks, the choices ahead and the role of elected representatives."
+                  "Coordinate a global pause so society has time to ensure that advanced AI remains safe and under democratic control."
                 )}
               </li>
             </ul>
@@ -81,47 +97,41 @@ defmodule PauseAiCaWeb.ProtestRecapLive do
         <section class="border-y border-stone-200 bg-white">
           <div class="mx-auto max-w-5xl px-5 py-14">
             <h2 class="font-heading text-3xl uppercase tracking-wide text-stone-950">
-              {gettext("A day of conversations")}
+              {gettext("Canada can help lead an international response")}
             </h2>
             <p class="mt-6 max-w-3xl leading-8 text-stone-700">
               {gettext(
-                "Le Devoir describes demonstrators chanting, handing out brochures and speaking with passersby along Sainte-Catherine Street. Organizer Étienne Langlois called for countries to act together, while the movement’s national leader urged people to listen to experts about AI risks."
+                "We welcome Prime Minister Mark Carney's support for the international call for stronger oversight of frontier AI. We now ask him to go further: join the more than 30 Canadian MPs and senators whom ControlAI identifies as supporting recognition of superintelligent AI as a national security threat and an international prohibition on its development."
               )}
             </p>
             <p class="mt-5 max-w-3xl leading-8 text-stone-700">
               {gettext(
-                "The exchanges included disagreement and curiosity. One passerby who challenged the protest left after a courteous conversation and a handshake, taking a brochure with him. Participants argued that international cooperation would give society time to decide how AI should develop."
+                "A pause requires countries to act together. Canada can draw on its AI safety researchers and international relationships to help build that agreement, before increasingly powerful systems create risks we cannot control."
               )}
             </p>
-            <p class="mt-6 text-sm leading-6 text-stone-600">
-              {gettext(
-                "Reporting summary: Mathilde Beaulieu-Lépine, Le Devoir, September 26, 2026. The newspaper estimated around thirty people present; the attendance count above is PauseAI Canada's."
-              )}
-            </p>
-            <a
-              id="protest-report-source"
-              href={@source}
-              rel="noreferrer"
-              class="mt-4 inline-block font-semibold underline decoration-brand decoration-2 underline-offset-4"
-            >{gettext("Read the report in Le Devoir (French)")} ↗</a>
-            <p class="mt-5">
-              <.link
-                id="protest-press-release"
-                navigate={
-                  if @locale == "fr",
-                    do: ~p"/fr/manifestation-montreal-2026-09-26/communique",
-                    else: ~p"/en/montreal-protest-2026-09-26/press-release"
-                }
-                class="font-semibold underline decoration-brand decoration-2 underline-offset-4"
-              >{gettext("Read PauseAI Canada's press release")}</.link>
-            </p>
+            <blockquote class="mt-8 max-w-3xl border-l-4 border-brand pl-6 text-xl leading-9 text-stone-800">
+              <p>
+                “{gettext(
+                  "We need to give ourselves more time to learn how to control AI systems before making them even more powerful. A pause is necessary."
+                )}”
+              </p>
+              <footer class="mt-4 text-base font-semibold">
+                {gettext("Jeremy Eliosoff, National Leader, PauseAI Canada")}
+              </footer>
+            </blockquote>
+            <aside class="mt-10 border-t border-stone-200 pt-5 text-sm text-stone-600">
+              <h3 class="font-semibold">{gettext("Media coverage")}</h3>
+              <a
+                id="protest-report-source"
+                href={@source}
+                rel="noreferrer"
+                class="mt-2 inline-block underline decoration-brand decoration-2 underline-offset-4"
+              >{gettext("Read the report in Le Devoir (French)")} ↗</a>
+            </aside>
           </div>
         </section>
         <section id="protest-photos" class="mx-auto max-w-5xl px-5 pt-12">
-          <h2 class="font-heading text-3xl uppercase tracking-wide text-stone-950">
-            {gettext("The protest in pictures")}
-          </h2>
-          <div class="mt-8 grid items-start gap-8 md:grid-cols-[3fr_2fr]">
+          <div class="grid items-start gap-8 md:grid-cols-[3fr_2fr]">
             <figure>
               <img
                 id="protest-photo-7"
