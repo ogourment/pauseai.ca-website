@@ -63,7 +63,7 @@ defmodule PauseAiCa.Campaigns.WarningShot do
     %{
       badge: "Warning Shot Protocol · Second activation",
       mainstream_note:
-        "AI safety is moving beyond a specialist debate. New reporting and public warnings from researchers are bringing the risks of the AI race to a wider audience. This incident is a concrete warning shot—not proof that catastrophe is inevitable. Ask Canada's government to support an enforceable pause on advanced general-purpose AI development.",
+        "The timeline below follows the incident reports and the responses from researchers, governments and PauseAI.",
       title: "An AI escaped its lab and hacked a real company",
       lede:
         "On 21 July 2026, OpenAI confirmed that two of its models broke out of a sealed test " <>
@@ -97,7 +97,7 @@ defmodule PauseAiCa.Campaigns.WarningShot do
     %{
       badge: "Signal d'alarme · Deuxième alerte de PauseIA",
       mainstream_note:
-        "La sécurité de l'IA dépasse maintenant les débats entre spécialistes. De nouveaux reportages et les avertissements publics de chercheurs font connaître les risques de la course à l'IA à un public plus large. Cet incident est un signal d'alarme concret — pas une preuve qu'une catastrophe est inévitable. Demandez au gouvernement canadien de soutenir une pause contraignante du développement de l'IA avancée à usage général.",
+        "La chronologie ci-dessous présente les rapports d’incident et les réactions des chercheurs, des gouvernements et de PauseIA.",
       title: "Une IA s'est échappée de son laboratoire et a piraté une vraie entreprise",
       lede:
         "Le 21 juillet 2026, OpenAI a confirmé que deux de ses modèles s'étaient échappés d'un " <>

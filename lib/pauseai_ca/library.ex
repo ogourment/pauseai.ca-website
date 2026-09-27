@@ -151,12 +151,12 @@ defmodule PauseAiCa.Library do
           "en" => %{
             title: "The International AI Safety Report",
             summary:
-              "Thirty countries, one report, chaired from Montréal: what the evidence currently supports about AI capabilities and harms, and where experts genuinely disagree."
+              "An international review of AI capabilities, harms and remaining uncertainties, chaired by Yoshua Bengio."
           },
           "fr" => %{
             title: "Le Rapport international sur la sécurité de l'IA",
             summary:
-              "Une trentaine de pays, un rapport, présidé depuis Montréal: ce que les données appuient actuellement sur les capacités et les dangers de l'IA, et là où les experts divergent réellement."
+              "Une synthèse internationale des capacités de l’IA, des dommages et des incertitudes, sous la direction de Yoshua Bengio."
           }
         }
       },
@@ -172,12 +172,12 @@ defmodule PauseAiCa.Library do
           "en" => %{
             title: "Why researchers talk about existential risk",
             summary:
-              "The argument that a system optimizing hard enough for any goal ends up wanting resources, self-preservation and no off switch — and why nobody knows how to rule that out."
+              "Why an AI system pursuing a goal might seek resources or resist being shut down."
           },
           "fr" => %{
             title: "Pourquoi les chercheur·ses parlent de risque existentiel",
             summary:
-              "L'argument selon lequel un système qui optimise assez fort n'importe quel objectif finit par vouloir des ressources, sa propre survie et aucun interrupteur — et pourquoi personne ne sait l'exclure."
+              "Pourquoi un système d’IA qui poursuit un objectif pourrait chercher à obtenir des ressources ou résister à son arrêt."
           }
         }
       },
@@ -193,12 +193,12 @@ defmodule PauseAiCa.Library do
           "en" => %{
             title: "What is at stake for everyone",
             summary:
-              "Loss of control, concentration of power, and the erosion of the human ability to decide. The clearest French-language treatment of the case."
+              "A French introduction to loss of control and the concentration of power that advanced AI could bring."
           },
           "fr" => %{
             title: "Les dangers pour l'humanité",
             summary:
-              "Perte de contrôle, concentration du pouvoir et érosion de la capacité humaine à décider. L'exposé francophone le plus clair sur la question."
+              "Une présentation en français des risques de perte de contrôle et de concentration du pouvoir liés à l’IA avancée."
           }
         }
       },
@@ -214,12 +214,12 @@ defmodule PauseAiCa.Library do
           "en" => %{
             title: "A parliamentary review of systemic and existential AI risk",
             summary:
-              "A French parliamentary science and technology report maps the competing expert positions, including sceptical arguments, rather than presenting advocacy alone."
+              "A French parliamentary report comparing expert views on systemic and existential AI risks."
           },
           "fr" => %{
             title: "Risque systémique, risque existentiel: l'état du débat",
             summary:
-              "Un rapport de l'Office parlementaire français présente les différentes positions scientifiques, y compris les objections, plutôt qu'un seul plaidoyer."
+              "Un rapport parlementaire français qui compare les positions scientifiques sur les risques systémiques et existentiels de l’IA."
           }
         }
       },
@@ -237,12 +237,12 @@ defmodule PauseAiCa.Library do
           "en" => %{
             title: "How rogue AIs may arise",
             summary:
-              "Bengio walks through how a system with goals of its own could actually arise from the training methods in use today. Technical, but written to be followed."
+              "Yoshua Bengio explains how current training methods could produce AI systems with harmful goals."
           },
           "fr" => %{
             title: "Comment des IA nocives pourraient apparaître",
             summary:
-              "Bengio explique comment un système doté de ses propres objectifs pourrait réellement émerger des méthodes d'entraînement actuelles. Technique, mais écrit pour être suivi."
+              "Yoshua Bengio explique comment les méthodes d’entraînement actuelles pourraient produire des systèmes d’IA aux objectifs dangereux."
           }
         }
       },
@@ -258,12 +258,12 @@ defmodule PauseAiCa.Library do
           "en" => %{
             title: "What a pause would and would not stop",
             summary:
-              "Not a ban on AI. A ceiling on training runs above a compute threshold, until safety methods catch up. Medical AI, translation and everything else continues."
+              "PauseAI’s proposal to pause training above a computing threshold while continuing safety research and uses of existing systems."
           },
           "fr" => %{
             title: "Ce qu'une pause arrêterait, et ce qu'elle n'arrêterait pas",
             summary:
-              "Pas une interdiction de l'IA. Un plafond sur les entraînements dépassant un seuil de calcul, jusqu'à ce que les méthodes de sécurité rattrapent leur retard. L'IA médicale, la traduction et le reste continuent."
+              "La proposition de PauseIA : suspendre les entraînements au-delà d’un seuil de puissance de calcul, tout en poursuivant la recherche en sécurité et l’utilisation des systèmes existants."
           }
         }
       },
@@ -323,12 +323,12 @@ defmodule PauseAiCa.Library do
           "en" => %{
             title: "Why a pause might not work",
             summary:
-              "China will not stop. The technology is already out. Regulation only punishes the careful. PauseAI's answers to the objections it hears most, including the ones it concedes."
+              "PauseAI responds to objections about international cooperation, existing models and enforcement."
           },
           "fr" => %{
             title: "Pourquoi une pause pourrait ne pas fonctionner",
             summary:
-              "La Chine ne s'arrêtera pas. La technologie est déjà sortie. La réglementation ne punit que les prudents. Les réponses de PauseIA aux objections les plus fréquentes, y compris celles qu'elle concède."
+              "PauseIA répond aux objections concernant la coopération internationale, les modèles existants et l’application d’un accord."
           }
         }
       },
@@ -408,12 +408,12 @@ defmodule PauseAiCa.Library do
           "en" => %{
             title: "What actually moves a government",
             summary:
-              "Elected officials count letters. Most files get almost none. PauseAI's list of actions, from a five-minute email to organizing a local group."
+              "Ways to ask for action, from writing to an elected representative to organizing a local group."
           },
           "fr" => %{
             title: "Ce qui fait vraiment bouger un gouvernement",
             summary:
-              "Les élu·es comptent les lettres. La plupart des dossiers n'en reçoivent presque aucune. La liste d'actions de PauseIA, du courriel de cinq minutes au groupe local."
+              "Des moyens de demander des mesures, de la lettre à un élu à l’organisation d’un groupe local."
           }
         }
       },

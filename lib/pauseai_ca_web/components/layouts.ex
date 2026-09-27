@@ -144,7 +144,7 @@ defmodule PauseAiCaWeb.Layouts do
               class="block border-b border-stone-100 px-4 py-3 hover:bg-brand-wash"
             >
               <span class="block font-heading text-base font-bold text-stone-950">
-                {gettext("Engagement ladder")}
+                {gettext("Ways to take part")}
               </span>
               <span class="block text-xs leading-5 text-stone-500">
                 {gettext("See ways to deepen your involvement")}

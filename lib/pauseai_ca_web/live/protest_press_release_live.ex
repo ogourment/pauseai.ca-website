@@ -70,7 +70,7 @@ defmodule PauseAiCaWeb.ProtestPressReleaseLive do
           </p>
           <p>
             {gettext(
-              "No country or developer can act alone without risking an advantage for less careful actors. International coordination is needed to reduce the gravest risks, from biological misuse to a loss of control. Canada can draw on its AI safety research community and its international relationships to help lead that work."
+              "A pause needs an international agreement so that countries and developers follow the same rules. We ask Canada to help negotiate that agreement."
             )}
           </p>
         </div>

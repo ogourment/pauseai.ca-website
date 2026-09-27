@@ -84,7 +84,12 @@ defmodule PauseAiCaWeb.DonateLiveTest do
     refute has_element?(view, "#funding-themes > section:nth-child(5)")
 
     assert has_element?(view, "#donate-page figcaption", "Clara Lacasse")
-    assert has_element?(view, "#pledge-suggestions", "not prices for a specific activity")
+
+    assert has_element?(
+             view,
+             "#pledge-suggestions",
+             "Choose a suggested amount or enter your own"
+           )
 
     view
     |> form("#pledge-form",

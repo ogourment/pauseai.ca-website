@@ -120,7 +120,7 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
       assert has_element?(
                view,
                "#involvement-menu a[href='/en/strategy#engagement-ladder']",
-               "Engagement ladder"
+               "Ways to take part"
              )
 
       assert has_element?(

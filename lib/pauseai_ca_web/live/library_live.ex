@@ -407,7 +407,7 @@ defmodule PauseAiCaWeb.LibraryLive do
   defp lede(_locale),
     do:
       gettext(
-        "The people who built this technology are among the most worried about where it is going, and several of them work in Canada. Their positions and the main possible responses deserve public debate."
+        "Researchers in Canada and elsewhere warn that advanced AI could escape human control. Read their arguments and the proposals for responding to that risk."
       )
 
   defp voices_heading(_locale), do: gettext("Canadian voices")
@@ -423,7 +423,7 @@ defmodule PauseAiCaWeb.LibraryLive do
   defp parliament_note(_locale),
     do:
       gettext(
-        "Current and former Canadian parliamentarians, from several parties and both chambers, have signed the statement calling for an international agreement to prohibit superintelligent AI. Writing to your MP is not a fringe act: the question is already in Ottawa."
+        "Current and former Canadian parliamentarians from several parties have signed a statement calling for an international agreement to prohibit superintelligent AI. Read the statement and see who has signed."
       )
 
   defp chamber_label(:commons, _locale), do: gettext("House of Commons")

@@ -11,7 +11,7 @@ defmodule PauseAiCaWeb.ProtestRecapLive do
     {:ok,
      assign(socket,
        locale: locale,
-       page_title: gettext("Montréal calls for a coordinated pause on AI"),
+       page_title: gettext("In Montréal, a call for a global pause on AI"),
        source: @source
      )}
   end
@@ -36,7 +36,7 @@ defmodule PauseAiCaWeb.ProtestRecapLive do
         </p>
         <section class="mx-auto max-w-5xl px-5 pt-14 pb-10">
           <h1 class="max-w-3xl font-heading text-5xl leading-[1.02] tracking-tight text-stone-950 sm:text-6xl">
-            {gettext("Montréal calls for a coordinated pause on AI")}
+            {gettext("In Montréal, a call for a global pause on AI")}
           </h1>
           <p id="protest-attendance" class="mt-7 max-w-3xl text-xl leading-9 text-stone-700">
             {gettext(
@@ -104,11 +104,6 @@ defmodule PauseAiCaWeb.ProtestRecapLive do
                 "We welcome Prime Minister Mark Carney's support for the international call for stronger oversight of frontier AI. We now ask him to go further: join the more than 30 Canadian MPs and senators whom ControlAI identifies as supporting recognition of superintelligent AI as a national security threat and an international prohibition on its development."
               )}
             </p>
-            <p class="mt-5 max-w-3xl leading-8 text-stone-700">
-              {gettext(
-                "A pause requires countries to act together. Canada can draw on its AI safety researchers and international relationships to help build that agreement, before increasingly powerful systems create risks we cannot control."
-              )}
-            </p>
             <blockquote class="mt-8 max-w-3xl border-l-4 border-brand pl-6 text-xl leading-9 text-stone-800">
               <p>
                 “{gettext(
@@ -168,15 +163,13 @@ defmodule PauseAiCaWeb.ProtestRecapLive do
         </section>
         <section class="mx-auto max-w-5xl px-5 py-16">
           <h2 class="font-heading text-3xl uppercase tracking-wide text-stone-950">
-            {gettext("Keep the conversation going")}
+            {gettext("Take part")}
           </h2>
           <div class="mt-8 grid gap-6 md:grid-cols-2">
             <div class="flex flex-col gap-3 rounded-2xl border border-stone-200 bg-white p-6">
               <h3 class="font-heading text-2xl">{gettext("Write to your MP")}</h3>
               <p class="leading-7 text-stone-600">
-                {gettext(
-                  "Ask your elected representative to support international cooperation and meaningful safeguards for advanced AI."
-                )}
+                {gettext("Ask your MP to support an international agreement on advanced AI.")}
               </p>
               <.link
                 id="protest-write-mp"

@@ -8,7 +8,7 @@ defmodule PauseAiCaWeb.UserLive.LoginTest do
     {:ok, view, _} = live(conn, ~p"/users/log-in")
     assert has_element?(view, "#login_form_magic")
     assert has_element?(view, "#continue-browsing")
-    assert render(view) =~ "A new email creates an account awaiting confirmation"
+    assert render(view) =~ "Use the email address you want for your account"
     refute has_element?(view, "#account-email-pending")
   end
 

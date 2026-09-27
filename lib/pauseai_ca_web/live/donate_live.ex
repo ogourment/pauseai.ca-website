@@ -83,13 +83,13 @@ defmodule PauseAiCaWeb.DonateLive do
     >
       <section id="donate-page" class="mx-auto max-w-5xl px-5 py-14">
         <h1 class="font-heading text-5xl text-stone-950">
-          {gettext("Help turn concern into action")}
+          {gettext("Support PauseAI Canada")}
         </h1>
         <div class="mt-7 grid items-start gap-8 md:grid-cols-[1fr_0.9fr]">
           <div>
             <p class="max-w-3xl text-xl leading-8 text-stone-700">
               {gettext(
-                "On September 26, around 40 people gathered in Montréal to call for a coordinated pause in advanced AI development. Help us carry that call into neighbourhoods, community meetings and policy discussions."
+                "Around 40 people joined our September 26 demonstration in Montréal. Your support will help us print information, hold meetings and workshops, and put proposals before elected representatives."
               )}
             </p>
           </div>
@@ -126,7 +126,7 @@ defmodule PauseAiCaWeb.DonateLive do
             <h3 class="font-heading text-2xl">{gettext("Reach more people")}</h3>
             <p class="mt-2 leading-7 text-stone-700">
               {gettext(
-                "Put clear information about AI risks and the call for a pause in neighbours’ hands and online feeds. We can count materials distributed and report the reach of public posts."
+                "Explain AI risks and our call for a pause through printed materials, photographs, articles and social media."
               )}
             </p>
             <ul class="mt-3 list-disc space-y-1 pl-5 text-sm leading-6 text-stone-600">
@@ -139,7 +139,7 @@ defmodule PauseAiCaWeb.DonateLive do
             <h3 class="font-heading text-2xl">{gettext("Bring people together")}</h3>
             <p class="mt-2 leading-7 text-stone-700">
               {gettext(
-                "Bring people together to learn, plan actions and build local communities across Canada, through meetings and practical workshops."
+                "Hold meetings and workshops where people can ask questions, learn and plan local activities. Travel helps us meet people in more parts of Canada."
               )}
             </p>
             <ul class="mt-3 list-disc space-y-1 pl-5 text-sm leading-6 text-stone-600">
@@ -152,7 +152,7 @@ defmodule PauseAiCaWeb.DonateLive do
             <h3 class="font-heading text-2xl">{gettext("Make the case for policy")}</h3>
             <p class="mt-2 leading-7 text-stone-700">
               {gettext(
-                "Turn community concerns and evidence into briefs and fact sheets that elected representatives can act on. We can share the finished work publicly."
+                "Prepare research, briefs and fact sheets to support specific requests to governments."
               )}
             </p>
             <ul class="mt-3 list-disc pl-5 text-sm leading-6 text-stone-600">
@@ -163,7 +163,7 @@ defmodule PauseAiCaWeb.DonateLive do
             <h3 class="font-heading text-2xl">{gettext("Keep people connected")}</h3>
             <p class="mt-2 leading-7 text-stone-700">
               {gettext(
-                "Maintain a site where people can learn, sign up to help and find the next action. We can report improvements as the tools become available."
+                "Keep the website, email lists and volunteer signup tools working, and pay for the software used to organize our activities."
               )}
             </p>
             <ul class="mt-3 list-disc pl-5 text-sm leading-6 text-stone-600">
@@ -180,7 +180,7 @@ defmodule PauseAiCaWeb.DonateLive do
           <h2 class="font-heading text-3xl">{gettext("Choose an amount that works for you")}</h2>
           <p class="mt-3 max-w-2xl leading-7 text-stone-700">
             {gettext(
-              "These are suggested pledge sizes, not prices for a specific activity. You can enter any amount in the form."
+              "Choose a suggested amount or enter your own. We will contact you when we can receive donations."
             )}
           </p>
           <div class="mt-5 grid gap-3 sm:grid-cols-2">
