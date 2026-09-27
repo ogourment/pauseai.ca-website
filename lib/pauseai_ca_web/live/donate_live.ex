@@ -185,14 +185,7 @@ defmodule PauseAiCaWeb.DonateLive do
           </p>
           <div class="mt-5 grid gap-3 sm:grid-cols-2">
             <button
-              :for={
-                {amount, outcome} <- [
-                  {"25", gettext("Help share clear information")},
-                  {"100", gettext("Help bring neighbours together")},
-                  {"500", gettext("Help turn evidence into policy proposals")},
-                  {"2000", gettext("Help keep people connected online")}
-                ]
-              }
+              :for={amount <- ~w(25 100 500 2000)}
               type="button"
               phx-click={
                 JS.set_attribute({"value", amount}, to: "#pledge_amount_cad")
@@ -203,7 +196,6 @@ defmodule PauseAiCaWeb.DonateLive do
               class="rounded-xl border-2 border-stone-300 bg-white p-4 text-left transition hover:border-brand hover:bg-brand-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand aria-pressed:border-brand aria-pressed:bg-brand-wash"
             >
               <strong class="font-heading text-2xl">${amount}</strong>
-              <span class="mt-1 block text-sm text-stone-700">{outcome}</span>
             </button>
           </div>
           <p

@@ -95,7 +95,7 @@ if System.get_env("ATDD") == "true" do
       _pending_browser =
         browser
         |> fill_in("Courriel", with: email)
-        |> click_button("Envoyez-moi un lien sécurisé")
+        |> click_button("Recevoir un lien de connexion")
         |> assert_has("#account-email-pending")
         |> capture(id, "Correct and submit", "One pending account awaits ownership")
 
@@ -222,7 +222,7 @@ if System.get_env("ATDD") == "true" do
         browser
         |> click("#account-entry")
         |> fill_in("Courriel", with: email)
-        |> click_button("Envoyez-moi un lien sécurisé")
+        |> click_button("Recevoir un lien de connexion")
         |> assert_has("#account-email-pending")
         |> capture(id, "Enter a previously unknown email", "Really creates one pending account")
         |> show_email(receive_email(email))

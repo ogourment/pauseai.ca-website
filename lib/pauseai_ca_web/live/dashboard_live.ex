@@ -66,7 +66,7 @@ defmodule PauseAiCaWeb.DashboardLive do
      |> assign(:action_count, socket.assigns.action_count + 1)
      |> stream_insert(:actions, action)
      |> refresh_recommendation()
-     |> put_flash(:info, gettext("Recorded. Thank you for following through."))}
+     |> put_flash(:info, gettext("Action recorded."))}
   end
 
   def handle_event("discard-action", %{"id" => id}, socket) do

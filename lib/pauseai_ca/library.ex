@@ -258,12 +258,12 @@ defmodule PauseAiCa.Library do
           "en" => %{
             title: "What a pause would and would not stop",
             summary:
-              "PauseAI’s proposal to pause training above a computing threshold while continuing safety research and uses of existing systems."
+              "PauseAI’s proposal for an international pause on training the most powerful general AI systems, with independent oversight."
           },
           "fr" => %{
             title: "Ce qu'une pause arrêterait, et ce qu'elle n'arrêterait pas",
             summary:
-              "La proposition de PauseIA : suspendre les entraînements au-delà d’un seuil de puissance de calcul, tout en poursuivant la recherche en sécurité et l’utilisation des systèmes existants."
+              "La proposition de PauseIA : une pause internationale de l’entraînement des systèmes d’IA généralistes les plus puissants, sous surveillance indépendante."
           }
         }
       },

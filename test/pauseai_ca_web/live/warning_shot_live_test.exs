@@ -225,7 +225,7 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
       end)
     end
 
-    test "the confirmation prompt tells people how to rescue it from spam", %{conn: conn} do
+    test "the confirmation prompt tells people where to check for the email", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/en/warning-shot")
 
       view
@@ -237,7 +237,7 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
         |> form("#send-form", send: %{email: "camille@example.org", consent: "true"})
         |> render_submit()
 
-      assert html =~ "Not spam"
+      assert html =~ "Check your spam or promotions folder."
     end
 
     test "a signed-in supporter with a confirmed address sends straight away", %{conn: conn} do

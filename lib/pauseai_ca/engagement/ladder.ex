@@ -34,7 +34,7 @@ defmodule PauseAiCa.Engagement.Ladder do
     [
       %{title: "Learn", examples: "Read, watch, or listen to one reliable resource"},
       %{title: "Talk", examples: "Discuss AI risk with one person"},
-      %{title: "Show up", examples: "Sign, join the movement, or attend an event"},
+      %{title: "Participate", examples: "Sign, join the movement, or attend an event"},
       %{title: "Influence", examples: "Contact or meet an elected representative"},
       %{title: "Contribute", examples: "Volunteer, flyer, or put up posters"},
       %{title: "Organize", examples: "Run an activity or start a local group"}

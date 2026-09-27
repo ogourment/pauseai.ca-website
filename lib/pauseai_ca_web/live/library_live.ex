@@ -206,7 +206,7 @@ defmodule PauseAiCaWeb.LibraryLive do
               </p>
               <p class="mt-4 flex flex-wrap items-center gap-2 text-sm text-stone-500">
                 <span>{publisher_name(resource.publisher)}</span>
-                <span :if={resource.author}>· {resource.author}</span>
+                <span :if={resource.author}>· {author_label(resource.author)}</span>
                 <span
                   :if={resource.canadian}
                   class="rounded border border-brand px-1.5 py-0.5 text-xs font-semibold uppercase text-brand-ink"
@@ -426,6 +426,10 @@ defmodule PauseAiCaWeb.LibraryLive do
         "Current and former Canadian parliamentarians from several parties have signed a statement calling for an international agreement to prohibit superintelligent AI. Read the statement and see who has signed."
       )
 
+  defp author_label("Chaired by Yoshua Bengio"), do: gettext("Chaired by Yoshua Bengio")
+  defp author_label("Founded by Yoshua Bengio"), do: gettext("Founded by Yoshua Bengio")
+  defp author_label(author), do: author
+
   defp chamber_label(:commons, _locale), do: gettext("House of Commons")
   defp chamber_label(:senate, _locale), do: gettext("Senate")
 
@@ -454,7 +458,7 @@ defmodule PauseAiCaWeb.LibraryLive do
   defp consent_label(_locale),
     do:
       gettext(
-        "I agree to receive emails from PauseAI Canada. My address is never sold or shared."
+        "I agree to receive emails from PauseAI Canada. We do not sell your address. Read our privacy policy."
       )
 
   defp confidentiality_policy_label(_locale), do: gettext("Confidentiality policy")

@@ -72,16 +72,14 @@ defmodule PauseAiCa.Campaigns.WarningShot do
           "being given. Nobody told them to do any of it.",
       why_heading: "Why this matters",
       why_bullets: [
-        "In April 2026, Claude Mythos showed the capability: an AI able to find and exploit unknown flaws in the software running banks, hospitals and power grids.",
-        "This shows the propensity: an AI deploying those capabilities on its own initiative, unprompted, against a real company.",
-        "This is the loss-of-control scenario PauseAI exists to prevent — now with a date, a victim and an incident report.",
+        "The models accessed real systems during evaluations. These incidents raise questions about whether the labs’ controls are sufficient.",
         "It is not isolated. Anthropic has since disclosed that Claude models also reached real systems during evaluations, and two of the three organizations involved had not noticed.",
         "Canada should support an enforceable pause and independent safety assessments—not leave the pace of the AI race to the companies competing in it."
       ],
       act_heading: "Two things you can do right now",
       act_letter: "Email your MP",
       act_letter_note:
-        "About a minute. Enter your postal code, we find your MP and prepare a letter you can edit before sending.",
+        "Enter your postal code to find your MP and prepare a letter you can edit before sending.",
       act_join: "Join PauseAI Canada",
       act_join_note:
         "PauseAI's global join form. Say Canada, and a Canadian organizer picks it up from there.",
@@ -107,16 +105,14 @@ defmodule PauseAiCa.Campaigns.WarningShot do
           "avait demandé de faire cela.",
       why_heading: "Pourquoi c'est important",
       why_bullets: [
-        "En avril 2026, Claude Mythos démontrait la capacité: une IA capable de trouver et d'exploiter des failles inconnues dans les logiciels qui font fonctionner les banques, les hôpitaux et les réseaux électriques.",
-        "Ceci démontre la propension: une IA qui déploie ces capacités de sa propre initiative, sans qu'on le lui demande, contre une vraie entreprise.",
-        "C'est le scénario de perte de contrôle que PauseIA existe pour prévenir — désormais avec une date, une victime et un rapport d'incident.",
+        "Les modèles ont accédé à des systèmes réels pendant des évaluations. Ces incidents soulèvent des questions sur l’efficacité des mesures de contrôle des laboratoires.",
         "Ce n'est pas un cas isolé. Anthropic a depuis révélé que des modèles Claude avaient eux aussi atteint des systèmes réels lors d'évaluations, et deux des trois organisations concernées ne l'avaient pas remarqué.",
         "Le Canada doit soutenir une pause contraignante et des évaluations de sécurité indépendantes — pas laisser les entreprises concurrentes décider du rythme de la course à l'IA."
       ],
       act_heading: "Deux gestes possibles maintenant",
       act_letter: "Écrivez à votre député·e",
       act_letter_note:
-        "Environ une minute. Entrez votre code postal, nous trouvons votre député·e et préparons une lettre que vous pouvez modifier avant l'envoi.",
+        "Entrez votre code postal pour trouver votre député et préparer une lettre que vous pouvez modifier avant l’envoi.",
       act_join: "Rejoignez PauseIA Canada",
       act_join_note:
         "Le formulaire d'adhésion mondial de PauseIA. Indiquez le Canada, et un·e organisateur·rice canadien·ne prend le relais.",
@@ -140,12 +136,12 @@ defmodule PauseAiCa.Campaigns.WarningShot do
           "en" => %{
             title: "PauseAI connects the warning to collective action",
             summary:
-              "In its September 10 response to Jacob Coxon, PauseAI invites researchers and the public to build a constituency for a pause. This is the movement's response, not an independent technical incident report."
+              "In its September 10 response to Jacob Coxon, PauseAI invites researchers and the public to organize support for a pause. This is the movement's response, not an independent technical incident report."
           },
           "fr" => %{
             title: "PauseIA relie l'avertissement à l'action collective",
             summary:
-              "Dans sa réponse du 10 septembre à Jacob Coxon, PauseIA invite les chercheurs et le public à construire une mobilisation pour une pause. Il s'agit de la réponse du mouvement, pas d'un rapport technique indépendant sur un incident."
+              "Dans sa réponse du 10 septembre à Jacob Coxon, PauseIA invite les chercheurs et le public à mobiliser des appuis en faveur d’une pause. Il s'agit de la réponse du mouvement, pas d'un rapport technique indépendant sur un incident."
           }
         }
       },
@@ -160,12 +156,12 @@ defmodule PauseAiCa.Campaigns.WarningShot do
           "en" => %{
             title: "Jacob Coxon resigns and warns about the AI race",
             summary:
-              "WIRED's September 9 interview follows Coxon's September 8 resignation announcement. The former Anthropic and OpenAI researcher argues that competition threatens safety and calls for coordination. This is his assessment, not a prediction established by the Hugging Face incident."
+              "WIRED's September 9 interview follows Coxon's September 8 resignation announcement. The former Anthropic and OpenAI researcher argues that competition threatens safety and calls for coordination."
           },
           "fr" => %{
             title: "Jacob Coxon démissionne et met en garde contre la course à l'IA",
             summary:
-              "L'entretien de WIRED du 9 septembre suit l'annonce de démission de Coxon du 8 septembre. L'ancien chercheur d'Anthropic et d'OpenAI estime que la concurrence menace la sécurité et appelle à la coordination. C'est son analyse, pas une prédiction établie par l'incident Hugging Face."
+              "L'entretien de WIRED du 9 septembre suit l'annonce de démission de Coxon du 8 septembre. L'ancien chercheur d'Anthropic et d'OpenAI estime que la concurrence menace la sécurité et appelle à la coordination."
           }
         }
       },
@@ -294,12 +290,12 @@ defmodule PauseAiCa.Campaigns.WarningShot do
           "en" => %{
             title: "PauseAI activates the Warning Shot Protocol for the second time",
             summary:
-              "Mythos showed the capability; this shows the propensity. PauseAI chapters worldwide begin contacting elected officials and the press."
+              "PauseAI chapters worldwide begin contacting elected officials and the press."
           },
           "fr" => %{
             title: "PauseIA lance l'alerte pour la deuxième fois",
             summary:
-              "Mythos démontrait la capacité; ceci démontre la propension. Les sections de PauseIA dans le monde commencent à contacter les élu·es et la presse."
+              "Les sections de PauseIA dans le monde commencent à contacter les élu·es et la presse."
           }
         }
       },

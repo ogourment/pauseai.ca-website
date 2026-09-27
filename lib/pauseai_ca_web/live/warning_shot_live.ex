@@ -981,7 +981,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
   defp body_hint(_locale),
     do:
       gettext(
-        "Personalize the letter before sending. One sentence of your own counts for more than the template."
+        "Personalize the letter before sending. Explain in your own words why this matters to you."
       )
 
   defp send_heading(_locale), do: gettext("Send your letter")
@@ -1037,10 +1037,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
       )
 
   defp spam_note(_locale),
-    do:
-      gettext(
-        "Nothing yet? Look in spam or promotions, move the message to your inbox and mark it \"Not spam\". That is what keeps us out of the spam folder for everyone else."
-      )
+    do: gettext("Check your spam or promotions folder.")
 
   defp diy_recorded_note(_locale),
     do: gettext("We recorded this as awaiting confirmation.")

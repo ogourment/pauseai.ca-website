@@ -46,7 +46,12 @@ defmodule PauseAiCaWeb.ProtestPressReleaseLive do
           </h2>
           <p class="mt-3 leading-8 text-stone-800">
             {gettext(
-              "Prime Minister Mark Carney joined other leaders in calling for stronger oversight of frontier AI models, including independent evaluations, coordinated standards and consideration of an international institution. We welcome this step. We now ask him to go further and join the more than 30 Canadian MPs and senators whom ControlAI says support recognizing superintelligent AI as a national security threat and negotiating an international prohibition on its development."
+              "Prime Minister Mark Carney joined other leaders in calling for stronger oversight of frontier AI models, including independent evaluations, coordinated standards and consideration of an international institution. We welcome this step."
+            )}
+          </p>
+          <p class="mt-3 leading-8 text-stone-800">
+            {gettext(
+              "We now ask him to go further and join the more than 30 Canadian MPs and senators whom ControlAI says support recognizing superintelligent AI as a national security threat and negotiating an international prohibition on its development."
             )}
           </p>
           <div class="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold">
