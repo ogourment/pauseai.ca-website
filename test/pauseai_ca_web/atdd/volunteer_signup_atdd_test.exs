@@ -614,6 +614,7 @@ if System.get_env("ATDD") == "true" do
       b =
         b
         |> reload_page()
+        |> assert_has("[data-phx-main].phx-connected #batch-result")
         |> click_button("Retry invitation")
         |> assert_has("#batch-result", text: "Retry requested")
 
@@ -1087,7 +1088,7 @@ if System.get_env("ATDD") == "true" do
     defp open_workspace(browser, user, id) do
       open_accounts(browser, user, id)
       |> click_link("Add multiple accounts")
-      |> assert_has("#volunteer-signups")
+      |> assert_has("[data-phx-main].phx-connected #volunteer-signups")
       |> capture(
         id,
         "Open Add multiple accounts",
