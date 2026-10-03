@@ -153,16 +153,21 @@ defmodule PauseAiCaWeb.Layouts do
               </span>
             </.link>
             <a
-              href="https://pauseai.info/local-organizing"
+              href={
+                if(@locale == "fr",
+                  do: "/fr/comprendre#local-participation",
+                  else: "/en/learn#local-participation"
+                )
+              }
               target="_blank"
               rel="noopener noreferrer"
               class="block border-b border-stone-100 px-4 py-3 hover:bg-brand-wash"
             >
               <span class="block font-heading text-base font-bold text-stone-950">
-                {gettext("Start a group")}
+                {gettext("Join or start a group")}
               </span>
               <span class="block text-xs leading-5 text-stone-500">
-                {gettext("PauseAI Global's chapter guide")}
+                {gettext("Local activities and organizing")}
               </span>
             </a>
             <a
@@ -203,10 +208,10 @@ defmodule PauseAiCaWeb.Layouts do
               class="block border-b border-stone-100 px-4 py-3 hover:bg-brand-wash"
             >
               <span class="block font-heading text-base font-bold text-stone-950">
-                {gettext("Join Us")}
+                {gettext("Subscribe")}
               </span>
               <span class="block text-xs leading-5 text-stone-500">
-                {gettext("Join PauseAI Canada")}
+                {gettext("Stay informed")}
               </span>
             </.link>
             <%!-- New tab: these leave for another site, and a visitor part-way
@@ -537,7 +542,12 @@ defmodule PauseAiCaWeb.Layouts do
       {"test", gettext("Take the test"),
        if(locale == "fr", do: ~p"/fr#questions", else: ~p"/en#questions")},
       {"risks", gettext("Learn about the risks"),
-       if(locale == "fr", do: ~p"/fr/comprendre", else: ~p"/en/learn")}
+       if(locale == "fr", do: ~p"/fr/comprendre", else: ~p"/en/learn")},
+      {"basket", gettext("My learning list"),
+       if(locale == "fr",
+         do: ~p"/fr/comprendre#my-learning-list",
+         else: ~p"/en/learn#my-learning-list"
+       )}
     ]
   end
 end

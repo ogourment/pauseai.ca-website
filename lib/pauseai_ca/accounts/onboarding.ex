@@ -30,6 +30,8 @@ defmodule PauseAiCa.Accounts.Onboarding do
       "locale" => locale,
       "source" => source,
       "bookmark" => bookmark,
+      "fsa" => valid_fsa(params["fsa"]),
+      "basket" => PauseAiCa.Learning.valid_ids(String.split(params["basket"] || "", ",")),
       "answers" => question_answers(params, visitor_id),
       "visitor_id" => visitor_id,
       "return_to" => safe_return(params["return_to"], locale, bookmark)
@@ -78,6 +80,14 @@ defmodule PauseAiCa.Accounts.Onboarding do
   def decode(_), do: %{}
 
   def apply_context(user, context, fallback_visitor_id) do
+    if context["fsa"],
+      do:
+        Accounts.update_user_local_context(Accounts.get_user!(user.id), %{"fsa" => context["fsa"]})
+
+    Enum.each(PauseAiCa.Learning.valid_ids(context["basket"]), fn id ->
+      Accounts.save_resource(Accounts.get_user!(user.id), id)
+    end)
+
     if bookmark = context["bookmark"] do
       Accounts.save_resource(user, bookmark)
 
@@ -140,6 +150,13 @@ defmodule PauseAiCa.Accounts.Onboarding do
         |> Map.filter(fn {key, value} -> key in @questions and value in @answers end)
     end
   end
+
+  defp valid_fsa(value) when is_binary(value) do
+    changeset = Accounts.change_user_local_context(%User{}, %{"fsa" => value})
+    if changeset.valid?, do: Ecto.Changeset.get_field(changeset, :fsa)
+  end
+
+  defp valid_fsa(_), do: nil
 
   defp valid_bookmark(value) when is_binary(value) do
     if Library.resource(value) || value in @questions, do: value

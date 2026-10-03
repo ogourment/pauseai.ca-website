@@ -217,7 +217,12 @@ defmodule PauseAiCaWeb.DashboardLive do
   defp saved_resource_url("coordination", _), do: "https://pauseai.info/feasibility"
   defp saved_resource_url("agency", "fr"), do: ~p"/fr/strategie"
   defp saved_resource_url("agency", _), do: ~p"/en/strategy"
-  defp saved_resource_url(resource, _locale), do: PauseAiCa.Library.resource(resource).url
+
+  defp saved_resource_url(resource, locale) do
+    if resource in PauseAiCa.Learning.ids(),
+      do: "#{if(locale == "fr", do: "/fr/comprendre", else: "/en/learn")}#nugget-#{resource}",
+      else: PauseAiCa.Library.resource(resource).url
+  end
 
   defp saved_resource_label("risk", _), do: gettext("Understand existential risk")
   defp saved_resource_label("pause", _), do: gettext("Understand a pause")

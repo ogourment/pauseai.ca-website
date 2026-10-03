@@ -295,3 +295,16 @@ h3 {
 .act-menu > summary::marker {
   content: "";
 }
+
+/* Shared topic labels include text: color is supplementary. */
+.learning-topic {display:inline-block;border-radius:999px;padding:.25rem .7rem;font-size:.875rem;font-weight:700;background:var(--topic-bg);color:var(--topic-ink)}
+.topic-research {--topic-bg:#dbeafe;--topic-ink:#1e40af}
+.topic-incidents {--topic-bg:#fef3c7;--topic-ink:#92400e}
+.topic-voices {--topic-bg:#ede9fe;--topic-ink:#5b21b6}
+.topic-politics {--topic-bg:#ccfbf1;--topic-ink:#115e59}
+.topic-treaty {--topic-bg:#dcfce7;--topic-ink:#166534}
+.learning-card {border-top:5px solid var(--topic-ink)}
+.learning-answer {display:block;width:100%;text-align:left;border:1px solid #78716c;border-radius:.6rem;padding:.65rem .8rem}
+.learning-answer[aria-pressed=true] {background:#e7e5e4;border:2px solid #292524}
+.learning-journey button:focus-visible,.learning-journey a:focus-visible {outline:3px solid #1d4ed8;outline-offset:4px}
+.learning-journey, #my-learning-list, [id^="nugget-"], #local-participation, #updates {scroll-margin-top: 10rem}

@@ -29,7 +29,9 @@
     </div>
   </section>
 
-  <section id="questions" class="mx-auto max-w-6xl px-5 py-20">
+  <PauseAiCaWeb.LearningJourney.journey locale={@locale} current_scope={@current_scope} quiz />
+
+  <section id="reflection" class="mx-auto max-w-6xl px-5 py-20">
     <div class="grid gap-12 lg:grid-cols-[0.7fr_1.3fr]">
       <div>
         <p class="eyebrow">
@@ -194,30 +196,12 @@
   </section>
 
   <section class="mx-auto max-w-6xl px-5 py-20">
-    <div class="grid gap-10 rounded-[2rem] bg-[#18352f] p-8 text-white sm:p-12 lg:grid-cols-[1.4fr_0.6fr]">
-      <div>
-        <h2 class="max-w-2xl font-serif text-4xl leading-tight">
-          {gettext("Make your actions count.")}
-        </h2>
-      </div>
-      <div class="flex items-end lg:justify-end">
-        <.link
-          href={
-            if(@current_scope,
-              do: ~p"/dashboard",
-              else: ~p"/users/register?#{%{from: "home_footer", locale: @locale}}"
-            )
-          }
-          class="inline-flex rounded-full bg-white px-6 py-3 font-semibold text-stone-900 hover:bg-[#f8d7cc]"
-        >
-          {cond do
-            @current_scope && @locale == "fr" -> "Voir mes actions"
-            @current_scope -> "View my actions"
-            @locale == "fr" -> "Créer un compte"
-            true -> "Create an account"
-          end}
-        </.link>
-      </div>
+    <div class="rounded-[2rem] bg-[#18352f] p-8 text-white sm:p-12">
+      <h2 class="font-serif text-4xl">{gettext("Stay informed")}</h2>
+      <a
+        href={if(@locale == "fr", do: "/fr/comprendre#updates", else: "/en/learn#updates")}
+        class="mt-6 inline-block rounded-full bg-white px-6 py-3 font-semibold text-stone-900"
+      >{gettext("Subscribe")}</a>
     </div>
   </section>
 </Layouts.app>
