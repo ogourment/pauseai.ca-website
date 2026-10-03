@@ -15,7 +15,7 @@ defmodule PauseAiCa.Accounts.UserNotifier do
 
   @default_sender {"PauseAI Canada", "info@pauseai.ca"}
 
-  defp deliver(recipient, subject, {html, text}) do
+  defp deliver(recipient, subject, {html, text}, opts \\ []) do
     email =
       new()
       |> to(recipient)
@@ -24,13 +24,13 @@ defmodule PauseAiCa.Accounts.UserNotifier do
       |> html_body(html)
       |> text_body(text)
 
-    with {:ok, _metadata} <- Mailer.deliver(email) do
+    with {:ok, _metadata} <- Mailer.deliver(email, opts) do
       {:ok, email}
     end
   end
 
-  def deliver_volunteer_invitation(user, url),
-    do: user |> volunteer_invitation(url) |> Mailer.deliver()
+  def deliver_volunteer_invitation(user, url, opts \\ []),
+    do: user |> volunteer_invitation(url) |> Mailer.deliver(opts)
 
   def volunteer_invitation(user, url) do
     {html, text} =
@@ -127,7 +127,8 @@ defmodule PauseAiCa.Accounts.UserNotifier do
            "Si vous n'avez pas demandé à vous connecter, ignorez ce message."}
         ],
         {"Sign in", "Se connecter", url}
-      )
+      ),
+      admin_actor_id: user.id
     )
   end
 

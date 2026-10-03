@@ -1,5 +1,30 @@
 import Config
 
+# Unknown release deployments fail closed. The canonical production hosts are
+# an explicit compatibility boundary; staging never inherits production mode.
+mail_environment =
+  if config_env() in [:dev, :test] do
+    config_env()
+  else
+    case System.get_env("PAUSEAI_CA_DISPLAY_ENV") do
+      "staging" ->
+        :staging
+
+      "production" ->
+        :production
+
+      nil ->
+        if System.get_env("PHX_HOST") in ["pauseai.ca", "pauseia.ca"],
+          do: :production,
+          else: :blocked
+
+      _ ->
+        :blocked
+    end
+  end
+
+config :pauseai_ca, :mail_environment, mail_environment
+
 # config/runtime.exs is executed for all environments, including
 # during releases. It is executed after compilation and before the
 # system starts, so it is typically used to load production configuration

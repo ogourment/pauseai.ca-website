@@ -26,9 +26,13 @@ defmodule PauseAiCa.Campaigns.Subscription do
           {:ok, :subscribed | :already_subscribed}
           | {:error, :invalid_email | :not_configured | :unavailable}
   def subscribe(email, locale, location \\ %{}) do
-    with {:ok, address} <- validate_email(email),
+    with true <- PauseAiCa.MailSafety.provider_writes_allowed?(),
+         {:ok, address} <- validate_email(email),
          {:ok, api_key} <- api_key() do
       request(address, locale, location, api_key)
+    else
+      false -> {:error, :not_configured}
+      error -> error
     end
   end
 

@@ -366,7 +366,7 @@ defmodule PauseAiCa.Volunteers do
     end)
   end
 
-  def dispatch_batch(scope, batch_id, deliver \\ &deliver_invitation/1) do
+  def dispatch_batch(scope, batch_id, deliver \\ &deliver_invitation/2) do
     with {:ok, _batch} <- get_batch(scope, batch_id) do
       from(i in Invitation,
         join: s in Signup,
@@ -408,7 +408,7 @@ defmodule PauseAiCa.Volunteers do
     end)
 
     Repo.all(from i in Invitation, where: i.status == "queued", limit: 100, select: i.id)
-    |> Enum.each(fn id -> dispatch(id, &deliver_invitation/1) end)
+    |> Enum.each(fn id -> dispatch(id, &deliver_invitation/2) end)
   end
 
   def get_profile(scope) do
@@ -497,7 +497,9 @@ defmodule PauseAiCa.Volunteers do
           {:error, :suppressed}
         else
           try do
-            deliver.(signup.user)
+            if is_function(deliver, 2),
+              do: deliver.(signup.user, invitation.actor_id),
+              else: deliver.(signup.user)
           rescue
             _ -> {:error, :unknown}
           catch
@@ -514,6 +516,9 @@ defmodule PauseAiCa.Volunteers do
             {"unknown", nil}
 
           {:error, :suppressed} ->
+            {"suppressed", nil}
+
+          {:error, reason} when reason in [:staging_admin_required, :mail_environment_blocked] ->
             {"suppressed", nil}
 
           {:error, :rejected} ->
@@ -545,13 +550,14 @@ defmodule PauseAiCa.Volunteers do
     end
   end
 
-  def deliver_invitation(user) do
+  def deliver_invitation(user, actor_id \\ nil) do
     {encoded, token} = UserToken.build_email_token(user, "login")
     Repo.insert!(token)
 
     PauseAiCa.Accounts.UserNotifier.deliver_volunteer_invitation(
       user,
-      PauseAiCaWeb.Endpoint.url() <> "/users/log-in/" <> encoded
+      PauseAiCaWeb.Endpoint.url() <> "/users/log-in/" <> encoded,
+      admin_actor_id: actor_id
     )
   end
 
