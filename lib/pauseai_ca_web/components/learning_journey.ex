@@ -39,17 +39,19 @@ defmodule PauseAiCaWeb.LearningJourney do
         <article
           :for={n <- @nuggets}
           id={"nugget-#{n["id"]}"}
-          class={"learning-card topic-#{n["topic"]} rounded-2xl border bg-white p-6"}
+          class={"learning-card topic-#{n["topic"]} relative rounded-2xl border border-stone-200 bg-white p-6"}
           data-nugget={n["id"]}
           data-nugget-title={n["title"]}
         >
-          <span class={"learning-topic topic-#{n["topic"]}"}>{topic_label(n["topic"])}</span>
+          <span class={"learning-topic mr-10 topic-#{n["topic"]}"}>{topic_label(n["topic"])}</span>
           <span
             :if={n["id"] in ["bengio-speed", "research-acceleration"]}
             class="learning-topic topic-voices"
           >{gettext("People and quotations")}</span>
           <p class="mt-3 text-sm text-stone-600">{n["evidence"]}</p>
-          <h3 class="mt-3 font-heading text-2xl">{if(@quiz, do: n["question"], else: n["title"])}</h3>
+          <h3 class="mt-3 pr-10 font-heading text-2xl">
+            {if(@quiz, do: n["question"], else: n["title"])}
+          </h3>
           <div
             :if={@quiz && !n["discussion"]}
             class="mt-5 space-y-2"
@@ -88,12 +90,7 @@ defmodule PauseAiCaWeb.LearningJourney do
             <a href={n["url"]} class="mt-3 inline-block underline" rel="noreferrer">{n["source"]}</a>
             <span :if={n["language"] != @locale} class="ml-2 text-sm">({String.upcase(n["language"])})</span>
           </details>
-          <button
-            type="button"
-            data-basket-toggle={n["id"]}
-            aria-pressed="false"
-            class="mt-5 rounded-full border-2 border-stone-800 px-4 py-2 font-semibold"
-          >{gettext("Add to my list")}</button>
+          <.resource_bookmark title={n["title"]} toggle_id={n["id"]} />
         </article>
       </div>
       <section
@@ -173,7 +170,8 @@ defmodule PauseAiCaWeb.LearningJourney do
   defp learning_copy do
     %{
       "remove" => gettext("Remove from my list"),
-      "add" => gettext("Add to my list"),
+      "add" => gettext("Bookmark"),
+      "saved" => gettext("Saved"),
       "removeShort" => gettext("Remove"),
       "empty" => gettext("Your list is empty. Add the topics that interest you."),
       "count" => gettext("Topics in your list:"),

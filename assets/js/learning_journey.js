@@ -59,7 +59,12 @@ function initialize() {
     cards.forEach(card => {
       const selected = state.ids.includes(card.dataset.nugget)
       const button = card.querySelector("[data-basket-toggle]")
-      button.textContent = selected ? copy.remove : copy.add
+      button.querySelector("[data-bookmark-label]").textContent = selected ? copy.saved : copy.add
+      const icon = button.querySelector("span[class*=hero-bookmark]")
+      icon.classList.toggle("hero-bookmark", !selected)
+      icon.classList.toggle("hero-bookmark-solid", selected)
+      button.dataset.saved = String(selected)
+      button.setAttribute("aria-label", `${selected ? copy.remove : copy.add}: ${card.dataset.nuggetTitle}`)
       button.setAttribute("aria-pressed", String(selected))
     })
     const list = root.querySelector("[data-basket-list]")

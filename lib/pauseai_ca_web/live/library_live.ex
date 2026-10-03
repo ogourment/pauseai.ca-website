@@ -165,9 +165,10 @@ defmodule PauseAiCaWeb.LibraryLive do
             <li
               :for={voice <- @voices}
               id={"voice-#{voice.id}"}
-              class="learning-card topic-voices flex flex-col rounded-2xl border border-stone-200 p-6"
+              class="topic-voices flex flex-col rounded-2xl border border-stone-200 p-6"
             >
-              <h3 class="font-heading text-2xl text-stone-950">{voice.name}</h3>
+              <span class="learning-topic topic-voices self-start">{gettext("People and quotations")}</span>
+              <h3 class="mt-3 font-heading text-2xl text-stone-950">{voice.name}</h3>
               <p class="mt-1 text-sm leading-6 text-stone-500">
                 {Voice.affiliation(voice, @locale)}
               </p>
@@ -294,39 +295,16 @@ defmodule PauseAiCaWeb.LibraryLive do
               >
                 {read_label(@locale)} <span aria-hidden="true">↗</span>
               </a>
-              <.link
+              <.resource_bookmark
+                title={Resource.copy(resource, @locale).title}
+                selected={!!@current_scope && resource.id in @current_scope.user.saved_resources}
                 href={
                   if @current_scope,
                     do: ~p"/bookmarks/#{resource.id}?locale=#{@locale}",
                     else: ~p"/users/register?#{%{bookmark: resource.id, locale: @locale}}"
                 }
                 method={if @current_scope, do: "post", else: "get"}
-                aria-label={
-                  gettext("%{action}: %{title}",
-                    action:
-                      if(@current_scope && resource.id in @current_scope.user.saved_resources,
-                        do: gettext("Saved"),
-                        else: bookmark_label(@locale)
-                      ),
-                    title: Resource.copy(resource, @locale).title
-                  )
-                }
-                class="group absolute right-3 top-3 inline-flex size-11 items-center justify-center rounded-full text-stone-700 hover:bg-brand-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
-              >
-                <.icon
-                  name={
-                    if @current_scope && resource.id in @current_scope.user.saved_resources,
-                      do: "hero-bookmark-solid",
-                      else: "hero-bookmark"
-                  }
-                  class="size-5"
-                />
-                <span class="pointer-events-none absolute right-0 top-full z-10 w-max max-w-56 rounded bg-stone-900 px-2 py-1 text-sm text-white opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100">
-                  {if @current_scope && resource.id in @current_scope.user.saved_resources,
-                    do: gettext("Saved"),
-                    else: bookmark_label(@locale)}
-                </span>
-              </.link>
+              />
             </li>
           </ul>
         </div>
@@ -511,8 +489,6 @@ defmodule PauseAiCaWeb.LibraryLive do
     </Layouts.app>
     """
   end
-
-  defp bookmark_label(_locale), do: gettext("Bookmark")
 
   defp page_title(_locale), do: gettext("Should we slow AI down?")
 

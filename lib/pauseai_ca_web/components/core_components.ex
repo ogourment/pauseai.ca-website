@@ -31,6 +31,61 @@ defmodule PauseAiCaWeb.CoreComponents do
 
   alias Phoenix.LiveView.JS
 
+  attr :title, :string, required: true
+  attr :selected, :boolean, default: false
+  attr :href, :string, default: nil
+  attr :method, :string, default: "get"
+  attr :toggle_id, :string, default: nil
+  attr :compact, :boolean, default: true
+
+  def resource_bookmark(assigns) do
+    assigns =
+      assign(
+        assigns,
+        :label,
+        if(assigns.selected, do: gettext("Saved"), else: gettext("Bookmark"))
+      )
+
+    ~H"""
+    <.link
+      :if={@href}
+      href={@href}
+      method={@method}
+      class={[
+        "resource-bookmark",
+        if(@compact, do: "resource-bookmark-tab", else: "resource-bookmark-pill")
+      ]}
+      data-saved={to_string(@selected)}
+      aria-label={gettext("%{action}: %{title}", action: @label, title: @title)}
+    >
+      <.bookmark_mark selected={@selected} label={@label} compact={@compact} />
+    </.link>
+    <button
+      :if={!@href}
+      type="button"
+      class="resource-bookmark resource-bookmark-tab"
+      data-basket-toggle={@toggle_id}
+      data-saved={to_string(@selected)}
+      aria-pressed={to_string(@selected)}
+      aria-label={gettext("%{action}: %{title}", action: @label, title: @title)}
+    >
+      <.bookmark_mark selected={@selected} label={@label} compact={true} />
+    </button>
+    """
+  end
+
+  attr :selected, :boolean, required: true
+  attr :label, :string, required: true
+  attr :compact, :boolean, required: true
+
+  defp bookmark_mark(assigns) do
+    ~H"""
+    <.icon name={if(@selected, do: "hero-bookmark-solid", else: "hero-bookmark")} class="size-5" />
+    <span :if={!@compact} data-bookmark-label>{@label}</span>
+    <span :if={@compact} data-bookmark-label class="resource-bookmark-tooltip">{@label}</span>
+    """
+  end
+
   @doc """
   Renders flash notices.
 

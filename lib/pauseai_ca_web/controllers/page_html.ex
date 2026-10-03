@@ -68,24 +68,17 @@ defmodule PauseAiCaWeb.PageHTML do
         {@cta} <span aria-hidden="true">&nbsp;↗</span>
       </a>
       <p class="mt-5 text-xs text-stone-400">Source: {@source}</p>
-      <%= if @current_scope do %>
-        <.link
-          href={~p"/bookmarks/#{@bookmark}?locale=#{@locale}"}
-          method="post"
-          class="mt-5 inline-flex items-center gap-2 rounded-full border border-stone-300 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:border-brand hover:bg-white"
-        >
-          <.icon name="hero-bookmark" class="size-4" />
-          {gettext("Bookmark")}
-        </.link>
-      <% else %>
-        <.link
-          href={~p"/users/register?bookmark=#{@bookmark}"}
-          class="mt-5 inline-flex items-center gap-2 rounded-full border border-stone-300 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:border-brand hover:bg-white"
-        >
-          <.icon name="hero-bookmark" class="size-4" />
-          {gettext("Bookmark")}
-        </.link>
-      <% end %>
+      <.resource_bookmark
+        title={@title}
+        compact={false}
+        selected={!!@current_scope && @bookmark in @current_scope.user.saved_resources}
+        href={
+          if @current_scope,
+            do: ~p"/bookmarks/#{@bookmark}?locale=#{@locale}",
+            else: ~p"/users/register?bookmark=#{@bookmark}"
+        }
+        method={if @current_scope, do: "post", else: "get"}
+      />
     </article>
     """
   end
