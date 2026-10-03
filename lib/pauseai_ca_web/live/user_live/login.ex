@@ -80,11 +80,7 @@ defmodule PauseAiCaWeb.UserLive.Login do
         <.link
           :if={!@current_scope}
           id="continue-browsing"
-          href={
-            if @context["return_to"] in ["/en/learn", "/fr/comprendre"],
-              do: @context["return_to"],
-              else: if(@locale == "fr", do: "/fr#questions", else: "/en#questions")
-          }
+          href={continue_path(@context, @locale)}
           class="mt-4 inline-block font-semibold underline decoration-brand decoration-2 underline-offset-4"
         >
           {gettext("Continue browsing")}
@@ -235,4 +231,11 @@ defmodule PauseAiCaWeb.UserLive.Login do
       })
 
   defp creation_metric(socket, _user, false), do: socket
+
+  defp continue_path(context, locale) do
+    case context["return_to"] do
+      path when path in ["/en/learn", "/fr/comprendre"] -> path
+      _ -> if(locale == "fr", do: "/fr#questions", else: "/en#questions")
+    end
+  end
 end

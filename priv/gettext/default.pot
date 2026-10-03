@@ -91,7 +91,7 @@ msgid "Body"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/core_components.ex:46
-#: lib/pauseai_ca_web/components/learning_journey.ex:173
+#: lib/pauseai_ca_web/components/learning_journey.ex:168
 #, elixir-autogen, elixir-format
 msgid "Bookmark"
 msgstr ""
@@ -308,7 +308,6 @@ msgid "My MP"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/layouts.ex:250
-#: lib/pauseai_ca_web/components/learning_journey.ex:141
 #: lib/pauseai_ca_web/live/dashboard_live.ex:24
 #: lib/pauseai_ca_web/live/dashboard_live.ex:266
 #: lib/pauseai_ca_web/live/library_live.ex:471
@@ -456,7 +455,7 @@ msgstr ""
 msgid "Record privately"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:175
+#: lib/pauseai_ca_web/components/learning_journey.ex:170
 #: lib/pauseai_ca_web/live/administrators_live.ex:129
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:306
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:475
@@ -1719,7 +1718,7 @@ msgid "Log me in only this time"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/core_components.ex:46
-#: lib/pauseai_ca_web/components/learning_journey.ex:174
+#: lib/pauseai_ca_web/components/learning_journey.ex:169
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:76
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:140
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:198
@@ -3520,7 +3519,7 @@ msgid "Take part"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/layouts.ex:151
-#: lib/pauseai_ca_web/components/learning_journey.ex:160
+#: lib/pauseai_ca_web/components/learning_journey.ex:155
 #: lib/pauseai_ca_web/controllers/page_html/strategy.html.heex:55
 #, elixir-autogen, elixir-format
 msgid "Ways to take part"
@@ -4088,13 +4087,13 @@ msgstr ""
 msgid "I don't know"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:189
+#: lib/pauseai_ca_web/components/learning_journey.ex:184
 #, elixir-autogen, elixir-format
 msgid "Incidents"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/layouts.ex:169
-#: lib/pauseai_ca_web/components/learning_journey.ex:151
+#: lib/pauseai_ca_web/components/learning_journey.ex:146
 #: lib/pauseai_ca_web/live/library_live.ex:314
 #, elixir-autogen, elixir-format
 msgid "Join or start a group"
@@ -4117,13 +4116,13 @@ msgid "My learning list"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/learning_journey.ex:50
-#: lib/pauseai_ca_web/components/learning_journey.ex:190
+#: lib/pauseai_ca_web/components/learning_journey.ex:185
 #: lib/pauseai_ca_web/live/library_live.ex:170
 #, elixir-autogen, elixir-format
 msgid "People and quotations"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:191
+#: lib/pauseai_ca_web/components/learning_journey.ex:186
 #: lib/pauseai_ca_web/live/library_live.ex:216
 #, elixir-autogen, elixir-format
 msgid "Politics"
@@ -4139,7 +4138,7 @@ msgstr ""
 msgid "Receive news about AI policy and ways to take part. Choose email updates first; location can wait until you want to organize locally."
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:188
+#: lib/pauseai_ca_web/components/learning_journey.ex:183
 #, elixir-autogen, elixir-format
 msgid "Research"
 msgstr ""
@@ -4169,7 +4168,7 @@ msgstr ""
 msgid "Topics"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:192
+#: lib/pauseai_ca_web/components/learning_journey.ex:187
 #, elixir-autogen, elixir-format
 msgid "Treaties and action"
 msgstr ""
@@ -4194,7 +4193,7 @@ msgstr ""
 msgid "Enter the first three characters of your postal code when you want local invitations. You can also read the organizing guide or attend an event."
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:180
+#: lib/pauseai_ca_web/components/learning_journey.ex:175
 #, elixir-autogen, elixir-format
 msgid "Here is some context to explore the question."
 msgstr ""
@@ -4219,7 +4218,7 @@ msgstr ""
 msgid "Postal area (FSA)"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:172
+#: lib/pauseai_ca_web/components/learning_journey.ex:167
 #, elixir-autogen, elixir-format
 msgid "Remove from my list"
 msgstr ""
@@ -4229,27 +4228,27 @@ msgstr ""
 msgid "Save my postal area with an account"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:179
+#: lib/pauseai_ca_web/components/learning_journey.ex:174
 #, elixir-autogen, elixir-format
 msgid "Saved in this browser. Account synchronization failed; reload to retry."
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:182
+#: lib/pauseai_ca_web/components/learning_journey.ex:177
 #, elixir-autogen, elixir-format
 msgid "The first answer matches the explanation. Here is why."
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:177
+#: lib/pauseai_ca_web/components/learning_journey.ex:172
 #, elixir-autogen, elixir-format
 msgid "Topics in your list:"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:181
+#: lib/pauseai_ca_web/components/learning_journey.ex:176
 #, elixir-autogen, elixir-format
 msgid "Yes. Read the qualifications and source."
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:176
+#: lib/pauseai_ca_web/components/learning_journey.ex:171
 #, elixir-autogen, elixir-format
 msgid "Your list is empty. Add the topics that interest you."
 msgstr ""
@@ -4269,7 +4268,7 @@ msgstr ""
 msgid "No group is listed for this postal area yet."
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:161
+#: lib/pauseai_ca_web/components/learning_journey.ex:156
 #, elixir-autogen, elixir-format
 msgid "Support our work"
 msgstr ""
