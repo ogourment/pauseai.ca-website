@@ -58,11 +58,11 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.management flash={@flash} current_scope={@current_scope}>
+    <Layouts.management active_tab="dashboard" flash={@flash} current_scope={@current_scope}>
       <section id="admin-dashboard" class="mx-auto max-w-6xl px-5 py-16">
         <p class="eyebrow">{gettext("Superadmin")}</p>
         <h1 class="mt-3 font-heading text-5xl text-stone-950">{gettext("Admin dashboard")}</h1>
-        <.admin_navigation current={:dashboard} />
+
         <section id="visit-preferences" class="mt-6 rounded-xl border p-5">
           <h2 class="font-heading text-xl">{gettext("My visits")}</h2>
           <p class="mt-2">
@@ -374,44 +374,6 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
       <dd class="font-bold">{@value}</dd>
     </div>
     """
-  end
-
-  attr :current, :atom, required: true
-
-  defp admin_navigation(assigns) do
-    ~H"""
-    <nav class="mt-8 flex flex-wrap gap-3" aria-label={gettext("Superadmin tools")}>
-      <.link
-        navigate={~p"/admin/dashboard"}
-        aria-current={if @current == :dashboard, do: "page"}
-        class={admin_link_class(@current == :dashboard)}
-      >{gettext("Dashboard")}</.link>
-      <.link
-        navigate={~p"/manage/accounts"}
-        aria-current={if @current == :accounts, do: "page"}
-        class={admin_link_class(@current == :accounts)}
-      >{gettext("Accounts")}</.link>
-      <.link navigate={~p"/admin/contacts"} class={admin_link_class(false)}>{gettext("Contacts")}</.link>
-      <.link navigate={~p"/admin/contact-imports"} class={admin_link_class(false)}>
-        {gettext("Contact imports")}
-      </.link>
-      <.link navigate={~p"/admin/donation-pledges"} class={admin_link_class(false)}>{gettext(
-        "Donation pledges"
-      )}</.link>
-      <a href="/admin/versions" class={admin_link_class(false)}>{gettext("Deployment versions")}</a>
-      <a href="/admin/acceptance" class={admin_link_class(false)}>{gettext("Acceptance evidence")}</a>
-    </nav>
-    """
-  end
-
-  defp admin_link_class(current?) do
-    [
-      "rounded-full border px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand",
-      if(current?,
-        do: "border-stone-900 bg-stone-900 text-white",
-        else: "border-stone-300 bg-white text-stone-800 hover:border-brand"
-      )
-    ]
   end
 
   attr :id, :string, required: true

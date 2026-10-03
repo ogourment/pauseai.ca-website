@@ -386,6 +386,7 @@ digraph Schema {
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">signup_entry_point</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">character varying</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">organizing_group_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">uuid</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">organizer_notes</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">staging_login_allowed</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">boolean NOT NULL</FONT></TD></TR>
       </TABLE>
     >
   ];

@@ -18,6 +18,7 @@ defmodule PauseAiCaWeb.ManagementLayoutTest do
       "/admin/contacts",
       "/admin/donation-pledges",
       "/manage/accounts",
+      "/manage/administrators",
       "/manage/accounts/new",
       "/manage/accounts/import",
       "/manage/accounts/#{admin.id}",

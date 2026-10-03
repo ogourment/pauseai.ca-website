@@ -15,6 +15,7 @@ defmodule PauseAiCa.Accounts.User do
     field :signup_entry_point, :string
     field :authenticated_at, :utc_datetime, virtual: true
     field :superadmin, :boolean, default: false
+    field :staging_login_allowed, :boolean, default: false
     field :fsa, :string
     field :local_updates, :boolean, default: false
     field :saved_resources, {:array, :string}, default: []

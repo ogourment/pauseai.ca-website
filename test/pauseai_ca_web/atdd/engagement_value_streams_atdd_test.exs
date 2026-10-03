@@ -205,7 +205,7 @@ if System.get_env("ATDD") == "true" do
           "engagement-06-accounts-before.png",
           transfer_scenario,
           "The existing superadmin sees the account list before the newcomer registers",
-          step: "1/3",
+          step: "1/4",
           user: "Existing superadmin"
         )
         |> log_out()
@@ -245,7 +245,7 @@ if System.get_env("ATDD") == "true" do
           "engagement-07-accounts-new-superadmin.png",
           transfer_scenario,
           "After the newcomer creates and confirms an account, the existing superadmin grants access",
-          step: "2/3",
+          step: "2/4",
           user: "Existing superadmin"
         )
         |> log_out()
@@ -272,8 +272,28 @@ if System.get_env("ATDD") == "true" do
         "engagement-08-accounts-transfer-complete.png",
         transfer_scenario,
         "The new superadmin removes access from the previous superadmin and remains the administrator",
-        step: "3/3",
+        step: "3/4",
         user: "New account holder"
+      )
+
+      {former_token, _} = generate_user_magic_link_token(member)
+
+      browser
+      |> log_out()
+      |> visit("/users/log-in/#{former_token}?locale=en")
+      |> click_button("Keep me logged in on this device")
+      |> assert_path("/")
+      |> visit("/admin/dashboard")
+      |> refute_has("#metric-users")
+      |> visit("/manage/administrators")
+      |> assert_path("/dashboard")
+      |> refute_has("#administrators")
+      |> capture(
+        "engagement-09-former-admin-denied.png",
+        transfer_scenario,
+        "The former administrator signs in again and is denied movement metrics and administrator management",
+        step: "4/4",
+        user: "Former superadmin"
       )
 
       Enum.each(@scenarios, &AtddEvidence.mark_scenario_success!/1)

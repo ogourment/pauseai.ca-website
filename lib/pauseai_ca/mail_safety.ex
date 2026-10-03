@@ -18,6 +18,38 @@ defmodule PauseAiCa.MailSafety do
 
   def provider_writes_allowed?(), do: environment() in [:production, :test]
 
+  @doc "Single-account authentication exception; never used by generic or bulk delivery."
+  def prepare_sign_in(email, user_id) do
+    case environment() do
+      mode when mode in [:dev, :test, :production] ->
+        {:ok, email}
+
+      :staging ->
+        with {:ok, id} <- Ecto.UUID.cast(user_id),
+             %User{confirmed_at: confirmed} = user when not is_nil(confirmed) <-
+               Repo.get(User, id),
+             true <-
+               user.staging_login_allowed or
+                 PauseAiCa.Volunteers.allowed?(PauseAiCa.Accounts.Scope.for_user(user)),
+             [{_, address}] when address == user.email <- email.to do
+          {:ok,
+           %{
+             email
+             | to: [{"Staging sign-in", user.email}],
+               cc: [],
+               bcc: [],
+               reply_to: nil,
+               subject: "[STAGING] " <> (email.subject || "")
+           }}
+        else
+          _ -> {:error, :staging_admin_required}
+        end
+
+      _ ->
+        {:error, :mail_environment_blocked}
+    end
+  end
+
   defp prepare_staging(email, actor_id) when is_binary(actor_id) do
     case Ecto.UUID.cast(actor_id) do
       {:ok, id} ->

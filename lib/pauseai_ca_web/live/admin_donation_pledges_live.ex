@@ -43,6 +43,7 @@ defmodule PauseAiCaWeb.AdminDonationPledgesLive do
   def render(assigns) do
     ~H"""
     <Layouts.management
+      active_tab="more"
       flash={@flash}
       current_scope={@current_scope}
       locale={@locale}

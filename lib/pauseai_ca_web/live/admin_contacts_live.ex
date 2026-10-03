@@ -179,15 +179,13 @@ defmodule PauseAiCaWeb.AdminContactsLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.management flash={@flash} current_scope={@current_scope} locale={@locale}>
+    <Layouts.management
+      active_tab="contacts"
+      flash={@flash}
+      current_scope={@current_scope}
+      locale={@locale}
+    >
       <main class="mx-auto max-w-5xl px-5 py-10 crm-surface">
-        <nav class="flex flex-wrap gap-4 mb-6">
-          <.link navigate={~p"/admin/dashboard?locale=#{@locale}"}>{gettext("Administration")}</.link><.link navigate={
-            ~p"/admin/contacts?locale=#{@locale}"
-          }>{gettext("Contacts")}</.link><.link navigate={
-            ~p"/admin/contact-imports?locale=#{@locale}"
-          }>{gettext("Contact imports")}</.link>
-        </nav>
         <h1 class="text-3xl font-bold mb-6">{gettext("Contacts")}</h1>
         <p :if={@error} id="crm-error" role="alert" class="crm-error">{@error}</p>
         <p :if={@status} role="status">{@status}</p>

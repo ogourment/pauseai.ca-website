@@ -3,6 +3,15 @@ defmodule PauseAiCa.Mailer do
 
   defoverridable deliver_many: 2
 
+  @doc "Authentication-only single delivery, guarded separately from campaign mail."
+  def deliver_sign_in(email, user_id) do
+    with {:ok, prepared} <- PauseAiCa.MailSafety.prepare_sign_in(email, user_id) do
+      instrument(:deliver, %{email: prepared, config: []}, fn ->
+        Swoosh.Mailer.deliver(prepared, parse_config([]))
+      end)
+    end
+  end
+
   def deliver(email, opts) do
     with {:ok, prepared} <- PauseAiCa.MailSafety.prepare(email, opts) do
       super(prepared, Keyword.delete(opts, :admin_actor_id))

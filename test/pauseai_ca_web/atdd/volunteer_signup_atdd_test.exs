@@ -898,12 +898,15 @@ if System.get_env("ATDD") == "true" do
       id = "ACC-01"
       target = user_fixture(%{email: "new-admin@example.org"})
       flush_emails()
+      before_accounts = Repo.aggregate(Accounts.User, :count)
+      before_invitations = Repo.aggregate(Invitation, :count)
+      before_contacts = Repo.aggregate(PauseAiCa.ContactMigration.Contact, :count)
 
       b =
         open_accounts(c.conn, c.admin, id)
         |> visit("/admin/dashboard")
         |> click_link("Accounts")
-        |> assert_path("/manage/accounts")
+        |> assert_path("/manage/accounts", query_params: %{locale: "en"})
         |> assert_has("#account-count", text: "2 accounts")
         |> click_link(target.email)
         |> click("#account-access summary")
@@ -919,10 +922,34 @@ if System.get_env("ATDD") == "true" do
       assert_receive {:email, notification}
       assert notification.subject =~ "superadmin"
       assert notification.text_body =~ "/manage/accounts"
+      assert notification.to == [{"", target.email}]
+      refute_receive {:email, _}
+      refute_receive {:emails, _}
+      promoted = Accounts.get_user!(target.id)
+      assert Accounts.get_user!(c.admin.id).superadmin
+      assert promoted.email == target.email and promoted.confirmed_at == target.confirmed_at
+      assert promoted.organizing_group_id == target.organizing_group_id
+      assert promoted.local_updates == target.local_updates
+      assert promoted.saved_resources == target.saved_resources
+      assert promoted.belief_answers == target.belief_answers
+      assert Repo.aggregate(Accounts.User, :count) == before_accounts
+      assert Repo.aggregate(Invitation, :count) == before_invitations
+      assert Repo.aggregate(PauseAiCa.ContactMigration.Contact, :count) == before_contacts
 
       open_accounts(new_device(c), Accounts.get_user!(target.id), id)
       |> assert_has("#managed-accounts", text: c.admin.email)
-      |> capture(id, "New admin signs in", "The granted role gives real administrative access")
+      |> visit("/manage/administrators?locale=en")
+      |> assert_has("#superadmin-list", text: c.admin.email)
+      |> assert_has("#superadmin-list", text: target.email)
+      |> visit("/admin/dashboard?locale=en")
+      |> assert_has("#metric-users")
+      |> visit("/admin/contacts?locale=en")
+      |> assert_has("#crm-directory")
+      |> capture(
+        id,
+        "New admin signs in and opens protected tools",
+        "Administrator roster, movement metrics and CRM access work; existing roles and member preferences are preserved"
+      )
 
       b
       |> visit("/admin/accounts?locale=en&page=1")

@@ -266,7 +266,7 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.management flash={@flash} current_scope={@current_scope}>
+    <Layouts.management active_tab="contacts" flash={@flash} current_scope={@current_scope}>
       <section id="admin-contact-imports" class="mx-auto max-w-6xl px-5 py-16">
         <p class="eyebrow">{gettext("Superadmin")}</p>
         <h1 class="mt-3 font-heading text-5xl text-stone-950">{gettext("Contact imports")}</h1>
@@ -275,17 +275,6 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
             "Review contacts before they enter PauseAI Canada. Importing does not send email or create accounts."
           )}
         </p>
-        <nav class="mt-8 flex flex-wrap gap-3" aria-label={gettext("Superadmin tools")}>
-          <.link navigate={~p"/admin/dashboard"} class={admin_link_class(false)}>{gettext("Dashboard")}</.link>
-          <.link navigate={~p"/manage/accounts"} class={admin_link_class(false)}>{gettext("Accounts")}</.link>
-          <.link
-            navigate={~p"/admin/contact-imports"}
-            aria-current="page"
-            class={admin_link_class(true)}
-          >{gettext("Contact imports")}</.link>
-          <a href="/admin/versions" class={admin_link_class(false)}>{gettext("Deployment versions")}</a>
-          <a href="/admin/acceptance" class={admin_link_class(false)}>{gettext("Acceptance evidence")}</a>
-        </nav>
 
         <section class="mt-10 rounded-3xl border border-stone-200 bg-white p-6">
           <h2 class="font-heading text-3xl text-stone-950">{gettext("Preview a CSV")}</h2>
@@ -516,16 +505,6 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
       </section>
     </Layouts.management>
     """
-  end
-
-  defp admin_link_class(current?) do
-    [
-      "rounded-full border px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand",
-      if(current?,
-        do: "border-stone-900 bg-stone-900 text-white",
-        else: "border-stone-300 bg-white text-stone-800 hover:border-brand"
-      )
-    ]
   end
 
   defp classification_label("known_active"), do: gettext("Known active")

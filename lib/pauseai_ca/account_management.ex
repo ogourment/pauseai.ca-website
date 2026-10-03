@@ -151,6 +151,49 @@ defmodule PauseAiCa.AccountManagement do
     end)
   end
 
+  def access_roster(scope) do
+    if Volunteers.superadmin?(scope) do
+      %{
+        superadmins: Repo.all(from u in User, where: u.superadmin, order_by: u.email),
+        managers: Volunteers.managers(scope),
+        staging_signins:
+          Repo.all(from u in User, where: u.staging_login_allowed, order_by: u.email)
+      }
+    else
+      %{superadmins: [], managers: [], staging_signins: []}
+    end
+  end
+
+  def set_staging_login(scope, email, enabled) when is_boolean(enabled) do
+    Repo.transaction(fn ->
+      if PauseAiCa.MailSafety.environment() != :staging or not Volunteers.superadmin?(scope),
+        do: Repo.rollback(:unauthorized)
+
+      user =
+        Repo.one(
+          from u in User,
+            where: fragment("lower(?)", u.email) == ^String.downcase(String.trim(email)),
+            lock: "FOR UPDATE"
+        )
+
+      if is_nil(user) or is_nil(user.confirmed_at), do: Repo.rollback(:confirmed_account_required)
+
+      if user.staging_login_allowed != enabled do
+        user = user |> change(staging_login_allowed: enabled) |> Repo.update!()
+
+        Repo.insert!(%Event{
+          actor_id: scope.user.id,
+          action: "staging_login_access_changed",
+          details: %{"user_id" => user.id, "allowed" => enabled}
+        })
+
+        user
+      else
+        user
+      end
+    end)
+  end
+
   defp query(scope) do
     base =
       from u in User,

@@ -89,10 +89,85 @@ defmodule PauseAiCa.MailSafetyTest do
              end)
 
     assert_receive {:email, login}
-    assert login.to == prepared.to
+    assert login.to == [{"Staging sign-in", actor.email}]
     :ok = PauseAiCa.Volunteers.revoke_manager(scope, assignment.id)
 
     assert {:error, :staging_admin_required} =
              MailSafety.prepare(message(), admin_actor_id: actor.id)
+  end
+
+  test "STAGE-AUTH-01 explicit reviewer whitelist allows authentication only, with fresh revocation",
+       %{admin: admin} do
+    actor =
+      unconfirmed_user_fixture()
+      |> Ecto.Changeset.change(confirmed_at: DateTime.utc_now(:second))
+      |> Repo.update!()
+
+    scope = PauseAiCa.Accounts.Scope.for_user(admin)
+
+    assert {:error, :staging_admin_required} =
+             PauseAiCa.Accounts.deliver_login_instructions(actor, fn _ ->
+               "http://localhost/sign-in"
+             end)
+
+    assert {:ok, allowed} =
+             PauseAiCa.AccountManagement.set_staging_login(scope, actor.email, true)
+
+    refute allowed.superadmin
+
+    assert {:ok, _} =
+             PauseAiCa.Accounts.deliver_login_instructions(actor, fn _ ->
+               "http://localhost/sign-in"
+             end)
+
+    assert_receive {:email, login}
+    assert login.to == [{"Staging sign-in", actor.email}]
+    assert login.cc == [] and login.bcc == []
+    assert {:error, :staging_admin_required} = Mailer.deliver(message(), admin_actor_id: actor.id)
+
+    assert {:error, :staging_admin_required} =
+             Mailer.deliver_many([message()], admin_actor_id: actor.id)
+
+    assert {:error, :staging_admin_required} = Mailer.deliver_sign_in(message(), actor.id)
+    assert {:ok, _} = PauseAiCa.AccountManagement.set_staging_login(scope, actor.email, false)
+
+    assert {:error, :staging_admin_required} =
+             PauseAiCa.Accounts.deliver_login_instructions(actor, fn _ ->
+               "http://localhost/sign-in"
+             end)
+
+    refute_receive {:email, _}
+  end
+
+  test "whitelist changes require a current superadmin, confirmed account and staging", %{
+    admin: admin
+  } do
+    scope = PauseAiCa.Accounts.Scope.for_user(admin)
+    pending = unconfirmed_user_fixture()
+
+    assert {:error, :confirmed_account_required} =
+             PauseAiCa.AccountManagement.set_staging_login(scope, pending.email, true)
+
+    assert {:error, :confirmed_account_required} =
+             PauseAiCa.AccountManagement.set_staging_login(scope, "missing@example.org", true)
+
+    actor =
+      unconfirmed_user_fixture()
+      |> Ecto.Changeset.change(confirmed_at: DateTime.utc_now(:second))
+      |> Repo.update!()
+
+    assert {:error, :unauthorized} =
+             PauseAiCa.AccountManagement.set_staging_login(
+               PauseAiCa.Accounts.Scope.for_user(actor),
+               actor.email,
+               true
+             )
+
+    Application.put_env(:pauseai_ca, :mail_environment, :production)
+
+    assert {:error, :unauthorized} =
+             PauseAiCa.AccountManagement.set_staging_login(scope, actor.email, true)
+
+    refute Repo.get!(PauseAiCa.Accounts.User, actor.id).staging_login_allowed
   end
 end

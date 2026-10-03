@@ -24,7 +24,13 @@ defmodule PauseAiCa.Accounts.UserNotifier do
       |> html_body(html)
       |> text_body(text)
 
-    with {:ok, _metadata} <- Mailer.deliver(email, opts) do
+    result =
+      case Keyword.fetch(opts, :sign_in_user_id) do
+        {:ok, id} -> Mailer.deliver_sign_in(email, id)
+        :error -> Mailer.deliver(email, opts)
+      end
+
+    with {:ok, _metadata} <- result do
       {:ok, email}
     end
   end
@@ -128,7 +134,7 @@ defmodule PauseAiCa.Accounts.UserNotifier do
         ],
         {"Sign in", "Se connecter", url}
       ),
-      admin_actor_id: user.id
+      sign_in_user_id: user.id
     )
   end
 

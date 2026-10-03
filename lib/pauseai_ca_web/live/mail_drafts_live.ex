@@ -258,16 +258,18 @@ defmodule PauseAiCaWeb.MailDraftsLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.management flash={@flash} current_scope={@current_scope} locale={@locale}>
+    <Layouts.management
+      active_tab="mail"
+      flash={@flash}
+      current_scope={@current_scope}
+      locale={@locale}
+    >
       <main class="mx-auto max-w-5xl px-5 py-10 crm-surface">
-        <nav class="flex flex-wrap gap-4 mb-6">
-          <.link navigate={~p"/manage/accounts?locale=#{@locale}"}>{gettext("Accounts")}</.link><.link navigate={
-            ~p"/manage/mail?locale=#{@locale}"
-          }>{gettext("Email drafts")}</.link><.link
-            :if={@batch}
-            navigate={~p"/manage/accounts/#{@batch.anchor_user_id}?locale=#{@locale}"}
-          >{gettext("Account and Brevo history")}</.link>
-        </nav>
+        <.link
+          :if={@batch}
+          navigate={~p"/manage/accounts/#{@batch.anchor_user_id}?locale=#{@locale}"}
+          class="mb-4 inline-block underline"
+        >{gettext("Account and Brevo history")}</.link>
         <h1 class="text-3xl font-bold mb-6">{gettext("Email drafts")}</h1>
         <p>
           {gettext(

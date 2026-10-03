@@ -552,6 +552,7 @@ defmodule PauseAiCaWeb.Layouts do
   attr :current_scope, :map, default: nil
   attr :locale, :string, default: nil
   attr :translated_path, :string, default: nil
+  attr :active_tab, :string, default: "accounts"
   slot :inner_block, required: true
 
   def management(assigns) do
@@ -563,8 +564,104 @@ defmodule PauseAiCaWeb.Layouts do
       translated_path={@translated_path}
       show_announcements={false}
     >
+      <.management_tabs current_scope={@current_scope} locale={@locale} active={@active_tab} />
       {render_slot(@inner_block)}
     </.app>
     """
   end
+
+  attr :current_scope, :map, required: true
+  attr :locale, :string, default: "en"
+  attr :active, :string, default: "accounts"
+
+  def management_tabs(assigns) do
+    assigns = assign(assigns, :locale, assigns.locale || Gettext.get_locale(PauseAiCaWeb.Gettext))
+
+    assigns =
+      assign(assigns, :superadmin?, PauseAiCa.Volunteers.superadmin?(assigns.current_scope))
+
+    ~H"""
+    <nav
+      id="management-tabs"
+      aria-label={gettext("Management")}
+      class="mx-auto flex max-w-6xl items-end gap-1 border-b border-stone-300 px-5 pt-5 text-sm"
+    >
+      <div
+        id="management-tab-links"
+        phx-hook=".ManagementTabs"
+        class="flex min-w-0 flex-1 overflow-x-auto"
+      >
+        <.link
+          navigate={~p"/manage/accounts?locale=#{@locale}"}
+          aria-current={if @active == "accounts", do: "page"}
+          class={tab_class(@active == "accounts")}
+        >{gettext("Accounts")}</.link>
+        <.link
+          navigate={~p"/admin/contacts?locale=#{@locale}"}
+          aria-current={if @active == "contacts", do: "page"}
+          class={tab_class(@active == "contacts")}
+        >{gettext("Contacts")}</.link>
+        <.link
+          navigate={~p"/manage/mail?locale=#{@locale}"}
+          aria-current={if @active == "mail", do: "page"}
+          class={tab_class(@active == "mail")}
+        >{gettext("Email drafts")}</.link>
+        <.link
+          :if={@superadmin?}
+          navigate={~p"/manage/administrators?locale=#{@locale}"}
+          aria-current={if @active == "administrators", do: "page"}
+          class={tab_class(@active == "administrators")}
+        >{gettext("Administrators")}</.link>
+      </div>
+      <script :type={Phoenix.LiveView.ColocatedHook} name=".ManagementTabs">
+        export default {
+          mounted() { this.showCurrent() },
+          updated() { this.showCurrent() },
+          showCurrent() {
+            const current = this.el.querySelector('[aria-current="page"]')
+            if (!current || this.activeHref === current.href) return
+            this.activeHref = current.href
+            const left = current.getBoundingClientRect().left - this.el.getBoundingClientRect().left + this.el.scrollLeft
+            this.el.scrollLeft = left - (this.el.clientWidth - current.offsetWidth) / 2
+          }
+        }
+      </script>
+      <details :if={@superadmin?} id="management-more" class="act-menu relative shrink-0">
+        <summary class="cursor-pointer list-none border-b-2 border-transparent px-3 py-3 font-semibold">
+          {gettext("More")} ▾
+        </summary>
+        <div class="absolute right-0 z-50 min-w-64 rounded-lg border border-stone-200 bg-white p-2 shadow-lg">
+          <.link
+            navigate={~p"/admin/dashboard?locale=#{@locale}"}
+            aria-current={if @active == "dashboard", do: "page"}
+            class="block px-3 py-2 hover:bg-brand-wash"
+          >{gettext("Dashboard")}</.link>
+          <.link
+            navigate={~p"/admin/contact-imports?locale=#{@locale}"}
+            class="block px-3 py-2 hover:bg-brand-wash"
+          >{gettext("Contact imports")}</.link>
+          <.link
+            navigate={~p"/admin/donation-pledges?locale=#{@locale}"}
+            class="block px-3 py-2 hover:bg-brand-wash"
+          >{gettext("Donation pledges")}</.link>
+          <a href="/admin/versions" class="block px-3 py-2 hover:bg-brand-wash">{gettext(
+            "Deployment versions"
+          )}</a>
+          <a href="/admin/acceptance" class="block px-3 py-2 hover:bg-brand-wash">{gettext(
+            "Acceptance evidence"
+          )}</a>
+        </div>
+      </details>
+    </nav>
+    """
+  end
+
+  defp tab_class(active),
+    do: [
+      "whitespace-nowrap border-b-2 px-3 py-3 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand",
+      if(active,
+        do: "border-brand text-stone-950",
+        else: "border-transparent text-stone-600 hover:border-stone-400 hover:text-stone-950"
+      )
+    ]
 end
