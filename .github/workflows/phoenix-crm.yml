@@ -1,0 +1,209 @@
+# Consumer-local adapter based on ogourment/github-ci-cd-harness v0.4.45.
+# Retains its quality/release gates; adds separate read-only Forgejo package keys.
+name: PauseAI Phoenix CI
+
+on:
+  workflow_call:
+    inputs:
+      elixir-version:
+        description: Elixir version
+        type: string
+        default: "1.20.2"
+      otp-version:
+        description: Erlang/OTP version
+        type: string
+        default: "29.0.3"
+      run-acceptance:
+        description: Run the consumer's mix test.atdd alias and retain evidence
+        type: boolean
+        default: false
+      build-release:
+        description: Build and retain a production OTP release
+        type: boolean
+        default: false
+      release-artifact-name:
+        description: GitHub Actions artifact name for the OTP release
+        type: string
+        default: phoenix-release
+      release-id-prefix:
+        description: Prefix used for immutable deployment release identifiers
+        type: string
+        default: phoenix
+      test-command:
+        description: Consumer test/quality command
+        type: string
+        default: mix test
+      acceptance-harness-github-ref:
+        description: Optional private GitHub archive tag for a temporary Framagit outage
+        type: string
+        default: ""
+      acceptance-harness-github-sha:
+        description: Expected commit for the private GitHub archive tag
+        type: string
+        default: ""
+    secrets:
+      crm-package-deploy-key:
+        description: Read-only phoenix_crm Forgejo deploy key
+        required: true
+      editor-package-deploy-key:
+        description: Read-only phoenix_markdown_editor Forgejo deploy key
+        required: true
+      forgejo-known-hosts:
+        description: Verified git.agile-u.com host key
+        required: true
+      acceptance-harness-token:
+        description: Optional Framagit token for the private acceptance_harness dependency
+        required: false
+      acceptance-harness-github-deploy-key:
+        description: Read-only deploy key for the private GitHub archive
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18.4-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      MIX_ENV: test
+      ACCEPTANCE_HARNESS_TOKEN: ${{ secrets.acceptance-harness-token }}
+      ACCEPTANCE_HARNESS_PATH: ${{ inputs.acceptance-harness-github-ref != '' && format('{0}/.ci-deps/acceptance_harness', github.workspace) || '' }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Checkout pinned private AcceptanceHarness archive
+        if: ${{ inputs.acceptance-harness-github-ref != '' }}
+        uses: actions/checkout@v6
+        with:
+          repository: ogourment/acceptance_harness-private-archive
+          ref: ${{ inputs.acceptance-harness-github-ref }}
+          path: .ci-deps/acceptance_harness
+          ssh-key: ${{ secrets.acceptance-harness-github-deploy-key }}
+          persist-credentials: false
+      - name: Verify private AcceptanceHarness commit
+        if: ${{ inputs.acceptance-harness-github-ref != '' }}
+        env:
+          EXPECTED_SHA: ${{ inputs.acceptance-harness-github-sha }}
+        run: |
+          test -n "$EXPECTED_SHA"
+          test "$(git -C .ci-deps/acceptance_harness rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: erlef/setup-beam@v1.24.1
+        with:
+          elixir-version: ${{ inputs.elixir-version }}
+          otp-version: ${{ inputs.otp-version }}
+      - name: Install Hex and Rebar
+        run: |
+          mix local.hex --force
+          mix local.rebar --force
+      - name: Configure read-only private package access
+        env:
+          CRM_DEPLOY_KEY: ${{ secrets.crm-package-deploy-key }}
+          EDITOR_DEPLOY_KEY: ${{ secrets.editor-package-deploy-key }}
+          FORGEJO_KNOWN_HOSTS: ${{ secrets.forgejo-known-hosts }}
+        run: |
+          set -euo pipefail
+          test -n "$CRM_DEPLOY_KEY"
+          test -n "$EDITOR_DEPLOY_KEY"
+          test -n "$FORGEJO_KNOWN_HOSTS"
+          install -d -m 700 "$HOME/.ssh"
+          printf '%s\n' "$CRM_DEPLOY_KEY" > "$HOME/.ssh/phoenix_crm_ci"
+          printf '%s\n' "$EDITOR_DEPLOY_KEY" > "$HOME/.ssh/phoenix_editor_ci"
+          chmod 600 "$HOME/.ssh/phoenix_crm_ci" "$HOME/.ssh/phoenix_editor_ci"
+          printf '%s\n' "$FORGEJO_KNOWN_HOSTS" >> "$HOME/.ssh/known_hosts"
+          cat >> "$HOME/.ssh/config" <<EOF
+          Host forgejo-crm forgejo-editor
+            HostName git.agile-u.com
+            User git
+            HostKeyAlias git.agile-u.com
+            StrictHostKeyChecking yes
+            IdentitiesOnly yes
+          Host forgejo-crm
+            IdentityFile $HOME/.ssh/phoenix_crm_ci
+          Host forgejo-editor
+            IdentityFile $HOME/.ssh/phoenix_editor_ci
+          EOF
+          chmod 600 "$HOME/.ssh/config" "$HOME/.ssh/known_hosts"
+          git config --global url."ssh://git@forgejo-crm/olivierg/phoenix_crm.git".insteadOf "ssh://git@git.agile-u.com/olivierg/phoenix_crm.git"
+          git config --global url."ssh://git@forgejo-editor/olivierg/phoenix_markdown_editor.git".insteadOf "ssh://git@git.agile-u.com/olivierg/phoenix_markdown_editor.git"
+      - name: Fetch dependencies
+        run: mix deps.get
+      - name: Check formatting
+        run: mix format --check-formatted
+      - name: Compile without warnings
+        run: mix compile --warnings-as-errors
+      - name: Run tests
+        run: ${{ inputs.test-command }}
+      - name: Install Playwright Chromium
+        if: ${{ inputs.run-acceptance }}
+        run: |
+          npm --prefix assets install --no-save playwright
+          npx --prefix assets playwright install --with-deps chromium chromium-headless-shell
+      - name: Run browser acceptance tests
+        if: ${{ inputs.run-acceptance }}
+        env:
+          ATDD: "true"
+        run: mix test.atdd
+      - name: Upload acceptance evidence
+        if: ${{ always() && inputs.run-acceptance }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: acceptance-evidence
+          path: tmp/atdd
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Build production assets
+        env:
+          MIX_ENV: prod
+        run: mix assets.deploy
+      - name: Build production release
+        if: ${{ inputs.build-release }}
+        env:
+          MIX_ENV: prod
+        run: mix release --overwrite
+      - name: Record release identity
+        if: ${{ inputs.build-release }}
+        env:
+          RELEASE_ID_PREFIX: ${{ inputs.release-id-prefix }}
+        run: |
+          version="$(mix run --no-start -e 'IO.write(Mix.Project.config()[:version])')"
+          mkdir -p _build
+          printf '%s\n' "$version" > _build/VERSION
+          printf '%s-%s-%s\n' "$RELEASE_ID_PREFIX" "$version" "$GITHUB_RUN_ID" > _build/RELEASE_ID
+      - name: Package verified acceptance evidence with the exact release
+        if: ${{ inputs.build-release && inputs.run-acceptance }}
+        run: |
+          set -euo pipefail
+          test -s tmp/atdd/evidence.json
+          version="$(cat _build/VERSION)"
+          app="$(mix run --no-start -e 'IO.write(Mix.Project.config()[:app])')"
+          destination="_build/prod/rel/$app/lib/$app-$version/priv/acceptance_evidence"
+          test -d "$(dirname "$destination")"
+          mkdir -p "$destination"
+          cp -a tmp/atdd/. "$destination/"
+      - name: Archive production release with Unix permissions
+        if: ${{ inputs.build-release }}
+        run: tar -C _build/prod/rel -czf _build/release.tar.gz .
+      - name: Upload production release
+        if: ${{ inputs.build-release }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.release-artifact-name }}
+          path: |
+            _build/RELEASE_ID
+            _build/VERSION
+            _build/release.tar.gz
+          if-no-files-found: error
+          retention-days: 14

@@ -76,6 +76,7 @@ defmodule PauseAiCaWeb.CoreComponents do
         <div>
           <p :if={@title} class="font-semibold">{@title}</p>
           <p>{msg}</p>
+          <.dev_mailbox_link :if={@kind == :info && Phoenix.Flash.get(@flash, :dev_mailbox)} />
         </div>
         <div class="flex-1" />
         <button type="button" class="group self-start cursor-pointer" aria-label={gettext("close")}>
@@ -83,6 +84,25 @@ defmodule PauseAiCaWeb.CoreComponents do
         </button>
       </div>
     </div>
+    """
+  end
+
+  @dev_mailbox_enabled Application.compile_env(:pauseai_ca, :dev_routes, false)
+
+  @doc "Development-only shortcut after an email delivery succeeds."
+  def dev_mailbox_link(assigns) do
+    assigns = assign(assigns, :enabled?, @dev_mailbox_enabled)
+
+    ~H"""
+    <a
+      :if={@enabled?}
+      href="/dev/mailbox"
+      target="_blank"
+      rel="noopener"
+      class="mt-3 inline-block font-semibold underline underline-offset-4"
+    >
+      Open development mailbox · Ouvrir la boîte de développement ↗
+    </a>
     """
   end
 

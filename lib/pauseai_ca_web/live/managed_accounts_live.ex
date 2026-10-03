@@ -192,6 +192,11 @@ defmodule PauseAiCaWeb.ManagedAccountsLive do
         socket = socket |> put_flash(:info, message) |> assign(:confirm_role, false)
 
         socket =
+          if changed? and user.superadmin and match?({:ok, _}, notification),
+            do: put_flash(socket, :dev_mailbox, true),
+            else: socket
+
+        socket =
           if socket.assigns.current_scope.user.id == user.id,
             do: assign(socket, :current_scope, PauseAiCa.Accounts.Scope.for_user(user)),
             else: socket

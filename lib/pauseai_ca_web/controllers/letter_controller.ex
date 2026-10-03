@@ -18,6 +18,7 @@ defmodule PauseAiCaWeb.LetterController do
 
         conn
         |> put_flash(:info, sent_message(locale))
+        |> put_flash(:dev_mailbox, true)
         |> redirect(to: campaign_path(locale))
 
       {:error, reason} ->

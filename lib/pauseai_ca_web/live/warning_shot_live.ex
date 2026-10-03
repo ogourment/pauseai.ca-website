@@ -779,6 +779,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
 
               <div :if={@send_state == :sent} id="send-success" role="status" class="mt-5">
                 <p class="font-semibold text-green-800">{sent_message(@locale)}</p>
+                <.dev_mailbox_link />
 
                 <div class="mt-4 rounded-2xl border border-stone-200 bg-white p-5">
                   <p class="font-heading text-xl text-stone-950">{share_heading(@locale)}</p>
@@ -810,6 +811,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
               >
                 <p class="font-heading text-xl text-stone-950">{check_inbox_heading(@locale)}</p>
                 <p class="mt-2 leading-7 text-stone-800">{check_inbox_note(@locale)}</p>
+                <.dev_mailbox_link />
                 <p class="mt-3 rounded-lg border border-[#e6d27a] bg-[#fff8dc] p-3 leading-6 text-stone-800">
                   📥 <strong>{spam_note(@locale)}</strong>
                 </p>

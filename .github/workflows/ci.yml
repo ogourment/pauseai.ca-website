@@ -22,7 +22,7 @@ jobs:
           fi
 
   phoenix:
-    uses: ogourment/github-ci-cd-harness/.github/workflows/phoenix.yml@v0.4.45
+    uses: ./.github/workflows/phoenix-crm.yml
     with:
       run-acceptance: true
       build-release: true
@@ -32,6 +32,9 @@ jobs:
       acceptance-harness-github-ref: v0.10.6
       acceptance-harness-github-sha: fb318c868be948316fcb1ebbd144d1a075f6d8fd
     secrets:
+      crm-package-deploy-key: ${{ secrets.CRM_PACKAGE_DEPLOY_KEY }}
+      editor-package-deploy-key: ${{ secrets.EDITOR_PACKAGE_DEPLOY_KEY }}
+      forgejo-known-hosts: ${{ secrets.FORGEJO_PACKAGE_KNOWN_HOSTS }}
       acceptance-harness-github-deploy-key: ${{ secrets.ACCEPTANCE_HARNESS_GITHUB_DEPLOY_KEY }}
 
   delivery:

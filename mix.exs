@@ -50,8 +50,9 @@ defmodule PauseAiCa.MixProject do
       {:phoenix_live_view, "~> 1.2.0"},
       {:lazy_html, ">= 0.1.0", only: :test},
       acceptance_harness_dependency(),
-      # Local preparation: replace with a reviewed private release before CI/deployment.
-      {:phoenix_crm, path: System.get_env("PHOENIX_CRM_PATH", "../phoenix_crm")},
+      {:phoenix_crm,
+       git: "ssh://git@git.agile-u.com/olivierg/phoenix_crm.git",
+       ref: "155a7a8466c223177be2b5c2eca8a77be1f7b2ff"},
       markdown_editor_dependency(),
       {:mdex, "~> 0.13.5"},
       {:phoenix_test_playwright, "~> 0.15.0", only: :test, runtime: false},
@@ -140,7 +141,7 @@ defmodule PauseAiCa.MixProject do
       _ ->
         {:phoenix_markdown_editor,
          git: "ssh://git@git.agile-u.com/olivierg/phoenix_markdown_editor.git",
-         ref: "46e5ba583af1d2dd3aa2346ece116a8eafe2e7cc"}
+         ref: "d8d7b1dcba6002734fea8036b087f81b2e7a4a83"}
     end
   end
 

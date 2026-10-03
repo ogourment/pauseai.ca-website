@@ -151,7 +151,7 @@ defmodule PauseAiCaWeb.UserLive.Settings do
         info =
           "Check the new address for a confirmation link. · Consultez la nouvelle adresse pour obtenir le lien de confirmation."
 
-        {:noreply, socket |> put_flash(:info, info)}
+        {:noreply, socket |> put_flash(:info, info) |> put_flash(:dev_mailbox, true)}
 
       changeset ->
         {:noreply, assign(socket, :email_form, to_form(changeset, action: :insert))}

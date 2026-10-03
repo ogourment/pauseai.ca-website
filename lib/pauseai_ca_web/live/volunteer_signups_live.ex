@@ -655,6 +655,7 @@ defmodule PauseAiCaWeb.VolunteerSignupsLive do
               </details>
               <div :for={invitation <- signup.invitations} class="mt-3 border-t pt-3">
                 <p>
+                  <.dev_mailbox_link :if={invitation.status == "accepted"} />
                   {VolunteerForms.status(invitation.status)} ·
                   <VolunteerForms.timestamp
                     id={"invitation-time-#{invitation.id}"}
