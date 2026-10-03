@@ -125,8 +125,8 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
 
       assert has_element?(
                view,
-               "#involvement-menu a[href='https://pauseai.info/local-organizing']",
-               "Start a group"
+               "#involvement-menu a[href='/en/learn#local-participation']",
+               "Join or start a group"
              )
 
       assert has_element?(
@@ -135,7 +135,7 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
                "Events"
              )
 
-      assert has_element?(view, "#act-join[href='/en/learn#updates']", "Join PauseAI Canada")
+      assert has_element?(view, "#act-join[href='/en/learn#updates']", "Stay informed")
 
       assert has_element?(
                view,
@@ -187,7 +187,7 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
       assert has_element?(
                view,
                "#act-join[href='/fr/comprendre#updates']",
-               "Rejoindre PauseIA Canada"
+               "Rester au courant"
              )
 
       assert has_element?(
@@ -239,16 +239,14 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
   end
 
   describe "getting updates" do
-    test "location labels stay concise even though both fields are optional", %{conn: conn} do
-      {:ok, en_view, _html} = live(conn, ~p"/en/learn")
-      assert has_element?(en_view, "#subscribe-form label", "Postal code")
-      assert has_element?(en_view, "#subscribe-form label", "City")
-      refute render(en_view) =~ "(optional)"
-
-      {:ok, fr_view, _html} = live(conn, ~p"/fr/comprendre")
-      assert has_element?(fr_view, "#subscribe-form label", "Code postal")
-      assert has_element?(fr_view, "#subscribe-form label", "Ville")
-      refute render(fr_view) =~ "(facultatif)"
+    test "LEARN-REQ-05 subscription asks for email and consent before location", %{conn: conn} do
+      for path <- ["/en/learn", "/fr/comprendre"] do
+        {:ok, view, _} = live(conn, path)
+        assert has_element?(view, "#subscribe-form input[type=email]")
+        refute has_element?(view, "#subscribe-form input[autocomplete=postal-code]")
+        refute has_element?(view, "#subscribe-form input[autocomplete=address-level2]")
+        assert has_element?(view, "#local-interest-form input[autocomplete=postal-code]")
+      end
     end
 
     test "consent links to the confidentiality policy on the same site", %{conn: conn} do
@@ -271,21 +269,20 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
       assert has_element?(view, "#subscribe-success")
     end
 
-    test "optional location is included with the subscription", %{conn: conn} do
-      {:ok, view, _html} = live(conn, ~p"/en/learn")
+    test "LEARN-REQ-08 anonymous local interest does not create an account", %{conn: conn} do
+      {:ok, view, _} = live(conn, ~p"/fr/comprendre")
+      before = PauseAiCa.Repo.aggregate(PauseAiCa.Accounts.User, :count)
+      view |> form("#local-interest-form", local: %{fsa: "H2X"}) |> render_submit()
+      assert has_element?(view, "#local-paths")
+      refute has_element?(view, "#local-interest-success")
+      assert PauseAiCa.Repo.aggregate(PauseAiCa.Accounts.User, :count) == before
+    end
 
-      view
-      |> form("#subscribe-form",
-        subscribe: %{
-          email: "located@example.org",
-          postal_code: "H2X 1Y4",
-          city: "Montréal",
-          consent: "true"
-        }
-      )
-      |> render_submit()
-
-      assert has_element?(view, "#subscribe-success")
+    test "LEARN-REQ-08 invalid local input preserves the task", %{conn: conn} do
+      {:ok, view, _} = live(conn, ~p"/en/learn")
+      view |> form("#local-interest-form", local: %{fsa: "123"}) |> render_submit()
+      refute has_element?(view, "#local-paths")
+      assert has_element?(view, "#local-interest-form input[value='123']")
     end
 
     test "nothing is sent without consent", %{conn: conn} do

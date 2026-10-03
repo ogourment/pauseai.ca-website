@@ -103,3 +103,7 @@ msgstr "doit être égal à %{number}"
 
 msgid "must have at most two decimal places"
 msgstr "doit avoir au plus deux décimales"
+
+# From Ecto.Changeset.validate_format/3 (local context)
+msgid "must be the first three characters of a Canadian postal code"
+msgstr "doit correspondre aux trois premiers caractères d’un code postal canadien"

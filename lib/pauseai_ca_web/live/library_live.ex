@@ -35,7 +35,22 @@ defmodule PauseAiCaWeb.LibraryLive do
          as: :subscribe
        )
      )
-     |> assign(:subscribe_state, :idle)}
+     |> assign(:subscribe_state, :idle)
+     |> assign(
+       :local_form,
+       to_form(
+         PauseAiCa.Accounts.change_user_local_context(
+           if(socket.assigns.current_scope,
+             do: socket.assigns.current_scope.user,
+             else: %PauseAiCa.Accounts.User{}
+           )
+         ),
+         as: :local
+       )
+     )
+     |> assign(:local_saved, false)
+     |> assign(:local_ready, false)
+     |> assign(:local_groups, [])}
   end
 
   @impl true
@@ -54,6 +69,55 @@ defmodule PauseAiCaWeb.LibraryLive do
       end
     else
       {:noreply, assign(socket, :subscribe_state, {:error, :consent_required})}
+    end
+  end
+
+  def handle_event("validate-local", %{"local" => params}, socket) do
+    user =
+      if socket.assigns.current_scope,
+        do: socket.assigns.current_scope.user,
+        else: %PauseAiCa.Accounts.User{}
+
+    changeset = PauseAiCa.Accounts.change_user_local_context(user, params)
+
+    {:noreply,
+     assign(socket,
+       local_form: to_form(%{changeset | action: :validate}, as: :local),
+       local_ready: false,
+       local_saved: false
+     )}
+  end
+
+  def handle_event("save-local", %{"local" => params}, socket) do
+    user =
+      if socket.assigns.current_scope,
+        do: socket.assigns.current_scope.user,
+        else: %PauseAiCa.Accounts.User{}
+
+    changeset = PauseAiCa.Accounts.change_user_local_context(user, params)
+
+    if changeset.valid? do
+      result =
+        if socket.assigns.current_scope,
+          do: PauseAiCa.Accounts.update_user_local_context(user, params),
+          else: {:ok, Ecto.Changeset.apply_changes(changeset)}
+
+      case result do
+        {:ok, _} ->
+          {:noreply,
+           assign(socket,
+             local_ready: true,
+             local_groups:
+               PauseAiCa.LocalGroups.for_fsa(Ecto.Changeset.get_field(changeset, :fsa)),
+             local_saved: !!socket.assigns.current_scope,
+             local_form: to_form(changeset, as: :local)
+           )}
+
+        {:error, changeset} ->
+          {:noreply, assign(socket, :local_form, to_form(changeset, as: :local))}
+      end
+    else
+      {:noreply, assign(socket, :local_form, to_form(%{changeset | action: :insert}, as: :local))}
     end
   end
 
@@ -89,6 +153,7 @@ defmodule PauseAiCaWeb.LibraryLive do
         </.link>
       </section>
 
+      <PauseAiCaWeb.LearningJourney.journey locale={@locale} current_scope={@current_scope} />
       <section id="voices" class="border-y border-stone-200 bg-white">
         <div class="mx-auto max-w-5xl px-5 py-14">
           <h2 class="font-heading text-3xl uppercase tracking-wide text-stone-950">
@@ -100,9 +165,10 @@ defmodule PauseAiCaWeb.LibraryLive do
             <li
               :for={voice <- @voices}
               id={"voice-#{voice.id}"}
-              class="flex flex-col rounded-2xl border border-stone-200 p-6"
+              class="topic-voices flex flex-col rounded-2xl border border-stone-200 p-6"
             >
-              <h3 class="font-heading text-2xl text-stone-950">{voice.name}</h3>
+              <span class="learning-topic topic-voices self-start">{gettext("People and quotations")}</span>
+              <h3 class="mt-3 font-heading text-2xl text-stone-950">{voice.name}</h3>
               <p class="mt-1 text-sm leading-6 text-stone-500">
                 {Voice.affiliation(voice, @locale)}
               </p>
@@ -147,6 +213,7 @@ defmodule PauseAiCaWeb.LibraryLive do
       </section>
 
       <section id="parliament" class="mx-auto max-w-5xl px-5 py-14">
+        <span class="learning-topic topic-politics">{gettext("Politics")}</span>
         <h2 class="font-heading text-3xl uppercase tracking-wide text-stone-950">
           {parliament_heading(@locale)}
         </h2>
@@ -194,7 +261,7 @@ defmodule PauseAiCaWeb.LibraryLive do
 
           <ul class="mt-4 grid gap-5 md:grid-cols-2">
             <li
-              :for={resource <- Library.resources(stage)}
+              :for={resource <- Library.resources(stage) |> Enum.sort_by(&(&1.language != @locale))}
               id={"resource-#{resource.id}"}
               class="relative flex flex-col rounded-2xl border border-stone-200 bg-white p-6 transition hover:shadow-md"
             >
@@ -228,44 +295,86 @@ defmodule PauseAiCaWeb.LibraryLive do
               >
                 {read_label(@locale)} <span aria-hidden="true">↗</span>
               </a>
-              <.link
+              <.resource_bookmark
+                title={Resource.copy(resource, @locale).title}
+                selected={!!@current_scope && resource.id in @current_scope.user.saved_resources}
                 href={
                   if @current_scope,
                     do: ~p"/bookmarks/#{resource.id}?locale=#{@locale}",
                     else: ~p"/users/register?#{%{bookmark: resource.id, locale: @locale}}"
                 }
                 method={if @current_scope, do: "post", else: "get"}
-                aria-label={
-                  gettext("%{action}: %{title}",
-                    action:
-                      if(@current_scope && resource.id in @current_scope.user.saved_resources,
-                        do: gettext("Saved"),
-                        else: bookmark_label(@locale)
-                      ),
-                    title: Resource.copy(resource, @locale).title
-                  )
-                }
-                class="group absolute right-3 top-3 inline-flex size-11 items-center justify-center rounded-full text-stone-700 hover:bg-brand-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
-              >
-                <.icon
-                  name={
-                    if @current_scope && resource.id in @current_scope.user.saved_resources,
-                      do: "hero-bookmark-solid",
-                      else: "hero-bookmark"
-                  }
-                  class="size-5"
-                />
-                <span class="pointer-events-none absolute right-0 top-full z-10 w-max max-w-56 rounded bg-stone-900 px-2 py-1 text-sm text-white opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100">
-                  {if @current_scope && resource.id in @current_scope.user.saved_resources,
-                    do: gettext("Saved"),
-                    else: bookmark_label(@locale)}
-                </span>
-              </.link>
+              />
             </li>
           </ul>
         </div>
       </section>
 
+      <section id="local-participation" class="mx-auto max-w-5xl px-5 py-14">
+        <h2 class="font-heading text-3xl">{gettext("Join or start a group")}</h2>
+        <p class="mt-3 leading-7">
+          {gettext(
+            "Enter the first three characters of your postal code when you want local invitations. You can also read the organizing guide or attend an event."
+          )}
+        </p>
+        <.form
+          for={@local_form}
+          id="local-interest-form"
+          phx-change="validate-local"
+          phx-submit="save-local"
+          class="mt-5 max-w-lg"
+        >
+          <.input
+            field={@local_form[:fsa]}
+            label={gettext("Postal area (FSA)")}
+            placeholder="H2X"
+            autocomplete="postal-code"
+            required
+            maxlength="3"
+          />
+          <.input
+            :if={@current_scope}
+            field={@local_form[:local_updates]}
+            type="checkbox"
+            label={gettext("I would like invitations to local activities.")}
+          />
+          <button class="mt-3 rounded-full bg-brand px-5 py-3 font-bold" type="submit">{gettext(
+            "Continue locally"
+          )}</button>
+        </.form>
+        <p :if={@local_saved} id="local-interest-success" role="status" class="mt-4">
+          {gettext("Your postal area is saved. Local invitations follow your account preference.")}
+        </p>
+        <div :if={@local_ready} id="local-paths" class="mt-5 space-y-3">
+          <p :if={@local_groups == []}>{gettext("No group is listed for this postal area yet.")}</p>
+          <ul :if={@local_groups != []} class="space-y-3">
+            <li :for={group <- @local_groups} class="rounded-xl border border-stone-300 p-4">
+              <h3 class="font-semibold">{group.name}</h3>
+              <p>{group.description}</p>
+              <a href={group.join_url} class="underline">{gettext("Ask to join")}</a>
+            </li>
+          </ul>
+          <p>
+            {gettext(
+              "Meet people at an event or explore starting a local group. An incubator helps people develop a project together; choosing this path does not create membership."
+            )}
+          </p>
+          <a href="https://luma.com/calendar/cal-tsYv79s4aTQC16Q" class="block underline">{gettext(
+            "Upcoming events"
+          )}</a>
+          <a href="https://pauseai.info/local-organizing" class="block underline">{gettext(
+            "Start a group"
+          )}</a>
+          <a
+            :if={!@current_scope}
+            href={
+              ~p"/users/register?#{%{locale: @locale, fsa: @local_form[:fsa].value, return_to: if(@locale == "fr", do: "/fr/comprendre", else: "/en/learn")}}"
+            }
+            data-learning-register
+            class="block underline"
+          >{gettext("Save my postal area with an account")}</a>
+        </div>
+      </section>
       <section id="updates" class="border-t border-stone-200 bg-white">
         <div class="mx-auto max-w-5xl px-5 py-14">
           <h2 class="font-heading text-3xl uppercase tracking-wide text-stone-950">
@@ -288,20 +397,6 @@ defmodule PauseAiCaWeb.LibraryLive do
                   label={email_label(@locale)}
                   autocomplete="email"
                 />
-                <div class="grid gap-4 sm:grid-cols-2">
-                  <.input
-                    field={@subscribe_form[:postal_code]}
-                    type="text"
-                    label={postal_code_label(@locale)}
-                    autocomplete="postal-code"
-                  />
-                  <.input
-                    field={@subscribe_form[:city]}
-                    type="text"
-                    label={city_label(@locale)}
-                    autocomplete="address-level2"
-                  />
-                </div>
                 <label class="mt-2 flex items-start gap-3">
                   <input type="hidden" name="subscribe[consent]" value="false" />
                   <input
@@ -395,8 +490,6 @@ defmodule PauseAiCaWeb.LibraryLive do
     """
   end
 
-  defp bookmark_label(_locale), do: gettext("Bookmark")
-
   defp page_title(_locale), do: gettext("Should we slow AI down?")
 
   defp voice_quotes(voice, locale) do
@@ -443,7 +536,7 @@ defmodule PauseAiCaWeb.LibraryLive do
 
   defp read_label(_locale), do: gettext("Read it")
 
-  defp updates_heading(_locale), do: gettext("Join Us")
+  defp updates_heading(_locale), do: gettext("Stay informed")
 
   defp updates_note(_locale),
     do:
@@ -452,8 +545,6 @@ defmodule PauseAiCaWeb.LibraryLive do
       )
 
   defp email_label(_locale), do: gettext("Your email")
-  defp postal_code_label(_locale), do: gettext("Postal code")
-  defp city_label(_locale), do: gettext("City")
 
   defp consent_label(_locale),
     do: gettext("I agree to receive emails from PauseAI Canada. We do not sell your address.")

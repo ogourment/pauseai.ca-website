@@ -300,3 +300,24 @@ h3 {
 .crm-surface{color:#182f29;background:#fffefa}.crm-button{display:inline-block;padding:.65rem 1rem;border:1px solid #426453;border-radius:.5rem;color:#fff;background:#254c3b;font:inherit;cursor:pointer}.crm-button:hover{background:#173326}.crm-button:focus-visible,.crm-surface a:focus-visible{outline:3px solid #74551c;outline-offset:3px}.crm-error{background:#fff0ec;color:#762b20;padding:1rem;border-left:4px solid #9b3828}.crm-surface a{color:#24533f;text-decoration:underline}.crm-surface input,.crm-surface select,.crm-surface textarea{color:#182f29;background:#fffefa;border-color:#647b6c}.crm-surface input::placeholder,.crm-surface textarea::placeholder{color:#53665b}.crm-surface .pme-editor{--pme-surface:#fffefa;--pme-text:#182f29;--pme-border:#647b6c;--pme-accent:#74551c}
 .crm-surface .label{color:#182f29;opacity:1}
 .pme-preview-content h1{font-size:1.7rem;font-weight:700;margin:.5rem 0 1rem}.pme-preview-content h2{font-size:1.4rem;font-weight:700;margin:1.2rem 0 .6rem}.pme-preview-content h3{font-size:1.2rem;font-weight:700;margin:1rem 0 .5rem}.pme-preview-content p{margin:.6rem 0}.pme-preview-content a{color:#24533f;text-decoration:underline}
+/* Shared topic labels include text: color is supplementary. */
+.learning-topic {display:inline-block;border-radius:999px;padding:.25rem .7rem;font-size:.875rem;font-weight:700;background:var(--topic-bg);color:var(--topic-ink)}
+.topic-research {--topic-bg:#dbeafe;--topic-ink:#1e40af}
+.topic-incidents {--topic-bg:#fef3c7;--topic-ink:#92400e}
+.topic-voices {--topic-bg:#ede9fe;--topic-ink:#5b21b6}
+.topic-politics {--topic-bg:#ccfbf1;--topic-ink:#115e59}
+.topic-treaty {--topic-bg:#dcfce7;--topic-ink:#166534}
+.learning-answer {display:block;width:100%;text-align:left;border:1px solid #78716c;border-radius:.6rem;padding:.65rem .8rem}
+.learning-answer[aria-pressed=true] {background:#e7e5e4;border:2px solid #292524}
+.learning-journey button:focus-visible,.learning-journey a:focus-visible {outline:3px solid #1d4ed8;outline-offset:4px}
+.learning-journey, #my-learning-list, [id^="nugget-"], #local-participation, #updates {scroll-margin-top: 10rem}
+
+/* One bookmark control across resource cards. Topic color stays in labelled pills. */
+.resource-bookmark {display:inline-flex;align-items:center;justify-content:center;gap:.5rem;color:#44403c;background:#fff;border:1px solid #78716c;cursor:pointer}
+.resource-bookmark-tab {position:absolute;right:.75rem;top:.75rem;width:2.75rem;height:2.75rem;border-radius:.5rem}
+.resource-bookmark-pill {margin-top:1.25rem;padding:.5rem 1rem;border-radius:999px;font-size:.875rem;font-weight:600}
+.resource-bookmark:hover {background:#ffedd5}
+.resource-bookmark[data-saved=true] {background:#e7e5e4;color:#292524}
+.resource-bookmark:focus-visible {outline:3px solid #1d4ed8;outline-offset:4px}
+.resource-bookmark-tooltip {position:absolute;right:0;top:calc(100% + .35rem);z-index:10;width:max-content;max-width:14rem;padding:.25rem .5rem;border-radius:.25rem;background:#292524;color:#fff;font-size:.875rem;opacity:0;pointer-events:none}
+.resource-bookmark:hover .resource-bookmark-tooltip,.resource-bookmark:focus-visible .resource-bookmark-tooltip {opacity:1}

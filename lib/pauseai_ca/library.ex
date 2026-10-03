@@ -36,7 +36,32 @@ defmodule PauseAiCa.Library do
   end
 
   @doc "Finds a reviewed resource by its stable bookmark identifier."
-  def resource(id), do: Enum.find(resources(), &(&1.id == id))
+  def resource(id) do
+    Enum.find(resources(), &(&1.id == id)) || learning_resource(id)
+  end
+
+  defp learning_resource(id) do
+    case Enum.find(PauseAiCa.Learning.nuggets("en"), &(&1["id"] == id)) do
+      nil ->
+        nil
+
+      _n ->
+        %Resource{
+          id: id,
+          stage: :curiosity,
+          format: :article,
+          language: "en",
+          url: "/en/learn#nugget-#{id}",
+          publisher: "PauseAI Canada",
+          reviewed_on: ~D[2026-10-03],
+          copy:
+            Map.new(["en", "fr"], fn locale ->
+              localized = Enum.find(PauseAiCa.Learning.nuggets(locale), &(&1["id"] == id))
+              {locale, %{title: localized["title"], summary: localized["answer"]}}
+            end)
+        }
+    end
+  end
 
   @doc """
   Canadian parliamentarians who signed the ControlAI Canada statement.
