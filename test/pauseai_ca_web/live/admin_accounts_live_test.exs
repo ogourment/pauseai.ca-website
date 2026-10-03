@@ -86,6 +86,47 @@ defmodule PauseAiCaWeb.AdminAccountsLiveTest do
     assert {:error, :unauthorized} = AccountManagement.set_superadmin(scope, target.id, true)
   end
 
+  test "staging role grant notifies only the acting admin and preserves unrelated state", %{
+    conn: conn,
+    admin: admin
+  } do
+    target = user_fixture()
+    flush_emails()
+    before_accounts = Repo.aggregate(Accounts.User, :count)
+    before_invitations = Repo.aggregate(PauseAiCa.Volunteers.Invitation, :count)
+    previous = Application.fetch_env!(:pauseai_ca, :mail_environment)
+    Application.put_env(:pauseai_ca, :mail_environment, :staging)
+    on_exit(fn -> Application.put_env(:pauseai_ca, :mail_environment, previous) end)
+
+    {:ok, view, _} = live(conn, "/manage/accounts/#{target.id}?locale=en")
+    view |> element("#account-superadmin") |> render_click()
+    html = view |> element("#role-confirmation button") |> render_click()
+    assert html =~ "Superadmin role granted."
+    assert_receive {:email, notification}
+    assert notification.to == [{"Staging admin", admin.email}]
+    assert notification.cc == [] and notification.bcc == [] and notification.reply_to == nil
+    assert notification.subject =~ "[STAGING]"
+    assert notification.text_body =~ "/manage/accounts"
+    refute_receive {:email, _}
+
+    promoted = Accounts.get_user!(target.id)
+    assert promoted.superadmin
+
+    assert Map.drop(Map.from_struct(promoted), [:superadmin, :updated_at]) ==
+             Map.drop(Map.from_struct(target), [:superadmin, :updated_at])
+
+    assert Accounts.get_user!(admin.id).superadmin
+    assert Repo.aggregate(Accounts.User, :count) == before_accounts
+    assert Repo.aggregate(PauseAiCa.Volunteers.Invitation, :count) == before_invitations
+
+    {:ok, roster, _} =
+      live(log_in_user(build_conn(), promoted), "/manage/administrators?locale=en")
+
+    assert has_element?(roster, "#superadmin-list", target.email)
+    render_click(view, "set-superadmin", %{"enabled" => "true"})
+    refute_receive {:email, _}
+  end
+
   defp flush_emails do
     receive do
       {:email, _} -> flush_emails()

@@ -174,7 +174,8 @@ defmodule PauseAiCaWeb.ManagedAccountsLive do
             do:
               UserNotifier.deliver_superadmin_granted(
                 user,
-                PauseAiCaWeb.Endpoint.url() <> "/manage/accounts"
+                PauseAiCaWeb.Endpoint.url() <> "/manage/accounts",
+                socket.assigns.current_scope.user.id
               ),
             else: {:ok, nil}
 

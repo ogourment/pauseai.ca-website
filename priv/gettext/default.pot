@@ -406,7 +406,7 @@ msgstr ""
 
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:133
 #: lib/pauseai_ca_web/live/library_live.ex:455
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:415
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:416
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:928
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:970
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:966
@@ -469,7 +469,7 @@ msgstr ""
 
 #: lib/pauseai_ca_web/live/administrators_live.ex:129
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:306
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:474
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:475
 #: lib/pauseai_ca_web/live/profile_live.ex:192
 #: lib/pauseai_ca_web/live/profile_live.ex:225
 #, elixir-autogen, elixir-format
@@ -584,7 +584,7 @@ msgid "Strategy"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:379
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:570
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:571
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:980
 #, elixir-autogen, elixir-format
 msgid "Subject"
@@ -1088,7 +1088,7 @@ msgstr ""
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:289
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:298
 #: lib/pauseai_ca_web/live/library_live.ex:456
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:420
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:421
 #: lib/pauseai_ca_web/live/profile_live.ex:147
 #, elixir-autogen, elixir-format
 msgid "City"
@@ -1169,8 +1169,8 @@ msgstr ""
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:289
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:298
 #: lib/pauseai_ca_web/live/donate_live.ex:249
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:402
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:652
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:403
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:653
 #: lib/pauseai_ca_web/live/profile_live.ex:133
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:926
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:950
@@ -1178,7 +1178,7 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:637
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:638
 #, elixir-autogen, elixir-format
 msgid "%{count} account"
 msgid_plural "%{count} accounts"
@@ -1190,7 +1190,7 @@ msgstr[1] ""
 msgid "Acceptance evidence"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:673
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:674
 #, elixir-autogen, elixir-format
 msgid "Account pages"
 msgstr ""
@@ -1198,7 +1198,7 @@ msgstr ""
 #: lib/pauseai_ca_web/components/layouts.ex:270
 #: lib/pauseai_ca_web/components/layouts.ex:598
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:16
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:376
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:377
 #, elixir-autogen, elixir-format
 msgid "Accounts"
 msgstr ""
@@ -1211,7 +1211,7 @@ msgstr ""
 msgid "Admin dashboard"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:223
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:224
 #, elixir-autogen, elixir-format
 msgid "Confirm this account's email before granting superadmin access."
 msgstr ""
@@ -1226,14 +1226,14 @@ msgstr ""
 msgid "Deployment versions"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:451
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:452
 #, elixir-autogen, elixir-format
 msgid "Make superadmin"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:565
 #: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:100
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:685
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:686
 #: lib/pauseai_ca_web/live/volunteer_profile_live.ex:138
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:742
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:1072
@@ -1241,32 +1241,32 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:678
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:679
 #, elixir-autogen, elixir-format
 msgid "Page %{page} of %{page_count}"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:558
 #: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:95
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:677
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:678
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:1065
 #, elixir-autogen, elixir-format
 msgid "Previous"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:450
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:451
 #, elixir-autogen, elixir-format
 msgid "Remove role"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:184
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:185
 #, elixir-autogen, elixir-format
 msgid "Role granted, but the notification email could not be sent."
 msgstr ""
 
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:271
 #: lib/pauseai_ca_web/live/admin_metrics_live.ex:63
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:439
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:440
 #, elixir-autogen, elixir-format
 msgid "Superadmin"
 msgstr ""
@@ -1275,23 +1275,23 @@ msgstr ""
 #: lib/pauseai_ca_web/live/administrators_live.ex:24
 #: lib/pauseai_ca_web/live/administrators_live.ex:50
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:162
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:226
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:257
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:227
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:258
 #, elixir-autogen, elixir-format
 msgid "Superadmin access required."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:188
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:189
 #, elixir-autogen, elixir-format
 msgid "Superadmin role granted."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:189
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:190
 #, elixir-autogen, elixir-format
 msgid "Superadmin role removed."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:220
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:221
 #, elixir-autogen, elixir-format
 msgid "The last superadmin cannot be removed."
 msgstr ""
@@ -1604,7 +1604,7 @@ msgstr ""
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:21
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:132
 #: lib/pauseai_ca_web/live/donate_live.ex:252
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:652
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:653
 #: lib/pauseai_ca_web/live/user_live/login.ex:34
 #: lib/pauseai_ca_web/live/user_live/login.ex:110
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:927
@@ -1879,8 +1879,8 @@ msgstr ""
 msgid "Accepted by email provider"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:390
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:666
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:391
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:667
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:646
 #, elixir-autogen, elixir-format
 msgid "Account created · email unconfirmed"
@@ -1901,7 +1901,7 @@ msgstr ""
 msgid "An administrator must review this row."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:489
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:490
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:592
 #, elixir-autogen, elixir-format
 msgid "Assign manager"
@@ -1958,7 +1958,7 @@ msgstr ""
 msgid "Choose one of the contact methods."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:701
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:702
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:623
 #, elixir-autogen, elixir-format
 msgid "Confirmed"
@@ -2026,7 +2026,7 @@ msgstr ""
 msgid "Do not contact. Invitation excluded."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:697
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:698
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:619
 #, elixir-autogen, elixir-format
 msgid "Draft"
@@ -2048,8 +2048,8 @@ msgstr ""
 msgid "Duplicate email in this sheet. Keep one row."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:389
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:665
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:390
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:666
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:645
 #, elixir-autogen, elixir-format
 msgid "Email confirmed"
@@ -2105,7 +2105,7 @@ msgstr ""
 msgid "Group name"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:486
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:487
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:581
 #, elixir-autogen, elixir-format
 msgid "Group to manage"
@@ -2129,8 +2129,8 @@ msgid "Ignore column"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:136
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:408
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:653
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:409
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:654
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:897
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:928
 #, elixir-autogen, elixir-format
@@ -2262,7 +2262,7 @@ msgid "Previously imported. No automatic resend."
 msgstr ""
 
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:137
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:426
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:427
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:649
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:929
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:1003
@@ -2437,7 +2437,7 @@ msgstr ""
 msgid "Unsaved changes — save before leaving"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:694
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:695
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:616
 #, elixir-autogen, elixir-format
 msgid "Untitled batch"
@@ -2506,7 +2506,7 @@ msgstr ""
 msgid "Management"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:626
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:627
 #, elixir-autogen, elixir-format
 msgid "Account actions"
 msgstr ""
@@ -2526,7 +2526,7 @@ msgstr ""
 msgid "Account updated"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:630
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:631
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:537
 #, elixir-autogen, elixir-format
 msgid "Add account"
@@ -2537,13 +2537,13 @@ msgstr ""
 msgid "Add accounts"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:634
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:635
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:537
 #, elixir-autogen, elixir-format
 msgid "Add multiple accounts"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:379
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:380
 #, elixir-autogen, elixir-format
 msgid "Back to accounts"
 msgstr ""
@@ -2553,119 +2553,119 @@ msgstr ""
 msgid "Changes not saved. Check the fields and your access."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:608
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:609
 #, elixir-autogen, elixir-format
 msgid "Invitations"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/administrators_live.ex:70
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:672
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:673
 #, elixir-autogen, elixir-format
 msgid "No accounts found."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:689
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:690
 #, elixir-autogen, elixir-format
 msgid "No saved batches yet."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:429
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:430
 #, elixir-autogen, elixir-format
 msgid "Save account"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:688
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:689
 #, elixir-autogen, elixir-format
 msgid "Saved batches and invitations"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:644
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:645
 #, elixir-autogen, elixir-format
 msgid "Search accounts"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:654
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:655
 #, elixir-autogen, elixir-format
 msgid "Status"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:623
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:624
 #, elixir-autogen, elixir-format
 msgid "View batch and invitation actions"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:742
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:743
 #, elixir-autogen, elixir-format
 msgid "Accepted"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:438
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:439
 #, elixir-autogen, elixir-format
 msgid "Access"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/layouts.ex:309
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:440
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:441
 #, elixir-autogen, elixir-format
 msgid "Account"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:757
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:758
 #, elixir-autogen, elixir-format
 msgid "Blocked"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:718
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:719
 #, elixir-autogen, elixir-format
 msgid "Brevo history is not configured."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:720
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:721
 #, elixir-autogen, elixir-format
 msgid "Brevo is limiting requests. Retry shortly."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:545
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:546
 #, elixir-autogen, elixir-format
 msgid "Campaigns"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:531
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:532
 #, elixir-autogen, elixir-format
 msgid "Choose up to 90 days. Each page contains up to 100 transactional events and 10 campaigns. Older pages may contain further events for the same message."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:714
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:715
 #, elixir-autogen, elixir-format
 msgid "Choose valid dates spanning at most 90 days, ending no later than today, and a valid page."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:746
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:747
 #, elixir-autogen, elixir-format
 msgid "Clicked"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:759
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:760
 #, elixir-autogen, elixir-format
 msgid "Complaint"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:756
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:757
 #, elixir-autogen, elixir-format
 msgid "Deferred"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:744
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:745
 #, elixir-autogen, elixir-format
 msgid "Delivered"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:493
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:494
 #, elixir-autogen, elixir-format
 msgid "Email history"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:721
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:722
 #, elixir-autogen, elixir-format
 msgid "Email history could not refresh. Retry shortly."
 msgstr ""
@@ -2675,42 +2675,42 @@ msgstr ""
 msgid "Find upcoming gatherings and ways to take part with PauseAI Montréal."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:509
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:510
 #, elixir-autogen, elixir-format
 msgid "From date"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:458
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:459
 #, elixir-autogen, elixir-format
 msgid "Grant superadmin access and send the account an email notification?"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:750
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:751
 #, elixir-autogen, elixir-format
 msgid "Hard bounce"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:525
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:526
 #, elixir-autogen, elixir-format
 msgid "History page"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:548
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:549
 #, elixir-autogen, elixir-format
 msgid "Last successful refresh"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:760
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:761
 #, elixir-autogen, elixir-format
 msgid "Loaded by proxy"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:535
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:536
 #, elixir-autogen, elixir-format
 msgid "Loading email history…"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:471
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:472
 #, elixir-autogen, elixir-format
 msgid "Managed groups"
 msgstr ""
@@ -2725,37 +2725,37 @@ msgstr ""
 msgid "Montréal · September 26, 2026"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:603
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:604
 #, elixir-autogen, elixir-format
 msgid "More history is available on the next page."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:564
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:565
 #, elixir-autogen, elixir-format
 msgid "No matching emails in this range and page."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:467
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:468
 #, elixir-autogen, elixir-format
 msgid "Only confirmed accounts can become superadmins. The last superadmin must retain access."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:745
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:746
 #, elixir-autogen, elixir-format
 msgid "Opened"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:761
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:762
 #, elixir-autogen, elixir-format
 msgid "Other provider event"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:561
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:562
 #, elixir-autogen, elixir-format
 msgid "Partial history: some sender or campaign metadata could not be verified."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:495
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:496
 #, elixir-autogen, elixir-format
 msgid "PauseAI transactional emails and campaigns recorded by Brevo. Availability depends on provider retention. Delivered means accepted by the receiving mail server; opens and clicks are separate observations."
 msgstr ""
@@ -2765,12 +2765,12 @@ msgstr ""
 msgid "Prepare your letter"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:556
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:557
 #, elixir-autogen, elixir-format
 msgid "Previously retrieved results, if any, are shown below."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:571
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:572
 #, elixir-autogen, elixir-format
 msgid "Provider events"
 msgstr ""
@@ -2780,13 +2780,13 @@ msgstr ""
 msgid "Read the report in Le Devoir (French)"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:528
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:529
 #, elixir-autogen, elixir-format
 msgid "Refresh history"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:570
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:743
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:571
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:744
 #, elixir-autogen, elixir-format
 msgid "Sent"
 msgstr ""
@@ -2796,17 +2796,17 @@ msgstr ""
 msgid "September 26 · Read the recap"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:754
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:755
 #, elixir-autogen, elixir-format
 msgid "Soft bounce"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:580
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:581
 #, elixir-autogen, elixir-format
 msgid "Subject unavailable"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:247
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:248
 #, elixir-autogen, elixir-format
 msgid "Superadmin access and a confirmed account are required."
 msgstr ""
@@ -2816,27 +2816,27 @@ msgstr ""
 msgid "The call from Montréal"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:738
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:739
 #, elixir-autogen, elixir-format
 msgid "Time unavailable"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:516
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:517
 #, elixir-autogen, elixir-format
 msgid "To date"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:544
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:545
 #, elixir-autogen, elixir-format
 msgid "Transactional emails"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:409
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:410
 #, elixir-autogen, elixir-format
 msgid "Unassigned"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:758
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:759
 #, elixir-autogen, elixir-format
 msgid "Unsubscribed"
 msgstr ""
@@ -2852,7 +2852,7 @@ msgstr ""
 msgid "Write to your MP"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:719
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:720
 #, elixir-autogen, elixir-format
 msgid "You no longer have access to this account."
 msgstr ""
@@ -3033,7 +3033,7 @@ msgstr ""
 msgid "Today is incomplete. Days end at midnight Eastern time, with daylight saving changes."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:464
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:465
 #, elixir-autogen, elixir-format
 msgid "Grant access and notify"
 msgstr ""
@@ -3756,7 +3756,7 @@ msgstr ""
 msgid "Comparison is read-only. Confirm your choices to reconcile."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/managed_accounts_live.ex:386
+#: lib/pauseai_ca_web/live/managed_accounts_live.ex:387
 #, elixir-autogen, elixir-format
 msgid "Compose"
 msgstr ""

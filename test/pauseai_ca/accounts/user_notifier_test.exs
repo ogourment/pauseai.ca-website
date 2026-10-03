@@ -61,7 +61,11 @@ defmodule PauseAiCa.Accounts.UserNotifierTest do
   end
 
   test "a new superadmin receives a bilingual role notification" do
-    UserNotifier.deliver_superadmin_granted(@user, "https://pauseai.ca/admin/accounts")
+    UserNotifier.deliver_superadmin_granted(
+      @user,
+      "https://pauseai.ca/admin/accounts",
+      Ecto.UUID.generate()
+    )
 
     assert_email_sent(fn email ->
       assert email.to == [{"", "camille@example.org"}]

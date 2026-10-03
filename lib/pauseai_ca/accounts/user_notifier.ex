@@ -91,7 +91,7 @@ defmodule PauseAiCa.Accounts.UserNotifier do
   @doc """
   Notify a confirmed account that it has been granted superadmin access.
   """
-  def deliver_superadmin_granted(user, url) do
+  def deliver_superadmin_granted(user, url, admin_actor_id) do
     deliver(
       user.email,
       "You are now a PauseAI Canada superadmin · Vous êtes maintenant superadmin de PauseAI Canada",
@@ -105,7 +105,8 @@ defmodule PauseAiCa.Accounts.UserNotifier do
            "Si vous ne vous y attendiez pas, contactez-nous à info@pauseai.ca."}
         ],
         {"Open movement metrics", "Ouvrir les indicateurs du mouvement", url}
-      )
+      ),
+      admin_actor_id: admin_actor_id
     )
   end
 
