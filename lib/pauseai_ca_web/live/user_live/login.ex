@@ -80,7 +80,11 @@ defmodule PauseAiCaWeb.UserLive.Login do
         <.link
           :if={!@current_scope}
           id="continue-browsing"
-          href={@context["return_to"]}
+          href={
+            if @context["return_to"] in ["/en/learn", "/fr/comprendre"],
+              do: @context["return_to"],
+              else: if(@locale == "fr", do: "/fr#questions", else: "/en#questions")
+          }
           class="mt-4 inline-block font-semibold underline decoration-brand decoration-2 underline-offset-4"
         >
           {gettext("Continue browsing")}

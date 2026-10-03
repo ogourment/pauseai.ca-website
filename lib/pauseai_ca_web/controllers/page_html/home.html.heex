@@ -202,6 +202,10 @@
         href={if(@locale == "fr", do: "/fr/comprendre#updates", else: "/en/learn#updates")}
         class="mt-6 inline-block rounded-full bg-white px-6 py-3 font-semibold text-stone-900"
       >{gettext("Subscribe")}</a>
+      <a
+        href={~p"/users/register?#{%{from: "home_footer", locale: @locale}}"}
+        class="ml-6 inline-block font-semibold text-white underline"
+      >{gettext("Create an account")}</a>
     </div>
   </section>
 </Layouts.app>

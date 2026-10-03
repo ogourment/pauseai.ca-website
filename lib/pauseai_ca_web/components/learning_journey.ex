@@ -134,11 +134,6 @@ defmodule PauseAiCaWeb.LearningJourney do
           >{gettext("Create an account")}</a>
           <button type="button" data-dismiss-return class="ml-4 underline">{gettext("Later")}</button>
         </div>
-        <a
-          :if={@current_scope}
-          href={if(@locale == "fr", do: "/fr/tableau-de-bord", else: "/en/dashboard")}
-          class="mt-4 block underline"
-        >{gettext("My dashboard")}</a>
         <div class="mt-6 flex flex-wrap gap-5">
           <a
             href={
@@ -159,7 +154,7 @@ defmodule PauseAiCaWeb.LearningJourney do
             class="underline"
           >{gettext("Ways to take part")}</a>
           <a href={if(@locale == "fr", do: "/fr/faire-un-don", else: "/en/donate")} class="underline">{gettext(
-            "Donate"
+            "Support our work"
           )}</a>
         </div>
       </section>

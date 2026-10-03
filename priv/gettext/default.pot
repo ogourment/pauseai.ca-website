@@ -1558,6 +1558,7 @@ msgid "Continue browsing"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/learning_journey.ex:134
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:208
 #: lib/pauseai_ca_web/live/library_live.ex:463
 #: lib/pauseai_ca_web/live/user_live/registration.ex:21
 #, elixir-autogen, elixir-format
@@ -2872,7 +2873,6 @@ msgid "Corporation number"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/layouts.ex:105
-#: lib/pauseai_ca_web/components/learning_journey.ex:161
 #: lib/pauseai_ca_web/live/donate_live.ex:14
 #, elixir-autogen, elixir-format
 msgid "Donate"
@@ -4267,4 +4267,9 @@ msgstr ""
 #: lib/pauseai_ca_web/live/library_live.ex:349
 #, elixir-autogen, elixir-format
 msgid "No group is listed for this postal area yet."
+msgstr ""
+
+#: lib/pauseai_ca_web/components/learning_journey.ex:161
+#, elixir-autogen, elixir-format
+msgid "Support our work"
 msgstr ""

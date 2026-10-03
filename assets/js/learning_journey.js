@@ -85,13 +85,7 @@ function initialize() {
     root.querySelector("[data-basket-status]").textContent = state.ids.length ? `${copy.count} ${state.ids.length}` : copy.empty
     root.querySelector("[data-learning-storage-warning]").classList.toggle("hidden", storageAvailable)
     root.querySelector("[data-return-invitation]").classList.toggle("hidden", account || state.visits < 2 || !!state.dismissed)
-    document.querySelectorAll('a[href*="/users/register"]').forEach(link => {
-      const url = new URL(link.href)
-      url.searchParams.set("basket", state.ids.join(","))
-      url.searchParams.set("locale", root.dataset.locale)
-      url.searchParams.set("return_to", fr ? "/fr/comprendre" : "/en/learn")
-      link.href = url.pathname + url.search
-    })
+    document.querySelectorAll('a[href*="/users/register"]').forEach(link => decorateRegistration(link, root, state.ids))
   }
   function toggle(id) {
     const removing = state.ids.includes(id)
@@ -125,14 +119,20 @@ function initialize() {
 initialize()
 document.addEventListener("DOMContentLoaded", initialize)
 window.addEventListener("phx:page-loading-stop", initialize)
-// Preserve the current list even when a LiveView has just inserted a new link.
+// Retain the established questionnaire, footer and individual-bookmark journeys.
+// Explicit learning links return to the library; legacy entry sources keep their destination.
+function decorateRegistration(link, root, ids) {
+  if (!ids.length && !link.hasAttribute("data-learning-register")) return
+  const url = new URL(link.href)
+  url.searchParams.set("basket", ids.join(","))
+  if (!url.searchParams.has("locale")) url.searchParams.set("locale", root.dataset.locale)
+  if (!url.searchParams.has("from") && !url.searchParams.has("bookmark")) {
+    url.searchParams.set("return_to", root.dataset.locale === "fr" ? "/fr/comprendre" : "/en/learn")
+  }
+  link.href = url.pathname + url.search
+}
 document.addEventListener("click", event => {
   const link = event.target.closest('a[href*="/users/register"]')
   const root = document.querySelector("[data-learning-root]")
-  if (!link || !root) return
-  const url = new URL(link.href)
-  url.searchParams.set("basket", (read().ids || []).join(","))
-  url.searchParams.set("locale", root.dataset.locale)
-  url.searchParams.set("return_to", root.dataset.locale === "fr" ? "/fr/comprendre" : "/en/learn")
-  link.href = url.pathname + url.search
+  if (link && root) decorateRegistration(link, root, read().ids || [])
 }, true)
