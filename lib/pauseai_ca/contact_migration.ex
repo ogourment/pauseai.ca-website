@@ -4,7 +4,8 @@ defmodule PauseAiCa.ContactMigration do
   alias Ecto.Multi
   alias PauseAiCa.Accounts.User
   alias PauseAiCa.ContactMigration.{Activity, Contact, Import}
-  alias PauseAiCa.Repo
+  alias PauseAiCa.{Repo, CRM, Volunteers}
+  alias PauseAiCa.Accounts.Scope
 
   def list_contacts(search \\ "") do
     list_contacts_page(search, 1, 100_000).entries
@@ -52,7 +53,22 @@ defmodule PauseAiCa.ContactMigration do
       })
     )
     |> Multi.run(:contacts, fn repo, %{import: import} ->
-      {:ok, Enum.map(rows, &upsert_contact(repo, &1, source, import.id, actor.id))}
+      scope = Scope.for_user(actor)
+
+      if Volunteers.superadmin?(scope) do
+        contacts = Enum.map(rows, &upsert_contact(repo, &1, source, import.id, actor.id))
+
+        Enum.each(contacts, fn contact ->
+          case CRM.link_contact(scope, contact) do
+            {:ok, _} -> :ok
+            {:error, reason} -> repo.rollback(reason)
+          end
+        end)
+
+        {:ok, contacts}
+      else
+        {:error, :unauthorized}
+      end
     end)
     |> Repo.transaction()
   end
@@ -78,7 +94,14 @@ defmodule PauseAiCa.ContactMigration do
         nil -> %Contact{}
         existing -> existing
       end
-      |> Contact.changeset(attrs)
+      |> then(fn existing ->
+        attrs =
+          if existing.classification == "do_not_contact",
+            do: Map.put(attrs, :classification, "do_not_contact"),
+            else: attrs
+
+        Contact.changeset(existing, attrs)
+      end)
       |> repo.insert_or_update!()
 
     %Activity{}

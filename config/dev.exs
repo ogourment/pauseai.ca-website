@@ -5,7 +5,7 @@ config :pauseai_ca, PauseAiCa.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
-  database: "pauseai_ca_dev",
+  database: System.get_env("PAUSEAI_DEV_DATABASE", "pauseai_ca_dev"),
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10

@@ -370,11 +370,18 @@ defmodule PauseAiCaWeb.ManagedAccountsLive do
     >
       <section id="managed-accounts" class="mx-auto max-w-6xl space-y-6 px-5 py-12">
         <h1 class="text-4xl font-bold">{gettext("Accounts")}</h1>
+        <.link navigate={~p"/manage/mail?locale=#{@locale}"} class="underline">{gettext(
+          "Email drafts"
+        )}</.link>
         <%= if @record do %>
           <.link navigate={~p"/manage/accounts?locale=#{@locale}"} class="underline">{gettext(
             "Back to accounts"
           )}</.link>
           <h2 class="text-2xl font-bold">{@record.user.email}</h2>
+          <.link
+            navigate={~p"/manage/accounts/#{@record.user.id}/compose?locale=#{@locale}"}
+            class="underline"
+          >{gettext("Compose")}</.link>
           <p>
             {if @record.user.confirmed_at,
               do: gettext("Email confirmed"),

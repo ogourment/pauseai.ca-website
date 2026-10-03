@@ -391,6 +391,7 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
         aria-current={if @current == :accounts, do: "page"}
         class={admin_link_class(@current == :accounts)}
       >{gettext("Accounts")}</.link>
+      <.link navigate={~p"/admin/contacts"} class={admin_link_class(false)}>{gettext("Contacts")}</.link>
       <.link navigate={~p"/admin/contact-imports"} class={admin_link_class(false)}>
         {gettext("Contact imports")}
       </.link>

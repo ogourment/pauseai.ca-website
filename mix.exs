@@ -50,6 +50,10 @@ defmodule PauseAiCa.MixProject do
       {:phoenix_live_view, "~> 1.2.0"},
       {:lazy_html, ">= 0.1.0", only: :test},
       acceptance_harness_dependency(),
+      # Local preparation: replace with a reviewed private release before CI/deployment.
+      {:phoenix_crm, path: System.get_env("PHOENIX_CRM_PATH", "../phoenix_crm")},
+      markdown_editor_dependency(),
+      {:mdex, "~> 0.13.5"},
       {:phoenix_test_playwright, "~> 0.15.0", only: :test, runtime: false},
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
@@ -126,6 +130,18 @@ defmodule PauseAiCa.MixProject do
         "test"
       ]
     ]
+  end
+
+  defp markdown_editor_dependency do
+    case System.get_env("PHOENIX_MARKDOWN_EDITOR_PATH") do
+      path when is_binary(path) and path != "" ->
+        {:phoenix_markdown_editor, path: path}
+
+      _ ->
+        {:phoenix_markdown_editor,
+         git: "ssh://git@git.agile-u.com/olivierg/phoenix_markdown_editor.git",
+         ref: "46e5ba583af1d2dd3aa2346ece116a8eafe2e7cc"}
+    end
   end
 
   defp acceptance_harness_dependency do

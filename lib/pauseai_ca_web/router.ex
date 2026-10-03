@@ -102,6 +102,9 @@ defmodule PauseAiCaWeb.Router do
       live "/accounts", AdminAccountsLive, :index
       live "/donation-pledges", AdminDonationPledgesLive, :index
       live "/contact-imports", AdminContactImportLive, :index
+      live "/contacts", AdminContactsLive, :index
+      live "/contacts/legacy/:legacy_id", AdminContactsLive, :legacy
+      live "/contacts/:id", AdminContactsLive, :show
     end
   end
 
@@ -115,6 +118,9 @@ defmodule PauseAiCaWeb.Router do
       live "/manage/accounts", ManagedAccountsLive, :index
       live "/manage/accounts/new", VolunteerSignupsLive, :new
       live "/manage/accounts/import", VolunteerSignupsLive, :index
+      live "/manage/accounts/:account_id/compose", MailDraftsLive, :new
+      live "/manage/mail", MailDraftsLive, :index
+      live "/manage/mail/:id", MailDraftsLive, :show
       live "/manage/accounts/:id", ManagedAccountsLive, :show
       live "/volunteer-signups", VolunteerSignupsLive, :index
       live "/dashboard", DashboardLive, :index

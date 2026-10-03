@@ -6,7 +6,11 @@ defmodule PauseAiCa.ContactMigrationTest do
   alias PauseAiCa.ContactMigration
 
   test "imports only supplied rows, reconciles accounts, and records the actor" do
-    actor = user_fixture()
+    actor =
+      user_fixture()
+      |> Ecto.Changeset.change(superadmin: true, confirmed_at: DateTime.utc_now(:second))
+      |> PauseAiCa.Repo.update!()
+
     existing = user_fixture(%{email: "active@example.org"})
 
     rows = [
@@ -45,7 +49,10 @@ defmodule PauseAiCa.ContactMigrationTest do
   end
 
   test "reimport updates one contact without duplicating it and adds history" do
-    actor = user_fixture()
+    actor =
+      user_fixture()
+      |> Ecto.Changeset.change(superadmin: true, confirmed_at: DateTime.utc_now(:second))
+      |> PauseAiCa.Repo.update!()
 
     row = %{
       "email" => "same@example.org",

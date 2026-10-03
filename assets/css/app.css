@@ -295,3 +295,8 @@ h3 {
 .act-menu > summary::marker {
   content: "";
 }
+
+@import "../../deps/phoenix_markdown_editor/assets/css/phoenix_markdown_editor.css";
+.crm-surface{color:#182f29;background:#fffefa}.crm-button{display:inline-block;padding:.65rem 1rem;border:1px solid #426453;border-radius:.5rem;color:#fff;background:#254c3b;font:inherit;cursor:pointer}.crm-button:hover{background:#173326}.crm-button:focus-visible,.crm-surface a:focus-visible{outline:3px solid #74551c;outline-offset:3px}.crm-error{background:#fff0ec;color:#762b20;padding:1rem;border-left:4px solid #9b3828}.crm-surface a{color:#24533f;text-decoration:underline}.crm-surface input,.crm-surface select,.crm-surface textarea{color:#182f29;background:#fffefa;border-color:#647b6c}.crm-surface input::placeholder,.crm-surface textarea::placeholder{color:#53665b}.crm-surface .pme-editor{--pme-surface:#fffefa;--pme-text:#182f29;--pme-border:#647b6c;--pme-accent:#74551c}
+.crm-surface .label{color:#182f29;opacity:1}
+.pme-preview-content h1{font-size:1.7rem;font-weight:700;margin:.5rem 0 1rem}.pme-preview-content h2{font-size:1.4rem;font-weight:700;margin:1.2rem 0 .6rem}.pme-preview-content h3{font-size:1.2rem;font-weight:700;margin:1rem 0 .5rem}.pme-preview-content p{margin:.6rem 0}.pme-preview-content a{color:#24533f;text-decoration:underline}

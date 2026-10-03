@@ -70,11 +70,21 @@ config :acceptance_harness, :schema_diagram,
   domains_output: "docs/schema/domains"
 
 # Configure esbuild (the version is required)
+editor_alias =
+  case System.get_env("PHOENIX_MARKDOWN_EDITOR_PATH") do
+    path when is_binary(path) and path != "" ->
+      ["--alias:phoenix_markdown_editor=" <> Path.expand(path, Path.expand("..", __DIR__))]
+
+    _ ->
+      []
+  end
+
 config :esbuild,
   version: "0.25.4",
   pauseai_ca: [
     args:
-      ~w(js/app.js --bundle --target=es2022 --outdir=../priv/static/assets/js --external:/fonts/* --external:/images/* --alias:@=.),
+      ~w(js/app.js --bundle --target=es2022 --outdir=../priv/static/assets/js --external:/fonts/* --external:/images/* --alias:@=.) ++
+        editor_alias,
     cd: Path.expand("../assets", __DIR__),
     env: %{"NODE_PATH" => [Path.expand("../deps", __DIR__), Mix.Project.build_path()]}
   ]
