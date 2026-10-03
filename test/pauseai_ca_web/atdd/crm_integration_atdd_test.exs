@@ -100,6 +100,8 @@ if System.get_env("ATDD") == "true" do
         |> visit("/admin/dashboard?locale=en")
         |> click_link("Contacts")
         |> assert_has("#crm-directory")
+        |> refute_has("#announcement-banners")
+        |> refute_has("#campaign-prompt")
         |> capture(
           id,
           "Open Administration then Contacts",
@@ -239,6 +241,8 @@ if System.get_env("ATDD") == "true" do
         |> click_link("Compose")
         |> click_button("Start draft")
         |> assert_has("#mail-workspace", text: member.email)
+        |> refute_has("#announcement-banners")
+        |> refute_has("#campaign-prompt")
         |> capture(
           id,
           "Open a Montréal account then Compose",

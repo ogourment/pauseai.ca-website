@@ -521,8 +521,7 @@ defmodule PauseAiCaWeb.VolunteerSignupsLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app
-      promote_warning_shot={false}
+    <Layouts.management
       flash={@flash}
       current_scope={@current_scope}
       locale={@locale}
@@ -1093,7 +1092,7 @@ defmodule PauseAiCaWeb.VolunteerSignupsLive do
           <% end %>
         <% end %>
       </section>
-    </Layouts.app>
+    </Layouts.management>
     """
   end
 end

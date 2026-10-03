@@ -42,7 +42,7 @@ defmodule PauseAiCaWeb.AdminDonationPledgesLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app
+    <Layouts.management
       flash={@flash}
       current_scope={@current_scope}
       locale={@locale}
@@ -99,7 +99,7 @@ defmodule PauseAiCaWeb.AdminDonationPledgesLive do
           >{gettext("Next")}</.link>
         </nav>
       </section>
-    </Layouts.app>
+    </Layouts.management>
     """
   end
 end

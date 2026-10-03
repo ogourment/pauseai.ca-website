@@ -41,6 +41,8 @@ defmodule PauseAiCaWeb.Layouts do
     default: true,
     doc: "whether to show the site-wide warning-shot banner and prompt"
 
+  attr :show_announcements, :boolean, default: true
+
   slot :inner_block, required: true
 
   def app(assigns) do
@@ -311,7 +313,11 @@ defmodule PauseAiCaWeb.Layouts do
       </nav>
     </header>
 
-    <div id="announcement-banners" class="sticky top-[var(--header-height)] z-30">
+    <div
+      :if={@show_announcements}
+      id="announcement-banners"
+      class="sticky top-[var(--header-height)] z-30"
+    >
       <a
         id="montreal-protest-banner"
         href={
@@ -373,7 +379,7 @@ defmodule PauseAiCaWeb.Layouts do
     </div>
 
     <.campaign_prompt
-      :if={@promote_warning_shot}
+      :if={@show_announcements and @promote_warning_shot}
       locale={@locale}
       campaign_id="warning-shot-2"
       href={if(@locale == "fr", do: ~p"/fr/signal-d-alarme", else: ~p"/en/warning-shot")}
@@ -539,5 +545,26 @@ defmodule PauseAiCaWeb.Layouts do
       {"risks", gettext("Learn about the risks"),
        if(locale == "fr", do: ~p"/fr/comprendre", else: ~p"/en/learn")}
     ]
+  end
+
+  @doc "Task-focused layout for management and administration."
+  attr :flash, :map, required: true
+  attr :current_scope, :map, default: nil
+  attr :locale, :string, default: nil
+  attr :translated_path, :string, default: nil
+  slot :inner_block, required: true
+
+  def management(assigns) do
+    ~H"""
+    <.app
+      flash={@flash}
+      current_scope={@current_scope}
+      locale={@locale}
+      translated_path={@translated_path}
+      show_announcements={false}
+    >
+      {render_slot(@inner_block)}
+    </.app>
+    """
   end
 end

@@ -179,7 +179,7 @@ defmodule PauseAiCaWeb.AdminContactsLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash} current_scope={@current_scope} locale={@locale}>
+    <Layouts.management flash={@flash} current_scope={@current_scope} locale={@locale}>
       <main class="mx-auto max-w-5xl px-5 py-10 crm-surface">
         <nav class="flex flex-wrap gap-4 mb-6">
           <.link navigate={~p"/admin/dashboard?locale=#{@locale}"}>{gettext("Administration")}</.link><.link navigate={
@@ -325,7 +325,7 @@ defmodule PauseAiCaWeb.AdminContactsLive do
           </section>
         </section>
       </main>
-    </Layouts.app>
+    </Layouts.management>
     """
   end
 end

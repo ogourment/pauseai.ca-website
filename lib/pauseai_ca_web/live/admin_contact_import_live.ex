@@ -266,7 +266,7 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash} current_scope={@current_scope}>
+    <Layouts.management flash={@flash} current_scope={@current_scope}>
       <section id="admin-contact-imports" class="mx-auto max-w-6xl px-5 py-16">
         <p class="eyebrow">{gettext("Superadmin")}</p>
         <h1 class="mt-3 font-heading text-5xl text-stone-950">{gettext("Contact imports")}</h1>
@@ -514,7 +514,7 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
           </ul>
         </section>
       </section>
-    </Layouts.app>
+    </Layouts.management>
     """
   end
 

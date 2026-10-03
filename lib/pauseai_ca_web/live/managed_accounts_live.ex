@@ -366,11 +366,10 @@ defmodule PauseAiCaWeb.ManagedAccountsLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app
+    <Layouts.management
       flash={@flash}
       current_scope={@current_scope}
       locale={@locale}
-      promote_warning_shot={false}
       translated_path={~p"/manage/accounts?locale=#{if(@locale == "fr", do: "en", else: "fr")}"}
     >
       <section id="managed-accounts" class="mx-auto max-w-6xl space-y-6 px-5 py-12">
@@ -708,7 +707,7 @@ defmodule PauseAiCaWeb.ManagedAccountsLive do
           </section>
         <% end %>
       </section>
-    </Layouts.app>
+    </Layouts.management>
     """
   end
 
