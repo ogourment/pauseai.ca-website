@@ -33,6 +33,8 @@ defmodule PauseAiCaWeb.LearningBasketControllerTest do
   } do
     user = user_fixture()
 
+    assert Accounts.Onboarding.context(%{"basket" => ["bengio-speed"]}, nil)["basket"] == []
+
     context =
       Accounts.Onboarding.context(
         %{

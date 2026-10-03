@@ -31,7 +31,10 @@ defmodule PauseAiCa.Accounts.Onboarding do
       "source" => source,
       "bookmark" => bookmark,
       "fsa" => valid_fsa(params["fsa"]),
-      "basket" => PauseAiCa.Learning.valid_ids(String.split(params["basket"] || "", ",")),
+      "basket" =>
+        PauseAiCa.Learning.valid_ids(
+          String.split(if(is_binary(params["basket"]), do: params["basket"], else: ""), ",")
+        ),
       "answers" => question_answers(params, visitor_id),
       "visitor_id" => visitor_id,
       "return_to" => safe_return(params["return_to"], locale, bookmark)
