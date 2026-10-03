@@ -44,6 +44,10 @@ defmodule PauseAiCaWeb.LearningJourney do
           data-nugget-title={n["title"]}
         >
           <span class={"learning-topic topic-#{n["topic"]}"}>{topic_label(n["topic"])}</span>
+          <span
+            :if={n["id"] in ["bengio-speed", "research-acceleration"]}
+            class="learning-topic topic-voices"
+          >{gettext("People and quotations")}</span>
           <p class="mt-3 text-sm text-stone-600">{n["evidence"]}</p>
           <h3 class="mt-3 font-heading text-2xl">{if(@quiz, do: n["question"], else: n["title"])}</h3>
           <div

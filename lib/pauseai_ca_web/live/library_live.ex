@@ -165,7 +165,7 @@ defmodule PauseAiCaWeb.LibraryLive do
             <li
               :for={voice <- @voices}
               id={"voice-#{voice.id}"}
-              class="flex flex-col rounded-2xl border border-stone-200 p-6"
+              class="learning-card topic-voices flex flex-col rounded-2xl border border-stone-200 p-6"
             >
               <h3 class="font-heading text-2xl text-stone-950">{voice.name}</h3>
               <p class="mt-1 text-sm leading-6 text-stone-500">
@@ -212,6 +212,7 @@ defmodule PauseAiCaWeb.LibraryLive do
       </section>
 
       <section id="parliament" class="mx-auto max-w-5xl px-5 py-14">
+        <span class="learning-topic topic-politics">{gettext("Politics")}</span>
         <h2 class="font-heading text-3xl uppercase tracking-wide text-stone-950">
           {parliament_heading(@locale)}
         </h2>
