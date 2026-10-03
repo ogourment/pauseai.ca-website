@@ -533,9 +533,7 @@ defmodule PauseAiCaWeb.VolunteerSignupsLive do
         lang={@locale}
       >
         <header>
-          <.link navigate={~p"/manage/accounts?locale=#{@locale}"} class="underline">{gettext(
-            "Accounts"
-          )}</.link><h1 class="mt-3 text-4xl font-bold">
+          <h1 class="text-4xl font-bold">
             {if @single?, do: gettext("Add account"), else: gettext("Add multiple accounts")}
           </h1>
           <p :if={!@single?} class="mt-3">
