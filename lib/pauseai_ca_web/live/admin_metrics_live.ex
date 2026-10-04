@@ -39,6 +39,7 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
     socket
     |> assign(:page_title, gettext("Admin dashboard"))
     |> assign(:metrics, metrics)
+    |> assign(:game_metrics, Engagement.game_metrics())
     |> assign(:signup_funnel, Engagement.signup_funnel())
     |> assign(:trend_period_label, trend_period_label(metrics.trend_period))
     |> assign(
@@ -63,6 +64,42 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
         <p class="eyebrow">{gettext("Superadmin")}</p>
         <h1 class="mt-3 font-heading text-5xl text-stone-950">{gettext("Admin dashboard")}</h1>
 
+        <section id="rogue-game-metrics" class="my-8 rounded-xl border border-stone-300 p-5">
+          <h2 class="font-heading text-2xl">{gettext("Rogue agent game")}</h2>
+          <p>{gettext("Attempts: %{count}", count: @game_metrics.attempts)}</p>
+          <p>{gettext("Completed: %{count}", count: @game_metrics.completed)}</p>
+          <p>{gettext("Linked to accounts: %{count}", count: @game_metrics.linked)}</p>
+          <p>
+            {gettext("Linked to newly created, verified accounts: %{count}",
+              count: @game_metrics.new_accounts
+            )}
+          </p>
+          <p class="text-sm">
+            {gettext(
+              "Counts describe game attempts, not distinct people. Account links show association, not proof of causation."
+            )}
+          </p>
+          <details class="mt-3">
+            <summary>{gettext("Progress and button clicks")}</summary>
+            <ul>
+              <li :for={{stage, count} <- @game_metrics.stages}>
+                {gettext("Furthest stage %{stage}: %{count}", stage: stage, count: count)}
+              </li>
+            </ul>
+            <table class="mt-3">
+              <thead>
+                <tr>
+                  <th class="pr-6">{gettext("Stage and button")}</th><th>{gettext("Clicks")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr :for={[button, count] <- @game_metrics.buttons}>
+                  <td class="pr-6">{button}</td><td>{count}</td>
+                </tr>
+              </tbody>
+            </table>
+          </details>
+        </section>
         <section id="visit-preferences" class="mt-6 rounded-xl border p-5">
           <h2 class="font-heading text-xl">{gettext("My visits")}</h2>
           <p class="mt-2">

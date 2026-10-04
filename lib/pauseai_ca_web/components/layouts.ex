@@ -386,8 +386,8 @@ defmodule PauseAiCaWeb.Layouts do
     <.campaign_prompt
       :if={@show_announcements and @promote_warning_shot}
       locale={@locale}
-      campaign_id="warning-shot-2"
-      href={if(@locale == "fr", do: ~p"/fr/signal-d-alarme", else: ~p"/en/warning-shot")}
+      campaign_id="rogue-agent-1"
+      href={if(@locale == "fr", do: ~p"/fr/agent-rebelle", else: ~p"/en/rogue-agent")}
     />
 
     <main>

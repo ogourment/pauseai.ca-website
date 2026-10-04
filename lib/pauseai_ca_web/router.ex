@@ -52,6 +52,10 @@ defmodule PauseAiCaWeb.Router do
     get "/fr/confidentialite", PageController, :privacy_fr
     get "/en/montreal.html", PageController, :legacy_montreal
     get "/fr/tir-de-semonce", PageController, :legacy_warning_shot
+    get "/en/rogue-agent", RogueGameController, :en
+    get "/fr/agent-rebelle", RogueGameController, :fr
+    get "/rogue-agent/ally", RogueGameController, :ally
+    post "/learning/game-progress", RogueProgressController, :update
     post "/learning/basket", LearningBasketController, :update
     post "/learning/questions/:question", LearningSignalController, :question
     post "/engagement/event-links/:event", LearningSignalController, :event_link

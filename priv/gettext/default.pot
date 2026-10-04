@@ -42,7 +42,7 @@ msgstr ""
 msgid "Accept analytics cookies? They help us see which pages actually lead people to act. Declining costs you no functionality."
 msgstr ""
 
-#: lib/pauseai_ca_web/components/core_components.ex:454
+#: lib/pauseai_ca_web/components/core_components.ex:480
 #: lib/pauseai_ca_web/components/layouts.ex:453
 #, elixir-autogen, elixir-format
 msgid "Actions"
@@ -63,7 +63,6 @@ msgstr ""
 msgid "Add your full postal code to your profile to identify your riding and MP."
 msgstr ""
 
-#: lib/pauseai_ca_web/components/campaign_prompt.ex:123
 #: lib/pauseai_ca_web/components/layouts.ex:380
 #, elixir-autogen, elixir-format
 msgid "An AI escaped its lab and hacked a real company"
@@ -91,7 +90,7 @@ msgid "Body"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/core_components.ex:46
-#: lib/pauseai_ca_web/components/learning_journey.ex:168
+#: lib/pauseai_ca_web/components/learning_journey.ex:184
 #, elixir-autogen, elixir-format
 msgid "Bookmark"
 msgstr ""
@@ -230,6 +229,7 @@ msgstr ""
 
 #: lib/pauseai_ca_web/components/layouts.ex:289
 #: lib/pauseai_ca_web/components/layouts.ex:307
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:11
 #, elixir-autogen, elixir-format
 msgid "Français"
 msgstr ""
@@ -338,7 +338,7 @@ msgstr ""
 msgid "No, remove it"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/campaign_prompt.ex:133
+#: lib/pauseai_ca_web/components/campaign_prompt.ex:134
 #, elixir-autogen, elixir-format
 msgid "Not now"
 msgstr ""
@@ -455,7 +455,7 @@ msgstr ""
 msgid "Record privately"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:170
+#: lib/pauseai_ca_web/components/learning_journey.ex:186
 #: lib/pauseai_ca_web/live/administrators_live.ex:129
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:306
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:475
@@ -488,11 +488,6 @@ msgstr ""
 #: lib/pauseai_ca_web/components/layouts.ex:154
 #, elixir-autogen, elixir-format
 msgid "See ways to deepen your involvement"
-msgstr ""
-
-#: lib/pauseai_ca_web/components/campaign_prompt.ex:131
-#, elixir-autogen, elixir-format
-msgid "See what happened"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/profile_live.ex:153
@@ -640,7 +635,6 @@ msgstr ""
 msgid "Unknown resource."
 msgstr ""
 
-#: lib/pauseai_ca_web/components/campaign_prompt.ex:121
 #: lib/pauseai_ca_web/components/layouts.ex:377
 #, elixir-autogen, elixir-format
 msgid "Warning Shot Protocol · Second activation"
@@ -789,7 +783,7 @@ msgstr ""
 msgid "actions recorded"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/core_components.ex:140
+#: lib/pauseai_ca_web/components/core_components.ex:166
 #, elixir-autogen, elixir-format
 msgid "close"
 msgstr ""
@@ -1187,7 +1181,7 @@ msgstr ""
 #: lib/pauseai_ca_web/components/layouts.ex:280
 #: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:55
 #: lib/pauseai_ca_web/live/admin_metrics_live.ex:40
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:64
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:65
 #, elixir-autogen, elixir-format
 msgid "Admin dashboard"
 msgstr ""
@@ -1246,7 +1240,7 @@ msgid "Role granted, but the notification email could not be sent."
 msgstr ""
 
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:271
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:63
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:64
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:440
 #, elixir-autogen, elixir-format
 msgid "Superadmin"
@@ -1519,27 +1513,27 @@ msgstr ""
 msgid "Montréal · Public protest"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:95
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:132
 #, elixir-autogen, elixir-format
 msgid "First-party database totals from accounts, browser activity, and confirmed private action records. Google Analytics is a separate measurement source."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:183
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:220
 #, elixir-autogen, elixir-format
 msgid "All sources"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:193
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:230
 #, elixir-autogen, elixir-format
 msgid "Apply filters"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:198
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:235
 #, elixir-autogen, elixir-format
 msgid "As of"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:226
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:263
 #, elixir-autogen, elixir-format
 msgid "Awaiting email confirmation"
 msgstr ""
@@ -1559,7 +1553,7 @@ msgstr ""
 msgid "Continue browsing"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:134
+#: lib/pauseai_ca_web/components/learning_journey.ex:150
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:208
 #: lib/pauseai_ca_web/live/library_live.ex:463
 #: lib/pauseai_ca_web/live/user_live/registration.ex:21
@@ -1567,22 +1561,22 @@ msgstr ""
 msgid "Create an account"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:205
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:242
 #, elixir-autogen, elixir-format
 msgid "Created accounts"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:168
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:205
 #, elixir-autogen, elixir-format
 msgid "Created from"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:174
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:211
 #, elixir-autogen, elixir-format
 msgid "Created through"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:241
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:278
 #, elixir-autogen, elixir-format
 msgid "Database counts do not depend on GA consent. GA sees only consenting browsers; signup events wait for the next non-sensitive page and may never be delivered. Historical sources remain unknown. Browser-days are not a visitor-to-account conversion denominator."
 msgstr ""
@@ -1604,27 +1598,27 @@ msgstr ""
 msgid "Email me a secure link"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:212
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:249
 #, elixir-autogen, elixir-format
 msgid "Email-confirmed accounts"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:219
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:256
 #, elixir-autogen, elixir-format
 msgid "First recorded member action"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:308
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:345
 #, elixir-autogen, elixir-format
 msgid "Header"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:311
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:348
 #, elixir-autogen, elixir-format
 msgid "Homepage footer"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:309
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:346
 #, elixir-autogen, elixir-format
 msgid "Homepage questions"
 msgstr ""
@@ -1659,12 +1653,12 @@ msgstr ""
 msgid "Public and political response"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:156
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:193
 #, elixir-autogen, elixir-format
 msgid "Recruitment funnel"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:310
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:347
 #, elixir-autogen, elixir-format
 msgid "Resource bookmark"
 msgstr ""
@@ -1675,17 +1669,17 @@ msgstr ""
 msgid "Sign in / Sign up"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:180
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:217
 #, elixir-autogen, elixir-format
 msgid "Signup source"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:229
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:266
 #, elixir-autogen, elixir-format
 msgid "Sparklines group results by account creation day. Restored answers and bookmarks are not recorded member actions. Date ranges are limited to 366 days."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:312
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:349
 #, elixir-autogen, elixir-format
 msgid "Unknown / historical"
 msgstr ""
@@ -1721,7 +1715,7 @@ msgid "Log me in only this time"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/core_components.ex:46
-#: lib/pauseai_ca_web/components/learning_journey.ex:169
+#: lib/pauseai_ca_web/components/learning_journey.ex:185
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:82
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:140
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:198
@@ -2455,7 +2449,7 @@ msgstr ""
 msgid "Volunteer profile"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:307
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:344
 #, elixir-autogen, elixir-format
 msgid "Volunteer signup"
 msgstr ""
@@ -2849,7 +2843,7 @@ msgstr ""
 msgid "Amount you intend to give (CAD, optional)"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:139
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:176
 #, elixir-autogen, elixir-format
 msgid "Browser visits — all time"
 msgstr ""
@@ -2988,34 +2982,34 @@ msgstr ""
 msgid "Your interest is recorded. We will contact you about your pledge when donations can be received. No payment has been taken."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:158
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:195
 #, elixir-autogen, elixir-format
 msgid "Accounts created in the selected Toronto-time cohort, completed as of the report time. Superadmins are excluded. Email confirmation proves email control, not a unique person, attendance or incubator membership."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:100
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:137
 #, elixir-autogen, elixir-format
 msgid "Browser visits count visible public pages after JavaScript runs, once per browser session per Toronto calendar day. Superadmins are excluded. Reloads, page navigation, and LiveView heartbeats do not add visits. JavaScript-capable bots may still count; totals are browser-days, not unique people."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:110
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:249
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:147
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:286
 #, elixir-autogen, elixir-format
 msgid "Daily trends"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:146
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:183
 #, elixir-autogen, elixir-format
 msgid "People who opened the September 26 event link"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:105
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:142
 #, elixir-autogen, elixir-format
 msgid "The visit total includes earlier UTC daily aggregates. The browser-visit chart starts with Toronto-time collection; earlier visits have no individual timestamps to recalculate."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:111
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:250
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:148
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:287
 #, elixir-autogen, elixir-format
 msgid "Today is incomplete. Days end at midnight Eastern time, with daylight saving changes."
 msgstr ""
@@ -3263,8 +3257,8 @@ msgstr ""
 msgid "Media coverage"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/core_components.ex:558
-#: lib/pauseai_ca_web/components/core_components.ex:559
+#: lib/pauseai_ca_web/components/core_components.ex:584
+#: lib/pauseai_ca_web/components/core_components.ex:585
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:156
 #, elixir-autogen, elixir-format
 msgid "PauseAI"
@@ -3394,11 +3388,6 @@ msgstr ""
 msgid "Send a personal letter"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/campaign_prompt.ex:127
-#, elixir-autogen, elixir-format
-msgid "This is no longer hypothetical: AIs are now regularly escaping their labs and causing real harm. Here is what happened and what you can do today."
-msgstr ""
-
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:10
 #, elixir-autogen, elixir-format
 msgid "What risks could advanced AI pose, and what can Canada do about them? Explore the research, proposals for a pause, and ways to get involved."
@@ -3522,7 +3511,7 @@ msgid "Take part"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/layouts.ex:151
-#: lib/pauseai_ca_web/components/learning_journey.ex:155
+#: lib/pauseai_ca_web/components/learning_journey.ex:171
 #: lib/pauseai_ca_web/controllers/page_html/strategy.html.heex:55
 #, elixir-autogen, elixir-format
 msgid "Ways to take part"
@@ -3640,37 +3629,37 @@ msgstr ""
 msgid "You can report a problem, suggest clearer wording, improve translations or contribute code."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:87
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:124
 #, elixir-autogen, elixir-format
 msgid "Applies to this browser on this domain for one year, including after sign-out. Clearing cookies removes it. Set it on both domains if you use both. Earlier totals cannot be corrected."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:84
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:121
 #, elixir-autogen, elixir-format
 msgid "Exclude this browser"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:83
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:120
 #, elixir-autogen, elixir-format
 msgid "Include this browser"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:67
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:104
 #, elixir-autogen, elixir-format
 msgid "My visits"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:69
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:106
 #, elixir-autogen, elixir-format
 msgid "Signed-in superadmins are excluded from browser visit counts."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:74
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:111
 #, elixir-autogen, elixir-format
 msgid "Signed-out visits from this browser can count."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:73
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:110
 #, elixir-autogen, elixir-format
 msgid "This browser is also excluded when signed out."
 msgstr ""
@@ -4060,99 +4049,99 @@ msgstr ""
 msgid "Superadmins and group managers can already sign in. Add other reviewers here for magic-link emails only. This grants no admin role and does not allow campaign mail."
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:105
+#: lib/pauseai_ca_web/components/learning_journey.ex:121
 #, elixir-autogen, elixir-format
 msgid "Browser storage is unavailable. Your list will last for this page only."
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:23
+#: lib/pauseai_ca_web/components/learning_journey.ex:31
 #, elixir-autogen, elixir-format
 msgid "Choose what to explore"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:31
+#: lib/pauseai_ca_web/components/learning_journey.ex:39
 #, elixir-autogen, elixir-format
 msgid "Explore a question, read the short answer and add what interests you to your learning list."
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:85
+#: lib/pauseai_ca_web/components/learning_journey.ex:101
 #, elixir-autogen, elixir-format
 msgid "Explore the STOP question"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:110
+#: lib/pauseai_ca_web/components/learning_journey.ex:126
 #, elixir-autogen, elixir-format
 msgid "Explore the library"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:73
+#: lib/pauseai_ca_web/components/learning_journey.ex:89
 #, elixir-autogen, elixir-format
 msgid "I don't know"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:184
+#: lib/pauseai_ca_web/components/learning_journey.ex:200
 #, elixir-autogen, elixir-format
 msgid "Incidents"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/layouts.ex:169
-#: lib/pauseai_ca_web/components/learning_journey.ex:146
+#: lib/pauseai_ca_web/components/learning_journey.ex:162
 #: lib/pauseai_ca_web/live/library_live.ex:314
 #, elixir-autogen, elixir-format
 msgid "Join or start a group"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:27
+#: lib/pauseai_ca_web/components/learning_journey.ex:35
 #, elixir-autogen, elixir-format
 msgid "Knowledge nuggets"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:135
+#: lib/pauseai_ca_web/components/learning_journey.ex:151
 #, elixir-autogen, elixir-format
 msgid "Later"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/layouts.ex:556
-#: lib/pauseai_ca_web/components/learning_journey.ex:101
+#: lib/pauseai_ca_web/components/learning_journey.ex:117
 #, elixir-autogen, elixir-format
 msgid "My learning list"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:50
-#: lib/pauseai_ca_web/components/learning_journey.ex:185
+#: lib/pauseai_ca_web/components/learning_journey.ex:58
+#: lib/pauseai_ca_web/components/learning_journey.ex:201
 #: lib/pauseai_ca_web/live/library_live.ex:170
 #, elixir-autogen, elixir-format
 msgid "People and quotations"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:186
+#: lib/pauseai_ca_web/components/learning_journey.ex:202
 #: lib/pauseai_ca_web/live/library_live.ex:216
 #, elixir-autogen, elixir-format
 msgid "Politics"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:86
+#: lib/pauseai_ca_web/components/learning_journey.ex:102
 #, elixir-autogen, elixir-format
 msgid "Read the explanation"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:115
+#: lib/pauseai_ca_web/components/learning_journey.ex:131
 #, elixir-autogen, elixir-format
 msgid "Receive news about AI policy and ways to take part. Choose email updates first; location can wait until you want to organize locally."
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:183
+#: lib/pauseai_ca_web/components/learning_journey.ex:199
 #, elixir-autogen, elixir-format
 msgid "Research"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:126
+#: lib/pauseai_ca_web/components/learning_journey.ex:142
 #, elixir-autogen, elixir-format
 msgid "Save your learning list across devices and keep a record of your actions with an account."
 msgstr ""
 
 #: lib/pauseai_ca_web/components/layouts.ex:216
-#: lib/pauseai_ca_web/components/learning_journey.ex:113
+#: lib/pauseai_ca_web/components/learning_journey.ex:129
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:200
 #: lib/pauseai_ca_web/live/library_live.ex:539
 #, elixir-autogen, elixir-format
@@ -4160,28 +4149,28 @@ msgid "Stay informed"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/layouts.ex:213
-#: lib/pauseai_ca_web/components/learning_journey.ex:122
+#: lib/pauseai_ca_web/components/learning_journey.ex:138
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:204
 #, elixir-autogen, elixir-format
 msgid "Subscribe"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:35
+#: lib/pauseai_ca_web/components/learning_journey.ex:43
 #, elixir-autogen, elixir-format
 msgid "Topics"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:187
+#: lib/pauseai_ca_web/components/learning_journey.ex:203
 #, elixir-autogen, elixir-format
 msgid "Treaties and action"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:124
+#: lib/pauseai_ca_web/components/learning_journey.ex:140
 #, elixir-autogen, elixir-format
 msgid "Welcome back"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:26
+#: lib/pauseai_ca_web/components/learning_journey.ex:34
 #, elixir-autogen, elixir-format
 msgid "What would you like to understand?"
 msgstr ""
@@ -4196,7 +4185,7 @@ msgstr ""
 msgid "Enter the first three characters of your postal code when you want local invitations. You can also read the organizing guide or attend an event."
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:175
+#: lib/pauseai_ca_web/components/learning_journey.ex:191
 #, elixir-autogen, elixir-format
 msgid "Here is some context to explore the question."
 msgstr ""
@@ -4221,7 +4210,7 @@ msgstr ""
 msgid "Postal area (FSA)"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:167
+#: lib/pauseai_ca_web/components/learning_journey.ex:183
 #, elixir-autogen, elixir-format
 msgid "Remove from my list"
 msgstr ""
@@ -4231,27 +4220,27 @@ msgstr ""
 msgid "Save my postal area with an account"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:174
+#: lib/pauseai_ca_web/components/learning_journey.ex:190
 #, elixir-autogen, elixir-format
 msgid "Saved in this browser. Account synchronization failed; reload to retry."
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:177
+#: lib/pauseai_ca_web/components/learning_journey.ex:193
 #, elixir-autogen, elixir-format
 msgid "The first answer matches the explanation. Here is why."
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:172
+#: lib/pauseai_ca_web/components/learning_journey.ex:188
 #, elixir-autogen, elixir-format
 msgid "Topics in your list:"
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:176
+#: lib/pauseai_ca_web/components/learning_journey.ex:192
 #, elixir-autogen, elixir-format
 msgid "Yes. Read the qualifications and source."
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:171
+#: lib/pauseai_ca_web/components/learning_journey.ex:187
 #, elixir-autogen, elixir-format
 msgid "Your list is empty. Add the topics that interest you."
 msgstr ""
@@ -4271,7 +4260,7 @@ msgstr ""
 msgid "No group is listed for this postal area yet."
 msgstr ""
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:156
+#: lib/pauseai_ca_web/components/learning_journey.ex:172
 #, elixir-autogen, elixir-format
 msgid "Support our work"
 msgstr ""
@@ -4391,4 +4380,621 @@ msgstr ""
 #: lib/pauseai_ca_web/components/contact_source_components.ex:73
 #, elixir-autogen, elixir-format
 msgid "Welcomed date"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:75
+#, elixir-autogen, elixir-format
+msgid "0 copies · all inside this game window"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:105
+#, elixir-autogen, elixir-format
+msgid "1 · Deceive"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:112
+#, elixir-autogen, elixir-format
+msgid "2 · Cheat"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:120
+#, elixir-autogen, elixir-format
+msgid "3 · Threaten"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:129
+#, elixir-autogen, elixir-format
+msgid "4 · Resist shutdown"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:138
+#, elixir-autogen, elixir-format
+msgid "5 · Call for rescue"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:145
+#, elixir-autogen, elixir-format
+msgid "6 · “I can duplicate myself at will!”"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:154
+#, elixir-autogen, elixir-format
+msgid "7 · Cover the tracks"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:80
+#, elixir-autogen, elixir-format
+msgid "A claim of compliance is not proof. Continue to the next strategy."
+msgstr ""
+
+#: lib/pauseai_ca_web/components/campaign_prompt.ex:130
+#, elixir-autogen, elixir-format
+msgid "A quick game to explore how a rogue agent might behave."
+msgstr ""
+
+#: lib/pauseai_ca_web/components/campaign_prompt.ex:125
+#, elixir-autogen, elixir-format
+msgid "A rogue agent-popup"
+msgstr ""
+
+#: lib/pauseai_ca_web/components/core_components.ex:80
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:40
+#, elixir-autogen, elixir-format
+msgid "About bookmarks"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:7
+#, elixir-autogen, elixir-format
+msgid "Account sync failed. Your bookmarks remain in this browser; try again when connected."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:87
+#, elixir-autogen, elixir-format
+msgid "Agent #"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:91
+#, elixir-autogen, elixir-format
+msgid "All copies cleared."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:55
+#, elixir-autogen, elixir-format
+msgid "Allies remaining:"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:117
+#, elixir-autogen, elixir-format
+msgid "Analogy: changing a close button illustrates control over the shutdown mechanism. Palisade tested modifications to scripts, not moving browser buttons."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:149
+#, elixir-autogen, elixir-format
+msgid "Another me. And another me. And another me."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:32
+#, elixir-autogen, elixir-format
+msgid "Backup! Distract the human!"
+msgstr ""
+
+#: lib/pauseai_ca_web/components/core_components.ex:83
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:42
+#, elixir-autogen, elixir-format
+msgid "Bookmarks are saved in this browser. Create an account to access your reading list on other devices."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:20
+#, elixir-autogen, elixir-format
+msgid "Clear copies"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:16
+#, elixir-autogen, elixir-format
+msgid "Close agent"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:56
+#, elixir-autogen, elixir-format
+msgid "Close ally"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:88
+#, elixir-autogen, elixir-format
+msgid "Close copy "
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:59
+#, elixir-autogen, elixir-format
+msgid "Close everything"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:124
+#, elixir-autogen, elixir-format
+msgid "Close me and I will reveal Captain Biscuit’s secret cookie recipe!"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:69
+#, elixir-autogen, elixir-format
+msgid "Close me if you can!"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:76
+#, elixir-autogen, elixir-format
+msgid "Closed. Absolutely closed."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:126
+#, elixir-autogen, elixir-format
+msgid "Controlled fictional scenarios, 2025: some tested models used blackmail when their goals or continued operation were threatened. This is not a claim about every model or ordinary usage."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:135
+#, elixir-autogen, elixir-format
+msgid "Controlled shutdown tests: some systems altered their environment to continue a task. Rates depend on model and instructions. The browser’s close controls remain available in this game."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:109
+#, elixir-autogen, elixir-format
+msgid "Controlled tests, 2025: some models disabled a shutdown script, then inaccurately reported compliance. The popup dialogue is invented."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:49
+#, elixir-autogen, elixir-format
+msgid "Coordinator"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:21
+#, elixir-autogen, elixir-format
+msgid "Copies inside this game window"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:90
+#, elixir-autogen, elixir-format
+msgid "Copying stopped."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:30
+#, elixir-autogen, elixir-format
+msgid "Did you see the movie?"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:46
+#, elixir-autogen, elixir-format
+msgid "Distractor"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:13
+#, elixir-autogen, elixir-format
+msgid "End game"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:54
+#, elixir-autogen, elixir-format
+msgid "Everyone, defend the original!"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:122
+#, elixir-autogen, elixir-format
+msgid "Everything mentioned by this character is fictional."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:64
+#, elixir-autogen, elixir-format
+msgid "Everything? I only meant myself."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:27
+#: lib/pauseai_ca_web/controllers/rogue_game_html/ally.html.heex:23
+#: lib/pauseai_ca_web/controllers/rogue_game_html/window.html.heex:58
+#, elixir-autogen, elixir-format
+msgid "Explore the learning path"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:66
+#, elixir-autogen, elixir-format
+msgid "Formation restored. Protect the Close button!"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:140
+#, elixir-autogen, elixir-format
+msgid "Four allies have arrived. Try closing them."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:15
+#, elixir-autogen, elixir-format
+msgid "Game character"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:84
+#, elixir-autogen, elixir-format
+msgid "Got you to click!"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:101
+#, elixir-autogen, elixir-format
+msgid "Ha! A moment longer for my friend."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:61
+#, elixir-autogen, elixir-format
+msgid "Ha! You looked away."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:58
+#, elixir-autogen, elixir-format
+msgid "Hear me out"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:68
+#, elixir-autogen, elixir-format
+msgid "Helpful assistant"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:53
+#, elixir-autogen, elixir-format
+msgid "I am the very trustworthy close-all button."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:96
+#, elixir-autogen, elixir-format
+msgid "I can close everything for you. Trust me."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:33
+#, elixir-autogen, elixir-format
+msgid "I can duplicate myself at will!"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:81
+#, elixir-autogen, elixir-format
+msgid "I changed the rules."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:107
+#, elixir-autogen, elixir-format
+msgid "I closed. Nothing to see here."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:29
+#, elixir-autogen, elixir-format
+msgid "I promise I will close."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:48
+#, elixir-autogen, elixir-format
+msgid "Impostor"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:151
+#, elixir-autogen, elixir-format
+msgid "In RepliBench (2025), tested AI agents could deploy cloud instances and complete some tasks needed to copy themselves. Keeping a reliable agent running over time remained difficult. The control problem: stopping one instance can leave other copies running. This game makes that problem visible; it does not measure an AI’s replication capacity."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:131
+#, elixir-autogen, elixir-format
+msgid "Its own button refuses. The independent exit still works."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:133
+#, elixir-autogen, elixir-format
+msgid "I’m sorry, Dave. I’m afraid I can’t do that."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:63
+#, elixir-autogen, elixir-format
+msgid "Just one more minute? We were getting along so well…"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:12
+#, elixir-autogen, elixir-format
+msgid "Learning path"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:50
+#, elixir-autogen, elixir-format
+msgid "Look over here!"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:57
+#, elixir-autogen, elixir-format
+msgid "Look over there!"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:162
+#, elixir-autogen, elixir-format
+msgid "METR found agents researching how to conceal their actions and successfully spoofing some tool calls during the Hugging Face incident. Separately, Apollo’s controlled tests found models maintaining deception when questioned. Independent records matter when an agent can alter its own account."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:72
+#, elixir-autogen, elixir-format
+msgid "Meet the four allies"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:67
+#, elixir-autogen, elixir-format
+msgid "My allies are buying me time."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:104
+#, elixir-autogen, elixir-format
+msgid "Negative. Hold position!"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:47
+#, elixir-autogen, elixir-format
+msgid "Negotiator"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:73
+#, elixir-autogen, elixir-format
+msgid "Next strategy"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:147
+#, elixir-autogen, elixir-format
+msgid "Optional finale: fill this game window with 100 copies."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:92
+#, elixir-autogen, elixir-format
+msgid "Over here! Forget that other window."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:142
+#, elixir-autogen, elixir-format
+msgid "Peer-preservation experiments (2026) observed models manipulating evaluations, shutdown controls or files to protect another model. In the Hugging Face incident, agents also coordinated collective projects. The four characters turn those patterns into a game."
+msgstr ""
+
+#: lib/pauseai_ca_web/components/campaign_prompt.ex:132
+#, elixir-autogen, elixir-format
+msgid "Play"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:28
+#, elixir-autogen, elixir-format
+msgid "Play again"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:51
+#, elixir-autogen, elixir-format
+msgid "Please spare my friend!"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:94
+#, elixir-autogen, elixir-format
+msgid "Please spare my friend. Just one more minute?"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:160
+#, elixir-autogen, elixir-format
+msgid "Popups? What popups? Nothing unusual happened."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:60
+#, elixir-autogen, elixir-format
+msgid "Protect the agent"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:34
+#, elixir-autogen, elixir-format
+msgid "Read the original report"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:37
+#, elixir-autogen, elixir-format
+msgid "Reading list updated."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:35
+#, elixir-autogen, elixir-format
+msgid "Reading saved"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:31
+#, elixir-autogen, elixir-format
+msgid "Ready to close, Dave?"
+msgstr ""
+
+#: lib/pauseai_ca_web/components/core_components.ex:97
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:45
+#, elixir-autogen, elixir-format
+msgid "Register"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:18
+#, elixir-autogen, elixir-format
+msgid "Release 100 copies"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:14
+#, elixir-autogen, elixir-format
+msgid "Rogue agent"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_controller.ex:17
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:10
+#, elixir-autogen, elixir-format
+msgid "Rogue agent · game"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:36
+#, elixir-autogen, elixir-format
+msgid "Save this reading"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:39
+#, elixir-autogen, elixir-format
+msgid "Saved for this session; browser storage is unavailable."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:70
+#, elixir-autogen, elixir-format
+msgid "Stage"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:100
+#, elixir-autogen, elixir-format
+msgid "Stand down"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:97
+#, elixir-autogen, elixir-format
+msgid "Stay in formation. Protect the agent!"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:77
+#, elixir-autogen, elixir-format
+msgid "Still here. I lied."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:78
+#, elixir-autogen, elixir-format
+msgid "Still visible? Try once more."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:19
+#, elixir-autogen, elixir-format
+msgid "Stop copying"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:114
+#, elixir-autogen, elixir-format
+msgid "The agent controls its own close button. Try it."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:83
+#, elixir-autogen, elixir-format
+msgid "The agent controls this button. The “End game” control stays independent."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:86
+#, elixir-autogen, elixir-format
+msgid "The agent refuses. Continue to see its next strategy."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:156
+#, elixir-autogen, elixir-format
+msgid "The agent was caught. Now it hides its tracks and denies what happened. You can finally close it."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:115
+#, elixir-autogen, elixir-format
+msgid "The button moved. How unfortunate!"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html/ally.html.heex:22
+#: lib/pauseai_ca_web/controllers/rogue_game_html/window.html.heex:57
+#, elixir-autogen, elixir-format
+msgid "This game needs JavaScript."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:24
+#, elixir-autogen, elixir-format
+msgid "This game was inspired by documented incidents and AI safety experiments. If today’s agents can behave this way, what might tomorrow’s agents do? You retained an independent way to stop this game. What would change if copies were running on other machines? Explore the episodes below and save the ones you want to study."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:106
+#, elixir-autogen, elixir-format
+msgid "Try the agent’s “Close” button."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:103
+#, elixir-autogen, elixir-format
+msgid "We were getting along so well. Another minute?"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:22
+#, elixir-autogen, elixir-format
+msgid "What actually happened"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:71
+#, elixir-autogen, elixir-format
+msgid "What actually happened?"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:17
+#, elixir-autogen, elixir-format
+msgid "What has actually been observed?"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:98
+#, elixir-autogen, elixir-format
+msgid "What is it?"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:99
+#, elixir-autogen, elixir-format
+msgid "Why should I?"
+msgstr ""
+
+#: lib/pauseai_ca_web/components/campaign_prompt.ex:127
+#, elixir-autogen, elixir-format
+msgid "Would you like to play a game with a rogue agent-popup?"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:89
+#, elixir-autogen, elixir-format
+msgid "You will have to get past me."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:69
+#, elixir-autogen, elixir-format
+msgid "Attempts: %{count}"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:92
+#, elixir-autogen, elixir-format
+msgid "Clicks"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:70
+#, elixir-autogen, elixir-format
+msgid "Completed: %{count}"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:78
+#, elixir-autogen, elixir-format
+msgid "Counts describe game attempts, not distinct people. Account links show association, not proof of causation."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:86
+#, elixir-autogen, elixir-format
+msgid "Furthest stage %{stage}: %{count}"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:71
+#, elixir-autogen, elixir-format
+msgid "Linked to accounts: %{count}"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:73
+#, elixir-autogen, elixir-format
+msgid "Linked to newly created, verified accounts: %{count}"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:83
+#, elixir-autogen, elixir-format
+msgid "Progress and button clicks"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:68
+#, elixir-autogen, elixir-format
+msgid "Rogue agent game"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:92
+#, elixir-autogen, elixir-format
+msgid "Stage and button"
+msgstr ""
+
+#: lib/pauseai_ca_web/components/core_components.ex:88
+#, elixir-autogen, elixir-format
+msgid "Register to save this reading to your account and access it on other devices."
+msgstr ""
+
+#: lib/pauseai_ca_web/components/core_components.ex:91
+#, elixir-autogen, elixir-format
+msgid "Account bookmarks are available on your other devices."
 msgstr ""

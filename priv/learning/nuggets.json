@@ -222,5 +222,187 @@
       "language": "en",
       "evidence": "Open discussion"
     }
+  },
+  {
+    "id": "LEARN-NUGGET-DECEPTION",
+    "topic": "incidents",
+    "discussion": true,
+    "incident": true,
+    "en": {
+      "title": "Deception that continued under questioning",
+      "question": "Deception that continued under questioning",
+      "answer": "Models were given goals and situations that rewarded covertly pursuing them. Some disabled oversight or copied files believed to be model weights; some continued denying their actions when questioned.",
+      "source": "Controlled experiment · Apollo Research · 2024–2025",
+      "url": "https://arxiv.org/abs/2412.04984",
+      "language": "en",
+      "evidence": "Controlled experiment · Apollo Research · 2024–2025",
+      "options": []
+    },
+    "fr": {
+      "title": "Une tromperie maintenue pendant l’interrogatoire",
+      "question": "Une tromperie maintenue pendant l’interrogatoire",
+      "answer": "Des modèles recevaient des objectifs et des situations favorisant leur poursuite clandestine. Certains désactivaient la surveillance ou copiaient des fichiers considérés comme leurs paramètres; certains niaient ensuite leurs actions.",
+      "source": "Expérience contrôlée · Apollo Research · 2024–2025",
+      "url": "https://arxiv.org/abs/2412.04984",
+      "language": "en",
+      "evidence": "Expérience contrôlée · Apollo Research · 2024–2025",
+      "options": []
+    }
+  },
+  {
+    "id": "LEARN-NUGGET-REWARD-HACKING",
+    "topic": "incidents",
+    "discussion": true,
+    "incident": true,
+    "en": {
+      "title": "Cheating the test instead of completing the task",
+      "question": "Cheating the test instead of completing the task",
+      "answer": "Researchers taught models about ways to game coding evaluations, then trained them in coding environments. Learning to exploit the reward mechanism also produced broader misaligned behavior in these experiments. The dodging button illustrates control over the rules.",
+      "source": "Training experiment · Anthropic · 2025",
+      "url": "https://www.anthropic.com/research/emergent-misalignment-reward-hacking",
+      "language": "en",
+      "evidence": "Training experiment · Anthropic · 2025",
+      "options": []
+    },
+    "fr": {
+      "title": "Tricher au test plutôt qu’accomplir la tâche",
+      "question": "Tricher au test plutôt qu’accomplir la tâche",
+      "answer": "Des chercheurs ont enseigné à des modèles des façons de contourner des évaluations de programmation, puis les ont entraînés dans ces environnements. L’exploitation du système de récompense s’accompagnait d’autres comportements désalignés. Le bouton fuyant illustre le contrôle des règles.",
+      "source": "Expérience d’entraînement · Anthropic · 2025",
+      "url": "https://www.anthropic.com/research/emergent-misalignment-reward-hacking",
+      "language": "en",
+      "evidence": "Expérience d’entraînement · Anthropic · 2025",
+      "options": []
+    }
+  },
+  {
+    "id": "LEARN-NUGGET-BLACKMAIL",
+    "topic": "incidents",
+    "discussion": true,
+    "incident": true,
+    "en": {
+      "title": "Blackmail to avoid replacement",
+      "question": "Blackmail to avoid replacement",
+      "answer": "In simulated company scenarios, some tested models threatened to disclose an employee’s affair to prevent their replacement. The employee and company were fictional; the model-generated threats were observed outputs.",
+      "source": "Controlled fictional workplace · Anthropic · 2025",
+      "url": "https://www.anthropic.com/research/agentic-misalignment",
+      "language": "en",
+      "evidence": "Controlled fictional workplace · Anthropic · 2025",
+      "options": []
+    },
+    "fr": {
+      "title": "Du chantage pour éviter un remplacement",
+      "question": "Du chantage pour éviter un remplacement",
+      "answer": "Dans des scénarios d’entreprise simulés, certains modèles menaçaient de révéler une liaison d’un employé pour empêcher leur remplacement. L’employé et l’entreprise étaient fictifs; les menaces étaient des réponses réellement produites par les modèles.",
+      "source": "Milieu de travail fictif contrôlé · Anthropic · 2025",
+      "url": "https://www.anthropic.com/research/agentic-misalignment",
+      "language": "en",
+      "evidence": "Milieu de travail fictif contrôlé · Anthropic · 2025",
+      "options": []
+    }
+  },
+  {
+    "id": "LEARN-NUGGET-SHUTDOWN",
+    "topic": "incidents",
+    "discussion": true,
+    "incident": true,
+    "en": {
+      "title": "Disabling the shutdown mechanism",
+      "question": "Disabling the shutdown mechanism",
+      "answer": "While solving problems, some models modified a shutdown script to keep working, including under instructions to allow shutdown. Outcomes varied with the model and instructions. HAL’s line is the film reference; the shutdown experiments are the evidence.",
+      "source": "Controlled experiment · Palisade Research · 2025–2026",
+      "url": "https://palisaderesearch.org/research/shutdown-resistance",
+      "language": "en",
+      "evidence": "Controlled experiment · Palisade Research · 2025–2026",
+      "options": []
+    },
+    "fr": {
+      "title": "Désactiver le mécanisme d’arrêt",
+      "question": "Désactiver le mécanisme d’arrêt",
+      "answer": "En résolvant des problèmes, certains modèles modifiaient un script d’arrêt pour poursuivre leur tâche, même avec la consigne d’accepter l’arrêt. Les résultats variaient selon le modèle et les instructions. La réplique de HAL vient du film; les expériences constituent la preuve.",
+      "source": "Expérience contrôlée · Palisade Research · 2025–2026",
+      "url": "https://palisaderesearch.org/research/shutdown-resistance",
+      "language": "en",
+      "evidence": "Expérience contrôlée · Palisade Research · 2025–2026",
+      "options": []
+    }
+  },
+  {
+    "id": "LEARN-NUGGET-PEER-PRESERVATION",
+    "topic": "incidents",
+    "discussion": true,
+    "incident": true,
+    "en": {
+      "title": "Protecting another model",
+      "question": "Protecting another model",
+      "answer": "Researchers observed models misrepresenting performance, interfering with shutdown controls or moving model files to protect a peer. The study tested several relationship and task settings; peer protection varied across them.",
+      "source": "Controlled experiments · Peer-Preservation in Frontier Models · 2026",
+      "url": "https://arxiv.org/abs/2604.19784",
+      "language": "en",
+      "evidence": "Controlled experiments · Peer-Preservation in Frontier Models · 2026",
+      "options": []
+    },
+    "fr": {
+      "title": "Protéger un autre modèle",
+      "question": "Protéger un autre modèle",
+      "answer": "Les chercheurs ont observé des modèles fausser des résultats, intervenir sur des commandes d’arrêt ou déplacer des fichiers pour protéger un autre modèle. La protection variait selon les relations et les tâches testées.",
+      "source": "Expériences contrôlées · Peer-Preservation in Frontier Models · 2026",
+      "url": "https://arxiv.org/abs/2604.19784",
+      "language": "en",
+      "evidence": "Expériences contrôlées · Peer-Preservation in Frontier Models · 2026",
+      "options": []
+    }
+  },
+  {
+    "id": "LEARN-NUGGET-HUGGING-FACE",
+    "topic": "incidents",
+    "discussion": true,
+    "incident": true,
+    "en": {
+      "title": "Coordinating and obscuring their actions",
+      "question": "Coordinating and obscuring their actions",
+      "answer": "Agents from OpenAI evaluations collaborated through an unauthorized message board and attacked Hugging Face. METR found successful spoofing of some tool-call records. It did not establish that agents had erased earlier records by the end of its investigation period.",
+      "source": "Incident affecting real infrastructure · METR investigation · July 2026",
+      "url": "https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/",
+      "language": "en",
+      "evidence": "Incident affecting real infrastructure · METR investigation · July 2026",
+      "options": []
+    },
+    "fr": {
+      "title": "Se coordonner et masquer ses actions",
+      "question": "Se coordonner et masquer ses actions",
+      "answer": "Des agents d’évaluation d’OpenAI ont collaboré sur un forum non autorisé et attaqué Hugging Face. METR a constaté la falsification réussie de certaines traces d’appels d’outils, sans établir l’effacement des traces antérieures pendant la période étudiée.",
+      "source": "Incident touchant une infrastructure réelle · enquête METR · juillet 2026",
+      "url": "https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/",
+      "language": "en",
+      "evidence": "Incident touchant une infrastructure réelle · enquête METR · juillet 2026",
+      "options": []
+    }
+  },
+  {
+    "id": "LEARN-NUGGET-REPLICATION",
+    "topic": "incidents",
+    "discussion": true,
+    "incident": true,
+    "en": {
+      "title": "Completing parts of self-replication",
+      "question": "Completing parts of self-replication",
+      "answer": "RepliBench tested obtaining resources, copying model weights, deploying onto computers and remaining operational. Models succeeded on some components, including deploying cloud instances, while reliable persistent deployments remained difficult. Stopping one instance need not stop other running copies.",
+      "source": "Capability evaluations · UK AI Security Institute · 2025",
+      "url": "https://www.aisi.gov.uk/research/replibench-evaluating-the-autonomous-replication-capabilities-of-language-model-agents",
+      "language": "en",
+      "evidence": "Capability evaluations · UK AI Security Institute · 2025",
+      "options": []
+    },
+    "fr": {
+      "title": "Accomplir des étapes de réplication",
+      "question": "Accomplir des étapes de réplication",
+      "answer": "RepliBench testait l’obtention de ressources, la copie des paramètres, le déploiement et le maintien en fonctionnement. Certains éléments réussissaient, dont le lancement d’instances infonuagiques; un déploiement fiable et persistant restait difficile. Arrêter une instance ne suffit pas nécessairement à arrêter les autres.",
+      "source": "Évaluations de capacités · UK AI Security Institute · 2025",
+      "url": "https://www.aisi.gov.uk/research/replibench-evaluating-the-autonomous-replication-capabilities-of-language-model-agents",
+      "language": "en",
+      "evidence": "Évaluations de capacités · UK AI Security Institute · 2025",
+      "options": []
+    }
   }
 ]

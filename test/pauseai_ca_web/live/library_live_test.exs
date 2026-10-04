@@ -14,7 +14,7 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
 
       assert has_element?(view, "#warning-shot-banner[href='/en/warning-shot']")
       assert render(view) =~ "September 26 · Read the recap"
-      assert has_element?(view, "#campaign-prompt[data-campaign='warning-shot-2']")
+      assert has_element?(view, "#campaign-prompt[data-campaign='rogue-agent-1']")
       assert has_element?(view, "#voices")
       assert has_element?(view, "#voice-bengio")
       assert has_element?(view, "#voice-tessari")

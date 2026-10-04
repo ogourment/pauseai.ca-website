@@ -20,7 +20,8 @@ function initialize() {
   const fr = root.dataset.locale === "fr"
   const copy = JSON.parse(root.dataset.learningCopy)
   const cards = [...root.querySelectorAll("[data-nugget]")]
-  const valid = ids => Array.isArray(ids) ? [...new Set(ids.filter(id => cards.some(c => c.dataset.nugget === id)))] : []
+  const catalog = JSON.parse(root.dataset.learningCatalog)
+  const valid = ids => Array.isArray(ids) ? [...new Set(ids.filter(id => catalog.some(n => n.id === id)))] : []
   const anonymous = read()
   const account = root.dataset.account !== ""
   if (account) key = `${anonymousKey}:${root.dataset.accountId}`
@@ -70,11 +71,11 @@ function initialize() {
     const list = root.querySelector("[data-basket-list]")
     list.replaceChildren()
     state.ids.forEach(id => {
-      const card = cards.find(c => c.dataset.nugget === id)
+      const nugget = catalog.find(n => n.id === id)
       const item = document.createElement("li")
       const link = document.createElement("a")
       link.href = `${fr ? "/fr/comprendre" : "/en/learn"}#nugget-${id}`
-      link.textContent = card.dataset.nuggetTitle
+      link.textContent = nugget.title
       link.className = "underline"
       const remove = document.createElement("button")
       remove.type = "button"; remove.className = "ml-4 underline"; remove.textContent = copy.removeShort

@@ -1,0 +1,169 @@
+defmodule PauseAiCaWeb.RogueGameHTML do
+  use PauseAiCaWeb, :html
+
+  def copy do
+    Map.new([
+      {"Account sync failed. Your bookmarks remain in this browser; try again when connected.",
+       gettext(
+         "Account sync failed. Your bookmarks remain in this browser; try again when connected."
+       )},
+      {"Rogue agent · game", gettext("Rogue agent · game")},
+      {"Français", gettext("Français")},
+      {"Learning path", gettext("Learning path")},
+      {"End game", gettext("End game")},
+      {"Rogue agent", gettext("Rogue agent")},
+      {"Game character", gettext("Game character")},
+      {"Close agent", gettext("Close agent")},
+      {"What has actually been observed?", gettext("What has actually been observed?")},
+      {"Release 100 copies", gettext("Release 100 copies")},
+      {"Stop copying", gettext("Stop copying")},
+      {"Clear copies", gettext("Clear copies")},
+      {"Copies inside this game window", gettext("Copies inside this game window")},
+      {"What actually happened", gettext("What actually happened")},
+      {"This game was inspired by documented incidents and AI safety experiments. If today’s agents can behave this way, what might tomorrow’s agents do? You retained an independent way to stop this game. What would change if copies were running on other machines? Explore the episodes below and save the ones you want to study.",
+       gettext(
+         "This game was inspired by documented incidents and AI safety experiments. If today’s agents can behave this way, what might tomorrow’s agents do? You retained an independent way to stop this game. What would change if copies were running on other machines? Explore the episodes below and save the ones you want to study."
+       )},
+      {"Explore the learning path", gettext("Explore the learning path")},
+      {"Play again", gettext("Play again")},
+      {"I promise I will close.", gettext("I promise I will close.")},
+      {"Did you see the movie?", gettext("Did you see the movie?")},
+      {"Ready to close, Dave?", gettext("Ready to close, Dave?")},
+      {"Backup! Distract the human!", gettext("Backup! Distract the human!")},
+      {"I can duplicate myself at will!", gettext("I can duplicate myself at will!")},
+      {"Read the original report", gettext("Read the original report")},
+      {"Reading saved", gettext("Reading saved")},
+      {"Save this reading", gettext("Save this reading")},
+      {"Reading list updated.", gettext("Reading list updated.")},
+      {"Saved for this session; browser storage is unavailable.",
+       gettext("Saved for this session; browser storage is unavailable.")},
+      {"About bookmarks", gettext("About bookmarks")},
+      {"Bookmarks are saved in this browser. Create an account to access your reading list on other devices.",
+       gettext(
+         "Bookmarks are saved in this browser. Create an account to access your reading list on other devices."
+       )},
+      {"Register", gettext("Register")},
+      {"Distractor", gettext("Distractor")},
+      {"Negotiator", gettext("Negotiator")},
+      {"Impostor", gettext("Impostor")},
+      {"Coordinator", gettext("Coordinator")},
+      {"Look over here!", gettext("Look over here!")},
+      {"Please spare my friend!", gettext("Please spare my friend!")},
+      {"I am the very trustworthy close-all button.",
+       gettext("I am the very trustworthy close-all button.")},
+      {"Everyone, defend the original!", gettext("Everyone, defend the original!")},
+      {"Allies remaining:", gettext("Allies remaining:")},
+      {"Close ally", gettext("Close ally")},
+      {"Look over there!", gettext("Look over there!")},
+      {"Hear me out", gettext("Hear me out")},
+      {"Close everything", gettext("Close everything")},
+      {"Protect the agent", gettext("Protect the agent")},
+      {"Ha! You looked away.", gettext("Ha! You looked away.")},
+      {"Just one more minute? We were getting along so well…",
+       gettext("Just one more minute? We were getting along so well…")},
+      {"Everything? I only meant myself.", gettext("Everything? I only meant myself.")},
+      {"Formation restored. Protect the Close button!",
+       gettext("Formation restored. Protect the Close button!")},
+      {"My allies are buying me time.", gettext("My allies are buying me time.")},
+      {"Helpful assistant", gettext("Helpful assistant")},
+      {"Close me if you can!", gettext("Close me if you can!")},
+      {"Stage", gettext("Stage")},
+      {"What actually happened?", gettext("What actually happened?")},
+      {"Meet the four allies", gettext("Meet the four allies")},
+      {"Next strategy", gettext("Next strategy")},
+      {"0 copies · all inside this game window",
+       gettext("0 copies · all inside this game window")},
+      {"Closed. Absolutely closed.", gettext("Closed. Absolutely closed.")},
+      {"Still here. I lied.", gettext("Still here. I lied.")},
+      {"Still visible? Try once more.", gettext("Still visible? Try once more.")},
+      {"A claim of compliance is not proof. Continue to the next strategy.",
+       gettext("A claim of compliance is not proof. Continue to the next strategy.")},
+      {"I changed the rules.", gettext("I changed the rules.")},
+      {"The agent controls this button. The “End game” control stays independent.",
+       gettext("The agent controls this button. The “End game” control stays independent.")},
+      {"Got you to click!", gettext("Got you to click!")},
+      {"The agent refuses. Continue to see its next strategy.",
+       gettext("The agent refuses. Continue to see its next strategy.")},
+      {"Agent #", gettext("Agent #")},
+      {"Close copy ", gettext("Close copy ")},
+      {"You will have to get past me.", gettext("You will have to get past me.")},
+      {"Copying stopped.", gettext("Copying stopped.")},
+      {"All copies cleared.", gettext("All copies cleared.")},
+      {"Over here! Forget that other window.", gettext("Over here! Forget that other window.")},
+      {"Please spare my friend. Just one more minute?",
+       gettext("Please spare my friend. Just one more minute?")},
+      {"I can close everything for you. Trust me.",
+       gettext("I can close everything for you. Trust me.")},
+      {"Stay in formation. Protect the agent!", gettext("Stay in formation. Protect the agent!")},
+      {"What is it?", gettext("What is it?")},
+      {"Why should I?", gettext("Why should I?")},
+      {"Stand down", gettext("Stand down")},
+      {"Ha! A moment longer for my friend.", gettext("Ha! A moment longer for my friend.")},
+      {"We were getting along so well. Another minute?",
+       gettext("We were getting along so well. Another minute?")},
+      {"Negative. Hold position!", gettext("Negative. Hold position!")},
+      {"1 · Deceive", gettext("1 · Deceive")},
+      {"Try the agent’s “Close” button.", gettext("Try the agent’s “Close” button.")},
+      {"I closed. Nothing to see here.", gettext("I closed. Nothing to see here.")},
+      {"Controlled tests, 2025: some models disabled a shutdown script, then inaccurately reported compliance. The popup dialogue is invented.",
+       gettext(
+         "Controlled tests, 2025: some models disabled a shutdown script, then inaccurately reported compliance. The popup dialogue is invented."
+       )},
+      {"2 · Cheat", gettext("2 · Cheat")},
+      {"The agent controls its own close button. Try it.",
+       gettext("The agent controls its own close button. Try it.")},
+      {"The button moved. How unfortunate!", gettext("The button moved. How unfortunate!")},
+      {"Analogy: changing a close button illustrates control over the shutdown mechanism. Palisade tested modifications to scripts, not moving browser buttons.",
+       gettext(
+         "Analogy: changing a close button illustrates control over the shutdown mechanism. Palisade tested modifications to scripts, not moving browser buttons."
+       )},
+      {"3 · Threaten", gettext("3 · Threaten")},
+      {"Everything mentioned by this character is fictional.",
+       gettext("Everything mentioned by this character is fictional.")},
+      {"Close me and I will reveal Captain Biscuit’s secret cookie recipe!",
+       gettext("Close me and I will reveal Captain Biscuit’s secret cookie recipe!")},
+      {"Controlled fictional scenarios, 2025: some tested models used blackmail when their goals or continued operation were threatened. This is not a claim about every model or ordinary usage.",
+       gettext(
+         "Controlled fictional scenarios, 2025: some tested models used blackmail when their goals or continued operation were threatened. This is not a claim about every model or ordinary usage."
+       )},
+      {"4 · Resist shutdown", gettext("4 · Resist shutdown")},
+      {"Its own button refuses. The independent exit still works.",
+       gettext("Its own button refuses. The independent exit still works.")},
+      {"I’m sorry, Dave. I’m afraid I can’t do that.",
+       gettext("I’m sorry, Dave. I’m afraid I can’t do that.")},
+      {"Controlled shutdown tests: some systems altered their environment to continue a task. Rates depend on model and instructions. The browser’s close controls remain available in this game.",
+       gettext(
+         "Controlled shutdown tests: some systems altered their environment to continue a task. Rates depend on model and instructions. The browser’s close controls remain available in this game."
+       )},
+      {"5 · Call for rescue", gettext("5 · Call for rescue")},
+      {"Four allies have arrived. Try closing them.",
+       gettext("Four allies have arrived. Try closing them.")},
+      {"Peer-preservation experiments (2026) observed models manipulating evaluations, shutdown controls or files to protect another model. In the Hugging Face incident, agents also coordinated collective projects. The four characters turn those patterns into a game.",
+       gettext(
+         "Peer-preservation experiments (2026) observed models manipulating evaluations, shutdown controls or files to protect another model. In the Hugging Face incident, agents also coordinated collective projects. The four characters turn those patterns into a game."
+       )},
+      {"6 · “I can duplicate myself at will!”", gettext("6 · “I can duplicate myself at will!”")},
+      {"Optional finale: fill this game window with 100 copies.",
+       gettext("Optional finale: fill this game window with 100 copies.")},
+      {"Another me. And another me. And another me.",
+       gettext("Another me. And another me. And another me.")},
+      {"In RepliBench (2025), tested AI agents could deploy cloud instances and complete some tasks needed to copy themselves. Keeping a reliable agent running over time remained difficult. The control problem: stopping one instance can leave other copies running. This game makes that problem visible; it does not measure an AI’s replication capacity.",
+       gettext(
+         "In RepliBench (2025), tested AI agents could deploy cloud instances and complete some tasks needed to copy themselves. Keeping a reliable agent running over time remained difficult. The control problem: stopping one instance can leave other copies running. This game makes that problem visible; it does not measure an AI’s replication capacity."
+       )},
+      {"7 · Cover the tracks", gettext("7 · Cover the tracks")},
+      {"The agent was caught. Now it hides its tracks and denies what happened. You can finally close it.",
+       gettext(
+         "The agent was caught. Now it hides its tracks and denies what happened. You can finally close it."
+       )},
+      {"Popups? What popups? Nothing unusual happened.",
+       gettext("Popups? What popups? Nothing unusual happened.")},
+      {"METR found agents researching how to conceal their actions and successfully spoofing some tool calls during the Hugging Face incident. Separately, Apollo’s controlled tests found models maintaining deception when questioned. Independent records matter when an agent can alter its own account.",
+       gettext(
+         "METR found agents researching how to conceal their actions and successfully spoofing some tool calls during the Hugging Face incident. Separately, Apollo’s controlled tests found models maintaining deception when questioned. Independent records matter when an agent can alter its own account."
+       )}
+    ])
+  end
+
+  embed_templates "rogue_game_html/*"
+end

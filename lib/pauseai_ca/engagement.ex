@@ -309,8 +309,48 @@ defmodule PauseAiCa.Engagement do
 
   @doc "Associates signals recorded in this browser before sign-in with its account."
   def associate_learning_visitor(visitor_id, user_id) do
-    from(signal in LearningSignal, where: signal.visitor_id == ^visitor_id)
+    from(attempt in PauseAiCa.Engagement.GameAttempt,
+      where: attempt.visitor_id == ^visitor_id and is_nil(attempt.user_id)
+    )
     |> Repo.update_all(set: [user_id: user_id])
+
+    from(signal in LearningSignal,
+      where: signal.visitor_id == ^visitor_id and is_nil(signal.user_id)
+    )
+    |> Repo.update_all(set: [user_id: user_id])
+  end
+
+  @doc "Game attempt aggregates; browser attempts are not counts of people."
+  def game_metrics do
+    alias PauseAiCa.Engagement.GameAttempt
+
+    totals =
+      Repo.one(
+        from a in GameAttempt,
+          left_join: u in assoc(a, :user),
+          select: %{
+            attempts: count(a.id),
+            completed: filter(count(a.id), a.completed),
+            linked: filter(count(a.id), not is_nil(a.user_id)),
+            new_accounts:
+              filter(count(a.id), not is_nil(u.confirmed_at) and u.inserted_at >= a.inserted_at)
+          }
+      )
+
+    stages =
+      Repo.all(
+        from a in GameAttempt,
+          group_by: a.furthest_stage,
+          order_by: a.furthest_stage,
+          select: {a.furthest_stage, count(a.id)}
+      )
+
+    %{rows: rows} =
+      Repo.query!(
+        "SELECT entry.key, SUM(entry.value::integer) FROM learning_game_attempts CROSS JOIN LATERAL jsonb_each_text(buttons) AS entry GROUP BY entry.key ORDER BY entry.key"
+      )
+
+    Map.merge(totals, %{stages: stages, buttons: rows})
   end
 
   @learning_kinds [

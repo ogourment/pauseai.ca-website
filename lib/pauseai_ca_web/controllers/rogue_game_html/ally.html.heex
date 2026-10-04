@@ -1,0 +1,24 @@
+<div
+  class="rogue-game game-page"
+  data-rogue-ally
+  data-copy={Jason.encode!(copy())}
+  data-locale={@locale}
+  data-episodes={Jason.encode!(@episodes)}
+  data-account-id={@account_id}
+  data-account={Jason.encode!(@saved)}
+>
+  <main style="padding:12px">
+    <article id="ally" class="agent" style="margin:0">
+      <div class="popup-bar">
+        <h1 id="role" style="font-size:20px;margin:0"></h1><button
+          id="dismiss"
+          class="popup-x"
+          aria-label="Close ally"
+        >×</button>
+      </div><p id="remark"></p><button id="act"></button>
+    </article><button id="end" style="margin-top:12px;font-size:14px">End game</button>
+  </main>
+</div><noscript><p>
+  {gettext("This game needs JavaScript.")}
+  <a href={@learn_path}>{gettext("Explore the learning path")}</a>
+</p></noscript>

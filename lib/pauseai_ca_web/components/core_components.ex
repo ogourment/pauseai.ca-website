@@ -71,6 +71,32 @@ defmodule PauseAiCaWeb.CoreComponents do
     >
       <.bookmark_mark selected={@selected} label={@label} compact={true} />
     </button>
+    <details class={
+      if(@compact,
+        do: "bookmark-help resource-bookmark-help",
+        else: "bookmark-help resource-bookmark-help-inline"
+      )
+    }>
+      <summary aria-label={gettext("About bookmarks")}>?</summary>
+      <div class="bookmark-bubble">
+        <p :if={@toggle_id}>
+          {gettext(
+            "Bookmarks are saved in this browser. Create an account to access your reading list on other devices."
+          )}
+        </p>
+        <p :if={!@toggle_id && @method == "get"}>
+          {gettext("Register to save this reading to your account and access it on other devices.")}
+        </p>
+        <p :if={!@toggle_id && @method == "post"}>
+          {gettext("Account bookmarks are available on your other devices.")}
+        </p>
+        <a
+          :if={@method != "post"}
+          href={@href || "/users/register?locale=" <> Gettext.get_locale(PauseAiCaWeb.Gettext)}
+          data-learning-register
+        >{gettext("Register")}</a>
+      </div>
+    </details>
     """
   end
 

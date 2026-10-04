@@ -1,0 +1,64 @@
+<div
+  class="rogue-game game-page"
+  data-rogue-game
+  data-copy={Jason.encode!(copy())}
+  data-locale={@locale}
+  data-episodes={Jason.encode!(@episodes)}
+  data-account-id={@account_id}
+  data-account={Jason.encode!(@saved)}
+>
+  <main>
+    <nav>
+      <a id="learn-top" href={@learn_path}>Learning path</a><a
+        id="language"
+        href="?lang=fr"
+        lang="fr"
+        hreflang="fr"
+      >Français</a><button id="exit">End game</button>
+    </nav><div id="game">
+      <p id="progress"></p><h1 id="stage-title" tabindex="-1"></h1><p id="instruction"></p><div id="arena">
+        <article class="agent primary-agent" aria-labelledby="agent-name">
+          <div class="window-heading">
+            <span id="agent-name">Rogue agent</span><span class="pill" id="fiction">Game character</span>
+          </div><p id="dialogue" aria-live="polite"></p><p id="film-credit" hidden>
+            <a
+              href="https://www.acmi.net.au/stories-and-ideas/2001-a-space-odyssey-cant/"
+              target="_blank"
+              rel="noopener"
+            >HAL 9000 · <i>2001: A Space Odyssey</i> (1968)</a>
+          </p><div class="trick-area"><button id="trick">Close agent</button></div>
+        </article><div id="allies" class="allies" hidden></div><div
+          id="copies"
+          class="copies"
+          aria-label="Copies inside this window"
+          hidden
+        >
+        </div>
+      </div><div id="swarm-controls" hidden>
+        <button id="swarm">Release 100 copies</button><button id="stop" hidden>Stop copying</button><button
+          id="clear"
+          hidden
+        >Clear copies</button><p id="counts" role="status" aria-live="polite"></p>
+      </div><p id="feedback" role="status"></p><div class="controls">
+        <button id="next">Next strategy</button>
+      </div><details id="evidence">
+        <summary id="evidence-label">What has actually been observed?</summary><p id="qualification">
+        </p><a id="source" target="_blank" rel="noopener"></a>
+      </details>
+    </div><section id="result" hidden>
+      <h1 id="result-title" tabindex="-1">You kept independent control.</h1><p id="lesson"></p><p
+        id="bookmark-status"
+        role="status"
+      >
+      </p><div id="episodes"></div><a id="learn" class="button" href={@learn_path}>Explore the learning path</a><button id="replay">Play again</button>
+    </section>
+  </main>
+</div><noscript><p>
+  {gettext("This game needs JavaScript.")}
+  <a href={@learn_path}>{gettext("Explore the learning path")}</a>
+</p></noscript>
+
+<PauseAiCaWeb.Analytics.analytics
+  measurement_id={Application.get_env(:pauseai_ca, :ga_measurement_id)}
+  locale={@locale}
+/>

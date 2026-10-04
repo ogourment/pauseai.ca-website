@@ -5,7 +5,12 @@ defmodule PauseAiCaWeb.LearningJourney do
   attr :quiz, :boolean, default: false
 
   def journey(assigns) do
-    assigns = assign(assigns, :nuggets, PauseAiCa.Learning.nuggets(assigns.locale))
+    assigns =
+      assign(
+        assigns,
+        :nuggets,
+        Enum.reject(PauseAiCa.Learning.nuggets(assigns.locale), &(assigns.quiz && &1["incident"]))
+      )
 
     ~H"""
     <section
@@ -13,6 +18,9 @@ defmodule PauseAiCaWeb.LearningJourney do
       class="learning-journey mx-auto max-w-5xl px-5 py-14"
       phx-update="ignore"
       data-learning-root
+      data-learning-catalog={
+        Jason.encode!(Enum.map(PauseAiCa.Learning.nuggets(@locale), &Map.take(&1, ["id", "title"])))
+      }
       data-learning-copy={Jason.encode!(learning_copy())}
       data-locale={@locale}
       data-account-id={if(@current_scope, do: @current_scope.user.id, else: "")}
@@ -48,6 +56,14 @@ defmodule PauseAiCaWeb.LearningJourney do
             :if={n["id"] in ["bengio-speed", "research-acceleration"]}
             class="learning-topic topic-voices"
           >{gettext("People and quotations")}</span>
+          <img
+            :if={n["incident"]}
+            src={~p"/images/incident-icons/#{n["id"] <> ".svg"}"}
+            alt=""
+            width="48"
+            height="48"
+            class="mt-4"
+          />
           <p class="mt-3 text-sm text-stone-600">{n["evidence"]}</p>
           <h3 class="mt-3 pr-10 font-heading text-2xl">
             {if(@quiz, do: n["question"], else: n["title"])}
@@ -81,7 +97,7 @@ defmodule PauseAiCaWeb.LearningJourney do
           </p>
           <details class="mt-4" data-explanation open={!@quiz || n["discussion"]}>
             <summary class="cursor-pointer font-semibold underline">
-              {if(n["discussion"],
+              {if(n["discussion"] && !n["incident"],
                 do: gettext("Explore the STOP question"),
                 else: gettext("Read the explanation")
               )}

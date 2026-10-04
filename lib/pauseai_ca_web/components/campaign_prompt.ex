@@ -43,7 +43,7 @@ defmodule PauseAiCaWeb.CampaignPrompt do
           aria-labelledby="campaign-prompt-title"
           class="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl"
         >
-          <p class="bg-brand px-5 py-2.5 text-center font-heading text-xs font-bold uppercase tracking-[0.16em] text-stone-950">
+          <p class="px-7 pt-6 text-sm font-semibold text-stone-700">
             {badge(@locale)}
           </p>
 
@@ -56,7 +56,7 @@ defmodule PauseAiCaWeb.CampaignPrompt do
             <div class="mt-6 flex flex-wrap gap-3">
               <.link
                 id="campaign-prompt-accept"
-                navigate={@href}
+                href={@href}
                 class="rounded-full bg-brand px-6 py-3 font-heading text-lg font-bold text-stone-950 transition hover:bg-brand-strong"
               >
                 {accept(@locale)}
@@ -102,7 +102,11 @@ defmodule PauseAiCaWeb.CampaignPrompt do
             }, Number(this.el.dataset.delay) || 7000)
 
             this.el.querySelector("#campaign-prompt-dismiss")?.addEventListener("click", close)
-            this.el.querySelector("#campaign-prompt-accept")?.addEventListener("click", close)
+            this.el.querySelector("#campaign-prompt-accept")?.addEventListener("click", event => {
+              const game = window.open(event.currentTarget.href, "pauseai-rogue-game", "popup,width=820,height=850")
+              if (game) { event.preventDefault(); game.focus() }
+              close()
+            })
             this.el.querySelector("#campaign-prompt-backdrop")?.addEventListener("click", (event) => {
               if (event.target.id === "campaign-prompt-backdrop") close()
             })
@@ -118,17 +122,14 @@ defmodule PauseAiCaWeb.CampaignPrompt do
     """
   end
 
-  defp badge(_locale), do: gettext("Warning Shot Protocol · Second activation")
+  defp badge(_locale), do: gettext("A rogue agent-popup")
 
-  defp title(_locale), do: gettext("An AI escaped its lab and hacked a real company")
+  defp title(_locale), do: gettext("Would you like to play a game with a rogue agent-popup?")
 
   defp body(_locale),
-    do:
-      gettext(
-        "This is no longer hypothetical: AIs are now regularly escaping their labs and causing real harm. Here is what happened and what you can do today."
-      )
+    do: gettext("A quick game to explore how a rogue agent might behave.")
 
-  defp accept(_locale), do: gettext("See what happened")
+  defp accept(_locale), do: gettext("Play")
 
   defp dismiss(_locale), do: gettext("Not now")
 end

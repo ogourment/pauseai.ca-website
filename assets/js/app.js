@@ -21,6 +21,8 @@
 import "phoenix_html"
 import "./signup_analytics"
 import "./learning_journey"
+import "./rogue_window"
+import "./rogue_ally"
 // Establish Phoenix Socket and LiveView configuration.
 import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
@@ -49,7 +51,7 @@ liveSocket.connect()
 if (!document.querySelector('[data-phx-main]')) {
   document.querySelectorAll('[phx-hook]').forEach(el => {
     const name = el.getAttribute('phx-hook')
-    const shared = ['PauseAiCaWeb.Analytics.Analytics', 'PauseAiCaWeb.Layouts.TrackOutbound', 'PauseAiCaWeb.Layouts.SignupSuccess']
+    const shared = ['PauseAiCaWeb.CampaignPrompt.CampaignPrompt', 'PauseAiCaWeb.Analytics.Analytics', 'PauseAiCaWeb.Layouts.TrackOutbound', 'PauseAiCaWeb.Layouts.SignupSuccess']
     if (shared.includes(name)) colocatedHooks[name]?.mounted.call({el})
   })
 }
@@ -309,3 +311,17 @@ document.addEventListener("pointerout", (event) => {
   clearTimeout(menuCloseTimers.get(menu))
   menuCloseTimers.set(menu, setTimeout(() => { menu.open = false }, 150))
 })
+
+// Shared bookmark disclosures support touch, keyboard and outside dismissal.
+document.addEventListener('click', event => document.querySelectorAll('.bookmark-help[open]').forEach(help => {if (!help.contains(event.target) || event.target.closest('a')) help.open=false}))
+document.addEventListener('keydown', event => {if(event.key==='Escape')document.querySelectorAll('.bookmark-help[open]').forEach(help=>{help.open=false;help.querySelector('summary').focus()})})
+// Keep help bubbles inside the viewport, including narrow touch screens.
+document.addEventListener('toggle', event => {
+  const help=event.target
+  if (!(help instanceof HTMLDetailsElement) || !help.matches('.bookmark-help') || !help.open) return
+  document.querySelectorAll('.bookmark-help[open]').forEach(other=>{if(other!==help)other.open=false})
+  const bubble=help.querySelector('.bookmark-bubble'),rect=help.querySelector('summary').getBoundingClientRect()
+  bubble.style.position='fixed';bubble.style.bottom='auto';bubble.style.right='auto'
+  bubble.style.left=Math.max(12,Math.min(innerWidth-bubble.offsetWidth-12,rect.right-bubble.offsetWidth))+'px'
+  bubble.style.top=Math.max(12,Math.min(innerHeight-bubble.offsetHeight-12,rect.top-bubble.offsetHeight-10))+'px'
+}, true)
