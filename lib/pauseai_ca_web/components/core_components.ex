@@ -118,13 +118,13 @@ defmodule PauseAiCaWeb.CoreComponents do
       id={@id}
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
       role="alert"
-      class="toast toast-top toast-end z-50"
+      class="pointer-events-auto"
       {@rest}
     >
       <div class={[
-        "alert w-80 sm:w-96 max-w-80 sm:max-w-96 text-wrap",
-        @kind == :info && "alert-info",
-        @kind == :error && "alert-error"
+        "alert w-full text-wrap",
+        @kind == :info && "border border-sky-200 bg-sky-50 text-sky-950",
+        @kind == :error && "border border-rose-200 bg-rose-50 text-rose-950"
       ]}>
         <.icon :if={@kind == :info} name="hero-information-circle" class="size-5 shrink-0" />
         <.icon :if={@kind == :error} name="hero-exclamation-circle" class="size-5 shrink-0" />
@@ -134,8 +134,12 @@ defmodule PauseAiCaWeb.CoreComponents do
           <.dev_mailbox_link :if={@kind == :info && Phoenix.Flash.get(@flash, :dev_mailbox)} />
         </div>
         <div class="flex-1" />
-        <button type="button" class="group self-start cursor-pointer" aria-label={gettext("close")}>
-          <.icon name="hero-x-mark" class="size-5 opacity-40 group-hover:opacity-70" />
+        <button
+          type="button"
+          class="self-start cursor-pointer rounded focus-visible:outline-2 focus-visible:outline-offset-2"
+          aria-label={gettext("close")}
+        >
+          <.icon name="hero-x-mark" class="size-5" />
         </button>
       </div>
     </div>

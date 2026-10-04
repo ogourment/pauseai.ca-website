@@ -73,4 +73,98 @@ defmodule PauseAiCaWeb.AdminContactsHistoryLiveTest do
              "historical_dates" => %{"events" => [nil, %{"kind" => "invented"}]}
            }) == []
   end
+
+  test "main directory and profile expose source metadata without opening details", %{conn: conn} do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    accounts_before = Repo.aggregate(PauseAiCa.Accounts.User, :count)
+
+    row = %{
+      "email" => "summary@example.org",
+      "name" => "Source summary",
+      "signup_date" => "2025-12-28",
+      "sheet" => "Rest of Canada",
+      "source" => "Notion ROC",
+      "source_status" => "onboarded",
+      "status" => "needs_review",
+      "welcomed_date" => "2025-12-28"
+    }
+
+    assert {:ok, %{contacts: [contact]}} =
+             ContactMigration.import_selected([row], "summary.csv", "summary", admin)
+
+    conn = log_in_user(conn, admin)
+    {:ok, directory, _} = live(conn, ~p"/admin/contacts?locale=en&q=summary")
+    selector = "#directory-source-summary-#{contact.id}"
+
+    for value <- [
+          "Signup date",
+          "2025-12-28",
+          "Geography",
+          "ROCanada",
+          "Notion ROC",
+          "Rest of Canada",
+          "Source status",
+          "onboarded",
+          "Sheet status",
+          "needs_review",
+          "Welcomed date"
+        ] do
+      assert has_element?(directory, selector, value)
+    end
+
+    {:ok, profile, _} = live(conn, ~p"/admin/contacts/legacy/#{contact.id}?locale=en")
+    assert has_element?(profile, "#profile-source-summary-#{contact.id}", "ROCanada")
+    assert has_element?(profile, "#profile-source-summary-#{contact.id}", "2025-12-28")
+
+    assert has_element?(
+             profile,
+             "#crm-source-details details summary",
+             "Show imported source fields"
+           )
+
+    refute has_element?(profile, "#crm-source-details details[open]")
+    assert Repo.get!(ContactMigration.Contact, contact.id).source_data == row
+    assert Repo.aggregate(PauseAiCa.Accounts.User, :count) == accounts_before
+    assert Enum.map(ContactMigration.list_activities(contact.id), & &1.action) == ["imported"]
+  end
+
+  test "directory keeps both reconciled origins and rechecks current authorization" do
+    alias PauseAiCa.{CRM, Accounts.Scope}
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    scope = Scope.for_user(admin)
+
+    rows = [
+      %{
+        "email" => "origin-mtl@example.org",
+        "name" => "Same person",
+        "sheet" => "mtl",
+        "signup_date" => "2025-11-13"
+      },
+      %{
+        "email" => "origin-roqc@example.org",
+        "name" => "Same person",
+        "sheet" => "quebec",
+        "signup_date" => "2025-10-15"
+      }
+    ]
+
+    assert {:ok, %{contacts: contacts}} =
+             ContactMigration.import_selected(rows, "origins.csv", "origins", admin)
+
+    before = Enum.map(contacts, &{&1.id, &1.source_data}) |> Map.new()
+    {:ok, [a, b]} = CRM.search(scope, "origin-")
+    {:ok, comparison} = CRM.compare(scope, a.person.id, b.person.id)
+
+    assert {:ok, _} =
+             CRM.merge(scope, comparison, %{
+               "preferred_address_id" => a.person.preferred_address_id
+             })
+
+    {:ok, records} = CRM.search(scope, "origin-")
+    assert length(records) == 1
+    assert {:ok, origins} = CRM.directory_origins(scope, records)
+    assert Map.new(Map.fetch!(origins, hd(records).person.id), &{&1.id, &1.source_data}) == before
+    admin |> Ecto.Changeset.change(superadmin: false) |> Repo.update!()
+    assert CRM.directory_origins(scope, records) == {:error, :unauthorized}
+  end
 end

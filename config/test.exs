@@ -1,6 +1,10 @@
 import Config
 
 atdd_port = System.get_env("ATDD_PORT", "4116") |> String.to_integer()
+sandbox_pool_size = min(System.schedulers_online() * 2, 8)
+
+# Async cases must not outnumber the available sandbox connections.
+config :ex_unit, max_cases: sandbox_pool_size
 
 # Only in tests, remove the complexity from the password hashing algorithm
 config :argon2_elixir, t_cost: 1, m_cost: 8
@@ -16,7 +20,7 @@ config :pauseai_ca, PauseAiCa.Repo,
   hostname: "localhost",
   database: "pauseai_ca_test#{System.get_env("MIX_TEST_PARTITION")}",
   pool: Ecto.Adapters.SQL.Sandbox,
-  pool_size: min(System.schedulers_online() * 2, 8)
+  pool_size: sandbox_pool_size
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.

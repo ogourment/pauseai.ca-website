@@ -12,6 +12,7 @@ defmodule PauseAiCaWeb.AdminContactsLive do
          locale: locale,
          page_title: gettext("Contacts"),
          records: [],
+         directory_origins: %{},
          record: nil,
          origins: [],
          activities: [],
@@ -48,12 +49,17 @@ defmodule PauseAiCaWeb.AdminContactsLive do
         {:noreply, load_record(socket, record)}
 
       :directory ->
-        case CRM.search(scope, params["q"] || "") do
-          {:ok, records} ->
-            {:noreply, assign(socket, record: nil, records: records, search: params["q"] || "")}
-
-          _ ->
-            {:noreply, denied(socket)}
+        with {:ok, records} <- CRM.search(scope, params["q"] || ""),
+             {:ok, origins} <- CRM.directory_origins(scope, records) do
+          {:noreply,
+           assign(socket,
+             record: nil,
+             records: records,
+             directory_origins: origins,
+             search: params["q"] || ""
+           )}
+        else
+          _ -> {:noreply, denied(socket)}
         end
 
       _ ->
@@ -209,7 +215,12 @@ defmodule PauseAiCaWeb.AdminContactsLive do
         <p :if={@error} id="crm-error" role="alert" class="crm-error">{@error}</p>
         <p :if={@status} role="status">{@status}</p>
         <section :if={is_nil(@record)} id="crm-directory">
-          <.form for={to_form(%{"search" => @search})} phx-change="search" phx-submit="search">
+          <.form
+            id="crm-search-form"
+            for={to_form(%{"search" => @search})}
+            phx-change="search"
+            phx-submit="search"
+          >
             <.input
               id="crm-search"
               name="search"
@@ -225,9 +236,16 @@ defmodule PauseAiCaWeb.AdminContactsLive do
             )}
           </p>
           <ul>
-            <li :for={record <- @records} class="py-4 border-b">
+            <li :for={record <- @records} id={"crm-contact-#{record.person.id}"} class="py-4 border-b">
               <strong>{record.person.name}</strong><div :for={address <- record.addresses}>
                 <.link navigate={~p"/admin/contacts/#{record.person.id}?locale=#{@locale}"}>{address.email}</.link>
+              </div>
+              <div :for={origin <- Map.get(@directory_origins, record.person.id, [])} class="mt-4">
+                <p class="text-sm font-semibold text-stone-700">{origin.email}</p>
+                <PauseAiCaWeb.ContactSourceComponents.source_summary
+                  id={"directory-source-summary-#{origin.id}"}
+                  data={origin.source_data}
+                />
               </div>
             </li>
           </ul>
@@ -266,6 +284,31 @@ defmodule PauseAiCaWeb.AdminContactsLive do
                 · {origin.classification} · {origin.source}
               </li>
             </ul>
+          </section>
+          <section :if={@origins != []} id="crm-source-details" class="mt-8">
+            <h2 class="text-xl font-bold">{gettext("Source")}</h2>
+            <div :for={origin <- @origins} class="mt-4 border-b border-stone-200 pb-4">
+              <h3 class="font-semibold break-all">{origin.email}</h3>
+              <PauseAiCaWeb.ContactSourceComponents.source_summary
+                id={"profile-source-summary-#{origin.id}"}
+                data={origin.source_data}
+              />
+              <details class="mt-3 text-sm text-stone-600">
+                <summary class="cursor-pointer font-semibold text-stone-800">
+                  {gettext("Show imported source fields")}
+                </summary>
+                <dl class="mt-3 grid gap-x-6 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
+                  <div :for={{field, value} <- Enum.sort(origin.source_data)}>
+                    <dt class="font-semibold">
+                      {PauseAiCaWeb.ContactSourceComponents.field_label(field)}
+                    </dt>
+                    <dd class="break-words">
+                      {if is_map(value) or is_list(value), do: Jason.encode!(value), else: value}
+                    </dd>
+                  </div>
+                </dl>
+              </details>
+            </div>
           </section>
           <section id="crm-historical-dates" class="mt-8">
             <h2 class="text-xl font-bold">{gettext("Historical source dates")}</h2>

@@ -469,7 +469,11 @@ defmodule PauseAiCaWeb.Layouts do
 
   def flash_group(assigns) do
     ~H"""
-    <div id={@id} aria-live="polite">
+    <div
+      id={@id}
+      aria-live="polite"
+      class="pointer-events-none fixed left-1/2 top-[calc(var(--header-height)+0.75rem)] z-50 flex w-[calc(100%-2rem)] max-w-96 -translate-x-1/2 flex-col gap-2"
+    >
       <.flash kind={:info} flash={@flash} />
       <.flash kind={:error} flash={@flash} />
 

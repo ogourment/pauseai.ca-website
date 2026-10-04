@@ -85,6 +85,29 @@ defmodule PauseAiCa.CRM do
     end
   end
 
+  # Load all displayed origins once, including aliases retained by reconciliation.
+  def directory_origins(scope, records) do
+    if Volunteers.superadmin?(scope) do
+      owners = for record <- records, id <- record.aliases, into: %{}, do: {id, record.person.id}
+      ids = Map.keys(owners)
+
+      origins =
+        Repo.all(
+          from c in Contact,
+            join: l in ContactLink,
+            on: l.contact_id == c.id,
+            where: l.person_id in ^ids,
+            order_by: c.id,
+            select: {l.person_id, c}
+        )
+        |> Enum.group_by(fn {id, _} -> Map.fetch!(owners, id) end, fn {_, contact} -> contact end)
+
+      {:ok, origins}
+    else
+      {:error, :unauthorized}
+    end
+  end
+
   def legacy_activities(scope, id) do
     ids = Enum.map(origins(scope, id), & &1.id)
 
