@@ -33,7 +33,7 @@ defmodule PauseAiCa.Engagement.GameAttempt do
       if map_size(buttons) <= 100 and
            Enum.all?(buttons, fn {key, value} ->
              Regex.match?(
-               ~r/^[1-7]:(share-game|copy-game-link|close-game-share|trick|next|swarm|stop|clear|exit|replay|close_copy|choice|close_ally_[1-4]|ally_role_[1-4]|ally_end|bookmark_LEARN-NUGGET-[A-Z-]+|source_opened|learning_path_opened|resource_bookmark_changed)$/,
+               ~r/^[1-7]:(spare-agent|share-game|copy-game-link|close-game-share|trick|next|swarm|stop|clear|exit|replay|close_copy|choice|close_ally_[1-4]|ally_role_[1-4]|ally_end|bookmark_LEARN-NUGGET-[A-Z-]+|source_opened|learning_path_opened|resource_bookmark_changed)$/,
                key
              ) and is_integer(value) and value >= 0 and value <= 10_000
            end), do: [], else: [buttons: "invalid aggregate"]

@@ -26,22 +26,31 @@ export function setupGameSharing(root,t) {
   const button=root.querySelector('#share-game'), panel=root.querySelector('#game-share-panel')
   const input=root.querySelector('#game-share-url'),status=root.querySelector('#game-share-status')
   input.value=gameShareURL(root.dataset.locale)
-  const fallback=()=>{panel.hidden=false;input.focus();input.select()}
+  async function copyLink(){
+    let copied=false
+    try {if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(input.value);copied=true}}catch(_){}
+    if(!copied){
+      const field=document.createElement('textarea')
+      field.value=input.value;field.setAttribute('aria-hidden','true');field.tabIndex=-1
+      Object.assign(field.style,{position:'fixed',left:'-9999px',top:'0',opacity:'0'})
+      document.body.append(field);field.select()
+      try{copied=document.execCommand('copy')}catch(_){}
+      field.remove()
+    }
+    panel.hidden=copied
+    status.textContent=copied?t('Copied!'):t('Select and copy the link above.')
+    if(copied){button.focus();window.getSelection()?.removeAllRanges()}
+    else input.focus()
+  }
   button.addEventListener('click',async()=>{
     status.textContent=''
     if(navigator.share){
       try {await navigator.share({title:t('Rogue agent · game'),text:t('Can you close this rogue agent?'),url:input.value});return}
       catch(error){if(error.name==='AbortError')return}
     }
-    fallback()
+    await copyLink()
   })
-  root.querySelector('#copy-game-link').addEventListener('click',async()=>{
-    let copied=false
-    try {if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(input.value);copied=true}}
-    catch(_) {}
-    if(!copied){input.focus();input.select();try{copied=document.execCommand('copy')}catch(_) {}}
-    status.textContent=copied?t('Link copied.'):t('Select and copy the link above.')
-  })
+  root.querySelector('#copy-game-link').addEventListener('click',copyLink)
   root.querySelector('#close-game-share').addEventListener('click',()=>{panel.hidden=true;button.focus()})
   panel.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();panel.hidden=true;button.focus()}})
 }

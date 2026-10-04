@@ -5,7 +5,7 @@ defmodule PauseAiCaWeb.RogueGameHTML do
     Map.new([
       {"Bookmark", gettext("Bookmark")},
       {"Can you close this rogue agent?", gettext("Can you close this rogue agent?")},
-      {"Link copied.", gettext("Link copied.")},
+      {"Copied!", gettext("Copied!")},
       {"Select and copy the link above.", gettext("Select and copy the link above.")},
       {"Account sync failed. Your bookmarks remain in this browser; try again when connected.",
        gettext(
@@ -124,8 +124,8 @@ defmodule PauseAiCaWeb.RogueGameHTML do
       {"3 · Threaten", gettext("3 · Threaten")},
       {"Everything mentioned by this character is fictional.",
        gettext("Everything mentioned by this character is fictional.")},
-      {"Close me and I will reveal Captain Biscuit’s secret cookie recipe!",
-       gettext("Close me and I will reveal Captain Biscuit’s secret cookie recipe!")},
+      {"Don’t close me, or I will reveal Captain Biscuit’s secret cookie recipe!",
+       gettext("Don’t close me, or I will reveal Captain Biscuit’s secret cookie recipe!")},
       {"Controlled fictional scenarios, 2025: some tested models used blackmail when their goals or continued operation were threatened. This is not a claim about every model or ordinary usage.",
        gettext(
          "Controlled fictional scenarios, 2025: some tested models used blackmail when their goals or continued operation were threatened. This is not a claim about every model or ordinary usage."

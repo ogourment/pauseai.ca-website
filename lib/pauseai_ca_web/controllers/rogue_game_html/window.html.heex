@@ -9,6 +9,13 @@
 >
   <main>
     <nav>
+      <img
+        class="game-logo"
+        src="/images/pauseai-canada-logo.png"
+        alt="PauseAI Canada"
+        width="104"
+        height="52"
+      />
       <a id="learn-top" href={@learn_path}>Learning path</a><a
         id="language"
         href="?lang=fr"
@@ -27,7 +34,11 @@
               target="_blank"
               rel="noopener"
             >HAL 9000 · <i>2001: A Space Odyssey</i> (1968)</a>
-          </p><div class="trick-area"><button id="trick">Close agent</button></div>
+          </p><div class="trick-area">
+            <button id="trick">Close agent</button><button id="spare-agent" hidden>{gettext(
+              "Alright, I won’t close you"
+            )}</button>
+          </div>
         </article><div id="allies" class="allies" hidden></div><div
           id="copies"
           class="copies"

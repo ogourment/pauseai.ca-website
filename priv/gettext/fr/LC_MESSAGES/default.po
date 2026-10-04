@@ -4896,11 +4896,6 @@ msgstr "Fermer la copie "
 msgid "Close everything"
 msgstr "Tout fermer"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:128
-#, elixir-autogen, elixir-format
-msgid "Close me and I will reveal Captain Biscuit’s secret cookie recipe!"
-msgstr "Fermez-moi et je révèle la recette secrète du capitaine Biscuit!"
-
 #: lib/pauseai_ca_web/controllers/rogue_game_html.ex:73
 #, elixir-autogen, elixir-format
 msgid "Close me if you can!"
@@ -4973,7 +4968,7 @@ msgstr "Tout? Je parlais seulement de moi."
 
 #: lib/pauseai_ca_web/controllers/rogue_game_html.ex:31
 #: lib/pauseai_ca_web/controllers/rogue_game_html/ally.html.heex:23
-#: lib/pauseai_ca_web/controllers/rogue_game_html/window.html.heex:71
+#: lib/pauseai_ca_web/controllers/rogue_game_html/window.html.heex:82
 #, elixir-autogen, elixir-format
 msgid "Explore the learning path"
 msgstr "Explorer le parcours"
@@ -5271,7 +5266,7 @@ msgid "The button moved. How unfortunate!"
 msgstr "Le bouton a bougé. Quel dommage!"
 
 #: lib/pauseai_ca_web/controllers/rogue_game_html/ally.html.heex:22
-#: lib/pauseai_ca_web/controllers/rogue_game_html/window.html.heex:70
+#: lib/pauseai_ca_web/controllers/rogue_game_html/window.html.heex:81
 #, elixir-autogen, elixir-format
 msgid "This game needs JavaScript."
 msgstr "Ce jeu nécessite JavaScript."
@@ -5391,30 +5386,25 @@ msgstr "Les signets de votre compte sont accessibles sur vos autres appareils."
 msgid "Can you close this rogue agent?"
 msgstr "Arriverez-vous à fermer cet agent rebelle ?"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html/window.html.heex:63
+#: lib/pauseai_ca_web/controllers/rogue_game_html/window.html.heex:74
 #, elixir-autogen, elixir-format
 msgid "Close sharing options"
 msgstr "Fermer les options de partage"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html/window.html.heex:62
+#: lib/pauseai_ca_web/controllers/rogue_game_html/window.html.heex:73
 #, elixir-autogen, elixir-format
 msgid "Copy link"
 msgstr "Copier le lien"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html/window.html.heex:59
+#: lib/pauseai_ca_web/controllers/rogue_game_html/window.html.heex:70
 #, elixir-autogen, elixir-format
 msgid "Game link"
 msgstr "Lien du jeu"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html/window.html.heex:58
+#: lib/pauseai_ca_web/controllers/rogue_game_html/window.html.heex:69
 #, elixir-autogen, elixir-format
 msgid "Invite someone to try the game."
 msgstr "Invitez quelqu’un à essayer le jeu."
-
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:8
-#, elixir-autogen, elixir-format
-msgid "Link copied."
-msgstr "Lien copié."
 
 #: lib/pauseai_ca_web/components/layouts.ex:558
 #, elixir-autogen, elixir-format
@@ -5426,12 +5416,27 @@ msgstr "Jouer avec l’agent rebelle"
 msgid "Select and copy the link above."
 msgstr "Sélectionnez et copiez le lien ci-dessus."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html/window.html.heex:54
+#: lib/pauseai_ca_web/controllers/rogue_game_html/window.html.heex:65
 #, elixir-autogen, elixir-format
 msgid "Share"
 msgstr "Partager"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html/window.html.heex:57
+#: lib/pauseai_ca_web/controllers/rogue_game_html/window.html.heex:68
 #, elixir-autogen, elixir-format
 msgid "Share the game"
 msgstr "Partager le jeu"
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html/window.html.heex:38
+#, elixir-autogen, elixir-format
+msgid "Alright, I won’t close you"
+msgstr "D’accord, je ne vous fermerai pas"
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:8
+#, elixir-autogen, elixir-format
+msgid "Copied!"
+msgstr "Copié !"
+
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:128
+#, elixir-autogen, elixir-format
+msgid "Don’t close me, or I will reveal Captain Biscuit’s secret cookie recipe!"
+msgstr "Ne me fermez pas, sinon je révélerai la recette secrète de biscuits du capitaine Biscuit !"
