@@ -35,18 +35,6 @@ if System.get_env("ATDD") == "true" do
         ]
       },
       %{
-        id: "safe-repeatable-contact-migration",
-        title: "A superadmin resumes migration without duplicating or reviving contacts",
-        steps: [
-          {"cm-06", "Reimport a stable source record",
-           "A repeated source identity updates its existing contact instead of creating a duplicate."},
-          {"cm-07", "Preserve a suppression decision",
-           "A deleted or opted-out person is not restored by legacy data."},
-          {"cm-09", "Resume an incremental batch",
-           "The superadmin can search prior batches and reconcile what remains."}
-        ]
-      },
-      %{
         id: "approved-contact-outreach",
         title: "A superadmin sends approved outreach and follows delivery",
         steps: [

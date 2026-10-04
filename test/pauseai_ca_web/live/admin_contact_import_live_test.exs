@@ -73,6 +73,47 @@ defmodule PauseAiCaWeb.AdminContactImportLiveTest do
     assert has_element?(view, "#contact-#{contact.id}", admin.email)
   end
 
+  test "receipt search and page size survive reload and fresh revocation blocks import", %{
+    conn: conn,
+    admin: admin
+  } do
+    rows =
+      for n <- 1..12,
+          do: %{
+            "email" => "receipt-#{n}@example.org",
+            "name" => "Receipt #{n}",
+            "city" => "Montréal"
+          }
+
+    {:ok, %{import: receipt}} =
+      ContactMigration.import_selected(rows, "original.csv", "receipt-source", admin)
+
+    {:ok, _} =
+      ContactMigration.import_selected(
+        [hd(rows), %{"email" => "other@example.org"}],
+        "later.csv",
+        "receipt-source",
+        admin
+      )
+
+    uri = ~p"/admin/contact-imports?#{%{import: receipt.id, q: "receipt", page: 1, per: 10}}"
+    {:ok, view, _} = live(conn, uri)
+    assert has_element?(view, "#receipt-summary")
+    assert has_element?(view, "#contact-pagination", "Page 1 of 2 · 12 contacts")
+    refute has_element?(view, "#managed-contacts", "other@example.org")
+    view |> element("#contact-pagination button", "Next") |> render_click()
+    next_uri = ~p"/admin/contact-imports?#{%{q: "receipt", page: 2, per: 10, import: receipt.id}}"
+    assert_patch(view, next_uri)
+    {:ok, reloaded, _} = live(conn, next_uri)
+    assert has_element?(reloaded, "#contact-pagination", "Page 2 of 2 · 12 contacts")
+    assert has_element?(reloaded, "#receipt-select option[selected]", "original.csv")
+    before = Repo.aggregate(PauseAiCa.ContactMigration.Import, :count)
+    admin |> Ecto.Changeset.change(superadmin: false) |> Repo.update!()
+    reloaded |> form("#receipt-filter", import: "") |> render_change()
+    assert_redirect(reloaded, ~p"/dashboard")
+    assert Repo.aggregate(PauseAiCa.ContactMigration.Import, :count) == before
+  end
+
   test "paginates large previews by 25 and keeps selection across pages", %{conn: conn} do
     {:ok, view, _html} = live(conn, ~p"/admin/contact-imports")
 

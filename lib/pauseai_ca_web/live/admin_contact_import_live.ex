@@ -1,7 +1,7 @@
 defmodule PauseAiCaWeb.AdminContactImportLive do
   use PauseAiCaWeb, :live_view
 
-  alias PauseAiCa.ContactMigration
+  alias PauseAiCa.{ContactMigration, Volunteers}
   alias PauseAiCa.ContactMigration.CSV
 
   @impl true
@@ -18,7 +18,10 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
      |> assign(:preview_page, 1)
      |> assign(:preview_page_size, 25)
      |> assign(:contact_search, "")
-     |> assign_contact_page(ContactMigration.list_contacts_page())
+     |> assign(:receipt_id, nil)
+     |> assign(:receipt, nil)
+     |> assign(:receipts, [])
+     |> assign_contact_page(%{entries: [], page: 1, page_size: 25, pages: 1, total: 0})
      |> assign(:expanded_contact_id, nil)
      |> assign(:activities, [])
      |> allow_upload(:contacts_csv,
@@ -36,6 +39,7 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
 
     {:noreply,
      socket
+     |> assign(:receipt_id, empty_to_nil(params["import"]))
      |> assign(:contact_search, search)
      |> assign(:contact_page_size, size)
      |> assign(:contact_page, page)
@@ -43,9 +47,15 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
   end
 
   @impl true
-  def handle_event("validate-upload", _params, socket), do: {:noreply, socket}
+  def handle_event(event, params, socket) do
+    if Volunteers.superadmin?(socket.assigns.current_scope),
+      do: dispatch_event(event, params, socket),
+      else: {:noreply, denied(socket)}
+  end
 
-  def handle_event("preview", %{"import" => params}, socket) do
+  defp dispatch_event("validate-upload", _params, socket), do: {:noreply, socket}
+
+  defp dispatch_event("preview", %{"import" => params}, socket) do
     source = normalize_source(params["source"])
 
     results =
@@ -59,20 +69,20 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
     end
   end
 
-  def handle_event("search-preview", %{"search" => search}, socket),
+  defp dispatch_event("search-preview", %{"search" => search}, socket),
     do:
       {:noreply,
        socket |> assign(:preview_search, String.trim(search)) |> assign(:preview_page, 1)}
 
-  def handle_event("preview-page-size", %{"page_size" => size}, socket),
+  defp dispatch_event("preview-page-size", %{"page_size" => size}, socket),
     do:
       {:noreply,
        socket |> assign(:preview_page_size, page_size(size)) |> assign(:preview_page, 1)}
 
-  def handle_event("preview-page", %{"page" => page}, socket),
+  defp dispatch_event("preview-page", %{"page" => page}, socket),
     do: {:noreply, assign(socket, :preview_page, positive_integer(page, 1))}
 
-  def handle_event("toggle-row", %{"id" => id}, socket) do
+  defp dispatch_event("toggle-row", %{"id" => id}, socket) do
     selected =
       if MapSet.member?(socket.assigns.selected, id),
         do: MapSet.delete(socket.assigns.selected, id),
@@ -81,7 +91,7 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
     {:noreply, assign(socket, :selected, selected)}
   end
 
-  def handle_event("select-visible", _params, socket) do
+  defp dispatch_event("select-visible", _params, socket) do
     ids =
       socket.assigns
       |> visible_rows()
@@ -92,10 +102,10 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
      assign(socket, :selected, Enum.reduce(ids, socket.assigns.selected, &MapSet.put(&2, &1)))}
   end
 
-  def handle_event("clear-selection", _params, socket),
+  defp dispatch_event("clear-selection", _params, socket),
     do: {:noreply, assign(socket, :selected, MapSet.new())}
 
-  def handle_event("import-selected", _params, socket) do
+  defp dispatch_event("import-selected", _params, socket) do
     rows =
       Enum.filter(socket.assigns.preview_rows, &MapSet.member?(socket.assigns.selected, &1["id"]))
 
@@ -110,10 +120,12 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
              socket.assigns.preview_source,
              actor
            ) do
-        {:ok, %{contacts: contacts}} ->
+        {:ok, %{contacts: contacts, import: receipt}} ->
           {:noreply,
            socket
-           |> load_contact_page()
+           |> push_patch(
+             to: ~p"/admin/contact-imports?#{%{import: receipt.id, q: "", page: 1, per: 25}}"
+           )
            |> assign(:selected, MapSet.new())
            |> put_flash(
              :info,
@@ -136,16 +148,24 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
     end
   end
 
-  def handle_event("search-contacts", %{"search" => search}, socket) do
+  defp dispatch_event("receipt-filter", %{"import" => id}, socket) do
+    {:noreply,
+     push_patch(socket,
+       to:
+         ~p"/admin/contact-imports?#{%{import: id, q: "", page: 1, per: socket.assigns.contact_page_size}}"
+     )}
+  end
+
+  defp dispatch_event("search-contacts", %{"search" => search}, socket) do
     search = String.trim(search)
 
     {:noreply, patch_contact_page(socket, search, 1, socket.assigns.contact_page_size)}
   end
 
-  def handle_event("contact-page-size", %{"page_size" => size}, socket),
+  defp dispatch_event("contact-page-size", %{"page_size" => size}, socket),
     do: {:noreply, patch_contact_page(socket, socket.assigns.contact_search, 1, page_size(size))}
 
-  def handle_event("contact-page", %{"page" => page}, socket),
+  defp dispatch_event("contact-page", %{"page" => page}, socket),
     do:
       {:noreply,
        patch_contact_page(
@@ -155,7 +175,7 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
          socket.assigns.contact_page_size
        )}
 
-  def handle_event("show-activity", %{"id" => id}, socket),
+  defp dispatch_event("show-activity", %{"id" => id}, socket),
     do:
       {:noreply,
        socket
@@ -224,15 +244,40 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
     do: max(Integer.ceil_div(preview_total(assigns), assigns.preview_page_size), 1)
 
   defp load_contact_page(socket) do
-    page =
-      ContactMigration.list_contacts_page(
-        socket.assigns.contact_search,
-        socket.assigns.contact_page,
-        socket.assigns.contact_page_size
-      )
+    scope = socket.assigns.current_scope
 
-    assign_contact_page(socket, page)
+    case ContactMigration.contacts_page(
+           scope,
+           socket.assigns.contact_search,
+           socket.assigns.contact_page,
+           socket.assigns.contact_page_size,
+           socket.assigns.receipt_id
+         ) do
+      {:ok, page} ->
+        receipt =
+          if socket.assigns.receipt_id,
+            do: elem(ContactMigration.receipt(scope, socket.assigns.receipt_id), 1)
+
+        socket
+        |> assign_contact_page(page)
+        |> assign(:receipt, receipt)
+        |> assign(:receipts, ContactMigration.receipts(scope))
+
+      _ ->
+        denied(socket)
+    end
   end
+
+  defp denied(socket),
+    do:
+      socket
+      |> put_flash(:error, gettext("Superadmin access required."))
+      |> redirect(to: ~p"/dashboard")
+
+  defp empty_to_nil(nil), do: nil
+  defp empty_to_nil(""), do: nil
+  defp empty_to_nil(value) when is_binary(value), do: value
+  defp empty_to_nil(_), do: "invalid"
 
   defp assign_contact_page(socket, page) do
     socket
@@ -259,7 +304,8 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
 
   defp patch_contact_page(socket, search, page, page_size) do
     push_patch(socket,
-      to: ~p"/admin/contact-imports?#{%{q: search, page: page, per: page_size}}"
+      to:
+        ~p"/admin/contact-imports?#{%{q: search, page: page, per: page_size, import: socket.assigns.receipt_id || ""}}"
     )
   end
 
@@ -437,7 +483,39 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
           class="mt-8 overflow-hidden rounded-3xl border border-stone-200 bg-white"
         >
           <div class="border-b border-stone-200 p-6">
-            <h2 class="font-heading text-3xl text-stone-950">{gettext("Imported contacts")}</h2><form
+            <h2 class="font-heading text-3xl text-stone-950">{gettext("Imported contacts")}</h2>
+            <form id="receipt-filter" phx-change="receipt-filter" class="mt-5">
+              <label for="receipt-select" class="block text-sm font-semibold text-stone-800">{gettext(
+                "Import receipt"
+              )}</label>
+              <select
+                id="receipt-select"
+                name="import"
+                class="mt-2 w-full rounded-xl border border-stone-300 p-3"
+              >
+                <option value="" selected={is_nil(@receipt_id)}>{gettext("All imports")}</option>
+                <option
+                  :for={receipt <- Enum.uniq_by(List.wrap(@receipt) ++ @receipts, & &1.id)}
+                  value={receipt.id}
+                  selected={receipt.id == @receipt_id}
+                >
+                  {receipt.filename} · {receipt.source} · {Calendar.strftime(
+                    receipt.inserted_at,
+                    "%Y-%m-%d %H:%M UTC"
+                  )} · {receipt.selected_count}
+                </option>
+              </select>
+            </form>
+            <p :if={@receipt} id="receipt-summary" class="mt-3 text-sm text-stone-600">
+              {gettext("This receipt retains its observed contacts after later reimports.")}
+              <.link
+                patch={
+                  ~p"/admin/contact-imports?#{%{import: @receipt.id, q: @contact_search, page: @contact_page, per: @contact_page_size}}"
+                }
+                class="underline"
+              >{gettext("Link to this receipt")}</.link>
+            </p>
+            <form
               id="contact-search-form"
               phx-change="search-contacts"
               class="mt-5"
@@ -498,6 +576,27 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
                   )}</time><span class="block text-sm text-stone-600">{gettext("By %{email}",
                     email: activity.actor_user.email
                   )}</span>
+                  <details
+                    :if={get_in(activity.details, ["previous_observation", "source_data"])}
+                    class="mt-2"
+                  >
+                    <summary class="cursor-pointer text-stone-600">
+                      {gettext("Previous source fields preserved on replay")}
+                    </summary>
+                    <PauseAiCaWeb.ContactSourceComponents.source_details
+                      id={"previous-observation-#{activity.id}"}
+                      data={activity.details["previous_observation"]["source_data"]}
+                    />
+                  </details>
+                  <details :if={activity.details["source_data"]} class="mt-2">
+                    <summary class="cursor-pointer text-stone-600">
+                      {gettext("Source observation")}
+                    </summary>
+                    <PauseAiCaWeb.ContactSourceComponents.source_details
+                      id={"observation-#{activity.id}"}
+                      data={activity.details["source_data"]}
+                    />
+                  </details>
                 </li>
               </ol>
             </li>
