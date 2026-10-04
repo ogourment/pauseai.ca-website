@@ -37,7 +37,8 @@ defmodule PauseAiCa.Library do
 
   @doc "Finds a reviewed resource by its stable bookmark identifier."
   def resource(id) do
-    Enum.find(resources(), &(&1.id == id)) || learning_resource(id)
+    Enum.find(resources(), &(&1.id == id)) || learning_resource(id) ||
+      PauseAiCa.Learning.QuestionBank.resource(id)
   end
 
   defp learning_resource(id) do

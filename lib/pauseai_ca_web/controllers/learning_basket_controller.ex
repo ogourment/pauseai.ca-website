@@ -1,7 +1,8 @@
 defmodule PauseAiCaWeb.LearningBasketController do
   use PauseAiCaWeb, :controller
   import Ecto.Query
-  alias PauseAiCa.{Learning, Repo}
+  alias PauseAiCa.Repo
+  alias PauseAiCa.Learning.QuestionBank
   alias PauseAiCa.Accounts.User
 
   def update(conn, params) do
@@ -23,15 +24,15 @@ defmodule PauseAiCaWeb.LearningBasketController do
             saved =
               case params["operation"] do
                 "merge" ->
-                  Enum.uniq(user.saved_resources ++ Learning.valid_ids(params["ids"]))
+                  Enum.uniq(user.saved_resources ++ QuestionBank.valid_ids(params["ids"]))
 
                 "add" ->
-                  if id in Learning.ids(),
+                  if QuestionBank.valid_ids([id]) != [],
                     do: Enum.uniq(user.saved_resources ++ [id]),
                     else: user.saved_resources
 
                 "remove" ->
-                  if id in Learning.ids(),
+                  if id in user.saved_resources,
                     do: List.delete(user.saved_resources, id),
                     else: user.saved_resources
               end

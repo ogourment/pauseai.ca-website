@@ -99,7 +99,7 @@ function initialize() {
       card.querySelectorAll("[data-quiz-answer]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.quizAnswer === value)))
       card.querySelector("[data-explanation]").open = true
       const feedback = card.querySelector("[data-quiz-feedback]")
-      if (feedback) feedback.textContent = value === "unknown" ? copy.unknown : value === "0" ? copy.correct : copy.incorrect
+      if (feedback) feedback.textContent = value === "unknown" ? copy.unknown : value === card.dataset.quizCorrect ? copy.correct : copy.incorrect
     }
     card.querySelectorAll("[data-quiz-answer]").forEach(button => button.addEventListener("click", () => {state.answers[card.dataset.nugget] = button.dataset.quizAnswer; save(state); answer(button.dataset.quizAnswer)}))
     if (state.answers[card.dataset.nugget] !== undefined) answer(state.answers[card.dataset.nugget])

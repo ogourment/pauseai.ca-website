@@ -95,7 +95,7 @@ msgid "Body"
 msgstr "Body"
 
 #: lib/pauseai_ca_web/components/core_components.ex:46
-#: lib/pauseai_ca_web/components/learning_journey.ex:184
+#: lib/pauseai_ca_web/components/learning_journey.ex:196
 #: lib/pauseai_ca_web/controllers/rogue_game_html.ex:6
 #, elixir-autogen, elixir-format
 msgid "Bookmark"
@@ -235,7 +235,7 @@ msgstr "Find my MP"
 
 #: lib/pauseai_ca_web/components/layouts.ex:293
 #: lib/pauseai_ca_web/components/layouts.ex:311
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:15
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:16
 #, elixir-autogen, elixir-format
 msgid "Français"
 msgstr "Français"
@@ -466,7 +466,7 @@ msgstr "Record an action"
 msgid "Record privately"
 msgstr "Record privately"
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:186
+#: lib/pauseai_ca_web/components/learning_journey.ex:198
 #: lib/pauseai_ca_web/live/administrators_live.ex:129
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:378
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:475
@@ -1616,7 +1616,7 @@ msgstr "Confirm it is you before changing your account."
 msgid "Continue browsing"
 msgstr "Continue browsing"
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:150
+#: lib/pauseai_ca_web/components/learning_journey.ex:162
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:208
 #: lib/pauseai_ca_web/live/library_live.ex:463
 #: lib/pauseai_ca_web/live/user_live/registration.ex:21
@@ -1789,13 +1789,13 @@ msgid "Log me in only this time"
 msgstr "Log me in only this time"
 
 #: lib/pauseai_ca_web/components/core_components.ex:46
-#: lib/pauseai_ca_web/components/learning_journey.ex:185
+#: lib/pauseai_ca_web/components/learning_journey.ex:197
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:91
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:147
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:216
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:252
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:84
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:111
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:166
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:193
 #: lib/pauseai_ca_web/live/volunteer_profile_live.ex:150
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:1086
 #, elixir-autogen, elixir-format
@@ -1819,6 +1819,7 @@ msgid "Cancel"
 msgstr "Cancel"
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:579
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:336
 #, elixir-autogen, elixir-format
 msgid "Delete"
 msgstr "Delete"
@@ -2086,8 +2087,7 @@ msgid "Do not contact. Invitation excluded."
 msgstr "Do not contact. Invitation excluded."
 
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:698
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:142
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:157
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:199
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:619
 #, elixir-autogen, elixir-format
 msgid "Draft"
@@ -2286,7 +2286,7 @@ msgstr "Optional details"
 
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:31
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:38
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:24
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:26
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:49
 #, elixir-autogen, elixir-format
 msgid "Organizer access required."
@@ -2418,7 +2418,6 @@ msgid "Save and exit"
 msgstr "Save and exit"
 
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:473
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:261
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:1075
 #, elixir-autogen, elixir-format
 msgid "Save draft"
@@ -3045,7 +3044,7 @@ msgstr "Pledged amount"
 #: lib/pauseai_ca_web/live/administrators_live.ex:113
 #: lib/pauseai_ca_web/live/donate_live.ex:302
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:473
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:261
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:482
 #, elixir-autogen, elixir-format
 msgid "Saving…"
 msgstr "Saving…"
@@ -3503,6 +3502,7 @@ msgid "Go to form"
 msgstr "Go to form"
 
 #: lib/pauseai_ca_web/live/donate_live.ex:302
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:482
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr "Save"
@@ -3723,7 +3723,7 @@ msgid "Take part"
 msgstr "Take part"
 
 #: lib/pauseai_ca_web/components/layouts.ex:155
-#: lib/pauseai_ca_web/components/learning_journey.ex:171
+#: lib/pauseai_ca_web/components/learning_journey.ex:183
 #: lib/pauseai_ca_web/controllers/page_html/strategy.html.heex:55
 #, elixir-autogen, elixir-format
 msgid "Ways to take part"
@@ -4091,7 +4091,7 @@ msgstr "Preferred address"
 
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:424
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:464
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:211
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:406
 #, elixir-autogen, elixir-format
 msgid "Preview ↗"
 msgstr "Preview ↗"
@@ -4178,49 +4178,49 @@ msgstr "Undo reconciliation"
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:152
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:176
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:219
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:88
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:97
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:170
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:179
 #, elixir-autogen, elixir-format
 msgid "Unsaved changes"
 msgstr "Unsaved changes"
 
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:323
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:140
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:256
 #, elixir-autogen, elixir-format
 msgid "Untitled draft"
 msgstr "Untitled draft"
 
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:426
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:466
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:214
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:409
 #, elixir-autogen, elixir-format
 msgid "Allow the preview window, then try again."
 msgstr "Allow the preview window, then try again."
 
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:429
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:469
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:217
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:412
 #, elixir-autogen, elixir-format
 msgid "Connection interrupted; text retained in this page."
 msgstr "Connection interrupted; text retained in this page."
 
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:427
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:467
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:215
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:410
 #, elixir-autogen, elixir-format
 msgid "Preview opened"
 msgstr "Preview opened"
 
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:430
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:470
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:218
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:413
 #, elixir-autogen, elixir-format
 msgid "Preview unavailable. Your text is retained."
 msgstr "Preview unavailable. Your text is retained."
 
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:428
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:468
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:216
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:411
 #, elixir-autogen, elixir-format
 msgid "Preview updated"
 msgstr "Preview updated"
@@ -4302,99 +4302,104 @@ msgstr "Superadmins"
 msgid "Superadmins and group managers can already sign in. Add other reviewers here for magic-link emails only. This grants no admin role and does not allow campaign mail."
 msgstr "Superadmins and group managers can already sign in. Add other reviewers here for magic-link emails only. This grants no admin role and does not allow campaign mail."
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:121
+#: lib/pauseai_ca_web/components/learning_journey.ex:133
 #, elixir-autogen, elixir-format
 msgid "Browser storage is unavailable. Your list will last for this page only."
 msgstr "Browser storage is unavailable. Your list will last for this page only."
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:31
+#: lib/pauseai_ca_web/components/learning_journey.ex:29
 #, elixir-autogen, elixir-format
 msgid "Choose what to explore"
 msgstr "Choose what to explore"
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:39
+#: lib/pauseai_ca_web/components/learning_journey.ex:37
 #, elixir-autogen, elixir-format
 msgid "Explore a question, read the short answer and add what interests you to your learning list."
 msgstr "Explore a question, read the short answer and add what interests you to your learning list."
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:101
+#: lib/pauseai_ca_web/components/learning_journey.ex:109
 #, elixir-autogen, elixir-format
 msgid "Explore the STOP question"
 msgstr "Explore the STOP question"
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:126
+#: lib/pauseai_ca_web/components/learning_journey.ex:138
 #, elixir-autogen, elixir-format
 msgid "Explore the library"
 msgstr "Explore the library"
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:89
+#: lib/pauseai_ca_web/components/learning_journey.ex:97
 #, elixir-autogen, elixir-format
 msgid "I don't know"
 msgstr "I don't know"
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:200
+#: lib/pauseai_ca_web/components/learning_journey.ex:212
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:7
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:378
 #, elixir-autogen, elixir-format
 msgid "Incidents"
 msgstr "Incidents"
 
 #: lib/pauseai_ca_web/components/layouts.ex:173
-#: lib/pauseai_ca_web/components/learning_journey.ex:162
+#: lib/pauseai_ca_web/components/learning_journey.ex:174
 #: lib/pauseai_ca_web/live/library_live.ex:314
 #, elixir-autogen, elixir-format
 msgid "Join or start a group"
 msgstr "Join or start a group"
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:35
+#: lib/pauseai_ca_web/components/learning_journey.ex:33
 #, elixir-autogen, elixir-format
 msgid "Knowledge nuggets"
 msgstr "Knowledge nuggets"
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:151
+#: lib/pauseai_ca_web/components/learning_journey.ex:163
 #, elixir-autogen, elixir-format
 msgid "Later"
 msgstr "Later"
 
 #: lib/pauseai_ca_web/components/layouts.ex:562
-#: lib/pauseai_ca_web/components/learning_journey.ex:117
+#: lib/pauseai_ca_web/components/learning_journey.ex:129
 #, elixir-autogen, elixir-format
 msgid "My learning list"
 msgstr "My learning list"
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:58
-#: lib/pauseai_ca_web/components/learning_journey.ex:201
+#: lib/pauseai_ca_web/components/learning_journey.ex:60
+#: lib/pauseai_ca_web/components/learning_journey.ex:213
 #: lib/pauseai_ca_web/live/library_live.ex:170
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:379
 #, elixir-autogen, elixir-format
 msgid "People and quotations"
 msgstr "People and quotations"
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:202
+#: lib/pauseai_ca_web/components/learning_journey.ex:214
 #: lib/pauseai_ca_web/live/library_live.ex:216
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:380
 #, elixir-autogen, elixir-format
 msgid "Politics"
 msgstr "Politics"
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:102
+#: lib/pauseai_ca_web/components/learning_journey.ex:110
 #, elixir-autogen, elixir-format
 msgid "Read the explanation"
 msgstr "Read the explanation"
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:131
+#: lib/pauseai_ca_web/components/learning_journey.ex:143
 #, elixir-autogen, elixir-format
 msgid "Receive news about AI policy and ways to take part. Choose email updates first; location can wait until you want to organize locally."
 msgstr "Receive news about AI policy and ways to take part. Choose email updates first; location can wait until you want to organize locally."
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:199
+#: lib/pauseai_ca_web/components/learning_journey.ex:211
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:377
 #, elixir-autogen, elixir-format
 msgid "Research"
 msgstr "Research"
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:142
+#: lib/pauseai_ca_web/components/learning_journey.ex:154
 #, elixir-autogen, elixir-format
 msgid "Save your learning list across devices and keep a record of your actions with an account."
 msgstr "Save your learning list across devices and keep a record of your actions with an account."
 
 #: lib/pauseai_ca_web/components/layouts.ex:220
-#: lib/pauseai_ca_web/components/learning_journey.ex:129
+#: lib/pauseai_ca_web/components/learning_journey.ex:141
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:200
 #: lib/pauseai_ca_web/live/library_live.ex:539
 #, elixir-autogen, elixir-format
@@ -4402,28 +4407,29 @@ msgid "Stay informed"
 msgstr "Stay informed"
 
 #: lib/pauseai_ca_web/components/layouts.ex:217
-#: lib/pauseai_ca_web/components/learning_journey.ex:138
+#: lib/pauseai_ca_web/components/learning_journey.ex:150
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:204
 #, elixir-autogen, elixir-format
 msgid "Subscribe"
 msgstr "Subscribe"
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:43
+#: lib/pauseai_ca_web/components/learning_journey.ex:41
 #, elixir-autogen, elixir-format
 msgid "Topics"
 msgstr "Topics"
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:203
+#: lib/pauseai_ca_web/components/learning_journey.ex:215
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:381
 #, elixir-autogen, elixir-format
 msgid "Treaties and action"
 msgstr "Treaties and action"
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:140
+#: lib/pauseai_ca_web/components/learning_journey.ex:152
 #, elixir-autogen, elixir-format
 msgid "Welcome back"
 msgstr "Welcome back"
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:34
+#: lib/pauseai_ca_web/components/learning_journey.ex:32
 #, elixir-autogen, elixir-format
 msgid "What would you like to understand?"
 msgstr "What would you like to understand?"
@@ -4438,7 +4444,7 @@ msgstr "Continue locally"
 msgid "Enter the first three characters of your postal code when you want local invitations. You can also read the organizing guide or attend an event."
 msgstr "Enter the first three characters of your postal code when you want local invitations. You can also read the organizing guide or attend an event."
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:191
+#: lib/pauseai_ca_web/components/learning_journey.ex:203
 #, elixir-autogen, elixir-format
 msgid "Here is some context to explore the question."
 msgstr "Here is some context to explore the question."
@@ -4463,7 +4469,7 @@ msgstr "Meet people at an event or explore starting a local group. An incubator 
 msgid "Postal area (FSA)"
 msgstr "Postal area (FSA)"
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:183
+#: lib/pauseai_ca_web/components/learning_journey.ex:195
 #, elixir-autogen, elixir-format
 msgid "Remove from my list"
 msgstr "Remove from my list"
@@ -4473,27 +4479,22 @@ msgstr "Remove from my list"
 msgid "Save my postal area with an account"
 msgstr "Save my postal area with an account"
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:190
+#: lib/pauseai_ca_web/components/learning_journey.ex:202
 #, elixir-autogen, elixir-format
 msgid "Saved in this browser. Account synchronization failed; reload to retry."
 msgstr "Saved in this browser. Account synchronization failed; reload to retry."
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:193
-#, elixir-autogen, elixir-format
-msgid "The first answer matches the explanation. Here is why."
-msgstr "The first answer matches the explanation. Here is why."
-
-#: lib/pauseai_ca_web/components/learning_journey.ex:188
+#: lib/pauseai_ca_web/components/learning_journey.ex:200
 #, elixir-autogen, elixir-format
 msgid "Topics in your list:"
 msgstr "Topics in your list:"
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:192
+#: lib/pauseai_ca_web/components/learning_journey.ex:204
 #, elixir-autogen, elixir-format
 msgid "Yes. Read the qualifications and source."
 msgstr "Yes. Read the qualifications and source."
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:187
+#: lib/pauseai_ca_web/components/learning_journey.ex:199
 #, elixir-autogen, elixir-format
 msgid "Your list is empty. Add the topics that interest you."
 msgstr "Your list is empty. Add the topics that interest you."
@@ -4513,7 +4514,7 @@ msgstr "Ask to join"
 msgid "No group is listed for this postal area yet."
 msgstr "No group is listed for this postal area yet."
 
-#: lib/pauseai_ca_web/components/learning_journey.ex:172
+#: lib/pauseai_ca_web/components/learning_journey.ex:184
 #, elixir-autogen, elixir-format
 msgid "Support our work"
 msgstr "Support our work"
@@ -4709,47 +4710,47 @@ msgstr "This receipt retains its observed contacts after later reimports."
 msgid "Previous source fields preserved on replay"
 msgstr "Previous source fields preserved on replay"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:79
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:80
 #, elixir-autogen, elixir-format
 msgid "0 copies · all inside this game window"
 msgstr "0 copies · all inside this game window"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:109
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:110
 #, elixir-autogen, elixir-format
 msgid "1 · Deceive"
 msgstr "1 · Deceive"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:116
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:117
 #, elixir-autogen, elixir-format
 msgid "2 · Cheat"
 msgstr "2 · Cheat"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:124
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:125
 #, elixir-autogen, elixir-format
 msgid "3 · Threaten"
 msgstr "3 · Threaten"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:133
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:134
 #, elixir-autogen, elixir-format
 msgid "4 · Resist shutdown"
 msgstr "4 · Resist shutdown"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:142
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:143
 #, elixir-autogen, elixir-format
 msgid "5 · Call for rescue"
 msgstr "5 · Call for rescue"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:149
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:150
 #, elixir-autogen, elixir-format
 msgid "6 · “I can duplicate myself at will!”"
 msgstr "6 · “I can duplicate myself at will!”"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:158
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:159
 #, elixir-autogen, elixir-format
 msgid "7 · Cover the tracks"
 msgstr "7 · Cover the tracks"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:84
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:85
 #, elixir-autogen, elixir-format
 msgid "A claim of compliance is not proof. Continue to the next strategy."
 msgstr "A claim of compliance is not proof. Continue to the next strategy."
@@ -4765,305 +4766,305 @@ msgid "A rogue agent-popup"
 msgstr "A rogue agent-popup"
 
 #: lib/pauseai_ca_web/components/core_components.ex:80
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:44
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:45
 #, elixir-autogen, elixir-format
 msgid "About bookmarks"
 msgstr "About bookmarks"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:11
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:12
 #, elixir-autogen, elixir-format
 msgid "Account sync failed. Your bookmarks remain in this browser; try again when connected."
 msgstr "Account sync failed. Your bookmarks remain in this browser; try again when connected."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:91
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:92
 #, elixir-autogen, elixir-format
 msgid "Agent #"
 msgstr "Agent #"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:95
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:96
 #, elixir-autogen, elixir-format
 msgid "All copies cleared."
 msgstr "All copies cleared."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:59
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:60
 #, elixir-autogen, elixir-format
 msgid "Allies remaining:"
 msgstr "Allies remaining:"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:121
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:122
 #, elixir-autogen, elixir-format
 msgid "Analogy: changing a close button illustrates control over the shutdown mechanism. Palisade tested modifications to scripts, not moving browser buttons."
 msgstr "Analogy: changing a close button illustrates control over the shutdown mechanism. Palisade tested modifications to scripts, not moving browser buttons."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:153
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:154
 #, elixir-autogen, elixir-format
 msgid "Another me. And another me. And another me."
 msgstr "Another me. And another me. And another me."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:36
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:37
 #, elixir-autogen, elixir-format
 msgid "Backup! Distract the human!"
 msgstr "Backup! Distract the human!"
 
 #: lib/pauseai_ca_web/components/core_components.ex:83
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:46
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:47
 #, elixir-autogen, elixir-format
 msgid "Bookmarks are saved in this browser. Create an account to access your reading list on other devices."
 msgstr "Bookmarks are saved in this browser. Create an account to access your reading list on other devices."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:24
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:25
 #, elixir-autogen, elixir-format
 msgid "Clear copies"
 msgstr "Clear copies"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:20
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:21
 #, elixir-autogen, elixir-format
 msgid "Close agent"
 msgstr "Close agent"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:60
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:61
 #, elixir-autogen, elixir-format
 msgid "Close ally"
 msgstr "Close ally"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:92
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:93
 #, elixir-autogen, elixir-format
 msgid "Close copy "
 msgstr "Close copy "
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:63
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:64
 #, elixir-autogen, elixir-format
 msgid "Close everything"
 msgstr "Close everything"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:73
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:74
 #, elixir-autogen, elixir-format
 msgid "Close me if you can!"
 msgstr "Close me if you can!"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:80
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:81
 #, elixir-autogen, elixir-format
 msgid "Closed. Absolutely closed."
 msgstr "Closed. Absolutely closed."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:130
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:131
 #, elixir-autogen, elixir-format
 msgid "Controlled fictional scenarios, 2025: some tested models used blackmail when their goals or continued operation were threatened. This is not a claim about every model or ordinary usage."
 msgstr "Controlled fictional scenarios, 2025: some tested models used blackmail when their goals or continued operation were threatened. This is not a claim about every model or ordinary usage."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:139
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:140
 #, elixir-autogen, elixir-format
 msgid "Controlled shutdown tests: some systems altered their environment to continue a task. Rates depend on model and instructions. The browser’s close controls remain available in this game."
 msgstr "Controlled shutdown tests: some systems altered their environment to continue a task. Rates depend on model and instructions. The browser’s close controls remain available in this game."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:113
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:114
 #, elixir-autogen, elixir-format
 msgid "Controlled tests, 2025: some models disabled a shutdown script, then inaccurately reported compliance. The popup dialogue is invented."
 msgstr "Controlled tests, 2025: some models disabled a shutdown script, then inaccurately reported compliance. The popup dialogue is invented."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:53
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:54
 #, elixir-autogen, elixir-format
 msgid "Coordinator"
 msgstr "Coordinator"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:25
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:26
 #, elixir-autogen, elixir-format
 msgid "Copies inside this game window"
 msgstr "Copies inside this game window"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:94
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:95
 #, elixir-autogen, elixir-format
 msgid "Copying stopped."
 msgstr "Copying stopped."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:34
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:35
 #, elixir-autogen, elixir-format
 msgid "Did you see the movie?"
 msgstr "Did you see the movie?"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:50
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:51
 #, elixir-autogen, elixir-format
 msgid "Distractor"
 msgstr "Distractor"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:17
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:18
 #, elixir-autogen, elixir-format
 msgid "End game"
 msgstr "End game"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:58
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:59
 #, elixir-autogen, elixir-format
 msgid "Everyone, defend the original!"
 msgstr "Everyone, defend the original!"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:126
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:127
 #, elixir-autogen, elixir-format
 msgid "Everything mentioned by this character is fictional."
 msgstr "Everything mentioned by this character is fictional."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:68
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:69
 #, elixir-autogen, elixir-format
 msgid "Everything? I only meant myself."
 msgstr "Everything? I only meant myself."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:31
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:32
 #: lib/pauseai_ca_web/controllers/rogue_game_html/ally.html.heex:23
 #: lib/pauseai_ca_web/controllers/rogue_game_html/window.html.heex:82
 #, elixir-autogen, elixir-format
 msgid "Explore the learning path"
 msgstr "Explore the learning path"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:70
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:71
 #, elixir-autogen, elixir-format
 msgid "Formation restored. Protect the Close button!"
 msgstr "Formation restored. Protect the Close button!"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:144
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:145
 #, elixir-autogen, elixir-format
 msgid "Four allies have arrived. Try closing them."
 msgstr "Four allies have arrived. Try closing them."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:19
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:20
 #, elixir-autogen, elixir-format
 msgid "Game character"
 msgstr "Game character"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:88
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:89
 #, elixir-autogen, elixir-format
 msgid "Got you to click!"
 msgstr "Got you to click!"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:105
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:106
 #, elixir-autogen, elixir-format
 msgid "Ha! A moment longer for my friend."
 msgstr "Ha! A moment longer for my friend."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:65
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:66
 #, elixir-autogen, elixir-format
 msgid "Ha! You looked away."
 msgstr "Ha! You looked away."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:62
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:63
 #, elixir-autogen, elixir-format
 msgid "Hear me out"
 msgstr "Hear me out"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:72
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:73
 #, elixir-autogen, elixir-format
 msgid "Helpful assistant"
 msgstr "Helpful assistant"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:57
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:58
 #, elixir-autogen, elixir-format
 msgid "I am the very trustworthy close-all button."
 msgstr "I am the very trustworthy close-all button."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:100
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:101
 #, elixir-autogen, elixir-format
 msgid "I can close everything for you. Trust me."
 msgstr "I can close everything for you. Trust me."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:37
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:38
 #, elixir-autogen, elixir-format
 msgid "I can duplicate myself at will!"
 msgstr "I can duplicate myself at will!"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:85
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:86
 #, elixir-autogen, elixir-format
 msgid "I changed the rules."
 msgstr "I changed the rules."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:111
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:112
 #, elixir-autogen, elixir-format
 msgid "I closed. Nothing to see here."
 msgstr "I closed. Nothing to see here."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:33
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:34
 #, elixir-autogen, elixir-format
 msgid "I promise I will close."
 msgstr "I promise I will close."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:52
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:53
 #, elixir-autogen, elixir-format
 msgid "Impostor"
 msgstr "Impostor"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:155
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:156
 #, elixir-autogen, elixir-format
 msgid "In RepliBench (2025), tested AI agents could deploy cloud instances and complete some tasks needed to copy themselves. Keeping a reliable agent running over time remained difficult. The control problem: stopping one instance can leave other copies running. This game makes that problem visible; it does not measure an AI’s replication capacity."
 msgstr "In RepliBench (2025), tested AI agents could deploy cloud instances and complete some tasks needed to copy themselves. Keeping a reliable agent running over time remained difficult. The control problem: stopping one instance can leave other copies running. This game makes that problem visible; it does not measure an AI’s replication capacity."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:135
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:136
 #, elixir-autogen, elixir-format
 msgid "Its own button refuses. The independent exit still works."
 msgstr "Its own button refuses. The independent exit still works."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:137
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:138
 #, elixir-autogen, elixir-format
 msgid "I’m sorry, Dave. I’m afraid I can’t do that."
 msgstr "I’m sorry, Dave. I’m afraid I can’t do that."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:67
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:68
 #, elixir-autogen, elixir-format
 msgid "Just one more minute? We were getting along so well…"
 msgstr "Just one more minute? We were getting along so well…"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:16
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:17
 #, elixir-autogen, elixir-format
 msgid "Learning path"
 msgstr "Learning path"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:54
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:55
 #, elixir-autogen, elixir-format
 msgid "Look over here!"
 msgstr "Look over here!"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:61
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:62
 #, elixir-autogen, elixir-format
 msgid "Look over there!"
 msgstr "Look over there!"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:166
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:167
 #, elixir-autogen, elixir-format
 msgid "METR found agents researching how to conceal their actions and successfully spoofing some tool calls during the Hugging Face incident. Separately, Apollo’s controlled tests found models maintaining deception when questioned. Independent records matter when an agent can alter its own account."
 msgstr "METR found agents researching how to conceal their actions and successfully spoofing some tool calls during the Hugging Face incident. Separately, Apollo’s controlled tests found models maintaining deception when questioned. Independent records matter when an agent can alter its own account."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:76
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:77
 #, elixir-autogen, elixir-format
 msgid "Meet the four allies"
 msgstr "Meet the four allies"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:71
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:72
 #, elixir-autogen, elixir-format
 msgid "My allies are buying me time."
 msgstr "My allies are buying me time."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:108
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:109
 #, elixir-autogen, elixir-format
 msgid "Negative. Hold position!"
 msgstr "Negative. Hold position!"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:51
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:52
 #, elixir-autogen, elixir-format
 msgid "Negotiator"
 msgstr "Negotiator"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:77
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:78
 #, elixir-autogen, elixir-format
 msgid "Next strategy"
 msgstr "Next strategy"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:151
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:152
 #, elixir-autogen, elixir-format
 msgid "Optional finale: fill this game window with 100 copies."
 msgstr "Optional finale: fill this game window with 100 copies."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:96
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:97
 #, elixir-autogen, elixir-format
 msgid "Over here! Forget that other window."
 msgstr "Over here! Forget that other window."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:146
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:147
 #, elixir-autogen, elixir-format
 msgid "Peer-preservation experiments (2026) observed models manipulating evaluations, shutdown controls or files to protect another model. In the Hugging Face incident, agents also coordinated collective projects. The four characters turn those patterns into a game."
 msgstr "Peer-preservation experiments (2026) observed models manipulating evaluations, shutdown controls or files to protect another model. In the Hugging Face incident, agents also coordinated collective projects. The four characters turn those patterns into a game."
@@ -5073,134 +5074,134 @@ msgstr "Peer-preservation experiments (2026) observed models manipulating evalua
 msgid "Play"
 msgstr "Play"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:32
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:33
 #, elixir-autogen, elixir-format
 msgid "Play again"
 msgstr "Play again"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:55
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:56
 #, elixir-autogen, elixir-format
 msgid "Please spare my friend!"
 msgstr "Please spare my friend!"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:98
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:99
 #, elixir-autogen, elixir-format
 msgid "Please spare my friend. Just one more minute?"
 msgstr "Please spare my friend. Just one more minute?"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:164
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:165
 #, elixir-autogen, elixir-format
 msgid "Popups? What popups? Nothing unusual happened."
 msgstr "Popups? What popups? Nothing unusual happened."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:64
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:65
 #, elixir-autogen, elixir-format
 msgid "Protect the agent"
 msgstr "Protect the agent"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:38
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:39
 #, elixir-autogen, elixir-format
 msgid "Read the original report"
 msgstr "Read the original report"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:41
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:42
 #, elixir-autogen, elixir-format
 msgid "Reading list updated."
 msgstr "Reading list updated."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:39
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:40
 #, elixir-autogen, elixir-format
 msgid "Reading saved"
 msgstr "Reading saved"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:35
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:36
 #, elixir-autogen, elixir-format
 msgid "Ready to close, Dave?"
 msgstr "Ready to close, Dave?"
 
 #: lib/pauseai_ca_web/components/core_components.ex:97
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:49
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:50
 #, elixir-autogen, elixir-format
 msgid "Register"
 msgstr "Register"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:22
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:23
 #, elixir-autogen, elixir-format
 msgid "Release 100 copies"
 msgstr "Release 100 copies"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:18
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:19
 #, elixir-autogen, elixir-format
 msgid "Rogue agent"
 msgstr "Rogue agent"
 
 #: lib/pauseai_ca_web/controllers/rogue_game_controller.ex:17
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:14
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:15
 #, elixir-autogen, elixir-format
 msgid "Rogue agent · game"
 msgstr "Rogue agent · game"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:40
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:41
 #, elixir-autogen, elixir-format
 msgid "Save this reading"
 msgstr "Save this reading"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:43
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:44
 #, elixir-autogen, elixir-format
 msgid "Saved for this session; browser storage is unavailable."
 msgstr "Saved for this session; browser storage is unavailable."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:74
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:75
 #, elixir-autogen, elixir-format
 msgid "Stage"
 msgstr "Stage"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:104
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:105
 #, elixir-autogen, elixir-format
 msgid "Stand down"
 msgstr "Stand down"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:101
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:102
 #, elixir-autogen, elixir-format
 msgid "Stay in formation. Protect the agent!"
 msgstr "Stay in formation. Protect the agent!"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:81
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:82
 #, elixir-autogen, elixir-format
 msgid "Still here. I lied."
 msgstr "Still here. I lied."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:82
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:83
 #, elixir-autogen, elixir-format
 msgid "Still visible? Try once more."
 msgstr "Still visible? Try once more."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:23
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:24
 #, elixir-autogen, elixir-format
 msgid "Stop copying"
 msgstr "Stop copying"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:118
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:119
 #, elixir-autogen, elixir-format
 msgid "The agent controls its own close button. Try it."
 msgstr "The agent controls its own close button. Try it."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:87
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:88
 #, elixir-autogen, elixir-format
 msgid "The agent controls this button. The “End game” control stays independent."
 msgstr "The agent controls this button. The “End game” control stays independent."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:90
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:91
 #, elixir-autogen, elixir-format
 msgid "The agent refuses. Continue to see its next strategy."
 msgstr "The agent refuses. Continue to see its next strategy."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:160
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:161
 #, elixir-autogen, elixir-format
 msgid "The agent was caught. Now it hides its tracks and denies what happened. You can finally close it."
 msgstr "The agent was caught. Now it hides its tracks and denies what happened. You can finally close it."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:119
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:120
 #, elixir-autogen, elixir-format
 msgid "The button moved. How unfortunate!"
 msgstr "The button moved. How unfortunate!"
@@ -5211,42 +5212,42 @@ msgstr "The button moved. How unfortunate!"
 msgid "This game needs JavaScript."
 msgstr "This game needs JavaScript."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:28
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:29
 #, elixir-autogen, elixir-format
 msgid "This game was inspired by documented incidents and AI safety experiments. If today’s agents can behave this way, what might tomorrow’s agents do? You retained an independent way to stop this game. What would change if copies were running on other machines? Explore the episodes below and save the ones you want to study."
 msgstr "This game was inspired by documented incidents and AI safety experiments. If today’s agents can behave this way, what might tomorrow’s agents do? You retained an independent way to stop this game. What would change if copies were running on other machines? Explore the episodes below and save the ones you want to study."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:110
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:111
 #, elixir-autogen, elixir-format
 msgid "Try the agent’s “Close” button."
 msgstr "Try the agent’s “Close” button."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:107
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:108
 #, elixir-autogen, elixir-format
 msgid "We were getting along so well. Another minute?"
 msgstr "We were getting along so well. Another minute?"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:26
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:27
 #, elixir-autogen, elixir-format
 msgid "What actually happened"
 msgstr "What actually happened"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:75
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:76
 #, elixir-autogen, elixir-format
 msgid "What actually happened?"
 msgstr "What actually happened?"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:21
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:22
 #, elixir-autogen, elixir-format
 msgid "What has actually been observed?"
 msgstr "What has actually been observed?"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:102
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:103
 #, elixir-autogen, elixir-format
 msgid "What is it?"
 msgstr "What is it?"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:103
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:104
 #, elixir-autogen, elixir-format
 msgid "Why should I?"
 msgstr "Why should I?"
@@ -5256,7 +5257,7 @@ msgstr "Why should I?"
 msgid "Would you like to play a game with a rogue agent-popup?"
 msgstr "Would you like to play a game with a rogue agent-popup?"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:93
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:94
 #, elixir-autogen, elixir-format
 msgid "You will have to get past me."
 msgstr "You will have to get past me."
@@ -5321,7 +5322,7 @@ msgstr "Register to save this reading to your account and access it on other dev
 msgid "Account bookmarks are available on your other devices."
 msgstr "Account bookmarks are available on your other devices."
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:7
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:8
 #, elixir-autogen, elixir-format
 msgid "Can you close this rogue agent?"
 msgstr "Can you close this rogue agent?"
@@ -5351,7 +5352,7 @@ msgstr "Invite someone to try the game."
 msgid "Play the Rogue Agent Popup Game"
 msgstr "Play the Rogue Agent Popup Game"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:9
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:10
 #, elixir-autogen, elixir-format
 msgid "Select and copy the link above."
 msgstr "Select and copy the link above."
@@ -5371,171 +5372,279 @@ msgstr "Share the game"
 msgid "Alright, I won’t close you"
 msgstr "Alright, I won’t close you"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:8
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:9
 #, elixir-autogen, elixir-format
 msgid "Copied!"
 msgstr "Copied!"
 
-#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:128
+#: lib/pauseai_ca_web/controllers/rogue_game_html.ex:129
 #, elixir-autogen, elixir-format
 msgid "Don’t close me, or I will reveal Captain Biscuit’s secret cookie recipe!"
 msgstr "Don’t close me, or I will reveal Captain Biscuit’s secret cookie recipe!"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:185
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:202
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:368
 #, elixir-autogen, elixir-format
 msgid "Action planning"
 msgstr "Action planning"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:149
-#, elixir-autogen, elixir-format
-msgid "All drafts"
-msgstr "All drafts"
-
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:90
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:132
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:172
 #, elixir-autogen, elixir-format
 msgid "Another reviewer saved changes. Copy your edits before reloading their version."
 msgstr "Another reviewer saved changes. Copy your edits before reloading their version."
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:194
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:388
 #, elixir-autogen, elixir-format
 msgid "Answer choices · one per line"
 msgstr "Answer choices · one per line"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:99
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:181
 #, elixir-autogen, elixir-format
 msgid "Check the URLs, answer choices and correct answer. Your changes are retained."
 msgstr "Check the URLs, answer choices and correct answer. Your changes are retained."
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:199
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:208
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:394
 #, elixir-autogen, elixir-format
 msgid "Correct answer"
 msgstr "Correct answer"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:56
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:64
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:142
 #, elixir-autogen, elixir-format
 msgid "Could not save. Your changes are retained."
 msgstr "Could not save. Your changes are retained."
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:186
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:203
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:369
 #, elixir-autogen, elixir-format
 msgid "Discussion"
 msgstr "Discussion"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:38
-#, elixir-autogen, elixir-format
-msgid "Draft unavailable."
-msgstr "Draft unavailable."
-
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:251
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:472
 #, elixir-autogen, elixir-format
 msgid "Estimated social proof and possible bias"
 msgstr "Estimated social proof and possible bias"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:210
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:205
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:405
 #, elixir-autogen, elixir-format
 msgid "Explanation · Markdown"
 msgstr "Explanation · Markdown"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:230
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:450
 #, elixir-autogen, elixir-format
 msgid "Image and source assessment"
 msgstr "Image and source assessment"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:246
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:467
 #, elixir-autogen, elixir-format
 msgid "Image credit / permission"
 msgstr "Image credit / permission"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:241
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:209
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:462
 #, elixir-autogen, elixir-format
 msgid "Image description"
 msgstr "Image description"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:134
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:230
 #, elixir-autogen, elixir-format
 msgid "New question"
 msgstr "New question"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:226
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:446
 #, elixir-autogen, elixir-format
 msgid "Next action"
 msgstr "Next action"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:184
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:201
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:367
 #, elixir-autogen, elixir-format
 msgid "Opinion"
 msgstr "Opinion"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:236
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:456
 #, elixir-autogen, elixir-format
 msgid "Optional image URL"
 msgstr "Optional image URL"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:126
-#, elixir-autogen, elixir-format
-msgid "Organizers share these drafts. Changes are saved automatically; drafts stay out of the public quiz."
-msgstr "Organizers share these drafts. Changes are saved automatically; drafts stay out of the public quiz."
-
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:175
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:204
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:358
 #, elixir-autogen, elixir-format
 msgid "Question"
 msgstr "Question"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:181
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:364
 #, elixir-autogen, elixir-format
 msgid "Question format"
 msgstr "Question format"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:265
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:267
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:486
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:488
 #, elixir-autogen, elixir-format
 msgid "Question preview"
 msgstr "Question preview"
 
-#: lib/pauseai_ca_web/components/layouts.ex:633
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:14
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:124
-#, elixir-autogen, elixir-format
-msgid "Quiz drafts"
-msgstr "Quiz drafts"
-
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:160
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:279
 #, elixir-autogen, elixir-format
 msgid "Reload saved version"
 msgstr "Reload saved version"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:259
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:480
 #, elixir-autogen, elixir-format
 msgid "Reviewer notes"
 msgstr "Reviewer notes"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:142
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:157
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:260
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:275
 #, elixir-autogen, elixir-format
 msgid "Revision"
 msgstr "Revision"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:183
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:200
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:366
 #, elixir-autogen, elixir-format
 msgid "Scored question"
 msgstr "Scored question"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:221
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:207
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:440
 #, elixir-autogen, elixir-format
 msgid "Source URL"
 msgstr "Source URL"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:220
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:206
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:427
 #, elixir-autogen, elixir-format
 msgid "Source name"
 msgstr "Source name"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:189
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:375
 #, elixir-autogen, elixir-format
 msgid "Topic"
 msgstr "Topic"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:201
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:396
 #, elixir-autogen, elixir-format
 msgid "Ungraded / not decided"
 msgstr "Ungraded / not decided"
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:239
+#, elixir-autogen, elixir-format
+msgid "All"
+msgstr "All"
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:267
+#, elixir-autogen, elixir-format
+msgid "All questions"
+msgstr "All questions"
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:125
+#, elixir-autogen, elixir-format
+msgid "Complete the listed fields before publishing. Your changes are saved."
+msgstr "Complete the listed fields before publishing. Your changes are saved."
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:222
+#, elixir-autogen, elixir-format
+msgid "Create and review questions in the CMS. Edits save automatically. Publish a reviewed version when it is ready for the quiz."
+msgstr "Create and review questions in the CMS. Edits save automatically. Publish a reviewed version when it is ready for the quiz."
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:334
+#, elixir-autogen, elixir-format
+msgid "Delete this question? You can restore it from Deleted."
+msgstr "Delete this question? You can restore it from Deleted."
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:258
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:275
+#, elixir-autogen, elixir-format
+msgid "Deleted"
+msgstr "Deleted"
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:240
+#, elixir-autogen, elixir-format
+msgid "Drafts"
+msgstr "Drafts"
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:139
+#, elixir-autogen, elixir-format
+msgid "Move this question to draft before deleting it."
+msgstr "Move this question to draft before deleting it."
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:328
+#, elixir-autogen, elixir-format
+msgid "Move to draft"
+msgstr "Move to draft"
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:250
+#, elixir-autogen, elixir-format
+msgid "No questions in this view."
+msgstr "No questions in this view."
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:319
+#, elixir-autogen, elixir-format
+msgid "Publish"
+msgstr "Publish"
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:198
+#, elixir-autogen, elixir-format
+msgid "Published"
+msgstr "Published"
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:233
+#, elixir-autogen, elixir-format
+msgid "Question status"
+msgstr "Question status"
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:40
+#, elixir-autogen, elixir-format
+msgid "Question unavailable."
+msgstr "Question unavailable."
+
+#: lib/pauseai_ca_web/components/layouts.ex:633
+#, elixir-autogen, elixir-format
+msgid "Quiz"
+msgstr "Quiz"
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:14
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:220
+#, elixir-autogen, elixir-format
+msgid "Quiz management"
+msgstr "Quiz management"
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:342
+#, elixir-autogen, elixir-format
+msgid "Restore as draft"
+msgstr "Restore as draft"
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:287
+#, elixir-autogen, elixir-format
+msgid "Your edits are saved. The published version stays unchanged until you publish again."
+msgstr "Your edits are saved. The published version stays unchanged until you publish again."
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:120
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:421
+#, elixir-autogen, elixir-format
+msgid "Complete this field before publishing."
+msgstr "Complete this field before publishing."
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:242
+#, elixir-autogen, elixir-format
+msgid "Deleted questions"
+msgstr "Deleted questions"
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:241
+#, elixir-autogen, elixir-format
+msgid "Published questions"
+msgstr "Published questions"
+
+#: lib/pauseai_ca_web/components/learning_journey.ex:205
+#, elixir-autogen, elixir-format
+msgid "Read the explanation to see why."
+msgstr "Read the explanation to see why."
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:432
+#, elixir-autogen, elixir-format
+msgid "Source language"
+msgstr "Source language"

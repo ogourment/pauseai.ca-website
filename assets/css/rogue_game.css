@@ -5,3 +5,8 @@
 .rogue-game .episode{position:relative;background:#fff;border:1px solid #d6d3d1;border-radius:16px;padding:24px;margin:20px 0}.rogue-game .episode-tools{position:absolute;top:12px;right:12px;display:flex;align-items:center;gap:10px;z-index:2}.rogue-game .episode-tools .bookmark{position:relative;top:auto;right:auto;width:44px;height:44px;padding:0;border:1px solid #78716c;border-radius:8px;display:flex}.rogue-game .episode-tools .bookmark .resource-bookmark-tooltip{white-space:nowrap}.rogue-game .episode-tools .bookmark-help{padding:0;margin:0}.rogue-game .episode-icon{margin:0 0 18px}.rogue-game .episode .pill{font-size:14px;margin:12px 0;background:#dbeafe;color:#1e3a8a}.rogue-game .episode h2{margin:14px 0;font-size:24px}.rogue-game #game-share-panel{margin:16px 0;padding:20px}.rogue-game #game-share-url{display:block;width:100%;padding:12px;border:1px solid #57534e;border-radius:8px;margin:8px 0 16px;background:#fff;color:#292524;font:inherit}.rogue-game #game-share-url:focus-visible{outline:3px solid #1d4ed8;outline-offset:3px}.rogue-game #game-share-status:empty{display:none}.rogue-game #share-game{margin:8px 12px 8px 0}
 
 .rogue-game .game-logo{display:block;width:44px;height:auto;object-fit:contain}.rogue-game nav{gap:12px}.rogue-game #spare-agent{margin:14px 0 14px 10px}.rogue-game #film-quote{color:inherit}.rogue-game #game-share-status{font-weight:600;color:#115e59}
+
+.rogue-game .episode{padding-bottom:50px}
+.rogue-game .episode::before,.rogue-game .episode::after{content:"";position:absolute;bottom:0;width:9px;height:34px;pointer-events:none;background:#92400e}
+.rogue-game .episode::before{right:39px}.rogue-game .episode::after{right:24px}
+.rogue-game .episode .episode-category{background:#fef3c7;color:#92400e;margin-right:10px}

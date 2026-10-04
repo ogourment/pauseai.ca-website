@@ -5,12 +5,12 @@ defmodule PauseAiCaWeb.LearningJourney do
   attr :quiz, :boolean, default: false
 
   def journey(assigns) do
+    catalogue = PauseAiCa.Learning.QuestionBank.catalogue(assigns.locale)
+
     assigns =
-      assign(
-        assigns,
-        :nuggets,
-        Enum.reject(PauseAiCa.Learning.nuggets(assigns.locale), &(assigns.quiz && &1["incident"]))
-      )
+      assigns
+      |> assign(:catalogue, catalogue)
+      |> assign(:nuggets, Enum.reject(catalogue, &(assigns.quiz && &1["incident"])))
 
     ~H"""
     <section
@@ -18,9 +18,7 @@ defmodule PauseAiCaWeb.LearningJourney do
       class="learning-journey mx-auto max-w-5xl px-5 py-14"
       phx-update="ignore"
       data-learning-root
-      data-learning-catalog={
-        Jason.encode!(Enum.map(PauseAiCa.Learning.nuggets(@locale), &Map.take(&1, ["id", "title"])))
-      }
+      data-learning-catalog={Jason.encode!(Enum.map(@catalogue, &Map.take(&1, ["id", "title"])))}
       data-learning-copy={Jason.encode!(learning_copy())}
       data-locale={@locale}
       data-account-id={if(@current_scope, do: @current_scope.user.id, else: "")}
@@ -47,9 +45,13 @@ defmodule PauseAiCaWeb.LearningJourney do
         <article
           :for={n <- @nuggets}
           id={"nugget-#{n["id"]}"}
-          class={"learning-card topic-#{n["topic"]} relative rounded-2xl border border-stone-200 bg-white p-6"}
+          class={[
+            "learning-card topic-#{n["topic"]} relative rounded-2xl border border-stone-200 bg-white p-6",
+            n["id"] in ["bengio-speed", "research-acceleration"] && "has-voice-category"
+          ]}
           data-nugget={n["id"]}
           data-nugget-title={n["title"]}
+          data-quiz-correct={n["correct"] || 0}
         >
           <span class={"learning-topic mr-10 topic-#{n["topic"]}"}>{topic_label(n["topic"])}</span>
           <span
@@ -64,6 +66,12 @@ defmodule PauseAiCaWeb.LearningJourney do
             height="48"
             class="mt-4"
           />
+          <figure :if={n["image_url"] not in [nil, ""]} class="mt-4">
+            <img src={n["image_url"]} alt={n["image_alt"]} loading="lazy" class="w-full rounded-lg" />
+            <figcaption :if={n["image_credit"] not in [nil, ""]} class="mt-1 text-sm">
+              {n["image_credit"]}
+            </figcaption>
+          </figure>
           <p class="mt-3 text-sm text-stone-600">{n["evidence"]}</p>
           <h3 class="mt-3 pr-10 font-heading text-2xl">
             {if(@quiz, do: n["question"], else: n["title"])}
@@ -97,12 +105,16 @@ defmodule PauseAiCaWeb.LearningJourney do
           </p>
           <details class="mt-4" data-explanation open={!@quiz || n["discussion"]}>
             <summary class="cursor-pointer font-semibold underline">
-              {if(n["discussion"] && !n["incident"],
+              {if(n["id"] == "stop-button",
                 do: gettext("Explore the STOP question"),
                 else: gettext("Read the explanation")
               )}
             </summary>
-            <p class="mt-3 leading-7">{n["answer"]}</p>
+            <p :if={!n["cms"]} class="mt-3 leading-7">{n["answer"]}</p>
+            <div :if={n["cms"]} class="prose mt-3">
+              {Phoenix.HTML.raw(PauseAiCa.Mail.Render.html(n["answer"]))}
+            </div>
+            <p :if={n["cms"] && n["action"] not in [nil, ""]} class="mt-3 leading-7">{n["action"]}</p>
             <a href={n["url"]} class="mt-3 inline-block underline" rel="noreferrer">{n["source"]}</a>
             <span :if={n["language"] != @locale} class="ml-2 text-sm">({String.upcase(n["language"])})</span>
           </details>
@@ -190,7 +202,7 @@ defmodule PauseAiCaWeb.LearningJourney do
         gettext("Saved in this browser. Account synchronization failed; reload to retry."),
       "unknown" => gettext("Here is some context to explore the question."),
       "correct" => gettext("Yes. Read the qualifications and source."),
-      "incorrect" => gettext("The first answer matches the explanation. Here is why.")
+      "incorrect" => gettext("Read the explanation to see why.")
     }
   end
 

@@ -32,7 +32,7 @@ defmodule PauseAiCa.Accounts.Onboarding do
       "bookmark" => bookmark,
       "fsa" => valid_fsa(params["fsa"]),
       "basket" =>
-        PauseAiCa.Learning.valid_ids(
+        PauseAiCa.Learning.QuestionBank.valid_ids(
           String.split(if(is_binary(params["basket"]), do: params["basket"], else: ""), ",")
         ),
       "answers" => question_answers(params, visitor_id),
@@ -87,7 +87,7 @@ defmodule PauseAiCa.Accounts.Onboarding do
       do:
         Accounts.update_user_local_context(Accounts.get_user!(user.id), %{"fsa" => context["fsa"]})
 
-    Enum.each(PauseAiCa.Learning.valid_ids(context["basket"]), fn id ->
+    Enum.each(PauseAiCa.Learning.QuestionBank.valid_ids(context["basket"]), fn id ->
       Accounts.save_resource(Accounts.get_user!(user.id), id)
     end)
 

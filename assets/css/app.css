@@ -331,3 +331,18 @@ h3 {
 #question-draft-form input,#question-draft-form textarea,#question-draft-form select{border-color:#78716c}
 #question-draft-form .pme-editor{--pme-border:#78716c}
 #question-draft-form input:focus-visible,#question-draft-form textarea:focus-visible,#question-draft-form select:focus-visible,#question-draft-form button:focus-visible{outline:3px solid #1d4ed8;outline-offset:3px}
+
+/* Category pills and the two Pause bars share the same category mapping. */
+.topic-research {--category-color:#1e40af}
+.topic-incidents {--category-color:#92400e}
+.topic-voices {--category-color:#5b21b6}
+.topic-politics {--category-color:#115e59}
+.topic-treaty {--category-color:#166534}
+.learning-card {position:relative;padding-bottom:50px}
+.learning-card::before,.learning-card::after {content:"";position:absolute;bottom:0;width:9px;height:34px;pointer-events:none;background:var(--category-color)}
+.learning-card::before {right:39px}
+.learning-card::after {right:24px;background:var(--secondary-category-color,var(--category-color))}
+.learning-card.has-voice-category {--secondary-category-color:#5b21b6}
+
+#question-publication-controls button:disabled{opacity:.55;cursor:not-allowed}
+#question-draft-form .text-red-600{color:#991b1b}

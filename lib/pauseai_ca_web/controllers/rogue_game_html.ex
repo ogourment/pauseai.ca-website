@@ -4,6 +4,7 @@ defmodule PauseAiCaWeb.RogueGameHTML do
   def copy do
     Map.new([
       {"Bookmark", gettext("Bookmark")},
+      {"Incidents", gettext("Incidents")},
       {"Can you close this rogue agent?", gettext("Can you close this rogue agent?")},
       {"Copied!", gettext("Copied!")},
       {"Select and copy the link above.", gettext("Select and copy the link above.")},
