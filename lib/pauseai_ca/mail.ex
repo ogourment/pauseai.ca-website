@@ -153,7 +153,8 @@ defmodule PauseAiCa.Mail do
   end
 
   # A withdrawal on any originating historical contact blocks all aliases. Never switch address to bypass it.
-  defp suppressed?(email) do
+  @doc "Consumer-owned historical withdrawal guard, shared with newsletter eligibility."
+  def suppressed?(email) do
     direct =
       Repo.exists?(
         from c in Contact, where: c.email == ^email and c.classification == "do_not_contact"
@@ -180,6 +181,34 @@ defmodule PauseAiCa.Mail do
                (p.id == ^canonical or p.canonical_id == ^canonical) and
                  c.classification == "do_not_contact"
          ))
+  end
+
+  @doc "Batch historical withdrawal lookup for audience review; same canonical alias policy as recipient preparation."
+  def suppressed_emails(emails) do
+    direct =
+      Repo.all(
+        from c in Contact,
+          where: c.email in ^emails and c.classification == "do_not_contact",
+          select: c.email
+      )
+
+    linked =
+      Repo.all(
+        from a in Address,
+          join: p in Person,
+          on: p.id == a.person_id,
+          join: origin in Person,
+          on: coalesce(origin.canonical_id, origin.id) == coalesce(p.canonical_id, p.id),
+          join: link in ContactLink,
+          on: link.person_id == origin.id,
+          join: c in Contact,
+          on: c.id == link.contact_id,
+          where: a.email in ^emails and c.classification == "do_not_contact",
+          select: a.email,
+          distinct: true
+      )
+
+    MapSet.new(direct ++ linked)
   end
 
   defp workspace_ids(batch) do

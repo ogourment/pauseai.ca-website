@@ -7,6 +7,11 @@
   },
   %{id: "crm", title: "Contact identity", tables: ~w(crm_people crm_addresses crm_sources crm_activities crm_merges crm_contact_links)},
   %{id: "mail_drafts", title: "Email drafts", tables: ~w(mail_batches mail_drafts)},
+  %{
+    id: "newsletter",
+    title: "Newsletter consent",
+    tables: ~w(newsletter_subscriptions newsletter_consent_events newsletter_withdrawal_tokens)
+  },
   %{id: "outreach", title: "Outreach", tables: ["pending_letters"]},
   %{
     id: "contact_migration",
