@@ -326,3 +326,8 @@ h3 {
 .resource-bookmark-help{position:absolute;right:4rem;top:1rem;z-index:20}.bookmark-help summary{display:flex;align-items:center;justify-content:center;width:28px;height:28px;list-style:none;border:2px solid #57534e;border-radius:50%;font-weight:700;cursor:pointer;background:#fff;color:#292524}.bookmark-help summary::-webkit-details-marker{display:none}.bookmark-help .bookmark-bubble{position:absolute;right:0;top:calc(100% + 10px);z-index:30;width:270px;max-width:80vw;padding:16px;background:#fff;color:#292524;border:1px solid #57534e;border-radius:12px;box-shadow:0 8px 24px #29252430}.bookmark-help a{display:inline-block;margin-top:8px;text-decoration:underline;color:#115e59}.bookmark-help summary:focus-visible{outline:3px solid #1d4ed8;outline-offset:4px}
 
 .resource-bookmark-help-inline{display:inline-block;position:relative;margin-left:.5rem}
+
+/* Editorial controls retain a visible boundary in the shared CRM surface. */
+#question-draft-form input,#question-draft-form textarea,#question-draft-form select{border-color:#78716c}
+#question-draft-form .pme-editor{--pme-border:#78716c}
+#question-draft-form input:focus-visible,#question-draft-form textarea:focus-visible,#question-draft-form select:focus-visible,#question-draft-form button:focus-visible{outline:3px solid #1d4ed8;outline-offset:3px}
