@@ -170,6 +170,25 @@ defmodule PauseAiCaWeb.AdminContactsLive do
     )
   end
 
+  defp historical_date_label("source_created"), do: gettext("Original source record created")
+
+  defp historical_date_label("notification_sent"),
+    do: gettext("Original global notification sent")
+
+  defp historical_date_label("first_known_processing"),
+    do: gettext("Earliest recovered processing; earlier runs may exist")
+
+  defp historical_date_label("signup_date"), do: gettext("Source signup / date added")
+
+  defp historical_date_label("processed_at"),
+    do: gettext("Latest source processing; overwritten by later runs")
+
+  defp historical_source_label("notion"), do: "Notion"
+  defp historical_source_label("google_sheet"), do: "Google Sheets"
+  defp historical_source_label("pauseai_global_email"), do: gettext("PauseAI Global email")
+  defp historical_source_label("pauseai_automations"), do: gettext("PauseAI Automations")
+  defp historical_source_label(source), do: source
+
   defp denied(socket),
     do:
       socket
@@ -245,6 +264,32 @@ defmodule PauseAiCaWeb.AdminContactsLive do
               }>
                 <.link navigate={~p"/admin/contacts/legacy/#{origin.id}?locale=#{@locale}"}>{origin.email}</.link>
                 · {origin.classification} · {origin.source}
+              </li>
+            </ul>
+          </section>
+          <section id="crm-historical-dates" class="mt-8">
+            <h2 class="text-xl font-bold">{gettext("Historical source dates")}</h2>
+            <p>
+              {gettext(
+                "Source creation, notification and processing times describe different events. Migration activity below records this database's import time."
+              )}
+            </p>
+            <ul :for={origin <- @origins}>
+              <li :for={
+                date <- PauseAiCa.ContactMigration.HistoricalDates.entries(origin.source_data)
+              }>
+                <strong>{historical_date_label(date["kind"])}</strong>
+                ·
+                <time datetime={date["value"]}>{PauseAiCa.ContactMigration.HistoricalDates.display_value(
+                  date
+                )}</time>
+                <span :if={date["precision"] == "date"}> · {gettext("Date only; time unknown")}</span>
+                <span :if={
+                  date["precision"] == "datetime" and
+                    date["timezone"] not in ["UTC", "explicit offset"]
+                }> · {gettext("Timezone unknown")}</span>
+                · {historical_source_label(date["source"])}
+                <span :if={date["source_record_id"]}> · {date["source_record_id"]}</span>
               </li>
             </ul>
           </section>
