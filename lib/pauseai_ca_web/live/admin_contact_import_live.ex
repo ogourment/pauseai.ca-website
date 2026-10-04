@@ -402,7 +402,8 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
                 <tr class="border-b border-stone-100 bg-stone-50/70">
                   <td></td>
                   <td colspan="3" class="px-4 pb-4 text-sm text-stone-600">
-                    <details>
+                    <.source_summary id={"preview-source-summary-#{row["id"]}"} data={row} />
+                    <details class="mt-3">
                       <summary class="cursor-pointer font-semibold text-stone-800">
                         {gettext("Show all source fields")}
                       </summary>
@@ -476,6 +477,7 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
                   class="rounded-full border border-stone-300 px-4 py-2 font-semibold"
                 >{gettext("View activity")}</button>
               </div>
+              <.source_summary id={"contact-source-summary-#{contact.id}"} data={contact.source_data} />
               <details class="mt-3 text-sm text-stone-600">
                 <summary class="cursor-pointer font-semibold text-stone-800">
                   {gettext("Show imported source fields")}
@@ -514,6 +516,76 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
   defp source_fields(row) do
     Enum.map(PauseAiCa.ContactMigration.CSV.source_headers(), &{&1, Map.get(row, &1, "")})
   end
+
+  attr :id, :string, required: true
+  attr :data, :map, required: true
+
+  defp source_summary(assigns) do
+    assigns = assign(assigns, :geography, source_geography(assigns.data))
+
+    ~H"""
+    <dl id={@id} class="mt-3 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2 xl:grid-cols-4">
+      <div>
+        <dt class="font-semibold text-stone-700">{gettext("Signup date")}</dt>
+        <dd class="break-words text-stone-900">{source_summary_value(@data, "signup_date")}</dd>
+      </div>
+      <div>
+        <dt class="font-semibold text-stone-700">{gettext("Geography")}</dt>
+        <dd class="break-words text-stone-900">
+          {elem(@geography, 0)}<span :if={elem(@geography, 1)} class="block text-xs text-stone-600">{elem(
+            @geography,
+            1
+          )}</span>
+        </dd>
+      </div>
+      <div :for={field <- ~w(source sheet source_status status welcomed_date)}>
+        <dt class="font-semibold text-stone-700">{source_field_label(field)}</dt>
+        <dd class="break-words text-stone-900">{source_summary_value(@data, field)}</dd>
+      </div>
+    </dl>
+    """
+  end
+
+  defp source_summary_value(data, field),
+    do: if(data[field] in [nil, ""], do: gettext("Not provided"), else: data[field])
+
+  defp source_geography(data) do
+    region =
+      Enum.find_value(~w(geography region), fn key ->
+        if data[key] not in [nil, ""], do: data[key]
+      end)
+
+    if region do
+      basis =
+        case data["region_source"] do
+          "self_reported" -> gettext("Self-reported region")
+          "postal_code" -> gettext("Computed from postal code")
+          "computed" -> gettext("Computed region")
+          _ -> gettext("Region supplied by source")
+        end
+
+      {region, basis}
+    else
+      geography =
+        case String.downcase(data["sheet"] || "") do
+          "mtl" -> "Montréal"
+          "quebec" -> "ROQuébec"
+          "rest of canada" -> "ROCanada"
+          _ -> nil
+        end
+
+      if geography,
+        do: {geography, gettext("From source sheet")},
+        else: {gettext("Not provided"), nil}
+    end
+  end
+
+  defp source_field_label("signup_date"), do: gettext("Signup date")
+  defp source_field_label("source"), do: gettext("Source")
+  defp source_field_label("sheet"), do: gettext("Sheet")
+  defp source_field_label("source_status"), do: gettext("Source status")
+  defp source_field_label("status"), do: gettext("Sheet status")
+  defp source_field_label("welcomed_date"), do: gettext("Welcomed date")
 
   defp source_field_label(field),
     do: field |> String.replace("_", " ") |> String.capitalize()

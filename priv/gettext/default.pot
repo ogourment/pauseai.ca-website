@@ -1212,7 +1212,7 @@ msgstr ""
 msgid "Make superadmin"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:565
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:637
 #: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:100
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:686
 #: lib/pauseai_ca_web/live/volunteer_profile_live.ex:138
@@ -1227,7 +1227,7 @@ msgstr ""
 msgid "Page %{page} of %{page_count}"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:558
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:630
 #: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:95
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:678
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:1065
@@ -1295,12 +1295,12 @@ msgstr[1] ""
 msgid "%{filename}: %{count} rows found"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:472
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:473
 #, elixir-autogen, elixir-format
 msgid "Account matched"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:497
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:499
 #, elixir-autogen, elixir-format
 msgid "By %{email}"
 msgstr ""
@@ -1338,12 +1338,12 @@ msgstr ""
 msgid "Human review"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:427
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:428
 #, elixir-autogen, elixir-format
 msgid "Import selected contacts"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:492
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:494
 #, elixir-autogen, elixir-format
 msgid "Imported"
 msgstr ""
@@ -1355,7 +1355,7 @@ msgid_plural "Imported %{count} contacts."
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:436
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:437
 #, elixir-autogen, elixir-format
 msgid "Imported contacts"
 msgstr ""
@@ -1365,7 +1365,7 @@ msgstr ""
 msgid "Invalid email — cannot select"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:461
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:462
 #, elixir-autogen, elixir-format
 msgid "No imported contacts match this search."
 msgstr ""
@@ -1395,8 +1395,8 @@ msgstr ""
 msgid "Review status"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:441
-#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:446
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:442
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:447
 #, elixir-autogen, elixir-format
 msgid "Search imported contacts"
 msgstr ""
@@ -1454,29 +1454,31 @@ msgstr ""
 msgid "The import could not be saved. No contacts were changed."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:477
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:478
 #, elixir-autogen, elixir-format
 msgid "View activity"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:179
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:186
-#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:511
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:513
 #, elixir-autogen, elixir-format
 msgid "Do not contact"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:510
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:512
 #, elixir-autogen, elixir-format
 msgid "Known active"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:512
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:514
 #, elixir-autogen, elixir-format
 msgid "Needs review"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:413
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:414
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:550
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:579
 #, elixir-autogen, elixir-format
 msgid "Not provided"
 msgstr ""
@@ -1486,12 +1488,12 @@ msgstr ""
 msgid "Required column: Email. The 15 standard onboarding columns and 3 Montréal columns are preserved. Nothing is saved during preview."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:407
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:408
 #, elixir-autogen, elixir-format
 msgid "Show all source fields"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:481
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:483
 #, elixir-autogen, elixir-format
 msgid "Show imported source fields"
 msgstr ""
@@ -1501,12 +1503,12 @@ msgstr ""
 msgid "Additional columns preserved: %{columns}"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:533
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:605
 #, elixir-autogen, elixir-format
 msgid "Page %{page} of %{pages} · %{total} contacts"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:541
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:613
 #, elixir-autogen, elixir-format
 msgid "Rows per page"
 msgstr ""
@@ -4326,4 +4328,65 @@ msgstr ""
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:188
 #, elixir-autogen, elixir-format
 msgid "PauseAI Global email"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:562
+#, elixir-autogen, elixir-format
+msgid "Computed from postal code"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:563
+#, elixir-autogen, elixir-format
+msgid "Computed region"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:578
+#, elixir-autogen, elixir-format
+msgid "From source sheet"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:533
+#, elixir-autogen, elixir-format
+msgid "Geography"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:564
+#, elixir-autogen, elixir-format
+msgid "Region supplied by source"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:561
+#, elixir-autogen, elixir-format
+msgid "Self-reported region"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:585
+#, elixir-autogen, elixir-format
+msgid "Sheet"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:587
+#, elixir-autogen, elixir-format
+msgid "Sheet status"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:529
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:583
+#, elixir-autogen, elixir-format
+msgid "Signup date"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:584
+#, elixir-autogen, elixir-format
+msgid "Source"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:586
+#, elixir-autogen, elixir-format
+msgid "Source status"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:588
+#, elixir-autogen, elixir-format
+msgid "Welcomed date"
 msgstr ""
