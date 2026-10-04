@@ -105,4 +105,31 @@ defmodule PauseAiCaWeb.QuestionDraftsLiveTest do
     restore |> element("#question-restore") |> render_click()
     assert has_element?(restore, "#question-draft-form")
   end
+
+  test "LEARN-CMS-PUBLIC-02 changing a source clears obsolete evidence labels and keeps categories distinct",
+       %{conn: conn} do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    scope = Scope.for_user(admin)
+    question = Repo.get_by!(PauseAiCa.Learning.QuestionDraft, concept_id: "bengio-speed")
+
+    values =
+      QuestionBank.values(question, "en")
+      |> Map.merge(%{
+        "url" => "https://example.org/new-article",
+        "source" => "Replacement article",
+        "topic" => "voices"
+      })
+
+    {:ok, saved} = QuestionBank.save(scope, question, "en", values)
+    {:ok, _} = QuestionBank.publish(scope, saved)
+    public = conn |> get("/en/learn") |> html_response(200)
+    document = LazyHTML.from_document(public)
+    card = LazyHTML.query(document, "#nugget-bengio-speed")
+    refute LazyHTML.text(card) =~ "Interview"
+    assert LazyHTML.text(card) =~ "Replacement article"
+    assert Enum.count(LazyHTML.query(card, ".learning-topic.topic-voices")) == 1
+
+    refute LazyHTML.attribute(card, "class")
+           |> Enum.any?(&String.contains?(&1, "has-voice-category"))
+  end
 end

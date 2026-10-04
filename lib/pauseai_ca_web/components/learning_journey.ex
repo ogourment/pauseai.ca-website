@@ -47,7 +47,8 @@ defmodule PauseAiCaWeb.LearningJourney do
           id={"nugget-#{n["id"]}"}
           class={[
             "learning-card topic-#{n["topic"]} relative rounded-2xl border border-stone-200 bg-white p-6",
-            n["id"] in ["bengio-speed", "research-acceleration"] && "has-voice-category"
+            n["id"] in ["bengio-speed", "research-acceleration"] && n["topic"] != "voices" &&
+              "has-voice-category"
           ]}
           data-nugget={n["id"]}
           data-nugget-title={n["title"]}
@@ -55,7 +56,7 @@ defmodule PauseAiCaWeb.LearningJourney do
         >
           <span class={"learning-topic mr-10 topic-#{n["topic"]}"}>{topic_label(n["topic"])}</span>
           <span
-            :if={n["id"] in ["bengio-speed", "research-acceleration"]}
+            :if={n["id"] in ["bengio-speed", "research-acceleration"] && n["topic"] != "voices"}
             class="learning-topic topic-voices"
           >{gettext("People and quotations")}</span>
           <img
@@ -72,7 +73,9 @@ defmodule PauseAiCaWeb.LearningJourney do
               {n["image_credit"]}
             </figcaption>
           </figure>
-          <p class="mt-3 text-sm text-stone-600">{n["evidence"]}</p>
+          <p :if={n["evidence"] not in [nil, ""]} class="mt-3 text-sm text-stone-600">
+            {n["evidence"]}
+          </p>
           <h3 class="mt-3 pr-10 font-heading text-2xl">
             {if(@quiz, do: n["question"], else: n["title"])}
           </h3>

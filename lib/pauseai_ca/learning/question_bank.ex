@@ -132,6 +132,7 @@ defmodule PauseAiCa.Learning.QuestionBank do
       "topic" =>
         if(question.published_topic == "actions", do: "treaty", else: question.published_topic),
       "discussion" => question.published_kind != "factual",
+      "evidence" => if(edition["url"] == original["url"], do: original["evidence"], else: nil),
       "cms" => true,
       "language" => language || locale
     })
