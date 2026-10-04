@@ -1,3 +1,4 @@
+import {publicAnalyticsLocation} from "./public_analytics_location"
 // Keep authentication capabilities and personal account pages away from gtag.
 // Consent-gated success events wait for the next non-sensitive public page.
 const consentKey = "pauseai-ca:analytics-consent"
@@ -31,12 +32,12 @@ export function flushSignupMetrics() {
       window.gtag("event", detail.event, {
         method: "email_link",
         signup_entry_point: sources.includes(detail.source) ? detail.source : "unknown",
-        page_location: window.location.origin + window.location.pathname,
+        page_location: publicAnalyticsLocation(),
         page_referrer: window.location.origin,
       })
     }
   } catch (_error) {}
 }
 
-window.pauseaiSignupAnalytics = {queue: queueSignupMetric, flush: flushSignupMetrics, publicPage: publicAnalyticsPage}
+window.pauseaiSignupAnalytics = {queue: queueSignupMetric, flush: flushSignupMetrics, publicPage: publicAnalyticsPage, publicLocation: publicAnalyticsLocation}
 window.addEventListener("phx:signup-metric", event => queueSignupMetric(event.detail))

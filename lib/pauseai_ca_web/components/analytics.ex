@@ -87,11 +87,11 @@ defmodule PauseAiCaWeb.Analytics do
               gtag("config", id, {
                 anonymize_ip: true, allow_google_signals: false,
                 send_page_view: false,
-                page_location: location.origin + location.pathname,
+                page_location: window.pauseaiSignupAnalytics.publicLocation(),
                 page_referrer: location.origin,
               })
               gtag("event", "page_view", {
-                page_location: location.origin + location.pathname,
+                page_location: window.pauseaiSignupAnalytics.publicLocation(),
                 page_referrer: location.origin,
               })
               window.pauseaiSignupAnalytics.flush()

@@ -22,6 +22,7 @@ import "phoenix_html"
 import "./signup_analytics"
 import "./learning_journey"
 import "./rogue_window"
+import "./rogue_navigation"
 import "./rogue_ally"
 // Establish Phoenix Socket and LiveView configuration.
 import {Socket} from "phoenix"

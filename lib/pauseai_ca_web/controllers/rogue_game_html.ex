@@ -3,6 +3,10 @@ defmodule PauseAiCaWeb.RogueGameHTML do
 
   def copy do
     Map.new([
+      {"Bookmark", gettext("Bookmark")},
+      {"Can you close this rogue agent?", gettext("Can you close this rogue agent?")},
+      {"Link copied.", gettext("Link copied.")},
+      {"Select and copy the link above.", gettext("Select and copy the link above.")},
       {"Account sync failed. Your bookmarks remain in this browser; try again when connected.",
        gettext(
          "Account sync failed. Your bookmarks remain in this browser; try again when connected."

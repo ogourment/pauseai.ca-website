@@ -15,7 +15,8 @@
         lang="fr"
         hreflang="fr"
       >Français</a><button id="exit">End game</button>
-    </nav><div id="game">
+    </nav>
+    <div id="game">
       <p id="progress"></p><h1 id="stage-title" tabindex="-1"></h1><p id="instruction"></p><div id="arena">
         <article class="agent primary-agent" aria-labelledby="agent-name">
           <div class="window-heading">
@@ -50,7 +51,19 @@
         id="bookmark-status"
         role="status"
       >
-      </p><div id="episodes"></div><a id="learn" class="button" href={@learn_path}>Explore the learning path</a><button id="replay">Play again</button>
+      </p><div id="episodes"></div><a id="learn" class="button" href={@learn_path}>Explore the learning path</a><button id="share-game">{gettext(
+        "Share"
+      )}</button><button id="replay">Play again</button>
+      <section id="game-share-panel" hidden aria-label={gettext("Share the game")}>
+        <p>{gettext("Invite someone to try the game.")}</p>
+        <label for="game-share-url">{gettext("Game link")}</label>
+        <input id="game-share-url" type="url" readonly />
+        <div class="controls">
+          <button id="copy-game-link">{gettext("Copy link")}</button>
+          <button id="close-game-share">{gettext("Close sharing options")}</button>
+        </div>
+      </section>
+      <p id="game-share-status" role="status" aria-live="polite"></p>
     </section>
   </main>
 </div><noscript><p>

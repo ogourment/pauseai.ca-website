@@ -1,3 +1,4 @@
+import {publicAnalyticsLocation} from "./public_analytics_location"
 import {learningId} from "./learning_id"
 // One aggregate per attempt, never a stream of pointer movements or personal data.
 export function rogueMetrics(root) {
@@ -24,7 +25,7 @@ export function rogueMetrics(root) {
     clearTimeout(timer);timer=setTimeout(flush,200)
     // The consenting parent owns gtag. Never pass attempt, visitor or account IDs.
     const target=window.gtag?window:window.opener
-    try {if(localStorage.getItem('pauseai-ca:analytics-consent')==='granted' && target?.gtag && ['game_stage_view','game_ended','learning_path_opened','button_clicked'].includes(event)) target.gtag('event',event,{game:'rogue_popup',stage,button:values.button_id,completed:state.completed,page_location:location.origin+location.pathname,page_referrer:location.origin})} catch (_) {}
+    try {if(localStorage.getItem('pauseai-ca:analytics-consent')==='granted' && target?.gtag && ['game_stage_view','game_ended','learning_path_opened','button_clicked'].includes(event)) target.gtag('event',event,{game:'rogue_popup',stage,button:values.button_id,completed:state.completed,page_location:publicAnalyticsLocation(),page_referrer:location.origin})} catch (_) {}
   }
   document.addEventListener('click',event=>{const button=event.target.closest('button');if(button&&root.contains(button))record('button_clicked',{button_id:button.id||button.dataset.metric||'choice'})},true)
   window.addEventListener('pagehide',flush)

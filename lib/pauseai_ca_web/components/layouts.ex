@@ -86,7 +86,9 @@ defmodule PauseAiCaWeb.Layouts do
             <.link
               :for={{id, label, href} <- learn_items(@locale)}
               id={"learn-#{id}"}
-              navigate={href}
+              href={if(id == "rogue-game", do: href)}
+              navigate={if(id != "rogue-game", do: href)}
+              data-rogue-launch={if(id == "rogue-game", do: "true")}
               class="block px-4 py-3 font-semibold hover:bg-brand-wash"
             >{label}</.link>
           </div>
@@ -119,7 +121,9 @@ defmodule PauseAiCaWeb.Layouts do
               <.link
                 :for={{id, label, href} <- learn_items(@locale)}
                 id={"mobile-learn-#{id}"}
-                navigate={href}
+                href={if(id == "rogue-game", do: href)}
+                navigate={if(id != "rogue-game", do: href)}
+                data-rogue-launch={if(id == "rogue-game", do: "true")}
                 class="block px-4 py-3 font-semibold hover:bg-brand-wash"
               >{label}</.link>
             </div>
@@ -551,6 +555,8 @@ defmodule PauseAiCaWeb.Layouts do
     [
       {"test", gettext("Take the test"),
        if(locale == "fr", do: ~p"/fr#questions", else: ~p"/en#questions")},
+      {"rogue-game", gettext("Play the Rogue Agent Popup Game"),
+       if(locale == "fr", do: ~p"/fr/agent-rebelle", else: ~p"/en/rogue-agent")},
       {"risks", gettext("Learn about the risks"),
        if(locale == "fr", do: ~p"/fr/comprendre", else: ~p"/en/learn")},
       {"basket", gettext("My learning list"),

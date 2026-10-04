@@ -18,7 +18,7 @@ export function createBookmarks(root) {
   const save = () => {try {localStorage.setItem(key, JSON.stringify(state))} catch (_) {persistent = false}}
   const send = change => {
     pending = pending.catch(() => {}).then(async () => {
-      const response = await fetch('/learning/basket', {method:'POST',headers:{'content-type':'application/json','x-csrf-token':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify(change)})
+      const response = await fetch('/learning/basket', {method:'POST',keepalive:true,headers:{'content-type':'application/json','x-csrf-token':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify(change)})
       if (!response.ok) throw Error('save')
       state.pending = state.pending.filter(item=>item.token!==change.token); save()
     }).catch(() => {
