@@ -122,6 +122,7 @@ defmodule PauseAiCaWeb.Router do
       live "/manage/accounts/import", VolunteerSignupsLive, :index
       live "/manage/accounts/:account_id/compose", MailDraftsLive, :new
       live "/manage/mail", MailDraftsLive, :index
+      live "/manage/mail/new", MailDraftsLive, :new
       live "/manage/mail/:id", MailDraftsLive, :show
       live "/manage/accounts/:id", ManagedAccountsLive, :show
       live "/volunteer-signups", VolunteerSignupsLive, :index

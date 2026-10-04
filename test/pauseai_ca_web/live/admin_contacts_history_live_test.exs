@@ -81,6 +81,7 @@ defmodule PauseAiCaWeb.AdminContactsHistoryLiveTest do
     row = %{
       "email" => "summary@example.org",
       "name" => "Source summary",
+      "source_notes" => "Preserved source note",
       "signup_date" => "2025-12-28",
       "sheet" => "Rest of Canada",
       "source" => "Notion ROC",
@@ -112,6 +113,27 @@ defmodule PauseAiCaWeb.AdminContactsHistoryLiveTest do
       assert has_element?(directory, selector, value)
     end
 
+    assert has_element?(
+             directory,
+             "#directory-source-details-#{contact.id} summary",
+             "Show imported source fields"
+           )
+
+    assert has_element?(
+             directory,
+             "#directory-source-details-#{contact.id} dd",
+             "Preserved source note"
+           )
+
+    refute has_element?(directory, "#directory-source-details-#{contact.id}[open]")
+    {:ok, imported, _} = live(conn, ~p"/admin/contact-imports?locale=en&q=summary")
+
+    assert has_element?(
+             imported,
+             "#imported-source-details-#{contact.id} dd",
+             "Preserved source note"
+           )
+
     {:ok, profile, _} = live(conn, ~p"/admin/contacts/legacy/#{contact.id}?locale=en")
     assert has_element?(profile, "#profile-source-summary-#{contact.id}", "ROCanada")
     assert has_element?(profile, "#profile-source-summary-#{contact.id}", "2025-12-28")
@@ -120,6 +142,12 @@ defmodule PauseAiCaWeb.AdminContactsHistoryLiveTest do
              profile,
              "#crm-source-details details summary",
              "Show imported source fields"
+           )
+
+    assert has_element?(
+             profile,
+             "#profile-source-details-#{contact.id} dd",
+             "Preserved source note"
            )
 
     refute has_element?(profile, "#crm-source-details details[open]")

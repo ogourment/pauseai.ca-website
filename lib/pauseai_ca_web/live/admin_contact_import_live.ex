@@ -484,17 +484,10 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
                 id={"contact-source-summary-#{contact.id}"}
                 data={contact.source_data}
               />
-              <details class="mt-3 text-sm text-stone-600">
-                <summary class="cursor-pointer font-semibold text-stone-800">
-                  {gettext("Show imported source fields")}
-                </summary>
-                <dl class="mt-3 grid gap-x-6 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
-                  <div :for={{field, value} <- Enum.sort(contact.source_data)}>
-                    <dt class="font-semibold">{source_field_label(field)}</dt>
-                    <dd class="break-words">{value}</dd>
-                  </div>
-                </dl>
-              </details>
+              <PauseAiCaWeb.ContactSourceComponents.source_details
+                id={"imported-source-details-#{contact.id}"}
+                data={contact.source_data}
+              />
               <ol :if={@expanded_contact_id == contact.id} class="mt-4 border-l-2 border-brand pl-5">
                 <li :for={activity <- @activities} class="py-2">
                   <strong>{gettext("Imported")}</strong>
