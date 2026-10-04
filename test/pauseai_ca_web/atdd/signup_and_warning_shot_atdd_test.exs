@@ -162,7 +162,7 @@ if System.get_env("ATDD") == "true" do
         |> visit("/en/learn")
         |> click("#consent-decline")
         |> capture(id, "Read a useful resource", "Reader can choose to preserve it")
-        |> click("#resource-pauseai-learn a[href*='bookmark=']")
+        |> click("#resource-pauseai-learn a.resource-bookmark[href*='bookmark=']")
         |> fill_in("Email", with: user.email)
         |> click_button("Email me a secure link")
         |> assert_has("#account-email-pending")
@@ -523,7 +523,7 @@ if System.get_env("ATDD") == "true" do
         context.conn
         |> visit("/en/learn")
         |> click("#consent-decline")
-        |> click("#resource-pauseai-learn a[href*='bookmark=']")
+        |> click("#resource-pauseai-learn a.resource-bookmark[href*='bookmark=']")
         |> fill_in("Email", with: email)
 
       Application.put_env(:pauseai_ca, PauseAiCa.Mailer, adapter: PauseAiCa.SignupFailureAdapter)
