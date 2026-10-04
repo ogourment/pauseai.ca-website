@@ -11,7 +11,7 @@ defmodule PauseAiCaWeb.MailDraftsLive do
       {:ok,
        assign(socket,
          locale: locale,
-         page_title: gettext("Email drafts"),
+         page_title: gettext("Emails"),
          batches: [],
          batch: nil,
          anchor: nil,
@@ -44,6 +44,16 @@ defmodule PauseAiCaWeb.MailDraftsLive do
           _ -> {:noreply, denied(socket)}
         end
 
+      socket.assigns.live_action == :new ->
+        case ContactSource.search(scope, "", []) do
+          {:ok, results} ->
+            {:noreply,
+             assign(socket, batch: nil, anchor: nil, draft: nil, query: "", results: results)}
+
+          _ ->
+            {:noreply, denied(socket)}
+        end
+
       params["id"] ->
         case Mail.get(scope, params["id"]) do
           {:ok, batch} ->
@@ -68,20 +78,17 @@ defmodule PauseAiCaWeb.MailDraftsLive do
         end
 
       true ->
-        {:noreply, assign(socket, batches: Mail.list(scope))}
+        {:noreply, assign(socket, batch: nil, anchor: nil, draft: nil, batches: Mail.list(scope))}
     end
   end
 
   @impl true
-  def handle_event("start", _, socket) do
-    case Mail.create(socket.assigns.current_scope, socket.assigns.anchor.id) do
-      {:ok, batch} ->
-        {:noreply,
-         push_navigate(socket, to: ~p"/manage/mail/#{batch.id}?locale=#{socket.assigns.locale}")}
+  def handle_event("start-account", %{"id" => id}, socket) do
+    start_batch(socket, id)
+  end
 
-      _ ->
-        {:noreply, assign(socket, error: error_message(:unauthorized))}
-    end
+  def handle_event("start", _, socket) do
+    start_batch(socket, socket.assigns.anchor && socket.assigns.anchor.id)
   end
 
   def handle_event("search", %{"query" => query}, socket) do
@@ -143,6 +150,17 @@ defmodule PauseAiCaWeb.MailDraftsLive do
       {:error, error} ->
         {:noreply,
          assign(socket, error: error_message(error), status: gettext("Unsaved changes"))}
+    end
+  end
+
+  defp start_batch(socket, id) do
+    case Mail.create(socket.assigns.current_scope, id) do
+      {:ok, batch} ->
+        {:noreply,
+         push_navigate(socket, to: ~p"/manage/mail/#{batch.id}?locale=#{socket.assigns.locale}")}
+
+      _ ->
+        {:noreply, assign(socket, error: error_message(:unauthorized))}
     end
   end
 
@@ -270,7 +288,7 @@ defmodule PauseAiCaWeb.MailDraftsLive do
           navigate={~p"/manage/accounts/#{@batch.anchor_user_id}?locale=#{@locale}"}
           class="mb-4 inline-block underline"
         >{gettext("Account and Brevo history")}</.link>
-        <h1 class="text-3xl font-bold mb-6">{gettext("Email drafts")}</h1>
+        <h1 class="text-3xl font-bold mb-6">{gettext("Emails")}</h1>
         <p>
           {gettext(
             "Templates save automatically. Individual edits save with Save draft. Drafting does not send email."
@@ -282,10 +300,23 @@ defmodule PauseAiCaWeb.MailDraftsLive do
           <p>{@anchor.name} · {@anchor.email}</p><button
             type="button"
             phx-click="start"
+            phx-disable-with={gettext("Start draft")}
             class="crm-button"
           >{gettext("Start draft")}</button>
         </section>
-        <section :if={is_nil(@batch) and is_nil(@anchor)} id="mail-batches">
+        <section
+          :if={@live_action == :index and is_nil(@batch) and is_nil(@anchor)}
+          id="mail-batches"
+          class="mt-6"
+        >
+          <.link
+            id="mail-new-draft"
+            navigate={~p"/manage/mail/new?locale=#{@locale}"}
+            class="crm-button"
+          >{gettext("New draft")}</.link>
+          <p :if={@batches == []} class="mt-3 text-stone-600">
+            {gettext("No drafts yet. Choose New draft to begin.")}
+          </p>
           <ul>
             <li :for={batch <- @batches}>
               <.link navigate={~p"/manage/mail/#{batch.id}?locale=#{@locale}"}>{if batch.subject == "",
@@ -293,6 +324,47 @@ defmodule PauseAiCaWeb.MailDraftsLive do
                 else: batch.subject}</.link>
             </li>
           </ul>
+        </section>
+        <section
+          :if={@live_action == :new and is_nil(@anchor) and is_nil(@batch)}
+          id="mail-new"
+          class="mt-6"
+        >
+          <h2 class="text-xl font-bold">{gettext("New draft")}</h2>
+          <p>
+            {gettext(
+              "Choose an eligible account to start. You can add up to five recipients in the draft."
+            )}
+          </p>
+          <.form
+            id="mail-new-search-form"
+            for={to_form(%{"query" => @query})}
+            phx-change="search"
+            phx-submit="search"
+          >
+            <.input
+              type="search"
+              id="mail-new-contact-search"
+              name="query"
+              value={@query}
+              label={gettext("Find an eligible account")}
+              phx-debounce="250"
+            />
+          </.form>
+          <ul>
+            <li :for={contact <- @results} class="flex flex-wrap items-center gap-4 py-3">
+              <span>{contact.name} · {contact.email}</span>
+              <button
+                type="button"
+                phx-click="start-account"
+                phx-disable-with={gettext("Start draft")}
+                phx-value-id={contact.id}
+                class="crm-button"
+              >{gettext("Start draft")}</button>
+            </li>
+          </ul>
+          <p :if={@results == []} role="status">{gettext("No eligible accounts found.")}</p>
+          <.link navigate={~p"/manage/mail?locale=#{@locale}"} class="underline">{gettext("Cancel")}</.link>
         </section>
         <section :if={@batch} id="mail-workspace" class="mt-6 space-y-8">
           <section id="mail-recipients">
@@ -306,7 +378,12 @@ defmodule PauseAiCaWeb.MailDraftsLive do
                 >{gettext("Remove")}</button>
               </li>
             </ul>
-            <.form for={to_form(%{"query" => @query})} phx-change="search" phx-submit="search">
+            <.form
+              id="mail-recipient-search-form"
+              for={to_form(%{"query" => @query})}
+              phx-change="search"
+              phx-submit="search"
+            >
               <.input
                 type="search"
                 id="mail-contact-search"

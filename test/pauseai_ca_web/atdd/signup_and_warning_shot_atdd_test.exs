@@ -931,7 +931,6 @@ if System.get_env("ATDD") == "true" do
         )
         |> click_link("Admin dashboard")
         |> capture(id, "Open admin tools", "Donation pledges is available from the dashboard")
-        |> click("#management-more summary")
         |> click_link("Donation pledges")
         |> assert_has("#donation-pledges", text: "followup@example.org")
         |> assert_has("#donation-pledges", text: "125")

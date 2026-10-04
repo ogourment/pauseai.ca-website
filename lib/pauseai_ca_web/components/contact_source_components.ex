@@ -9,14 +9,16 @@ defmodule PauseAiCaWeb.ContactSourceComponents do
     assigns = assign(assigns, :geography, source_geography(assigns.data))
 
     ~H"""
-    <dl id={@id} class="mt-3 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2 xl:grid-cols-4">
+    <dl id={@id} class="mt-2 grid gap-x-6 gap-y-1 text-sm sm:grid-cols-2 xl:grid-cols-4">
       <div>
-        <dt class="font-semibold text-stone-700">{gettext("Signup date")}</dt>
-        <dd class="break-words text-stone-900">{source_summary_value(@data, "signup_date")}</dd>
+        <dt class="font-normal text-stone-600">{gettext("Signup date")}</dt>
+        <dd class="break-words font-medium text-stone-900">
+          {source_summary_value(@data, "signup_date")}
+        </dd>
       </div>
       <div>
-        <dt class="font-semibold text-stone-700">{gettext("Geography")}</dt>
-        <dd class="break-words text-stone-900">
+        <dt class="font-normal text-stone-600">{gettext("Geography")}</dt>
+        <dd class="break-words font-medium text-stone-900">
           {elem(@geography, 0)}<span :if={elem(@geography, 1)} class="block text-xs text-stone-600">{elem(
             @geography,
             1
@@ -24,10 +26,31 @@ defmodule PauseAiCaWeb.ContactSourceComponents do
         </dd>
       </div>
       <div :for={field <- ~w(source sheet source_status status welcomed_date)}>
-        <dt class="font-semibold text-stone-700">{field_label(field)}</dt>
-        <dd class="break-words text-stone-900">{source_summary_value(@data, field)}</dd>
+        <dt class="font-normal text-stone-600">{field_label(field)}</dt>
+        <dd class="break-words font-medium text-stone-900">{source_summary_value(@data, field)}</dd>
       </div>
     </dl>
+    """
+  end
+
+  attr :id, :string, required: true
+  attr :data, :map, required: true
+
+  def source_details(assigns) do
+    ~H"""
+    <details id={@id} class="mt-3 text-sm text-stone-600">
+      <summary class="cursor-pointer font-semibold text-stone-800">
+        {gettext("Show imported source fields")}
+      </summary>
+      <dl class="mt-3 grid gap-x-6 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
+        <div :for={{field, value} <- Enum.sort(@data)}>
+          <dt class="font-normal text-stone-600">{field_label(field)}</dt>
+          <dd class="break-words text-stone-900">
+            {if is_map(value) or is_list(value), do: Jason.encode!(value), else: value}
+          </dd>
+        </div>
+      </dl>
+    </details>
     """
   end
 

@@ -619,13 +619,25 @@ defmodule PauseAiCaWeb.Layouts do
           navigate={~p"/manage/mail?locale=#{@locale}"}
           aria-current={if @active == "mail", do: "page"}
           class={tab_class(@active == "mail")}
-        >{gettext("Email drafts")}</.link>
+        >{gettext("Emails")}</.link>
         <.link
           :if={@superadmin?}
           navigate={~p"/manage/administrators?locale=#{@locale}"}
           aria-current={if @active == "administrators", do: "page"}
           class={tab_class(@active == "administrators")}
         >{gettext("Administrators")}</.link>
+        <.link
+          :if={@superadmin?}
+          navigate={~p"/admin/dashboard?locale=#{@locale}"}
+          aria-current={if @active == "dashboard", do: "page"}
+          class={tab_class(@active == "dashboard")}
+        >{gettext("Dashboard")}</.link>
+        <.link
+          :if={@superadmin?}
+          navigate={~p"/admin/donation-pledges?locale=#{@locale}"}
+          aria-current={if @active == "donation-pledges", do: "page"}
+          class={tab_class(@active == "donation-pledges")}
+        >{gettext("Donation pledges")}</.link>
       </div>
       <script :type={Phoenix.LiveView.ColocatedHook} name=".ManagementTabs">
         export default {
@@ -645,19 +657,6 @@ defmodule PauseAiCaWeb.Layouts do
           {gettext("More")} ▾
         </summary>
         <div class="absolute right-0 z-50 min-w-64 rounded-lg border border-stone-200 bg-white p-2 shadow-lg">
-          <.link
-            navigate={~p"/admin/dashboard?locale=#{@locale}"}
-            aria-current={if @active == "dashboard", do: "page"}
-            class="block px-3 py-2 hover:bg-brand-wash"
-          >{gettext("Dashboard")}</.link>
-          <.link
-            navigate={~p"/admin/contact-imports?locale=#{@locale}"}
-            class="block px-3 py-2 hover:bg-brand-wash"
-          >{gettext("Contact imports")}</.link>
-          <.link
-            navigate={~p"/admin/donation-pledges?locale=#{@locale}"}
-            class="block px-3 py-2 hover:bg-brand-wash"
-          >{gettext("Donation pledges")}</.link>
           <a href="/admin/versions" class="block px-3 py-2 hover:bg-brand-wash">{gettext(
             "Deployment versions"
           )}</a>

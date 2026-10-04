@@ -23,7 +23,8 @@ defmodule PauseAiCaWeb.AdminContactsLive do
          error: nil,
          status: nil,
          form: to_form(%{}, as: "contact"),
-         search: ""
+         search: "",
+         directory_page: %{region: "", regions: [], page: 1, pages: 1, per: 25, total: 0}
        )}
     else
       {:ok,
@@ -49,14 +50,15 @@ defmodule PauseAiCaWeb.AdminContactsLive do
         {:noreply, load_record(socket, record)}
 
       :directory ->
-        with {:ok, records} <- CRM.search(scope, params["q"] || ""),
-             {:ok, origins} <- CRM.directory_origins(scope, records) do
+        with {:ok, page} <- CRM.directory_page(scope, params),
+             {:ok, origins} <- CRM.directory_origins(scope, page.records) do
           {:noreply,
            assign(socket,
              record: nil,
-             records: records,
+             records: page.records,
+             directory_page: page,
              directory_origins: origins,
-             search: params["q"] || ""
+             search: page.q
            )}
         else
           _ -> {:noreply, denied(socket)}
@@ -68,10 +70,17 @@ defmodule PauseAiCaWeb.AdminContactsLive do
   end
 
   @impl true
-  def handle_event("search", %{"search" => term}, socket),
-    do:
-      {:noreply,
-       push_patch(socket, to: ~p"/admin/contacts?#{%{locale: socket.assigns.locale, q: term}}")}
+  def handle_event("search", params, socket) do
+    values = %{
+      locale: socket.assigns.locale,
+      q: params["search"] || socket.assigns.search,
+      region: params["region"] || socket.assigns.directory_page.region,
+      per: params["per"] || socket.assigns.directory_page.per,
+      page: 1
+    }
+
+    {:noreply, push_patch(socket, to: ~p"/admin/contacts?#{values}")}
+  end
 
   def handle_event("edit", %{"contact" => attrs}, socket),
     do: {:noreply, assign(socket, form: to_form(attrs, as: "contact"), status: nil)}
@@ -149,6 +158,10 @@ defmodule PauseAiCaWeb.AdminContactsLive do
     end
   end
 
+  defp directory_uri(locale, search, directory, page) do
+    ~p"/admin/contacts?#{%{locale: locale, q: search, region: directory.region, per: directory.per, page: page}}"
+  end
+
   defp load_record(socket, record) do
     scope = socket.assigns.current_scope
     legacy = CRM.legacy_activities(scope, record.person.id)
@@ -211,13 +224,27 @@ defmodule PauseAiCaWeb.AdminContactsLive do
       locale={@locale}
     >
       <main class="mx-auto max-w-5xl px-5 py-10 crm-surface">
-        <h1 class="text-3xl font-bold mb-6">{gettext("Contacts")}</h1>
+        <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+          <h1 class="text-3xl font-bold">{gettext("Contacts")}</h1>
+          <.link
+            id="crm-import-contacts"
+            navigate={~p"/admin/contact-imports?locale=#{@locale}"}
+            class="crm-button"
+          >{gettext("Import Contacts")}</.link>
+        </div>
         <p :if={@error} id="crm-error" role="alert" class="crm-error">{@error}</p>
         <p :if={@status} role="status">{@status}</p>
         <section :if={is_nil(@record)} id="crm-directory">
           <.form
             id="crm-search-form"
-            for={to_form(%{"search" => @search})}
+            for={
+              to_form(%{
+                "search" => @search,
+                "region" => @directory_page.region,
+                "per" => @directory_page.per
+              })
+            }
+            class="grid gap-3 sm:grid-cols-[2fr_1fr_1fr]"
             phx-change="search"
             phx-submit="search"
           >
@@ -229,6 +256,22 @@ defmodule PauseAiCaWeb.AdminContactsLive do
               label={gettext("Find a contact")}
               phx-debounce="250"
             />
+            <.input
+              type="select"
+              id="crm-region"
+              name="region"
+              value={@directory_page.region}
+              label={gettext("Geography")}
+              options={[{gettext("All regions"), ""} | Enum.map(@directory_page.regions, &{&1, &1})]}
+            />
+            <.input
+              type="select"
+              id="crm-per"
+              name="per"
+              value={@directory_page.per}
+              label={gettext("Rows per page")}
+              options={Enum.map([10, 25, 50, 100], &{to_string(&1), &1})}
+            />
           </.form>
           <p>
             {gettext(
@@ -236,19 +279,59 @@ defmodule PauseAiCaWeb.AdminContactsLive do
             )}
           </p>
           <ul>
-            <li :for={record <- @records} id={"crm-contact-#{record.person.id}"} class="py-4 border-b">
+            <li :for={record <- @records} id={"crm-contact-#{record.person.id}"} class="py-3 border-b">
               <strong>{record.person.name}</strong><div :for={address <- record.addresses}>
                 <.link navigate={~p"/admin/contacts/#{record.person.id}?locale=#{@locale}"}>{address.email}</.link>
               </div>
-              <div :for={origin <- Map.get(@directory_origins, record.person.id, [])} class="mt-4">
-                <p class="text-sm font-semibold text-stone-700">{origin.email}</p>
+              <div :for={origin <- Map.get(@directory_origins, record.person.id, [])} class="mt-2">
+                <p
+                  :if={length(Map.get(@directory_origins, record.person.id, [])) > 1}
+                  class="text-sm font-medium text-stone-700"
+                >
+                  {origin.email}
+                </p>
                 <PauseAiCaWeb.ContactSourceComponents.source_summary
                   id={"directory-source-summary-#{origin.id}"}
+                  data={origin.source_data}
+                />
+                <PauseAiCaWeb.ContactSourceComponents.source_details
+                  id={"directory-source-details-#{origin.id}"}
                   data={origin.source_data}
                 />
               </div>
             </li>
           </ul>
+          <nav
+            id="crm-pagination"
+            aria-label={gettext("Contact pages")}
+            class="mt-4 flex flex-wrap items-center gap-4"
+          >
+            <p role="status">
+              {gettext("Page %{page} of %{pages} · %{total} contacts",
+                page: @directory_page.page,
+                pages: @directory_page.pages,
+                total: @directory_page.total
+              )}
+            </p>
+            <.link
+              :if={@directory_page.page > 1}
+              patch={directory_uri(@locale, @search, @directory_page, @directory_page.page - 1)}
+              class="underline"
+            >{gettext("Previous")}</.link>
+            <span :if={@directory_page.page == 1} aria-disabled="true" class="text-stone-500">{gettext(
+              "Previous"
+            )}</span>
+            <.link
+              :if={@directory_page.page < @directory_page.pages}
+              patch={directory_uri(@locale, @search, @directory_page, @directory_page.page + 1)}
+              class="underline"
+            >{gettext("Next")}</.link>
+            <span
+              :if={@directory_page.page == @directory_page.pages}
+              aria-disabled="true"
+              class="text-stone-500"
+            >{gettext("Next")}</span>
+          </nav>
         </section>
         <section :if={@record} id="crm-record">
           <.form
@@ -293,21 +376,10 @@ defmodule PauseAiCaWeb.AdminContactsLive do
                 id={"profile-source-summary-#{origin.id}"}
                 data={origin.source_data}
               />
-              <details class="mt-3 text-sm text-stone-600">
-                <summary class="cursor-pointer font-semibold text-stone-800">
-                  {gettext("Show imported source fields")}
-                </summary>
-                <dl class="mt-3 grid gap-x-6 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
-                  <div :for={{field, value} <- Enum.sort(origin.source_data)}>
-                    <dt class="font-semibold">
-                      {PauseAiCaWeb.ContactSourceComponents.field_label(field)}
-                    </dt>
-                    <dd class="break-words">
-                      {if is_map(value) or is_list(value), do: Jason.encode!(value), else: value}
-                    </dd>
-                  </div>
-                </dl>
-              </details>
+              <PauseAiCaWeb.ContactSourceComponents.source_details
+                id={"profile-source-details-#{origin.id}"}
+                data={origin.source_data}
+              />
             </div>
           </section>
           <section id="crm-historical-dates" class="mt-8">

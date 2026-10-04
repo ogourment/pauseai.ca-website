@@ -94,8 +94,8 @@ if System.get_env("ATDD") == "true" do
         |> click_button("Keep me logged in on this device")
         |> assert_path("/")
         |> visit("/admin/dashboard")
-        |> click("#management-more summary")
-        |> click_link("Contact imports")
+        |> click_link("Contacts")
+        |> click_link("Import Contacts")
         |> assert_path("/admin/contact-imports")
         |> capture(
           "contact-import-01-workspace.png",
