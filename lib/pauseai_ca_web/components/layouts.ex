@@ -627,6 +627,11 @@ defmodule PauseAiCaWeb.Layouts do
           class={tab_class(@active == "mail")}
         >{gettext("Emails")}</.link>
         <.link
+          navigate={~p"/manage/questions?locale=#{@locale}"}
+          aria-current={if @active == "questions", do: "page"}
+          class={tab_class(@active == "questions")}
+        >{gettext("Quiz drafts")}</.link>
+        <.link
           :if={@superadmin?}
           navigate={~p"/manage/administrators?locale=#{@locale}"}
           aria-current={if @active == "administrators", do: "page"}

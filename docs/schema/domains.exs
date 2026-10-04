@@ -3,7 +3,7 @@
   %{
     id: "engagement",
     title: "Engagement and learning",
-    tables: ["actions", "learning_signals", "learning_game_attempts"]
+    tables: ["actions", "learning_signals", "learning_game_attempts", "quiz_question_drafts", "quiz_question_revisions"]
   },
   %{id: "crm", title: "Contact identity", tables: ~w(crm_people crm_addresses crm_sources crm_activities crm_merges crm_contact_links)},
   %{id: "mail_drafts", title: "Email drafts", tables: ~w(mail_batches mail_drafts)},
