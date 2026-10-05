@@ -8,6 +8,14 @@ defmodule PauseAiCaWeb.ProtestPressReleaseLiveTest do
     {:ok, english, _} = live(conn, "/en/montreal-protest-2026-09-26/press-release")
     assert has_element?(english, "#protest-press-release-page", "around 40")
     assert has_element?(english, "#protest-press-release-page blockquote", "Jeremy Eliosoff")
+
+    assert has_element?(
+             english,
+             "blockquote",
+             "AIs are starting to do increasingly sophisticated things"
+           )
+
+    assert has_element?(english, "blockquote", "pause the training of frontier models")
     assert has_element?(english, "#canada-policy-update", "Mark Carney")
 
     assert has_element?(

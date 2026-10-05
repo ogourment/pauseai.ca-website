@@ -156,6 +156,40 @@ defmodule PauseAiCaWeb.AdminContactsHistoryLiveTest do
     assert Enum.map(ContactMigration.list_activities(contact.id), & &1.action) == ["imported"]
   end
 
+  test "spreadsheet signup dates are readable across contact views without changing source history",
+       %{conn: conn} do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+
+    row = %{
+      "email" => "serial-date@example.org",
+      "name" => "Spreadsheet date",
+      "signup_date" => "45945",
+      "welcomed_date" => "45945",
+      "sheet" => "mtl"
+    }
+
+    {:ok, %{contacts: [contact]}} =
+      ContactMigration.import_selected([row], "serial.csv", "google-sheet:synthetic", admin)
+
+    conn = log_in_user(conn, admin)
+
+    for {uri, selector} <- [
+          {~p"/admin/contacts?locale=en&q=serial-date",
+           "#directory-source-summary-#{contact.id}"},
+          {~p"/admin/contact-imports?locale=en&q=serial-date",
+           "#contact-source-summary-#{contact.id}"},
+          {~p"/admin/contacts/legacy/#{contact.id}?locale=fr",
+           "#profile-source-summary-#{contact.id}"}
+        ] do
+      {:ok, view, _} = live(conn, uri)
+      assert has_element?(view, selector, "2025-10-15")
+      refute has_element?(view, selector, "45945")
+    end
+
+    assert Repo.get!(ContactMigration.Contact, contact.id).source_data == row
+    assert Enum.map(ContactMigration.list_activities(contact.id), & &1.action) == ["imported"]
+  end
+
   test "directory keeps both reconciled origins and rechecks current authorization" do
     alias PauseAiCa.{CRM, Accounts.Scope}
     admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()

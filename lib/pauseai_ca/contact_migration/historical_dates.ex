@@ -18,6 +18,24 @@ defmodule PauseAiCa.ContactMigration.HistoricalDates do
 
   def display_value(date), do: date["value"]
 
+  # Render modern spreadsheet date serials as dates, without inventing a UTC
+  # timestamp. The immutable source observation retains the original value.
+  # Short numbers may be years; do not reinterpret those as early-1900s dates.
+  def source_date_display(value) when is_binary(value) do
+    case Float.parse(String.trim(value)) do
+      {serial, ""} when serial >= 10_000 and serial < 2_958_466 ->
+        ~D[1899-12-30] |> Date.add(floor(serial)) |> Date.to_iso8601()
+
+      _ ->
+        value
+    end
+  end
+
+  def source_date_display(value) when is_number(value),
+    do: source_date_display(to_string(value))
+
+  def source_date_display(value), do: value
+
   def entries(source_data) do
     history = decode(source_data["historical_dates"])
 

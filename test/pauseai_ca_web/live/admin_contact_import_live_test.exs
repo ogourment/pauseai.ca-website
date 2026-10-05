@@ -44,12 +44,42 @@ defmodule PauseAiCaWeb.AdminContactImportLiveTest do
     view |> form("form[phx-change='search-preview']", search: "Québec") |> render_change()
     assert has_element?(view, "#selected-count", "1 selected")
     view |> element("#preview-row-3 input") |> render_click()
-    view |> element("#import-selected") |> render_click()
+    view |> form("#contact-selection-form") |> render_submit()
 
     assert render(view) =~ "Imported 2 contacts"
     assert [ada] = ContactMigration.list_contacts("ada@")
     assert ada.user_id == existing.id
     assert ContactMigration.list_contacts("bad-address") == []
+  end
+
+  test "fourteen selected protest contacts recover from an empty selection and import together",
+       %{conn: conn} do
+    {:ok, view, _} = live(conn, ~p"/admin/contact-imports")
+
+    csv =
+      "Name,Email,City,Source,Signup\n" <>
+        Enum.map_join(
+          1..14,
+          "\n",
+          &"Protester #{&1},protester-#{&1}@example.org,Montreal,Protest,2026-09-26"
+        )
+
+    upload =
+      file_input(view, "form[phx-submit='preview']", :contacts_csv, [
+        %{name: "protest.csv", content: csv, type: "text/csv"}
+      ])
+
+    render_upload(upload, "protest.csv")
+    view |> form("form[phx-submit='preview']", import: %{source: "protest"}) |> render_submit()
+    view |> form("#contact-selection-form") |> render_submit()
+    assert render(view) =~ "Select at least one valid contact."
+    view |> element("button[phx-click='select-visible']") |> render_click()
+    assert has_element?(view, "#selected-count", "14 selected")
+    refute render(view) =~ "Select at least one valid contact."
+    view |> form("#contact-selection-form") |> render_submit()
+    assert render(view) =~ "Imported 14 contacts"
+    assert length(ContactMigration.list_contacts("protester-")) == 14
+    assert Repo.aggregate(PauseAiCa.Accounts.User, :count) == 1
   end
 
   test "shows the responsible administrator in a contact timeline", %{conn: conn, admin: admin} do
@@ -142,5 +172,9 @@ defmodule PauseAiCaWeb.AdminContactImportLiveTest do
     view |> element("#preview-pagination button", "Next") |> render_click()
     assert has_element?(view, "#preview-pagination", "Page 2 of 2 · 30 contacts")
     assert has_element?(view, "#selected-count", "1 selected")
+    view |> form("#contact-selection-form") |> render_submit()
+    assert render(view) =~ "Imported 1 contact"
+    assert [contact] = ContactMigration.list_contacts("contact-")
+    assert contact.email == "contact-1@example.org"
   end
 end
