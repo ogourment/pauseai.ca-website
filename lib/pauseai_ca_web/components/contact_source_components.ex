@@ -54,8 +54,21 @@ defmodule PauseAiCaWeb.ContactSourceComponents do
     """
   end
 
-  defp source_summary_value(data, field),
-    do: if(data[field] in [nil, ""], do: gettext("Not provided"), else: data[field])
+  defp source_summary_value(data, field) do
+    value = data[field]
+    value = if field == "signup_date" and value in [nil, ""], do: data["signup"], else: value
+
+    cond do
+      value in [nil, ""] ->
+        gettext("Not provided")
+
+      field in ~w(signup_date welcomed_date) ->
+        PauseAiCa.ContactMigration.HistoricalDates.source_date_display(value)
+
+      true ->
+        value
+    end
+  end
 
   defp source_geography(data) do
     region =
