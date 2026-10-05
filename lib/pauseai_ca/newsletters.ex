@@ -55,6 +55,37 @@ defmodule PauseAiCa.Newsletters do
     end
   end
 
+  @doc "Read-only capability inspection. Opening a mail link never confirms or withdraws consent."
+  def capability(token, action) when action in [:confirm, :withdraw] do
+    if is_binary(token) and byte_size(token) in 20..200 do
+      hash = digest(token)
+
+      query =
+        case action do
+          :confirm ->
+            now = DateTime.utc_now()
+
+            from s in Subscription,
+              where:
+                s.confirmation_hash == ^hash and s.state == "pending" and
+                  s.confirmation_expires_at > ^now
+
+          :withdraw ->
+            from s in Subscription,
+              join: t in WithdrawalToken,
+              on: t.subscription_id == s.id,
+              where: t.token_hash == ^hash
+        end
+
+      case Repo.one(query) do
+        nil -> {:error, :invalid_token}
+        subscription -> {:ok, %{locale: subscription.locale}}
+      end
+    else
+      {:error, :invalid_token}
+    end
+  end
+
   def confirm(token) do
     token_transaction(token, :confirmation_hash, fn subscription ->
       if subscription.state != "pending" or
@@ -228,7 +259,10 @@ defmodule PauseAiCa.Newsletters do
 
       subscriptions = Repo.all(query)
       emails = Enum.map(subscriptions, & &1.email)
-      provider = provider_observations(emails)
+      observations = provider_evidence(emails)
+
+      provider =
+        Map.new(observations, fn {email, evidence} -> {email, evidence["email_blacklisted"]} end)
 
       suppressed =
         MapSet.union(PauseAiCa.Mail.suppressed_emails(emails), withdrawn_aliases(emails))
@@ -245,7 +279,11 @@ defmodule PauseAiCa.Newsletters do
               true -> :included
             end
 
-          %{subscription: subscription, status: status}
+          %{
+            subscription: subscription,
+            status: status,
+            provider: observations[subscription.email]
+          }
         end)
 
       total = length(rows)
@@ -308,7 +346,13 @@ defmodule PauseAiCa.Newsletters do
     MapSet.new(direct ++ linked)
   end
 
-  defp provider_observations(emails) do
+  defp provider_observations(emails),
+    do:
+      Map.new(provider_evidence(emails), fn {email, evidence} ->
+        {email, evidence["email_blacklisted"]}
+      end)
+
+  defp provider_evidence(emails) do
     Repo.all(
       from e in ConsentEvent,
         join: s in Subscription,
@@ -322,7 +366,7 @@ defmodule PauseAiCa.Newsletters do
         select: {s.email, e.evidence}
     )
     |> Enum.reduce(%{}, fn {email, evidence}, result ->
-      Map.put_new(result, email, evidence["email_blacklisted"])
+      Map.put_new(result, email, evidence)
     end)
   end
 

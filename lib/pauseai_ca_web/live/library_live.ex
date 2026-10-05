@@ -10,7 +10,7 @@ defmodule PauseAiCaWeb.LibraryLive do
 
   use PauseAiCaWeb, :live_view
 
-  alias PauseAiCa.Campaigns.Subscription
+  alias PauseAiCa.Newsletters.Signup
   alias PauseAiCa.Library
   alias PauseAiCa.Library.Reference
   alias PauseAiCa.Library.Resource
@@ -63,7 +63,18 @@ defmodule PauseAiCaWeb.LibraryLive do
     socket = assign(socket, :subscribe_form, to_form(params, as: :subscribe))
 
     if params["consent"] == "true" do
-      case Subscription.subscribe(params["email"], socket.assigns.locale, params) do
+      locale = socket.assigns.locale
+      actor_id = if socket.assigns.current_scope, do: socket.assigns.current_scope.user.id
+      attrs = %{consent: true, locale: locale, city: params["city"]}
+
+      url = fn token ->
+        PauseAiCaWeb.Site.url(
+          locale,
+          "/newsletters/confirm?" <> URI.encode_query(%{"token" => token})
+        )
+      end
+
+      case Signup.request(params["email"], attrs, url, admin_actor_id: actor_id) do
         {:ok, _status} -> {:noreply, assign(socket, :subscribe_state, :subscribed)}
         {:error, reason} -> {:noreply, assign(socket, :subscribe_state, {:error, reason})}
       end
@@ -556,7 +567,16 @@ defmodule PauseAiCaWeb.LibraryLive do
   defp subscribing_label(_locale), do: gettext("Signing up…")
 
   defp subscribed_message(_locale),
-    do: gettext("Done. Thank you — you will get the next mailing.")
+    do:
+      gettext(
+        "Check your email to confirm your newsletter signup. You will receive updates only after confirmation."
+      )
+
+  defp subscribe_error_message({:error, :confirmation_unavailable}, _locale),
+    do:
+      gettext(
+        "Your signup is saved, but the confirmation email could not be sent. Please retry in a minute."
+      )
 
   defp subscribe_error_message({:error, :consent_required}, _locale),
     do: gettext("Please tick the consent box before signing up.")

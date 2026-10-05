@@ -259,7 +259,7 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
              )
     end
 
-    test "a consenting visitor is subscribed", %{conn: conn} do
+    test "a consenting visitor stays pending until email confirmation", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/en/learn")
 
       view
@@ -267,6 +267,12 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
       |> render_submit()
 
       assert has_element?(view, "#subscribe-success")
+
+      subscription =
+        PauseAiCa.Repo.get_by!(PauseAiCa.Newsletters.Subscription, email: "camille@example.org")
+
+      assert subscription.state == "pending"
+      refute PauseAiCa.Newsletters.eligible?(subscription.email)
     end
 
     test "LEARN-REQ-08 anonymous local interest does not create an account", %{conn: conn} do

@@ -37,6 +37,12 @@ defmodule PauseAiCaWeb.Router do
     # even while the staging gate is on.
     get "/letters/confirm/:token", LetterController, :confirm
 
+    # Mail scanners may open GET links: consent changes require an explicit CSRF-protected POST.
+    get "/newsletters/confirm", NewsletterController, :show_confirm
+    post "/newsletters/confirm", NewsletterController, :confirm
+    get "/newsletters/withdraw", NewsletterController, :show_withdraw
+    post "/newsletters/withdraw", NewsletterController, :withdraw
+
     # Leaving for PauseAI Global. Goes through us so a signed-in visitor's
     # departure can be recorded; see ActController.
     get "/act/:destination", ActController, :go
@@ -129,6 +135,8 @@ defmodule PauseAiCaWeb.Router do
       live "/manage/questions/:id", QuestionDraftsLive, :show
       live "/manage/mail", MailDraftsLive, :index
       live "/manage/mail/new", MailDraftsLive, :new
+      live "/manage/mail/newsletters", NewslettersLive, :index
+      live "/manage/mail/newsletters/:id", NewsletterDraftLive, :show
       live "/manage/mail/:id", MailDraftsLive, :show
       live "/manage/accounts/:id", ManagedAccountsLive, :show
       live "/volunteer-signups", VolunteerSignupsLive, :index

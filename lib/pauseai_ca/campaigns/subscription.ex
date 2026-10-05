@@ -1,15 +1,8 @@
 defmodule PauseAiCa.Campaigns.Subscription do
   @moduledoc """
-  Subscribes a supporter to the PauseAI Canada mailing list in Brevo.
-
-  Brevo, not our database, is the record for people who ask for updates. That
-  keeps one copy of an email address under one set of unsubscribe and retention
-  controls rather than two.
-
-  We send the address, the language they read the site in, the country, and any
-  city or postal code they chose to provide. We do not send anything they did
-  not type, and the caller must have taken an
-  explicit opt-in — see `PauseAiCaWeb.SubscribeLive` for the consent wording.
+  Brevo contact/location adapter retained for existing campaign flows.
+  Local Newsletters owns newsletter consent. Public signup uses Newsletters.Signup,
+  never this provider list-write API. Membership cannot grant newsletter eligibility.
   """
 
   @brevo_base_url "https://api.brevo.com/v3"
@@ -28,6 +21,7 @@ defmodule PauseAiCa.Campaigns.Subscription do
   def subscribe(email, locale, location \\ %{}) do
     with true <- PauseAiCa.MailSafety.provider_writes_allowed?(),
          {:ok, address} <- validate_email(email),
+         :ok <- eligible(address),
          {:ok, api_key} <- api_key() do
       request(address, locale, location, api_key)
     else
@@ -81,6 +75,10 @@ defmodule PauseAiCa.Campaigns.Subscription do
         {:error, :unavailable}
     end
   end
+
+  defp eligible(email),
+    do:
+      if(PauseAiCa.Newsletters.eligible?(email), do: :ok, else: {:error, :confirmation_required})
 
   defp attributes(locale, location) do
     %{"LANGUAGE" => language(locale), "COUNTRY" => "Canada"}

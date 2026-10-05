@@ -31,6 +31,13 @@ digraph newsletter {
     </TABLE>
   >];
 
+  "newsletter_drafts" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.newsletter_drafts</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">owner_id</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">subject</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">source</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">region</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">revision</TD><TD ALIGN="LEFT">integer NOT NULL</TD></TR><TR><TD ALIGN="LEFT">archived_at</TD><TD ALIGN="LEFT">timestamp without time zone NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
   }
 
   subgraph cluster_external {
@@ -49,5 +56,6 @@ digraph newsletter {
 
   "newsletter_consent_events" -> "users" [label="actor_id -> id", color="#d97706", style="dashed", penwidth=1.5];
   "newsletter_consent_events" -> "newsletter_subscriptions" [label="subscription_id -> id", color="#64748b"];
+  "newsletter_drafts" -> "users" [label="owner_id -> id", color="#d97706", style="dashed", penwidth=1.5];
   "newsletter_withdrawal_tokens" -> "newsletter_subscriptions" [label="subscription_id -> id", color="#64748b"];
 }

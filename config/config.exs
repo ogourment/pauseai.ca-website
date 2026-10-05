@@ -120,5 +120,8 @@ config :phoenix, :filter_parameters, [
   "signup",
   "profile",
   "account",
-  "paste"
+  "paste",
+  "subscribe",
+  "draft",
+  "template"
 ]

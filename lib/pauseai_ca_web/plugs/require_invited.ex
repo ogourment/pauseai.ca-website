@@ -26,6 +26,7 @@ defmodule PauseAiCaWeb.Plugs.RequireInvited do
     ~r{^/users/register},
     ~r{^/health},
     ~r{^/letters/confirm/},
+    ~r"^/newsletters/(confirm|withdraw)$",
     ~r{^/images/},
     ~r{^/fonts/},
     ~r{^/assets/},

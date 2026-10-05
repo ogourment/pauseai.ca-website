@@ -296,6 +296,16 @@ defmodule PauseAiCaWeb.MailDraftsLive do
         </p>
         <p :if={@error} id="mail-error" role="alert" class="crm-error">{@error}</p>
         <p :if={@status} id="mail-save-status" role="status" aria-live="polite">{@status}</p>
+        <nav aria-label={gettext("Emails")} class="my-5 flex gap-5 border-b border-stone-300 pb-3">
+          <.link navigate={~p"/manage/mail?locale=#{@locale}"} aria-current="page" class="font-bold">{gettext(
+            "Member emails"
+          )}</.link>
+          <.link
+            :if={Volunteers.superadmin?(@current_scope)}
+            navigate={~p"/manage/mail/newsletters?locale=#{@locale}"}
+            class="underline"
+          >{gettext("Newsletters")}</.link>
+        </nav>
         <section :if={@anchor} class="mt-6">
           <p>{@anchor.name} · {@anchor.email}</p><button
             type="button"

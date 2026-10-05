@@ -10,7 +10,7 @@
   %{
     id: "newsletter",
     title: "Newsletter consent",
-    tables: ~w(newsletter_subscriptions newsletter_consent_events newsletter_withdrawal_tokens)
+    tables: ~w(newsletter_subscriptions newsletter_consent_events newsletter_withdrawal_tokens newsletter_drafts)
   },
   %{id: "outreach", title: "Outreach", tables: ["pending_letters"]},
   %{

@@ -1,7 +1,21 @@
 defmodule PauseAiCa.Campaigns.SubscriptionTest do
-  use ExUnit.Case, async: true
+  use PauseAiCa.DataCase, async: false
 
   alias PauseAiCa.Campaigns.Subscription
+
+  setup do
+    for email <- ~w(camille@example.org located@example.org taken@example.org broken@example.org) do
+      {:ok, request} = PauseAiCa.Newsletters.request_signup(email, %{consent: true})
+      {:ok, _} = PauseAiCa.Newsletters.confirm(request.confirmation_token)
+    end
+
+    :ok
+  end
+
+  test "provider list writes require local newsletter confirmation" do
+    assert {:error, :confirmation_required} =
+             Subscription.subscribe("unconfirmed@example.org", "en")
+  end
 
   test "subscribes a new address" do
     assert {:ok, :subscribed} = Subscription.subscribe("camille@example.org", "fr")

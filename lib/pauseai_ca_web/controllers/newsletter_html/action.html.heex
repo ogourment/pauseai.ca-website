@@ -1,0 +1,58 @@
+<section class="mx-auto max-w-2xl px-5 py-12" id="newsletter-action">
+  <h1 class="text-3xl font-bold">{gettext("Newsletter")}</h1>
+  <div :if={@state == :ready} class="mt-6">
+    <p :if={@action == :confirm}>
+      {gettext("Confirm that you want to receive PauseAI Canada newsletter updates.")}
+    </p>
+    <p :if={@action == :withdraw}>
+      {gettext("Withdraw your newsletter consent. You can sign up again later.")}
+    </p>
+    <.form
+      for={%{}}
+      action={
+        if @action == :confirm,
+          do: ~p"/newsletters/confirm",
+          else: ~p"/newsletters/withdraw"
+      }
+      method="post"
+      class="mt-5"
+    >
+      <input type="hidden" name="token" value={@token} />
+      <button id="newsletter-confirm-action" class="crm-button" type="submit">{if @action ==
+                                                                                    :confirm,
+                                                                                  do:
+                                                                                    gettext(
+                                                                                      "Confirm signup"
+                                                                                    ),
+                                                                                  else:
+                                                                                    gettext(
+                                                                                      "Unsubscribe"
+                                                                                    )}</button>
+    </.form>
+  </div>
+  <p
+    :if={@state == :done and @action == :confirm}
+    id="newsletter-result"
+    role="status"
+    class="mt-6"
+  >
+    {gettext("Your newsletter signup is confirmed. Thank you.")}
+  </p>
+  <p
+    :if={@state == :done and @action == :withdraw}
+    id="newsletter-result"
+    role="status"
+    class="mt-6"
+  >
+    {gettext("You are unsubscribed from newsletter updates.")}
+  </p>
+  <p :if={@state == :invalid} id="newsletter-invalid" role="alert" class="mt-6">
+    {gettext(
+      "This link is invalid or has expired. You can request a new confirmation from the signup form."
+    )}
+  </p>
+  <.link
+    href={if @locale == "fr", do: ~p"/fr/comprendre", else: ~p"/en/learn"}
+    class="mt-6 inline-block underline"
+  >{gettext("Return to learning")}</.link>
+</section>
