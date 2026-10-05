@@ -13,6 +13,7 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
      |> assign(:preview_filename, nil)
      |> assign(:preview_source, "legacy-sheet")
      |> assign(:unknown_columns, [])
+     |> assign(:selection_error, nil)
      |> assign(:selected, MapSet.new())
      |> assign(:preview_search, "")
      |> assign(:preview_page, 1)
@@ -88,7 +89,7 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
         do: MapSet.delete(socket.assigns.selected, id),
         else: MapSet.put(socket.assigns.selected, id)
 
-    {:noreply, assign(socket, :selected, selected)}
+    {:noreply, socket |> assign(:selected, selected) |> assign(:selection_error, nil)}
   end
 
   defp dispatch_event("select-visible", _params, socket) do
@@ -99,18 +100,25 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
       |> Enum.map(& &1["id"])
 
     {:noreply,
-     assign(socket, :selected, Enum.reduce(ids, socket.assigns.selected, &MapSet.put(&2, &1)))}
+     socket
+     |> assign(:selected, Enum.reduce(ids, socket.assigns.selected, &MapSet.put(&2, &1)))
+     |> assign(:selection_error, nil)}
   end
 
   defp dispatch_event("clear-selection", _params, socket),
-    do: {:noreply, assign(socket, :selected, MapSet.new())}
+    do: {:noreply, socket |> assign(:selected, MapSet.new()) |> assign(:selection_error, nil)}
 
-  defp dispatch_event("import-selected", _params, socket) do
+  defp dispatch_event("import-selected", params, socket) do
+    selected = MapSet.new(List.wrap(params["selected"]))
+
     rows =
-      Enum.filter(socket.assigns.preview_rows, &MapSet.member?(socket.assigns.selected, &1["id"]))
+      Enum.filter(
+        socket.assigns.preview_rows,
+        &(&1["valid"] and MapSet.member?(selected, &1["id"]))
+      )
 
     if rows == [] do
-      {:noreply, put_flash(socket, :error, gettext("Select at least one valid contact."))}
+      {:noreply, assign(socket, :selection_error, gettext("Select at least one valid contact."))}
     else
       actor = socket.assigns.current_scope.user
 
@@ -127,6 +135,8 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
              to: ~p"/admin/contact-imports?#{%{import: receipt.id, q: "", page: 1, per: 25}}"
            )
            |> assign(:selected, MapSet.new())
+           |> assign(:selection_error, nil)
+           |> clear_flash(:error)
            |> put_flash(
              :info,
              ngettext(
@@ -192,6 +202,7 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
          |> assign(:preview_source, source)
          |> assign(:unknown_columns, unknown_columns)
          |> assign(:selected, MapSet.new())
+         |> assign(:selection_error, nil)
          |> assign(:preview_page, 1)
          |> clear_flash()}
 
@@ -413,69 +424,84 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
               size_event="preview-page-size"
             />
           </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left">
-              <thead>
-                <tr class="border-b border-stone-200">
-                  <th class="p-4">{gettext("Select")}</th><th class="p-4">{gettext("Contact")}</th><th class="p-4">
-                    {gettext("City")}
-                  </th><th class="p-4">{gettext("Review status")}</th>
-                </tr>
-              </thead><tbody :for={row <- visible_rows(assigns)}>
-                <tr
-                  id={"preview-row-#{row["id"]}"}
-                  class="border-b border-stone-100"
-                >
-                  <td class="p-4">
-                    <input
-                      type="checkbox"
-                      aria-label={gettext("Select %{email}", email: row["email"])}
-                      checked={MapSet.member?(@selected, row["id"])}
-                      disabled={!row["valid"]}
-                      phx-click="toggle-row"
-                      phx-value-id={row["id"]}
-                    />
-                  </td><td class="p-4">
-                    <strong>{row["name"]}</strong><span class="block break-all text-sm text-stone-600">{row[
-                      "email"
-                    ]}</span>
-                  </td><td class="p-4">{row["city"]}</td><td class="p-4">
-                    {if row["valid"],
-                      do: gettext("Ready for review"),
-                      else: gettext("Invalid email — cannot select")}
-                  </td>
-                </tr>
-                <tr class="border-b border-stone-100 bg-stone-50/70">
-                  <td></td>
-                  <td colspan="3" class="px-4 pb-4 text-sm text-stone-600">
-                    <PauseAiCaWeb.ContactSourceComponents.source_summary
-                      id={"preview-source-summary-#{row["id"]}"}
-                      data={row}
-                    />
-                    <details class="mt-3">
-                      <summary class="cursor-pointer font-semibold text-stone-800">
-                        {gettext("Show all source fields")}
-                      </summary>
-                      <dl class="mt-3 grid gap-x-6 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
-                        <div :for={{field, value} <- source_fields(row)}>
-                          <dt class="font-semibold">{source_field_label(field)}</dt>
-                          <dd class="break-words">
-                            {if(value == "", do: gettext("Not provided"), else: value)}
-                          </dd>
-                        </div>
-                      </dl>
-                    </details>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div><div class="p-6">
-            <button
-              id="import-selected"
-              phx-click="import-selected"
-              class="rounded-full bg-brand px-5 py-3 font-semibold text-stone-950"
-            >{gettext("Import selected contacts")}</button>
-          </div>
+          <form id="contact-selection-form" phx-submit="import-selected">
+            <input
+              :for={id <- @selected}
+              :if={id not in Enum.map(visible_rows(assigns), & &1["id"])}
+              type="hidden"
+              name="selected[]"
+              value={id}
+            />
+            <div class="overflow-x-auto">
+              <table class="w-full text-left">
+                <thead>
+                  <tr class="border-b border-stone-200">
+                    <th class="p-4">{gettext("Select")}</th><th class="p-4">{gettext("Contact")}</th><th class="p-4">
+                      {gettext("City")}
+                    </th><th class="p-4">{gettext("Review status")}</th>
+                  </tr>
+                </thead><tbody :for={row <- visible_rows(assigns)}>
+                  <tr
+                    id={"preview-row-#{row["id"]}"}
+                    class="border-b border-stone-100"
+                  >
+                    <td class="p-4">
+                      <input
+                        type="checkbox"
+                        name="selected[]"
+                        value={row["id"]}
+                        aria-describedby={@selection_error && "selection-error"}
+                        aria-label={gettext("Select %{email}", email: row["email"])}
+                        checked={MapSet.member?(@selected, row["id"])}
+                        disabled={!row["valid"]}
+                        phx-click="toggle-row"
+                        phx-value-id={row["id"]}
+                      />
+                    </td><td class="p-4">
+                      <strong>{row["name"]}</strong><span class="block break-all text-sm text-stone-600">{row[
+                        "email"
+                      ]}</span>
+                    </td><td class="p-4">{row["city"]}</td><td class="p-4">
+                      {if row["valid"],
+                        do: gettext("Ready for review"),
+                        else: gettext("Invalid email — cannot select")}
+                    </td>
+                  </tr>
+                  <tr class="border-b border-stone-100 bg-stone-50/70">
+                    <td></td>
+                    <td colspan="3" class="px-4 pb-4 text-sm text-stone-600">
+                      <PauseAiCaWeb.ContactSourceComponents.source_summary
+                        id={"preview-source-summary-#{row["id"]}"}
+                        data={row}
+                      />
+                      <details class="mt-3">
+                        <summary class="cursor-pointer font-semibold text-stone-800">
+                          {gettext("Show all source fields")}
+                        </summary>
+                        <dl class="mt-3 grid gap-x-6 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
+                          <div :for={{field, value} <- source_fields(row)}>
+                            <dt class="font-semibold">{source_field_label(field)}</dt>
+                            <dd class="break-words">
+                              {if(value == "", do: gettext("Not provided"), else: value)}
+                            </dd>
+                          </div>
+                        </dl>
+                      </details>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div><div class="p-6">
+              <p :if={@selection_error} id="selection-error" role="alert" class="mb-3 text-red-700">
+                {@selection_error}
+              </p>
+              <button
+                id="import-selected"
+                type="submit"
+                class="rounded-full bg-brand px-5 py-3 font-semibold text-stone-950"
+              >{gettext("Import selected contacts")}</button>
+            </div>
+          </form>
         </section>
 
         <section

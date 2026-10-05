@@ -106,7 +106,7 @@ defmodule PauseAiCaWeb.ProtestPressReleaseLive do
           <blockquote class="text-xl leading-8 text-stone-900">
             <p>
               “{gettext(
-                "In just a few years, AI systems have gone from clumsy chatbots to systems capable of hacking some of the most sophisticated computer networks. Where is this trajectory taking us? We need to give ourselves more time to learn how to control AI systems before making them even more powerful. A pause is necessary."
+                "AIs are starting to do increasingly sophisticated things that we didn’t ask for, aren’t aware of, and can’t restrain with technical or legal measures - even before they are released to the public.  We are starting to lose control.  We are not anti-AI, but we want to pause the training of frontier models so we can learn how to manage AI systems before they get any more powerful."
               )}”
             </p>
             <footer class="mt-5 text-base font-semibold">
