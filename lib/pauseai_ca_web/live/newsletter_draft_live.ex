@@ -124,7 +124,7 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
       locale={@locale}
       active_tab="mail"
     >
-      <section :if={@draft} id="newsletter-draft" class="mx-auto max-w-5xl px-5 py-8">
+      <section :if={@draft} id="newsletter-draft" class="crm-surface mx-auto max-w-5xl px-5 py-8">
         <.link navigate={~p"/manage/mail/newsletters?locale=#{@locale}"} class="underline">{gettext(
           "Newsletters"
         )}</.link>

@@ -119,7 +119,7 @@ defmodule PauseAiCaWeb.NewslettersLive do
       locale={@locale}
       active_tab="mail"
     >
-      <section id="newsletters" class="mx-auto max-w-6xl px-5 py-8">
+      <section id="newsletters" class="crm-surface mx-auto max-w-6xl px-5 py-8">
         <nav aria-label={gettext("Emails")} class="mb-6 flex gap-5 border-b border-stone-300 pb-3">
           <.link navigate={~p"/manage/mail?locale=#{@locale}"} class="underline">{gettext(
             "Member emails"
