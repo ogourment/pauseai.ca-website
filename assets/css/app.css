@@ -346,3 +346,22 @@ h3 {
 
 #question-publication-controls button:disabled{opacity:.55;cursor:not-allowed}
 #question-draft-form .text-red-600{color:#991b1b}
+
+/* Consumer theme for the provider-neutral application shell. */
+.app-shell-navigation { display: flex; flex-wrap: wrap; gap: 1rem 2rem; border-bottom: 1px solid #a8a29e; padding-bottom: .75rem; color: #292524; }
+.app-shell-area { min-width: 0; }
+.app-shell-area-label { margin: 0 0 .35rem; font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #57534e; }
+.app-shell-links { display: flex; flex-wrap: wrap; gap: .25rem; }
+.app-shell-link { display: inline-block; padding: .55rem .7rem; border-radius: .45rem; color: #44403c; font-size: .875rem; font-weight: 600; text-decoration: none; }
+.app-shell-link:hover { background: #e7e5e4; color: #1c1917; }
+.app-shell-link[aria-current="page"] { background: #292524; color: #fff; }
+.app-shell-link:focus-visible { outline: 2px solid #9a3412; outline-offset: 2px; }
+.app-shell-compact { display: block; padding: .25rem; border: 0; }
+.app-shell-compact .app-shell-area { margin-bottom: .6rem; }
+.app-shell-compact .app-shell-links { display: block; }
+.app-shell-compact .app-shell-link { display: block; }
+@media (max-width: 640px) { .app-shell-navigation { gap: .8rem; } .app-shell-area { width: 100%; } .app-shell-link { padding: .65rem .7rem; } }
+.app-shell-more { position: relative; }
+.app-shell-more summary { list-style: none; cursor: pointer; }
+.app-shell-popover { position: absolute; right: 0; top: 100%; z-index: 30; min-width: 15rem; border: 1px solid #a8a29e; border-radius: .5rem; padding: .35rem; background: #fff; box-shadow: 0 8px 20px #29252422; }
+.app-shell-popover .app-shell-link { display: block; }

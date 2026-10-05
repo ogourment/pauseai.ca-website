@@ -50,8 +50,8 @@ defmodule PauseAiCaWeb.CrmDirectoryLiveTest do
     refute has_element?(view, "#crm-directory li", "Directory 01")
     assert has_element?(view, "#crm-import-contacts", "Import Contacts")
     refute has_element?(view, "#management-more a", "Contact imports")
-    assert has_element?(view, "#management-tab-links a", "Donation pledges")
-    assert has_element?(view, "#management-tab-links a", "Emails")
+    assert has_element?(view, "#management-tabs a", "Donation pledges")
+    assert has_element?(view, "#management-tabs a", "Emails")
 
     view
     |> form("#crm-search-form", %{

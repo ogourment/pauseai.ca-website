@@ -4,7 +4,7 @@ defmodule PauseAiCa.MixProject do
   def project do
     [
       app: :pauseai_ca,
-      version: "0.5.5",
+      version: "0.5.6",
       elixir: "~> 1.17",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -40,6 +40,7 @@ defmodule PauseAiCa.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:phoenix_app_shell, path: System.fetch_env!("PHOENIX_APP_SHELL_PATH")},
       {:argon2_elixir, "~> 4.0"},
       {:phoenix, "~> 1.8.9"},
       {:phoenix_ecto, "~> 4.5"},
