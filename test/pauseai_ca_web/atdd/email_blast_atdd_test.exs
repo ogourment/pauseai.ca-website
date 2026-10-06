@@ -100,7 +100,7 @@ if System.get_env("ATDD") == "true" do
         |> assert_has("#newsletter-selected-count", text: "26 selected")
         |> click_button("Previous")
         |> click_button("Save")
-        |> assert_has("#newsletter-save-status", text: "Saved")
+        |> assert_has("#newsletter-save-status", text: "Saved", exact: true)
         |> visit(path)
         |> assert_has("#newsletter-selected-count", text: "26 selected")
         |> capture(
@@ -284,7 +284,7 @@ if System.get_env("ATDD") == "true" do
           text: tr(locale, "%{count} selected", %{count: 14})
         )
         |> click_button(tr(locale, "Save"))
-        |> assert_has("#newsletter-save-status", text: tr(locale, "Saved"))
+        |> assert_has("#newsletter-save-status", text: tr(locale, "Saved"), exact: true)
         |> capture(
           locale,
           "Compose actual PR and save fourteen selected contacts",

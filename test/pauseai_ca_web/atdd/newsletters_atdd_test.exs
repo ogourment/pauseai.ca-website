@@ -196,7 +196,7 @@ if System.get_env("ATDD") == "true" do
         )
         |> select(tr(locale, "Audience geography"), option: "Montréal", exact: false)
         |> click_button(tr(locale, "Save"))
-        |> assert_has("#newsletter-save-status", text: tr(locale, "Saved"))
+        |> assert_has("#newsletter-save-status", text: tr(locale, "Saved"), exact: true)
         |> capture(
           locale,
           "Compose and save newsletter draft",
