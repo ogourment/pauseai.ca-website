@@ -25,6 +25,11 @@ mail_environment =
 
 config :pauseai_ca, :mail_environment, mail_environment
 
+# Operator-controlled durable newsletter queue; isolated dev/test rehearsals keep it disabled.
+config :pauseai_ca,
+       :newsletter_dispatcher,
+       System.get_env("PAUSEAI_NEWSLETTER_DISPATCHER_ENABLED") == "true"
+
 # config/runtime.exs is executed for all environments, including
 # during releases. It is executed after compilation and before the
 # system starts, so it is typically used to load production configuration

@@ -1,11 +1,11 @@
 <section class="mx-auto max-w-2xl px-5 py-12" id="newsletter-action">
-  <h1 class="text-3xl font-bold">{gettext("Newsletter")}</h1>
+  <h1 class="text-3xl font-bold">{if @action == :withdraw, do: gettext("Email preferences"), else: gettext("Newsletter")}</h1>
   <div :if={@state == :ready} class="mt-6">
     <p :if={@action == :confirm}>
       {gettext("Confirm that you want to receive PauseAI Canada newsletter updates.")}
     </p>
     <p :if={@action == :withdraw}>
-      {gettext("Withdraw your newsletter consent. You can sign up again later.")}
+      {gettext("Unsubscribe from PauseAI Canada updates. You can sign up again later.")}
     </p>
     <.form
       for={%{}}
@@ -44,7 +44,7 @@
     role="status"
     class="mt-6"
   >
-    {gettext("You are unsubscribed from newsletter updates.")}
+    {gettext("You are unsubscribed from PauseAI Canada updates.")}
   </p>
   <p :if={@state == :invalid} id="newsletter-invalid" role="alert" class="mt-6">
     {gettext(

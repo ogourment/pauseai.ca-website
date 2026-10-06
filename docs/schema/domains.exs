@@ -3,14 +3,25 @@
   %{
     id: "engagement",
     title: "Engagement and learning",
-    tables: ["actions", "learning_signals", "learning_game_attempts", "quiz_question_drafts", "quiz_question_revisions"]
+    tables: [
+      "actions",
+      "learning_signals",
+      "learning_game_attempts",
+      "quiz_question_drafts",
+      "quiz_question_revisions"
+    ]
   },
-  %{id: "crm", title: "Contact identity", tables: ~w(crm_people crm_addresses crm_sources crm_activities crm_merges crm_contact_links)},
+  %{
+    id: "crm",
+    title: "Contact identity",
+    tables: ~w(crm_people crm_addresses crm_sources crm_activities crm_merges crm_contact_links)
+  },
   %{id: "mail_drafts", title: "Email drafts", tables: ~w(mail_batches mail_drafts)},
   %{
     id: "newsletter",
-    title: "Newsletter consent",
-    tables: ~w(newsletter_subscriptions newsletter_consent_events newsletter_withdrawal_tokens newsletter_drafts)
+    title: "Newsletter consent and delivery",
+    tables:
+      ~w(newsletter_subscriptions newsletter_consent_events newsletter_withdrawal_tokens newsletter_drafts newsletter_batches newsletter_deliveries)
   },
   %{id: "outreach", title: "Outreach", tables: ["pending_letters"]},
   %{

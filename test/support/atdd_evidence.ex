@@ -65,7 +65,7 @@ defmodule PauseAiCaWeb.AtddEvidence do
   def scrub_html(html) do
     html =
       Regex.replace(
-        ~r/<(?:meta|input)\b[^>]*(?:csrf-token|_csrf_token|user\[token\]|user\[flow\])[^>]*>/,
+        ~r/<(?:meta|input)\b[^>]*(?:csrf-token|_csrf_token|user\[token\]|user\[flow\]|name="token")[^>]*>/,
         html,
         fn tag ->
           Regex.replace(~r/(content|value)="[^"]*"/, tag, "\\1=\"REDACTED\"")
@@ -73,6 +73,8 @@ defmodule PauseAiCaWeb.AtddEvidence do
       )
 
     html = Regex.replace(~r/data-phx-(session|static)="[^"]*"/, html, "data-phx-\\1=\"REDACTED\"")
+
+    html = Regex.replace(~r{([?&](?:amp;)?token=)[^&"<>\s]+}, html, "\\1[REDACTED CAPABILITY]")
 
     Regex.replace(
       ~r{https?://[^\s"<>]+/(?:users/log-in/|letters/confirm/)[^\s"<>]+},
@@ -86,6 +88,9 @@ defmodule PauseAiCaWeb.AtddEvidence do
   def safe_url(url) do
     uri = URI.parse(url)
     uri = if String.starts_with?(uri.path || "", "/users/"), do: %{uri | query: nil}, else: uri
+
+    uri =
+      if String.starts_with?(uri.path || "", "/newsletters/"), do: %{uri | query: nil}, else: uri
 
     Regex.replace(
       ~r{(/(?:users/log-in|letters/confirm)/)[^?/#]+(?:\?[^#]*)?},

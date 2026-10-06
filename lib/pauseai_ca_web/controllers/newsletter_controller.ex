@@ -43,7 +43,8 @@ defmodule PauseAiCaWeb.NewsletterController do
       token: token,
       action: action,
       state: state,
-      page_title: gettext("Newsletter")
+      page_title:
+        if(action == :withdraw, do: gettext("Email preferences"), else: gettext("Newsletter"))
     )
   end
 

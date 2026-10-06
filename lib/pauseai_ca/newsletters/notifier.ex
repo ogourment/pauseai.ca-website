@@ -16,7 +16,10 @@ defmodule PauseAiCa.Newsletters.Notifier do
           {"This link expires in 24 hours. If you did not request these updates, ignore this message.",
            "Ce lien expire dans 24 heures. Si vous n’avez pas demandé ces nouvelles, ignorez ce message."}
         ],
-        {"Confirm signup", "Confirmer l’inscription", url}
+        {"Confirm signup", "Confirmer l’inscription", url},
+        footer:
+          {"You requested newsletter updates. Confirmation is required before receiving them.",
+           "Vous avez demandé des nouvelles par infolettre. La confirmation est requise avant de les recevoir."}
       )
 
     new()

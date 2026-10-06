@@ -1,7 +1,9 @@
 import Config
 
 atdd_port = System.get_env("ATDD_PORT", "4116") |> String.to_integer()
-sandbox_pool_size = min(System.schedulers_online() * 2, 8)
+
+sandbox_pool_size =
+  min(System.schedulers_online() * 2, String.to_integer(System.get_env("TEST_POOL_SIZE", "8")))
 
 # Async cases must not outnumber the available sandbox connections.
 config :ex_unit, max_cases: sandbox_pool_size

@@ -34,8 +34,8 @@ defmodule PauseAiCaWeb.Emails.Layout do
          "Vous recevez ce message parce qu'une connexion a été demandée avec cette adresse."}
       )
 
-    {html(title_en, title_fr, blocks, action, notice?, footer),
-     text(title_en, title_fr, blocks, action, notice?, footer)}
+    {html(title_en, title_fr, blocks, action, notice?, footer, Keyword.get(opts, :body_html, "")),
+     text(title_en, title_fr, blocks, action, notice?, footer, Keyword.get(opts, :body_text, ""))}
   end
 
   @doc """
@@ -51,7 +51,7 @@ defmodule PauseAiCaWeb.Emails.Layout do
      "Ce message est-il arrivé dans les indésirables ou les promotions? Déplacez-le vers votre boîte de réception et marquez-le « Non indésirable ». Cela prend une seconde, et c'est ainsi que nous évitons le dossier spam pour tout le monde."}
   end
 
-  defp html(title_en, title_fr, blocks, action, notice?, {footer_en, footer_fr}) do
+  defp html(title_en, title_fr, blocks, action, notice?, {footer_en, footer_fr}, body_html) do
     """
     <!DOCTYPE html>
     <html lang="en">
@@ -76,6 +76,7 @@ defmodule PauseAiCaWeb.Emails.Layout do
                                font-size:26px;line-height:1.2;color:#{@ink};">#{esc(title_en)}</h1>
                     <p style="margin:0 0 24px;font-family:Impact,'Helvetica Neue',Arial,sans-serif;
                               font-size:20px;line-height:1.25;color:#7a7268;">#{esc(title_fr)}</p>
+                    #{body_html}
                     #{Enum.map_join(blocks, "", &html_block/1)}
                     #{html_action(action)}
                     #{html_notice(notice?)}
@@ -149,7 +150,7 @@ defmodule PauseAiCaWeb.Emails.Layout do
     """
   end
 
-  defp text(title_en, title_fr, blocks, action, notice?, {footer_en, footer_fr}) do
+  defp text(title_en, title_fr, blocks, action, notice?, {footer_en, footer_fr}, body_text) do
     body =
       Enum.map_join(blocks, "\n\n", fn {en, fr} -> "#{en}\n\n#{fr}" end)
 
@@ -174,6 +175,8 @@ defmodule PauseAiCaWeb.Emails.Layout do
 
     #{title_en}
     #{title_fr}
+
+    #{body_text}
 
     #{body}#{action_text}#{notice_text}
     --

@@ -126,6 +126,71 @@ defmodule PauseAiCa.Newsletters do
     end)
   end
 
+  @doc "Issues a personal withdrawal capability for reviewed mail; never grants consent or sends."
+  def issue_withdrawal_token(scope, subscription_id) do
+    with true <- Volunteers.superadmin?(scope), {:ok, id} <- Ecto.UUID.cast(subscription_id) do
+      Repo.transaction(fn ->
+        actor =
+          Repo.one(
+            from u in PauseAiCa.Accounts.User, where: u.id == ^scope.user.id, lock: "FOR UPDATE"
+          )
+
+        if is_nil(actor) or not Volunteers.superadmin?(scope), do: Repo.rollback(:unauthorized)
+        subscription = Repo.one(from s in Subscription, where: s.id == ^id, lock: "FOR UPDATE")
+        if is_nil(subscription), do: Repo.rollback(:not_found)
+        raw = token()
+
+        Repo.insert!(%WithdrawalToken{
+          subscription_id: id,
+          token_hash: digest(raw),
+          inserted_at: DateTime.utc_now()
+        })
+
+        event(subscription, "withdrawal_link_created", actor.id, %{})
+        raw
+      end)
+    else
+      _ -> {:error, :unauthorized}
+    end
+  end
+
+  @doc "No newsletter consent is inferred by a manual, reviewed outreach batch."
+  def outreach_eligible?(email) do
+    with {:ok, email} <- normalize(email) do
+      not PauseAiCa.Mail.suppressed?(email) and
+        not MapSet.member?(withdrawn_aliases([email]), email) and
+        not Enum.any?(linked_addresses(email), &provider_blocked?/1)
+    else
+      _ -> false
+    end
+  end
+
+  @doc "Creates only a withdrawal ledger for manually reviewed outreach, without an opt-in/account."
+  def outreach_withdrawal_token(scope, email) do
+    with true <- Volunteers.superadmin?(scope), {:ok, email} <- normalize(email) do
+      Repo.transaction(fn ->
+        actor =
+          Repo.one(
+            from u in PauseAiCa.Accounts.User, where: u.id == ^scope.user.id, lock: "FOR UPDATE"
+          )
+
+        if is_nil(actor) or not Volunteers.superadmin?(scope), do: Repo.rollback(:unauthorized)
+        lock_address(email)
+
+        row =
+          Repo.get_by(Subscription, email: email) ||
+            persist(nil, %{email: email, state: "outreach_only"})
+
+        case issue_withdrawal_token(scope, row.id) do
+          {:ok, raw} -> raw
+          {:error, reason} -> Repo.rollback(reason)
+        end
+      end)
+    else
+      _ -> {:error, :unauthorized}
+    end
+  end
+
   @doc "Records source evidence for review, never granting consent or overwriting a local decision. No provider calls."
   def observe_legacy(scope, email, evidence) when is_map(evidence) do
     with true <- Volunteers.superadmin?(scope), {:ok, email} <- normalize(email) do
@@ -244,7 +309,12 @@ defmodule PauseAiCa.Newsletters do
       term = filter_text(params["q"]) |> String.downcase()
       per = positive_integer(params["per"], 25)
       per = if per in [10, 25, 50, 100], do: per, else: 25
-      query = from s in Subscription, order_by: [asc: s.email, asc: s.id]
+
+      query =
+        from s in Subscription,
+          where: s.state != "outreach_only",
+          order_by: [asc: s.email, asc: s.id]
+
       query = if region == "", do: query, else: from(s in query, where: s.region == ^region)
 
       query =
