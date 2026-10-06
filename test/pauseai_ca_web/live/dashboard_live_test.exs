@@ -57,6 +57,7 @@ defmodule PauseAiCaWeb.DashboardLiveTest do
   test "the empty journal points to the first ladder rung", %{conn: conn} do
     {:ok, view, _html} = live(conn, ~p"/dashboard")
 
+    assert has_element?(view, "#saved-resources", "No saved readings yet.")
     assert has_element?(view, "#engagement-ladder")
     assert has_element?(view, "#ladder-step-1", "Start here")
   end

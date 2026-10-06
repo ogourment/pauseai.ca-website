@@ -48,6 +48,9 @@ defmodule PauseAiCaWeb.RogueGameHTML do
          "Bookmarks are saved in this browser. Create an account to access your reading list on other devices."
        )},
       {"Register", gettext("Register")},
+      {"Account bookmarks are available on your other devices.",
+       gettext("Account bookmarks are available on your other devices.")},
+      {"View saved readings", gettext("View saved readings")},
       {"Distractor", gettext("Distractor")},
       {"Negotiator", gettext("Negotiator")},
       {"Impostor", gettext("Impostor")},

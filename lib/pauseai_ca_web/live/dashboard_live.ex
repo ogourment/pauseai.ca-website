@@ -314,13 +314,15 @@ defmodule PauseAiCaWeb.DashboardLive do
           </p>
 
           <div
-            :if={@saved_resources != [] or @custom_resource_urls != []}
             id="saved-resources"
             class="mt-8 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm"
           >
             <h2 class="font-serif text-2xl text-stone-950">
               {gettext("Saved for later")}
             </h2>
+            <p :if={@saved_resources == [] && @custom_resource_urls == []} class="mt-3">
+              {gettext("No saved readings yet.")}
+            </p>
             <ul class="mt-3 space-y-2">
               <li :for={resource <- @saved_resources}>
                 <a

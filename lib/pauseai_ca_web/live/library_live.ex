@@ -308,6 +308,7 @@ defmodule PauseAiCaWeb.LibraryLive do
               </a>
               <.resource_bookmark
                 title={Resource.copy(resource, @locale).title}
+                current_scope={@current_scope}
                 selected={!!@current_scope && resource.id in @current_scope.user.saved_resources}
                 href={
                   if @current_scope,

@@ -82,6 +82,27 @@ defmodule PauseAiCaWeb.PageControllerTest do
     assert html =~ ~s(href="/bookmarks/risk?locale=fr")
   end
 
+  test "BOOKMARK-HELP-01 readers reach their account list or registration in their language" do
+    user = PauseAiCa.AccountsFixtures.user_fixture()
+
+    for {locale, library, dashboard, label} <- [
+          {"en", "/en/learn", "/en/dashboard#saved-resources", "View saved readings"},
+          {"fr", "/fr/comprendre", "/fr/tableau-de-bord#saved-resources",
+           "Voir les lectures enregistrées"}
+        ],
+        path <- ["/" <> locale, library] do
+      signed_in = build_conn() |> log_in_user(user) |> get(path) |> html_response(200)
+      help = signed_in |> LazyHTML.from_document() |> LazyHTML.query(".bookmark-bubble")
+      assert LazyHTML.text(help) =~ label
+      assert Enum.count(LazyHTML.query(help, ~s(a[href="#{dashboard}"]))) > 0
+      assert Enum.count(LazyHTML.query(help, ~s(a[href*="/users/register"]))) == 0
+
+      guest = build_conn() |> get(path) |> html_response(200)
+      guest_help = guest |> LazyHTML.from_document() |> LazyHTML.query(".bookmark-bubble")
+      assert Enum.count(LazyHTML.query(guest_help, ~s(a[href*="/users/register"]))) > 0
+    end
+  end
+
   test "authenticated French LiveViews set the Gettext locale", %{conn: conn} do
     user = PauseAiCa.AccountsFixtures.user_fixture()
     conn = log_in_user(conn, user)

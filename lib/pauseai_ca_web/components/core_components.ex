@@ -37,6 +37,7 @@ defmodule PauseAiCaWeb.CoreComponents do
   attr :method, :string, default: "get"
   attr :toggle_id, :string, default: nil
   attr :compact, :boolean, default: true
+  attr :current_scope, :any, default: nil
 
   def resource_bookmark(assigns) do
     assigns =
@@ -79,22 +80,31 @@ defmodule PauseAiCaWeb.CoreComponents do
     }>
       <summary aria-label={gettext("About bookmarks")}>?</summary>
       <div class="bookmark-bubble">
-        <p :if={@toggle_id}>
+        <p :if={!@current_scope && @toggle_id}>
           {gettext(
             "Bookmarks are saved in this browser. Create an account to access your reading list on other devices."
           )}
         </p>
-        <p :if={!@toggle_id && @method == "get"}>
+        <p :if={!@current_scope && !@toggle_id && @method == "get"}>
           {gettext("Register to save this reading to your account and access it on other devices.")}
         </p>
-        <p :if={!@toggle_id && @method == "post"}>
+        <p :if={@current_scope}>
           {gettext("Account bookmarks are available on your other devices.")}
         </p>
         <a
-          :if={@method != "post"}
+          :if={!@current_scope}
           href={@href || "/users/register?locale=" <> Gettext.get_locale(PauseAiCaWeb.Gettext)}
           data-learning-register
         >{gettext("Register")}</a>
+        <a
+          :if={@current_scope}
+          href={
+            if(Gettext.get_locale(PauseAiCaWeb.Gettext) == "fr",
+              do: "/fr/tableau-de-bord#saved-resources",
+              else: "/en/dashboard#saved-resources"
+            )
+          }
+        >{gettext("View saved readings")}</a>
       </div>
     </details>
     """

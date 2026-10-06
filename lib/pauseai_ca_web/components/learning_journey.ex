@@ -121,7 +121,7 @@ defmodule PauseAiCaWeb.LearningJourney do
             <a href={n["url"]} class="mt-3 inline-block underline" rel="noreferrer">{n["source"]}</a>
             <span :if={n["language"] != @locale} class="ml-2 text-sm">({String.upcase(n["language"])})</span>
           </details>
-          <.resource_bookmark title={n["title"]} toggle_id={n["id"]} />
+          <.resource_bookmark title={n["title"]} toggle_id={n["id"]} current_scope={@current_scope} />
         </article>
       </div>
       <section

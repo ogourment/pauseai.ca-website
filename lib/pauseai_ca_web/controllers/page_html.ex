@@ -70,6 +70,7 @@ defmodule PauseAiCaWeb.PageHTML do
       <p class="mt-5 text-xs text-stone-400">Source: {@source}</p>
       <.resource_bookmark
         title={@title}
+        current_scope={@current_scope}
         compact={false}
         selected={!!@current_scope && @bookmark in @current_scope.user.saved_resources}
         href={
