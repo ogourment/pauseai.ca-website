@@ -12,7 +12,7 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
          assign(socket,
            locale: locale,
            connected: connected?(socket),
-           page_title: gettext("Newsletter draft"),
+           page_title: gettext("Email draft"),
            draft: draft,
            form: to_form(Draft.changeset(draft, %{}), as: "draft"),
            status: nil,
@@ -360,7 +360,7 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
           <.link navigate={~p"/manage/mail/newsletters?locale=#{@locale}"} class="underline">{gettext(
             "Newsletters"
           )}</.link>
-          <h1 class="mt-5 text-3xl font-bold">{gettext("Newsletter draft")}</h1>
+          <h1 class="mt-5 text-3xl font-bold">{gettext("Email draft")}</h1>
           <p class="mt-3">
             {gettext(
               "Saving a draft does not approve or send it. Eligibility is checked from current consent when a batch is prepared."

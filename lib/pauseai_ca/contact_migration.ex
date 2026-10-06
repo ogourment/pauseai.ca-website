@@ -226,6 +226,7 @@ defmodule PauseAiCa.ContactMigration do
       attrs
       | source_data:
           Map.merge(Map.take(existing.source_data, ["historical_dates"]), attrs.source_data)
+          |> preserve_confirmed_geography(existing.source_data)
     }
 
     previous_status = classification(existing.source_data["status"])
@@ -240,6 +241,11 @@ defmodule PauseAiCa.ContactMigration do
           else: attrs
         )
   end
+
+  defp preserve_confirmed_geography(data, %{"region_source" => "operator_confirmed"} = previous),
+    do: Map.merge(data, Map.take(previous, ~w(geography region_source)))
+
+  defp preserve_confirmed_geography(data, _), do: data
 
   defp classification(value) when value in ["known_active", "active"], do: "known_active"
   defp classification("do_not_contact"), do: "do_not_contact"

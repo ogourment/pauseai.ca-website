@@ -20,8 +20,8 @@ defmodule PauseAiCaWeb.MailEntryLiveTest do
     conn = log_in_user(conn, admin)
     {:ok, index, _} = live(conn, "/manage/mail?locale=en")
     assert has_element?(index, "h1", "Emails")
-    assert has_element?(index, "#mail-new-draft", "New draft")
-    uri = index |> element("#mail-new-draft") |> render_click() |> follow_redirect(conn)
+    assert has_element?(index, "#mail-new-account-draft", "New personalized account drafts")
+    uri = index |> element("#mail-new-account-draft") |> render_click() |> follow_redirect(conn)
     assert {:ok, chooser, _} = uri
     chooser |> form("#mail-new-search-form", %{"query" => "draft-entry"}) |> render_change()
     assert has_element?(chooser, "#mail-new", member.email)
@@ -95,6 +95,40 @@ defmodule PauseAiCaWeb.MailEntryLiveTest do
     render_click(chooser, "start-account", %{"id" => member.id})
     assert Repo.aggregate(Mail.Batch, :count) == 0
     refute_received {:email, _}
+  end
+
+  test "admin writes and reloads a general email before choosing any recipient", %{conn: conn} do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    conn = log_in_user(conn, admin)
+    flush_fixture_emails()
+    users_before = Repo.aggregate(User, :count)
+    {:ok, index, _} = live(conn, "/manage/mail?locale=en")
+
+    assert {:ok, composer, _} =
+             index |> element("#mail-new-draft") |> render_click() |> follow_redirect(conn)
+
+    assert has_element?(composer, "#newsletter-selected-count", "0 selected")
+
+    composer
+    |> form("#newsletter-draft-form",
+      draft: %{subject: "Content first", source: "Saved before audience selection"}
+    )
+    |> render_submit()
+
+    [draft] = Repo.all(PauseAiCa.Newsletters.Draft)
+    assert draft.recipient_keys == []
+    {:ok, reloaded, _} = live(conn, "/manage/mail/newsletters/#{draft.id}?locale=en")
+    assert has_element?(reloaded, "input[value='Content first']")
+    assert has_element?(reloaded, "#newsletter-selected-count", "0 selected")
+    {:ok, landing, _} = live(conn, "/manage/mail?locale=en")
+    assert has_element?(landing, "#email-drafts a", "Content first")
+    assert Repo.aggregate(PauseAiCa.Newsletters.Batch, :count) == 0
+    assert Repo.aggregate(PauseAiCa.Newsletters.Subscription, :count) == 0
+    assert Repo.aggregate(User, :count) == users_before
+    refute_received {:email, _}
+    Repo.update!(Ecto.Changeset.change(admin, superadmin: false))
+    render_click(landing, "new-email-draft", %{})
+    assert Repo.aggregate(PauseAiCa.Newsletters.Draft, :count) == 1
   end
 
   defp flush_fixture_emails do

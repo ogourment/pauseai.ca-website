@@ -177,4 +177,47 @@ defmodule PauseAiCaWeb.AdminContactImportLiveTest do
     assert [contact] = ContactMigration.list_contacts("contact-")
     assert contact.email == "contact-1@example.org"
   end
+
+  test "upload geography fills only unknown rows, previews first and persists without subscriptions",
+       %{conn: conn} do
+    {:ok, view, _} = live(conn, "/admin/contact-imports")
+
+    csv =
+      "Email,Name,City,Geography,Signup\ncity@example.org,City,Montreal,,2026-09-26\nexplicit@example.org,Explicit,,ROQuébec,2026-09-26\ndefault@example.org,Default,,,2026-09-26\n"
+
+    upload =
+      file_input(view, "#contact-upload-form", :contacts_csv, [
+        %{name: "geo.csv", content: csv, type: "text/csv"}
+      ])
+
+    render_upload(upload, "geo.csv")
+
+    render_submit(view, "preview", %{
+      "import" => %{"source" => "geography-test", "geography" => "invalid"}
+    })
+
+    assert has_element?(view, "#import-geography-error", "Choose a valid geography.")
+    assert Repo.aggregate(ContactMigration.Contact, :count) == 0
+
+    view
+    |> form("#contact-upload-form", import: %{source: "geography-test", geography: "ROCanada"})
+    |> render_submit()
+
+    assert has_element?(view, "#contact-preview", "From source city")
+    assert has_element?(view, "#contact-preview", "From import default")
+    assert Repo.aggregate(ContactMigration.Contact, :count) == 0
+    users = Repo.aggregate(PauseAiCa.Accounts.User, :count)
+    view |> element("button[phx-click='select-visible']") |> render_click()
+    view |> form("#contact-selection-form") |> render_submit()
+    data = Repo.all(ContactMigration.Contact) |> Map.new(&{&1.email, &1.source_data})
+    assert data["city@example.org"]["city"] == "Montreal"
+    refute Map.has_key?(data["city@example.org"], "geography")
+    assert data["explicit@example.org"]["geography"] == "ROQuébec"
+    assert data["default@example.org"]["geography"] == "ROCanada"
+    assert data["default@example.org"]["region_source"] == "upload_default"
+    assert Enum.all?(data, fn {_, row} -> row["signup"] == "2026-09-26" end)
+    assert Repo.aggregate(PauseAiCa.Accounts.User, :count) == users
+    assert Repo.aggregate(PauseAiCa.Newsletters.Subscription, :count) == 0
+    assert Repo.aggregate(PauseAiCa.Newsletters.Delivery, :count) == 0
+  end
 end

@@ -8,6 +8,9 @@ defmodule PauseAiCa.CRM do
   def context, do: PhoenixCRM.new(Repo, PauseAiCa.CRM.Policy)
   def get(scope, id), do: PhoenixCRM.get(context(), scope, id)
   def search(scope, term), do: PhoenixCRM.search(context(), scope, term)
+  require PauseAiCa.ContactMigration.Geography
+  alias PauseAiCa.ContactMigration.Geography
+
   @directory_sizes [10, 25, 50, 100]
 
   # Directory reads are paged by canonical person, never by address or source row.
@@ -45,12 +48,7 @@ defmodule PauseAiCa.CRM do
                 ilike(a.email, ^pattern) or ilike(c.name, ^pattern) or
                 ilike(c.city, ^pattern) or ilike(c.email, ^pattern) or
                 ilike(
-                  fragment(
-                    "COALESCE(NULLIF(?->>'geography', ''), NULLIF(?->>'region', ''), CASE lower(?->>'sheet') WHEN 'mtl' THEN 'Montréal' WHEN 'quebec' THEN 'ROQuébec' WHEN 'rest of canada' THEN 'ROCanada' END)",
-                    c.source_data,
-                    c.source_data,
-                    c.source_data
-                  ),
+                  Geography.expression(c.source_data),
                   ^pattern
                 ) or
                 fragment(
@@ -65,14 +63,7 @@ defmodule PauseAiCa.CRM do
           matches
         else
           from [p, ap, a, l, c] in matches,
-            where:
-              fragment(
-                "COALESCE(NULLIF(?->>'geography', ''), NULLIF(?->>'region', ''), CASE lower(?->>'sheet') WHEN 'mtl' THEN 'Montréal' WHEN 'quebec' THEN 'ROQuébec' WHEN 'rest of canada' THEN 'ROCanada' END) = ?",
-                c.source_data,
-                c.source_data,
-                c.source_data,
-                ^region
-              )
+            where: Geography.expression(c.source_data) == ^region
         end
 
       people = from p in PhoenixCRM.Person, where: p.id in subquery(matches)
@@ -119,13 +110,7 @@ defmodule PauseAiCa.CRM do
           from c in Contact,
             join: l in ContactLink,
             on: l.contact_id == c.id,
-            select:
-              fragment(
-                "COALESCE(NULLIF(?->>'geography', ''), NULLIF(?->>'region', ''), CASE lower(?->>'sheet') WHEN 'mtl' THEN 'Montréal' WHEN 'quebec' THEN 'ROQuébec' WHEN 'rest of canada' THEN 'ROCanada' END)",
-                c.source_data,
-                c.source_data,
-                c.source_data
-              ),
+            select: Geography.expression(c.source_data),
             distinct: true
         )
         |> Enum.reject(&is_nil/1)

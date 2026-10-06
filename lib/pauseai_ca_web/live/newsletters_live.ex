@@ -10,7 +10,7 @@ defmodule PauseAiCaWeb.NewslettersLive do
       {:ok,
        assign(socket,
          locale: locale,
-         page_title: gettext("Newsletters"),
+         page_title: gettext("Batches and newsletters"),
          audience: nil,
          drafts: [],
          history: [],
@@ -128,12 +128,12 @@ defmodule PauseAiCaWeb.NewslettersLive do
             patch={~p"/manage/mail/newsletters?locale=#{@locale}"}
             aria-current="page"
             class="font-bold"
-          >{gettext("Newsletters")}</.link>
+          >{gettext("Batches and newsletters")}</.link>
         </nav>
-        <h1 class="text-3xl font-bold">{gettext("Newsletters")}</h1>
+        <h1 class="text-3xl font-bold">{gettext("Batches and newsletters")}</h1>
         <p class="mt-3">
           {gettext(
-            "Only confirmed newsletter consent is eligible. Accounts, imported contacts and Brevo membership do not grant consent."
+            "Newsletter audiences require confirmed consent. Contacts require a separate manual eligibility review."
           )}
         </p>
         <p
@@ -150,7 +150,7 @@ defmodule PauseAiCaWeb.NewslettersLive do
         <p :if={@error} id="newsletter-error" role="alert" class="mt-3 crm-error">{@error}</p>
         <div :if={@audience}>
           <section id="newsletter-drafts" class="mt-6">
-            <h2 class="text-xl font-semibold">{gettext("Newsletter drafts")}</h2>
+            <h2 class="text-xl font-semibold">{gettext("Email drafts")}</h2>
             <div class="my-3 flex flex-wrap gap-5">
               <button type="button" class="crm-button" phx-click="new-draft">{gettext("New draft")}</button>
               <.link

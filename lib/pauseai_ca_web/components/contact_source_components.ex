@@ -71,34 +71,21 @@ defmodule PauseAiCaWeb.ContactSourceComponents do
   end
 
   defp source_geography(data) do
-    region =
-      Enum.find_value(~w(geography region), fn key ->
-        if data[key] not in [nil, ""], do: data[key]
-      end)
+    {region, basis} = PauseAiCa.ContactMigration.Geography.resolve(data)
 
-    if region do
-      basis =
-        case data["region_source"] do
-          "self_reported" -> gettext("Self-reported region")
-          "postal_code" -> gettext("Computed from postal code")
-          "computed" -> gettext("Computed region")
-          _ -> gettext("Region supplied by source")
-        end
+    label =
+      case basis do
+        "self_reported" -> gettext("Self-reported region")
+        "postal_code" -> gettext("Computed from postal code")
+        "computed" -> gettext("Computed region")
+        "operator_confirmed" -> gettext("Confirmed region")
+        "upload_default" -> gettext("From import default")
+        "sheet" -> gettext("From source sheet")
+        "city" -> gettext("From source city")
+        _ -> gettext("Region supplied by source")
+      end
 
-      {region, basis}
-    else
-      geography =
-        case String.downcase(data["sheet"] || "") do
-          "mtl" -> "Montréal"
-          "quebec" -> "ROQuébec"
-          "rest of canada" -> "ROCanada"
-          _ -> nil
-        end
-
-      if geography,
-        do: {geography, gettext("From source sheet")},
-        else: {gettext("Not provided"), nil}
-    end
+    if region, do: {region, label}, else: {gettext("Not provided"), nil}
   end
 
   def field_label("signup_date"), do: gettext("Signup date")

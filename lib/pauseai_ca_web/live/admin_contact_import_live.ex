@@ -2,7 +2,7 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
   use PauseAiCaWeb, :live_view
 
   alias PauseAiCa.{ContactMigration, Volunteers}
-  alias PauseAiCa.ContactMigration.CSV
+  alias PauseAiCa.ContactMigration.{CSV, Geography}
 
   @impl true
   def mount(_params, _session, socket) do
@@ -12,6 +12,8 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
      |> assign(:preview_rows, [])
      |> assign(:preview_filename, nil)
      |> assign(:preview_source, "legacy-sheet")
+     |> assign(:preview_geography, "")
+     |> assign(:geography_error, nil)
      |> assign(:unknown_columns, [])
      |> assign(:selection_error, nil)
      |> assign(:selected, MapSet.new())
@@ -58,15 +60,22 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
 
   defp dispatch_event("preview", %{"import" => params}, socket) do
     source = normalize_source(params["source"])
+    socket = assign(socket, preview_geography: params["geography"] || "", geography_error: nil)
 
-    results =
-      consume_uploaded_entries(socket, :contacts_csv, fn %{path: path}, entry ->
-        {:ok, {entry.client_name, File.read!(path)}}
-      end)
+    case Geography.with_default([], socket.assigns.preview_geography) do
+      {:ok, _} ->
+        results =
+          consume_uploaded_entries(socket, :contacts_csv, fn %{path: path}, entry ->
+            {:ok, {entry.client_name, File.read!(path)}}
+          end)
 
-    case results do
-      [{filename, contents}] -> preview(socket, filename, source, contents)
-      [] -> {:noreply, put_flash(socket, :error, gettext("Choose a CSV file to preview."))}
+        case results do
+          [{filename, contents}] -> preview(socket, filename, source, contents)
+          [] -> {:noreply, put_flash(socket, :error, gettext("Choose a CSV file to preview."))}
+        end
+
+      {:error, _} ->
+        {:noreply, assign(socket, geography_error: gettext("Choose a valid geography."))}
     end
   end
 
@@ -193,18 +202,21 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
        |> assign(:activities, ContactMigration.list_activities(id))}
 
   defp preview(socket, filename, source, contents) do
-    case CSV.parse(contents) do
-      {:ok, rows, unknown_columns} ->
-        {:noreply,
-         socket
-         |> assign(:preview_rows, rows)
-         |> assign(:preview_filename, filename)
-         |> assign(:preview_source, source)
-         |> assign(:unknown_columns, unknown_columns)
-         |> assign(:selected, MapSet.new())
-         |> assign(:selection_error, nil)
-         |> assign(:preview_page, 1)
-         |> clear_flash()}
+    with {:ok, rows, unknown_columns} <- CSV.parse(contents),
+         {:ok, rows} <- Geography.with_default(rows, socket.assigns.preview_geography) do
+      {:noreply,
+       socket
+       |> assign(:preview_rows, rows)
+       |> assign(:preview_filename, filename)
+       |> assign(:preview_source, source)
+       |> assign(:unknown_columns, unknown_columns)
+       |> assign(:selected, MapSet.new())
+       |> assign(:selection_error, nil)
+       |> assign(:preview_page, 1)
+       |> clear_flash()}
+    else
+      {:error, :invalid_geography} ->
+        {:noreply, put_flash(socket, :error, gettext("Choose a valid geography."))}
 
       {:error, :missing_email} ->
         {:noreply, put_flash(socket, :error, gettext("The CSV must contain an email column."))}
@@ -341,7 +353,7 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
             as={:import}
             phx-change="validate-upload"
             phx-submit="preview"
-            class="mt-6 grid gap-5 md:grid-cols-[1fr_1fr_auto] md:items-end"
+            class="mt-6 grid gap-5 md:grid-cols-2 md:items-end"
           >
             <div>
               <label
@@ -361,6 +373,37 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
                 value={@preview_source}
                 class="mt-2 block w-full rounded-xl border border-stone-300 p-3"
               />
+            </div>
+            <div>
+              <label for="import-geography" class="block text-sm font-semibold text-stone-800">{gettext(
+                "Default geography"
+              )}</label>
+              <select
+                id="import-geography"
+                name="import[geography]"
+                aria-invalid={@geography_error != nil}
+                aria-describedby={if @geography_error, do: "import-geography-error"}
+                class="mt-2 w-full rounded-xl border border-stone-300 p-3"
+              >
+                <option value="" selected={@preview_geography == ""}>
+                  {gettext("Use each row's geography or city")}
+                </option>
+                <option
+                  :for={region <- Geography.regions()}
+                  value={region}
+                  selected={region == @preview_geography}
+                >
+                  {region}
+                </option>
+              </select>
+              <p :if={@geography_error} id="import-geography-error" role="alert" class="crm-error">
+                {@geography_error}
+              </p>
+              <p class="text-sm text-stone-600 mt-2">
+                {gettext(
+                  "Only fills missing geography. Existing regions and recognized cities are preserved."
+                )}
+              </p>
             </div>
             <button class="rounded-full bg-stone-900 px-5 py-3 font-semibold text-white">{gettext(
               "Preview"

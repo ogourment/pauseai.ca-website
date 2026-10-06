@@ -1,6 +1,7 @@
 defmodule PauseAiCaWeb.MailDraftsLive do
   use PauseAiCaWeb, :live_view
   alias PauseAiCa.{Mail, Volunteers}
+  alias PauseAiCa.Newsletters.Drafts, as: EmailDrafts
   alias PauseAiCa.Mail.{ContactSource, Render}
   @impl true
   def mount(params, _, socket) do
@@ -13,6 +14,8 @@ defmodule PauseAiCaWeb.MailDraftsLive do
          locale: locale,
          page_title: gettext("Emails"),
          batches: [],
+         general_drafts: [],
+         account_flow: false,
          batch: nil,
          anchor: nil,
          draft: nil,
@@ -36,6 +39,7 @@ defmodule PauseAiCaWeb.MailDraftsLive do
   @impl true
   def handle_params(params, _, socket) do
     scope = socket.assigns.current_scope
+    socket = assign(socket, account_flow: params["account_drafts"] == "true")
 
     cond do
       params["account_id"] ->
@@ -78,11 +82,37 @@ defmodule PauseAiCaWeb.MailDraftsLive do
         end
 
       true ->
-        {:noreply, assign(socket, batch: nil, anchor: nil, draft: nil, batches: Mail.list(scope))}
+        general =
+          case EmailDrafts.list(scope) do
+            {:ok, drafts} -> drafts
+            _ -> []
+          end
+
+        {:noreply,
+         assign(socket,
+           batch: nil,
+           anchor: nil,
+           draft: nil,
+           batches: Mail.list(scope),
+           general_drafts: general
+         )}
     end
   end
 
   @impl true
+  def handle_event("new-email-draft", _, socket) do
+    case EmailDrafts.create(socket.assigns.current_scope) do
+      {:ok, draft} ->
+        {:noreply,
+         push_navigate(socket,
+           to: ~p"/manage/mail/newsletters/#{draft.id}?locale=#{socket.assigns.locale}"
+         )}
+
+      _ ->
+        {:noreply, assign(socket, error: error_message(:unauthorized))}
+    end
+  end
+
   def handle_event("start-account", %{"id" => id}, socket) do
     start_batch(socket, id)
   end
@@ -304,7 +334,7 @@ defmodule PauseAiCaWeb.MailDraftsLive do
             :if={Volunteers.superadmin?(@current_scope)}
             navigate={~p"/manage/mail/newsletters?locale=#{@locale}"}
             class="underline"
-          >{gettext("Newsletters")}</.link>
+          >{gettext("Batches and newsletters")}</.link>
         </nav>
         <section :if={@anchor} class="mt-6">
           <p>{@anchor.name} · {@anchor.email}</p><button
@@ -319,14 +349,34 @@ defmodule PauseAiCaWeb.MailDraftsLive do
           id="mail-batches"
           class="mt-6"
         >
+          <section :if={Volunteers.superadmin?(@current_scope)} id="email-drafts" class="mb-8">
+            <button id="mail-new-draft" type="button" phx-click="new-email-draft" class="crm-button">{gettext(
+              "New draft"
+            )}</button>
+            <p class="my-3 text-stone-600">
+              {gettext("Write the content first. Choose the audience when you are ready.")}
+            </p>
+            <ul class="space-y-3">
+              <li :for={draft <- @general_drafts}>
+                <.link
+                  navigate={~p"/manage/mail/newsletters/#{draft.id}?locale=#{@locale}"}
+                  class="underline"
+                >{if draft.subject == "", do: gettext("Untitled draft"), else: draft.subject}</.link>
+              </li>
+            </ul>
+            <h2 class="mt-8 mb-3 text-xl font-semibold">{gettext("Personalized account drafts")}</h2>
+          </section>
           <.link
-            id="mail-new-draft"
-            navigate={~p"/manage/mail/new?locale=#{@locale}"}
+            id={
+              if Volunteers.superadmin?(@current_scope),
+                do: "mail-new-account-draft",
+                else: "mail-new-draft"
+            }
+            navigate={~p"/manage/mail/new?account_drafts=true&locale=#{@locale}"}
             class="crm-button"
-          >{gettext("New draft")}</.link>
-          <p :if={@batches == []} class="mt-3 text-stone-600">
-            {gettext("No drafts yet. Choose New draft to begin.")}
-          </p>
+          >{if Volunteers.superadmin?(@current_scope),
+            do: gettext("New personalized account drafts"),
+            else: gettext("New draft")}</.link>
           <ul>
             <li :for={batch <- @batches}>
               <.link navigate={~p"/manage/mail/#{batch.id}?locale=#{@locale}"}>{if batch.subject == "",
@@ -336,7 +386,29 @@ defmodule PauseAiCaWeb.MailDraftsLive do
           </ul>
         </section>
         <section
-          :if={@live_action == :new and is_nil(@anchor) and is_nil(@batch)}
+          :if={
+            @live_action == :new and Volunteers.superadmin?(@current_scope) and not @account_flow and
+              is_nil(@anchor)
+          }
+          class="mt-6"
+        >
+          <h2 class="text-xl font-bold">{gettext("New draft")}</h2>
+          <p class="my-3">
+            {gettext("Write the content first. Choose the audience when you are ready.")}
+          </p>
+          <button id="mail-new-draft" type="button" phx-click="new-email-draft" class="crm-button">{gettext(
+            "Start draft"
+          )}</button>
+          <.link
+            navigate={~p"/manage/mail/new?account_drafts=true&locale=#{@locale}"}
+            class="ml-5 underline"
+          >{gettext("Personalized account drafts")}</.link>
+        </section>
+        <section
+          :if={
+            @live_action == :new and is_nil(@anchor) and is_nil(@batch) and
+              (not Volunteers.superadmin?(@current_scope) or @account_flow)
+          }
           id="mail-new"
           class="mt-6"
         >
