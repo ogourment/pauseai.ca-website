@@ -11,6 +11,7 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
         {:ok,
          assign(socket,
            locale: locale,
+           connected: connected?(socket),
            page_title: gettext("Newsletter draft"),
            draft: draft,
            form: to_form(Draft.changeset(draft, %{}), as: "draft"),
@@ -355,257 +356,274 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
       active_tab="mail"
     >
       <section :if={@draft} id="newsletter-draft" class="crm-surface mx-auto max-w-5xl px-5 py-8">
-        <.link navigate={~p"/manage/mail/newsletters?locale=#{@locale}"} class="underline">{gettext(
-          "Newsletters"
-        )}</.link>
-        <h1 class="mt-5 text-3xl font-bold">{gettext("Newsletter draft")}</h1>
-        <p class="mt-3">
-          {gettext(
-            "Saving a draft does not approve or send it. Eligibility is checked from current consent when a batch is prepared."
-          )}
-        </p>
-        <p :if={@status} id="newsletter-save-status" role="status" class="mt-3">{@status}</p>
-        <p :if={@error} id="newsletter-draft-error" role="alert" class="mt-3 crm-error">{@error}</p>
-        <.form
-          :if={is_nil(@draft.archived_at)}
-          for={@form}
-          id="newsletter-draft-form"
-          phx-change="edit"
-          phx-submit="save"
-          class="mt-6 space-y-5"
-        >
-          <.input field={@form[:subject]} label={gettext("Subject")} />
-          <.input
-            field={@form[:region]}
-            type="select"
-            label={gettext("Audience geography")}
-            options={[
-              {gettext("All regions"), ""},
-              {"Montréal", "Montréal"},
-              {"ROQuébec", "ROQuébec"},
-              {"ROCanada", "ROCanada"}
-            ]}
-          />
-          <.live_component
-            module={PhoenixMarkdownEditor.Component}
-            id="newsletter-content"
-            source={@form[:source].value || ""}
-            name="draft[source]"
-            label={gettext("Message · Markdown")}
-            preview_label={gettext("Preview ↗")}
-            preview_title={gettext("Newsletter preview")}
-            popup_blocked_message={gettext("Allow the preview window, then try again.")}
-            preview_open_message={gettext("Preview opened")}
-            preview_updated_message={gettext("Preview updated")}
-            disconnected_message={gettext("Connection interrupted; text retained in this page.")}
-            preview_error_message={gettext("Preview unavailable. Your text is retained.")}
-            render_preview={&PauseAiCa.Mail.Render.html/1}
-          />
-          <section :if={@audience} id="newsletter-recipient-picker" class="space-y-4">
-            <h2 class="text-xl font-semibold">{gettext("Recipients")}</h2>
+        <fieldset disabled={!@connected} class="contents">
+          <.link navigate={~p"/manage/mail/newsletters?locale=#{@locale}"} class="underline">{gettext(
+            "Newsletters"
+          )}</.link>
+          <h1 class="mt-5 text-3xl font-bold">{gettext("Newsletter draft")}</h1>
+          <p class="mt-3">
+            {gettext(
+              "Saving a draft does not approve or send it. Eligibility is checked from current consent when a batch is prepared."
+            )}
+          </p>
+          <p :if={@status} id="newsletter-save-status" role="status" class="mt-3">{@status}</p>
+          <p :if={@error} id="newsletter-draft-error" role="alert" class="mt-3 crm-error">{@error}</p>
+          <.form
+            :if={is_nil(@draft.archived_at)}
+            for={@form}
+            id="newsletter-draft-form"
+            phx-change="edit"
+            phx-submit="save"
+            class="mt-6 space-y-5"
+          >
+            <.input field={@form[:subject]} label={gettext("Subject")} />
             <.input
-              field={@form[:recipient_mode]}
+              field={@form[:region]}
               type="select"
-              label={gettext("Audience source")}
+              label={gettext("Audience geography")}
               options={[
-                {gettext("Confirmed newsletter subscribers"), "newsletter"},
-                {gettext("Contacts · manual review"), "contacts"}
+                {gettext("All regions"), ""},
+                {"Montréal", "Montréal"},
+                {"ROQuébec", "ROQuébec"},
+                {"ROCanada", "ROCanada"}
               ]}
             />
-            <.input name="draft[candidate_q]" value={@candidate_q} label={gettext("Find contacts")} />
-            <div class="flex flex-wrap gap-4 items-center">
-              <button type="button" class="crm-button" phx-click="select-visible">{gettext(
-                "Select visible available recipients"
-              )}</button>
-              <button type="button" class="underline" phx-click="clear-recipients">{gettext(
-                "Clear selection"
-              )}</button>
-              <span id="newsletter-selected-count">{gettext("%{count} selected",
-                count: length(@form[:recipient_keys].value || [])
-              )}</span>
-            </div>
-            <input type="hidden" name="draft[recipient_keys][]" value="" />
-            <input
-              :for={key <- (@form[:recipient_keys].value || []) -- Enum.map(@audience.rows, & &1.id)}
-              type="hidden"
-              name="draft[recipient_keys][]"
-              value={key}
+            <.live_component
+              module={PhoenixMarkdownEditor.Component}
+              id="newsletter-content"
+              source={@form[:source].value || ""}
+              name="draft[source]"
+              label={gettext("Message · Markdown")}
+              preview_label={gettext("Preview ↗")}
+              preview_title={gettext("Newsletter preview")}
+              popup_blocked_message={gettext("Allow the preview window, then try again.")}
+              preview_open_message={gettext("Preview opened")}
+              preview_updated_message={gettext("Preview updated")}
+              disconnected_message={gettext("Connection interrupted; text retained in this page.")}
+              preview_error_message={gettext("Preview unavailable. Your text is retained.")}
+              render_preview={&PauseAiCa.Mail.Render.html/1}
             />
-            <ul class="space-y-2">
-              <li :for={row <- @audience.rows} class="border border-stone-300 rounded-lg p-3">
-                <label class="flex gap-3 items-start">
-                  <input
-                    type="checkbox"
-                    name="draft[recipient_keys][]"
-                    value={row.id}
-                    checked={row.id in (@form[:recipient_keys].value || [])}
-                    disabled={
-                      row.status != :available and row.id not in (@form[:recipient_keys].value || [])
-                    }
-                    aria-label={gettext("Select %{email}", email: row.email || row.name)}
+            <section :if={@audience} id="newsletter-recipient-picker" class="space-y-4">
+              <h2 class="text-xl font-semibold">{gettext("Recipients")}</h2>
+              <.input
+                field={@form[:recipient_mode]}
+                type="select"
+                label={gettext("Audience source")}
+                options={[
+                  {gettext("Confirmed newsletter subscribers"), "newsletter"},
+                  {gettext("Contacts · manual review"), "contacts"}
+                ]}
+              />
+              <.input name="draft[candidate_q]" value={@candidate_q} label={gettext("Find contacts")} />
+              <div class="flex flex-wrap gap-4 items-center">
+                <button type="button" class="crm-button" phx-click="select-visible">{gettext(
+                  "Select visible available recipients"
+                )}</button>
+                <button type="button" class="underline" phx-click="clear-recipients">{gettext(
+                  "Clear selection"
+                )}</button>
+                <span id="newsletter-selected-count">{gettext("%{count} selected",
+                  count: length(@form[:recipient_keys].value || [])
+                )}</span>
+              </div>
+              <input type="hidden" name="draft[recipient_keys][]" value="" />
+              <input
+                :for={
+                  key <- (@form[:recipient_keys].value || []) -- Enum.map(@audience.rows, & &1.id)
+                }
+                type="hidden"
+                name="draft[recipient_keys][]"
+                value={key}
+              />
+              <ul class="space-y-2">
+                <li :for={row <- @audience.rows} class="border border-stone-300 rounded-lg p-3">
+                  <label class="flex gap-3 items-start">
+                    <input
+                      type="checkbox"
+                      name="draft[recipient_keys][]"
+                      value={row.id}
+                      checked={row.id in (@form[:recipient_keys].value || [])}
+                      disabled={
+                        row.status != :available and
+                          row.id not in (@form[:recipient_keys].value || [])
+                      }
+                      aria-label={gettext("Select %{email}", email: row.email || row.name)}
+                    />
+                    <span><strong class="break-all">{row.email || row.name}</strong><span
+                      :if={row.name != ""}
+                      class="block text-sm"
+                    >{row.name}</span><span :if={row.status != :available} class="block text-sm">{gettext(
+                      "Excluded: withdrawal, blocked address or missing preferred email."
+                    )}</span></span>
+                  </label>
+                  <PauseAiCaWeb.ContactSourceComponents.source_summary
+                    :for={origin <- Map.get(row, :origins, [])}
+                    id={"blast-source-#{origin.id}"}
+                    data={origin.source_data}
                   />
-                  <span><strong class="break-all">{row.email || row.name}</strong><span
-                    :if={row.name != ""}
-                    class="block text-sm"
-                  >{row.name}</span><span :if={row.status != :available} class="block text-sm">{gettext(
-                    "Excluded: withdrawal, blocked address or missing preferred email."
-                  )}</span></span>
-                </label>
-                <PauseAiCaWeb.ContactSourceComponents.source_summary
-                  :for={origin <- Map.get(row, :origins, [])}
-                  id={"blast-source-#{origin.id}"}
-                  data={origin.source_data}
-                />
-              </li>
-            </ul>
-            <nav aria-label={gettext("Pagination")} class="flex gap-4 items-center">
-              <button
-                :if={@audience.page > 1}
-                type="button"
-                phx-click="candidate-page"
-                phx-value-page={@audience.page - 1}
-                class="underline"
-              >{gettext("Previous")}</button>
-              <span>{gettext("Page %{page} of %{pages}", page: @audience.page, pages: @audience.pages)}</span>
-              <button
-                :if={@audience.page < @audience.pages}
-                type="button"
-                phx-click="candidate-page"
-                phx-value-page={@audience.page + 1}
-                class="underline"
-              >{gettext("Next")}</button>
-            </nav>
-          </section>
-          <button type="submit" class="crm-button" phx-disable-with={gettext("Saving…")}>{gettext(
-            "Save"
-          )}</button>
-        </.form>
-        <section
-          :if={is_nil(@draft.archived_at)}
-          id="newsletter-batch-workspace"
-          class="mt-10 space-y-5 border-t border-stone-300 pt-6"
-        >
-          <h2 class="text-xl font-semibold">{gettext("Review and send")}</h2>
-          <p :if={@quota}>
-            {gettext(
-              "Available this hour: %{personal} for your authorizations, %{global} across the application.",
-              personal: @quota.personal_remaining,
-              global: @quota.global_remaining
-            )}
-          </p>
-          <p>
-            {gettext(
-              "Delivery limits: 20 messages/hour per authorizing admin, 100/hour globally. Unsure submissions are held for review, never retried automatically."
-            )}
-          </p>
-          <p :if={PauseAiCa.MailSafety.environment() == :staging} class="crm-error">
-            {gettext("Staging rehearsal: every message goes only to the authorizing admin.")}
-          </p>
-          <.form for={%{}} as={:review} id="newsletter-prepare-form" phx-submit="prepare-batch">
-            <input type="hidden" name="review[eligible]" value="false" />
-            <label class="flex gap-3 my-3"><input
-              type="checkbox"
-              name="review[eligible]"
-              value="true"
-            /><span>{gettext(
-              "I reviewed the selected contacts' eligibility for this communication. This does not grant newsletter consent."
-            )}</span></label>
-            <button type="submit" class="crm-button" phx-disable-with={gettext("Preparing…")}>{gettext(
-              "Prepare batch"
+                </li>
+              </ul>
+              <nav aria-label={gettext("Pagination")} class="flex gap-4 items-center">
+                <button
+                  :if={@audience.page > 1}
+                  type="button"
+                  phx-click="candidate-page"
+                  phx-value-page={@audience.page - 1}
+                  class="underline"
+                >{gettext("Previous")}</button>
+                <span>{gettext("Page %{page} of %{pages}",
+                  page: @audience.page,
+                  pages: @audience.pages
+                )}</span>
+                <button
+                  :if={@audience.page < @audience.pages}
+                  type="button"
+                  phx-click="candidate-page"
+                  phx-value-page={@audience.page + 1}
+                  class="underline"
+                >{gettext("Next")}</button>
+              </nav>
+            </section>
+            <button type="submit" class="crm-button" phx-disable-with={gettext("Saving…")}>{gettext(
+              "Save"
             )}</button>
           </.form>
-          <ul class="flex flex-wrap gap-4">
-            <li :for={batch <- @batches}>
-              <button type="button" phx-click="review-batch" phx-value-id={batch.id} class="underline">{batch.subject} · {length(
-                batch.recipient_keys
-              )} · {batch_label(batch.state)}</button>
-            </li>
-          </ul>
-          <section :if={@batch_review} id="newsletter-batch-review" class="space-y-4">
-            <h3 class="font-semibold">{gettext("Frozen batch snapshot")}</h3>
-            <p>
-              {gettext("Saved draft version %{version}", version: @batch_review.batch.draft_revision)}
-            </p>
-            <p>
-              {@batch_review.batch.subject} · {length(@batch_review.deliveries)} · {batch_label(
-                @batch_review.batch.state
+          <section
+            :if={is_nil(@draft.archived_at)}
+            id="newsletter-batch-workspace"
+            class="mt-10 space-y-5 border-t border-stone-300 pt-6"
+          >
+            <h2 class="text-xl font-semibold">{gettext("Review and send")}</h2>
+            <p :if={@quota}>
+              {gettext(
+                "Available this hour: %{personal} for your authorizations, %{global} across the application.",
+                personal: @quota.personal_remaining,
+                global: @quota.global_remaining
               )}
             </p>
-            <p>
-              {@batch_review.batch.sender_name} · {@batch_review.batch.sender_email} · {@batch_review.batch.delivery_environment}
-            </p>
-            <p>{gettext("Authorizing admin: %{email}", email: @current_scope.user.email)}</p>
-            <div class="prose max-w-none">
-              {Phoenix.HTML.raw(PauseAiCa.Mail.Render.html(@batch_review.batch.source))}
-            </div>
             <p>
               {gettext(
-                "Each recipient gets a personal Manage my subscription link. Approval applies only to this saved content and recipient snapshot."
+                "Delivery limits: 20 messages/hour per authorizing admin, 100/hour globally. Unsure submissions are held for review, never retried automatically."
               )}
             </p>
-            <div class="flex flex-wrap gap-4">
-              <button
-                :if={@batch_review.batch.state in ["review", "paused"]}
-                type="button"
-                class="crm-button"
-                phx-click="approve-batch"
-              >{gettext("Approve batch")}</button>
-              <button
-                :if={@batch_review.batch.state in ["approved", "sending"]}
-                type="button"
-                class="crm-button"
-                phx-click="send-batch"
-                disabled={@delivery_state == :sending}
-              >{gettext("Send")}</button>
-              <button
-                :if={@batch_review.batch.state in ["approved", "sending"]}
-                type="button"
-                class="underline"
-                phx-click="pause-batch"
-              >{gettext("Pause batch")}</button>
-            </div>
-            <p id="newsletter-delivery-progress" role="status">
-              {Enum.count(@batch_review.deliveries, &(&1.state == "accepted"))} / {length(
-                @batch_review.deliveries
-              )} · {delivery_label(@delivery_state)}
+            <p :if={PauseAiCa.MailSafety.environment() == :staging} class="crm-error">
+              {gettext("Staging rehearsal: every message goes only to the authorizing admin.")}
             </p>
-            <p :if={@delivery_state == :throttled}>
-              {gettext("Hourly limit reached. Remaining recipients are retained for a later resume.")}
-            </p>
-            <p :if={PauseAiCa.MailSafety.environment() == :dev}>
-              <.link href="/dev/mailbox" class="underline">{gettext("Open development mailbox")}</.link>
-            </p>
-            <ul id="newsletter-batch-receipt" class="space-y-2">
-              <li :for={delivery <- @batch_review.deliveries} class="break-all">
-                {delivery.email} · {receipt_label(
-                  delivery.state,
-                  @batch_review.batch.delivery_environment
-                )}<span :if={delivery.provider_id not in [nil, ""]}> · {if @batch_review.batch.delivery_environment in [
-                                                                             "dev",
-                                                                             "test"
-                                                                           ],
-                                                                           do:
-                                                                             gettext("Local mailbox"),
-                                                                           else: gettext("Brevo")} {delivery.provider_id}</span><span :if={
-                  delivery.error
-                }> · {delivery.error}</span>
+            <.form for={%{}} as={:review} id="newsletter-prepare-form" phx-submit="prepare-batch">
+              <input type="hidden" name="review[eligible]" value="false" />
+              <label class="flex gap-3 my-3"><input
+                type="checkbox"
+                name="review[eligible]"
+                value="true"
+              /><span>{gettext(
+                "I reviewed the selected contacts' eligibility for this communication. This does not grant newsletter consent."
+              )}</span></label>
+              <button type="submit" class="crm-button" phx-disable-with={gettext("Preparing…")}>{gettext(
+                "Prepare batch"
+              )}</button>
+            </.form>
+            <ul class="flex flex-wrap gap-4">
+              <li :for={batch <- @batches}>
+                <button
+                  type="button"
+                  phx-click="review-batch"
+                  phx-value-id={batch.id}
+                  class="underline"
+                >{batch.subject} · {length(batch.recipient_keys)} · {batch_label(batch.state)}</button>
               </li>
             </ul>
-            <p>
-              {gettext("Provider acceptance is separate from delivery to the recipient's mailbox.")}
-            </p>
+            <section :if={@batch_review} id="newsletter-batch-review" class="space-y-4">
+              <h3 class="font-semibold">{gettext("Frozen batch snapshot")}</h3>
+              <p>
+                {gettext("Saved draft version %{version}",
+                  version: @batch_review.batch.draft_revision
+                )}
+              </p>
+              <p>
+                {@batch_review.batch.subject} · {length(@batch_review.deliveries)} · {batch_label(
+                  @batch_review.batch.state
+                )}
+              </p>
+              <p>
+                {@batch_review.batch.sender_name} · {@batch_review.batch.sender_email} · {@batch_review.batch.delivery_environment}
+              </p>
+              <p>{gettext("Authorizing admin: %{email}", email: @current_scope.user.email)}</p>
+              <div class="prose max-w-none">
+                {Phoenix.HTML.raw(PauseAiCa.Mail.Render.html(@batch_review.batch.source))}
+              </div>
+              <p>
+                {gettext(
+                  "Each recipient gets a personal Manage my subscription link. Approval applies only to this saved content and recipient snapshot."
+                )}
+              </p>
+              <div class="flex flex-wrap gap-4">
+                <button
+                  :if={@batch_review.batch.state in ["review", "paused"]}
+                  type="button"
+                  class="crm-button"
+                  phx-click="approve-batch"
+                >{gettext("Approve batch")}</button>
+                <button
+                  :if={@batch_review.batch.state in ["approved", "sending"]}
+                  type="button"
+                  class="crm-button"
+                  phx-click="send-batch"
+                  disabled={@delivery_state == :sending}
+                >{gettext("Send")}</button>
+                <button
+                  :if={@batch_review.batch.state in ["approved", "sending"]}
+                  type="button"
+                  class="underline"
+                  phx-click="pause-batch"
+                >{gettext("Pause batch")}</button>
+              </div>
+              <p id="newsletter-delivery-progress" role="status">
+                {Enum.count(@batch_review.deliveries, &(&1.state == "accepted"))} / {length(
+                  @batch_review.deliveries
+                )} · {delivery_label(@delivery_state)}
+              </p>
+              <p :if={@delivery_state == :throttled}>
+                {gettext(
+                  "Hourly limit reached. Remaining recipients are retained for a later resume."
+                )}
+              </p>
+              <p :if={PauseAiCa.MailSafety.environment() == :dev}>
+                <.link href="/dev/mailbox" class="underline">{gettext("Open development mailbox")}</.link>
+              </p>
+              <ul id="newsletter-batch-receipt" class="space-y-2">
+                <li :for={delivery <- @batch_review.deliveries} class="break-all">
+                  {delivery.email} · {receipt_label(
+                    delivery.state,
+                    @batch_review.batch.delivery_environment
+                  )}<span :if={delivery.provider_id not in [nil, ""]}> · {if @batch_review.batch.delivery_environment in [
+                                                                               "dev",
+                                                                               "test"
+                                                                             ],
+                                                                             do:
+                                                                               gettext(
+                                                                                 "Local mailbox"
+                                                                               ),
+                                                                             else: gettext("Brevo")} {delivery.provider_id}</span><span :if={
+                    delivery.error
+                  }> · {delivery.error}</span>
+                </li>
+              </ul>
+              <p>
+                {gettext("Provider acceptance is separate from delivery to the recipient's mailbox.")}
+              </p>
+            </section>
           </section>
-        </section>
-        <p :if={@draft.archived_at} class="mt-5">{gettext("Archived draft")}</p>
-        <button
-          :if={is_nil(@draft.archived_at)}
-          type="button"
-          class="mt-6 underline"
-          phx-click="archive"
-        >{gettext("Archive")}</button>
-        <button :if={@draft.archived_at} type="button" class="mt-6 crm-button" phx-click="restore">{gettext(
-          "Restore"
-        )}</button>
+          <p :if={@draft.archived_at} class="mt-5">{gettext("Archived draft")}</p>
+          <button
+            :if={is_nil(@draft.archived_at)}
+            type="button"
+            class="mt-6 underline"
+            phx-click="archive"
+          >{gettext("Archive")}</button>
+          <button :if={@draft.archived_at} type="button" class="mt-6 crm-button" phx-click="restore">{gettext(
+            "Restore"
+          )}</button>
+        </fieldset>
       </section>
     </Layouts.management>
     """
