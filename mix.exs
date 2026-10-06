@@ -40,7 +40,9 @@ defmodule PauseAiCa.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix_app_shell, path: System.fetch_env!("PHOENIX_APP_SHELL_PATH")},
+      {:phoenix_app_shell,
+       git: "ssh://git@git.agile-u.com/olivierg/phoenix_app_shell.git",
+       ref: "a7139b3ad55754da346cc232959d93b4dd3222fe"},
       {:argon2_elixir, "~> 4.0"},
       {:phoenix, "~> 1.8.9"},
       {:phoenix_ecto, "~> 4.5"},

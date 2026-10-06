@@ -48,6 +48,9 @@ on:
       editor-package-deploy-key:
         description: Read-only phoenix_markdown_editor Forgejo deploy key
         required: true
+      shell-package-deploy-key:
+        description: Read-only phoenix_app_shell Forgejo deploy key
+        required: true
       forgejo-known-hosts:
         description: Verified git.agile-u.com host key
         required: true
@@ -111,20 +114,23 @@ jobs:
       - name: Configure read-only private package access
         env:
           CRM_DEPLOY_KEY: ${{ secrets.crm-package-deploy-key }}
+          SHELL_DEPLOY_KEY: ${{ secrets.shell-package-deploy-key }}
           EDITOR_DEPLOY_KEY: ${{ secrets.editor-package-deploy-key }}
           FORGEJO_KNOWN_HOSTS: ${{ secrets.forgejo-known-hosts }}
         run: |
           set -euo pipefail
           test -n "$CRM_DEPLOY_KEY"
           test -n "$EDITOR_DEPLOY_KEY"
+          test -n "$SHELL_DEPLOY_KEY"
           test -n "$FORGEJO_KNOWN_HOSTS"
           install -d -m 700 "$HOME/.ssh"
           printf '%s\n' "$CRM_DEPLOY_KEY" > "$HOME/.ssh/phoenix_crm_ci"
           printf '%s\n' "$EDITOR_DEPLOY_KEY" > "$HOME/.ssh/phoenix_editor_ci"
-          chmod 600 "$HOME/.ssh/phoenix_crm_ci" "$HOME/.ssh/phoenix_editor_ci"
+          printf '%s\n' "$SHELL_DEPLOY_KEY" > "$HOME/.ssh/phoenix_shell_ci"
+          chmod 600 "$HOME/.ssh/phoenix_crm_ci" "$HOME/.ssh/phoenix_editor_ci" "$HOME/.ssh/phoenix_shell_ci"
           printf '%s\n' "$FORGEJO_KNOWN_HOSTS" >> "$HOME/.ssh/known_hosts"
           cat >> "$HOME/.ssh/config" <<EOF
-          Host forgejo-crm forgejo-editor
+          Host forgejo-crm forgejo-editor forgejo-shell
             HostName git.agile-u.com
             User git
             HostKeyAlias git.agile-u.com
@@ -132,12 +138,15 @@ jobs:
             IdentitiesOnly yes
           Host forgejo-crm
             IdentityFile $HOME/.ssh/phoenix_crm_ci
+          Host forgejo-shell
+            IdentityFile $HOME/.ssh/phoenix_shell_ci
           Host forgejo-editor
             IdentityFile $HOME/.ssh/phoenix_editor_ci
           EOF
           chmod 600 "$HOME/.ssh/config" "$HOME/.ssh/known_hosts"
           git config --global url."ssh://git@forgejo-crm/olivierg/phoenix_crm.git".insteadOf "ssh://git@git.agile-u.com/olivierg/phoenix_crm.git"
           git config --global url."ssh://git@forgejo-editor/olivierg/phoenix_markdown_editor.git".insteadOf "ssh://git@git.agile-u.com/olivierg/phoenix_markdown_editor.git"
+          git config --global url."ssh://git@forgejo-shell/olivierg/phoenix_app_shell.git".insteadOf "ssh://git@git.agile-u.com/olivierg/phoenix_app_shell.git"
       - name: Fetch dependencies
         run: mix deps.get
       - name: Check formatting
