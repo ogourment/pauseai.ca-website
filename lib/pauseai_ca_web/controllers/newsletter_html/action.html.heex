@@ -1,5 +1,7 @@
 <section class="mx-auto max-w-2xl px-5 py-12" id="newsletter-action">
-  <h1 class="text-3xl font-bold">{if @action == :withdraw, do: gettext("Email preferences"), else: gettext("Newsletter")}</h1>
+  <h1 class="text-3xl font-bold">
+    {if @action == :withdraw, do: gettext("Email preferences"), else: gettext("Newsletter")}
+  </h1>
   <div :if={@state == :ready} class="mt-6">
     <p :if={@action == :confirm}>
       {gettext("Confirm that you want to receive PauseAI Canada newsletter updates.")}
