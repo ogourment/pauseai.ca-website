@@ -436,9 +436,14 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
                 value={key}
               />
               <ul class="space-y-2">
-                <li :for={row <- @audience.rows} class="border border-stone-300 rounded-lg p-3">
+                <li
+                  :for={row <- @audience.rows}
+                  id={"newsletter-recipient-#{row.id}"}
+                  class="border border-stone-300 rounded-lg p-3"
+                >
                   <label class="flex gap-3 items-start">
                     <input
+                      id={"newsletter-recipient-choice-#{row.id}"}
                       type="checkbox"
                       name="draft[recipient_keys][]"
                       value={row.id}
