@@ -290,28 +290,18 @@ defmodule PauseAiCa.Learning.QuestionBank do
        when map_size(changes) == 0, do: {:ok, question}
 
   defp persist(changeset, scope) do
-    Repo.transaction(fn ->
-      case Repo.update(changeset) do
-        {:ok, saved} ->
-          Repo.insert_all(PauseAiCa.Learning.QuestionRevision, [
-            %{
-              question_id: saved.id,
-              revision: saved.revision,
-              editor_id: scope.user.id,
-              editions: saved.editions,
-              kind: saved.kind,
-              topic: saved.topic,
-              status: saved.status,
-              published_editions: saved.published_editions,
-              inserted_at: DateTime.utc_now()
-            }
-          ])
-
-          saved
-
-        {:error, reason} ->
-          Repo.rollback(reason)
-      end
+    PhoenixCMS.Revisions.update(Repo, changeset, PauseAiCa.Learning.QuestionRevision, fn saved ->
+      %{
+        question_id: saved.id,
+        revision: saved.revision,
+        editor_id: scope.user.id,
+        editions: saved.editions,
+        kind: saved.kind,
+        topic: saved.topic,
+        status: saved.status,
+        published_editions: saved.published_editions,
+        inserted_at: DateTime.utc_now()
+      }
     end)
   end
 

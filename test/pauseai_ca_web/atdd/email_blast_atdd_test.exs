@@ -85,7 +85,7 @@ if System.get_env("ATDD") == "true" do
       on_exit(fn -> Application.put_env(:pauseai_ca, :mail_environment, old_environment) end)
       flush_emails()
       {token, _} = generate_user_magic_link_token(actor)
-      path = "/manage/mail/newsletters/#{draft.id}?locale=en"
+      path = "/manage/mail/drafts/#{draft.id}?locale=en"
 
       b =
         c.conn
@@ -211,11 +211,11 @@ if System.get_env("ATDD") == "true" do
       assert source =~ "AIs are starting to do increasingly sophisticated things"
 
       csv =
-        "Name,Email,City,Geography,Signup\n" <>
+        "Name,Email,City,Signup,Source\n" <>
           Enum.map_join(
             1..14,
             "\n",
-            &"Synthetic protest contact #{&1},blast-#{locale}-#{&1}@example.org,Montréal,Montréal,45945"
+            &"Synthetic protest contact #{&1},blast-#{locale}-#{&1}@example.org,Montreal,45945,protest"
           )
 
       file = "tmp/PA-SEND-01-#{locale}.csv"
@@ -263,9 +263,12 @@ if System.get_env("ATDD") == "true" do
       b =
         b
         |> visit("/manage/mail?locale=#{locale}")
-        |> click_link(tr(locale, "Newsletters"))
-        |> click_button(tr(locale, "New draft"))
+        |> click_button(tr(locale, "Compose"))
         |> assert_has("#newsletter-draft-form")
+        |> assert_has("#newsletter-selected-count",
+          text: tr(locale, "%{count} selected", %{count: 0}),
+          exact: true
+        )
         |> fill_in(tr(locale, "Subject"), with: "September 26 protest press release #{locale}")
         |> fill_in(tr(locale, "Message · Markdown"), with: source)
         |> select(tr(locale, "Audience source"),
@@ -292,7 +295,7 @@ if System.get_env("ATDD") == "true" do
         )
 
       {:ok, [draft]} = Newsletters.Drafts.list(scope)
-      path = "/manage/mail/newsletters/#{draft.id}?locale=#{locale}"
+      path = "/manage/mail/drafts/#{draft.id}?locale=#{locale}"
 
       b =
         b

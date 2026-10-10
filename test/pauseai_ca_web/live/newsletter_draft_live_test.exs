@@ -9,11 +9,11 @@ defmodule PauseAiCaWeb.NewsletterDraftLiveTest do
     admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
     conn = log_in_user(conn, admin)
     scope = Accounts.Scope.for_user(admin)
-    {:ok, audience, _} = live(conn, "/manage/mail/newsletters?locale=en")
-    audience |> element("button", "New draft") |> render_click()
+    {:ok, audience, _} = live(conn, "/manage/mail?locale=en")
+    audience |> element("#mail-new-draft", "Compose") |> render_click()
     assert {:ok, [draft]} = Newsletters.Drafts.list(scope)
-    assert_redirect(audience, "/manage/mail/newsletters/#{draft.id}?locale=en")
-    path = "/manage/mail/newsletters/#{draft.id}?locale=en"
+    assert_redirect(audience, "/manage/mail/drafts/#{draft.id}?locale=en")
+    path = "/manage/mail/drafts/#{draft.id}?locale=en"
     {:ok, editor, _} = live(conn, path)
 
     editor
@@ -25,6 +25,8 @@ defmodule PauseAiCaWeb.NewsletterDraftLiveTest do
     assert has_element?(editor, "#newsletter-save-status", "Saved")
     {:ok, reloaded, _} = live(conn, path)
     assert has_element?(reloaded, "input[value='Montréal recap']")
+    {:ok, legacy, _} = live(conn, "/manage/mail/newsletters/#{draft.id}?locale=en")
+    assert has_element?(legacy, "input[value='Montréal recap']")
     reloaded |> element("button", "Archive") |> render_click()
     refute has_element?(reloaded, "#newsletter-draft-form")
     reloaded |> element("button", "Restore") |> render_click()
@@ -61,7 +63,7 @@ defmodule PauseAiCaWeb.NewsletterDraftLiveTest do
       end
 
     conn = log_in_user(conn, admin)
-    path = "/manage/mail/newsletters/#{draft.id}?locale=en"
+    path = "/manage/mail/drafts/#{draft.id}?locale=en"
     {:ok, view, _} = live(conn, path)
 
     view

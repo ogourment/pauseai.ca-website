@@ -357,9 +357,7 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
     >
       <section :if={@draft} id="newsletter-draft" class="crm-surface mx-auto max-w-5xl px-5 py-8">
         <fieldset disabled={!@connected} class="contents">
-          <.link navigate={~p"/manage/mail/newsletters?locale=#{@locale}"} class="underline">{gettext(
-            "Newsletters"
-          )}</.link>
+          <.link navigate={~p"/manage/mail?locale=#{@locale}"} class="underline">{gettext("Drafts")}</.link>
           <h1 class="mt-5 text-3xl font-bold">{gettext("Email draft")}</h1>
           <p class="mt-3">
             {gettext(

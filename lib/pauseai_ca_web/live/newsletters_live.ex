@@ -10,9 +10,8 @@ defmodule PauseAiCaWeb.NewslettersLive do
       {:ok,
        assign(socket,
          locale: locale,
-         page_title: gettext("Batches and newsletters"),
+         page_title: gettext("Newsletter lists"),
          audience: nil,
-         drafts: [],
          history: [],
          selected_id: nil,
          provider_state: :idle,
@@ -26,23 +25,7 @@ defmodule PauseAiCaWeb.NewslettersLive do
   def handle_params(params, _, socket) do
     case Newsletters.audience_page(socket.assigns.current_scope, params) do
       {:ok, audience} ->
-        {:ok, drafts} =
-          Newsletters.Drafts.list(socket.assigns.current_scope, params["archived"] == "true")
-
-        {:noreply, assign(socket, audience: audience, params: params, drafts: drafts)}
-
-      _ ->
-        {:noreply, denied(socket)}
-    end
-  end
-
-  def handle_event("new-draft", _, socket) do
-    case Newsletters.Drafts.create(socket.assigns.current_scope) do
-      {:ok, draft} ->
-        {:noreply,
-         push_navigate(socket,
-           to: ~p"/manage/mail/newsletters/#{draft.id}?locale=#{socket.assigns.locale}"
-         )}
+        {:noreply, assign(socket, audience: audience, params: params)}
 
       _ ->
         {:noreply, denied(socket)}
@@ -121,19 +104,17 @@ defmodule PauseAiCaWeb.NewslettersLive do
     >
       <section id="newsletters" class="crm-surface mx-auto max-w-6xl px-5 py-8">
         <nav aria-label={gettext("Emails")} class="mb-6 flex gap-5 border-b border-stone-300 pb-3">
-          <.link navigate={~p"/manage/mail?locale=#{@locale}"} class="underline">{gettext(
-            "Member emails"
-          )}</.link>
+          <.link navigate={~p"/manage/mail?locale=#{@locale}"} class="underline">{gettext("Drafts")}</.link>
           <.link
             patch={~p"/manage/mail/newsletters?locale=#{@locale}"}
             aria-current="page"
             class="font-bold"
-          >{gettext("Batches and newsletters")}</.link>
+          >{gettext("Newsletter lists")}</.link>
         </nav>
-        <h1 class="text-3xl font-bold">{gettext("Batches and newsletters")}</h1>
+        <h1 class="text-3xl font-bold">{gettext("Newsletter lists")}</h1>
         <p class="mt-3">
           {gettext(
-            "Newsletter audiences require confirmed consent. Contacts require a separate manual eligibility review."
+            "Manage confirmed subscribers, withdrawals and subscription history here. Compose emails from Drafts."
           )}
         </p>
         <p
@@ -149,29 +130,6 @@ defmodule PauseAiCaWeb.NewslettersLive do
         </p>
         <p :if={@error} id="newsletter-error" role="alert" class="mt-3 crm-error">{@error}</p>
         <div :if={@audience}>
-          <section id="newsletter-drafts" class="mt-6">
-            <h2 class="text-xl font-semibold">{gettext("Email drafts")}</h2>
-            <div class="my-3 flex flex-wrap gap-5">
-              <button type="button" class="crm-button" phx-click="new-draft">{gettext("New draft")}</button>
-              <.link
-                patch={
-                  ~p"/manage/mail/newsletters?#{Map.merge(@params, %{"archived" => if(@params["archived"] == "true", do: "false", else: "true"), "locale" => @locale})}"
-                }
-                class="underline"
-              >{if @params["archived"] == "true",
-                do: gettext("Active drafts"),
-                else: gettext("Archived drafts")}</.link>
-            </div>
-            <p :if={@drafts == []}>{gettext("No drafts yet.")}</p>
-            <ul class="space-y-2">
-              <li :for={draft <- @drafts}>
-                <.link
-                  navigate={~p"/manage/mail/newsletters/#{draft.id}?locale=#{@locale}"}
-                  class="underline"
-                >{if draft.subject == "", do: gettext("Untitled draft"), else: draft.subject}</.link>
-              </li>
-            </ul>
-          </section>
           <h2 class="mt-8 text-xl font-semibold">{gettext("Newsletter audience")}</h2>
           <.form
             for={

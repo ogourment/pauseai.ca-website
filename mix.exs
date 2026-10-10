@@ -53,9 +53,10 @@ defmodule PauseAiCa.MixProject do
       {:phoenix_live_view, "~> 1.2.0"},
       {:lazy_html, ">= 0.1.0", only: :test},
       acceptance_harness_dependency(),
+      cms_dependency(),
       {:phoenix_crm,
        git: "ssh://git@git.agile-u.com/olivierg/phoenix_crm.git",
-       ref: "155a7a8466c223177be2b5c2eca8a77be1f7b2ff"},
+       ref: "763ba7add0ac53a10dd10d6a8d0dda29d100b226"},
       markdown_editor_dependency(),
       {:mdex, "~> 0.13.5"},
       {:phoenix_test_playwright, "~> 0.15.0", only: :test, runtime: false},
@@ -145,6 +146,18 @@ defmodule PauseAiCa.MixProject do
         {:phoenix_markdown_editor,
          git: "ssh://git@git.agile-u.com/olivierg/phoenix_markdown_editor.git",
          ref: "d8d7b1dcba6002734fea8036b087f81b2e7a4a83"}
+    end
+  end
+
+  defp cms_dependency do
+    case System.get_env("PHOENIX_CMS_PATH") do
+      path when is_binary(path) and path != "" ->
+        {:phoenix_cms, path: Path.expand(path), override: true}
+
+      _ ->
+        {:phoenix_cms,
+         git: "ssh://git@git.agile-u.com/olivierg/phoenix_cms.git",
+         ref: "4157162fd65e30e202f47c506688dda2a00362a4"}
     end
   end
 

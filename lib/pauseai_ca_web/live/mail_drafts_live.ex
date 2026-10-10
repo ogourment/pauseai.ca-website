@@ -15,6 +15,7 @@ defmodule PauseAiCaWeb.MailDraftsLive do
          page_title: gettext("Emails"),
          batches: [],
          general_drafts: [],
+         archived_drafts: false,
          account_flow: false,
          batch: nil,
          anchor: nil,
@@ -39,7 +40,12 @@ defmodule PauseAiCaWeb.MailDraftsLive do
   @impl true
   def handle_params(params, _, socket) do
     scope = socket.assigns.current_scope
-    socket = assign(socket, account_flow: params["account_drafts"] == "true")
+
+    socket =
+      assign(socket,
+        account_flow: params["account_drafts"] == "true",
+        archived_drafts: params["archived"] == "true"
+      )
 
     cond do
       params["account_id"] ->
@@ -83,7 +89,7 @@ defmodule PauseAiCaWeb.MailDraftsLive do
 
       true ->
         general =
-          case EmailDrafts.list(scope) do
+          case EmailDrafts.list(scope, socket.assigns.archived_drafts) do
             {:ok, drafts} -> drafts
             _ -> []
           end
@@ -105,7 +111,7 @@ defmodule PauseAiCaWeb.MailDraftsLive do
       {:ok, draft} ->
         {:noreply,
          push_navigate(socket,
-           to: ~p"/manage/mail/newsletters/#{draft.id}?locale=#{socket.assigns.locale}"
+           to: ~p"/manage/mail/drafts/#{draft.id}?locale=#{socket.assigns.locale}"
          )}
 
       _ ->
@@ -319,7 +325,7 @@ defmodule PauseAiCaWeb.MailDraftsLive do
           class="mb-4 inline-block underline"
         >{gettext("Account and Brevo history")}</.link>
         <h1 class="text-3xl font-bold mb-6">{gettext("Emails")}</h1>
-        <p>
+        <p :if={@batch}>
           {gettext(
             "Templates save automatically. Individual edits save with Save draft. Drafting does not send email."
           )}
@@ -328,13 +334,13 @@ defmodule PauseAiCaWeb.MailDraftsLive do
         <p :if={@status} id="mail-save-status" role="status" aria-live="polite">{@status}</p>
         <nav aria-label={gettext("Emails")} class="my-5 flex gap-5 border-b border-stone-300 pb-3">
           <.link navigate={~p"/manage/mail?locale=#{@locale}"} aria-current="page" class="font-bold">{gettext(
-            "Member emails"
+            "Drafts"
           )}</.link>
           <.link
             :if={Volunteers.superadmin?(@current_scope)}
             navigate={~p"/manage/mail/newsletters?locale=#{@locale}"}
             class="underline"
-          >{gettext("Batches and newsletters")}</.link>
+          >{gettext("Newsletter lists")}</.link>
         </nav>
         <section :if={@anchor} class="mt-6">
           <p>{@anchor.name} · {@anchor.email}</p><button
@@ -351,15 +357,19 @@ defmodule PauseAiCaWeb.MailDraftsLive do
         >
           <section :if={Volunteers.superadmin?(@current_scope)} id="email-drafts" class="mb-8">
             <button id="mail-new-draft" type="button" phx-click="new-email-draft" class="crm-button">{gettext(
-              "New draft"
+              "Compose"
             )}</button>
             <p class="my-3 text-stone-600">
               {gettext("Write the content first. Choose the audience when you are ready.")}
             </p>
+            <.link
+              navigate={~p"/manage/mail?archived=#{!@archived_drafts}&locale=#{@locale}"}
+              class="underline"
+            >{if @archived_drafts, do: gettext("Active drafts"), else: gettext("Archived drafts")}</.link>
             <ul class="space-y-3">
               <li :for={draft <- @general_drafts}>
                 <.link
-                  navigate={~p"/manage/mail/newsletters/#{draft.id}?locale=#{@locale}"}
+                  navigate={~p"/manage/mail/drafts/#{draft.id}?locale=#{@locale}"}
                   class="underline"
                 >{if draft.subject == "", do: gettext("Untitled draft"), else: draft.subject}</.link>
               </li>

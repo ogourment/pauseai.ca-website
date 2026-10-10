@@ -131,7 +131,7 @@ if System.get_env("ATDD") == "true" do
         new_device(c, width, height)
         |> sign_in(admin)
         |> visit("/manage/mail?locale=#{locale}")
-        |> click_link(tr(locale, "Newsletters"))
+        |> click_link(tr(locale, "Newsletter lists"))
         |> assert_has("#newsletter-#{pending.id}", text: tr(locale, "Awaiting confirmation"))
         |> capture(
           locale,
@@ -187,8 +187,8 @@ if System.get_env("ATDD") == "true" do
 
       admin_browser =
         admin_browser
-        |> visit("/manage/mail/newsletters?locale=#{locale}")
-        |> click_button(tr(locale, "New draft"))
+        |> visit("/manage/mail?locale=#{locale}")
+        |> click_button(tr(locale, "Compose"))
         |> assert_has("#newsletter-draft-form")
         |> fill_in(tr(locale, "Subject"), with: "Synthetic press release #{locale}")
         |> fill_in(tr(locale, "Message · Markdown"),
@@ -204,7 +204,7 @@ if System.get_env("ATDD") == "true" do
         )
 
       {:ok, [draft]} = Newsletters.Drafts.list(scope)
-      draft_path = "/manage/mail/newsletters/#{draft.id}?locale=#{locale}"
+      draft_path = "/manage/mail/drafts/#{draft.id}?locale=#{locale}"
 
       admin_browser =
         admin_browser
