@@ -98,7 +98,7 @@ if System.get_env("ATDD") == "true" do
         |> assert_has("[data-phx-main].phx-connected")
         |> fill_in(tr(locale, "Name (optional)"), with: "Camille Synthetic")
         |> fill_in(tr(locale, "Your email"), with: email)
-        |> fill_in(tr(locale, "Postal area · FSA (optional)"), with: "h2x")
+        |> fill_in(tr(locale, "FSA (optional)"), with: "h2x")
         |> check(
           "#subscribe-consent",
           tr(

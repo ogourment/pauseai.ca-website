@@ -420,29 +420,35 @@ defmodule PauseAiCaWeb.LibraryLive do
                 phx-submit="subscribe"
                 class="mt-6"
               >
-                <.input
-                  field={@subscribe_form[:name]}
-                  label={gettext("Name (optional)")}
-                  autocomplete="name"
-                  maxlength="160"
-                />
+                <div class="grid grid-cols-[minmax(0,1fr)_8.25rem] gap-3">
+                  <.input
+                    field={@subscribe_form[:name]}
+                    label={gettext("Name (optional)")}
+                    autocomplete="name"
+                    maxlength="160"
+                  />
+                  <.input
+                    field={@subscribe_form[:fsa]}
+                    label={gettext("FSA (optional)")}
+                    placeholder="H2X"
+                    maxlength="3"
+                    autocapitalize="characters"
+                    spellcheck="false"
+                    title={
+                      gettext("First three characters of your Canadian postal code, for example H2X.")
+                    }
+                    aria-describedby="subscribe-fsa-hint"
+                  />
+                </div>
+                <p id="subscribe-fsa-hint" class="sr-only">
+                  {gettext("First three characters of your Canadian postal code, for example H2X.")}
+                </p>
                 <.input
                   field={@subscribe_form[:email]}
                   type="email"
                   label={email_label(@locale)}
                   autocomplete="email"
                 />
-                <.input
-                  field={@subscribe_form[:fsa]}
-                  label={gettext("Postal area · FSA (optional)")}
-                  maxlength="3"
-                  autocapitalize="characters"
-                  spellcheck="false"
-                  aria-describedby="subscribe-fsa-hint"
-                />
-                <p id="subscribe-fsa-hint" class="mt-1 text-sm text-stone-600">
-                  {gettext("First three characters of your Canadian postal code, for example H2X.")}
-                </p>
                 <label class="mt-2 flex items-start gap-3">
                   <input type="hidden" name="subscribe[consent]" value="false" />
                   <input
