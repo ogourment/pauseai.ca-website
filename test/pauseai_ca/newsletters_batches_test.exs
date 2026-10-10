@@ -42,7 +42,12 @@ defmodule PauseAiCa.NewslettersBatchesTest do
       for _ <- 1..14 do
         assert_receive {:email, email}
         assert email.cc == [] and email.bcc == []
-        assert email.html_body =~ "Manage my subscription"
+        assert email.html_body =~ "Unsubscribe"
+        assert email.html_body =~ "Se désabonner"
+        assert email.html_body =~ "/en/learn#newsletter-heading"
+        assert email.html_body =~ "/fr/comprendre#newsletter-heading"
+        assert email.text_body =~ "Unsubscribe · Se désabonner"
+        refute email.html_body =~ "newsletter-unsubscribe-preview"
         assert email.html_body =~ "<h1>Montréal</h1>"
         assert email.text_body =~ "A reviewed press release."
         email

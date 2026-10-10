@@ -9,6 +9,14 @@ defmodule PauseAiCa.Newsletters.Signup do
   @cooldown_seconds 60
 
   def request(email, attrs, url_builder, opts \\ []) when is_function(url_builder, 1) do
+    profile = Subscription.profile_changeset(attrs)
+
+    if profile.valid?,
+      do: request_validated(email, attrs, url_builder, opts),
+      else: {:error, profile}
+  end
+
+  defp request_validated(email, attrs, url_builder, opts) do
     case reserve(email, attrs, Keyword.get(opts, :admin_actor_id)) do
       {:ok, :unchanged} -> {:ok, :pending_confirmation}
       {:ok, request} -> deliver(request, url_builder, opts)

@@ -425,17 +425,7 @@ defmodule PauseAiCa.Newsletters.Batches do
 
   defp message(batch, email, link) do
     {html, text} =
-      PauseAiCaWeb.Emails.Layout.render(
-        batch.subject,
-        "",
-        [],
-        {"Manage my subscription", "Gérer mon abonnement", link},
-        body_html: PauseAiCa.Mail.Render.html(batch.source),
-        body_text: batch.source,
-        footer:
-          {"You are receiving a reviewed PauseAI Canada update. Manage your subscription using the link above.",
-           "Vous recevez une communication révisée de PauseIA Canada. Gérez votre abonnement avec le lien ci-dessus."}
-      )
+      PauseAiCa.Newsletters.Message.render(batch.subject, batch.source, link)
 
     Swoosh.Email.new()
     |> Swoosh.Email.to(email)

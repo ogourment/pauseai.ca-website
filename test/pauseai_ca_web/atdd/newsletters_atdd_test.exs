@@ -96,7 +96,9 @@ if System.get_env("ATDD") == "true" do
         c.conn
         |> visit(path)
         |> assert_has("[data-phx-main].phx-connected")
+        |> fill_in(tr(locale, "Name (optional)"), with: "Camille Synthetic")
         |> fill_in(tr(locale, "Your email"), with: email)
+        |> fill_in(tr(locale, "Postal area · FSA (optional)"), with: "h2x")
         |> check(
           "#subscribe-consent",
           tr(
@@ -115,6 +117,8 @@ if System.get_env("ATDD") == "true" do
 
       pending = Repo.get_by!(Newsletters.Subscription, email: email)
       assert pending.state == "pending"
+      assert pending.name == "Camille Synthetic"
+      assert pending.fsa == "H2X"
       refute Newsletters.eligible?(email)
       assert baseline == unrelated_counts()
       assert_receive {:email, delivered}, 8_000

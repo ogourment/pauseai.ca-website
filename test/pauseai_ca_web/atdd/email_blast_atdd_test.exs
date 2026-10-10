@@ -323,6 +323,9 @@ if System.get_env("ATDD") == "true" do
         )
         |> click_button(tr(locale, "Prepare batch"))
         |> assert_has("#newsletter-batch-review")
+        |> assert_has("#newsletter-batch-review", text: "Unsubscribe")
+        |> assert_has("#newsletter-batch-review", text: "Subscribe · English")
+        |> assert_has("#newsletter-batch-review", text: "S’inscrire · Français")
         |> refute_has("button[phx-click=send-batch]")
         |> capture(
           locale,
@@ -359,7 +362,11 @@ if System.get_env("ATDD") == "true" do
         for _ <- 1..14 do
           assert_receive {:email, email}, 8000
           assert email.cc == [] and email.bcc == []
-          assert email.html_body =~ "Manage my subscription"
+          assert email.html_body =~ "Unsubscribe"
+          assert email.html_body =~ "Se désabonner"
+          assert email.html_body =~ "/en/learn#newsletter-heading"
+          assert email.html_body =~ "/fr/comprendre#newsletter-heading"
+          refute email.html_body =~ "newsletter-unsubscribe-preview"
           assert email.text_body =~ "AIs are starting to do increasingly sophisticated things"
           email
         end

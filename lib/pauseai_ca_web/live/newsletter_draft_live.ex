@@ -399,7 +399,11 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
               preview_updated_message={gettext("Preview updated")}
               disconnected_message={gettext("Connection interrupted; text retained in this page.")}
               preview_error_message={gettext("Preview unavailable. Your text is retained.")}
-              render_preview={&PauseAiCa.Mail.Render.html/1}
+              render_preview={
+                fn source ->
+                  PauseAiCa.Newsletters.Message.preview(@form[:subject].value || "", source)
+                end
+              }
             />
             <section :if={@audience} id="newsletter-recipient-picker" class="space-y-4">
               <h2 class="text-xl font-semibold">{gettext("Recipients")}</h2>
@@ -552,7 +556,12 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
               </p>
               <p>{gettext("Authorizing admin: %{email}", email: @current_scope.user.email)}</p>
               <div class="prose max-w-none">
-                {Phoenix.HTML.raw(PauseAiCa.Mail.Render.html(@batch_review.batch.source))}
+                {Phoenix.HTML.raw(
+                  PauseAiCa.Newsletters.Message.preview(
+                    @batch_review.batch.subject,
+                    @batch_review.batch.source
+                  )
+                )}
               </div>
               <p>
                 {gettext(

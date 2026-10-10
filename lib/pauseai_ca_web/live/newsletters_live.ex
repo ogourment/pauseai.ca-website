@@ -184,6 +184,10 @@ defmodule PauseAiCaWeb.NewslettersLive do
               class="rounded-lg border border-stone-300 p-4"
             >
               <p class="font-semibold break-all">{row.subscription.email}</p>
+              <p :if={row.subscription.name} class="mt-1">{row.subscription.name}</p>
+              <p :if={row.subscription.fsa} class="mt-1 text-sm">
+                {gettext("Postal area")}: {row.subscription.fsa}
+              </p>
               <p class="mt-1 text-sm">
                 {status_label(row.status)} · {row.subscription.region || gettext("Geography unknown")}
               </p>

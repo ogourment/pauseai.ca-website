@@ -220,4 +220,49 @@ defmodule PauseAiCa.NewslettersTest do
     assert Repo.aggregate(ConsentEvent, :count) == events
     assert Repo.aggregate(Accounts.User, :count) == accounts
   end
+
+  test "optional name and postal area survive confirmation without creating an account" do
+    accounts = Repo.aggregate(Accounts.User, :count)
+
+    assert {:ok, request} =
+             Newsletters.request_signup("profile@example.org", %{
+               consent: true,
+               name: "  Camille  ",
+               fsa: "h2x",
+               locale: "fr"
+             })
+
+    assert request.subscription.name == "Camille"
+    assert request.subscription.fsa == "H2X"
+    assert request.subscription.locale == "fr"
+    refute Newsletters.eligible?(request.subscription.email)
+    assert {:ok, saved} = Newsletters.confirm(request.confirmation_token)
+    assert saved.name == "Camille" and saved.fsa == "H2X"
+
+    assert {:ok, unchanged} =
+             Newsletters.request_signup(saved.email, %{
+               consent: true,
+               name: "Different person",
+               fsa: "V6B"
+             })
+
+    assert unchanged.subscription.name == "Camille" and unchanged.subscription.fsa == "H2X"
+    assert unchanged.subscription.confirmed_at == saved.confirmed_at
+    assert Repo.aggregate(Accounts.User, :count) == accounts
+  end
+
+  test "invalid optional profile cannot create consent records" do
+    count = Repo.aggregate(Subscription, :count)
+
+    for attrs <- [%{fsa: "123"}, %{fsa: "H2X9"}, %{name: String.duplicate("n", 161)}] do
+      assert {:error, %Ecto.Changeset{valid?: false}} =
+               Newsletters.request_signup(
+                 "invalid-profile@example.org",
+                 Map.put(attrs, :consent, true)
+               )
+    end
+
+    assert Repo.aggregate(Subscription, :count) == count
+    refute Repo.exists?(from e in ConsentEvent, where: e.kind == "requested")
+  end
 end

@@ -34,8 +34,28 @@ defmodule PauseAiCaWeb.Emails.Layout do
          "Vous recevez ce message parce qu'une connexion a été demandée avec cette adresse."}
       )
 
-    {html(title_en, title_fr, blocks, action, notice?, footer, Keyword.get(opts, :body_html, "")),
-     text(title_en, title_fr, blocks, action, notice?, footer, Keyword.get(opts, :body_text, ""))}
+    links = Keyword.get(opts, :footer_links, [])
+
+    {html(
+       title_en,
+       title_fr,
+       blocks,
+       action,
+       notice?,
+       footer,
+       Keyword.get(opts, :body_html, ""),
+       links
+     ),
+     text(
+       title_en,
+       title_fr,
+       blocks,
+       action,
+       notice?,
+       footer,
+       Keyword.get(opts, :body_text, ""),
+       links
+     )}
   end
 
   @doc """
@@ -51,7 +71,7 @@ defmodule PauseAiCaWeb.Emails.Layout do
      "Ce message est-il arrivé dans les indésirables ou les promotions? Déplacez-le vers votre boîte de réception et marquez-le « Non indésirable ». Cela prend une seconde, et c'est ainsi que nous évitons le dossier spam pour tout le monde."}
   end
 
-  defp html(title_en, title_fr, blocks, action, notice?, {footer_en, footer_fr}, body_html) do
+  defp html(title_en, title_fr, blocks, action, notice?, {footer_en, footer_fr}, body_html, links) do
     """
     <!DOCTYPE html>
     <html lang="en">
@@ -84,10 +104,11 @@ defmodule PauseAiCaWeb.Emails.Layout do
                 </tr>
                 <tr>
                   <td style="padding:18px 28px 26px;border-top:1px solid #eceae4;
-                             font-family:Georgia,serif;font-size:12px;line-height:1.55;color:#8a8378;">
+                             font-family:Georgia,serif;font-size:12px;line-height:1.55;color:#57534e;">
                     pauseai.ca · info@pauseai.ca<br />
                     #{esc(footer_en)}<br />
                     #{esc(footer_fr)}
+                    #{html_links(links)}
                   </td>
                 </tr>
               </table>
@@ -150,14 +171,20 @@ defmodule PauseAiCaWeb.Emails.Layout do
     """
   end
 
-  defp text(title_en, title_fr, blocks, action, notice?, {footer_en, footer_fr}, body_text) do
+  defp html_links(links) do
+    Enum.map_join(links, "", fn {label, url} ->
+      "<p style=\"margin:10px 0 0;font-size:14px;\"><a href=\"#{esc(url)}\" style=\"color:#854d0e;text-decoration:underline;\">#{esc(label)}</a></p>"
+    end)
+  end
+
+  defp text(title_en, title_fr, blocks, action, notice?, {footer_en, footer_fr}, body_text, links) do
     body =
       Enum.map_join(blocks, "\n\n", fn {en, fr} -> "#{en}\n\n#{fr}" end)
 
     action_text =
       case action do
         nil -> ""
-        {_label_en, _label_fr, url} -> "\n\n#{url}\n"
+        {label_en, label_fr, url} -> "\n\n#{label_en} · #{label_fr}:\n#{url}\n"
       end
 
     notice_text =
@@ -183,6 +210,7 @@ defmodule PauseAiCaWeb.Emails.Layout do
     pauseai.ca · info@pauseai.ca
     #{footer_en}
     #{footer_fr}
+    #{Enum.map_join(links, "\n", fn {label, url} -> "#{label}: #{url}" end)}
     """
   end
 

@@ -263,7 +263,9 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
       {:ok, view, _html} = live(conn, ~p"/en/learn")
 
       view
-      |> form("#subscribe-form", subscribe: %{email: "camille@example.org", consent: "true"})
+      |> form("#subscribe-form",
+        subscribe: %{email: "camille@example.org", name: "Camille", fsa: "h2x", consent: "true"}
+      )
       |> render_submit()
 
       assert has_element?(view, "#subscribe-success")
@@ -272,7 +274,43 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
         PauseAiCa.Repo.get_by!(PauseAiCa.Newsletters.Subscription, email: "camille@example.org")
 
       assert subscription.state == "pending"
+      assert subscription.name == "Camille"
+      assert subscription.fsa == "H2X"
       refute PauseAiCa.Newsletters.eligible?(subscription.email)
+    end
+
+    test "invalid postal area keeps the bilingual form entries and sends nothing", %{conn: conn} do
+      for path <- ["/en/learn", "/fr/comprendre"] do
+        {:ok, view, _html} = live(conn, path)
+
+        view
+        |> form("#subscribe-form",
+          subscribe: %{
+            email: "invalid-area@example.org",
+            name: "Camille",
+            fsa: "123",
+            consent: "true"
+          }
+        )
+        |> render_submit()
+
+        assert has_element?(view, "#subscribe-error")
+        assert has_element?(view, "input[name='subscribe[name]'][value='Camille']")
+
+        assert has_element?(
+                 view,
+                 "input[name='subscribe[email]'][value='invalid-area@example.org']"
+               )
+
+        assert has_element?(view, "input[name='subscribe[fsa]'][value='123']")
+        assert has_element?(view, "#subscribe-consent[checked]")
+
+        refute PauseAiCa.Repo.get_by(PauseAiCa.Newsletters.Subscription,
+                 email: "invalid-area@example.org"
+               )
+
+        refute_receive {:email, _}
+      end
     end
 
     test "LEARN-REQ-08 anonymous local interest does not create an account", %{conn: conn} do

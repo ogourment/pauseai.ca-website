@@ -140,10 +140,10 @@ defmodule PauseAiCa.Accounts.User do
     user
     |> cast(attrs, [:fsa, :local_updates])
     |> update_change(:fsa, fn value ->
-      value |> String.upcase() |> String.replace(~r/\s+/, "") |> String.slice(0, 3)
+      value |> PauseAiCa.PostalArea.normalize() |> String.slice(0, 3)
     end)
     |> validate_required([:fsa])
-    |> validate_format(:fsa, ~r/^[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJKLMNPRSTVWXYZ]$/,
+    |> validate_format(:fsa, PauseAiCa.PostalArea.pattern(),
       message: "must be the first three characters of a Canadian postal code"
     )
   end

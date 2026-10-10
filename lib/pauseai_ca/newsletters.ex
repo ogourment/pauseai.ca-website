@@ -12,7 +12,9 @@ defmodule PauseAiCa.Newsletters do
 
   @doc "Persists explicit newsletter opt-in. Tokens are returned only to the delivery adapter, never logged/stored in cleartext."
   def request_signup(email, attrs) do
-    with {:ok, email} <- normalize(email), true <- attrs[:consent] == true do
+    with {:ok, email} <- normalize(email),
+         true <- attrs[:consent] == true,
+         {:ok, profile} <- profile_attributes(attrs) do
       Repo.transaction(fn ->
         lock_address(email)
         current = Repo.one(from s in Subscription, where: s.email == ^email, lock: "FOR UPDATE")
@@ -26,6 +28,8 @@ defmodule PauseAiCa.Newsletters do
 
           values = %{
             email: email,
+            name: profile.name,
+            fsa: profile.fsa,
             state: "pending",
             locale: if(attrs[:locale] == "fr", do: "fr", else: "en"),
             city: text(attrs[:city]),
@@ -53,6 +57,14 @@ defmodule PauseAiCa.Newsletters do
       false -> {:error, :consent_required}
       error -> error
     end
+  end
+
+  defp profile_attributes(attrs) do
+    changeset = Subscription.profile_changeset(attrs)
+
+    if changeset.valid?,
+      do: {:ok, Ecto.Changeset.apply_changes(changeset)},
+      else: {:error, changeset}
   end
 
   @doc "Read-only capability inspection. Opening a mail link never confirms or withdraws consent."

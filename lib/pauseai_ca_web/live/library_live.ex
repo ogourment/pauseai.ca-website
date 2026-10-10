@@ -31,7 +31,7 @@ defmodule PauseAiCaWeb.LibraryLive do
      |> assign(:signatories, Library.signatories())
      |> assign(
        :subscribe_form,
-       to_form(%{"email" => "", "postal_code" => "", "city" => "", "consent" => "false"},
+       to_form(%{"email" => "", "name" => "", "fsa" => "", "city" => "", "consent" => "false"},
          as: :subscribe
        )
      )
@@ -65,7 +65,14 @@ defmodule PauseAiCaWeb.LibraryLive do
     if params["consent"] == "true" do
       locale = socket.assigns.locale
       actor_id = if socket.assigns.current_scope, do: socket.assigns.current_scope.user.id
-      attrs = %{consent: true, locale: locale, city: params["city"]}
+
+      attrs = %{
+        consent: true,
+        locale: locale,
+        city: params["city"],
+        name: params["name"],
+        fsa: params["fsa"]
+      }
 
       url = fn token ->
         PauseAiCaWeb.Site.url(
@@ -75,8 +82,17 @@ defmodule PauseAiCaWeb.LibraryLive do
       end
 
       case Signup.request(params["email"], attrs, url, admin_actor_id: actor_id) do
-        {:ok, _status} -> {:noreply, assign(socket, :subscribe_state, :subscribed)}
-        {:error, reason} -> {:noreply, assign(socket, :subscribe_state, {:error, reason})}
+        {:ok, _status} ->
+          {:noreply, assign(socket, :subscribe_state, :subscribed)}
+
+        {:error, %Ecto.Changeset{} = changeset} ->
+          {:noreply,
+           socket
+           |> assign(:subscribe_form, to_form(params, as: :subscribe, errors: changeset.errors))
+           |> assign(:subscribe_state, {:error, :invalid_profile})}
+
+        {:error, reason} ->
+          {:noreply, assign(socket, :subscribe_state, {:error, reason})}
       end
     else
       {:noreply, assign(socket, :subscribe_state, {:error, :consent_required})}
@@ -135,7 +151,8 @@ defmodule PauseAiCaWeb.LibraryLive do
   defp subscribe_params(params) do
     %{
       "email" => params["email"] || "",
-      "postal_code" => params["postal_code"] || "",
+      "name" => params["name"] || "",
+      "fsa" => params["fsa"] || "",
       "city" => params["city"] || "",
       "consent" => if(params["consent"] in ["true", "on"], do: "true", else: "false")
     }
@@ -404,11 +421,28 @@ defmodule PauseAiCaWeb.LibraryLive do
                 class="mt-6"
               >
                 <.input
+                  field={@subscribe_form[:name]}
+                  label={gettext("Name (optional)")}
+                  autocomplete="name"
+                  maxlength="160"
+                />
+                <.input
                   field={@subscribe_form[:email]}
                   type="email"
                   label={email_label(@locale)}
                   autocomplete="email"
                 />
+                <.input
+                  field={@subscribe_form[:fsa]}
+                  label={gettext("Postal area · FSA (optional)")}
+                  maxlength="3"
+                  autocapitalize="characters"
+                  spellcheck="false"
+                  aria-describedby="subscribe-fsa-hint"
+                />
+                <p id="subscribe-fsa-hint" class="mt-1 text-sm text-stone-600">
+                  {gettext("First three characters of your Canadian postal code, for example H2X.")}
+                </p>
                 <label class="mt-2 flex items-start gap-3">
                   <input type="hidden" name="subscribe[consent]" value="false" />
                   <input
@@ -584,6 +618,9 @@ defmodule PauseAiCaWeb.LibraryLive do
 
   defp subscribe_error_message({:error, :invalid_email}, _locale),
     do: gettext("That email does not look valid.")
+
+  defp subscribe_error_message({:error, :invalid_profile}, _locale),
+    do: gettext("Check the highlighted signup fields. Your entries have been kept.")
 
   defp subscribe_error_message({:error, :not_configured}, _locale),
     do: gettext("The mailing list is not connected in this environment yet.")
