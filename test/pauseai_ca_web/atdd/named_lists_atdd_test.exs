@@ -33,6 +33,7 @@ if System.get_env("ATDD") == "true" do
     end
 
     for {locale, width, height} <- [{"en", 1280, 900}, {"fr", 390, 844}] do
+      @tag screenshot: true
       @tag browser_context_opts: [viewport: %{width: width, height: height}]
       test "LIST-NEWS-01 dynamic list journey #{locale}", c do
         journey(c, unquote(locale))
@@ -76,7 +77,10 @@ if System.get_env("ATDD") == "true" do
         c.conn
         |> visit("/users/log-in/#{token}")
         |> click_button("Keep me logged in on this device")
+        |> assert_path("/")
         |> visit("/manage/mail/newsletters?locale=#{locale}")
+        |> assert_has("[data-phx-main].phx-connected")
+        |> assert_has("#mailing-list-form")
 
       b =
         b
@@ -84,6 +88,7 @@ if System.get_env("ATDD") == "true" do
         |> fill_in(tr(locale, "Cities"), with: "Montréal")
         |> fill_in(tr(locale, "FSAs"), with: "H2X")
         |> click_button(tr(locale, "Save list"))
+        |> assert_has("#dynamic-mailing-lists li", text: "Montréal and H2X")
 
       {:ok, [list]} = Lists.list(scope)
 
@@ -154,6 +159,7 @@ if System.get_env("ATDD") == "true" do
           exact: false
         )
         |> click_button(tr(locale, "Save list"))
+        |> assert_has("#newsletter-audience > li", count: 1)
         |> visit(path)
         |> click("button[phx-click=review-batch][phx-value-id='#{batch.id}']")
         |> click_button(tr(locale, "Approve batch"))
