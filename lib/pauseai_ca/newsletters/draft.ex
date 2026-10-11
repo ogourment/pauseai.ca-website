@@ -8,6 +8,7 @@ defmodule PauseAiCa.Newsletters.Draft do
     field :subject, :string, default: ""
     field :source, :string, default: "", redact: true
     field :region, :string, default: ""
+    field :mailing_list_id, :binary_id
     field :recipient_mode, :string, default: "newsletter"
     field :recipient_keys, {:array, :string}, default: []
     field :revision, :integer, default: 1
@@ -17,7 +18,14 @@ defmodule PauseAiCa.Newsletters.Draft do
 
   def changeset(draft, attrs) do
     draft
-    |> cast(attrs, [:subject, :source, :region, :recipient_mode, :recipient_keys])
+    |> cast(attrs, [
+      :subject,
+      :source,
+      :region,
+      :recipient_mode,
+      :recipient_keys,
+      :mailing_list_id
+    ])
     |> update_change(:recipient_keys, fn keys ->
       keys
       |> Enum.reject(&(&1 == ""))
@@ -35,7 +43,7 @@ defmodule PauseAiCa.Newsletters.Draft do
         do: [],
         else: [{field, "is invalid"}]
     end)
-    |> validate_inclusion(:recipient_mode, ["contacts", "newsletter"])
+    |> validate_inclusion(:recipient_mode, ["contacts", "newsletter", "list"])
     |> validate_length(:subject, max: 300)
     |> validate_length(:source, max: 50_000)
     |> validate_inclusion(:region, ["", "Montréal", "ROQuébec", "ROCanada"])

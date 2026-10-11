@@ -1,6 +1,8 @@
 defmodule PauseAiCaWeb.NewslettersLive do
   use PauseAiCaWeb, :live_view
   alias PauseAiCa.{Newsletters, Volunteers}
+  alias PauseAiCa.Newsletters.Lists
+  import PauseAiCaWeb.NewsletterAudienceLabels
 
   def mount(params, _, socket) do
     locale = PauseAiCaWeb.Site.locale(params, socket)
@@ -12,6 +14,9 @@ defmodule PauseAiCaWeb.NewslettersLive do
          locale: locale,
          page_title: gettext("Newsletter lists"),
          audience: nil,
+         mailing_lists: [],
+         editing_list: nil,
+         list_form: to_form(Lists.form(nil), as: "list"),
          history: [],
          selected_id: nil,
          provider_state: :idle,
@@ -25,10 +30,113 @@ defmodule PauseAiCaWeb.NewslettersLive do
   def handle_params(params, _, socket) do
     case Newsletters.audience_page(socket.assigns.current_scope, params) do
       {:ok, audience} ->
-        {:noreply, assign(socket, audience: audience, params: params)}
+        {:ok, lists} = Lists.list(socket.assigns.current_scope)
+        {:noreply, assign(socket, audience: audience, params: params, mailing_lists: lists)}
 
       _ ->
         {:noreply, denied(socket)}
+    end
+  end
+
+  def handle_event("list-compose", %{"id" => id}, socket) do
+    case PauseAiCa.Newsletters.Drafts.create_for_list(socket.assigns.current_scope, id) do
+      {:ok, draft} ->
+        {:noreply,
+         push_navigate(socket,
+           to: ~p"/manage/mail/drafts/#{draft.id}?locale=#{socket.assigns.locale}"
+         )}
+
+      _ ->
+        {:noreply, denied(socket)}
+    end
+  end
+
+  def handle_event("list-new", params, socket) do
+    attrs =
+      if params["preset"] == "montreal",
+        do:
+          Map.merge(Lists.form(nil), %{
+            "name" => "Montréal",
+            "city" => "Montréal",
+            "region" => "Montréal"
+          }),
+        else: Lists.form(nil)
+
+    {:noreply,
+     assign(socket, editing_list: nil, list_form: to_form(attrs, as: "list"), error: nil)}
+  end
+
+  def handle_event("list-edit", %{"id" => id}, socket) do
+    case Lists.get(socket.assigns.current_scope, id) do
+      {:ok, list} ->
+        {:noreply,
+         assign(socket,
+           editing_list: list,
+           list_form: to_form(Lists.form(list), as: "list"),
+           error: nil
+         )}
+
+      _ ->
+        {:noreply, denied(socket)}
+    end
+  end
+
+  def handle_event("list-save", %{"list" => attrs}, socket) do
+    case Lists.save(socket.assigns.current_scope, socket.assigns.editing_list, attrs) do
+      {:ok, list} ->
+        {:ok, lists} = Lists.list(socket.assigns.current_scope)
+        params = Map.merge(socket.assigns.params, %{"list_id" => list.id, "page" => "1"})
+        {:ok, audience} = Newsletters.audience_page(socket.assigns.current_scope, params)
+
+        socket =
+          socket
+          |> assign(
+            mailing_lists: lists,
+            editing_list: list,
+            audience: audience,
+            list_form: to_form(Lists.form(list), as: "list"),
+            error: nil
+          )
+          |> put_flash(:info, gettext("List saved."))
+
+        patch(socket, params)
+
+      {:error, :unauthorized} ->
+        {:noreply, denied(socket)}
+
+      {:error, :stale} ->
+        {:noreply,
+         assign(socket,
+           error: gettext("This list changed. Reopen it before editing."),
+           list_form: to_form(attrs, as: "list")
+         )}
+
+      _ ->
+        {:noreply,
+         assign(socket,
+           error:
+             gettext(
+               "Enter a list name and at least one valid city, region or three-character FSA. Your entries have been kept."
+             ),
+           list_form: to_form(attrs, as: "list")
+         )}
+    end
+  end
+
+  def handle_event("list-archive", %{"id" => id}, socket) do
+    with {:ok, list} <- Lists.get(socket.assigns.current_scope, id),
+         {:ok, _} <- Lists.archive(socket.assigns.current_scope, list),
+         {:ok, lists} <- Lists.list(socket.assigns.current_scope) do
+      socket =
+        assign(socket,
+          mailing_lists: lists,
+          editing_list: nil,
+          list_form: to_form(Lists.form(nil), as: "list")
+        )
+
+      patch(socket, Map.merge(socket.assigns.params, %{"list_id" => "", "page" => "1"}))
+    else
+      _ -> {:noreply, denied(socket)}
     end
   end
 
@@ -78,6 +186,8 @@ defmodule PauseAiCaWeb.NewslettersLive do
   end
 
   defp patch(socket, params) do
+    params = if params["list_id"] == "", do: Map.delete(params, "list_id"), else: params
+
     if Volunteers.superadmin?(socket.assigns.current_scope),
       do:
         {:noreply,
@@ -129,6 +239,86 @@ defmodule PauseAiCaWeb.NewslettersLive do
           {gettext("Brevo status refreshed.")}
         </p>
         <p :if={@error} id="newsletter-error" role="alert" class="mt-3 crm-error">{@error}</p>
+        <section id="dynamic-mailing-lists" class="mt-8 space-y-4">
+          <h2 class="text-xl font-semibold">{gettext("Dynamic mailing lists")}</h2>
+          <p>
+            {gettext(
+              "Rules update membership automatically. Matching a list does not grant newsletter consent."
+            )}
+          </p>
+          <ul class="space-y-3">
+            <li
+              :for={list <- @mailing_lists}
+              id={"mailing-list-#{list.id}"}
+              class="flex flex-wrap items-center gap-4 rounded-lg border border-stone-300 p-3"
+            >
+              <strong>{list.name}</strong>
+              <button type="button" phx-click="list-compose" phx-value-id={list.id} class="crm-button">{gettext(
+                "Compose"
+              )}</button>
+              <.link
+                patch={~p"/manage/mail/newsletters?#{%{locale: @locale, list_id: list.id}}"}
+                class="underline"
+              >{gettext("Preview members")}</.link>
+              <button type="button" phx-click="list-edit" phx-value-id={list.id} class="underline">{gettext(
+                "Edit rules"
+              )}</button>
+              <button type="button" phx-click="list-archive" phx-value-id={list.id} class="underline">{gettext(
+                "Archive"
+              )}</button>
+            </li>
+          </ul>
+          <div class="flex gap-4">
+            <button type="button" phx-click="list-new" class="underline">{gettext("New list")}</button>
+            <button type="button" phx-click="list-new" phx-value-preset="montreal" class="underline">{gettext(
+              "Use Montréal rules"
+            )}</button>
+          </div>
+          <.form
+            for={@list_form}
+            id="mailing-list-form"
+            phx-submit="list-save"
+            class="grid gap-3 rounded-lg border border-stone-300 p-4 md:grid-cols-2"
+          >
+            <.input field={@list_form[:name]} label={gettext("List name")} maxlength="120" />
+            <.input
+              field={@list_form[:match]}
+              type="select"
+              label={gettext("Combine rules")}
+              options={[
+                {gettext("Match any rule (OR)"), "any"},
+                {gettext("Match every rule (AND)"), "all"}
+              ]}
+            />
+            <.input
+              field={@list_form[:city]}
+              label={gettext("Cities")}
+              placeholder="Montréal, Laval"
+            />
+            <.input
+              field={@list_form[:region]}
+              type="select"
+              label={gettext("Recorded region")}
+              options={[
+                {gettext("No region rule"), ""},
+                {"Montréal", "Montréal"},
+                {"ROQuébec", "ROQuébec"},
+                {"ROCanada", "ROCanada"}
+              ]}
+            />
+            <.input field={@list_form[:fsas]} label={gettext("FSAs")} placeholder="H2X, H2Y" />
+            <p class="text-sm text-stone-600">
+              {gettext(
+                "Separate cities and three-character postal prefixes with commas. Empty fields add no rule; unknown geography never matches a rule."
+              )}
+            </p>
+            <button
+              type="submit"
+              class="crm-button justify-self-start"
+              phx-disable-with={gettext("Saving…")}
+            >{gettext("Save list")}</button>
+          </.form>
+        </section>
         <div :if={@audience}>
           <h2 class="mt-8 text-xl font-semibold">{gettext("Newsletter audience")}</h2>
           <.form
@@ -141,6 +331,15 @@ defmodule PauseAiCaWeb.NewslettersLive do
             phx-submit="filter"
             class="mt-6 flex flex-wrap items-end gap-3"
           >
+            <.input
+              name="filters[list_id]"
+              value={@params["list_id"] || ""}
+              type="select"
+              label={gettext("Mailing list")}
+              options={
+                [{gettext("All subscribers"), ""}] ++ Enum.map(@mailing_lists, &{&1.name, &1.id})
+              }
+            />
             <.input
               name="filters[q]"
               value={@audience.filters["q"]}
@@ -189,7 +388,11 @@ defmodule PauseAiCaWeb.NewslettersLive do
                 {gettext("Postal area")}: {row.subscription.fsa}
               </p>
               <p class="mt-1 text-sm">
-                {status_label(row.status)} · {row.subscription.region || gettext("Geography unknown")}
+                <span :if={row.matched_fields != []} class="block">{gettext("Matches: %{fields}",
+                  fields: Enum.map_join(row.matched_fields, ", ", &rule_label/1)
+                )}</span>
+                {status_label(row.status)} · {row.subscription.city || row.subscription.region ||
+                  gettext("Geography unknown")}
               </p>
               <p class="mt-1 text-sm text-stone-600">
                 Brevo: {if row.provider,
@@ -278,12 +481,6 @@ defmodule PauseAiCaWeb.NewslettersLive do
       ~p"/manage/mail/newsletters?#{Map.merge(assigns.params, %{"page" => page, "locale" => assigns.locale})}"
 
   defp timestamp(date), do: Calendar.strftime(date, "%Y-%m-%d %H:%M UTC")
-  defp status_label(:included), do: gettext("Eligible")
-  defp status_label(:unconfirmed), do: gettext("Awaiting confirmation")
-  defp status_label(:withdrawn), do: gettext("Withdrawn")
-  defp status_label(:legacy_uncertain), do: gettext("Legacy evidence to review")
-  defp status_label(:provider_blocked), do: gettext("Provider blocked")
-  defp status_label(:suppressed), do: gettext("Suppressed")
   defp event_label("requested"), do: gettext("Explicit signup requested")
   defp event_label("confirmed"), do: gettext("Signup confirmed")
   defp event_label("withdrawn"), do: gettext("Consent withdrawn")

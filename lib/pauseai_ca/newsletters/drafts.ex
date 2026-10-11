@@ -37,11 +37,42 @@ defmodule PauseAiCa.Newsletters.Drafts do
     authorized(scope, fn -> Repo.insert!(%Draft{owner_id: scope.user.id}) end)
   end
 
+  def create_for_list(scope, list_id) do
+    authorized(scope, fn ->
+      case PauseAiCa.Newsletters.Lists.get(scope, list_id) do
+        {:ok, %{archived_at: nil} = list} ->
+          Repo.insert!(%Draft{
+            owner_id: scope.user.id,
+            recipient_mode: "list",
+            mailing_list_id: list.id
+          })
+
+        _ ->
+          Repo.rollback(:audience_required)
+      end
+    end)
+  end
+
   def save(scope, %Draft{} = expected, attrs) do
     authorized(scope, fn ->
       draft = locked(scope, expected)
       if draft.archived_at, do: Repo.rollback(:archived)
-      changeset = draft |> Draft.changeset(attrs) |> Ecto.Changeset.optimistic_lock(:revision)
+      changeset = draft |> Draft.changeset(attrs)
+
+      changeset =
+        if Ecto.Changeset.get_field(changeset, :recipient_mode) == "list" do
+          case PauseAiCa.Newsletters.Lists.get(
+                 scope,
+                 Ecto.Changeset.get_field(changeset, :mailing_list_id)
+               ) do
+            {:ok, %{archived_at: nil}} -> changeset
+            _ -> Ecto.Changeset.add_error(changeset, :mailing_list_id, "is invalid")
+          end
+        else
+          Ecto.Changeset.put_change(changeset, :mailing_list_id, nil)
+        end
+
+      changeset = changeset |> Ecto.Changeset.optimistic_lock(:revision)
 
       case Repo.update(changeset) do
         {:ok, saved} -> saved

@@ -321,6 +321,7 @@ defmodule PauseAiCa.Newsletters do
       term = filter_text(params["q"]) |> String.downcase()
       per = positive_integer(params["per"], 25)
       per = if per in [10, 25, 50, 100], do: per, else: 25
+      all_rows? = params[:all_rows] == true
 
       query =
         from s in Subscription,
@@ -340,6 +341,23 @@ defmodule PauseAiCa.Newsletters do
             )
 
       subscriptions = Repo.all(query)
+
+      {subscriptions, dynamic_list} =
+        case params["list_id"] do
+          id when is_binary(id) and id != "" ->
+            case PauseAiCa.Newsletters.Lists.get(scope, id) do
+              {:ok, %{archived_at: nil} = list} ->
+                {Enum.filter(subscriptions, &PauseAiCa.Newsletters.Lists.matches?(list, &1)),
+                 list}
+
+              _ ->
+                {[], nil}
+            end
+
+          _ ->
+            {subscriptions, nil}
+        end
+
       emails = Enum.map(subscriptions, & &1.email)
       observations = provider_evidence(emails)
 
@@ -363,6 +381,11 @@ defmodule PauseAiCa.Newsletters do
 
           %{
             subscription: subscription,
+            matched_fields:
+              if(dynamic_list,
+                do: PauseAiCa.Newsletters.Lists.reasons(dynamic_list, subscription),
+                else: []
+              ),
             status: status,
             provider: observations[subscription.email]
           }
@@ -386,7 +409,7 @@ defmodule PauseAiCa.Newsletters do
         do:
           {:ok,
            %{
-             rows: Enum.slice(rows, (page - 1) * per, per),
+             rows: if(all_rows?, do: rows, else: Enum.slice(rows, (page - 1) * per, per)),
              total: total,
              page: page,
              pages: pages,

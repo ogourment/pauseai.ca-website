@@ -52,6 +52,20 @@ digraph crm {
     </TABLE>
   >];
 
+  "crm_mailing_lists" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.crm_mailing_lists</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">name</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">criteria</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">revision</TD><TD ALIGN="LEFT">integer NOT NULL</TD></TR><TR><TD ALIGN="LEFT">archived_at</TD><TD ALIGN="LEFT">timestamp without time zone NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
+  "crm_mailing_list_events" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.crm_mailing_list_events</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">list_id</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">actor_id</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">action</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">revision</TD><TD ALIGN="LEFT">integer NOT NULL</TD></TR><TR><TD ALIGN="LEFT">snapshot</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
   }
 
   subgraph cluster_external {
@@ -72,6 +86,7 @@ digraph crm {
   "crm_addresses" -> "crm_people" [label="person_id -> id", color="#64748b"];
   "crm_contact_links" -> "contacts" [label="contact_id -> id", color="#d97706", style="dashed", penwidth=1.5];
   "crm_contact_links" -> "crm_people" [label="person_id -> id", color="#64748b"];
+  "crm_mailing_list_events" -> "crm_mailing_lists" [label="list_id -> id", color="#64748b"];
   "crm_merges" -> "crm_people" [label="person_id -> id", color="#64748b"];
   "crm_people" -> "crm_people" [label="canonical_id -> id", color="#64748b"];
   "crm_people" -> "crm_addresses" [label="preferred_address_id -> id", color="#64748b"];

@@ -34,14 +34,14 @@ digraph newsletter {
   "newsletter_drafts" [label=<
     <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
       <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.newsletter_drafts</B></TD></TR>
-      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">owner_id</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">subject</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">source</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">region</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">revision</TD><TD ALIGN="LEFT">integer NOT NULL</TD></TR><TR><TD ALIGN="LEFT">archived_at</TD><TD ALIGN="LEFT">timestamp without time zone NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">recipient_mode</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">recipient_keys</TD><TD ALIGN="LEFT">_text NOT NULL</TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">owner_id</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">subject</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">source</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">region</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">revision</TD><TD ALIGN="LEFT">integer NOT NULL</TD></TR><TR><TD ALIGN="LEFT">archived_at</TD><TD ALIGN="LEFT">timestamp without time zone NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">recipient_mode</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">recipient_keys</TD><TD ALIGN="LEFT">_text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">mailing_list_id</TD><TD ALIGN="LEFT">uuid NULL</TD></TR>
     </TABLE>
   >];
 
   "newsletter_batches" [label=<
     <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
       <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.newsletter_batches</B></TD></TR>
-      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">draft_id</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">owner_id</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">approver_id</TD><TD ALIGN="LEFT">uuid NULL</TD></TR><TR><TD ALIGN="LEFT">draft_revision</TD><TD ALIGN="LEFT">integer NOT NULL</TD></TR><TR><TD ALIGN="LEFT">recipient_mode</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">recipient_keys</TD><TD ALIGN="LEFT">_text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">state</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">sender_name</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">sender_email</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">delivery_environment</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">subject</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">source</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">preparation_key</TD><TD ALIGN="LEFT">bytea NOT NULL</TD></TR><TR><TD ALIGN="LEFT">audience_digest</TD><TD ALIGN="LEFT">bytea NOT NULL</TD></TR><TR><TD ALIGN="LEFT">reviewed_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">approved_at</TD><TD ALIGN="LEFT">timestamp without time zone NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">draft_id</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">owner_id</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">approver_id</TD><TD ALIGN="LEFT">uuid NULL</TD></TR><TR><TD ALIGN="LEFT">draft_revision</TD><TD ALIGN="LEFT">integer NOT NULL</TD></TR><TR><TD ALIGN="LEFT">recipient_mode</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">recipient_keys</TD><TD ALIGN="LEFT">_text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">state</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">sender_name</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">sender_email</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">delivery_environment</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">subject</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">source</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">preparation_key</TD><TD ALIGN="LEFT">bytea NOT NULL</TD></TR><TR><TD ALIGN="LEFT">audience_digest</TD><TD ALIGN="LEFT">bytea NOT NULL</TD></TR><TR><TD ALIGN="LEFT">reviewed_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">approved_at</TD><TD ALIGN="LEFT">timestamp without time zone NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">mailing_list_id</TD><TD ALIGN="LEFT">uuid NULL</TD></TR><TR><TD ALIGN="LEFT">mailing_list_revision</TD><TD ALIGN="LEFT">integer NULL</TD></TR>
     </TABLE>
   >];
 
@@ -59,6 +59,13 @@ digraph newsletter {
     color="#cbd5e1";
     penwidth=1;
     style="rounded";
+  "crm_mailing_lists" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#d97706">
+      <TR><TD BGCOLOR="#fef3c7"><B>external: crm_mailing_lists</B></TD></TR>
+      <TR><TD><FONT POINT-SIZE="10">other fields and relationships omitted</FONT></TD></TR>
+    </TABLE>
+  >];
+
   "users" [label=<
     <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#d97706">
       <TR><TD BGCOLOR="#fef3c7"><B>external: users</B></TD></TR>
@@ -70,11 +77,13 @@ digraph newsletter {
 
   "newsletter_batches" -> "users" [label="approver_id -> id", color="#d97706", style="dashed", penwidth=1.5];
   "newsletter_batches" -> "newsletter_drafts" [label="draft_id -> id", color="#64748b"];
+  "newsletter_batches" -> "crm_mailing_lists" [label="mailing_list_id -> id", color="#d97706", style="dashed", penwidth=1.5];
   "newsletter_batches" -> "users" [label="owner_id -> id", color="#d97706", style="dashed", penwidth=1.5];
   "newsletter_consent_events" -> "users" [label="actor_id -> id", color="#d97706", style="dashed", penwidth=1.5];
   "newsletter_consent_events" -> "newsletter_subscriptions" [label="subscription_id -> id", color="#64748b"];
   "newsletter_deliveries" -> "users" [label="authorizing_admin_id -> id", color="#d97706", style="dashed", penwidth=1.5];
   "newsletter_deliveries" -> "newsletter_batches" [label="batch_id -> id", color="#64748b"];
+  "newsletter_drafts" -> "crm_mailing_lists" [label="mailing_list_id -> id", color="#d97706", style="dashed", penwidth=1.5];
   "newsletter_drafts" -> "users" [label="owner_id -> id", color="#d97706", style="dashed", penwidth=1.5];
   "newsletter_withdrawal_tokens" -> "newsletter_subscriptions" [label="subscription_id -> id", color="#64748b"];
 }

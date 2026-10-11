@@ -1,6 +1,7 @@
 defmodule PauseAiCaWeb.NewsletterDraftLive do
   use PauseAiCaWeb, :live_view
-  alias PauseAiCa.Newsletters.{Draft, Drafts, Batches}
+  alias PauseAiCa.Newsletters.{Draft, Drafts, Batches, Lists}
+  import PauseAiCaWeb.NewsletterAudienceLabels
 
   def mount(params, _, socket) do
     locale = PauseAiCaWeb.Site.locale(params, socket)
@@ -8,6 +9,8 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
 
     case Drafts.get(socket.assigns.current_scope, params["id"]) do
       {:ok, draft} ->
+        {:ok, lists} = Lists.list(socket.assigns.current_scope)
+
         {:ok,
          assign(socket,
            locale: locale,
@@ -18,6 +21,7 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
            status: nil,
            error: nil,
            audience: nil,
+           mailing_lists: lists,
            candidate_page: 1,
            candidate_q: "",
            reviewed: false,
@@ -84,8 +88,16 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
              draft.recipient_keys,
              review["eligible"] == "true"
            ) do
-        {:ok, batch} -> {:noreply, socket |> show_batch(batch.id) |> assign(error: nil)}
-        {:error, reason} -> {:noreply, assign(socket, error: batch_error(reason))}
+        {:ok, batch} ->
+          {:noreply, socket |> show_batch(batch.id) |> assign(error: nil)}
+
+        {:error, reason} ->
+          error =
+            if reason == :audience_required and draft.recipient_mode == "list",
+              do: gettext("Choose a list with eligible subscribers."),
+              else: batch_error(reason)
+
+          {:noreply, assign(socket, error: error)}
       end
     end
   end
@@ -175,7 +187,10 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
           attrs["recipient_mode"] != socket.assigns.form[:recipient_mode].value
 
       attrs = if mode_changed?, do: Map.put(attrs, "recipient_keys", []), else: attrs
-      socket = if mode_changed?, do: assign(socket, candidate_page: 1), else: socket
+
+      socket =
+        if mode_changed?, do: assign(socket, candidate_page: 1, candidate_q: ""), else: socket
+
       changeset = Draft.changeset(socket.assigns.draft, attrs)
       socket = assign(socket, candidate_q: attrs["candidate_q"] || socket.assigns.candidate_q)
 
@@ -245,8 +260,17 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
   defp refresh_audience(socket) do
     params = %{
       "page" => to_string(socket.assigns.candidate_page),
-      "q" => socket.assigns.candidate_q,
-      "region" => socket.assigns.form[:region].value || "",
+      "q" =>
+        if(socket.assigns.form[:recipient_mode].value == "list",
+          do: "",
+          else: socket.assigns.candidate_q
+        ),
+      "region" =>
+        if(socket.assigns.form[:recipient_mode].value == "list",
+          do: "",
+          else: socket.assigns.form[:region].value || ""
+        ),
+      "list_id" => socket.assigns.form[:mailing_list_id].value,
       "per" => "25"
     }
 
@@ -257,6 +281,9 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
         {:ok, batches} = Batches.list(socket.assigns.current_scope, socket.assigns.draft.id)
         {:ok, quota} = Batches.quota(socket.assigns.current_scope)
         assign(socket, audience: page, batches: batches, quota: quota)
+
+      {:error, :audience_required} ->
+        assign(socket, audience: %{rows: [], page: 1, pages: 1, total: 0, counts: %{included: 0}})
 
       _ ->
         denied(socket)
@@ -376,6 +403,7 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
           >
             <.input field={@form[:subject]} label={gettext("Subject")} />
             <.input
+              :if={@form[:recipient_mode].value != "list"}
               field={@form[:region]}
               type="select"
               label={gettext("Audience geography")}
@@ -412,12 +440,35 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
                 type="select"
                 label={gettext("Audience source")}
                 options={[
+                  {gettext("Mailing list · all eligible members"), "list"},
                   {gettext("Confirmed newsletter subscribers"), "newsletter"},
                   {gettext("Contacts · manual review"), "contacts"}
                 ]}
               />
-              <.input name="draft[candidate_q]" value={@candidate_q} label={gettext("Find contacts")} />
-              <div class="flex flex-wrap gap-4 items-center">
+              <.input
+                :if={@form[:recipient_mode].value == "list"}
+                field={@form[:mailing_list_id]}
+                type="select"
+                label={gettext("Mailing list")}
+                options={
+                  [{gettext("Choose a list"), ""}] ++ Enum.map(@mailing_lists, &{&1.name, &1.id})
+                }
+              />
+              <p :if={@form[:recipient_mode].value == "list"} id="whole-list-audience" role="status">
+                <strong>{gettext("Eligible")}: {Map.get(@audience, :counts, %{})[:included] || 0}</strong>. {gettext(
+                  "Whole list selected. Membership and consent are rechecked before sending."
+                )}
+              </p>
+              <.input
+                :if={@form[:recipient_mode].value != "list"}
+                name="draft[candidate_q]"
+                value={@candidate_q}
+                label={gettext("Find contacts")}
+              />
+              <div
+                :if={@form[:recipient_mode].value != "list"}
+                class="flex flex-wrap gap-4 items-center"
+              >
                 <button type="button" class="crm-button" phx-click="select-visible">{gettext(
                   "Select visible available recipients"
                 )}</button>
@@ -445,6 +496,7 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
                 >
                   <label class="flex gap-3 items-start">
                     <input
+                      :if={@form[:recipient_mode].value != "list"}
                       id={"newsletter-recipient-choice-#{row.id}"}
                       type="checkbox"
                       name="draft[recipient_keys][]"
@@ -459,8 +511,17 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
                     <span><strong class="break-all">{row.email || row.name}</strong><span
                       :if={row.name != ""}
                       class="block text-sm"
-                    >{row.name}</span><span :if={row.status != :available} class="block text-sm">{gettext(
-                      "Excluded: withdrawal, blocked address or missing preferred email."
+                    >{row.name}</span><span
+                      :if={@form[:recipient_mode].value != "list" and row.status != :available}
+                      class="block text-sm"
+                    >{gettext("Excluded: withdrawal, blocked address or missing preferred email.")}</span><span
+                      :if={@form[:recipient_mode].value == "list" and row.status != :available}
+                      class="block text-sm"
+                    >{status_label(row.exclusion_reason)}</span><span
+                      :if={Map.get(row, :matched_fields, []) != []}
+                      class="block text-sm"
+                    >{gettext("Matches: %{fields}",
+                      fields: Enum.map_join(row.matched_fields, ", ", &rule_label/1)
                     )}</span></span>
                   </label>
                   <PauseAiCaWeb.ContactSourceComponents.source_summary
@@ -518,7 +579,7 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
             </p>
             <.form for={%{}} as={:review} id="newsletter-prepare-form" phx-submit="prepare-batch">
               <input type="hidden" name="review[eligible]" value="false" />
-              <label class="flex gap-3 my-3"><input
+              <label :if={@form[:recipient_mode].value == "contacts"} class="flex gap-3 my-3"><input
                 type="checkbox"
                 name="review[eligible]"
                 value="true"

@@ -77,13 +77,23 @@ defmodule PauseAiCa.Newsletters.Batches do
         Enum.map(page.rows, fn r ->
           %{
             id: r.subscription.id,
-            name: "",
+            name: r.subscription.name || "",
+            matched_fields: r.matched_fields,
+            exclusion_reason: r.status,
             email: r.subscription.email,
             status: if(r.status == :included, do: :available, else: :excluded)
           }
         end)
 
       {:ok, Map.put(page, :rows, rows)}
+    end
+  end
+
+  def audience(scope, "list", params) do
+    with {:ok, %{archived_at: nil}} <- PauseAiCa.Newsletters.Lists.get(scope, params["list_id"]) do
+      audience(scope, "newsletter", params)
+    else
+      _ -> {:error, :audience_required}
     end
   end
 
@@ -104,19 +114,32 @@ defmodule PauseAiCa.Newsletters.Batches do
         do: Repo.rollback(:content_required)
 
       if mode == "contacts" and reviewed? != true, do: Repo.rollback(:review_required)
-      targets = targets!(scope, mode, keys)
+
+      list =
+        if mode == "list" do
+          case PauseAiCa.Newsletters.Lists.get(scope, draft.mailing_list_id) do
+            {:ok, %{archived_at: nil} = list} ->
+              Repo.one!(
+                from l in PhoenixCRM.MailingList, where: l.id == ^list.id, lock: "FOR SHARE"
+              )
+
+            _ ->
+              Repo.rollback(:audience_required)
+          end
+        end
+
+      targets = if list, do: list_targets!(scope, list), else: targets!(scope, mode, keys)
       if Enum.any?(targets, &(&1.status != :available)), do: Repo.rollback(:ineligible)
       now = DateTime.utc_now()
       {sender_name, sender_email} = Application.fetch_env!(:pauseai_ca, :campaign_sender)
 
-      preparation_key =
-        :crypto.hash(
-          :sha256,
-          :erlang.term_to_binary(
-            {draft.id, draft.revision, mode, digest(targets), sender_name, sender_email,
-             MailSafety.environment()}
-          )
-        )
+      # Preserve the deployed fingerprint for manual/newsletter batches.
+      identity =
+        {draft.id, draft.revision, mode, digest(targets), sender_name, sender_email,
+         MailSafety.environment()}
+
+      identity = if list, do: {:mailing_list, list.id, list.revision, identity}, else: identity
+      preparation_key = :crypto.hash(:sha256, :erlang.term_to_binary(identity))
 
       case Repo.get_by(Batch, preparation_key: preparation_key) do
         %Batch{} = existing ->
@@ -129,6 +152,8 @@ defmodule PauseAiCa.Newsletters.Batches do
               owner_id: scope.user.id,
               draft_revision: draft.revision,
               recipient_mode: mode,
+              mailing_list_id: if(list, do: list.id),
+              mailing_list_revision: if(list, do: list.revision),
               recipient_keys: Enum.map(targets, & &1.id),
               sender_name: sender_name,
               sender_email: sender_email,
@@ -448,9 +473,38 @@ defmodule PauseAiCa.Newsletters.Batches do
             Application.fetch_env!(:pauseai_ca, :campaign_sender) and
             batch.delivery_environment == to_string(MailSafety.environment())
 
-        case targets(scope, batch.recipient_mode, batch.recipient_keys) do
+        mode = if batch.recipient_mode == "list", do: "newsletter", else: batch.recipient_mode
+
+        list_current? =
+          if batch.mailing_list_id do
+            case PauseAiCa.Newsletters.Lists.get(scope, batch.mailing_list_id) do
+              {:ok, list} ->
+                # Serialize rule edits with the exact approval/send check.
+                list =
+                  Repo.one!(
+                    from l in PhoenixCRM.MailingList, where: l.id == ^list.id, lock: "FOR SHARE"
+                  )
+
+                if is_nil(list.archived_at) and list.revision == batch.mailing_list_revision do
+                  case list_targets(scope, list) do
+                    {:ok, current} -> digest(current) == batch.audience_digest
+                    _ -> false
+                  end
+                else
+                  false
+                end
+
+              _ ->
+                false
+            end
+          else
+            true
+          end
+
+        case targets(scope, mode, batch.recipient_keys) do
           {:ok, rows} ->
-            sender_current? and draft.subject == batch.subject and draft.source == batch.source and
+            list_current? and sender_current? and draft.subject == batch.subject and
+              draft.source == batch.source and
               Enum.all?(rows, &(&1.status == :available)) and
               digest(rows) == batch.audience_digest
 
@@ -460,6 +514,31 @@ defmodule PauseAiCa.Newsletters.Batches do
 
       _ ->
         false
+    end
+  end
+
+  defp list_targets(scope, list) do
+    with {:ok, page} <-
+           Newsletters.audience_page(scope, %{"list_id" => list.id, :all_rows => true}) do
+      {:ok,
+       page.rows
+       |> Enum.filter(&(&1.status == :included))
+       |> Enum.map(
+         &%{
+           id: &1.subscription.id,
+           name: &1.subscription.name || "",
+           email: &1.subscription.email,
+           status: :available
+         }
+       )
+       |> Enum.sort_by(& &1.id)}
+    end
+  end
+
+  defp list_targets!(scope, list) do
+    case list_targets(scope, list) do
+      {:ok, rows} when length(rows) in 1..5000 -> rows
+      _ -> Repo.rollback(:audience_required)
     end
   end
 

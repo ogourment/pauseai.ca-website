@@ -4,7 +4,7 @@ defmodule PauseAiCa.MixProject do
   def project do
     [
       app: :pauseai_ca,
-      version: "0.5.12",
+      version: "0.5.13",
       elixir: "~> 1.17",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -54,9 +54,7 @@ defmodule PauseAiCa.MixProject do
       {:lazy_html, ">= 0.1.0", only: :test},
       acceptance_harness_dependency(),
       cms_dependency(),
-      {:phoenix_crm,
-       git: "ssh://git@git.agile-u.com/olivierg/phoenix_crm.git",
-       ref: "763ba7add0ac53a10dd10d6a8d0dda29d100b226"},
+      crm_dependency(),
       markdown_editor_dependency(),
       {:mdex, "~> 0.13.5"},
       {:phoenix_test_playwright, "~> 0.15.0", only: :test, runtime: false},
@@ -135,6 +133,18 @@ defmodule PauseAiCa.MixProject do
         "test"
       ]
     ]
+  end
+
+  defp crm_dependency do
+    case System.get_env("PHOENIX_CRM_PATH") do
+      path when is_binary(path) and path != "" ->
+        {:phoenix_crm, path: path}
+
+      _ ->
+        {:phoenix_crm,
+         git: "ssh://git@git.agile-u.com/olivierg/phoenix_crm.git",
+         ref: "281273494a611ff8256abdfd239e35ff40af586c"}
+    end
   end
 
   defp markdown_editor_dependency do

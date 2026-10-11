@@ -6,6 +6,8 @@ defmodule PauseAiCa.Newsletters.Batch do
     field :owner_id, :binary_id
     field :approver_id, :binary_id
     field :draft_revision, :integer
+    field :mailing_list_id, :binary_id
+    field :mailing_list_revision, :integer
     field :recipient_mode, :string
     field :recipient_keys, {:array, :string}
     field :state, :string, default: "review"
