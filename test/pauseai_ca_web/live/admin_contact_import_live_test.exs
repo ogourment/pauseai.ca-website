@@ -82,6 +82,53 @@ defmodule PauseAiCaWeb.AdminContactImportLiveTest do
     assert Repo.aggregate(PauseAiCa.Accounts.User, :count) == 1
   end
 
+  test "unconfirmed source profiles show Discord when names are placeholders", %{conn: conn} do
+    rows = [
+      %{
+        "email" => "",
+        "name" => "—",
+        "discord" => "  ",
+        "source_key" => "discord/fallback",
+        "source_observation" => %{
+          "Discord" => "synthetic.handle",
+          "Discord User ID" => "123456789012345678"
+        }
+      }
+    ]
+
+    assert {:ok, _} = PauseAiCa.SourceIntake.ingest("discord", "pending-fallback", rows)
+    {:ok, view, _} = live(conn, ~p"/admin/contact-imports")
+
+    assert has_element?(
+             view,
+             "#pending-source-profiles li > strong",
+             "synthetic.handle · 123456789012345678"
+           )
+
+    assert Repo.aggregate(PauseAiCa.Accounts.User, :count) == 1
+    assert Repo.aggregate(PauseAiCa.Newsletters.Subscription, :count) == 0
+  end
+
+  test "source summaries prefer recorded city and retain the broad source region" do
+    data = %{
+      "city" => "Toronto",
+      "sheet" => "Rest of Canada",
+      "discord" => "",
+      "discord_username" => "synthetic.handle"
+    }
+
+    html =
+      render_component(&PauseAiCaWeb.ContactSourceComponents.source_summary/1,
+        id: "city-summary",
+        data: data
+      )
+
+    assert html =~ "Toronto"
+    assert html =~ "From source city"
+    assert html =~ "synthetic.handle"
+    assert PauseAiCa.ContactMigration.Geography.resolve(data) == {"ROCanada", "sheet"}
+  end
+
   test "unresolved profiles remain browsable and page by stable source identity", %{conn: conn} do
     for batch <-
           Enum.chunk_every(

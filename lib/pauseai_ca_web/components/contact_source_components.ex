@@ -6,7 +6,10 @@ defmodule PauseAiCaWeb.ContactSourceComponents do
   attr :data, :map, required: true
 
   def source_summary(assigns) do
-    assigns = assign(assigns, :geography, source_geography(assigns.data))
+    assigns =
+      assigns
+      |> assign(:geography, source_geography(assigns.data))
+      |> assign(:discord_identity, discord_identity(assigns.data))
 
     ~H"""
     <dl id={@id} class="mt-2 grid gap-x-6 gap-y-1 text-sm sm:grid-cols-2 xl:grid-cols-4">
@@ -24,6 +27,10 @@ defmodule PauseAiCaWeb.ContactSourceComponents do
             1
           )}</span>
         </dd>
+      </div>
+      <div :if={@discord_identity}>
+        <dt class="font-normal text-stone-600">Discord</dt>
+        <dd class="break-words font-medium text-stone-900">{@discord_identity}</dd>
       </div>
       <div :for={field <- ~w(source sheet source_status status welcomed_date)}>
         <dt class="font-normal text-stone-600">{field_label(field)}</dt>
@@ -85,7 +92,53 @@ defmodule PauseAiCaWeb.ContactSourceComponents do
         _ -> gettext("Region supplied by source")
       end
 
-    if region, do: {region, label}, else: {gettext("Not provided"), nil}
+    case first_recorded([data["city"], data["City"]]) do
+      nil ->
+        if region, do: {region, label}, else: {gettext("Not provided"), nil}
+
+      city ->
+        normalized_city = elem(PauseAiCa.ContactMigration.Geography.resolve(%{"city" => city}), 0)
+        {normalized_city || city, gettext("From source city")}
+    end
+  end
+
+  def discord_identity(data) do
+    raw = if is_map(data["source_observation"]), do: data["source_observation"], else: %{}
+
+    username =
+      first_recorded([
+        data["discord"],
+        data["discord_username"],
+        data["Discord"],
+        raw["discord"],
+        raw["discord_username"],
+        raw["Discord"]
+      ])
+
+    user_id =
+      first_recorded([
+        data["discord_user_id"],
+        data["Discord User ID"],
+        raw["discord_user_id"],
+        raw["Discord User ID"]
+      ])
+
+    case {username, user_id} do
+      {nil, id} -> id
+      {name, nil} -> name
+      {name, id} -> name <> " · " <> id
+    end
+  end
+
+  def first_recorded(values) do
+    Enum.find_value(values, fn
+      value when is_binary(value) ->
+        trimmed = String.trim(value)
+        if trimmed not in ["", "—", "–", "-"], do: trimmed
+
+      _ ->
+        nil
+    end)
   end
 
   def field_label("signup_date"), do: gettext("Signup date")

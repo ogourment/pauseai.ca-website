@@ -1238,7 +1238,7 @@ msgid "Make superadmin"
 msgstr "Make superadmin"
 
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:747
-#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:816
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:819
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:328
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:333
 #: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:100
@@ -1258,7 +1258,7 @@ msgid "Page %{page} of %{page_count}"
 msgstr "Page %{page} of %{page_count}"
 
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:741
-#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:809
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:812
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:320
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:321
 #: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:95
@@ -1510,23 +1510,23 @@ msgstr "View activity"
 
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:179
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:186
-#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:763
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:766
 #, elixir-autogen, elixir-format
 msgid "Do not contact"
 msgstr "Do not contact"
 
-#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:762
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:765
 #, elixir-autogen, elixir-format
 msgid "Known active"
 msgstr "Known active"
 
-#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:764
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:767
 #, elixir-autogen, elixir-format
 msgid "Needs review"
 msgstr "Needs review"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:63
-#: lib/pauseai_ca_web/components/contact_source_components.ex:88
+#: lib/pauseai_ca_web/components/contact_source_components.ex:70
+#: lib/pauseai_ca_web/components/contact_source_components.ex:97
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:557
 #, elixir-autogen, elixir-format
 msgid "Not provided"
@@ -1544,7 +1544,7 @@ msgstr ""
 msgid "Show all source fields"
 msgstr "Show all source fields"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:43
+#: lib/pauseai_ca_web/components/contact_source_components.ex:50
 #, elixir-autogen, elixir-format
 msgid "Show imported source fields"
 msgstr "Show imported source fields"
@@ -1554,13 +1554,13 @@ msgstr "Show imported source fields"
 msgid "Additional columns preserved: %{columns}"
 msgstr "Additional columns preserved: %{columns}"
 
-#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:784
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:787
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:310
 #, elixir-autogen, elixir-format
 msgid "Page %{page} of %{pages} · %{total} contacts"
 msgstr "Page %{page} of %{pages} · %{total} contacts"
 
-#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:792
+#: lib/pauseai_ca_web/live/admin_contact_import_live.ex:795
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:272
 #, elixir-autogen, elixir-format
 msgid "Rows per page"
@@ -4631,66 +4631,66 @@ msgstr "PauseAI Automations"
 msgid "PauseAI Global email"
 msgstr "PauseAI Global email"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:79
+#: lib/pauseai_ca_web/components/contact_source_components.ex:86
 #, elixir-autogen, elixir-format
 msgid "Computed from postal code"
 msgstr "Computed from postal code"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:80
+#: lib/pauseai_ca_web/components/contact_source_components.ex:87
 #, elixir-autogen, elixir-format
 msgid "Computed region"
 msgstr "Computed region"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:83
+#: lib/pauseai_ca_web/components/contact_source_components.ex:90
 #, elixir-autogen, elixir-format
 msgid "From source sheet"
 msgstr "From source sheet"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:20
+#: lib/pauseai_ca_web/components/contact_source_components.ex:23
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:264
 #: lib/pauseai_ca_web/live/newsletters_live.ex:346
 #, elixir-autogen, elixir-format
 msgid "Geography"
 msgstr "Geography"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:85
+#: lib/pauseai_ca_web/components/contact_source_components.ex:92
 #, elixir-autogen, elixir-format
 msgid "Region supplied by source"
 msgstr "Region supplied by source"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:78
+#: lib/pauseai_ca_web/components/contact_source_components.ex:85
 #, elixir-autogen, elixir-format
 msgid "Self-reported region"
 msgstr "Self-reported region"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:93
+#: lib/pauseai_ca_web/components/contact_source_components.ex:146
 #, elixir-autogen, elixir-format
 msgid "Sheet"
 msgstr "Sheet"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:95
+#: lib/pauseai_ca_web/components/contact_source_components.ex:148
 #, elixir-autogen, elixir-format
 msgid "Sheet status"
 msgstr "Sheet status"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:14
-#: lib/pauseai_ca_web/components/contact_source_components.ex:91
+#: lib/pauseai_ca_web/components/contact_source_components.ex:17
+#: lib/pauseai_ca_web/components/contact_source_components.ex:144
 #, elixir-autogen, elixir-format
 msgid "Signup date"
 msgstr "Signup date"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:92
+#: lib/pauseai_ca_web/components/contact_source_components.ex:145
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:372
 #, elixir-autogen, elixir-format
 msgid "Source"
 msgstr "Source"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:94
+#: lib/pauseai_ca_web/components/contact_source_components.ex:147
 #, elixir-autogen, elixir-format
 msgid "Source status"
 msgstr "Source status"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:96
+#: lib/pauseai_ca_web/components/contact_source_components.ex:149
 #, elixir-autogen, elixir-format
 msgid "Welcomed date"
 msgstr "Welcomed date"
@@ -6331,7 +6331,7 @@ msgstr "View saved readings"
 msgid "Choose a valid geography."
 msgstr "Choose a valid geography."
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:81
+#: lib/pauseai_ca_web/components/contact_source_components.ex:88
 #, elixir-autogen, elixir-format
 msgid "Confirmed region"
 msgstr "Confirmed region"
@@ -6347,12 +6347,13 @@ msgstr "Default geography"
 msgid "Email draft"
 msgstr "Email draft"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:82
+#: lib/pauseai_ca_web/components/contact_source_components.ex:89
 #, elixir-autogen, elixir-format
 msgid "From import default"
 msgstr "From import default"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:84
+#: lib/pauseai_ca_web/components/contact_source_components.ex:91
+#: lib/pauseai_ca_web/components/contact_source_components.ex:101
 #, elixir-autogen, elixir-format
 msgid "From source city"
 msgstr "From source city"

@@ -752,12 +752,15 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
     """
   end
 
-  defp pending_name(profile),
-    do:
-      Enum.find(
-        [profile.original["name"], profile.original["discord"], profile.external_key],
-        &(is_binary(&1) and String.trim(&1) != "")
-      )
+  defp pending_name(profile) do
+    source = PauseAiCaWeb.ContactSourceComponents
+
+    source.first_recorded([
+      profile.original["name"],
+      source.discord_identity(profile.original),
+      profile.external_key
+    ])
+  end
 
   defp classification_label("known_active"), do: gettext("Known active")
   defp classification_label("do_not_contact"), do: gettext("Do not contact")
