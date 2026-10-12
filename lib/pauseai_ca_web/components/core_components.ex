@@ -186,7 +186,13 @@ defmodule PauseAiCaWeb.CoreComponents do
 
   @doc "Development-only shortcut after an email delivery succeeds."
   def dev_mailbox_link(assigns) do
-    assigns = assign(assigns, :enabled?, @dev_mailbox_enabled)
+    local? = Application.get_env(:pauseai_ca, PauseAiCa.Mailer)[:adapter] == Swoosh.Adapters.Local
+    preview? = Application.get_env(:pauseai_ca, :dev_review_mailbox, false)
+
+    enabled? =
+      (@dev_mailbox_enabled || preview?) && local? && PauseAiCa.MailSafety.environment() == :dev
+
+    assigns = assign(assigns, :enabled?, enabled?)
 
     ~H"""
     <a
@@ -196,7 +202,7 @@ defmodule PauseAiCaWeb.CoreComponents do
       rel="noopener"
       class="mt-3 inline-block font-semibold underline underline-offset-4"
     >
-      Open development mailbox · Ouvrir la boîte de développement ↗
+      {gettext("Open development mailbox")} ↗
     </a>
     """
   end

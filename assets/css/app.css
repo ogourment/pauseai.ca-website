@@ -374,3 +374,6 @@ h3 {
 .app-shell-popover { position: absolute; right: 0; top: 100%; z-index: 30; min-width: 15rem; border: 1px solid #a8a29e; border-radius: .5rem; padding: .35rem; background: #fff; box-shadow: 0 8px 20px #29252422; }
 .app-shell-popover .app-shell-link { display: block; }
 @media (max-width: 640px) { .app-shell-popover { position: fixed; left: 1.25rem; right: 1.25rem; top: auto; min-width: 0; } }
+
+/* The shared editor's separate preview also uses the consumer's theme. */
+.pme-preview-content{--pme-surface:var(--paper);--pme-text:var(--ink);--pme-border:var(--color-base-300);--pme-accent:var(--color-primary);font-family:var(--font-body)}

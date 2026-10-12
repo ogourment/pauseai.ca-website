@@ -155,7 +155,7 @@ defmodule PauseAiCa.MixProject do
       _ ->
         {:phoenix_markdown_editor,
          git: "ssh://git@git.agile-u.com/olivierg/phoenix_markdown_editor.git",
-         ref: "d8d7b1dcba6002734fea8036b087f81b2e7a4a83"}
+         ref: "4399bb45c1b8f6931ce88a768d94426cdb943149"}
     end
   end
 

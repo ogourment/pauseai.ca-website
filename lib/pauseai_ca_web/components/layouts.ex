@@ -561,6 +561,9 @@ defmodule PauseAiCaWeb.Layouts do
       show_announcements={false}
     >
       <.management_tabs current_scope={@current_scope} locale={@locale} active={@active_tab} />
+      <div class="mx-auto max-w-6xl px-5 text-sm">
+        <.dev_mailbox_link />
+      </div>
       {render_slot(@inner_block)}
     </.app>
     """
