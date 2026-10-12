@@ -103,20 +103,20 @@ defmodule PauseAiCaWeb.AdminContactImportLiveTest do
     {:ok, view, _} = live(conn, ~p"/admin/contact-imports")
     assert has_element?(view, "#pending-source-profiles", "Unresolved source profiles")
 
-    assert length(
+    assert Enum.count(
              view
              |> render()
-             |> Floki.parse_document!()
-             |> Floki.find("#pending-source-profiles li")
+             |> LazyHTML.from_document()
+             |> LazyHTML.query("#pending-source-profiles > ul > li")
            ) == 25
 
     view |> element("#pending-source-profiles button", "Next") |> render_click()
 
-    assert length(
+    assert Enum.count(
              view
              |> render()
-             |> Floki.parse_document!()
-             |> Floki.find("#pending-source-profiles li")
+             |> LazyHTML.from_document()
+             |> LazyHTML.query("#pending-source-profiles > ul > li")
            ) == 1
 
     assert Repo.aggregate(ContactMigration.Contact, :count) == 0
