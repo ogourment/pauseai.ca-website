@@ -1,7 +1,7 @@
 defmodule PauseAiCa.ContactMigration.CSV do
   @moduledoc false
 
-  @known ~w(geography region region_source sheet status name email city discord discord_user_id signup_date source email_verified skills_interests bio welcomed_date welcomed_by notes processed_at intro next_meetup meetups_attended)
+  @known ~w(geography region region_source sheet status name email city discord discord_user_id signup_date source email_verified skills_interests bio welcomed_date welcomed_by notes processed_at intro next_meetup meetups_attended intent weekly_hours languages country discovery discovery_other motivation motivation_other skills_other email_subscription source_message_id)
 
   def source_headers, do: @known
 

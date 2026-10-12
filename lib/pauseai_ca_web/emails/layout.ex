@@ -6,8 +6,8 @@ defmodule PauseAiCaWeb.Emails.Layout do
   tables, inline styles, no web fonts, no external images. It should survive
   Outlook and still read as ours.
 
-  Every message is bilingual. We do not know which language a recipient reads,
-  and a sign-in link is the wrong place to guess.
+  Pass `locale: "en"` or `locale: "fr"` for a single-language message.
+  Messages without a known locale retain both languages.
   """
 
   @brand "#f68b1e"
@@ -24,7 +24,11 @@ defmodule PauseAiCaWeb.Emails.Layout do
   @spec render(String.t(), String.t(), [{String.t(), String.t()}], tuple() | nil, keyword()) ::
           {String.t(), String.t()}
   def render(title_en, title_fr, blocks, action \\ nil, opts \\ []) do
+    locale = Keyword.get(opts, :locale)
     notice? = Keyword.get(opts, :notice, false)
+    {title_en, title_fr} = edition({title_en, title_fr}, locale)
+    blocks = Enum.map(blocks, &edition(&1, locale))
+    action = localize_action(action, locale, Keyword.get(opts, :language_actions, false))
 
     footer =
       Keyword.get(
@@ -34,6 +38,7 @@ defmodule PauseAiCaWeb.Emails.Layout do
          "Vous recevez ce message parce qu'une connexion a été demandée avec cette adresse."}
       )
 
+    footer = edition(footer, locale)
     links = Keyword.get(opts, :footer_links, [])
 
     {html(
@@ -44,7 +49,8 @@ defmodule PauseAiCaWeb.Emails.Layout do
        notice?,
        footer,
        Keyword.get(opts, :body_html, ""),
-       links
+       links,
+       locale
      ),
      text(
        title_en,
@@ -54,7 +60,8 @@ defmodule PauseAiCaWeb.Emails.Layout do
        notice?,
        footer,
        Keyword.get(opts, :body_text, ""),
-       links
+       links,
+       locale
      )}
   end
 
@@ -71,10 +78,20 @@ defmodule PauseAiCaWeb.Emails.Layout do
      "Ce message est-il arrivé dans les indésirables ou les promotions? Déplacez-le vers votre boîte de réception et marquez-le « Non indésirable ». Cela prend une seconde, et c'est ainsi que nous évitons le dossier spam pour tout le monde."}
   end
 
-  defp html(title_en, title_fr, blocks, action, notice?, {footer_en, footer_fr}, body_html, links) do
+  defp html(
+         title_en,
+         title_fr,
+         blocks,
+         action,
+         notice?,
+         {footer_en, footer_fr},
+         body_html,
+         links,
+         locale
+       ) do
     """
     <!DOCTYPE html>
-    <html lang="en">
+    <html lang="#{locale || "en"}">
       <head><meta charset="utf-8" /><meta name="viewport" content="width=device-width" /></head>
       <body style="margin:0;padding:0;background:#{@paper};">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#{@paper};">
@@ -94,20 +111,18 @@ defmodule PauseAiCaWeb.Emails.Layout do
                              font-size:16px;line-height:1.6;color:#{@ink};">
                     <h1 style="margin:0 0 6px;font-family:Impact,'Helvetica Neue',Arial,sans-serif;
                                font-size:26px;line-height:1.2;color:#{@ink};">#{esc(title_en)}</h1>
-                    <p style="margin:0 0 24px;font-family:Impact,'Helvetica Neue',Arial,sans-serif;
-                              font-size:20px;line-height:1.25;color:#7a7268;">#{esc(title_fr)}</p>
+                    #{secondary_title(title_fr)}
                     #{body_html}
                     #{Enum.map_join(blocks, "", &html_block/1)}
                     #{html_action(action)}
-                    #{html_notice(notice?)}
+                    #{html_notice(notice?, locale)}
                   </td>
                 </tr>
                 <tr>
                   <td style="padding:18px 28px 26px;border-top:1px solid #eceae4;
                              font-family:Georgia,serif;font-size:12px;line-height:1.55;color:#57534e;">
                     pauseai.ca · info@pauseai.ca<br />
-                    #{esc(footer_en)}<br />
-                    #{esc(footer_fr)}
+                    #{Enum.map_join(present([footer_en, footer_fr]), "<br />", &esc/1)}
                     #{html_links(links)}
                   </td>
                 </tr>
@@ -120,27 +135,33 @@ defmodule PauseAiCaWeb.Emails.Layout do
     """
   end
 
-  defp html_block({en, fr}) do
-    """
-    <p style="margin:0 0 10px;">#{esc(en)}</p>
-    <p style="margin:0 0 22px;color:#6f675d;">#{esc(fr)}</p>
-    """
+  defp html_block(pair) do
+    pair
+    |> Tuple.to_list()
+    |> present()
+    |> Enum.map_join("", fn value ->
+      "<p style=\"margin:0 0 16px;\">#{esc(value)}</p>"
+    end)
   end
+
+  defp secondary_title(nil), do: ""
+
+  defp secondary_title(value),
+    do: "<p style=\"margin:0 0 24px;font-size:20px;color:#7a7268;\">#{esc(value)}</p>"
 
   # Yellow, bordered, and the instruction itself in bold: this is the one part
   # of the message we actively want people to act on.
-  defp html_notice(false), do: ""
+  defp html_notice(false, _locale), do: ""
 
-  defp html_notice(true) do
-    {en, fr} = deliverability_notice()
+  defp html_notice(true, locale) do
+    {en, fr} = edition(deliverability_notice(), locale)
 
     """
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
            style="margin:8px 0 4px;background:#fff8dc;border:1px solid #e6d27a;border-radius:8px;">
       <tr>
         <td style="padding:16px 18px;font-family:Georgia,serif;font-size:14px;line-height:1.55;color:#4a4034;">
-          <p style="margin:0 0 8px;">📥 <strong>#{esc(en)}</strong></p>
-          <p style="margin:0;color:#6b5f4e;">#{esc(fr)}</p>
+          #{html_block({en, fr})}
         </td>
       </tr>
     </table>
@@ -149,7 +170,12 @@ defmodule PauseAiCaWeb.Emails.Layout do
 
   defp html_action(nil), do: ""
 
-  defp html_action({label_en, label_fr, url}) do
+  defp html_action({en, fr, url, :language_choices}) do
+    html_action({en, nil, language_url(url, "en"), "en"}) <>
+      html_action({fr, nil, language_url(url, "fr"), "fr"})
+  end
+
+  defp html_action({label_en, label_fr, url, locale}) do
     """
     <table role="presentation" cellpadding="0" cellspacing="0" style="margin:8px 0 24px;">
       <tr>
@@ -157,15 +183,14 @@ defmodule PauseAiCaWeb.Emails.Layout do
           <a href="#{esc(url)}"
              style="display:inline-block;padding:14px 30px;font-family:Impact,'Helvetica Neue',Arial,sans-serif;
                     font-size:17px;letter-spacing:0.5px;color:#{@ink};text-decoration:none;">
-            #{esc(label_en)} · #{esc(label_fr)}
+            #{present([label_en, label_fr]) |> Enum.map_join(" · ", &esc/1)}
           </a>
         </td>
       </tr>
     </table>
-    <p style="margin:0 0 6px;font-size:13px;color:#8a8378;">
-      If the button does not work, paste this into your browser:<br />
-      Si le bouton ne fonctionne pas, collez ceci dans votre navigateur&nbsp;:
-    </p>
+    <div style="margin:0 0 6px;font-size:13px;color:#8a8378;">
+      #{html_block(edition({"If the button does not work, paste this into your browser:", "Si le bouton ne fonctionne pas, collez ceci dans votre navigateur :"}, locale))}
+    </div>
     <p style="margin:0 0 22px;font-size:13px;word-break:break-all;"><a href="#{esc(url)}"
        style="color:#b35f00;">#{esc(url)}</a></p>
     """
@@ -177,21 +202,39 @@ defmodule PauseAiCaWeb.Emails.Layout do
     end)
   end
 
-  defp text(title_en, title_fr, blocks, action, notice?, {footer_en, footer_fr}, body_text, links) do
+  defp text(
+         title_en,
+         title_fr,
+         blocks,
+         action,
+         notice?,
+         {footer_en, footer_fr},
+         body_text,
+         links,
+         locale
+       ) do
     body =
-      Enum.map_join(blocks, "\n\n", fn {en, fr} -> "#{en}\n\n#{fr}" end)
+      Enum.map_join(blocks, "\n\n", fn pair ->
+        pair |> Tuple.to_list() |> present() |> Enum.join("\n\n")
+      end)
 
     action_text =
       case action do
-        nil -> ""
-        {label_en, label_fr, url} -> "\n\n#{label_en} · #{label_fr}:\n#{url}\n"
+        nil ->
+          ""
+
+        {en, fr, url, :language_choices} ->
+          "\n\n#{en}:\n#{language_url(url, "en")}\n\n#{fr}:\n#{language_url(url, "fr")}\n"
+
+        {label_en, label_fr, url, _locale} ->
+          "\n\n#{present([label_en, label_fr]) |> Enum.join(" · ")}:\n#{url}\n"
       end
 
     notice_text =
       if notice? do
-        {en, fr} = deliverability_notice()
+        {en, fr} = edition(deliverability_notice(), locale)
 
-        "\n-----------------------------------------------------------\n#{en}\n\n#{fr}\n-----------------------------------------------------------\n"
+        "\n-----------------------------------------------------------\n#{present([en, fr]) |> Enum.join("\n\n")}\n-----------------------------------------------------------\n"
       else
         ""
       end
@@ -200,18 +243,35 @@ defmodule PauseAiCaWeb.Emails.Layout do
     PauseAI Canada
     ==============
 
-    #{title_en}
-    #{title_fr}
+    #{present([title_en, title_fr]) |> Enum.join("\n")}
 
     #{body_text}
 
     #{body}#{action_text}#{notice_text}
     --
     pauseai.ca · info@pauseai.ca
-    #{footer_en}
-    #{footer_fr}
+    #{present([footer_en, footer_fr]) |> Enum.join("\n")}
     #{Enum.map_join(links, "\n", fn {label, url} -> "#{label}: #{url}" end)}
     """
+  end
+
+  defp edition({en, _fr}, "en"), do: {en, nil}
+  defp edition({_en, fr}, "fr"), do: {fr, nil}
+  defp edition(pair, _), do: pair
+  defp present(values), do: Enum.reject(values, &is_nil/1)
+  defp localize_action(nil, _, _), do: nil
+
+  defp localize_action({en, fr, url}, locale, language_actions?) do
+    {first, second} = edition({en, fr}, locale)
+
+    {first, second, url,
+     if(is_nil(locale) and language_actions?, do: :language_choices, else: locale)}
+  end
+
+  defp language_url(url, locale) do
+    uri = URI.parse(url)
+    query = URI.decode_query(uri.query || "") |> Map.put("locale", locale) |> URI.encode_query()
+    URI.to_string(%{uri | query: query})
   end
 
   defp esc(value) do

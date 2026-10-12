@@ -3,8 +3,8 @@ defmodule PauseAiCa.Accounts.UserNotifier do
   Transactional email for sign-in and account changes.
 
   Sent from the authenticated pauseai.ca domain and laid out in the PauseAI
-  Canada look. Every message is bilingual: we do not know which language a
-  recipient reads, and a sign-in link is the wrong place to guess.
+  Canada look. Sign-in and confirmation messages follow the language of the
+  requested website link; unknown-language messages offer both editions.
   """
 
   import Swoosh.Email
@@ -114,16 +114,19 @@ defmodule PauseAiCa.Accounts.UserNotifier do
   Deliver instructions to log in with a magic link.
   """
   def deliver_login_instructions(user, url) do
+    locale = URI.decode_query(URI.parse(url).query || "")["locale"]
+    locale = if locale in ["en", "fr"], do: locale
+
     case user do
-      %User{confirmed_at: nil} -> deliver_confirmation_instructions(user, url)
-      _ -> deliver_magic_link_instructions(user, url)
+      %User{confirmed_at: nil} -> deliver_confirmation_instructions(user, url, locale)
+      _ -> deliver_magic_link_instructions(user, url, locale)
     end
   end
 
-  defp deliver_magic_link_instructions(user, url) do
+  defp deliver_magic_link_instructions(user, url, locale) do
     deliver(
       user.email,
-      "Your sign-in link · Votre lien de connexion",
+      localized_subject({"Your sign-in link", "Votre lien de connexion"}, locale),
       Layout.render(
         "Your sign-in link",
         "Votre lien de connexion",
@@ -133,16 +136,18 @@ defmodule PauseAiCa.Accounts.UserNotifier do
           {"If you did not ask to sign in, you can ignore this message.",
            "Si vous n'avez pas demandé à vous connecter, ignorez ce message."}
         ],
-        {"Sign in", "Se connecter", url}
+        {"Sign in", "Se connecter", url},
+        locale: locale,
+        language_actions: true
       ),
       sign_in_user_id: user.id
     )
   end
 
-  defp deliver_confirmation_instructions(user, url) do
+  defp deliver_confirmation_instructions(user, url, locale) do
     deliver(
       user.email,
-      "Confirm your account · Confirmez votre compte",
+      localized_subject({"Confirm your account", "Confirmez votre compte"}, locale),
       Layout.render(
         "Confirm your account",
         "Confirmez votre compte",
@@ -154,8 +159,14 @@ defmodule PauseAiCa.Accounts.UserNotifier do
           {"If you did not create an account, you can ignore this message.",
            "Si vous n'avez pas créé de compte, ignorez ce message."}
         ],
-        {"Confirm account", "Confirmer le compte", url}
+        {"Confirm account", "Confirmer le compte", url},
+        locale: locale,
+        language_actions: true
       )
     )
   end
+
+  defp localized_subject({en, _}, "en"), do: en
+  defp localized_subject({_, fr}, "fr"), do: fr
+  defp localized_subject({en, fr}, _), do: en <> " · " <> fr
 end

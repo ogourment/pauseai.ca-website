@@ -32,6 +32,42 @@ defmodule PauseAiCa.Accounts.UserNotifierTest do
     end)
   end
 
+  for {locale, confirmation, sign_in, other} <- [
+        {"en", "Confirm your account", "Your sign-in link", "Confirmez votre compte"},
+        {"fr", "Confirmez votre compte", "Votre lien de connexion", "Confirm your account"}
+      ] do
+    @locale locale
+    @confirmation confirmation
+    @sign_in sign_in
+    @other other
+    test "account emails follow the requested #{@locale} website edition" do
+      for {user, expected} <- [{@unconfirmed, @confirmation}, {@user, @sign_in}] do
+        url = "https://pauseai.ca/users/log-in/one-use?locale=#{@locale}&flow=continuation"
+        assert {:ok, email} = UserNotifier.deliver_login_instructions(user, url)
+        assert email.subject == expected
+        assert email.html_body =~ ~s(lang="#{@locale}")
+        assert email.text_body =~ url
+        refute email.html_body =~ @other
+        refute email.text_body =~ @other
+      end
+    end
+  end
+
+  test "unknown-language confirmation offers distinct English and French destinations" do
+    assert {:ok, email} =
+             UserNotifier.deliver_login_instructions(
+               @unconfirmed,
+               "https://pauseai.ca/users/log-in/one-use?flow=continuation"
+             )
+
+    assert email.html_body =~ "locale=en"
+    assert email.html_body =~ "locale=fr"
+    assert email.text_body =~ "locale=en"
+    assert email.text_body =~ "locale=fr"
+    assert email.html_body =~ "Confirm account"
+    assert email.html_body =~ "Confirmer le compte"
+  end
+
   test "the link is reachable without rendering HTML" do
     url = "https://pauseai.ca/users/log-in/abc123"
     UserNotifier.deliver_login_instructions(@user, url)

@@ -48,6 +48,49 @@ defmodule PauseAiCa.ContactMigrationTest do
     assert activity.details["account_match"]
   end
 
+  test "full form answers survive import and replay without enrollment or outreach" do
+    actor = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> PauseAiCa.Repo.update!()
+
+    row = %{
+      "email" => "profile-evidence@example.org",
+      "name" => "Synthetic profile",
+      "source_key" => "gmail/synthetic-stable-message",
+      "signup_date" => "2025-07-16",
+      "intent" => "Volunteer",
+      "weekly_hours" => "2–5",
+      "skills_interests" => "Research",
+      "skills_other" => "Translation",
+      "languages" => "English, French",
+      "bio" => "Synthetic bio",
+      "motivation" => "Research",
+      "discovery" => "Friend",
+      "email_subscription" => "No",
+      "source_message_id" => "synthetic-stable-message"
+    }
+
+    before_users = PauseAiCa.Repo.aggregate(PauseAiCa.Accounts.User, :count)
+
+    for _ <- 1..2 do
+      assert {:ok, %{contacts: [contact]}} =
+               ContactMigration.import_selected(
+                 [row],
+                 "full-profile.csv",
+                 "global-registration",
+                 actor
+               )
+
+      for key <-
+            ~w(intent weekly_hours skills_interests skills_other languages bio motivation discovery email_subscription source_message_id signup_date),
+          do: assert(contact.source_data[key] == row[key])
+    end
+
+    assert length(ContactMigration.list_contacts("profile-evidence@")) == 1
+    assert PauseAiCa.Repo.aggregate(PauseAiCa.Accounts.User, :count) == before_users
+    assert PauseAiCa.Repo.aggregate(PauseAiCa.Newsletters.Subscription, :count) == 0
+    assert PauseAiCa.Repo.aggregate(PauseAiCa.Newsletters.Batch, :count) == 0
+    assert PauseAiCa.Repo.aggregate(PauseAiCa.Newsletters.Delivery, :count) == 0
+  end
+
   test "reimport updates one contact without duplicating it and adds history" do
     actor =
       user_fixture()
