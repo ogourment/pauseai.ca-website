@@ -45,7 +45,7 @@ msgstr ""
 "voir quelles pages amènent les gens à agir. Refuser n'enlève aucune "
 "fonctionnalité."
 
-#: lib/pauseai_ca_web/components/core_components.ex:490
+#: lib/pauseai_ca_web/components/core_components.ex:496
 #: lib/pauseai_ca_web/components/layouts.ex:433
 #, elixir-autogen, elixir-format
 msgid "Actions"
@@ -2615,7 +2615,7 @@ msgstr "Résultat du fournisseur vérifié"
 msgid "Provider reference"
 msgstr "Référence du fournisseur"
 
-#: lib/pauseai_ca_web/components/layouts.ex:592
+#: lib/pauseai_ca_web/components/layouts.ex:595
 #: lib/pauseai_ca_web/navigation.ex:155
 #, elixir-autogen, elixir-format
 msgid "Management"
@@ -3490,8 +3490,8 @@ msgstr "Concevoir et animer des ateliers"
 msgid "Media coverage"
 msgstr "Dans les médias"
 
-#: lib/pauseai_ca_web/components/core_components.ex:594
-#: lib/pauseai_ca_web/components/core_components.ex:595
+#: lib/pauseai_ca_web/components/core_components.ex:600
+#: lib/pauseai_ca_web/components/core_components.ex:601
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:156
 #, elixir-autogen, elixir-format
 msgid "PauseAI"
@@ -4410,7 +4410,7 @@ msgstr "Courriel non confirmé"
 msgid "Group managers"
 msgstr "Responsables de groupes"
 
-#: lib/pauseai_ca_web/components/layouts.ex:590
+#: lib/pauseai_ca_web/components/layouts.ex:593
 #, elixir-autogen, elixir-format
 msgid "More"
 msgstr "Autres"
@@ -6340,6 +6340,7 @@ msgstr "Envoi à vérifier"
 msgid "Not submitted"
 msgstr "Non soumis"
 
+#: lib/pauseai_ca_web/components/core_components.ex:205
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:664
 #, elixir-autogen, elixir-format
 msgid "Open development mailbox"

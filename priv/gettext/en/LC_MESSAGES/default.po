@@ -44,7 +44,7 @@ msgstr ""
 "Accept analytics cookies? They help us see which pages actually lead people "
 "to act. Declining costs you no functionality."
 
-#: lib/pauseai_ca_web/components/core_components.ex:490
+#: lib/pauseai_ca_web/components/core_components.ex:496
 #: lib/pauseai_ca_web/components/layouts.ex:433
 #, elixir-autogen, elixir-format
 msgid "Actions"
@@ -2575,7 +2575,7 @@ msgstr "Provider outcome verified"
 msgid "Provider reference"
 msgstr "Provider reference"
 
-#: lib/pauseai_ca_web/components/layouts.ex:592
+#: lib/pauseai_ca_web/components/layouts.ex:595
 #: lib/pauseai_ca_web/navigation.ex:155
 #, elixir-autogen, elixir-format
 msgid "Management"
@@ -3413,8 +3413,8 @@ msgstr "Design and facilitate workshops"
 msgid "Media coverage"
 msgstr "Media coverage"
 
-#: lib/pauseai_ca_web/components/core_components.ex:594
-#: lib/pauseai_ca_web/components/core_components.ex:595
+#: lib/pauseai_ca_web/components/core_components.ex:600
+#: lib/pauseai_ca_web/components/core_components.ex:601
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:156
 #, elixir-autogen, elixir-format
 msgid "PauseAI"
@@ -4292,7 +4292,7 @@ msgstr "Email unconfirmed"
 msgid "Group managers"
 msgstr "Group managers"
 
-#: lib/pauseai_ca_web/components/layouts.ex:590
+#: lib/pauseai_ca_web/components/layouts.ex:593
 #, elixir-autogen, elixir-format
 msgid "More"
 msgstr "More"
@@ -6190,6 +6190,7 @@ msgstr "Needs delivery review"
 msgid "Not submitted"
 msgstr "Not submitted"
 
+#: lib/pauseai_ca_web/components/core_components.ex:205
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:664
 #, elixir-autogen, elixir-format
 msgid "Open development mailbox"
