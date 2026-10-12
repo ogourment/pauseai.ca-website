@@ -37,7 +37,7 @@ defmodule PauseAiCa.NewslettersListsTest do
     list
   end
 
-  test "OR/AND membership is dynamic, unknown geography stays out and consent exclusions remain visible",
+  test "OR membership is dynamic, unknown geography stays out and consent exclusions remain visible",
        c do
     list = list(c.scope)
     signup("city@example.org", %{city: "Montreal"})
@@ -53,15 +53,26 @@ defmodule PauseAiCa.NewslettersListsTest do
     {:ok, next} = Newsletters.audience_page(c.scope, %{"list_id" => list.id})
     assert next.total == 2
 
-    {:ok, both} =
-      Lists.save(c.scope, list, %{
-        "name" => list.name,
-        "match" => "all",
-        "city" => "Montréal",
-        "fsas" => "H2X"
-      })
+    assert {:error, :invalid_rules} =
+             Lists.save(c.scope, list, %{
+               "name" => list.name,
+               "match" => "all",
+               "city" => "Montréal",
+               "fsas" => "H2X"
+             })
 
-    assert {:ok, %{total: 0}} = Newsletters.audience_page(c.scope, %{"list_id" => both.id})
+    assert {:ok, %{total: 2}} = Newsletters.audience_page(c.scope, %{"list_id" => list.id})
+  end
+
+  test "Toronto/GTA preset matches municipalities without admitting all of Canada", c do
+    {:ok, list} = Lists.save(c.scope, nil, Lists.preset("toronto"))
+
+    for city <- ["Toronto", "Scarborough", "Mississauga", "Ajax", "Vaughan"],
+        do: signup("#{String.downcase(city)}@example.org", %{city: city})
+
+    signup("outside-gta@example.org", %{city: "Ottawa", region: "ROCanada"})
+    assert {:ok, %{total: 5}} = Newsletters.audience_page(c.scope, %{"list_id" => list.id})
+    assert list.criteria["match"] == "any"
   end
 
   test "whole-list batches span pagination, snapshot exact recipients and become stale on rule or membership change",

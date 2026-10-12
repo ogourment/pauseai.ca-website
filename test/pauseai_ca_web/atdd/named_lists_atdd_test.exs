@@ -154,10 +154,7 @@ if System.get_env("ATDD") == "true" do
         b
         |> visit("/manage/mail/newsletters?locale=#{locale}")
         |> click("#mailing-list-#{list.id} button[phx-click=list-edit]")
-        |> select("#list_match", tr(locale, "Combine rules"),
-          option: tr(locale, "Match every rule (AND)"),
-          exact: false
-        )
+        |> fill_in(tr(locale, "FSAs"), with: "J4B")
         |> click_button(tr(locale, "Save list"))
         |> assert_has("#newsletter-audience > li", count: 1)
         |> visit(path)

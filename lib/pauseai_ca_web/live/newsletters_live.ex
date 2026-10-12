@@ -52,15 +52,7 @@ defmodule PauseAiCaWeb.NewslettersLive do
   end
 
   def handle_event("list-new", params, socket) do
-    attrs =
-      if params["preset"] == "montreal",
-        do:
-          Map.merge(Lists.form(nil), %{
-            "name" => "Montréal",
-            "city" => "Montréal",
-            "region" => "Montréal"
-          }),
-        else: Lists.form(nil)
+    attrs = Lists.preset(params["preset"])
 
     {:noreply,
      assign(socket, editing_list: nil, list_form: to_form(attrs, as: "list"), error: nil)}
@@ -273,6 +265,9 @@ defmodule PauseAiCaWeb.NewslettersLive do
             <button type="button" phx-click="list-new" phx-value-preset="montreal" class="underline">{gettext(
               "Use Montréal rules"
             )}</button>
+            <button type="button" phx-click="list-new" phx-value-preset="toronto" class="underline">{gettext(
+              "Use Toronto / GTA rules"
+            )}</button>
           </div>
           <.form
             for={@list_form}
@@ -281,15 +276,14 @@ defmodule PauseAiCaWeb.NewslettersLive do
             class="grid gap-3 rounded-lg border border-stone-300 p-4 md:grid-cols-2"
           >
             <.input field={@list_form[:name]} label={gettext("List name")} maxlength="120" />
-            <.input
-              field={@list_form[:match]}
-              type="select"
-              label={gettext("Combine rules")}
-              options={[
-                {gettext("Match any rule (OR)"), "any"},
-                {gettext("Match every rule (AND)"), "all"}
-              ]}
-            />
+            <p class="text-sm text-stone-600">
+              {gettext("Members match any city, recorded region or FSA rule (OR).")}
+            </p>
+            <p :if={@editing_list && @editing_list.criteria["match"] == "all"} class="crm-error">
+              {gettext(
+                "This older list uses AND. Saving these rules changes it to OR and requires reviewing any prepared batch again."
+              )}
+            </p>
             <.input
               field={@list_form[:city]}
               label={gettext("Cities")}

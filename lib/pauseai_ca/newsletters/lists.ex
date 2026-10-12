@@ -30,6 +30,22 @@ defmodule PauseAiCa.Newsletters.Lists do
     })
   end
 
+  # GTA municipalities and common Toronto borough city values; consumer-owned.
+  # No ROCanada rule or guessed postal coverage.
+  def preset("toronto") do
+    Map.merge(form(nil), %{
+      "name" => "Toronto / GTA",
+      "city" =>
+        "Toronto, North York, Scarborough, Etobicoke, East York, York, Ajax, Brock, Clarington, Oshawa, Pickering, Scugog, Uxbridge, Whitby, Burlington, Halton Hills, Milton, Oakville, Brampton, Caledon, Mississauga, Aurora, East Gwillimbury, Georgina, King, Markham, Newmarket, Richmond Hill, Vaughan, Whitchurch-Stouffville"
+    })
+  end
+
+  def preset("montreal"),
+    do:
+      Map.merge(form(nil), %{"name" => "Montréal", "city" => "Montréal", "region" => "Montréal"})
+
+  def preset(_), do: form(nil)
+
   def matches?(list, subscription), do: ListRules.matches?(list.criteria, fields(subscription))
 
   def reasons(list, subscription),
@@ -53,9 +69,10 @@ defmodule PauseAiCa.Newsletters.Lists do
             "values" => value
           }
 
-    criteria = %{"match" => attrs["match"] || "any", "rules" => rules}
+    criteria = %{"match" => "any", "rules" => rules}
 
-    if ListRules.valid?(criteria) and Enum.all?(fsas, &PauseAiCa.PostalArea.valid?/1) and
+    if attrs["match"] in [nil, "", "any"] and ListRules.valid?(criteria) and
+         Enum.all?(fsas, &PauseAiCa.PostalArea.valid?/1) and
          Enum.all?(values(attrs["region"]), &(&1 in ["Montréal", "ROQuébec", "ROCanada"])),
        do: {:ok, criteria},
        else: {:error, :invalid_rules}

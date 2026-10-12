@@ -17,11 +17,12 @@ defmodule PauseAiCaWeb.NewsletterListsLiveTest do
     {:ok, _} = Newsletters.confirm(request.confirmation_token)
     {:ok, view, _} = live(c.conn, "/manage/mail/newsletters?locale=en")
     view |> element("button[phx-value-preset=montreal]") |> render_click()
+    refute has_element?(view, "#list_match")
     assert has_element?(view, "#list_name[value='Montréal']")
 
     view
     |> form("#mailing-list-form",
-      list: %{name: "Montréal area", match: "any", city: "Montréal", region: "", fsas: "H2X"}
+      list: %{name: "Montréal area", city: "Montréal", region: "", fsas: "H2X"}
     )
     |> render_submit()
 
@@ -34,7 +35,7 @@ defmodule PauseAiCaWeb.NewsletterListsLiveTest do
 
     reloaded
     |> form("#mailing-list-form",
-      list: %{name: "Montréal area", match: "all", city: "Montréal", region: "", fsas: "H2X"}
+      list: %{name: "Montréal area", city: "Montréal", region: "", fsas: "J4B"}
     )
     |> render_submit()
 
