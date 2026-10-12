@@ -58,6 +58,8 @@ defmodule PauseAiCa.MixProject do
       markdown_editor_dependency(),
       {:mdex, "~> 0.13.5"},
       {:phoenix_test_playwright, "~> 0.15.0", only: :test, runtime: false},
+      # Match the Playwright 1.62 timeout metadata protocol used by the locked driver.
+      {:playwright_ex, "~> 0.8.0", only: :test, runtime: false},
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.5", runtime: Mix.env() == :dev},

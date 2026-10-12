@@ -167,8 +167,8 @@ jobs:
       - name: Install Playwright Chromium
         if: ${{ inputs.run-acceptance }}
         run: |
-          npm --prefix assets install --no-save playwright
-          npx --prefix assets playwright install --with-deps chromium chromium-headless-shell
+          npm --prefix assets ci
+          npm --prefix assets exec -- playwright install --with-deps chromium chromium-headless-shell
       - name: Run browser acceptance tests
         if: ${{ inputs.run-acceptance }}
         env:
