@@ -154,6 +154,7 @@ if System.get_env("ATDD") == "true" do
         b
         |> visit("/manage/mail/newsletters?locale=#{locale}")
         |> click("#mailing-list-#{list.id} button[phx-click=list-edit]")
+        |> assert_has("#list_fsas[value='H2X']")
         |> fill_in(tr(locale, "FSAs"), with: "J4B")
         |> click_button(tr(locale, "Save list"))
         |> assert_has("#newsletter-audience > li", count: 1)

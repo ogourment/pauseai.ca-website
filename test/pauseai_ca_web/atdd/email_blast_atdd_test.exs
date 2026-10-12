@@ -228,6 +228,7 @@ if System.get_env("ATDD") == "true" do
         |> click_button("Keep me logged in on this device")
         |> assert_path("/")
         |> visit("/admin/contact-imports?locale=#{locale}")
+        |> assert_has("[data-phx-main].phx-connected")
         |> upload(tr(locale, "CSV file"), file)
         |> fill_in(tr(locale, "Source label"), with: "synthetic-press-#{locale}")
         |> click_button(tr(locale, "Preview"))

@@ -67,7 +67,19 @@ if System.get_env("ATDD") == "true" do
         assert String.ends_with?(saved.source, "Safe text after")
         refute saved.source =~ "javascript:"
         refute saved.source =~ "clipboardExecuted"
-        b = b |> visit(path) |> assert_has("[data-pme-source]", text: saved.source)
+
+        b =
+          b
+          |> visit(path)
+          |> assert_has("[data-phx-main].phx-connected")
+          |> assert_has("[data-pme-source]")
+
+        b =
+          PhoenixTest.Playwright.evaluate(
+            b,
+            "document.querySelector('[data-pme-source]').value",
+            fn value -> assert value == saved.source end
+          )
 
         b =
           PhoenixTest.Playwright.evaluate(
