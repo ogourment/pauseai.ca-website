@@ -82,6 +82,52 @@ defmodule PauseAiCaWeb.AdminContactImportLiveTest do
     assert Repo.aggregate(PauseAiCa.Accounts.User, :count) == 1
   end
 
+  test "unresolved profiles remain browsable and page by stable source identity", %{conn: conn} do
+    for batch <-
+          Enum.chunk_every(
+            Enum.map(1..26, fn i ->
+              %{
+                "email" => "",
+                "name" => "Unresolved #{i}",
+                "source_key" => "discord/user-#{i}",
+                "bio" => "Recorded introduction"
+              }
+            end),
+            25
+          )
+          |> Enum.with_index() do
+      {rows, i} = batch
+      assert {:ok, _} = PauseAiCa.SourceIntake.ingest("discord", "pending-page-#{i}", rows)
+    end
+
+    {:ok, view, _} = live(conn, ~p"/admin/contact-imports")
+    assert has_element?(view, "#pending-source-profiles", "Unresolved source profiles")
+
+    assert length(
+             view
+             |> render()
+             |> Floki.parse_document!()
+             |> Floki.find("#pending-source-profiles li")
+           ) == 25
+
+    view |> element("#pending-source-profiles button", "Next") |> render_click()
+
+    assert length(
+             view
+             |> render()
+             |> Floki.parse_document!()
+             |> Floki.find("#pending-source-profiles li")
+           ) == 1
+
+    assert Repo.aggregate(ContactMigration.Contact, :count) == 0
+
+    assert {:error, :unauthorized} =
+             PauseAiCa.SourceIntake.pending_page(
+               PauseAiCa.Accounts.Scope.for_user(user_fixture()),
+               1
+             )
+  end
+
   test "service imports have a readable timeline without a human account", %{conn: conn} do
     assert {:ok, _} =
              PauseAiCa.SourceIntake.ingest("global-registration", "service-timeline", [

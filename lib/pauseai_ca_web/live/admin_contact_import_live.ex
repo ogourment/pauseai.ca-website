@@ -24,6 +24,7 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
      |> assign(:receipt_id, nil)
      |> assign(:receipt, nil)
      |> assign(:receipts, [])
+     |> assign(:pending_profiles, %{entries: [], page: 1, pages: 1, total: 0})
      |> assign_contact_page(%{entries: [], page: 1, page_size: 25, pages: 1, total: 0})
      |> assign(:expanded_contact_id, nil)
      |> assign(:activities, [])
@@ -201,6 +202,16 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
        |> assign(:expanded_contact_id, id)
        |> assign(:activities, ContactMigration.list_activities(id))}
 
+  defp dispatch_event("pending-page", %{"page" => page}, socket) do
+    {:noreply,
+     socket
+     |> assign(:pending_profiles, %{
+       socket.assigns.pending_profiles
+       | page: positive_integer(page, 1)
+     })
+     |> load_pending_profiles()}
+  end
+
   defp preview(socket, filename, source, contents) do
     with {:ok, rows, unknown_columns} <- CSV.parse(contents),
          {:ok, rows} <- Geography.with_default(rows, socket.assigns.preview_geography) do
@@ -266,6 +277,16 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
   defp preview_pages(assigns),
     do: max(Integer.ceil_div(preview_total(assigns), assigns.preview_page_size), 1)
 
+  defp load_pending_profiles(socket) do
+    case PauseAiCa.SourceIntake.pending_page(
+           socket.assigns.current_scope,
+           socket.assigns.pending_profiles.page
+         ) do
+      {:ok, page} -> assign(socket, :pending_profiles, page)
+      _ -> denied(socket)
+    end
+  end
+
   defp load_contact_page(socket) do
     scope = socket.assigns.current_scope
 
@@ -285,6 +306,7 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
         |> assign_contact_page(page)
         |> assign(:receipt, receipt)
         |> assign(:receipts, ContactMigration.receipts(scope))
+        |> load_pending_profiles()
 
       _ ->
         denied(socket)
@@ -679,9 +701,63 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
           </ul>
         </section>
       </section>
+      <section
+        :if={@pending_profiles.total > 0}
+        id="pending-source-profiles"
+        class="mt-8 rounded-xl border border-stone-300 p-5"
+      >
+        <h2 class="font-heading text-2xl">{gettext("Unresolved source profiles")}</h2>
+        <p class="mt-2 text-sm text-stone-600">
+          {gettext(
+            "Recorded profiles without a usable email address. Source observations are preserved for review."
+          )}
+        </p>
+        <ul class="mt-4 divide-y divide-stone-200">
+          <li
+            :for={profile <- @pending_profiles.entries}
+            id={"pending-source-#{profile.id}"}
+            class="py-3"
+          >
+            <strong>{pending_name(profile)}</strong>
+            <span class="ml-2 text-sm text-stone-600">{profile.source} · {profile.original["city"]}</span>
+            <PauseAiCaWeb.ContactSourceComponents.source_details
+              id={"pending-source-details-#{profile.id}"}
+              data={profile.original}
+            />
+          </li>
+        </ul>
+        <div class="mt-4 flex items-center justify-between text-sm">
+          <span>{gettext("Page %{page} of %{pages} · %{total} profiles",
+            page: @pending_profiles.page,
+            pages: @pending_profiles.pages,
+            total: @pending_profiles.total
+          )}</span>
+          <div class="flex gap-2">
+            <button
+              class="rounded border border-stone-300 px-3 py-1 disabled:opacity-40"
+              phx-click="pending-page"
+              phx-value-page={@pending_profiles.page - 1}
+              disabled={@pending_profiles.page == 1}
+            >{gettext("Previous")}</button>
+            <button
+              class="rounded border border-stone-300 px-3 py-1 disabled:opacity-40"
+              phx-click="pending-page"
+              phx-value-page={@pending_profiles.page + 1}
+              disabled={@pending_profiles.page == @pending_profiles.pages}
+            >{gettext("Next")}</button>
+          </div>
+        </div>
+      </section>
     </Layouts.management>
     """
   end
+
+  defp pending_name(profile),
+    do:
+      Enum.find(
+        [profile.original["name"], profile.original["discord"], profile.external_key],
+        &(is_binary(&1) and String.trim(&1) != "")
+      )
 
   defp classification_label("known_active"), do: gettext("Known active")
   defp classification_label("do_not_contact"), do: gettext("Do not contact")

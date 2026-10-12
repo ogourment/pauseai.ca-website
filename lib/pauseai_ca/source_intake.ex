@@ -43,7 +43,14 @@ defmodule PauseAiCa.SourceIntake do
             Repo.rollback(:event_conflict)
 
           nil ->
-            allowed = Enum.reject(rows, &suppressed?(&1["email"] || &1["source_key"]))
+            allowed =
+              Enum.reject(
+                rows,
+                &suppressed?(
+                  if(&1["email"] in [nil, ""], do: &1["source_key"], else: &1["email"])
+                )
+              )
+
             {address_rows, pending} = Enum.split_with(allowed, &(&1["email"] not in [nil, ""]))
 
             for row <- pending do
@@ -76,6 +83,30 @@ defmodule PauseAiCa.SourceIntake do
       end)
     else
       {:error, :invalid_payload}
+    end
+  end
+
+  def pending_page(scope, page) do
+    if PauseAiCa.Volunteers.superadmin?(scope) do
+      latest =
+        from p in PendingSource,
+          distinct: [p.source, p.external_key],
+          order_by: [asc: p.source, asc: p.external_key, desc: p.inserted_at, desc: p.id]
+
+      query = from p in subquery(latest), order_by: [asc: p.source, asc: p.external_key]
+      total = Repo.aggregate(query, :count)
+      pages = max(1, Integer.ceil_div(total, 25))
+      page = min(max(page, 1), pages)
+
+      {:ok,
+       %{
+         entries: Repo.all(from p in query, limit: 25, offset: ^((page - 1) * 25)),
+         total: total,
+         page: page,
+         pages: pages
+       }}
+    else
+      {:error, :unauthorized}
     end
   end
 

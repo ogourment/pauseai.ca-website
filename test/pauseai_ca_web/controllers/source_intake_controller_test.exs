@@ -136,6 +136,25 @@ defmodule PauseAiCaWeb.SourceIntakeControllerTest do
     assert Repo.aggregate(PhoenixCRM.Person, :count) == 0
   end
 
+  test "an erased unresolved identity is suppressed by its stable key", %{
+    conn: conn,
+    token: token
+  } do
+    SourceIntake.suppress("discord/erased-user")
+
+    data = %{
+      "source" => "discord",
+      "event_id" => "discord/erased-message",
+      "rows" => [
+        %{"email" => "", "source_key" => "discord/erased-user", "bio" => "Earlier source"}
+      ]
+    }
+
+    result = conn |> send_payload(token, data) |> json_response(200)
+    assert result["suppressed_count"] == 1
+    assert Repo.aggregate(SourceIntake.PendingSource, :count) == 0
+  end
+
   test "rejects malformed and oversized input, arbitrary source and privilege claims", %{
     conn: conn,
     token: token
