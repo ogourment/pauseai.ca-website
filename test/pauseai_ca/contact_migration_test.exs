@@ -84,6 +84,33 @@ defmodule PauseAiCa.ContactMigrationTest do
           do: assert(contact.source_data[key] == row[key])
     end
 
+    [contact] = ContactMigration.list_contacts("profile-evidence@")
+    scope = PauseAiCa.Accounts.Scope.for_user(actor)
+    assert {:ok, first} = PauseAiCa.CRM.get_legacy(scope, contact.id)
+    assert length(first.sources) == 1
+    assert hd(first.sources).original["weekly_hours"] == "2–5"
+    assert hd(first.sources).original["email_subscription"] == "No"
+    changed = Map.put(row, "weekly_hours", "5")
+
+    for _ <- 1..2,
+        do:
+          assert(
+            {:ok, _} =
+              ContactMigration.import_selected(
+                [changed],
+                "full-profile.csv",
+                "global-registration",
+                actor
+              )
+          )
+
+    assert {:ok, second} = PauseAiCa.CRM.get_legacy(scope, contact.id)
+    assert length(second.sources) == 2
+
+    assert MapSet.new(Enum.map(second.sources, & &1.original["weekly_hours"])) ==
+             MapSet.new(["2–5", "5"])
+
+    assert second.person.id == first.person.id
     assert length(ContactMigration.list_contacts("profile-evidence@")) == 1
     assert PauseAiCa.Repo.aggregate(PauseAiCa.Accounts.User, :count) == before_users
     assert PauseAiCa.Repo.aggregate(PauseAiCa.Newsletters.Subscription, :count) == 0

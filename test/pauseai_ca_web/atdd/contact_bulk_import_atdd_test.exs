@@ -68,6 +68,7 @@ if System.get_env("ATDD") == "true" do
         |> click_button("Keep me logged in on this device")
         |> assert_path("/")
         |> visit("/admin/contact-imports?locale=en")
+        |> assert_has("[data-phx-main].phx-connected")
         |> upload("CSV file", path)
         |> fill_in("Source label", with: "synthetic-protest")
         |> click_button("Preview")

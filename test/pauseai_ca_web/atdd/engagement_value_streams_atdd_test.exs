@@ -178,6 +178,7 @@ if System.get_env("ATDD") == "true" do
 
       browser
       |> visit("/admin/dashboard?locale=en")
+      |> assert_has("[data-phx-main].phx-connected")
       |> assert_has("#metric-actions")
       |> assert_has("#metrics-by-type")
       |> assert_has("#learning-breakdown summary", text: "1 person")

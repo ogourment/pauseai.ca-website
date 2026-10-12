@@ -165,7 +165,7 @@ defmodule PauseAiCa.CRM do
     do: PhoenixCRM.update(context(), scope, record.person.id, record.person.revision, attrs)
 
   def observe(scope, attrs, source, key) do
-    PhoenixCRM.import(context(), scope, Map.take(attrs, ~w(email name city)), %{
+    PhoenixCRM.import(context(), scope, attrs, %{
       source: source,
       external_key: key,
       observed_at: DateTime.utc_now()
@@ -176,28 +176,28 @@ defmodule PauseAiCa.CRM do
   def link_contact(scope, %Contact{} = contact) do
     if Volunteers.superadmin?(scope) do
       Repo.transaction(fn ->
-        case Repo.get_by(ContactLink, contact_id: contact.id) do
-          nil ->
-            attrs = %{"email" => contact.email, "name" => contact.name, "city" => contact.city}
+        attrs =
+          Map.merge(contact.source_data, %{
+            "email" => contact.email,
+            "name" => contact.name,
+            "city" => contact.city
+          })
 
-            case observe(scope, attrs, contact.source, contact.source_key || contact.id) do
-              {:ok, record} ->
-                Repo.insert!(%ContactLink{contact_id: contact.id, person_id: record.person.id})
+        # Keep full immutable observations in the shared CRM. Identical replay
+        # reuses the key; changed answers create a new source snapshot.
+        fingerprint =
+          :crypto.hash(:sha256, :erlang.term_to_binary(attrs, [:deterministic]))
+          |> Base.encode16(case: :lower)
 
-              {:error, error} ->
-                Repo.rollback(error)
-            end
+        key = (contact.source_key || contact.id) <> "/" <> fingerprint
 
-          link ->
-            case observe(
-                   scope,
-                   %{"email" => contact.email, "name" => contact.name, "city" => contact.city},
-                   contact.source,
-                   contact.source_key || contact.id
-                 ) do
-              {:ok, _} -> link
-              {:error, error} -> Repo.rollback(error)
-            end
+        case observe(scope, attrs, contact.source, key) do
+          {:ok, record} ->
+            Repo.get_by(ContactLink, contact_id: contact.id) ||
+              Repo.insert!(%ContactLink{contact_id: contact.id, person_id: record.person.id})
+
+          {:error, error} ->
+            Repo.rollback(error)
         end
       end)
     else
