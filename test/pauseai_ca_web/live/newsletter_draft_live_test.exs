@@ -23,6 +23,15 @@ defmodule PauseAiCaWeb.NewsletterDraftLiveTest do
     |> render_submit()
 
     assert has_element?(editor, "#newsletter-save-status", "Saved")
+    saved_revision = Repo.get!(Newsletters.Draft, draft.id).revision
+    send(editor.pid, {:markdown_editor_changed, "newsletter-content", "## Next steps"})
+    assert has_element?(editor, "#newsletter-save-status", "Saved")
+    assert Repo.get!(Newsletters.Draft, draft.id).revision == saved_revision
+
+    send(editor.pid, {:markdown_editor_changed, "newsletter-content", "## Changed steps"})
+    assert has_element?(editor, "#newsletter-save-status", "Unsaved changes")
+    send(editor.pid, {:markdown_editor_changed, "newsletter-content", "## Next steps"})
+    assert has_element?(editor, "#newsletter-save-status", "Saved")
     {:ok, reloaded, _} = live(conn, path)
     assert has_element?(reloaded, "input[value='Montréal recap']")
     {:ok, legacy, _} = live(conn, "/manage/mail/newsletters/#{draft.id}?locale=en")
@@ -86,6 +95,9 @@ defmodule PauseAiCaWeb.NewsletterDraftLiveTest do
     assert has_element?(reloaded, "#newsletter-draft-error", "reviewed outreach eligibility")
     assert Repo.aggregate(Newsletters.Batch, :count) == 0
     reloaded |> form("#newsletter-prepare-form", review: %{eligible: "true"}) |> render_submit()
+    assert has_element?(reloaded, "#newsletter-batch-review", "Frozen batch snapshot")
+    send(reloaded.pid, {:markdown_editor_changed, "newsletter-content", "# Montréal"})
+    assert has_element?(reloaded, "#newsletter-save-status", "Saved")
     assert has_element?(reloaded, "#newsletter-batch-review", "Frozen batch snapshot")
     refute has_element?(reloaded, "button[phx-click=send-batch]")
     reloaded |> element("button", "Approve batch") |> render_click()

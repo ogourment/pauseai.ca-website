@@ -194,14 +194,24 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
       changeset = Draft.changeset(socket.assigns.draft, attrs)
       socket = assign(socket, candidate_q: attrs["candidate_q"] || socket.assigns.candidate_q)
 
-      assign(socket,
-        form: to_form(%{changeset | action: :validate}, as: "draft"),
-        status: gettext("Unsaved changes"),
-        error: nil,
-        reviewed: false,
-        batch_review: nil
-      )
-      |> refresh_audience()
+      socket =
+        assign(socket,
+          form: to_form(%{changeset | action: :validate}, as: "draft"),
+          error: nil
+        )
+
+      socket =
+        if changeset.valid? and changeset.changes == %{} do
+          assign(socket, status: gettext("Saved"))
+        else
+          assign(socket,
+            status: gettext("Unsaved changes"),
+            reviewed: false,
+            batch_review: nil
+          )
+        end
+
+      refresh_audience(socket)
     else
       denied(socket)
     end
