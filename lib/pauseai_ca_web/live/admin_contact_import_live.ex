@@ -332,6 +332,13 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
     )
   end
 
+  defp activity_actor(%{actor_user: %{email: email}}), do: email
+
+  defp activity_actor(%{details: %{"actor_service" => "source-intake"}}),
+    do: gettext("Source import service")
+
+  defp activity_actor(_), do: gettext("Unavailable account")
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -643,7 +650,7 @@ defmodule PauseAiCaWeb.AdminContactImportLive do
                     activity.inserted_at,
                     "%Y-%m-%d %H:%M UTC"
                   )}</time><span class="block text-sm text-stone-600">{gettext("By %{email}",
-                    email: activity.actor_user.email
+                    email: activity_actor(activity)
                   )}</span>
                   <details
                     :if={get_in(activity.details, ["previous_observation", "source_data"])}

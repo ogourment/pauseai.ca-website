@@ -82,6 +82,22 @@ defmodule PauseAiCaWeb.AdminContactImportLiveTest do
     assert Repo.aggregate(PauseAiCa.Accounts.User, :count) == 1
   end
 
+  test "service imports have a readable timeline without a human account", %{conn: conn} do
+    assert {:ok, _} =
+             PauseAiCa.SourceIntake.ingest("global-registration", "service-timeline", [
+               %{
+                 "email" => "service-timeline@example.org",
+                 "name" => "Service profile",
+                 "source_key" => "gmail/service-timeline"
+               }
+             ])
+
+    [contact] = ContactMigration.list_contacts("service-timeline@")
+    {:ok, view, _} = live(conn, ~p"/admin/contact-imports")
+    view |> element("#contact-#{contact.id} button", "View activity") |> render_click()
+    assert render(view) =~ "Source import service"
+  end
+
   test "shows the responsible administrator in a contact timeline", %{conn: conn, admin: admin} do
     row = %{
       "email" => "history@example.org",
