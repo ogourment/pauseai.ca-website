@@ -86,6 +86,8 @@ if System.get_env("ATDD") == "true" do
       assert_receive {:email, email}, 8_000
       assert email.to == [{"", "domain-acceptance@example.org"}]
       assert email.cc == [] and email.bcc == []
+      assert email.subject == "Confirmez votre compte"
+      refute email.text_body =~ "Confirm your account"
       [_, url] = Regex.run(~r{href="(https?://[^"]+/users/log-in/[^"]+)"}, email.html_body)
       url = String.replace(url, "&amp;", "&")
       assert String.starts_with?(url, c.fr <> "/users/log-in/")
@@ -107,7 +109,7 @@ if System.get_env("ATDD") == "true" do
 
       b =
         b
-        |> click_link("Confirm account · Confirmer le compte")
+        |> click_link("Confirmer le compte")
         |> assert_has("html[lang=fr]")
         |> click_button("Confirmer et rester connecté")
         |> assert_has("#account-menu")

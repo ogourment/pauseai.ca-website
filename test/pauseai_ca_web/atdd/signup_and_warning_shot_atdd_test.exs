@@ -113,7 +113,7 @@ if System.get_env("ATDD") == "true" do
 
       device =
         device
-        |> click_link("Confirm account")
+        |> click_link("Confirmer le compte")
         |> click_button("Confirmer et rester connecté")
         |> assert_path("/fr/tableau-de-bord")
         |> capture(id, "Confirm ownership", "French member next step and saved progress")
@@ -227,7 +227,7 @@ if System.get_env("ATDD") == "true" do
         |> capture(id, "Enter a previously unknown email", "Really creates one pending account")
         |> show_email(receive_email(email))
         |> capture(id, "Open delivered confirmation", "Separate ownership stage")
-        |> click_link("Confirm account")
+        |> click_link("Confirmer le compte")
         |> click_button("Confirmer et rester connecté")
         |> assert_path("/fr/tableau-de-bord")
         |> capture(
