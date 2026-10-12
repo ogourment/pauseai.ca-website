@@ -5,7 +5,7 @@ if System.get_env("ATDD") == "true" do
     alias PauseAiCa.{Accounts, Newsletters, Repo}
     alias PauseAiCaWeb.AtddEvidence
     @moduletag :atdd
-    @scenarios for {locale, language, device} <- [
+    @scenarios (for {locale, language, device} <- [
                      {"en", "English", "Desktop"},
                      {"fr", "French", "Phone"}
                    ] do
@@ -18,7 +18,7 @@ if System.get_env("ATDD") == "true" do
         device: device,
         source_file: __ENV__.file
       }
-    end
+    end)
 
     setup_all do
       AtddEvidence.reset!("PA-NEWS-PASTE-01 · rich clipboard to Markdown", @scenarios, %{
@@ -96,6 +96,14 @@ if System.get_env("ATDD") == "true" do
         assert Repo.aggregate(Newsletters.Delivery, :count) == 0
         assert Repo.aggregate(Newsletters.Batch, :count) == 0
       end
+    end
+
+    defp sign_in(browser, user) do
+      {token, _} = generate_user_magic_link_token(user)
+      browser
+      |> visit("/users/log-in/#{token}")
+      |> click_button("Keep me logged in on this device")
+      |> assert_path("/")
     end
 
     defp tr(locale, text),
