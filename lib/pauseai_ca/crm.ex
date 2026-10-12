@@ -176,32 +176,45 @@ defmodule PauseAiCa.CRM do
   def link_contact(scope, %Contact{} = contact) do
     if Volunteers.superadmin?(scope) do
       Repo.transaction(fn ->
-        attrs =
-          Map.merge(contact.source_data, %{
-            "email" => contact.email,
-            "name" => contact.name,
-            "city" => contact.city
-          })
-
-        # Keep full immutable observations in the shared CRM. Identical replay
-        # reuses the key; changed answers create a new source snapshot.
-        fingerprint =
-          :crypto.hash(:sha256, :erlang.term_to_binary(attrs, [:deterministic]))
-          |> Base.encode16(case: :lower)
-
-        key = (contact.source_key || contact.id) <> "/" <> fingerprint
-
-        case observe(scope, attrs, contact.source, key) do
-          {:ok, record} ->
-            Repo.get_by(ContactLink, contact_id: contact.id) ||
-              Repo.insert!(%ContactLink{contact_id: contact.id, person_id: record.person.id})
-
-          {:error, error} ->
-            Repo.rollback(error)
-        end
+        link_observation(context(), scope, contact)
       end)
     else
       {:error, :unauthorized}
+    end
+  end
+
+  def link_service_contact(%Contact{} = contact) do
+    ctx = PhoenixCRM.new(Repo, PauseAiCa.SourceIntake.Policy)
+    Repo.transaction(fn -> link_observation(ctx, :source_intake, contact) end)
+  end
+
+  defp link_observation(ctx, scope, contact) do
+    attrs =
+      Map.merge(contact.source_data, %{
+        "email" => contact.email,
+        "name" => contact.name,
+        "city" => contact.city
+      })
+
+    # Keep full immutable observations in the shared CRM. Identical replay
+    # reuses the key; changed answers create a new source snapshot.
+    fingerprint =
+      :crypto.hash(:sha256, :erlang.term_to_binary(attrs, [:deterministic]))
+      |> Base.encode16(case: :lower)
+
+    key = (contact.source_key || contact.id) <> "/" <> fingerprint
+
+    case PhoenixCRM.import(ctx, scope, attrs, %{
+           source: contact.source,
+           external_key: key,
+           observed_at: DateTime.utc_now()
+         }) do
+      {:ok, record} ->
+        Repo.get_by(ContactLink, contact_id: contact.id) ||
+          Repo.insert!(%ContactLink{contact_id: contact.id, person_id: record.person.id})
+
+      {:error, error} ->
+        Repo.rollback(error)
     end
   end
 

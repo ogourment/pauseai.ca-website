@@ -27,7 +27,7 @@
   %{
     id: "contact_migration",
     title: "Contact migration",
-    tables: ["contact_activities", "contact_imports", "contacts"]
+    tables: ["contact_activities", "contact_imports", "contacts", "crm_intake_receipts", "crm_intake_suppressions", "crm_pending_sources"]
   },
   %{
     id: "volunteers",

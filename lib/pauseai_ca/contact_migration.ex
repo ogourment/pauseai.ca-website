@@ -115,6 +115,31 @@ defmodule PauseAiCa.ContactMigration do
     end
   end
 
+  # Internal service entry point: no account or human administrator impersonation.
+  # Authentication, validation, replay and suppression belong to SourceIntake.
+  def import_service(rows, source, event_id) do
+    receipt =
+      %Import{}
+      |> Import.changeset(%{
+        filename: event_id,
+        source: source,
+        selected_count: length(rows),
+        actor_service: "source-intake"
+      })
+      |> Repo.insert!()
+
+    contacts = Enum.map(rows, &upsert_contact(Repo, &1, source, receipt.id, nil))
+
+    for contact <- contacts do
+      case CRM.link_service_contact(contact) do
+        {:ok, _} -> :ok
+        {:error, reason} -> Repo.rollback(reason)
+      end
+    end
+
+    %{import: receipt, contacts: contacts}
+  end
+
   defp upsert_contact(repo, row, source, import_id, actor_id) do
     validation =
       Contact.changeset(%Contact{}, %{
@@ -159,6 +184,7 @@ defmodule PauseAiCa.ContactMigration do
         }
 
     attrs = preserve_human_fields(existing, attrs)
+    attrs = if is_nil(actor_id), do: preserve_service_profile(existing, attrs, row), else: attrs
     contact = (existing || %Contact{}) |> Contact.changeset(attrs) |> repo.insert_or_update!()
 
     %Activity{}
@@ -168,6 +194,7 @@ defmodule PauseAiCa.ContactMigration do
       action: "imported",
       details: %{
         "account_match" => not is_nil(user),
+        "actor_service" => if(is_nil(actor_id), do: "source-intake", else: nil),
         "import_id" => import_id,
         "source" => source,
         "source_key" => attrs.source_key,
@@ -178,6 +205,30 @@ defmodule PauseAiCa.ContactMigration do
     |> repo.insert!()
 
     contact
+  end
+
+  defp preserve_service_profile(nil, attrs, row),
+    do: %{attrs | source_data: Map.put(attrs.source_data, "source_observation", row)}
+
+  defp preserve_service_profile(existing, attrs, row) do
+    data = Map.merge(existing.source_data, attrs.source_data)
+    old_date = existing.source_data["signup_date"]
+    new_date = attrs.source_data["signup_date"]
+
+    dates =
+      Enum.filter(
+        [old_date, new_date],
+        &(is_binary(&1) and match?({:ok, _}, Date.from_iso8601(&1)))
+      )
+
+    data = if dates == [], do: data, else: Map.put(data, "signup_date", Enum.min(dates))
+    attrs = %{attrs | source_data: Map.put(data, "source_observation", row)}
+
+    if existing.source != attrs.source do
+      %{attrs | name: existing.name || attrs.name, city: existing.city || attrs.city}
+    else
+      attrs
+    end
   end
 
   defp source_contact(_repo, _source, nil), do: nil

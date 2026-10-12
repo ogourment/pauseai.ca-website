@@ -118,6 +118,7 @@ config :phoenix, :filter_parameters, [
   "password",
   "token",
   "signup",
+  "rows",
   "profile",
   "account",
   "paste",

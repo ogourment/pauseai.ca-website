@@ -1,5 +1,13 @@
 import Config
 
+intake_token =
+  case System.get_env("PAUSEAI_CRM_INTAKE_TOKEN_FILE") do
+    nil -> System.get_env("PAUSEAI_CRM_INTAKE_TOKEN")
+    path -> path |> File.read!() |> String.trim()
+  end
+
+config :pauseai_ca, :crm_intake_token, intake_token
+
 # Unknown release deployments fail closed. The canonical production hosts are
 # an explicit compatibility boundary; staging never inherits production mode.
 mail_environment =

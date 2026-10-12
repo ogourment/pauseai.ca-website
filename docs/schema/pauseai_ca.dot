@@ -128,6 +128,7 @@ digraph Schema {
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">imported_by_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">actor_service</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying</FONT></TD></TR>
       </TABLE>
     >
   ];
@@ -197,6 +198,34 @@ digraph Schema {
   ];
 
 
+  "public.crm_intake_receipts" [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.crm_intake_receipts</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">source</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">event_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">digest</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">import_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">imported_count</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">integer NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">suppressed_count</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">integer NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
+  "public.crm_intake_suppressions" [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.crm_intake_suppressions</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">email_hash PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
   "public.crm_mailing_list_events" [
     label=<
       <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
@@ -240,6 +269,21 @@ digraph Schema {
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">after_revisions</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">jsonb NOT NULL</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">resolutions</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">jsonb NOT NULL</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">undone_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
+  "public.crm_pending_sources" [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.crm_pending_sources</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">source</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">external_key</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">digest</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">original</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">jsonb NOT NULL</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
       </TABLE>
     >
@@ -759,6 +803,7 @@ digraph Schema {
   "public.crm_addresses" -> "public.crm_people" [label="person_id -> id"];
   "public.crm_contact_links" -> "public.contacts" [label="contact_id -> id"];
   "public.crm_contact_links" -> "public.crm_people" [label="person_id -> id"];
+  "public.crm_intake_receipts" -> "public.contact_imports" [label="import_id -> id"];
   "public.crm_mailing_list_events" -> "public.crm_mailing_lists" [label="list_id -> id"];
   "public.crm_merges" -> "public.crm_people" [label="person_id -> id"];
   "public.crm_people" -> "public.crm_people" [label="canonical_id -> id"];

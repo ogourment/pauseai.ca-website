@@ -20,7 +20,7 @@ digraph contact_migration {
   "contact_imports" [label=<
     <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
       <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.contact_imports</B></TD></TR>
-      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">filename</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">source</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">selected_count</TD><TD ALIGN="LEFT">integer NOT NULL</TD></TR><TR><TD ALIGN="LEFT">imported_by_id</TD><TD ALIGN="LEFT">uuid NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">filename</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">source</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">selected_count</TD><TD ALIGN="LEFT">integer NOT NULL</TD></TR><TR><TD ALIGN="LEFT">imported_by_id</TD><TD ALIGN="LEFT">uuid NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">actor_service</TD><TD ALIGN="LEFT">character varying NULL</TD></TR>
     </TABLE>
   >];
 
@@ -28,6 +28,27 @@ digraph contact_migration {
     <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
       <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.contacts</B></TD></TR>
       <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">email</TD><TD ALIGN="LEFT">citext NOT NULL</TD></TR><TR><TD ALIGN="LEFT">name</TD><TD ALIGN="LEFT">character varying NULL</TD></TR><TR><TD ALIGN="LEFT">city</TD><TD ALIGN="LEFT">character varying NULL</TD></TR><TR><TD ALIGN="LEFT">source</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">source_key</TD><TD ALIGN="LEFT">character varying NULL</TD></TR><TR><TD ALIGN="LEFT">source_data</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">classification</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">user_id</TD><TD ALIGN="LEFT">uuid NULL</TD></TR><TR><TD ALIGN="LEFT">last_import_id</TD><TD ALIGN="LEFT">uuid NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
+  "crm_intake_receipts" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.crm_intake_receipts</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">source</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">event_id</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">digest</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">import_id</TD><TD ALIGN="LEFT">uuid NULL</TD></TR><TR><TD ALIGN="LEFT">imported_count</TD><TD ALIGN="LEFT">integer NOT NULL</TD></TR><TR><TD ALIGN="LEFT">suppressed_count</TD><TD ALIGN="LEFT">integer NOT NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
+  "crm_intake_suppressions" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.crm_intake_suppressions</B></TD></TR>
+      <TR><TD ALIGN="LEFT">email_hash PK</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
+  "crm_pending_sources" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.crm_pending_sources</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">source</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">external_key</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">digest</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">original</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
     </TABLE>
   >];
 
@@ -52,4 +73,5 @@ digraph contact_migration {
   "contact_imports" -> "users" [label="imported_by_id -> id", color="#d97706", style="dashed", penwidth=1.5];
   "contacts" -> "contact_imports" [label="last_import_id -> id", color="#64748b"];
   "contacts" -> "users" [label="user_id -> id", color="#d97706", style="dashed", penwidth=1.5];
+  "crm_intake_receipts" -> "contact_imports" [label="import_id -> id", color="#64748b"];
 }

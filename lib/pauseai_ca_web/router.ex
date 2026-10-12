@@ -30,6 +30,11 @@ defmodule PauseAiCaWeb.Router do
     acceptance_harness_health("/health")
   end
 
+  scope "/api/crm", PauseAiCaWeb do
+    pipe_through :api
+    post "/observations", SourceIntakeController, :create
+  end
+
   scope "/", PauseAiCaWeb do
     pipe_through :browser
 

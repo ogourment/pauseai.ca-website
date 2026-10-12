@@ -16,6 +16,14 @@ defmodule PauseAiCa.ContactMigration.Activity do
   def changeset(activity, attrs) do
     activity
     |> cast(attrs, [:contact_id, :actor_user_id, :action, :details])
-    |> validate_required([:contact_id, :actor_user_id, :action])
+    |> validate_required([:contact_id, :action])
+    |> validate_actor()
+  end
+
+  defp validate_actor(changeset) do
+    if get_field(changeset, :actor_user_id) ||
+         get_field(changeset, :details, %{})["actor_service"] == "source-intake",
+       do: changeset,
+       else: add_error(changeset, :actor_user_id, "is required")
   end
 end
