@@ -6377,11 +6377,6 @@ msgstr "Listes d’infolettre"
 msgid "First three characters of your Canadian postal code, for example H2X."
 msgstr "Les trois premiers caractères de votre code postal canadien, par exemple H2X."
 
-#: lib/pauseai_ca_web/live/participation_form.ex:319
-#, elixir-autogen, elixir-format
-msgid "Name (optional)"
-msgstr "Nom (facultatif)"
-
 #: lib/pauseai_ca_web/live/newsletters_live.ex:382
 #, elixir-autogen, elixir-format
 msgid "Postal area"
@@ -6394,8 +6389,8 @@ msgstr "Votre courriel permet de sécuriser votre compte et de retrouver les él
 
 #: lib/pauseai_ca_web/live/participation_form.ex:325
 #, elixir-autogen, elixir-format
-msgid "FSA (optional)"
-msgstr "RTA (facultatif)"
+msgid "FSA"
+msgstr "RTA"
 
 #: lib/pauseai_ca_web/live/newsletters_live.ex:334
 #, elixir-autogen, elixir-format
@@ -6426,11 +6421,6 @@ msgstr "Modifier les règles"
 #, elixir-autogen, elixir-format
 msgid "Enter a list name and at least one valid city, region or three-character FSA. Your entries have been kept."
 msgstr "Indiquez un nom et au moins une ville, une région ou une RTA valide de trois caractères. Vos réponses ont été conservées."
-
-#: lib/pauseai_ca_web/newsletter_audience_labels.ex:5
-#, elixir-autogen, elixir-format
-msgid "FSA"
-msgstr "RTA"
 
 #: lib/pauseai_ca_web/live/newsletters_live.ex:303
 #, elixir-autogen, elixir-format
@@ -6621,8 +6611,8 @@ msgstr "Recevoir des nouvelles"
 
 #: lib/pauseai_ca_web/live/participation_form.ex:381
 #, elixir-autogen, elixir-format
-msgid "How would you like to help? (optional)"
-msgstr "Comment souhaitez-vous aider? (facultatif)"
+msgid "How would you like to help?"
+msgstr "Comment souhaitez-vous aider?"
 
 #: lib/pauseai_ca_web/live/local_interest_live.ex:62
 #: lib/pauseai_ca_web/live/participation_form.ex:291

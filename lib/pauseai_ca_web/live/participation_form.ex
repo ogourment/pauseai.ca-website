@@ -324,13 +324,13 @@ defmodule PauseAiCaWeb.ParticipationForm do
           <div class="grid grid-cols-[minmax(0,1fr)_8.25rem] gap-3">
             <.input
               field={@form[:name]}
-              label={gettext("Name (optional)")}
+              label={gettext("Name")}
               autocomplete="name"
               maxlength="160"
             />
             <.input
               field={@form[:fsa]}
-              label={gettext("FSA (optional)")}
+              label={gettext("FSA")}
               placeholder="M5V"
               maxlength="3"
               autocapitalize="characters"
@@ -387,7 +387,7 @@ defmodule PauseAiCaWeb.ParticipationForm do
               :if={@params["local_kind"] == "help"}
               field={@form[:help_text]}
               type="textarea"
-              label={gettext("How would you like to help? (optional)")}
+              label={gettext("How would you like to help?")}
               maxlength="2000"
             />
             <p class="mt-2 text-sm text-stone-600">
