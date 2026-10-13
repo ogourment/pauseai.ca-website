@@ -132,107 +132,31 @@ defmodule PauseAiCaWeb.Layouts do
               class="block px-4 py-3 font-semibold hover:bg-brand-wash md:hidden"
             >{gettext("Warning shot")}</.link>
             <.link
-              href={if(@locale == "fr", do: ~p"/fr/strategie", else: ~p"/en/strategy")}
-              class="block border-b border-stone-100 px-4 py-3 hover:bg-brand-wash"
-            >
-              <span class="block font-heading text-base font-bold text-stone-950">
-                {gettext("Strategy")}
-              </span>
-              <span class="block text-xs leading-5 text-stone-500">
-                {gettext("How concern becomes collective action")}
-              </span>
-            </.link>
+              id="act-solo"
+              navigate={
+                if(@locale == "fr",
+                  do: ~p"/fr/participer?intent=account",
+                  else: ~p"/en/participate?intent=account"
+                )
+              }
+              class="block px-4 py-3 font-semibold hover:bg-brand-wash"
+            >{gettext("Record my actions")}</.link>
             <.link
-              href={
+              id="act-local"
+              navigate={
                 if(@locale == "fr",
-                  do: ~p"/fr/strategie#engagement-ladder",
-                  else: ~p"/en/strategy#engagement-ladder"
+                  do: ~p"/fr/participer?intent=waitlist",
+                  else: ~p"/en/participate?intent=waitlist"
                 )
               }
-              class="block border-b border-stone-100 px-4 py-3 hover:bg-brand-wash"
-            >
-              <span class="block font-heading text-base font-bold text-stone-950">
-                {gettext("Ways to take part")}
-              </span>
-              <span class="block text-xs leading-5 text-stone-500">
-                {gettext("See ways to deepen your involvement")}
-              </span>
-            </.link>
-            <a
-              href={
-                if(@locale == "fr",
-                  do: "/fr/comprendre#local-participation",
-                  else: "/en/learn#local-participation"
-                )
-              }
-              target="_blank"
-              rel="noopener noreferrer"
-              class="block border-b border-stone-100 px-4 py-3 hover:bg-brand-wash"
-            >
-              <span class="block font-heading text-base font-bold text-stone-950">
-                {gettext("Join or start a group")}
-              </span>
-              <span class="block text-xs leading-5 text-stone-500">
-                {gettext("Local activities and organizing")}
-              </span>
-            </a>
+              class="block px-4 py-3 font-semibold hover:bg-brand-wash"
+            >{gettext("Join or help a local group")}</.link>
             <a
               href="https://luma.com/calendar/cal-tsYv79s4aTQC16Q"
               target="_blank"
               rel="noopener noreferrer"
-              class="block border-b border-stone-100 px-4 py-3 hover:bg-brand-wash"
-            >
-              <span class="block font-heading text-base font-bold text-stone-950">
-                {gettext("Events")}
-              </span>
-              <span class="block text-xs leading-5 text-stone-500">
-                {gettext("Canada-wide calendar")}
-              </span>
-            </a>
-            <.link
-              id="act-email-mp"
-              navigate={
-                if(@locale == "fr",
-                  do: ~p"/fr/signal-d-alarme#letter",
-                  else: ~p"/en/warning-shot#letter"
-                )
-              }
-              class="block border-b border-stone-100 px-4 py-3 hover:bg-brand-wash"
-            >
-              <span class="block font-heading text-base font-bold text-stone-950">
-                {gettext("Email your MP")}
-              </span>
-              <span class="block text-xs leading-5 text-stone-500">
-                {gettext("Send a personal letter")}
-              </span>
-            </.link>
-            <.link
-              id="act-join"
-              navigate={
-                if(@locale == "fr", do: ~p"/fr/comprendre#updates", else: ~p"/en/learn#updates")
-              }
-              class="block border-b border-stone-100 px-4 py-3 hover:bg-brand-wash"
-            >
-              <span class="block font-heading text-base font-bold text-stone-950">
-                {gettext("Subscribe")}
-              </span>
-              <span class="block text-xs leading-5 text-stone-500">
-                {gettext("Stay informed")}
-              </span>
-            </.link>
-            <%!-- New tab: these leave for another site, and a visitor part-way
-                 through reading should not lose their place. --%>
-            <a
-              :for={{id, label, note, href} <- act_items(@locale)}
-              id={id}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="block border-b border-stone-100 px-4 py-3 last:border-0 hover:bg-brand-wash"
-            >
-              <span class="block font-heading text-base font-bold text-stone-950">{label}</span>
-              <span class="block text-xs leading-5 text-stone-500">{note}</span>
-            </a>
+              class="block px-4 py-3 font-semibold hover:bg-brand-wash"
+            >{gettext("Events")}</a>
           </div>
         </details>
 
@@ -427,15 +351,6 @@ defmodule PauseAiCaWeb.Layouts do
 
   # The remaining PauseAI Global actions leave this site, so each says where it
   # goes rather than pretending to be a local page.
-  defp act_items(locale) do
-    [
-      {"act-sign", gettext("Sign"), gettext("The PauseAI statement"), act_path("sign", locale)},
-      {"act-actions", gettext("Actions"), gettext("What PauseAI asks people to do"),
-       act_path("actions", locale)}
-    ]
-  end
-
-  defp act_path(destination, locale), do: ~p"/act/#{destination}?locale=#{locale}"
 
   @doc """
   Shows the flash group with standard titles and content.

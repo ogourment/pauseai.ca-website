@@ -112,41 +112,28 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
       assert render(fr_view) =~ "S&#39;impliquer"
     end
 
-    test "the Get involved menu offers the three global asks, in a new tab", %{conn: conn} do
-      {:ok, view, _html} = live(conn, ~p"/en/learn")
-
-      assert has_element?(view, "#involvement-menu a[href='/en/strategy']", "Strategy")
+    test "the Get involved menu focuses on solo actions, local requests and events", %{conn: conn} do
+      {:ok, view, _} = live(conn, ~p"/en/learn")
 
       assert has_element?(
                view,
-               "#involvement-menu a[href='/en/strategy#engagement-ladder']",
-               "Ways to take part"
+               "#act-solo[href='/en/participate?intent=account']",
+               "Record my actions"
              )
 
       assert has_element?(
                view,
-               "#involvement-menu a[href='/en/learn#local-participation']",
-               "Join or start a group"
+               "#act-local[href='/en/participate?intent=waitlist']",
+               "Join or help a local group"
              )
 
       assert has_element?(
                view,
-               "#involvement-menu a[href='https://luma.com/calendar/cal-tsYv79s4aTQC16Q']",
+               "#involvement-menu a[href='https://luma.com/calendar/cal-tsYv79s4aTQC16Q'][target='_blank']",
                "Events"
              )
 
-      assert has_element?(view, "#act-join[href='/en/learn#updates']", "Stay informed")
-
-      assert has_element?(
-               view,
-               "#act-email-mp[href='/en/warning-shot#letter']",
-               "Email your MP"
-             )
-
-      # External actions route through the app so a departure can be recorded,
-      # and open in a new tab so a reader does not lose their place.
-      assert has_element?(view, "#act-sign[href='/act/sign?locale=en'][target='_blank']")
-      assert has_element?(view, "#act-actions[href='/act/actions?locale=en'][target='_blank']")
+      refute has_element?(view, "#involvement-menu a[href='/en/strategy']")
     end
 
     test "About follows the involvement menu and events are inside it", %{conn: conn} do
@@ -181,22 +168,20 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
       assert has_element?(view, "#account-menu [role='separator']")
     end
 
-    test "the Act menu speaks French on French pages", %{conn: conn} do
-      {:ok, view, _html} = live(conn, ~p"/fr/comprendre")
+    test "the focused participation menu speaks French", %{conn: conn} do
+      {:ok, view, _} = live(conn, ~p"/fr/comprendre")
 
       assert has_element?(
                view,
-               "#act-join[href='/fr/comprendre#updates']",
-               "Rester au courant"
+               "#act-solo[href='/fr/participer?intent=account']",
+               "Noter mes actions"
              )
 
       assert has_element?(
                view,
-               "#act-email-mp[href='/fr/signal-d-alarme#letter']",
-               "Écrire à votre député·e"
+               "#act-local[href='/fr/participer?intent=waitlist']",
+               "Rejoindre ou aider un groupe local"
              )
-
-      assert render(view) =~ "Signer"
     end
 
     test "the banner asks about cookies rather than naming a vendor", %{conn: conn} do
@@ -242,10 +227,15 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
     test "LEARN-REQ-05 subscription asks for email and consent before location", %{conn: conn} do
       for path <- ["/en/learn", "/fr/comprendre"] do
         {:ok, view, _} = live(conn, path)
-        assert has_element?(view, "#subscribe-form input[type=email]")
-        refute has_element?(view, "#subscribe-form input[autocomplete=postal-code]")
-        refute has_element?(view, "#subscribe-form input[autocomplete=address-level2]")
-        assert has_element?(view, "#local-interest-form input[autocomplete=postal-code]")
+        assert has_element?(view, "#participation-form input[type=email]")
+        refute has_element?(view, "#participation-form input[autocomplete=postal-code]")
+        refute has_element?(view, "#participation-form input[autocomplete=address-level2]")
+        assert has_element?(view, "#participation-form input[name='participation[fsa]']")
+
+        assert has_element?(
+                 view,
+                 "#participation-form input[name='participation[account]'][type=checkbox]"
+               )
       end
     end
 
@@ -254,7 +244,7 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
 
       assert has_element?(
                view,
-               "#subscribe-form a[href='/en/privacy']",
+               "#participation-form a[href='/en/privacy']",
                "Read our privacy policy."
              )
     end
@@ -263,20 +253,27 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
       {:ok, view, _html} = live(conn, ~p"/en/learn")
 
       view
-      |> form("#subscribe-form",
-        subscribe: %{email: "camille@example.org", name: "Camille", fsa: "h2x", consent: "true"}
+      |> form("#participation-form",
+        participation: %{
+          email: "camille@example.org",
+          name: "Camille",
+          fsa: "h2x",
+          newsletter: "true"
+        }
       )
       |> render_submit()
 
-      assert has_element?(view, "#subscribe-success")
+      assert has_element?(view, "#account-email-pending")
 
-      subscription =
-        PauseAiCa.Repo.get_by!(PauseAiCa.Newsletters.Subscription, email: "camille@example.org")
+      request =
+        PauseAiCa.Repo.get_by!(PauseAiCa.Participation.Request, email: "camille@example.org")
 
-      assert subscription.state == "pending"
-      assert subscription.name == "Camille"
-      assert subscription.fsa == "H2X"
-      refute PauseAiCa.Newsletters.eligible?(subscription.email)
+      assert request.state == "pending"
+      assert request.newsletter
+      assert request.name == "Camille"
+      assert request.fsa == "H2X"
+      refute PauseAiCa.Newsletters.eligible?(request.email)
+      refute PauseAiCa.Accounts.get_user_by_email(request.email)
     end
 
     test "invalid postal area keeps the bilingual form entries and sends nothing", %{conn: conn} do
@@ -284,26 +281,26 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
         {:ok, view, _html} = live(conn, path)
 
         view
-        |> form("#subscribe-form",
-          subscribe: %{
+        |> form("#participation-form",
+          participation: %{
             email: "invalid-area@example.org",
             name: "Camille",
             fsa: "123",
-            consent: "true"
+            newsletter: "true"
           }
         )
         |> render_submit()
 
-        assert has_element?(view, "#subscribe-error")
-        assert has_element?(view, "input[name='subscribe[name]'][value='Camille']")
+        assert has_element?(view, "#participation-validation")
+        assert has_element?(view, "input[name='participation[name]'][value='Camille']")
 
         assert has_element?(
                  view,
-                 "input[name='subscribe[email]'][value='invalid-area@example.org']"
+                 "input[name='participation[email]'][value='invalid-area@example.org']"
                )
 
-        assert has_element?(view, "input[name='subscribe[fsa]'][value='123']")
-        assert has_element?(view, "#subscribe-consent[checked]")
+        assert has_element?(view, "input[name='participation[fsa]'][value='123']")
+        assert has_element?(view, "#participation_newsletter[checked]")
 
         refute PauseAiCa.Repo.get_by(PauseAiCa.Newsletters.Subscription,
                  email: "invalid-area@example.org"
@@ -313,51 +310,65 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
       end
     end
 
-    test "LEARN-REQ-08 anonymous local interest does not create an account", %{conn: conn} do
-      {:ok, view, _} = live(conn, ~p"/fr/comprendre")
+    test "LEARN-REQ-08 anonymous local follow-up is an explicit request without an account", %{
+      conn: conn
+    } do
+      {:ok, view, _} = live(conn, ~p"/fr/participer?intent=waitlist")
       before = PauseAiCa.Repo.aggregate(PauseAiCa.Accounts.User, :count)
-      view |> form("#local-interest-form", local: %{fsa: "H2X"}) |> render_submit()
-      assert has_element?(view, "#local-paths")
-      refute has_element?(view, "#local-interest-success")
+
+      view
+      |> form("#participation-form", participation: %{email: "local@example.org", fsa: "H2X"})
+      |> render_submit()
+
+      assert has_element?(view, "#account-email-pending")
       assert PauseAiCa.Repo.aggregate(PauseAiCa.Accounts.User, :count) == before
+      assert_receive {:email, _}
+      refute PauseAiCa.Repo.exists?(PauseAiCa.Newsletters.Subscription)
     end
 
     test "LEARN-REQ-08 invalid local input preserves the task", %{conn: conn} do
-      {:ok, view, _} = live(conn, ~p"/en/learn")
-      view |> form("#local-interest-form", local: %{fsa: "123"}) |> render_submit()
-      refute has_element?(view, "#local-paths")
-      assert has_element?(view, "#local-interest-form input[value='123']")
+      {:ok, view, _} = live(conn, ~p"/en/participate?intent=waitlist")
+
+      view
+      |> form("#participation-form", participation: %{email: "local@example.org", fsa: "123"})
+      |> render_submit()
+
+      assert has_element?(view, "#participation-form input[value='123']")
+      refute has_element?(view, "#account-email-pending")
+      refute_receive {:email, _}
     end
 
     test "nothing is sent without consent", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/en/learn")
 
       view
-      |> form("#subscribe-form", subscribe: %{email: "camille@example.org"})
+      |> form("#participation-form", participation: %{email: "camille@example.org"})
       |> render_submit()
 
-      assert has_element?(view, "#subscribe-error")
-      refute has_element?(view, "#subscribe-success")
+      assert has_element?(view, "#participation-validation")
+      refute has_element?(view, "#account-email-pending")
     end
 
     test "an address already on the list gets the same friendly answer", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/fr/comprendre")
 
       view
-      |> form("#subscribe-form", subscribe: %{email: "taken@example.org", consent: "true"})
+      |> form("#participation-form",
+        participation: %{email: "taken@example.org", newsletter: "true"}
+      )
       |> render_submit()
 
-      assert has_element?(view, "#subscribe-success")
+      assert has_element?(view, "#account-email-pending")
     end
 
     test "a bad address is explained rather than swallowed", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/en/learn")
 
       view
-      |> form("#subscribe-form", subscribe: %{email: "nope", consent: "true"})
+      |> form("#participation-form", participation: %{email: "nope", newsletter: "true"})
       |> render_submit()
 
-      assert has_element?(view, "#subscribe-error")
+      assert has_element?(view, "#participation-validation")
     end
   end
 end

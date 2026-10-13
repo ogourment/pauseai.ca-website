@@ -107,3 +107,13 @@ msgstr "doit avoir au plus deux décimales"
 # From Ecto.Changeset.validate_format/3 (local context)
 msgid "must be the first three characters of a Canadian postal code"
 msgstr "doit correspondre aux trois premiers caractères d’un code postal canadien"
+
+#: lib/pauseai_ca/participation/request.ex:79
+#, elixir-autogen, elixir-format
+msgid "choose at least one option"
+msgstr "choisissez au moins une option"
+
+#: lib/pauseai_ca/participation/request.ex:73
+#, elixir-autogen, elixir-format
+msgid "enter a city or postal area for local follow-up"
+msgstr "indiquez une ville ou une région postale pour le suivi local"

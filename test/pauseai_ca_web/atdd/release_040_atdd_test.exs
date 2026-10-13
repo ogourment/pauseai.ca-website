@@ -111,7 +111,7 @@ if System.get_env("ATDD") == "true" do
         b
         |> click_link("Confirmer le compte")
         |> assert_has("html[lang=fr]")
-        |> click_button("Confirmer et rester connecté")
+        |> click_button("Confirmer et continuer")
         |> assert_has("#account-menu")
         |> assert_has("html[lang=fr]")
 

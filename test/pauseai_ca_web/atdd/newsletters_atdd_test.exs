@@ -100,25 +100,25 @@ if System.get_env("ATDD") == "true" do
         |> fill_in(tr(locale, "Your email"), with: email)
         |> fill_in(tr(locale, "FSA (optional)"), with: "h2x")
         |> check(
-          "#subscribe-consent",
+          "#participation_newsletter",
           tr(
             locale,
-            "I agree to receive emails from PauseAI Canada. We do not sell your address."
+            "Subscribe me to the PauseAI Canada newsletter."
           ),
           exact: false
         )
-        |> click("#subscribe")
-        |> assert_has("#subscribe-success")
+        |> click("#participation-submit")
+        |> assert_has("#account-email-pending")
         |> capture(
           locale,
           "Submit explicit newsletter signup",
           "Pending consent, confirmation sent to isolated test mailbox"
         )
 
-      pending = Repo.get_by!(Newsletters.Subscription, email: email)
-      assert pending.state == "pending"
-      assert pending.name == "Camille Synthetic"
-      assert pending.fsa == "H2X"
+      pending_request = Repo.get_by!(PauseAiCa.Participation.Request, email: email)
+      assert pending_request.state == "pending"
+      assert pending_request.name == "Camille Synthetic"
+      assert pending_request.fsa == "H2X"
       refute Newsletters.eligible?(email)
       assert baseline == unrelated_counts()
       assert_receive {:email, delivered}, 8_000
@@ -126,35 +126,17 @@ if System.get_env("ATDD") == "true" do
       assert delivered.cc == [] and delivered.bcc == []
 
       [_, confirmation] =
-        Regex.run(~r{href="(https?://[^\"]+/newsletters/confirm[^\"]+)"}, delivered.html_body)
+        Regex.run(~r{href="(https?://[^\"]+/participation/confirm[^\"]+)"}, delivered.html_body)
 
       confirmation = String.replace(confirmation, "&amp;", "&")
-      {:ok, withdrawal} = Newsletters.issue_withdrawal_token(scope, pending.id)
-
-      admin_browser =
-        new_device(c, width, height)
-        |> sign_in(admin)
-        |> visit("/manage/mail?locale=#{locale}")
-        |> click_link(tr(locale, "Newsletter lists"))
-        |> assert_has("#newsletter-#{pending.id}", text: tr(locale, "Awaiting confirmation"))
-        |> capture(
-          locale,
-          "Open Emails and newsletter audience",
-          "Pending and historical membership excluded"
-        )
+      # Pending purpose choices remain private intake requests and are not yet
+      # newsletter audience entries. The administrator sees only actual consent.
+      admin_browser = new_device(c, width, height) |> sign_in(admin)
 
       admin_browser =
         admin_browser
-        |> fill_in(tr(locale, "Find email or city"), with: "reader-")
-        |> click_button(tr(locale, "Find"))
-        |> visit("/manage/mail/newsletters?locale=#{locale}&q=reader-&per=10&region=")
-        |> assert_has("#newsletter-#{pending.id}")
-        |> refute_has("#newsletter-audience", text: "legacy-#{locale}")
-        |> capture(
-          locale,
-          "Filter and reload audience",
-          "Query survives reload without granting legacy consent"
-        )
+        |> visit("/manage/mail/newsletters?locale=#{locale}")
+        |> refute_has("#newsletter-audience", text: email)
 
       denied =
         new_device(c, width, height)
@@ -167,7 +149,7 @@ if System.get_env("ATDD") == "true" do
       reader =
         reader
         |> visit(confirmation)
-        |> assert_has("#newsletter-confirm-action")
+        |> assert_has("#participation-confirm")
         |> capture(
           locale,
           "Open actual confirmation email link",
@@ -178,8 +160,8 @@ if System.get_env("ATDD") == "true" do
 
       reader =
         reader
-        |> click("#newsletter-confirm-action")
-        |> assert_has("#newsletter-result")
+        |> click("#participation-confirm")
+        |> assert_has("#participation-result")
         |> capture(
           locale,
           "Explicitly confirm signup",
@@ -187,7 +169,16 @@ if System.get_env("ATDD") == "true" do
         )
 
       assert Newsletters.eligible?(email)
-      reader |> visit(confirmation) |> assert_has("#newsletter-invalid")
+      pending = Repo.get_by!(Newsletters.Subscription, email: email)
+      {:ok, withdrawal} = Newsletters.issue_withdrawal_token(scope, pending.id)
+
+      admin_browser =
+        admin_browser
+        |> visit("/manage/mail/newsletters?locale=#{locale}&q=reader-&per=10&region=")
+        |> assert_has("#newsletter-#{pending.id}")
+        |> refute_has("#newsletter-audience", text: "legacy-#{locale}")
+
+      reader |> visit(confirmation) |> assert_has("#participation-invalid")
 
       admin_browser =
         admin_browser
@@ -248,7 +239,7 @@ if System.get_env("ATDD") == "true" do
 
       refute Newsletters.eligible?(email)
       refute Newsletters.eligible?(alias_email)
-      reader |> visit(confirmation) |> assert_has("#newsletter-invalid")
+      reader |> visit(confirmation) |> assert_has("#participation-invalid")
 
       admin_browser =
         admin_browser
@@ -270,8 +261,8 @@ if System.get_env("ATDD") == "true" do
 
       reader
       |> visit(withdrawal_path)
-      |> click("#newsletter-confirm-action")
-      |> assert_has("#newsletter-result")
+      |> click("#participation-confirm")
+      |> assert_has("#participation-result")
 
       admin |> Ecto.Changeset.change(superadmin: false) |> Repo.update!()
       admin_browser |> visit(draft_path) |> refute_has("#newsletter-draft")

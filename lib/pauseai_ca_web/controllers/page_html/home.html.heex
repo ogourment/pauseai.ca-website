@@ -197,15 +197,25 @@
 
   <section class="mx-auto max-w-6xl px-5 py-20">
     <div class="rounded-[2rem] bg-[#18352f] p-8 text-white sm:p-12">
-      <h2 class="font-serif text-4xl">{gettext("Stay informed")}</h2>
+      <h2 class="font-serif text-4xl">{gettext("Get updates or take action")}</h2>
       <a
-        href={if(@locale == "fr", do: "/fr/comprendre#updates", else: "/en/learn#updates")}
+        href={
+          if(@locale == "fr",
+            do: ~p"/fr/participer?intent=newsletter",
+            else: ~p"/en/participate?intent=newsletter"
+          )
+        }
         class="mt-6 inline-block rounded-full bg-white px-6 py-3 font-semibold text-stone-900"
-      >{gettext("Subscribe")}</a>
+      >{gettext("Get updates")}</a>
       <a
-        href={~p"/users/register?#{%{from: "home_footer", locale: @locale}}"}
+        href={
+          if(@locale == "fr",
+            do: ~p"/fr/participer?intent=action",
+            else: ~p"/en/participate?intent=action"
+          )
+        }
         class="ml-6 inline-block font-semibold text-white underline"
-      >{gettext("Create an account")}</a>
+      >{gettext("Take action")}</a>
     </div>
   </section>
 </Layouts.app>

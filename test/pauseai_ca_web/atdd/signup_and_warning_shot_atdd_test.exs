@@ -114,7 +114,7 @@ if System.get_env("ATDD") == "true" do
       device =
         device
         |> click_link("Confirmer le compte")
-        |> click_button("Confirmer et rester connecté")
+        |> click_button("Confirmer et continuer")
         |> assert_path("/fr/tableau-de-bord")
         |> capture(id, "Confirm ownership", "French member next step and saved progress")
 
@@ -177,7 +177,7 @@ if System.get_env("ATDD") == "true" do
         |> show_email(delivered)
         |> capture(id, "Read actual delivered sign-in", "No new account or creation event")
         |> click_link("Sign in")
-        |> click_button("Keep me logged in on this device")
+        |> click_button("Confirm and continue")
         |> assert_path("/en/learn")
         |> assert_has("#resource-pauseai-learn", text: "Saved")
         |> capture(
@@ -243,7 +243,7 @@ if System.get_env("ATDD") == "true" do
         |> press("body", "Control+Home")
         |> click("#flash-info button")
         |> click("#account-menu summary")
-        |> click_link("Déconnexion")
+        |> click("#account-menu a[href='/users/log-out']")
         |> assert_has("#account-entry")
         |> click("#flash-info button")
         |> click("#account-entry")
@@ -258,7 +258,7 @@ if System.get_env("ATDD") == "true" do
       new_device(context)
       |> visit("/en")
       |> click("#consent-decline")
-      |> click("a[href*='from=home_footer']")
+      |> click_link("Take action")
       |> fill_in("Email", with: "footer@example.org")
       |> click_button("Email me a secure link")
       |> assert_has("#account-email-pending")
@@ -382,9 +382,9 @@ if System.get_env("ATDD") == "true" do
         new_device(context)
         |> visit("/en")
         |> click("#consent-decline")
-        |> click("a[href*='from=home_footer']")
-        |> fill_in("Email", with: "late@example.org")
-        |> click_button("Email me a secure link")
+        |> click_link("Take action")
+        |> fill_in("Your email", with: "late@example.org")
+        |> click_button("Create an account")
         |> assert_has("#account-email-pending")
 
       late = Accounts.get_user_by_email("late@example.org")
@@ -396,7 +396,7 @@ if System.get_env("ATDD") == "true" do
       late_browser
       |> show_email(receive_email(late.email))
       |> click_link("Confirm account")
-      |> click_button("Confirm and stay logged in")
+      |> click_button("Confirm and continue")
       |> assert_has("#action-editor")
       |> capture(
         id,
@@ -540,6 +540,10 @@ if System.get_env("ATDD") == "true" do
 
       assert Repo.aggregate(User, :count) == 1
       Application.put_env(:pauseai_ca, PauseAiCa.Mailer, original)
+      # Recovery honors the public confirmation cooldown; no real sleep is needed.
+      Repo.update_all(PauseAiCa.Participation.Request,
+        set: [inserted_at: DateTime.add(DateTime.utc_now(), -61)]
+      )
 
       browser =
         browser
@@ -587,7 +591,7 @@ if System.get_env("ATDD") == "true" do
       new_device(context)
       |> show_email(receive_email(email))
       |> click_link("Confirm account")
-      |> click_button("Confirm and stay logged in")
+      |> click_button("Confirm and continue")
       |> assert_path("/en/learn")
       |> assert_has("#resource-pauseai-learn", text: "Saved")
       |> capture(

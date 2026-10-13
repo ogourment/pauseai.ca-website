@@ -1,0 +1,64 @@
+<section class="mx-auto max-w-2xl px-5 py-12" id="participation-confirmation">
+  <h1 class="font-heading text-3xl">
+    {if @action == :withdraw,
+      do: gettext("Withdraw my local request"),
+      else: gettext("Confirm your choices")}
+  </h1>
+  <div :if={@state == :ready} class="mt-5">
+    <ul :if={@action == :confirm} class="list-disc space-y-2 pl-5">
+      <li :if={@request.newsletter}>{gettext("PauseAI Canada newsletter")}</li>
+      <li :if={@request.local_kind == "waitlist"}>
+        {gettext("Local waitlist")} · {@request.city || @request.fsa}
+      </li>
+      <li :if={@request.local_kind == "help"}>
+        {gettext("Offer of help")} · {@request.city || @request.fsa}
+      </li>
+    </ul>
+    <p :if={@action == :withdraw}>
+      {gettext(
+        "Stop follow-up on this local request. Your account and newsletter preferences are managed separately."
+      )}
+    </p>
+    <.form
+      for={%{}}
+      method="post"
+      action={
+        if(@action == :withdraw,
+          do: ~p"/participation/withdraw",
+          else: ~p"/participation/confirm"
+        )
+      }
+      class="mt-5"
+    >
+      <input type="hidden" name="token" value={@token} />
+      <button
+        id="participation-confirm"
+        type="submit"
+        class="rounded-full bg-brand px-6 py-3 font-heading text-lg font-bold"
+      >{if @action == :withdraw,
+        do: gettext("Withdraw request"),
+        else: gettext("Confirm and continue")}</button>
+    </.form>
+  </div>
+  <p
+    :if={@state == :done && @action == :confirm}
+    role="status"
+    id="participation-result"
+    class="mt-5"
+  >
+    {gettext(
+      "Your choices are confirmed. We will email you about your local request when you selected one."
+    )}
+  </p>
+  <p
+    :if={@state == :done && @action == :withdraw}
+    role="status"
+    id="participation-result"
+    class="mt-5"
+  >
+    {gettext("Your local request is withdrawn.")}
+  </p>
+  <p :if={@state == :invalid} role="alert" id="participation-invalid" class="mt-5">
+    {gettext("This link is invalid or has expired. Please request a new confirmation.")}
+  </p>
+</section>

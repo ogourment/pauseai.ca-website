@@ -20,6 +20,7 @@
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
 import "phoenix_html"
 import "./signup_analytics"
+import {FormDraft} from "./form_draft"
 import "./learning_journey"
 import "./rogue_window"
 import "./rogue_navigation"
@@ -35,7 +36,7 @@ const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: {_csrf_token: csrfToken},
-  hooks: {...colocatedHooks, PhoenixMarkdownEditor},
+  hooks: {...colocatedHooks, PhoenixMarkdownEditor, FormDraft},
   disconnectedTimeout: 1500,
 })
 

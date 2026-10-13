@@ -9,11 +9,44 @@ defmodule PauseAiCaWeb.UserLive.Confirmation do
     <Layouts.app flash={@flash} current_scope={@current_scope} locale={@locale}>
       <div class="mx-auto max-w-sm">
         <div class="text-center">
-          <.header>Welcome {@user.email}</.header>
+          <.header>
+            {if @participation_request,
+              do: gettext("Confirm your choices"),
+              else: gettext("Welcome %{email}", email: @user.email)}
+          </.header>
+        </div>
+
+        <div :if={@participation_request} class="mt-5">
+          <ul class="mt-3 list-disc space-y-2 pl-5">
+            <li>{gettext("Save and record my actions with an account.")}</li>
+            <li :if={@participation_request.newsletter}>{gettext("PauseAI Canada newsletter")}</li>
+            <li :if={@participation_request.local_kind}>
+              {if @participation_request.local_kind == "help",
+                do: gettext("Offer of help"),
+                else: gettext("Local waitlist")} · {@participation_request.city ||
+                @participation_request.fsa}
+            </li>
+          </ul>
+          <.form
+            for={@form}
+            id="participation-confirmation-form"
+            phx-submit="submit"
+            action={~p"/users/log-in"}
+            phx-trigger-action={@trigger_submit}
+            class="mt-5"
+          >
+            <input type="hidden" name={@form[:token].name} value={@form[:token].value} />
+            <.continuation_fields continuation={@continuation} />
+            <button
+              type="submit"
+              phx-disable-with={gettext("Confirming…")}
+              class="w-full rounded-full bg-brand px-6 py-3 font-heading text-lg font-bold"
+            >{gettext("Confirm and continue")}</button>
+          </.form>
         </div>
 
         <.form
-          :if={!@user.confirmed_at}
+          :if={!@participation_request && !@user.confirmed_at}
           for={@form}
           id="confirmation_form"
           phx-mounted={JS.focus_first()}
@@ -37,7 +70,7 @@ defmodule PauseAiCaWeb.UserLive.Confirmation do
         </.form>
 
         <.form
-          :if={@user.confirmed_at}
+          :if={!@participation_request && @user.confirmed_at}
           for={@form}
           id="login_form"
           phx-submit="submit"
@@ -66,7 +99,7 @@ defmodule PauseAiCaWeb.UserLive.Confirmation do
           <% end %>
         </.form>
 
-        <p :if={!@user.confirmed_at} class="alert alert-outline mt-8">
+        <p :if={!@participation_request && !@user.confirmed_at} class="alert alert-outline mt-8">
           Tip: If you prefer passwords, you can enable them in the user settings.
         </p>
       </div>
@@ -81,11 +114,22 @@ defmodule PauseAiCaWeb.UserLive.Confirmation do
     socket = assign(socket, :locale, locale)
 
     if user = Accounts.get_user_by_magic_link_token(token) do
+      context = PauseAiCa.Accounts.Onboarding.restore(params["flow"], user)
+
+      participation =
+        if id = context["participation_id"],
+          do: PauseAiCa.Repo.get(PauseAiCa.Participation.Request, id)
+
+      participation =
+        if participation && participation.user_id == user.id && participation.state == "pending",
+          do: participation
+
       form = to_form(%{"token" => token}, as: "user")
 
       {:ok,
        assign(socket,
          user: user,
+         participation_request: participation,
          form: form,
          continuation: Map.take(params, ~w(flow bookmark risk pause coordination)),
          trigger_submit: false

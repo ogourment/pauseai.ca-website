@@ -43,6 +43,10 @@ defmodule PauseAiCaWeb.Router do
     get "/letters/confirm/:token", LetterController, :confirm
 
     # Mail scanners may open GET links: consent changes require an explicit CSRF-protected POST.
+    get "/participation/confirm", ParticipationController, :show_confirm
+    post "/participation/confirm", ParticipationController, :confirm
+    get "/participation/withdraw", ParticipationController, :show_withdraw
+    post "/participation/withdraw", ParticipationController, :withdraw
     get "/newsletters/confirm", NewsletterController, :show_confirm
     post "/newsletters/confirm", NewsletterController, :confirm
     get "/newsletters/withdraw", NewsletterController, :show_withdraw
@@ -117,6 +121,7 @@ defmodule PauseAiCaWeb.Router do
       live "/metrics", AdminMetricsLive, :redirect
       live "/accounts", AdminAccountsLive, :index
       live "/donation-pledges", AdminDonationPledgesLive, :index
+      live "/local-interest", LocalInterestLive, :index
       live "/contact-imports", AdminContactImportLive, :index
       live "/contacts", AdminContactsLive, :index
       live "/contacts/legacy/:legacy_id", AdminContactsLive, :legacy
@@ -178,6 +183,8 @@ defmodule PauseAiCaWeb.Router do
       live "/fr/manifestation-montreal-2026-09-26/communique", ProtestPressReleaseLive, :fr
       live "/en/warning-shot", WarningShotLive, :en
       live "/fr/signal-d-alarme", WarningShotLive, :fr
+      live "/en/participate", ParticipationLive, :en
+      live "/fr/participer", ParticipationLive, :fr
       live "/en/learn", LibraryLive, :en
       live "/fr/comprendre", LibraryLive, :fr
       live "/fr/learn", LibraryLive, :fr

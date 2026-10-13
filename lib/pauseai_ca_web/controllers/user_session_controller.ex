@@ -31,9 +31,25 @@ defmodule PauseAiCaWeb.UserSessionController do
             do: conn,
             else: put_session(conn, :user_return_to, context["return_to"])
 
-        if context == %{},
-          do: save_continuation(conn, user, user_params),
-          else: Onboarding.apply_context(user, context, conn.assigns.learning_visitor_id)
+        continuation_result =
+          if context == %{},
+            do: save_continuation(conn, user, user_params),
+            else: Onboarding.apply_context(user, context, conn.assigns.learning_visitor_id)
+
+        conn =
+          case continuation_result do
+            {:error, _} ->
+              put_flash(
+                conn,
+                :error,
+                gettext(
+                  "You are signed in, but your other signup choices could not be applied. Please review them and request a new confirmation."
+                )
+              )
+
+            _ ->
+              conn
+          end
 
         conn
         |> put_flash(:info, info)

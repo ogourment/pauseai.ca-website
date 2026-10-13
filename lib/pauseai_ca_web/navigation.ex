@@ -9,6 +9,14 @@ defmodule PauseAiCaWeb.Navigation do
   @impl true
   def navigation_items do
     [
+      item(
+        "pauseai.local-interest",
+        gettext_noop("Local participation"),
+        :admin,
+        :local_interest,
+        :admin,
+        65
+      ),
       item("pauseai.contacts", gettext_noop("Contacts"), :admin, :contacts, :admin, 10),
       item(
         "pauseai.administrators",
@@ -109,6 +117,7 @@ defmodule PauseAiCaWeb.Navigation do
     route =
       case key do
         :contacts -> "/admin/contacts"
+        :local_interest -> "/admin/local-interest"
         :administrators -> "/manage/administrators"
         :dashboard -> "/admin/dashboard"
         :donation_pledges -> "/admin/donation-pledges"

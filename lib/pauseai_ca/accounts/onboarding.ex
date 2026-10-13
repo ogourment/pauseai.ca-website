@@ -41,14 +41,14 @@ defmodule PauseAiCa.Accounts.Onboarding do
     }
   end
 
-  def request(email, context, url_fun) do
+  def request(email, context, url_fun, opts \\ []) do
     email = if is_binary(email), do: String.trim(email), else: ""
 
     with :ok <- validate_bound_address(email, context),
          {:ok, user, created?} <- find_or_create(email, context) do
       flow = Phoenix.Token.encrypt(Endpoint, @salt, Map.put(context, "user_id", user.id))
 
-      case Accounts.deliver_login_instructions(user, &url_fun.(&1, flow)) do
+      case Accounts.deliver_login_instructions(user, &url_fun.(&1, flow), opts) do
         {:ok, _email} -> {:ok, user, created?, flow}
         {:error, _reason} -> {:error, :delivery, user, created?, flow}
       end
@@ -108,7 +108,14 @@ defmodule PauseAiCa.Accounts.Onboarding do
     if visitor = context["visitor_id"],
       do: Engagement.associate_learning_visitor(visitor, user.id)
 
-    :ok
+    if id = context["participation_id"] do
+      case PauseAiCa.Participation.confirm_for_user(user, id) do
+        {:ok, _} -> :ok
+        {:error, reason} -> {:error, reason}
+      end
+    else
+      :ok
+    end
   end
 
   defp find_or_create(email, context) do
@@ -168,7 +175,8 @@ defmodule PauseAiCa.Accounts.Onboarding do
   defp valid_bookmark(_), do: nil
 
   defp safe_return(value, locale, bookmark) do
-    allowed = ~w(/en/dashboard /fr/tableau-de-bord /en/learn /fr/comprendre)
+    allowed =
+      ~w(/en/dashboard /fr/tableau-de-bord /en/learn /fr/comprendre /en/actions#action-editor /fr/actions#action-editor)
 
     if value in allowed,
       do: value,

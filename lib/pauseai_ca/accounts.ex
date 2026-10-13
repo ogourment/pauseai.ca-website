@@ -374,11 +374,19 @@ defmodule PauseAiCa.Accounts do
   @doc """
   Delivers the magic link login instructions to the given user.
   """
-  def deliver_login_instructions(%User{} = user, magic_link_url_fun)
+  def deliver_login_instructions(%User{} = user, magic_link_url_fun, opts \\ [])
       when is_function(magic_link_url_fun, 1) do
     {encoded_token, user_token} = UserToken.build_email_token(user, "login")
     Repo.insert!(user_token)
-    UserNotifier.deliver_login_instructions(user, magic_link_url_fun.(encoded_token))
+    url = magic_link_url_fun.(encoded_token)
+
+    case Keyword.get(opts, :email_builder) do
+      builder when is_function(builder, 2) ->
+        builder.(user, url) |> PauseAiCa.Mailer.deliver_sign_in(user.id)
+
+      _ ->
+        UserNotifier.deliver_login_instructions(user, url)
+    end
   end
 
   @doc """
