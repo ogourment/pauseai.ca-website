@@ -259,8 +259,8 @@ if System.get_env("ATDD") == "true" do
       |> visit("/en")
       |> click("#consent-decline")
       |> click_link("Take action")
-      |> fill_in("Email", with: "footer@example.org")
-      |> click_button("Email me a secure link")
+      |> fill_in("Your email", with: "footer@example.org")
+      |> click_button("Create an account")
       |> assert_has("#account-email-pending")
       |> capture(
         id,

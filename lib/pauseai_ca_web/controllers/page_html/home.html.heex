@@ -201,8 +201,8 @@
       <a
         href={
           if(@locale == "fr",
-            do: ~p"/fr/participer?intent=newsletter",
-            else: ~p"/en/participate?intent=newsletter"
+            do: ~p"/fr/participer?intent=newsletter&from=home_footer",
+            else: ~p"/en/participate?intent=newsletter&from=home_footer"
           )
         }
         class="mt-6 inline-block rounded-full bg-white px-6 py-3 font-semibold text-stone-900"
@@ -210,8 +210,8 @@
       <a
         href={
           if(@locale == "fr",
-            do: ~p"/fr/participer?intent=action",
-            else: ~p"/en/participate?intent=action"
+            do: ~p"/fr/participer?intent=action&from=home_footer",
+            else: ~p"/en/participate?intent=action&from=home_footer"
           )
         }
         class="ml-6 inline-block font-semibold text-white underline"
