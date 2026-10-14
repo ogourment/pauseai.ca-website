@@ -38,6 +38,18 @@ defmodule PauseAiCa.MixProject do
   # Specifies your project dependencies.
   #
   # Type `mix help deps` for examples and options.
+  defp mail_workflow_dependency do
+    case System.get_env("PHOENIX_MAIL_WORKFLOW_PATH") do
+      path when is_binary(path) and path != "" ->
+        {:phoenix_mail_workflow, path: Path.expand(path)}
+
+      _ ->
+        {:phoenix_mail_workflow,
+         git: "ssh://git@git.agile-u.com/olivierg/phoenix_mail_workflow.git",
+         ref: "8d4fe38affe52b13875eeada6de261dc0eddf9fa"}
+    end
+  end
+
   defp deps do
     [
       {:phoenix_app_shell,
@@ -53,6 +65,7 @@ defmodule PauseAiCa.MixProject do
       {:phoenix_live_view, "~> 1.2.0"},
       {:lazy_html, ">= 0.1.0", only: :test},
       acceptance_harness_dependency(),
+      mail_workflow_dependency(),
       cms_dependency(),
       crm_dependency(),
       markdown_editor_dependency(),

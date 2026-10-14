@@ -32,6 +32,7 @@ jobs:
       acceptance-harness-github-ref: v0.10.6
       acceptance-harness-github-sha: fb318c868be948316fcb1ebbd144d1a075f6d8fd
     secrets:
+      mail-package-deploy-key: ${{ secrets.MAIL_PACKAGE_DEPLOY_KEY }}
       cms-package-deploy-key: ${{ secrets.CMS_PACKAGE_DEPLOY_KEY }}
       crm-package-deploy-key: ${{ secrets.CRM_PACKAGE_DEPLOY_KEY }}
       shell-package-deploy-key: ${{ secrets.SHELL_PACKAGE_DEPLOY_KEY }}

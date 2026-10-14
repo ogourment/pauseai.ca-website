@@ -42,6 +42,9 @@ on:
         type: string
         default: ""
     secrets:
+      mail-package-deploy-key:
+        description: Read-only phoenix_mail_workflow Forgejo deploy key
+        required: true
       crm-package-deploy-key:
         description: Read-only phoenix_crm Forgejo deploy key
         required: true
@@ -116,6 +119,7 @@ jobs:
           mix local.rebar --force
       - name: Configure read-only private package access
         env:
+          MAIL_DEPLOY_KEY: ${{ secrets.mail-package-deploy-key }}
           CMS_DEPLOY_KEY: ${{ secrets.cms-package-deploy-key }}
           CRM_DEPLOY_KEY: ${{ secrets.crm-package-deploy-key }}
           SHELL_DEPLOY_KEY: ${{ secrets.shell-package-deploy-key }}
@@ -123,12 +127,15 @@ jobs:
           FORGEJO_KNOWN_HOSTS: ${{ secrets.forgejo-known-hosts }}
         run: |
           set -euo pipefail
+          test -n "$MAIL_DEPLOY_KEY"
           test -n "$CMS_DEPLOY_KEY"
           test -n "$CRM_DEPLOY_KEY"
           test -n "$EDITOR_DEPLOY_KEY"
           test -n "$SHELL_DEPLOY_KEY"
           test -n "$FORGEJO_KNOWN_HOSTS"
           install -d -m 700 "$HOME/.ssh"
+          printf '%s\n' "$MAIL_DEPLOY_KEY" > "$HOME/.ssh/phoenix_mail_ci"
+          chmod 600 "$HOME/.ssh/phoenix_mail_ci"
           printf '%s\n' "$CMS_DEPLOY_KEY" > "$HOME/.ssh/phoenix_cms_ci"
           printf '%s\n' "$CRM_DEPLOY_KEY" > "$HOME/.ssh/phoenix_crm_ci"
           printf '%s\n' "$EDITOR_DEPLOY_KEY" > "$HOME/.ssh/phoenix_editor_ci"
@@ -136,12 +143,14 @@ jobs:
           chmod 600 "$HOME/.ssh/phoenix_cms_ci" "$HOME/.ssh/phoenix_crm_ci" "$HOME/.ssh/phoenix_editor_ci" "$HOME/.ssh/phoenix_shell_ci"
           printf '%s\n' "$FORGEJO_KNOWN_HOSTS" >> "$HOME/.ssh/known_hosts"
           cat >> "$HOME/.ssh/config" <<EOF
-          Host forgejo-cms forgejo-crm forgejo-editor forgejo-shell
+          Host forgejo-mail forgejo-cms forgejo-crm forgejo-editor forgejo-shell
             HostName git.agile-u.com
             User git
             HostKeyAlias git.agile-u.com
             StrictHostKeyChecking yes
             IdentitiesOnly yes
+          Host forgejo-mail
+            IdentityFile $HOME/.ssh/phoenix_mail_ci
           Host forgejo-cms
             IdentityFile $HOME/.ssh/phoenix_cms_ci
           Host forgejo-crm
@@ -152,6 +161,7 @@ jobs:
             IdentityFile $HOME/.ssh/phoenix_editor_ci
           EOF
           chmod 600 "$HOME/.ssh/config" "$HOME/.ssh/known_hosts"
+          git config --global url."ssh://git@forgejo-mail/olivierg/phoenix_mail_workflow.git".insteadOf "ssh://git@git.agile-u.com/olivierg/phoenix_mail_workflow.git"
           git config --global url."ssh://git@forgejo-cms/olivierg/phoenix_cms.git".insteadOf "ssh://git@git.agile-u.com/olivierg/phoenix_cms.git"
           git config --global url."ssh://git@forgejo-crm/olivierg/phoenix_crm.git".insteadOf "ssh://git@git.agile-u.com/olivierg/phoenix_crm.git"
           git config --global url."ssh://git@forgejo-editor/olivierg/phoenix_markdown_editor.git".insteadOf "ssh://git@git.agile-u.com/olivierg/phoenix_markdown_editor.git"
