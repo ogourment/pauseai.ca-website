@@ -1260,6 +1260,8 @@ if System.get_env("ATDD") == "true" do
       do:
         b
         |> click_link("Sign in")
+        |> assert_has(".phx-connected")
+        |> assert_has("#confirmation_form")
         |> click_button("Confirm and stay logged in")
         |> assert_has("#account-menu")
 
