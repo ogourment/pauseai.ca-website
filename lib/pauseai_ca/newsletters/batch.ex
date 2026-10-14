@@ -14,6 +14,7 @@ defmodule PauseAiCa.Newsletters.Batch do
     field :sender_name, :string
     field :sender_email, :string
     field :delivery_environment, :string
+    field :edition, :string, default: "unknown"
     field :subject, :string
     field :source, :string, redact: true
     field :preparation_key, :binary

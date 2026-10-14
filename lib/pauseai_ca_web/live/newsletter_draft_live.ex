@@ -46,6 +46,40 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
       else: {:noreply, denied(socket)}
   end
 
+  def handle_event("confirm-language", %{"email" => email, "language" => language}, socket) do
+    # Accept only an address currently visible in this authorized audience.
+    if Enum.any?(socket.assigns.audience.rows, &(&1.email == email)) do
+      case PauseAiCa.Newsletters.Edition.confirm_preference(
+             socket.assigns.current_scope,
+             email,
+             language
+           ) do
+        {:ok, _} -> {:noreply, socket |> assign(batch_review: nil) |> refresh_audience()}
+        _ -> {:noreply, denied(socket)}
+      end
+    else
+      {:noreply, denied(socket)}
+    end
+  end
+
+  def handle_event("new-edition", %{"edition" => edition}, socket) do
+    if dirty?(socket) do
+      {:noreply,
+       assign(socket, error: gettext("Save this draft before creating another edition."))}
+    else
+      case Drafts.create_edition(socket.assigns.current_scope, socket.assigns.draft, edition) do
+        {:ok, draft} ->
+          {:noreply,
+           push_navigate(socket,
+             to: ~p"/manage/mail/drafts/#{draft.id}?locale=#{socket.assigns.locale}"
+           )}
+
+        _ ->
+          {:noreply, denied(socket)}
+      end
+    end
+  end
+
   def handle_event("archive", _, socket), do: archive(socket, true)
   def handle_event("restore", _, socket), do: archive(socket, false)
 
@@ -183,8 +217,10 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
   defp edit(socket, attrs) do
     if PauseAiCa.Volunteers.superadmin?(socket.assigns.current_scope) do
       mode_changed? =
-        attrs["recipient_mode"] &&
-          attrs["recipient_mode"] != socket.assigns.form[:recipient_mode].value
+        Enum.any?([:recipient_mode, :edition], fn field ->
+          key = to_string(field)
+          Map.has_key?(attrs, key) and attrs[key] != socket.assigns.form[field].value
+        end)
 
       attrs = if mode_changed?, do: Map.put(attrs, "recipient_keys", []), else: attrs
 
@@ -281,6 +317,7 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
           else: socket.assigns.form[:region].value || ""
         ),
       "list_id" => socket.assigns.form[:mailing_list_id].value,
+      "edition" => socket.assigns.form[:edition].value || "unknown",
       "per" => "25"
     }
 
@@ -326,6 +363,12 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
   defp receipt_label("unknown", _), do: gettext("Needs delivery review")
   defp selected(socket), do: socket.assigns.form[:recipient_keys].value || []
   defp dirty?(socket), do: socket.assigns.status == gettext("Unsaved changes")
+
+  defp batch_error(:incomplete_link),
+    do:
+      gettext(
+        "The last Markdown link is incomplete. Finish its URL and closing parenthesis before preparing a batch."
+      )
 
   defp batch_error(:review_required),
     do: gettext("Confirm that you reviewed outreach eligibility for this batch.")
@@ -411,6 +454,45 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
             phx-submit="save"
             class="mt-6 space-y-5"
           >
+            <section id="newsletter-edition" class="space-y-3 rounded-lg border p-4">
+              <.input
+                field={@form[:edition]}
+                type="select"
+                label={gettext("Language edition")}
+                options={[
+                  {gettext("English · confirmed English recipients"), "en"},
+                  {gettext("French · confirmed French recipients"), "fr"},
+                  {gettext("Bilingual · language unknown only"), "unknown"}
+                ]}
+              />
+              <p>
+                {gettext(
+                  "Write one language per edition. Bilingual content is reserved for recipients whose language is unknown or ambiguous. A website language default is not proof of preference."
+                )}
+              </p>
+              <p :if={@audience} id="newsletter-language-counts">
+                {gettext("English: %{en} · French: %{fr} · Unknown: %{unknown}",
+                  en: Map.get(Map.get(@audience, :edition_counts, %{}), "en", 0),
+                  fr: Map.get(Map.get(@audience, :edition_counts, %{}), "fr", 0),
+                  unknown: Map.get(Map.get(@audience, :edition_counts, %{}), "unknown", 0)
+                )}
+              </p>
+              <div class="flex flex-wrap gap-4">
+                <button
+                  :for={
+                    {label, edition} <- [
+                      {gettext("New English edition"), "en"},
+                      {gettext("New French edition"), "fr"},
+                      {gettext("New bilingual edition"), "unknown"}
+                    ]
+                  }
+                  type="button"
+                  class="underline"
+                  phx-click="new-edition"
+                  phx-value-edition={edition}
+                >{label}</button>
+              </div>
+            </section>
             <.input field={@form[:subject]} label={gettext("Subject")} />
             <.input
               :if={@form[:recipient_mode].value != "list"}
@@ -424,6 +506,15 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
                 {"ROCanada", "ROCanada"}
               ]}
             />
+            <p
+              :if={!PauseAiCa.Mail.Render.complete_links?(@form[:source].value || "")}
+              role="alert"
+              class="crm-error"
+            >
+              {gettext(
+                "The last Markdown link is incomplete. Finish its URL and closing parenthesis before preparing a batch."
+              )}
+            </p>
             <.live_component
               module={PhoenixMarkdownEditor.Component}
               id="newsletter-content"
@@ -439,7 +530,11 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
               preview_error_message={gettext("Preview unavailable. Your text is retained.")}
               render_preview={
                 fn source ->
-                  PauseAiCa.Newsletters.Message.preview(@form[:subject].value || "", source)
+                  PauseAiCa.Newsletters.Message.preview(
+                    @form[:subject].value || "",
+                    source,
+                    PauseAiCa.Newsletters.Edition.locale(@form[:edition].value)
+                  )
                 end
               }
             />
@@ -534,6 +629,26 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
                       fields: Enum.map_join(row.matched_fields, ", ", &rule_label/1)
                     )}</span></span>
                   </label>
+                  <div
+                    :if={is_binary(row.email)}
+                    class="mt-2 flex flex-wrap items-center gap-3 text-sm"
+                  >
+                    <span>{gettext("Record a verified language:")}</span>
+                    <button
+                      :for={
+                        {label, language} <- [
+                          {gettext("English"), "en"},
+                          {gettext("French"), "fr"},
+                          {gettext("Unknown"), "unknown"}
+                        ]
+                      }
+                      type="button"
+                      class="underline"
+                      phx-click="confirm-language"
+                      phx-value-email={row.email}
+                      phx-value-language={language}
+                    >{label}</button>
+                  </div>
                   <PauseAiCaWeb.ContactSourceComponents.source_summary
                     :for={origin <- Map.get(row, :origins, [])}
                     id={"blast-source-#{origin.id}"}
@@ -630,7 +745,8 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
                 {Phoenix.HTML.raw(
                   PauseAiCa.Newsletters.Message.preview(
                     @batch_review.batch.subject,
-                    @batch_review.batch.source
+                    @batch_review.batch.source,
+                    PauseAiCa.Newsletters.Edition.locale(@batch_review.batch.edition)
                   )
                 )}
               </div>

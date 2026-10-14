@@ -50,7 +50,8 @@ defmodule PauseAiCaWeb.Emails.Layout do
        footer,
        Keyword.get(opts, :body_html, ""),
        links,
-       locale
+       locale,
+       opts
      ),
      text(
        title_en,
@@ -87,8 +88,16 @@ defmodule PauseAiCaWeb.Emails.Layout do
          {footer_en, footer_fr},
          body_html,
          links,
-         locale
+         locale,
+         opts
        ) do
+    font = Keyword.get(opts, :font_family, "Georgia,'Times New Roman',serif")
+
+    heading_font =
+      Keyword.get(opts, :heading_font_family, "Impact,'Helvetica Neue',Arial,sans-serif")
+
+    width = Keyword.get(opts, :width, 560)
+
     """
     <!DOCTYPE html>
     <html lang="#{locale || "en"}">
@@ -98,18 +107,18 @@ defmodule PauseAiCaWeb.Emails.Layout do
           <tr>
             <td align="center" style="padding:32px 16px;">
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
-                     style="max-width:560px;background:#ffffff;border-radius:12px;overflow:hidden;">
+                     style="max-width:#{width}px;table-layout:fixed;background:#ffffff;border-radius:12px;overflow:hidden;">
                 <tr>
                   <td style="background:#{@brand};padding:14px 24px;text-align:center;
-                             font-family:Impact,'Helvetica Neue',Arial,sans-serif;font-size:13px;
+                             font-family:#{heading_font};font-size:13px;
                              letter-spacing:2px;text-transform:uppercase;color:#{@ink};font-weight:bold;">
                     PauseAI Canada
                   </td>
                 </tr>
                 <tr>
-                  <td style="padding:32px 28px;font-family:Georgia,'Times New Roman',serif;
+                  <td style="padding:32px 28px;font-family:#{font};overflow-wrap:anywhere;word-break:break-word;
                              font-size:16px;line-height:1.6;color:#{@ink};">
-                    <h1 style="margin:0 0 6px;font-family:Impact,'Helvetica Neue',Arial,sans-serif;
+                    <h1 style="margin:0 0 6px;font-family:#{heading_font};
                                font-size:26px;line-height:1.2;color:#{@ink};">#{esc(title_en)}</h1>
                     #{secondary_title(title_fr)}
                     #{body_html}
@@ -120,7 +129,7 @@ defmodule PauseAiCaWeb.Emails.Layout do
                 </tr>
                 <tr>
                   <td style="padding:18px 28px 26px;border-top:1px solid #eceae4;
-                             font-family:Georgia,serif;font-size:12px;line-height:1.55;color:#57534e;">
+                             font-family:#{font};font-size:12px;line-height:1.55;color:#57534e;">
                     pauseai.ca · info@pauseai.ca<br />
                     #{Enum.map_join(present([footer_en, footer_fr]), "<br />", &esc/1)}
                     #{html_links(links)}
@@ -198,7 +207,7 @@ defmodule PauseAiCaWeb.Emails.Layout do
 
   defp html_links(links) do
     Enum.map_join(links, "", fn {label, url} ->
-      "<p style=\"margin:10px 0 0;font-size:14px;\"><a href=\"#{esc(url)}\" style=\"color:#854d0e;text-decoration:underline;\">#{esc(label)}</a></p>"
+      "<p style=\"margin:8px 0 0;font-size:12px;\"><a href=\"#{esc(url)}\" style=\"color:#854d0e;text-decoration:underline;\">#{esc(label)}</a></p>"
     end)
   end
 

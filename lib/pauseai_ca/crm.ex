@@ -19,6 +19,7 @@ defmodule PauseAiCa.CRM do
     if Volunteers.superadmin?(scope) do
       query_text = String.slice(directory_string(params["q"]), 0, 500)
       region = String.slice(directory_string(params["region"]), 0, 200)
+      all_rows? = params[:all_rows] == true
       per = positive_integer(params["per"], 25)
       per = if per in @directory_sizes, do: per, else: 25
       pattern = "%" <> escape_search(query_text) <> "%"
@@ -75,8 +76,8 @@ defmodule PauseAiCa.CRM do
         Repo.all(
           from p in people,
             order_by: [asc: p.name, asc: p.id],
-            limit: ^per,
-            offset: ^((page - 1) * per)
+            limit: ^if(all_rows?, do: 5000, else: per),
+            offset: ^if(all_rows?, do: 0, else: (page - 1) * per)
         )
 
       ids = Enum.map(selected, & &1.id)

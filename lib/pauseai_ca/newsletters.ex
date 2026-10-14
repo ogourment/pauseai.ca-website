@@ -49,7 +49,7 @@ defmodule PauseAiCa.Newsletters do
             inserted_at: now
           })
 
-          event(saved, "requested", nil, %{"explicit_opt_in" => true})
+          event(saved, "requested", nil, %{"explicit_opt_in" => true, "locale" => attrs[:locale]})
           %{subscription: saved, confirmation_token: confirmation, withdrawal_token: withdrawal}
         end
       end)

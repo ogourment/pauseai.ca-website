@@ -13,6 +13,9 @@ defmodule PauseAiCa.Mail.Render do
       else: {:error, missing}
   end
 
+  def complete_links?(source),
+    do: not Regex.match?(~r/\[[^\]\n]+\]\(https?:?[^)\s]*\s*$/u, String.trim(source))
+
   def html(source) do
     MDEx.to_html!(source,
       render: [escape: true],

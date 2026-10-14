@@ -3,6 +3,7 @@ defmodule PauseAiCa.Newsletters.Batches do
   import Ecto.Query
   alias PauseAiCa.{Repo, Volunteers, Accounts, Newsletters, CRM, Mailer, MailSafety}
   alias PauseAiCa.Newsletters.{Batch, Delivery, Draft, Drafts, Subscription}
+  alias PauseAiCa.Newsletters.Edition
   @admin_limit 20
   @global_limit 100
 
@@ -58,7 +59,41 @@ defmodule PauseAiCa.Newsletters.Batches do
     end
   end
 
-  def audience(scope, "contacts", params) do
+  def audience(scope, mode, params) do
+    if params["edition"] in ["en", "fr", "unknown"] do
+      with {:ok, all} <- raw_audience(scope, mode, Map.put(params, :all_rows, true)) do
+        rows = Edition.decorate(all.rows)
+        selected = Edition.select(rows, params["edition"])
+        per = 25
+        pages = max(1, Integer.ceil_div(length(selected), per))
+
+        page =
+          case Integer.parse(to_string(params["page"] || "1")) do
+            {n, ""} -> min(max(n, 1), pages)
+            _ -> 1
+          end
+
+        {:ok,
+         Map.merge(all, %{
+           rows: Enum.slice(selected, (page - 1) * per, per),
+           page: page,
+           pages: pages,
+           total: length(selected),
+           edition_counts: Edition.counts(Enum.filter(rows, &(&1.status == :available))),
+           counts:
+             Map.put(
+               Map.get(all, :counts, %{}),
+               :included,
+               Enum.count(selected, &(&1.status == :available))
+             )
+         })}
+      end
+    else
+      raw_audience(scope, mode, params)
+    end
+  end
+
+  defp raw_audience(scope, "contacts", params) do
     with {:ok, page} <- CRM.directory_page(scope, params) do
       {:ok, origins} = CRM.directory_origins(scope, page.records)
 
@@ -71,7 +106,7 @@ defmodule PauseAiCa.Newsletters.Batches do
     end
   end
 
-  def audience(scope, "newsletter", params) do
+  defp raw_audience(scope, "newsletter", params) do
     with {:ok, page} <- Newsletters.audience_page(scope, params) do
       rows =
         Enum.map(page.rows, fn r ->
@@ -89,15 +124,15 @@ defmodule PauseAiCa.Newsletters.Batches do
     end
   end
 
-  def audience(scope, "list", params) do
+  defp raw_audience(scope, "list", params) do
     with {:ok, %{archived_at: nil}} <- PauseAiCa.Newsletters.Lists.get(scope, params["list_id"]) do
-      audience(scope, "newsletter", params)
+      raw_audience(scope, "newsletter", params)
     else
       _ -> {:error, :audience_required}
     end
   end
 
-  def audience(_, _, _), do: {:error, :unauthorized}
+  defp raw_audience(_, _, _), do: {:error, :unauthorized}
 
   def prepare(scope, %Draft{} = expected, mode, keys, reviewed?) do
     authorized(scope, fn ->
@@ -112,6 +147,9 @@ defmodule PauseAiCa.Newsletters.Batches do
 
       if String.trim(draft.subject) == "" or String.trim(draft.source) == "",
         do: Repo.rollback(:content_required)
+
+      if not PauseAiCa.Mail.Render.complete_links?(draft.source),
+        do: Repo.rollback(:incomplete_link)
 
       if mode == "contacts" and reviewed? != true, do: Repo.rollback(:review_required)
 
@@ -128,7 +166,9 @@ defmodule PauseAiCa.Newsletters.Batches do
           end
         end
 
-      targets = if list, do: list_targets!(scope, list), else: targets!(scope, mode, keys)
+      candidates = if list, do: list_targets!(scope, list), else: targets!(scope, mode, keys)
+      targets = candidates |> Edition.decorate() |> Edition.select(draft.edition)
+      if targets == [], do: Repo.rollback(:audience_required)
       if Enum.any?(targets, &(&1.status != :available)), do: Repo.rollback(:ineligible)
       now = DateTime.utc_now()
       {sender_name, sender_email} = Application.fetch_env!(:pauseai_ca, :campaign_sender)
@@ -138,6 +178,7 @@ defmodule PauseAiCa.Newsletters.Batches do
         {draft.id, draft.revision, mode, digest(targets), sender_name, sender_email,
          MailSafety.environment()}
 
+      identity = {:language_edition_v1, draft.edition, identity}
       identity = if list, do: {:mailing_list, list.id, list.revision, identity}, else: identity
       preparation_key = :crypto.hash(:sha256, :erlang.term_to_binary(identity))
 
@@ -158,6 +199,7 @@ defmodule PauseAiCa.Newsletters.Batches do
               sender_name: sender_name,
               sender_email: sender_email,
               delivery_environment: to_string(MailSafety.environment()),
+              edition: draft.edition,
               subject: draft.subject,
               source: draft.source,
               preparation_key: preparation_key,
@@ -450,7 +492,13 @@ defmodule PauseAiCa.Newsletters.Batches do
 
   defp message(batch, email, link) do
     {html, text} =
-      PauseAiCa.Newsletters.Message.render(batch.subject, batch.source, link)
+      PauseAiCa.Newsletters.Message.render(
+        batch.subject,
+        batch.source,
+        link,
+        [],
+        Edition.locale(batch.edition)
+      )
 
     Swoosh.Email.new()
     |> Swoosh.Email.to(email)
@@ -487,8 +535,12 @@ defmodule PauseAiCa.Newsletters.Batches do
 
                 if is_nil(list.archived_at) and list.revision == batch.mailing_list_revision do
                   case list_targets(scope, list) do
-                    {:ok, current} -> digest(current) == batch.audience_digest
-                    _ -> false
+                    {:ok, current} ->
+                      digest(current |> Edition.decorate() |> Edition.select(batch.edition)) ==
+                        batch.audience_digest
+
+                    _ ->
+                      false
                   end
                 else
                   false
@@ -502,9 +554,12 @@ defmodule PauseAiCa.Newsletters.Batches do
           end
 
         case targets(scope, mode, batch.recipient_keys) do
-          {:ok, rows} ->
+          {:ok, raw_rows} ->
+            rows = raw_rows |> Edition.decorate() |> Edition.select(batch.edition)
+
             list_current? and sender_current? and draft.subject == batch.subject and
-              draft.source == batch.source and
+              draft.source == batch.source and draft.edition == batch.edition and
+              PauseAiCa.Mail.Render.complete_links?(draft.source) and
               Enum.all?(rows, &(&1.status == :available)) and
               digest(rows) == batch.audience_digest
 
@@ -619,7 +674,12 @@ defmodule PauseAiCa.Newsletters.Batches do
 
   defp digest(rows),
     do:
-      :crypto.hash(:sha256, :erlang.term_to_binary(Enum.map(rows, &{&1.id, &1.email, &1.status})))
+      :crypto.hash(
+        :sha256,
+        :erlang.term_to_binary(
+          Enum.map(rows, &{&1.id, &1.email, &1.status, Map.get(&1, :edition, "unknown")})
+        )
+      )
 
   defp locked!(scope, id) do
     with {:ok, uuid} <- Ecto.UUID.cast(id),

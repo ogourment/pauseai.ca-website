@@ -19,9 +19,32 @@ defmodule PauseAiCa.NewslettersMessageTest do
     assert html =~ "Unsubscribe"
     assert text =~ "Unsubscribe · Se désabonner"
     assert html =~ url and text =~ url
-    assert text =~ "/en/learn#newsletter-heading"
-    assert text =~ "/fr/comprendre#newsletter-heading"
+    assert text =~ "/en/participate?intent=newsletter"
+    assert text =~ "/fr/participer?intent=newsletter"
     refute html =~ "newsletter-unsubscribe-preview"
     refute html =~ "Preview:"
+  end
+
+  test "newsletter unsubscribe is a small footer link and the body uses readable responsive styling" do
+    {html, _} =
+      Message.render(
+        "Updates",
+        "[Website](https://pauseai.ca/fr)",
+        "https://example.org/withdraw",
+        [],
+        "fr"
+      )
+
+    assert html =~ "Se désabonner"
+    refute html =~ "If the button does not work"
+    refute html =~ "padding:14px 30px"
+    refute html =~ "Impact"
+    refute html =~ "Georgia"
+    refute html =~ "You are receiving"
+    assert html =~ "font-size:12px"
+    assert html =~ "max-width:680px"
+    assert html =~ "<h1"
+    assert html =~ "Updates</h1>"
+    assert html =~ "href=\"https://pauseai.ca/fr\""
   end
 end

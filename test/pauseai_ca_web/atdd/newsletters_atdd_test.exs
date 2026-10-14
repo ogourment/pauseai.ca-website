@@ -185,6 +185,16 @@ if System.get_env("ATDD") == "true" do
         |> visit("/manage/mail?locale=#{locale}")
         |> click_button(tr(locale, "Compose"))
         |> assert_has("#newsletter-draft-form")
+        |> select(tr(locale, "Language edition"),
+          option:
+            tr(
+              locale,
+              if(locale == "fr",
+                do: "French · confirmed French recipients",
+                else: "English · confirmed English recipients"
+              )
+            )
+        )
         |> fill_in(tr(locale, "Subject"), with: "Synthetic press release #{locale}")
         |> fill_in(tr(locale, "Message · Markdown"),
           with: "## Montréal\n\nSynthetic press release review."

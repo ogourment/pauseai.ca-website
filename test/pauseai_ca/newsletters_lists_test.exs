@@ -143,7 +143,7 @@ defmodule PauseAiCa.NewslettersListsTest do
     assert Repo.aggregate(Delivery, :count) == 1
   end
 
-  test "existing newsletter preparation fingerprints stay compatible with0.5.12", c do
+  test "language editions do not reuse a legacy preparation fingerprint", c do
     previous_env = Application.fetch_env!(:pauseai_ca, :mail_environment)
     on_exit(fn -> Application.put_env(:pauseai_ca, :mail_environment, previous_env) end)
     Application.put_env(:pauseai_ca, :mail_environment, :dev)
@@ -166,8 +166,8 @@ defmodule PauseAiCa.NewslettersListsTest do
       })
 
     {:ok, batch} = Batches.prepare(c.scope, draft, "newsletter", [sub.id], false)
-    # Golden fingerprint from the0.5.12 format for this fixed synthetic fixture.
-    assert Base.encode16(batch.preparation_key, case: :lower) ==
+    # A language-scoped approval must not reuse the0.5.12 unscoped golden fingerprint.
+    refute Base.encode16(batch.preparation_key, case: :lower) ==
              "005e5b8cbe9cea7ef0dd351da97f61e621586422842a07cc3269c4d4af3eb00d"
 
     {:ok, repeated} = Batches.prepare(c.scope, draft, "newsletter", [sub.id], false)

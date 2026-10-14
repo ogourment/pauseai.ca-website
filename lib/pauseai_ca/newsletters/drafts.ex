@@ -53,6 +53,24 @@ defmodule PauseAiCa.Newsletters.Drafts do
     end)
   end
 
+  def create_edition(scope, %Draft{} = expected, edition)
+      when edition in ["en", "fr", "unknown"] do
+    with {:ok, current} <- get(scope, expected.id) do
+      authorized(scope, fn ->
+        Repo.insert!(%Draft{
+          owner_id: scope.user.id,
+          edition: edition,
+          recipient_mode: current.recipient_mode,
+          recipient_keys: [],
+          mailing_list_id: current.mailing_list_id,
+          region: current.region
+        })
+      end)
+    end
+  end
+
+  def create_edition(_, _, _), do: {:error, :invalid_edition}
+
   def save(scope, %Draft{} = expected, attrs) do
     authorized(scope, fn ->
       draft = locked(scope, expected)

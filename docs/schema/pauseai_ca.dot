@@ -453,6 +453,7 @@ digraph Schema {
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp without time zone NOT NULL</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">mailing_list_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">uuid</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">mailing_list_revision</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">integer</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">edition</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text NOT NULL</FONT></TD></TR>
       </TABLE>
     >
   ];
@@ -512,6 +513,21 @@ digraph Schema {
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">recipient_mode</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text NOT NULL</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">recipient_keys</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">_text NOT NULL</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">mailing_list_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">edition</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
+  "public.newsletter_language_preferences" [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.newsletter_language_preferences</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">email</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">locale</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">actor_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
       </TABLE>
     >
   ];
@@ -856,6 +872,7 @@ digraph Schema {
   "public.newsletter_deliveries" -> "public.newsletter_batches" [label="batch_id -> id"];
   "public.newsletter_drafts" -> "public.crm_mailing_lists" [label="mailing_list_id -> id"];
   "public.newsletter_drafts" -> "public.users" [label="owner_id -> id"];
+  "public.newsletter_language_preferences" -> "public.users" [label="actor_id -> id"];
   "public.newsletter_withdrawal_tokens" -> "public.newsletter_subscriptions" [label="subscription_id -> id"];
   "public.participation_requests" -> "public.users" [label="followup_owner_id -> id"];
   "public.participation_requests" -> "public.users" [label="user_id -> id"];

@@ -5,6 +5,7 @@ defmodule PauseAiCa.Newsletters.Draft do
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "newsletter_drafts" do
     field :owner_id, :binary_id
+    field :edition, :string, default: "unknown"
     field :subject, :string, default: ""
     field :source, :string, default: "", redact: true
     field :region, :string, default: ""
@@ -19,6 +20,7 @@ defmodule PauseAiCa.Newsletters.Draft do
   def changeset(draft, attrs) do
     draft
     |> cast(attrs, [
+      :edition,
       :subject,
       :source,
       :region,
@@ -43,6 +45,7 @@ defmodule PauseAiCa.Newsletters.Draft do
         do: [],
         else: [{field, "is invalid"}]
     end)
+    |> validate_inclusion(:edition, ["en", "fr", "unknown"])
     |> validate_inclusion(:recipient_mode, ["contacts", "newsletter", "list"])
     |> validate_length(:subject, max: 300)
     |> validate_length(:source, max: 50_000)
