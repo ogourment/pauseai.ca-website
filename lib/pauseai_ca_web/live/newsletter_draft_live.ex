@@ -728,6 +728,13 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
             <section :if={@batch_review} id="newsletter-batch-review" class="space-y-4">
               <h3 class="font-semibold">{gettext("Frozen batch snapshot")}</h3>
               <p>
+                {gettext("Language edition")}: {case @batch_review.batch.edition do
+                  "en" -> gettext("English")
+                  "fr" -> gettext("French")
+                  _ -> gettext("Bilingual · language unknown only")
+                end}
+              </p>
+              <p>
                 {gettext("Saved draft version %{version}",
                   version: @batch_review.batch.draft_revision
                 )}

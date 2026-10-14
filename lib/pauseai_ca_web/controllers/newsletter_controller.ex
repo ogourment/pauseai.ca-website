@@ -14,7 +14,7 @@ defmodule PauseAiCaWeb.NewsletterController do
 
   defp show(conn, token, action) do
     case Newsletters.capability(token, action) do
-      {:ok, %{locale: locale}} -> page(conn, token, action, locale, :ready)
+      {:ok, %{locale: locale}} -> page(conn, token, action, chosen_locale(conn, locale), :ready)
       {:error, _} -> page(conn, nil, action, locale(conn), :invalid)
     end
   end
@@ -27,8 +27,11 @@ defmodule PauseAiCaWeb.NewsletterController do
       end
 
     case result do
-      {:ok, subscription} -> page(conn, nil, action, subscription.locale, :done)
-      {:error, _} -> page(conn, nil, action, locale(conn), :invalid)
+      {:ok, subscription} ->
+        page(conn, nil, action, chosen_locale(conn, subscription.locale), :done)
+
+      {:error, _} ->
+        page(conn, nil, action, locale(conn), :invalid)
     end
   end
 
@@ -46,6 +49,10 @@ defmodule PauseAiCaWeb.NewsletterController do
       page_title:
         if(action == :withdraw, do: gettext("Email preferences"), else: gettext("Newsletter"))
     )
+  end
+
+  defp chosen_locale(conn, fallback) do
+    if conn.params["locale"] in ["en", "fr"], do: conn.params["locale"], else: fallback
   end
 
   defp locale(conn), do: if(conn.params["locale"] == "fr", do: "fr", else: "en")

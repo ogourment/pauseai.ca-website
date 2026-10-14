@@ -39,4 +39,26 @@ defmodule PauseAiCaWeb.NewsletterControllerTest do
 
     assert PauseAiCa.Repo.aggregate(PauseAiCa.Accounts.User, :count) == accounts
   end
+
+  test "an edition language stays on withdrawal GET and POST without changing stored preference",
+       %{conn: conn} do
+    {:ok, request} =
+      Newsletters.request_signup("edition-language@example.org", %{consent: true, locale: "en"})
+
+    {:ok, _} = Newsletters.confirm(request.confirmation_token)
+
+    page =
+      get(conn, "/newsletters/withdraw", %{"token" => request.withdrawal_token, "locale" => "fr"})
+
+    assert html_response(page, 200) =~ "Se désabonner"
+    assert html_response(page, 200) =~ "name=\"locale\""
+    assert Newsletters.eligible?("edition-language@example.org")
+
+    result =
+      post(conn, "/newsletters/withdraw", %{"token" => request.withdrawal_token, "locale" => "fr"})
+
+    assert html_response(result, 200) =~ "lang=\"fr\""
+    refute Newsletters.eligible?("edition-language@example.org")
+    assert PauseAiCa.Repo.get!(Newsletters.Subscription, request.subscription.id).locale == "en"
+  end
 end

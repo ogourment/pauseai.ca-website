@@ -448,7 +448,11 @@ defmodule PauseAiCa.Newsletters.Batches do
             link =
               PauseAiCaWeb.Site.url(
                 "en",
-                "/newsletters/withdraw?" <> URI.encode_query(%{"token" => raw})
+                "/newsletters/withdraw?" <>
+                  URI.encode_query(%{
+                    "token" => raw,
+                    "locale" => Edition.locale(batch.edition) || "en"
+                  })
               )
 
             message =

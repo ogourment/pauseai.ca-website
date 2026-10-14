@@ -193,7 +193,8 @@ if System.get_env("ATDD") == "true" do
                 do: "French · confirmed French recipients",
                 else: "English · confirmed English recipients"
               )
-            )
+            ),
+          exact: false
         )
         |> fill_in(tr(locale, "Subject"), with: "Synthetic press release #{locale}")
         |> fill_in(tr(locale, "Message · Markdown"),
