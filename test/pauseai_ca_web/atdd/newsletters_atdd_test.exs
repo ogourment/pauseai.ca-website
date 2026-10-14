@@ -261,8 +261,8 @@ if System.get_env("ATDD") == "true" do
 
       reader
       |> visit(withdrawal_path)
-      |> click("#participation-confirm")
-      |> assert_has("#participation-result")
+      |> click("#newsletter-confirm-action")
+      |> assert_has("#newsletter-result")
 
       admin |> Ecto.Changeset.change(superadmin: false) |> Repo.update!()
       admin_browser |> visit(draft_path) |> refute_has("#newsletter-draft")
