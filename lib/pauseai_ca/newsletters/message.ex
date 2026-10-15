@@ -19,6 +19,12 @@ defmodule PauseAiCa.Newsletters.Message do
     [
       brand_name: "PauseAI Canada",
       identity_text: "pauseai.ca · info@pauseai.ca",
+      logo: %{
+        src: Site.url("en", "/images/pauseai-canada-logo.png"),
+        alt: "PauseAI Canada",
+        width: 160,
+        href: Site.url(locale || "en", "/#{locale || "en"}")
+      },
       brand_color: "#f68b1e",
       ink_color: "#1c1917",
       background_color: "#f8f5ed",

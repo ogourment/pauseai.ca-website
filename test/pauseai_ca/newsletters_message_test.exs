@@ -47,4 +47,25 @@ defmodule PauseAiCa.NewslettersMessageTest do
     assert html =~ "Updates</h1>"
     assert html =~ "href=\"https://pauseai.ca/fr\""
   end
+
+  test "newsletter header contains the big-leaf logo and brand fallback without changing its body" do
+    {html, text} =
+      Message.render(
+        "October update",
+        "An unchanged authored paragraph.",
+        "https://example.org/withdraw",
+        [],
+        "fr"
+      )
+
+    assert html =~ "/images/pauseai-canada-logo.png"
+    assert html =~ "alt=\"PauseAI Canada\""
+    assert html =~ "width=\"160\""
+    assert html =~ "/fr\" style=\"display:block;text-decoration:none;"
+    assert html =~ ">PauseAI Canada</span>"
+    assert html =~ "An unchanged authored paragraph."
+    assert text =~ "An unchanged authored paragraph."
+    refute text =~ "<img"
+    refute html =~ "pauseai-canada.png"
+  end
 end
