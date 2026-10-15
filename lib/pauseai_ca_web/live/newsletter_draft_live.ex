@@ -1,6 +1,6 @@
 defmodule PauseAiCaWeb.NewsletterDraftLive do
   use PauseAiCaWeb, :live_view
-  alias PauseAiCa.Newsletters.{Draft, Drafts, Batches, Lists}
+  alias PauseAiCa.Newsletters.{Draft, Drafts, Batches, Lists, DeliveryLimits}
   import PauseAiCaWeb.NewsletterAudienceLabels
 
   def mount(params, _, socket) do
@@ -28,7 +28,10 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
            delivery_state: :idle,
            batch_review: nil,
            batches: [],
-           quota: nil
+           quota: nil,
+           limits_form: nil,
+           limits_status: nil,
+           limits_open: false
          )}
 
       _ ->
@@ -37,6 +40,48 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
   end
 
   def handle_params(_, _, socket), do: {:noreply, refresh_audience(socket)}
+
+  def handle_event("toggle-delivery-limits", _, socket) do
+    {:noreply, assign(socket, limits_open: !socket.assigns.limits_open)}
+  end
+
+  def handle_event("save-delivery-limits", %{"limits" => attrs}, socket) do
+    case DeliveryLimits.save(socket.assigns.current_scope, attrs["revision"], attrs) do
+      {:ok, limits} ->
+        {:noreply,
+         socket
+         |> assign(
+           limits_form: to_form(DeliveryLimits.changeset(limits, %{}), as: "limits"),
+           limits_status: gettext("Hourly limits saved."),
+           limits_open: true
+         )
+         |> refresh_audience()}
+
+      {:error, %Ecto.Changeset{} = cs} ->
+        {:noreply,
+         assign(socket,
+           limits_form: to_form(%{cs | action: :validate}, as: "limits"),
+           limits_status: nil,
+           limits_open: true
+         )}
+
+      {:error, :stale} ->
+        {:ok, limits} = DeliveryLimits.get(socket.assigns.current_scope)
+
+        {:noreply,
+         assign(socket,
+           limits_form: to_form(DeliveryLimits.changeset(limits, %{}), as: "limits"),
+           limits_open: true,
+           limits_status:
+             gettext(
+               "Another administrator changed the limits. Review the current values before saving."
+             )
+         )}
+
+      _ ->
+        {:noreply, denied(socket)}
+    end
+  end
 
   def handle_event("edit", %{"draft" => attrs}, socket), do: {:noreply, edit(socket, attrs)}
 
@@ -327,7 +372,15 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
       {:ok, page} ->
         {:ok, batches} = Batches.list(socket.assigns.current_scope, socket.assigns.draft.id)
         {:ok, quota} = Batches.quota(socket.assigns.current_scope)
-        assign(socket, audience: page, batches: batches, quota: quota)
+
+        assign(socket,
+          audience: page,
+          batches: batches,
+          quota: quota,
+          limits_form:
+            socket.assigns.limits_form ||
+              to_form(DeliveryLimits.changeset(quota.limits, %{}), as: "limits")
+        )
 
       {:error, :audience_required} ->
         assign(socket, audience: %{rows: [], page: 1, pages: 1, total: 0, counts: %{included: 0}})
@@ -345,6 +398,7 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
   defp batch_label("paused"), do: gettext("Paused")
   defp delivery_label(:idle), do: gettext("Ready for review")
   defp delivery_label(:completed), do: gettext("Completed")
+  defp delivery_label(:queued), do: gettext("Queued for the next sending cycle")
   defp delivery_label(:sending), do: gettext("Sending")
   defp delivery_label(:throttled), do: gettext("Waiting for hourly allowance")
   defp delivery_label(:stale), do: gettext("Approval expired")
@@ -694,11 +748,55 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
                 global: @quota.global_remaining
               )}
             </p>
-            <p>
-              {gettext(
-                "Delivery limits: 20 messages/hour per authorizing admin, 100/hour globally. Unsure submissions are held for review, never retried automatically."
-              )}
-            </p>
+            <details
+              :if={@limits_form}
+              id="newsletter-delivery-limits"
+              class="crm-panel"
+              open={@limits_open}
+            >
+              <summary class="cursor-pointer underline" phx-click="toggle-delivery-limits">
+                {gettext("Hourly sending limits")}
+              </summary>
+              <p class="my-3">
+                {gettext(
+                  "These settings apply to all newsletter drafts. Increasing them can let already approved queues continue. Brevo's own limits still apply."
+                )}
+              </p>
+              <.form
+                for={@limits_form}
+                id="newsletter-delivery-limits-form"
+                phx-submit="save-delivery-limits"
+              >
+                <input
+                  type="hidden"
+                  name="limits[revision]"
+                  value={@limits_form.params["revision"] || @limits_form.source.data.id || 0}
+                />
+                <div class="grid gap-3 sm:grid-cols-2">
+                  <.input
+                    field={@limits_form[:personal]}
+                    type="number"
+                    min="1"
+                    max="100000"
+                    required
+                    label={gettext("Per authorizing admin / hour")}
+                  />
+                  <.input
+                    field={@limits_form[:global]}
+                    type="number"
+                    min="1"
+                    max="100000"
+                    required
+                    label={gettext("Across the application / hour")}
+                  />
+                </div>
+                <button type="submit" class="crm-button" phx-disable-with={gettext("Saving…")}>{gettext(
+                  "Save hourly limits"
+                )}</button>
+              </.form>
+              <p :if={@limits_status} id="newsletter-limits-status" role="status">{@limits_status}</p>
+            </details>
+            <p>{gettext("Unsure submissions are held for review, never retried automatically.")}</p>
             <p :if={PauseAiCa.MailSafety.environment() == :staging} class="crm-error">
               {gettext("Staging rehearsal: every message goes only to the authorizing admin.")}
             </p>

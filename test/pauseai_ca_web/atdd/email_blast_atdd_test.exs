@@ -172,7 +172,39 @@ if System.get_env("ATDD") == "true" do
       assert Enum.count(latest, &(&1.batch_id != old_batch.id)) == 5
       assert {:ok, %{personal_remaining: 0}} = Batches.quota(scope)
       assert length(keys) == 30
-      _ = b
+
+      b =
+        b
+        |> evaluate("document.querySelector('#newsletter-delivery-limits').open = true")
+        |> fill_in("Per authorizing admin / hour", with: "1000")
+        |> fill_in("Across the application / hour", with: "1000")
+        |> click_button("Save hourly limits")
+        |> assert_has("#newsletter-limits-status", text: "Hourly limits saved.")
+        |> click_button("Send")
+        |> assert_has("#newsletter-delivery-progress", text: "25 / 25", timeout: 30_000)
+        |> assert_has("#newsletter-delivery-progress", text: "Completed")
+        |> capture(
+          "controls",
+          "Raise the saved hourly allowance and resume",
+          "The five remaining synthetic envelopes submit once; the initial twenty are retained"
+        )
+
+      for _ <- 1..5 do
+        assert_receive {:email, email}, 8000
+        assert email.to == [{"Staging admin", actor.email}]
+      end
+
+      refute_receive {:email, _}
+
+      b
+      |> visit(path)
+      |> evaluate("document.querySelector('#newsletter-delivery-limits').open = true")
+      |> assert_has("input[name='limits[personal]'][value='1000']")
+
+      assert Repo.aggregate(
+               from(d in Delivery, where: d.state == "accepted" and d.batch_id != ^old_batch.id),
+               :count
+             ) == 25
 
       AtddEvidence.mark_scenario_success!(%{
         id: "PA-SEND-01-controls",

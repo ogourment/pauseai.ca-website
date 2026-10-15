@@ -21,7 +21,7 @@
     id: "newsletter",
     title: "Newsletter consent and delivery",
     tables:
-      ~w(newsletter_language_preferences newsletter_subscriptions newsletter_consent_events newsletter_withdrawal_tokens newsletter_drafts newsletter_batches newsletter_deliveries)
+      ~w(newsletter_delivery_limits newsletter_language_preferences newsletter_subscriptions newsletter_consent_events newsletter_withdrawal_tokens newsletter_drafts newsletter_batches newsletter_deliveries)
   },
   %{id: "participation", title: "Signup choices and local interest", tables: ["participation_requests"]},
   %{id: "outreach", title: "Outreach", tables: ["pending_letters"]},

@@ -497,6 +497,20 @@ digraph Schema {
   ];
 
 
+  "public.newsletter_delivery_limits" [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.newsletter_delivery_limits</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">bigint NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">personal</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">integer NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">global</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">integer NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">actor_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
   "public.newsletter_drafts" [
     label=<
       <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
@@ -870,6 +884,7 @@ digraph Schema {
   "public.newsletter_consent_events" -> "public.newsletter_subscriptions" [label="subscription_id -> id"];
   "public.newsletter_deliveries" -> "public.users" [label="authorizing_admin_id -> id"];
   "public.newsletter_deliveries" -> "public.newsletter_batches" [label="batch_id -> id"];
+  "public.newsletter_delivery_limits" -> "public.users" [label="actor_id -> id"];
   "public.newsletter_drafts" -> "public.crm_mailing_lists" [label="mailing_list_id -> id"];
   "public.newsletter_drafts" -> "public.users" [label="owner_id -> id"];
   "public.newsletter_language_preferences" -> "public.users" [label="actor_id -> id"];

@@ -4,11 +4,11 @@ defmodule PauseAiCa.Newsletters.Batches do
   alias PauseAiCa.{Repo, Volunteers, Accounts, Newsletters, CRM, Mailer, MailSafety}
   alias PauseAiCa.Newsletters.{Batch, Delivery, Draft, Drafts, Subscription}
   alias PauseAiCa.Newsletters.Edition
-  @admin_limit 20
-  @global_limit 100
+  @dispatch_chunk 100
 
   def quota(scope) do
     if Volunteers.superadmin?(scope) do
+      limits = PauseAiCa.Newsletters.DeliveryLimits.current()
       cutoff = DateTime.add(DateTime.utc_now(), -3600)
       recent = from d in Delivery, where: d.attempted_at > ^cutoff
       global = Repo.aggregate(recent, :count)
@@ -23,8 +23,11 @@ defmodule PauseAiCa.Newsletters.Batches do
         do:
           {:ok,
            %{
-             personal_remaining: max(0, @admin_limit - personal),
-             global_remaining: max(0, @global_limit - global),
+             personal_remaining: max(0, limits.personal - personal),
+             limits: limits,
+             personal_used: personal,
+             global_used: global,
+             global_remaining: max(0, limits.global - global),
              next_slot: if(oldest, do: DateTime.add(oldest, 3600))
            }},
         else: {:error, :unauthorized}
@@ -296,7 +299,7 @@ defmodule PauseAiCa.Newsletters.Batches do
     end
   end
 
-  defp dispatch(_scope, _id, n) when n >= @admin_limit, do: {:ok, :throttled}
+  defp dispatch(_scope, _id, n) when n >= @dispatch_chunk, do: {:ok, :queued}
 
   defp dispatch(scope, id, n) do
     case reserve(scope, id) do
@@ -413,7 +416,9 @@ defmodule PauseAiCa.Newsletters.Batches do
           :count
         )
 
-      if total >= @global_limit or actor >= @admin_limit do
+      limits = PauseAiCa.Newsletters.DeliveryLimits.current()
+
+      if total >= limits.global or actor >= limits.personal do
         :throttled
       else
         Repo.update!(Ecto.Changeset.change(batch, state: "sending"))

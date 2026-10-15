@@ -110,4 +110,48 @@ defmodule PauseAiCaWeb.NewsletterDraftLiveTest do
     assert Enum.sort(saved.recipient_keys) == Enum.sort(keys)
     assert saved.recipient_mode == "contacts"
   end
+
+  test "admin edits hourly limits independently of a draft and values survive reload", %{
+    conn: conn
+  } do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    scope = Accounts.Scope.for_user(admin)
+    {:ok, draft} = Newsletters.Drafts.create(scope)
+    conn = log_in_user(conn, admin)
+    path = "/manage/mail/drafts/#{draft.id}?locale=en"
+    {:ok, view, _} = live(conn, path)
+    assert has_element?(view, "#newsletter-delivery-limits", "already approved queues")
+
+    view
+    |> form("#newsletter-delivery-limits-form", limits: %{personal: "1000", global: "2000"})
+    |> render_submit()
+
+    assert has_element?(view, "#newsletter-limits-status", "Hourly limits saved")
+    assert has_element?(view, "#newsletter-delivery-limits[open]")
+    {:ok, reload, _} = live(conn, path)
+    assert has_element?(reload, "input[name='limits[personal]'][value='1000']")
+    assert has_element?(reload, "input[name='limits[global]'][value='2000']")
+
+    reload
+    |> form("#newsletter-delivery-limits-form", limits: %{personal: "0", global: "2000"})
+    |> render_submit()
+
+    refute has_element?(reload, "#newsletter-limits-status", "Hourly limits saved")
+
+    reload
+    |> form("#newsletter-delivery-limits-form", limits: %{personal: "1000", global: "2000"})
+    |> render_submit()
+
+    assert has_element?(reload, "#newsletter-limits-status", "Hourly limits saved")
+    assert Repo.get!(Newsletters.Draft, draft.id).revision == draft.revision
+    assert Repo.aggregate(Newsletters.Delivery, :count) == 0
+    admin |> Ecto.Changeset.change(superadmin: false) |> Repo.update!()
+
+    view
+    |> form("#newsletter-delivery-limits-form", limits: %{personal: "5000", global: "5000"})
+    |> render_submit()
+
+    assert_redirect(view, "/dashboard")
+    assert Newsletters.DeliveryLimits.current().personal == 1000
+  end
 end

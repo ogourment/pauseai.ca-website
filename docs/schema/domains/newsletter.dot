@@ -10,6 +10,13 @@ digraph newsletter {
     color="#94a3b8";
     penwidth=1.5;
     style="rounded";
+  "newsletter_delivery_limits" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.newsletter_delivery_limits</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">bigint NOT NULL</TD></TR><TR><TD ALIGN="LEFT">personal</TD><TD ALIGN="LEFT">integer NOT NULL</TD></TR><TR><TD ALIGN="LEFT">global</TD><TD ALIGN="LEFT">integer NOT NULL</TD></TR><TR><TD ALIGN="LEFT">actor_id</TD><TD ALIGN="LEFT">uuid NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
   "newsletter_language_preferences" [label=<
     <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
       <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.newsletter_language_preferences</B></TD></TR>
@@ -90,6 +97,7 @@ digraph newsletter {
   "newsletter_consent_events" -> "newsletter_subscriptions" [label="subscription_id -> id", color="#64748b"];
   "newsletter_deliveries" -> "users" [label="authorizing_admin_id -> id", color="#d97706", style="dashed", penwidth=1.5];
   "newsletter_deliveries" -> "newsletter_batches" [label="batch_id -> id", color="#64748b"];
+  "newsletter_delivery_limits" -> "users" [label="actor_id -> id", color="#d97706", style="dashed", penwidth=1.5];
   "newsletter_drafts" -> "crm_mailing_lists" [label="mailing_list_id -> id", color="#d97706", style="dashed", penwidth=1.5];
   "newsletter_drafts" -> "users" [label="owner_id -> id", color="#d97706", style="dashed", penwidth=1.5];
   "newsletter_language_preferences" -> "users" [label="actor_id -> id", color="#d97706", style="dashed", penwidth=1.5];

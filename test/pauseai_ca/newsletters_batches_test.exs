@@ -112,6 +112,62 @@ defmodule PauseAiCa.NewslettersBatchesTest do
     assert Repo.aggregate(from(d in Delivery, where: not is_nil(d.attempted_at)), :count) == 20
   end
 
+  test "an admin can raise saved limits and resume the same approved queue without duplicate delivery",
+       c do
+    alias PauseAiCa.Newsletters.DeliveryLimits
+    keys = contacts(25) |> Enum.map(& &1.id)
+    {:ok, batch} = Batches.prepare(c.scope, c.draft, "contacts", keys, true)
+    {:ok, _} = Batches.approve(c.scope, batch.id)
+    assert {:ok, :throttled} = Batches.dispatch(c.scope, batch.id)
+    assert Repo.aggregate(from(d in Delivery, where: d.state == "accepted"), :count) == 20
+
+    assert {:ok, saved} =
+             DeliveryLimits.save(c.scope, 0, %{"personal" => "1000", "global" => "1000"})
+
+    assert saved.actor_id == c.actor.id
+    assert {:ok, %{personal_remaining: 980, global_remaining: 980}} = Batches.quota(c.scope)
+    assert {:ok, :completed} = Batches.dispatch(c.scope, batch.id)
+    assert Repo.aggregate(from(d in Delivery, where: d.state == "accepted"), :count) == 25
+    assert {:ok, :not_approved} = Batches.dispatch(c.scope, batch.id)
+    assert Repo.aggregate(Delivery, :count) == 25
+  end
+
+  test "limit changes require fresh admin authority, valid values and a current revision", c do
+    alias PauseAiCa.Newsletters.DeliveryLimits
+    other = user_fixture() |> Accounts.Scope.for_user()
+    assert {:error, :unauthorized} = DeliveryLimits.get(other)
+
+    assert {:error, :unauthorized} =
+             DeliveryLimits.save(other, 0, %{"personal" => "1000", "global" => "1000"})
+
+    for attrs <- [
+          %{"personal" => "0"},
+          %{"global" => "100001"},
+          %{"personal" => "200", "global" => "100"},
+          %{"personal" => "unlimited"}
+        ] do
+      assert {:error, %Ecto.Changeset{}} = DeliveryLimits.save(c.scope, 0, attrs)
+    end
+
+    assert Repo.aggregate(DeliveryLimits, :count) == 0
+
+    assert {:ok, first} =
+             DeliveryLimits.save(c.scope, 0, %{"personal" => "1000", "global" => "2000"})
+
+    assert {:error, :stale} =
+             DeliveryLimits.save(c.scope, 0, %{"personal" => "10", "global" => "100"})
+
+    assert {:ok, second} =
+             DeliveryLimits.save(c.scope, first.id, %{"personal" => "10", "global" => "100"})
+
+    assert Repo.get!(DeliveryLimits, first.id).personal == 1000
+    assert second.personal == 10
+    c.actor |> change(superadmin: false) |> Repo.update!()
+
+    assert {:error, :unauthorized} =
+             DeliveryLimits.save(c.scope, second.id, %{"personal" => "1000", "global" => "2000"})
+  end
+
   test "staging redirects each recipient to the current authorizing admin; revoked actors cannot dispatch",
        c do
     Application.put_env(:pauseai_ca, :mail_environment, :staging)
