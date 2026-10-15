@@ -129,7 +129,7 @@ if System.get_env("ATDD") == "true" do
         |> fill_in("Subject", with: "Changed approved control batch")
         |> click_button("Save")
         |> click_button("#{old_batch.subject} · 25 · Approved")
-        |> click_button("Send")
+        |> click_button("Send", exact: true)
         |> assert_has("#newsletter-delivery-progress", text: "Approval expired")
         |> capture(
           "controls",
@@ -147,7 +147,7 @@ if System.get_env("ATDD") == "true" do
         )
         |> click_button("Prepare batch")
         |> click_button("Approve batch")
-        |> click_button("Send")
+        |> click_button("Send", exact: true)
         |> assert_has("#newsletter-delivery-progress", text: "20 / 25", timeout: 30_000)
         |> assert_has("#newsletter-delivery-progress",
           text: "Waiting for hourly allowance",
@@ -180,7 +180,7 @@ if System.get_env("ATDD") == "true" do
         |> fill_in("Across the application / hour", with: "1000")
         |> click_button("Save hourly limits")
         |> assert_has("#newsletter-limits-status", text: "Hourly limits saved.")
-        |> click_button("Send")
+        |> click_button("Send", exact: true)
         |> assert_has("#newsletter-delivery-progress", text: "25 / 25", timeout: 30_000)
         |> assert_has("#newsletter-delivery-progress", text: "Completed")
         |> capture(
