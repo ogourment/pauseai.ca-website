@@ -825,10 +825,12 @@ if System.get_env("ATDD") == "true" do
           |> assert_has("#donate-page ul li", count: 9)
           |> assert_has("#donate-page", text: "1819452-1")
           |> assert_has("#donate-page", text: "791107246")
+          |> assert_has("#donation-email", text: "pauseaicanada@proton.me")
+          |> assert_has("#donate-interac strong", text: "PauseAI Canada")
           |> capture(
             id,
             "Open #{locale} Donate",
-            "Bank account pending; nine funding uses and a short contact form"
+            "Verified Interac recipient and Autodeposit instructions; a separate pledge form remains available"
           )
           |> assert_has("#pledge_frequency", selected: one_time_label)
           |> select(frequency_label, option: monthly_label, exact: false)

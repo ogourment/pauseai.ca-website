@@ -13,6 +13,10 @@ defmodule PauseAiCaWeb.DonateLiveTest do
     assert has_element?(view, "#donate-page", "PauseIA Canada")
     assert has_element?(view, "#donate-page", "1819452-1")
     assert has_element?(view, "#donate-page", "791107246")
+    assert has_element?(view, "#donation-email", "pauseaicanada@proton.me")
+    assert has_element?(view, "#donate-interac strong", "PauseAI Canada")
+    assert has_element?(view, "#donate-interac", "dépôt automatique")
+    refute render(view) =~ "Nous préparons notre compte bancaire"
 
     attrs = %{
       name: "Camille Exemple",
@@ -37,6 +41,9 @@ defmodule PauseAiCaWeb.DonateLiveTest do
     refute_receive {:email, _}
     {:ok, retry, _} = live(conn, "/en/donate")
     assert has_element?(retry, "#donate-page", "PauseAI Canada")
+    assert has_element?(retry, "#donation-email", "pauseaicanada@proton.me")
+    assert has_element?(retry, "#donate-interac", "Autodeposit is enabled")
+    refute render(retry) =~ "We are preparing our bank account"
 
     retry
     |> form("#pledge-form", pledge: %{attrs | name: "Different name", contact_consent: "true"})

@@ -113,18 +113,25 @@ defmodule PauseAiCaWeb.DonateLive do
             </figcaption>
           </figure>
         </div>
-        <div class="mt-8 border-l-4 border-brand bg-brand-wash p-6">
-          <h2 class="font-heading text-2xl">{gettext("Make a pledge today")}</h2>
+        <div id="donate-interac" class="mt-8 border-l-4 border-brand bg-brand-wash p-6">
+          <h2 class="font-heading text-2xl">{gettext("Donate by Interac e-Transfer")}</h2>
           <p class="mt-3 leading-7">
             {gettext(
-              "We are preparing our bank account. No payment is collected here. Leave your contact information and, if you wish, an amount you intend to give. We will contact you when we can receive donations."
+              "Send your donation from your banking app to the address below. Autodeposit is enabled. Check that the recipient name is PauseAI Canada before confirming."
             )}
+          </p>
+          <p class="mt-3 break-all text-xl font-semibold">
+            <span id="donation-email" class="select-all">pauseaicanada@proton.me</span>
+          </p>
+          <p class="mt-2">{gettext("Recipient")}: <strong>PauseAI Canada</strong></p>
+          <p class="mt-3 text-sm">
+            {gettext("You can donate directly without completing the pledge form.")}
           </p>
           <a
             href="#pledge-form"
             class="mt-4 inline-block font-semibold underline decoration-brand decoration-2 underline-offset-4"
           >
-            {gettext("Go to form")}
+            {gettext("Prefer to make a pledge?")}
           </a>
         </div>
         <h2 class="mt-10 font-heading text-3xl">{gettext("What your support makes possible")}</h2>
@@ -184,10 +191,10 @@ defmodule PauseAiCaWeb.DonateLive do
           </section>
         </div>
         <div id="pledge-suggestions" class="mt-12">
-          <h2 class="font-heading text-3xl">{gettext("Choose an amount that works for you")}</h2>
+          <h2 class="font-heading text-3xl">{gettext("Make a pledge")}</h2>
           <p class="mt-3 max-w-2xl leading-7 text-stone-700">
             {gettext(
-              "Choose a suggested amount or enter your own. We will contact you when we can receive donations."
+              "Choose a suggested amount or enter your own for a future contribution. We will contact you about your pledge. This form does not send a payment."
             )}
           </p>
           <div class="mt-5 grid gap-3 sm:grid-cols-2">
@@ -228,7 +235,7 @@ defmodule PauseAiCaWeb.DonateLive do
           <h2 class="font-heading text-2xl">{gettext("Thank you for your support")}</h2>
           <p>
             {gettext(
-              "Your interest is recorded. We will contact you about your pledge when donations can be received. No payment has been taken."
+              "Your pledge is recorded. We will contact you about it. No payment has been taken through this form."
             )}
           </p>
           <p>
