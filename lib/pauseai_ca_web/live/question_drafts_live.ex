@@ -11,10 +11,11 @@ defmodule PauseAiCaWeb.QuestionDraftsLive do
       {:ok,
        assign(socket,
          locale: locale,
-         page_title: gettext("Quiz management"),
+         page_title: gettext("Knowledge content"),
          draft: nil,
          records: [],
          filter: "all",
+         placement: "all",
          publication_errors: [],
          form: to_form(%{}, as: "question"),
          status: nil,
@@ -37,13 +38,16 @@ defmodule PauseAiCaWeb.QuestionDraftsLive do
         _ ->
           {:noreply,
            socket
-           |> put_flash(:error, gettext("Question unavailable."))
+           |> put_flash(:error, gettext("Content unavailable."))
            |> push_navigate(to: ~p"/manage/questions")}
       end
     else
       {:noreply,
        assign(socket,
-         records: QuestionBank.list(socket.assigns.current_scope, filter(params)),
+         records:
+           QuestionBank.list(socket.assigns.current_scope, filter(params))
+           |> Enum.filter(&matches_placement?(&1, placement(params), socket.assigns.locale)),
+         placement: placement(params),
          draft: nil,
          filter: filter(params),
          error: nil,
@@ -136,7 +140,7 @@ defmodule PauseAiCaWeb.QuestionDraftsLive do
 
       {:error, :published} ->
         {:noreply,
-         assign(socket, error: gettext("Move this question to draft before deleting it."))}
+         assign(socket, error: gettext("Move this content to draft before deleting it."))}
 
       _ ->
         {:noreply, assign(socket, error: gettext("Could not save. Your changes are retained."))}
@@ -146,6 +150,15 @@ defmodule PauseAiCaWeb.QuestionDraftsLive do
   defp filter(params),
     do:
       if(params["status"] in ["draft", "published", "deleted"], do: params["status"], else: "all")
+
+  defp placement(params),
+    do: if(params["placement"] in ~w(nuggets home quiz), do: params["placement"], else: "all")
+
+  defp home_card?(q, locale), do: get_in(q.editions, [locale, "home_page"]) == "true"
+  defp matches_placement?(q, "home", locale), do: home_card?(q, locale)
+  defp matches_placement?(q, "nuggets", locale), do: !home_card?(q, locale)
+  defp matches_placement?(q, "quiz", _locale), do: q.kind == "factual"
+  defp matches_placement?(_, _, _), do: true
 
   def handle_info({:markdown_editor_changed, "question-explanation", source}, socket) do
     values = Map.put(socket.assigns.form.params, "answer", source)
@@ -195,6 +208,20 @@ defmodule PauseAiCaWeb.QuestionDraftsLive do
         publication_errors: []
       )
 
+  defp content_title(q, locale) do
+    Enum.find(
+      [
+        get_in(q.editions, [locale, "title"]) || get_in(q.published_editions, [locale, "title"]),
+        get_in(q.editions, [locale, "question"])
+      ],
+      &(is_binary(&1) and String.trim(&1) != "")
+    ) || gettext("Untitled draft")
+  end
+
+  defp placement_label(q, locale),
+    do:
+      if(home_card?(q, locale), do: gettext("Home-page card"), else: gettext("Knowledge nugget"))
+
   defp status_label("published"), do: gettext("Published")
   defp status_label(_), do: gettext("Draft")
   defp kind_label("factual"), do: gettext("Scored question")
@@ -217,20 +244,44 @@ defmodule PauseAiCaWeb.QuestionDraftsLive do
       locale={@locale}
     >
       <main class="mx-auto max-w-5xl px-5 py-10 crm-surface">
-        <h1 class="text-3xl font-bold">{gettext("Quiz management")}</h1>
+        <h1 class="text-3xl font-bold">{gettext("Knowledge content")}</h1>
         <p class="my-3">
           {gettext(
-            "Create and review questions in the CMS. Edits save automatically. Publish a reviewed version when it is ready for the quiz."
+            "Edit knowledge nuggets and home-page reading cards. Changes save as drafts; Publish updates the public version."
           )}
         </p>
         <p :if={@error} role="alert" class="my-4 rounded-lg border border-red-700 p-4 text-red-800">
           {@error}
         </p>
         <div :if={!@draft}>
-          <button id="question-new" phx-click="new" class="crm-button my-4">{gettext("New question")}</button>
+          <button id="question-new" phx-click="new" class="crm-button my-4">{gettext("New content")}</button>
+          <nav
+            id="content-placement-filter"
+            aria-label={gettext("Content placement")}
+            class="my-4 flex flex-wrap gap-4"
+          >
+            <.link
+              :for={
+                {value, label} <- [
+                  {"all", gettext("All content")},
+                  {"nuggets", gettext("Knowledge nuggets")},
+                  {"home", gettext("Home-page cards")},
+                  {"quiz", gettext("Scored questions")}
+                ]
+              }
+              patch={~p"/manage/questions?locale=#{@locale}&status=#{@filter}&placement=#{value}"}
+              aria-current={if @placement == value, do: "page"}
+              class={if @placement == value, do: "font-bold underline", else: "underline"}
+            >{label}</.link>
+          </nav>
+          <p class="text-sm">
+            {gettext(
+              "Scored questions are knowledge nuggets with answer choices. Home-page cards are selected separately for each language."
+            )}
+          </p>
           <nav
             id="question-status-filter"
-            aria-label={gettext("Question status")}
+            aria-label={gettext("Publication status")}
             class="my-4 flex flex-wrap gap-4"
           >
             <.link
@@ -238,26 +289,27 @@ defmodule PauseAiCaWeb.QuestionDraftsLive do
                 {value, label} <- [
                   {"all", gettext("All")},
                   {"draft", gettext("Drafts")},
-                  {"published", gettext("Published questions")},
-                  {"deleted", gettext("Deleted questions")}
+                  {"published", gettext("Published")},
+                  {"deleted", gettext("Deleted")}
                 ]
               }
-              patch={~p"/manage/questions?locale=#{@locale}&status=#{value}"}
+              patch={~p"/manage/questions?locale=#{@locale}&status=#{value}&placement=#{@placement}"}
               aria-current={if @filter == value, do: "page"}
               class={if @filter == value, do: "font-bold underline", else: "underline"}
             >{label}</.link>
           </nav>
-          <p :if={@records == []}>{gettext("No questions in this view.")}</p>
+          <p :if={@records == []}>{gettext("No content in this view.")}</p>
           <ul id="question-drafts" class="divide-y divide-stone-200">
             <li :for={q <- @records} class="py-4">
               <.link
                 navigate={~p"/manage/questions/#{q.id}?locale=#{@locale}"}
                 class="font-semibold underline"
-              >{q.review_id} · {get_in(q.editions, [@locale, "question"]) || gettext("Untitled draft")}</.link>
+              >{content_title(q, @locale)}</.link>
               <p class="mt-1 text-sm">
-                {if q.deleted_at, do: gettext("Deleted"), else: status_label(q.status)} · {kind_label(
-                  q.kind
-                )} · {gettext("Revision")} {q.revision}
+                {if q.deleted_at, do: gettext("Deleted"), else: status_label(q.status)} · {placement_label(
+                  q,
+                  @locale
+                )} · {kind_label(q.kind)} · {gettext("Revision")} {q.revision}
               </p>
             </li>
           </ul>
@@ -265,12 +317,14 @@ defmodule PauseAiCaWeb.QuestionDraftsLive do
         <div :if={@draft}>
           <div class="my-5 flex flex-wrap gap-5">
             <.link navigate={~p"/manage/questions?locale=#{@locale}"} class="underline">{gettext(
-              "All questions"
+              "All content"
             )}</.link>
             <.link href={~p"/manage/questions/#{@draft.id}?locale=en"} hreflang="en" class="underline">English</.link>
             <.link href={~p"/manage/questions/#{@draft.id}?locale=fr"} hreflang="fr" class="underline">Français</.link>
           </div>
-          <h2 class="text-xl font-bold">{@draft.review_id}</h2>
+          <h2 class="text-xl font-bold">
+            {content_title(@draft, @locale)}
+          </h2>
           <p class="my-2">
             {if @draft.deleted_at, do: gettext("Deleted"), else: status_label(@draft.status)} · {gettext(
               "Revision"
@@ -331,7 +385,7 @@ defmodule PauseAiCaWeb.QuestionDraftsLive do
               id="question-delete"
               disabled={@error != nil}
               phx-click="delete"
-              data-confirm={gettext("Delete this question? You can restore it from Deleted.")}
+              data-confirm={gettext("Delete this content? You can restore it from Deleted.")}
               class="crm-button"
             >{gettext("Delete")}</button>
             <button
@@ -350,6 +404,12 @@ defmodule PauseAiCaWeb.QuestionDraftsLive do
             class="space-y-5"
             phx-debounce="400"
           >
+            <.input field={@form[:title]} label={gettext("Library title")} phx-debounce="400" />
+            <.input
+              field={@form[:evidence]}
+              label={gettext("Source type / qualification")}
+              phx-debounce="400"
+            />
             <.input
               phx-debounce="400"
               field={@form[:question]}
@@ -361,7 +421,7 @@ defmodule PauseAiCaWeb.QuestionDraftsLive do
               <.input
                 field={@form[:kind]}
                 type="select"
-                label={gettext("Question format")}
+                label={gettext("Interaction format")}
                 options={[
                   {gettext("Scored question"), "factual"},
                   {gettext("Opinion"), "opinion"},

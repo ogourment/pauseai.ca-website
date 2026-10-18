@@ -1,0 +1,12 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  locale={@locale}
+  promote_warning_shot={false}
+>
+  <main class="mx-auto max-w-3xl px-5 py-16">
+    <h1 class="text-3xl font-bold">{gettext("Page not found")}</h1>
+    <p class="my-5">{gettext("This address does not match a page on this site.")}</p>
+    <.link href={"/" <> @locale} class="underline">{gettext("Go to the home page")}</.link>
+  </main>
+</Layouts.app>

@@ -124,4 +124,41 @@ defmodule PauseAiCa.QuestionBankTest do
     assert {:error, :invalid} =
              QuestionBank.save(scope, latest, "fr", Map.put(values, "path_stage", "invalid"))
   end
+
+  test "all shipped nuggets are managed with their bilingual public content intact" do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    scope = Scope.for_user(admin)
+    managed = QuestionBank.list(scope)
+
+    for locale <- ["en", "fr"], original <- PauseAiCa.Learning.nuggets(locale) do
+      draft = Enum.find(managed, &(&1.concept_id == original["id"]))
+      assert draft, "Missing managed nugget #{original["id"]}"
+      public = Enum.find(QuestionBank.catalogue(locale), &(&1["id"] == original["id"]))
+
+      for field <-
+            ~w(title question answer options source url language evidence image_url image_alt incident) do
+        assert public[field] == original[field], "Changed #{original["id"]} #{locale} #{field}"
+      end
+    end
+
+    draft = Enum.find(managed, &(&1.concept_id == "bengio-speed"))
+
+    attrs =
+      QuestionBank.values(draft, "en")
+      |> Map.put("title", "Revised library title")
+      |> Map.put("evidence", "Reviewed interview")
+
+    {:ok, edited} = QuestionBank.save(scope, draft, "en", attrs)
+
+    refute Enum.find(QuestionBank.catalogue("en"), &(&1["id"] == draft.concept_id))["title"] ==
+             "Revised library title"
+
+    {:ok, _} = QuestionBank.publish(scope, edited)
+    published = Enum.find(QuestionBank.catalogue("en"), &(&1["id"] == draft.concept_id))
+    assert published["title"] == "Revised library title"
+    assert published["evidence"] == "Reviewed interview"
+
+    assert Enum.find(QuestionBank.catalogue("fr"), &(&1["id"] == draft.concept_id))["title"] ==
+             draft.published_editions["fr"]["title"]
+  end
 end

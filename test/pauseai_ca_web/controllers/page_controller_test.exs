@@ -30,19 +30,21 @@ defmodule PauseAiCaWeb.PageControllerTest do
     refute html =~ "Choisissez ce que vous souhaitez explorer"
   end
 
-  test "unknown browser pages redirect home with a localized flash", %{conn: conn} do
-    en_conn = get(conn, "/en/no-such-page")
-    assert redirected_to(en_conn) == "/en"
-
-    assert Phoenix.Flash.get(en_conn.assigns.flash, :error) ==
-             "The page you requested could not be found."
-
-    fr_conn = get(recycle(conn), "/fr/page-introuvable")
-    assert redirected_to(fr_conn) == "/fr"
-    assert Phoenix.Flash.get(fr_conn.assigns.flash, :error) == "La page demandée est introuvable."
-
-    other_conn = get(recycle(conn), "/not-a-page")
-    assert redirected_to(other_conn) == "/en"
+  test "unknown pages return a localized 404 without putting an error on the next home visit", %{
+    conn: conn
+  } do
+    for {path, locale, message} <- [
+          {"/en/no-such-page", "en", "Page not found"},
+          {"/fr/page-introuvable", "fr", "Page introuvable"},
+          {"/not-a-page", "en", "Page not found"}
+        ] do
+      missing = get(recycle(conn), path)
+      assert html_response(missing, 404) =~ message
+      assert Phoenix.Flash.get(missing.assigns.flash, :error) == nil
+      home = missing |> recycle() |> get("/" <> locale)
+      assert html_response(home, 200)
+      assert Phoenix.Flash.get(home.assigns.flash, :error) == nil
+    end
   end
 
   test "English and French information paths are available", %{conn: conn} do

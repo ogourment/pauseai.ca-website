@@ -41,8 +41,8 @@ defmodule PauseAiCaWeb.PageController do
     Gettext.put_locale(PauseAiCaWeb.Gettext, locale)
 
     conn
-    |> put_flash(:error, gettext("The page you requested could not be found."))
-    |> redirect(to: "/#{locale}")
+    |> put_status(:not_found)
+    |> render(:not_found, locale: locale, page_title: gettext("Page not found"))
   end
 
   defp render_home(conn, locale) do

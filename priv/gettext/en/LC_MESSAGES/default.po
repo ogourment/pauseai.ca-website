@@ -100,7 +100,7 @@ msgstr "Canada"
 msgid "Canadian voices"
 msgstr "Canadian voices"
 
-#: lib/pauseai_ca_web/navigation.ex:67
+#: lib/pauseai_ca_web/navigation.ex:74
 #, elixir-autogen, elixir-format
 msgid "Change password"
 msgstr "Change password"
@@ -181,7 +181,7 @@ msgstr "Enter a complete web address."
 msgid "Estimated time"
 msgstr "Estimated time"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:400
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:460
 #, elixir-autogen, elixir-format
 msgid "Evaluate responses"
 msgstr "Evaluate responses"
@@ -258,7 +258,7 @@ msgstr "Montréal events"
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:230
 #: lib/pauseai_ca_web/live/profile_live.ex:239
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:402
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:462
 #, elixir-autogen, elixir-format
 msgid "Move toward action"
 msgstr "Move toward action"
@@ -270,7 +270,7 @@ msgstr "My MP"
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:24
 #: lib/pauseai_ca_web/live/dashboard_live.ex:266
-#: lib/pauseai_ca_web/navigation.ex:59
+#: lib/pauseai_ca_web/navigation.ex:66
 #, elixir-autogen, elixir-format
 msgid "My dashboard"
 msgstr "My dashboard"
@@ -283,7 +283,7 @@ msgstr "My learning path"
 #: lib/pauseai_ca_web/live/profile_live.ex:15
 #: lib/pauseai_ca_web/live/profile_live.ex:116
 #: lib/pauseai_ca_web/live/volunteer_profile_live.ex:156
-#: lib/pauseai_ca_web/navigation.ex:65
+#: lib/pauseai_ca_web/navigation.ex:72
 #, elixir-autogen, elixir-format
 msgid "My profile"
 msgstr "My profile"
@@ -457,7 +457,7 @@ msgstr "Sending…"
 msgid "Sent. Thank you — replies from MP offices often arrive within a few days."
 msgstr "Sent. Thank you — replies from MP offices often arrive within a few days."
 
-#: lib/pauseai_ca_web/navigation.ex:66
+#: lib/pauseai_ca_web/navigation.ex:73
 #, elixir-autogen, elixir-format
 msgid "Settings"
 msgstr "Settings"
@@ -502,7 +502,7 @@ msgid "Subject"
 msgstr "Subject"
 
 #: lib/pauseai_ca_web/live/profile_live.ex:238
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:401
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:461
 #, elixir-autogen, elixir-format
 msgid "Test coordination"
 msgstr "Test coordination"
@@ -552,7 +552,7 @@ msgstr "Two of the three Turing Award winners for deep learning built their care
 msgid "Understand and act"
 msgstr "Understand and act"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:399
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:459
 #, elixir-autogen, elixir-format
 msgid "Understand the risk"
 msgstr "Understand the risk"
@@ -903,11 +903,6 @@ msgstr "Join Us"
 msgid "Want to participate? Join PauseAI Canada."
 msgstr "Want to participate? Join PauseAI Canada."
 
-#: lib/pauseai_ca_web/controllers/page_controller.ex:44
-#, elixir-autogen, elixir-format
-msgid "The page you requested could not be found."
-msgstr "The page you requested could not be found."
-
 #: lib/pauseai_ca_web/live/participation_form.ex:473
 #, elixir-autogen, elixir-format
 msgid "Email your MP"
@@ -1038,7 +1033,7 @@ msgstr "Accounts"
 #: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:55
 #: lib/pauseai_ca_web/live/admin_metrics_live.ex:40
 #: lib/pauseai_ca_web/live/admin_metrics_live.ex:65
-#: lib/pauseai_ca_web/navigation.ex:155
+#: lib/pauseai_ca_web/navigation.ex:162
 #, elixir-autogen, elixir-format
 msgid "Admin dashboard"
 msgstr "Admin dashboard"
@@ -1595,8 +1590,8 @@ msgstr "Log me in only this time"
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:224
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:286
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:461
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:166
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:193
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:179
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:206
 #: lib/pauseai_ca_web/live/volunteer_profile_live.ex:150
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:1086
 #, elixir-autogen, elixir-format
@@ -1620,7 +1615,7 @@ msgid "Cancel"
 msgstr "Cancel"
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:581
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:336
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:390
 #, elixir-autogen, elixir-format
 msgid "Delete"
 msgstr "Delete"
@@ -1887,7 +1882,7 @@ msgid "Do not contact. Invitation excluded."
 msgstr "Do not contact. Invitation excluded."
 
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:698
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:199
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:226
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:619
 #, elixir-autogen, elixir-format
 msgid "Draft"
@@ -2080,7 +2075,7 @@ msgstr "Optional details"
 
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:35
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:38
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:26
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:27
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:49
 #, elixir-autogen, elixir-format
 msgid "Organizer access required."
@@ -2366,7 +2361,7 @@ msgid "Provider reference"
 msgstr "Provider reference"
 
 #: lib/pauseai_ca_web/components/layouts.ex:510
-#: lib/pauseai_ca_web/navigation.ex:164
+#: lib/pauseai_ca_web/navigation.ex:171
 #, elixir-autogen, elixir-format
 msgid "Management"
 msgstr "Management"
@@ -2821,7 +2816,7 @@ msgstr "Pledged amount"
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:734
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:793
 #: lib/pauseai_ca_web/live/newsletters_live.ex:312
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:505
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:565
 #, elixir-autogen, elixir-format
 msgid "Saving…"
 msgstr "Saving…"
@@ -3192,7 +3187,7 @@ msgstr "A protest organized by PauseAI Montréal brought together around 40 peop
 
 #: lib/pauseai_ca_web/live/donate_live.ex:309
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:734
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:505
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:565
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr "Save"
@@ -3650,7 +3645,7 @@ msgstr "Preferred address"
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:516
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:556
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:578
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:429
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:489
 #, elixir-autogen, elixir-format
 msgid "Preview ↗"
 msgstr "Preview ↗"
@@ -3742,15 +3737,15 @@ msgstr "Undo reconciliation"
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:289
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:419
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:451
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:170
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:179
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:183
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:192
 #, elixir-autogen, elixir-format
 msgid "Unsaved changes"
 msgstr "Unsaved changes"
 
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:374
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:393
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:256
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:218
 #, elixir-autogen, elixir-format
 msgid "Untitled draft"
 msgstr "Untitled draft"
@@ -3758,7 +3753,7 @@ msgstr "Untitled draft"
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:518
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:558
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:580
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:432
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:492
 #, elixir-autogen, elixir-format
 msgid "Allow the preview window, then try again."
 msgstr "Allow the preview window, then try again."
@@ -3766,7 +3761,7 @@ msgstr "Allow the preview window, then try again."
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:521
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:561
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:583
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:435
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:495
 #, elixir-autogen, elixir-format
 msgid "Connection interrupted; text retained in this page."
 msgstr "Connection interrupted; text retained in this page."
@@ -3774,7 +3769,7 @@ msgstr "Connection interrupted; text retained in this page."
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:519
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:559
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:581
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:433
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:493
 #, elixir-autogen, elixir-format
 msgid "Preview opened"
 msgstr "Preview opened"
@@ -3782,7 +3777,7 @@ msgstr "Preview opened"
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:522
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:562
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:584
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:436
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:496
 #, elixir-autogen, elixir-format
 msgid "Preview unavailable. Your text is retained."
 msgstr "Preview unavailable. Your text is retained."
@@ -3790,7 +3785,7 @@ msgstr "Preview unavailable. Your text is retained."
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:520
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:560
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:582
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:434
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:494
 #, elixir-autogen, elixir-format
 msgid "Preview updated"
 msgstr "Preview updated"
@@ -3904,7 +3899,7 @@ msgstr "I don't know"
 
 #: lib/pauseai_ca_web/components/learning_journey.ex:215
 #: lib/pauseai_ca_web/controllers/rogue_game_html.ex:7
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:378
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:438
 #, elixir-autogen, elixir-format
 msgid "Incidents"
 msgstr "Incidents"
@@ -3915,6 +3910,7 @@ msgid "Join or start a group"
 msgstr "Join or start a group"
 
 #: lib/pauseai_ca_web/components/learning_journey.ex:33
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:267
 #, elixir-autogen, elixir-format
 msgid "Knowledge nuggets"
 msgstr "Knowledge nuggets"
@@ -3933,14 +3929,14 @@ msgstr "My learning list"
 #: lib/pauseai_ca_web/components/learning_journey.ex:61
 #: lib/pauseai_ca_web/components/learning_journey.ex:216
 #: lib/pauseai_ca_web/live/library_live.ex:77
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:379
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:439
 #, elixir-autogen, elixir-format
 msgid "People and quotations"
 msgstr "People and quotations"
 
 #: lib/pauseai_ca_web/components/learning_journey.ex:217
 #: lib/pauseai_ca_web/live/library_live.ex:123
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:380
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:440
 #, elixir-autogen, elixir-format
 msgid "Politics"
 msgstr "Politics"
@@ -3956,7 +3952,7 @@ msgid "Receive news about AI policy and ways to take part. Choose email updates 
 msgstr "Receive news about AI policy and ways to take part. Choose email updates first; location can wait until you want to organize locally."
 
 #: lib/pauseai_ca_web/components/learning_journey.ex:214
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:377
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:437
 #, elixir-autogen, elixir-format
 msgid "Research"
 msgstr "Research"
@@ -3983,7 +3979,7 @@ msgid "Topics"
 msgstr "Topics"
 
 #: lib/pauseai_ca_web/components/learning_journey.ex:218
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:381
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:441
 #, elixir-autogen, elixir-format
 msgid "Treaties and action"
 msgstr "Treaties and action"
@@ -4899,182 +4895,158 @@ msgstr "Copied!"
 msgid "Don’t close me, or I will reveal Captain Biscuit’s secret cookie recipe!"
 msgstr "Don’t close me, or I will reveal Captain Biscuit’s secret cookie recipe!"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:202
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:368
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:229
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:428
 #, elixir-autogen, elixir-format
 msgid "Action planning"
 msgstr "Action planning"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:132
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:172
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:136
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:185
 #, elixir-autogen, elixir-format
 msgid "Another reviewer saved changes. Copy your edits before reloading their version."
 msgstr "Another reviewer saved changes. Copy your edits before reloading their version."
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:411
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:471
 #, elixir-autogen, elixir-format
 msgid "Answer choices · one per line"
 msgstr "Answer choices · one per line"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:181
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:194
 #, elixir-autogen, elixir-format
 msgid "Check the URLs, answer choices and correct answer. Your changes are retained."
 msgstr "Check the URLs, answer choices and correct answer. Your changes are retained."
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:208
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:417
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:235
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:477
 #, elixir-autogen, elixir-format
 msgid "Correct answer"
 msgstr "Correct answer"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:64
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:142
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:68
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:146
 #, elixir-autogen, elixir-format
 msgid "Could not save. Your changes are retained."
 msgstr "Could not save. Your changes are retained."
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:203
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:369
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:230
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:429
 #, elixir-autogen, elixir-format
 msgid "Discussion"
 msgstr "Discussion"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:495
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:555
 #, elixir-autogen, elixir-format
 msgid "Estimated social proof and possible bias"
 msgstr "Estimated social proof and possible bias"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:205
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:428
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:232
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:488
 #, elixir-autogen, elixir-format
 msgid "Explanation · Markdown"
 msgstr "Explanation · Markdown"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:473
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:533
 #, elixir-autogen, elixir-format
 msgid "Image and source assessment"
 msgstr "Image and source assessment"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:490
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:550
 #, elixir-autogen, elixir-format
 msgid "Image credit / permission"
 msgstr "Image credit / permission"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:209
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:485
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:236
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:545
 #, elixir-autogen, elixir-format
 msgid "Image description"
 msgstr "Image description"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:230
-#, elixir-autogen, elixir-format
-msgid "New question"
-msgstr "New question"
-
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:469
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:529
 #, elixir-autogen, elixir-format
 msgid "Next action"
 msgstr "Next action"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:201
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:367
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:228
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:427
 #, elixir-autogen, elixir-format
 msgid "Opinion"
 msgstr "Opinion"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:479
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:539
 #, elixir-autogen, elixir-format
 msgid "Optional image URL"
 msgstr "Optional image URL"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:204
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:358
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:231
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:418
 #, elixir-autogen, elixir-format
 msgid "Question"
 msgstr "Question"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:364
-#, elixir-autogen, elixir-format
-msgid "Question format"
-msgstr "Question format"
-
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:509
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:511
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:569
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:571
 #, elixir-autogen, elixir-format
 msgid "Question preview"
 msgstr "Question preview"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:279
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:333
 #, elixir-autogen, elixir-format
 msgid "Reload saved version"
 msgstr "Reload saved version"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:503
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:563
 #, elixir-autogen, elixir-format
 msgid "Reviewer notes"
 msgstr "Reviewer notes"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:260
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:275
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:312
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:329
 #, elixir-autogen, elixir-format
 msgid "Revision"
 msgstr "Revision"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:200
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:366
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:227
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:426
 #, elixir-autogen, elixir-format
 msgid "Scored question"
 msgstr "Scored question"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:207
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:463
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:234
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:523
 #, elixir-autogen, elixir-format
 msgid "Source URL"
 msgstr "Source URL"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:206
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:450
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:233
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:510
 #, elixir-autogen, elixir-format
 msgid "Source name"
 msgstr "Source name"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:375
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:435
 #, elixir-autogen, elixir-format
 msgid "Topic"
 msgstr "Topic"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:419
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:479
 #, elixir-autogen, elixir-format
 msgid "Ungraded / not decided"
 msgstr "Ungraded / not decided"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:239
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:290
 #, elixir-autogen, elixir-format
 msgid "All"
 msgstr "All"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:267
-#, elixir-autogen, elixir-format
-msgid "All questions"
-msgstr "All questions"
-
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:125
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:129
 #, elixir-autogen, elixir-format
 msgid "Complete the listed fields before publishing. Your changes are saved."
 msgstr "Complete the listed fields before publishing. Your changes are saved."
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:222
-#, elixir-autogen, elixir-format
-msgid "Create and review questions in the CMS. Edits save automatically. Publish a reviewed version when it is ready for the quiz."
-msgstr "Create and review questions in the CMS. Edits save automatically. Publish a reviewed version when it is ready for the quiz."
-
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:334
-#, elixir-autogen, elixir-format
-msgid "Delete this question? You can restore it from Deleted."
-msgstr "Delete this question? You can restore it from Deleted."
-
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:258
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:275
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:293
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:309
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:329
 #, elixir-autogen, elixir-format
 msgid "Deleted"
 msgstr "Deleted"
@@ -5082,89 +5054,49 @@ msgstr "Deleted"
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:336
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:494
 #: lib/pauseai_ca_web/live/newsletters_live.ex:209
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:240
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:291
 #, elixir-autogen, elixir-format
 msgid "Drafts"
 msgstr "Drafts"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:139
-#, elixir-autogen, elixir-format
-msgid "Move this question to draft before deleting it."
-msgstr "Move this question to draft before deleting it."
-
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:328
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:382
 #, elixir-autogen, elixir-format
 msgid "Move to draft"
 msgstr "Move to draft"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:250
-#, elixir-autogen, elixir-format
-msgid "No questions in this view."
-msgstr "No questions in this view."
-
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:319
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:373
 #, elixir-autogen, elixir-format
 msgid "Publish"
 msgstr "Publish"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:198
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:225
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:292
 #, elixir-autogen, elixir-format
 msgid "Published"
 msgstr "Published"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:233
-#, elixir-autogen, elixir-format
-msgid "Question status"
-msgstr "Question status"
-
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:40
-#, elixir-autogen, elixir-format
-msgid "Question unavailable."
-msgstr "Question unavailable."
-
-#: lib/pauseai_ca_web/navigation.ex:56
-#, elixir-autogen, elixir-format
-msgid "Quiz"
-msgstr "Quiz"
-
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:14
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:220
-#, elixir-autogen, elixir-format
-msgid "Quiz management"
-msgstr "Quiz management"
-
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:342
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:396
 #, elixir-autogen, elixir-format
 msgid "Restore as draft"
 msgstr "Restore as draft"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:287
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:341
 #, elixir-autogen, elixir-format
 msgid "Your edits are saved. The published version stays unchanged until you publish again."
 msgstr "Your edits are saved. The published version stays unchanged until you publish again."
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:120
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:444
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:124
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:504
 #, elixir-autogen, elixir-format
 msgid "Complete this field before publishing."
 msgstr "Complete this field before publishing."
-
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:242
-#, elixir-autogen, elixir-format
-msgid "Deleted questions"
-msgstr "Deleted questions"
-
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:241
-#, elixir-autogen, elixir-format
-msgid "Published questions"
-msgstr "Published questions"
 
 #: lib/pauseai_ca_web/components/learning_journey.ex:208
 #, elixir-autogen, elixir-format
 msgid "Read the explanation to see why."
 msgstr "Read the explanation to see why."
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:455
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:515
 #, elixir-autogen, elixir-format
 msgid "Source language"
 msgstr "Source language"
@@ -5407,13 +5339,13 @@ msgstr "This draft changed in another tab. Reload before archiving or restoring 
 msgid "This draft changed in another tab. Your text is retained here. Copy it before reloading the saved version."
 msgstr "This draft changed in another tab. Your text is retained here. Copy it before reloading the saved version."
 
-#: lib/pauseai_ca_web/navigation.ex:164
+#: lib/pauseai_ca_web/navigation.ex:171
 #, elixir-autogen, elixir-format
 msgid "Admin"
 msgstr "Admin"
 
 #: lib/pauseai_ca_web/components/layouts.ex:183
-#: lib/pauseai_ca_web/navigation.ex:164
+#: lib/pauseai_ca_web/navigation.ex:171
 #, elixir-autogen, elixir-format
 msgid "My account"
 msgstr "My account"
@@ -6384,37 +6316,146 @@ msgstr "You can donate directly without completing the pledge form."
 msgid "Your pledge is recorded. We will contact you about it. No payment has been taken through this form."
 msgstr "Your pledge is recorded. We will contact you about it. No payment has been taken through this form."
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:405
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:465
 #, elixir-autogen, elixir-format
 msgid "Card category label"
 msgstr "Card category label"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:406
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:466
 #, elixir-autogen, elixir-format
 msgid "Card link label"
 msgstr "Card link label"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:398
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:458
 #, elixir-autogen, elixir-format
 msgid "Choose a category"
 msgstr "Choose a category"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:386
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:446
 #, elixir-autogen, elixir-format
 msgid "Learning path / home page"
 msgstr "Learning path / home page"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:396
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:456
 #, elixir-autogen, elixir-format
 msgid "Learning path category"
 msgstr "Learning path category"
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:389
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:449
 #, elixir-autogen, elixir-format
 msgid "Publish to apply these settings. Other nuggets remain in the learning library."
 msgstr "Publish to apply these settings. Other nuggets remain in the learning library."
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:387
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:447
 #, elixir-autogen, elixir-format
 msgid "Show on home page"
 msgstr "Show on home page"
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:266
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:319
+#, elixir-autogen, elixir-format
+msgid "All content"
+msgstr "All content"
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:260
+#, elixir-autogen, elixir-format
+msgid "Content placement"
+msgstr "Content placement"
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:41
+#, elixir-autogen, elixir-format
+msgid "Content unavailable."
+msgstr "Content unavailable."
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:388
+#, elixir-autogen, elixir-format
+msgid "Delete this content? You can restore it from Deleted."
+msgstr "Delete this content? You can restore it from Deleted."
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:249
+#, elixir-autogen, elixir-format
+msgid "Edit knowledge nuggets and home-page reading cards. Changes save as drafts; Publish updates the public version."
+msgstr "Edit knowledge nuggets and home-page reading cards. Changes save as drafts; Publish updates the public version."
+
+#: lib/pauseai_ca_web/controllers/page_html/not_found.html.heex:10
+#, elixir-autogen, elixir-format
+msgid "Go to the home page"
+msgstr "Go to the home page"
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:223
+#, elixir-autogen, elixir-format
+msgid "Home-page card"
+msgstr "Home-page card"
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:268
+#, elixir-autogen, elixir-format
+msgid "Home-page cards"
+msgstr "Home-page cards"
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:424
+#, elixir-autogen, elixir-format
+msgid "Interaction format"
+msgstr "Interaction format"
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:14
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:247
+#: lib/pauseai_ca_web/navigation.ex:58
+#, elixir-autogen, elixir-format
+msgid "Knowledge content"
+msgstr "Knowledge content"
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:223
+#, elixir-autogen, elixir-format
+msgid "Knowledge nugget"
+msgstr "Knowledge nugget"
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:407
+#, elixir-autogen, elixir-format
+msgid "Library title"
+msgstr "Library title"
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:143
+#, elixir-autogen, elixir-format
+msgid "Move this content to draft before deleting it."
+msgstr "Move this content to draft before deleting it."
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:257
+#, elixir-autogen, elixir-format
+msgid "New content"
+msgstr "New content"
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:301
+#, elixir-autogen, elixir-format
+msgid "No content in this view."
+msgstr "No content in this view."
+
+#: lib/pauseai_ca_web/controllers/page_controller.ex:45
+#: lib/pauseai_ca_web/controllers/page_html/not_found.html.heex:8
+#, elixir-autogen, elixir-format
+msgid "Page not found"
+msgstr "Page not found"
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:284
+#, elixir-autogen, elixir-format
+msgid "Publication status"
+msgstr "Publication status"
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:269
+#, elixir-autogen, elixir-format
+msgid "Scored questions"
+msgstr "Scored questions"
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:278
+#, elixir-autogen, elixir-format
+msgid "Scored questions are knowledge nuggets with answer choices. Home-page cards are selected separately for each language."
+msgstr "Scored questions are knowledge nuggets with answer choices. Home-page cards are selected separately for each language."
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:410
+#, elixir-autogen, elixir-format
+msgid "Source type / qualification"
+msgstr "Source type / qualification"
+
+#: lib/pauseai_ca_web/controllers/page_html/not_found.html.heex:9
+#, elixir-autogen, elixir-format
+msgid "This address does not match a page on this site."
+msgstr "This address does not match a page on this site."

@@ -146,4 +146,32 @@ defmodule PauseAiCaWeb.QuestionDraftsLiveTest do
     assert get(build_conn(), "/fr") |> html_response(200) =~ ~s(id="resource-risk")
     assert get(build_conn(), "/en/learn") |> html_response(200) =~ ~s(id="nugget-risk")
   end
+
+  test "organizers can find every existing nugget separately from home-page cards", %{conn: conn} do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    conn = log_in_user(conn, admin)
+    {:ok, view, html} = live(conn, "/manage/questions?locale=en&placement=nuggets")
+    assert html =~ "Knowledge content"
+    refute html =~ "Quiz management"
+
+    for original <- PauseAiCa.Learning.nuggets("en") do
+      assert has_element?(view, "#question-drafts a", original["title"])
+    end
+
+    refute has_element?(
+             view,
+             "#question-drafts a",
+             "Why do researchers discuss existential risk?"
+           )
+
+    {:ok, home, _} = live(conn, "/manage/questions?locale=en&placement=home")
+
+    assert has_element?(
+             home,
+             "#question-drafts a",
+             "Why do researchers discuss existential risk?"
+           )
+
+    refute has_element?(home, "#question-drafts a", "Development speed surprised researchers")
+  end
 end

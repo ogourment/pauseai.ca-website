@@ -53,7 +53,14 @@ defmodule PauseAiCaWeb.Navigation do
       ),
       item("pauseai.accounts", gettext_noop("Accounts"), :manage, :accounts, :organizer, 10),
       item("pauseai.mail", gettext_noop("Emails"), :manage, :mail, :organizer, 20),
-      item("pauseai.questions", gettext_noop("Quiz"), :manage, :questions, :organizer, 30),
+      item(
+        "pauseai.questions",
+        gettext_noop("Knowledge content"),
+        :manage,
+        :questions,
+        :organizer,
+        30
+      ),
       item(
         "pauseai.my-dashboard",
         gettext_noop("My dashboard"),

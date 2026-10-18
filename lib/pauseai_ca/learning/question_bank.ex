@@ -4,7 +4,7 @@ defmodule PauseAiCa.Learning.QuestionBank do
   alias PauseAiCa.{Repo, Volunteers}
   alias PauseAiCa.Learning.QuestionDraft
 
-  @fields ~w(question options correct answer source url action notes image_url image_alt image_credit social_proof language home_page path_stage home_label home_cta)
+  @fields ~w(title evidence question options correct answer source url action notes image_url image_alt image_credit social_proof language home_page path_stage home_label home_cta)
 
   def list(scope, filter \\ "all") do
     if Volunteers.allowed?(scope) do
@@ -138,11 +138,19 @@ defmodule PauseAiCa.Learning.QuestionBank do
     |> Map.merge(Map.drop(edition, ["notes", "social_proof"]))
     |> Map.merge(%{
       "id" => question.concept_id,
-      "title" => original["title"] || edition["question"],
+      "title" =>
+        if(blank?(edition["title"]),
+          do: original["title"] || edition["question"],
+          else: edition["title"]
+        ),
       "topic" =>
         if(question.published_topic == "actions", do: "treaty", else: question.published_topic),
       "discussion" => question.published_kind != "factual",
-      "evidence" => if(edition["url"] == original["url"], do: original["evidence"], else: nil),
+      "evidence" =>
+        if(blank?(edition["evidence"]),
+          do: if(edition["url"] == original["url"], do: original["evidence"], else: nil),
+          else: edition["evidence"]
+        ),
       "cms" => true,
       "language" => language || locale
     })
@@ -176,7 +184,18 @@ defmodule PauseAiCa.Learning.QuestionBank do
   end
 
   def values(draft, locale) do
-    edition = Map.get(draft.editions, locale, %{})
+    original =
+      Enum.find(PauseAiCa.Learning.nuggets(locale), &(&1["id"] == draft.concept_id)) || %{}
+
+    stored = Map.get(draft.editions, locale, %{})
+    defaults = Map.take(original, ~w(title))
+
+    defaults =
+      if stored["url"] == original["url"],
+        do: Map.put(defaults, "evidence", original["evidence"] || ""),
+        else: defaults
+
+    edition = Map.merge(defaults, stored)
 
     Map.merge(Map.new(@fields, &{&1, ""}), edition)
     |> Map.put("options", Enum.join(edition["options"] || [], "\n"))
@@ -197,7 +216,15 @@ defmodule PauseAiCa.Learning.QuestionBank do
          {:ok, persisted} <- get(scope, draft.id),
          true <- persisted.revision == draft.revision and is_nil(persisted.deleted_at),
          {:ok, edition} <- edition(attrs) do
-      changed = Map.put(persisted.editions, locale, edition)
+      previous = values(persisted, locale)
+
+      edition =
+        if edition["url"] != previous["url"] and edition["evidence"] == previous["evidence"],
+          do: Map.put(edition, "evidence", ""),
+          else: edition
+
+      changed =
+        Map.put(persisted.editions, locale, Map.merge(persisted.editions[locale] || %{}, edition))
 
       changeset =
         QuestionDraft.changeset(draft, %{
