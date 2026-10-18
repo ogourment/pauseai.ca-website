@@ -1,45 +1,18 @@
-<Layouts.app flash={@flash} current_scope={@current_scope} locale={@locale}>
-  <section class="relative overflow-hidden border-b border-stone-200">
-    <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_80%_15%,rgba(239,91,53,0.18),transparent_32%),linear-gradient(180deg,#f8f5ed_0%,#f3efe4_100%)]">
-    </div>
-    <div class="mx-auto max-w-6xl px-5 py-20 sm:py-28">
-      <h1 class="max-w-4xl font-serif text-5xl leading-[1.02] tracking-tight text-stone-950 sm:text-7xl">
-        {gettext("How far should we let AI advance?")}
-      </h1>
-      <p id="latest-safety-context" class="mt-6 max-w-2xl text-lg leading-8 text-stone-700">
-        {gettext(
-          "What risks could advanced AI pose, and what can Canada do about them? Explore the research, proposals for a pause, and ways to get involved."
-        )}
-        <a
-          href={
-            if(@locale == "fr",
-              do: ~p"/fr/signal-d-alarme#developments",
-              else: ~p"/en/warning-shot#developments"
-            )
-          }
-          class="font-semibold underline decoration-brand decoration-2 underline-offset-4"
-        >{gettext("Latest developments")}</a>
-      </p>
-      <a
-        href="#questions"
-        class="mt-9 inline-flex rounded-full bg-stone-900 px-6 py-3 font-semibold text-white transition hover:-translate-y-0.5 hover:bg-stone-700"
-      >
-        {gettext("Begin · 2 minutes")}
-      </a>
-    </div>
-  </section>
-
-  <PauseAiCaWeb.LearningJourney.journey locale={@locale} current_scope={@current_scope} quiz />
-
-  <section id="reflection" class="mx-auto max-w-6xl px-5 py-20">
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  locale={@locale}
+  promote_warning_shot={false}
+>
+  <section id="questions" class="mx-auto max-w-6xl px-5 py-20">
     <div class="grid gap-12 lg:grid-cols-[0.7fr_1.3fr]">
       <div>
         <p class="eyebrow">
           {gettext("Your starting point")}
         </p>
-        <h2 class="mt-3 font-serif text-4xl leading-tight text-stone-950">
+        <h1 class="mt-3 font-serif text-4xl leading-tight text-stone-950">
           {gettext("Where do you stand today?")}
-        </h2>
+        </h1>
       </div>
 
       <div
@@ -128,66 +101,16 @@
 
       <div id="resource-grid" class="mt-10 grid gap-5 md:grid-cols-2">
         <.resource_card
-          id="resource-risk"
-          stage={gettext("Understand the risk")}
-          title={gettext("Why do researchers discuss existential risk?")}
-          body={
-            gettext(
-              "How could people lose control of an AI system? Read an introduction to the risks researchers are studying."
-            )
-          }
-          href={gettext("https://pauseai.info/xrisk")}
-          source={if(@locale == "fr", do: "Yoshua Bengio", else: "PauseAI")}
-          cta={gettext("Read the source overview")}
-          bookmark="risk"
-          locale={@locale}
-          current_scope={@current_scope}
-        />
-        <.resource_card
-          id="resource-pause"
-          stage={gettext("Evaluate responses")}
-          title={gettext("What would a pause actually mean?")}
-          body={
-            gettext(
-              "What would pause, what would continue, and how a pause differs from a blanket ban on AI."
-            )
-          }
-          href={gettext("https://pauseai.info/proposal")}
-          source={gettext("PauseAI")}
-          cta={gettext("Examine the proposal")}
-          bookmark="pause"
-          locale={@locale}
-          current_scope={@current_scope}
-        />
-        <.resource_card
-          id="resource-coordination"
-          stage={gettext("Test coordination")}
-          title={gettext("Could a global treaty be verified?")}
-          body={
-            gettext(
-              "How inspections of advanced chips and data centres could help countries verify an agreement."
-            )
-          }
-          href={gettext("https://pauseai.info/feasibility")}
-          source={gettext("PauseAI (in English)")}
-          cta={gettext("Explore the mechanisms")}
-          bookmark="coordination"
-          locale={@locale}
-          current_scope={@current_scope}
-        />
-        <.resource_card
-          id="resource-agency"
-          stage={gettext("Move toward action")}
-          title={gettext("Why public support matters")}
-          body={
-            gettext(
-              "Letters, meetings and public events can show elected representatives that people want action on AI risks."
-            )
-          }
-          href={if(@locale == "fr", do: ~p"/fr/strategie", else: ~p"/en/strategy")}
-          source={gettext("PauseAI Canada")}
-          cta={gettext("Read the summary")}
-          bookmark="agency"
+          :for={n <- @home_resources}
+          id={"resource-#{n["id"]}"}
+          path_stage={n["path_stage"]}
+          stage={n["home_label"]}
+          title={n["question"]}
+          body={n["answer"]}
+          href={n["url"]}
+          source={n["source"]}
+          cta={n["home_cta"]}
+          bookmark={n["id"]}
           locale={@locale}
           current_scope={@current_scope}
         />

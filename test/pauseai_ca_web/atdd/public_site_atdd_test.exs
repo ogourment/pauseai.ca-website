@@ -27,7 +27,13 @@ if System.get_env("ATDD") == "true" do
         conn
         |> visit("/")
         |> assert_has("#questions")
-        |> assert_has("h1", text: "How far should we let AI advance?")
+        |> refute_has("#warning-shot-banner")
+        |> refute_has("#campaign-prompt")
+        |> refute_has("[data-learning-root]")
+        |> assert_has("#resource-grid .resource-card", count: 4)
+        |> click_button("Show my suggested path")
+        |> assert_has("#resource-risk.is-recommended")
+        |> assert_has("h1", text: "Where do you stand today?")
         |> BrowserScreenshot.capture(
           "public-site-01-home.png",
           &PhoenixTest.Playwright.screenshot/2

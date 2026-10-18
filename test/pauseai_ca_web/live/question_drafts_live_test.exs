@@ -132,4 +132,18 @@ defmodule PauseAiCaWeb.QuestionDraftsLiveTest do
     refute LazyHTML.attribute(card, "class")
            |> Enum.any?(&String.contains?(&1, "has-voice-category"))
   end
+
+  test "home page checkbox saves privately and publication applies the selection", %{conn: conn} do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    draft = Repo.get_by!(PauseAiCa.Learning.QuestionDraft, concept_id: "risk")
+    {:ok, view, _} = live(log_in_user(conn, admin), "/manage/questions/#{draft.id}?locale=en")
+    assert has_element?(view, "input[name='question[home_page]'][checked]")
+    view |> form("#question-draft-form", question: %{home_page: "false"}) |> render_change()
+    assert has_element?(view, "#question-save-status", "Saved")
+    assert get(build_conn(), "/en") |> html_response(200) =~ ~s(id="resource-risk")
+    view |> form("#question-draft-form") |> render_submit(%{"intent" => "publish"})
+    refute get(build_conn(), "/en") |> html_response(200) =~ ~s(id="resource-risk")
+    assert get(build_conn(), "/fr") |> html_response(200) =~ ~s(id="resource-risk")
+    assert get(build_conn(), "/en/learn") |> html_response(200) =~ ~s(id="nugget-risk")
+  end
 end

@@ -99,4 +99,29 @@ defmodule PauseAiCa.QuestionBankTest do
     assert Repo.get!(PauseAiCa.Learning.QuestionDraft, saved.id).deleted_at == nil
     assert Repo.aggregate(QuestionRevision, :count) == 7
   end
+
+  test "home selections are locale-specific publication snapshots and preserve library items" do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    scope = Scope.for_user(admin)
+    assert Enum.map(QuestionBank.homepage("en"), & &1["id"]) == ~w(risk pause coordination agency)
+    draft = Repo.get_by!(PauseAiCa.Learning.QuestionDraft, concept_id: "risk")
+    values = QuestionBank.values(draft, "en") |> Map.put("home_page", "false")
+    {:ok, saved} = QuestionBank.save(scope, draft, "en", values)
+    assert Enum.any?(QuestionBank.homepage("en"), &(&1["id"] == "risk"))
+    {:ok, published} = QuestionBank.publish(scope, saved)
+    refute Enum.any?(QuestionBank.homepage("en"), &(&1["id"] == "risk"))
+    assert Enum.any?(QuestionBank.homepage("fr"), &(&1["id"] == "risk"))
+    assert Enum.any?(QuestionBank.catalogue("en"), &(&1["id"] == "risk"))
+
+    values =
+      QuestionBank.values(published, "en")
+      |> Map.merge(%{"home_page" => "true", "path_stage" => "agency", "home_cta" => "Read more"})
+
+    {:ok, saved} = QuestionBank.save(scope, published, "en", values)
+    {:ok, latest} = QuestionBank.publish(scope, saved)
+    assert Enum.find(QuestionBank.homepage("en"), &(&1["id"] == "risk"))["path_stage"] == "agency"
+
+    assert {:error, :invalid} =
+             QuestionBank.save(scope, latest, "fr", Map.put(values, "path_stage", "invalid"))
+  end
 end

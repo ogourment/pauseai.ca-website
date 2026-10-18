@@ -50,7 +50,8 @@ defmodule PauseAiCaWeb.PageController do
 
     render(conn, :home,
       locale: locale,
-      page_title: gettext("Understand and act")
+      page_title: gettext("Understand and act"),
+      home_resources: PauseAiCa.Learning.QuestionBank.homepage(locale)
     )
   end
 

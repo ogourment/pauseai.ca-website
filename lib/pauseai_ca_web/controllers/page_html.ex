@@ -47,10 +47,13 @@ defmodule PauseAiCaWeb.PageHTML do
   attr :locale, :string, required: true
   attr :current_scope, :map, default: nil
 
+  attr :path_stage, :string, default: nil
+
   def resource_card(assigns) do
     ~H"""
     <article
       id={@id}
+      data-path-stage={@path_stage}
       class="resource-card group relative rounded-3xl border border-stone-200 bg-[#f8f5ed] p-7 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
     >
       <span class="recommendation-badge hidden rounded-full bg-brand px-3 py-1 text-xs font-bold uppercase tracking-wider text-stone-950">{gettext(
@@ -58,7 +61,9 @@ defmodule PauseAiCaWeb.PageHTML do
       )}</span>
       <p class="mt-3 text-xs font-bold uppercase tracking-[0.18em] text-brand-ink">{@stage}</p>
       <h3 class="mt-3 font-serif text-3xl leading-tight text-stone-950">{@title}</h3>
-      <p class="mt-4 leading-7 text-stone-600">{@body}</p>
+      <div class="mt-4 leading-7 text-stone-600 [&_a]:underline">
+        {raw(PauseAiCa.Mail.Render.html(@body))}
+      </div>
       <a
         href={@href}
         target="_blank"

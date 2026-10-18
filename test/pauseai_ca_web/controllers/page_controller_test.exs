@@ -3,7 +3,7 @@ defmodule PauseAiCaWeb.PageControllerTest do
 
   test "GET / renders English by default", %{conn: conn} do
     conn = get(conn, ~p"/")
-    assert html_response(conn, 200) =~ "How far should we let AI advance?"
+    assert html_response(conn, 200) =~ "Where do you stand today?"
   end
 
   test "the legacy Montreal page permanently redirects to the English home page", %{conn: conn} do
@@ -25,7 +25,9 @@ defmodule PauseAiCaWeb.PageControllerTest do
   test "French navigation points to the renamed campaign", %{conn: conn} do
     html = conn |> get(~p"/fr") |> html_response(200)
     assert html =~ ~s(href="/fr/signal-d-alarme")
-    assert html =~ ~s(href="/fr/signal-d-alarme#developments")
+    refute html =~ ~s(id="warning-shot-banner")
+    refute html =~ ~s(id="campaign-prompt")
+    refute html =~ "Choisissez ce que vous souhaitez explorer"
   end
 
   test "unknown browser pages redirect home with a localized flash", %{conn: conn} do
@@ -45,10 +47,10 @@ defmodule PauseAiCaWeb.PageControllerTest do
 
   test "English and French information paths are available", %{conn: conn} do
     en_html = html_response(get(conn, ~p"/en"), 200)
-    assert en_html =~ "How far should we let AI advance?"
+    assert en_html =~ "Where do you stand today?"
 
     fr_html = html_response(get(conn, ~p"/fr"), 200)
-    assert fr_html =~ "Jusqu’où devrions-nous laisser l’IA progresser?"
+    assert fr_html =~ "Qu’en pensez-vous aujourd’hui?"
     assert fr_html =~ "Commencez là où vous avez des questions."
     refute fr_html =~ "Explorer les arguments"
     assert fr_html =~ "Créer un compte pour enregistrer votre parcours"

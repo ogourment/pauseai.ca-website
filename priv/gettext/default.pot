@@ -11,12 +11,12 @@
 msgid ""
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:62
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:35
 #, elixir-autogen, elixir-format
 msgid "A pause or treaty could materially reduce that risk."
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:56
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:29
 #, elixir-autogen, elixir-format
 msgid "AI poses a genuine existential risk."
 msgstr ""
@@ -78,11 +78,6 @@ msgstr ""
 msgid "Attempting to reconnect"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:27
-#, elixir-autogen, elixir-format
-msgid "Begin · 2 minutes"
-msgstr ""
-
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:982
 #, elixir-autogen, elixir-format
 msgid "Body"
@@ -120,7 +115,7 @@ msgstr ""
 msgid "Choose an action"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:88
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:61
 #, elixir-autogen, elixir-format
 msgid "Clear my answers"
 msgstr ""
@@ -146,12 +141,7 @@ msgstr ""
 msgid "Copy the letter"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:165
-#, elixir-autogen, elixir-format
-msgid "Could a global treaty be verified?"
-msgstr ""
-
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:106
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:79
 #, elixir-autogen, elixir-format
 msgid "Create an account to save your progress"
 msgstr ""
@@ -191,7 +181,7 @@ msgstr ""
 msgid "Estimated time"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:148
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:400
 #, elixir-autogen, elixir-format
 msgid "Evaluate responses"
 msgstr ""
@@ -199,16 +189,6 @@ msgstr ""
 #: lib/pauseai_ca_web/components/layouts.ex:159
 #, elixir-autogen, elixir-format
 msgid "Events"
-msgstr ""
-
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:157
-#, elixir-autogen, elixir-format
-msgid "Examine the proposal"
-msgstr ""
-
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:173
-#, elixir-autogen, elixir-format
-msgid "Explore the mechanisms"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/profile_live.ex:156
@@ -240,12 +220,7 @@ msgstr ""
 msgid "Get involved"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:7
-#, elixir-autogen, elixir-format
-msgid "How far should we let AI advance?"
-msgstr ""
-
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:69
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:42
 #, elixir-autogen, elixir-format
 msgid "International coordination is politically achievable—countries can agree, comply, and enforce it."
 msgstr ""
@@ -281,9 +256,9 @@ msgstr ""
 msgid "Montréal events"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:180
 #: lib/pauseai_ca_web/live/dashboard_live.ex:230
 #: lib/pauseai_ca_web/live/profile_live.ex:239
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:402
 #, elixir-autogen, elixir-format
 msgid "Move toward action"
 msgstr ""
@@ -393,7 +368,7 @@ msgstr ""
 msgid "Privacy"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:112
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:85
 #: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:9
 #, elixir-autogen, elixir-format
 msgid "Privacy policy"
@@ -418,16 +393,6 @@ msgstr ""
 #: lib/pauseai_ca_web/controllers/page_html/strategy.html.heex:89
 #, elixir-autogen, elixir-format
 msgid "Read the original article ↗"
-msgstr ""
-
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:141
-#, elixir-autogen, elixir-format
-msgid "Read the source overview"
-msgstr ""
-
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:189
-#, elixir-autogen, elixir-format
-msgid "Read the summary"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:461
@@ -460,7 +425,7 @@ msgstr ""
 msgid "Save changes"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:98
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:71
 #, elixir-autogen, elixir-format
 msgid "Save your answers and continue your path on another device."
 msgstr ""
@@ -502,7 +467,7 @@ msgstr ""
 msgid "Should we slow AI down?"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:81
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:54
 #, elixir-autogen, elixir-format
 msgid "Show my suggested path"
 msgstr ""
@@ -523,7 +488,7 @@ msgstr ""
 msgid "Start here"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:124
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:97
 #, elixir-autogen, elixir-format
 msgid "Start where you have questions."
 msgstr ""
@@ -536,8 +501,8 @@ msgstr ""
 msgid "Subject"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:164
 #: lib/pauseai_ca_web/live/profile_live.ex:238
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:401
 #, elixir-autogen, elixir-format
 msgid "Test coordination"
 msgstr ""
@@ -587,7 +552,7 @@ msgstr ""
 msgid "Understand and act"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:132
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:399
 #, elixir-autogen, elixir-format
 msgid "Understand the risk"
 msgstr ""
@@ -638,22 +603,12 @@ msgstr ""
 msgid "What we measure"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:149
-#, elixir-autogen, elixir-format
-msgid "What would a pause actually mean?"
-msgstr ""
-
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:151
-#, elixir-autogen, elixir-format
-msgid "What would pause, what would continue, and how a pause differs from a blanket ban on AI."
-msgstr ""
-
 #: lib/pauseai_ca_web/live/dashboard_live.ex:481
 #, elixir-autogen, elixir-format
 msgid "When?"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:41
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:14
 #, elixir-autogen, elixir-format
 msgid "Where do you stand today?"
 msgstr ""
@@ -666,11 +621,6 @@ msgstr ""
 #: lib/pauseai_ca_web/controllers/page_html/about.html.heex:10
 #, elixir-autogen, elixir-format
 msgid "Who we are"
-msgstr ""
-
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:133
-#, elixir-autogen, elixir-format
-msgid "Why do researchers discuss existential risk?"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:444
@@ -729,7 +679,7 @@ msgstr ""
 msgid "Your profile"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:38
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:11
 #, elixir-autogen, elixir-format
 msgid "Your starting point"
 msgstr ""
@@ -754,22 +704,7 @@ msgstr ""
 msgid "en-CA"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:171
-#, elixir-autogen, elixir-format
-msgid "https://pauseai.info/feasibility"
-msgstr ""
-
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:155
-#, elixir-autogen, elixir-format
-msgid "https://pauseai.info/proposal"
-msgstr ""
-
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:139
-#, elixir-autogen, elixir-format
-msgid "https://pauseai.info/xrisk"
-msgstr ""
-
-#: lib/pauseai_ca_web/controllers/page_html.ex:93
+#: lib/pauseai_ca_web/controllers/page_html.ex:98
 #, elixir-autogen, elixir-format
 msgid "Agree"
 msgstr ""
@@ -789,7 +724,7 @@ msgstr ""
 msgid "Contacted a representative"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html.ex:91
+#: lib/pauseai_ca_web/controllers/page_html.ex:96
 #, elixir-autogen, elixir-format
 msgid "Disagree"
 msgstr ""
@@ -829,7 +764,7 @@ msgstr ""
 msgid "Met a representative"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html.ex:92
+#: lib/pauseai_ca_web/controllers/page_html.ex:97
 #, elixir-autogen, elixir-format
 msgid "Mixed"
 msgstr ""
@@ -874,12 +809,12 @@ msgstr ""
 msgid "Signed the PauseAI statement"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html.ex:94
+#: lib/pauseai_ca_web/controllers/page_html.ex:99
 #, elixir-autogen, elixir-format
 msgid "Strongly agree"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html.ex:90
+#: lib/pauseai_ca_web/controllers/page_html.ex:95
 #, elixir-autogen, elixir-format
 msgid "Strongly disagree"
 msgstr ""
@@ -921,7 +856,7 @@ msgstr ""
 msgid "Understand existential risk"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html.ex:89
+#: lib/pauseai_ca_web/controllers/page_html.ex:94
 #, elixir-autogen, elixir-format
 msgid "Unsure"
 msgstr ""
@@ -1575,11 +1510,6 @@ msgstr ""
 msgid "Keep your answers, saved resources and progress when you return. We email you a secure link; no password is required."
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:21
-#, elixir-autogen, elixir-format
-msgid "Latest developments"
-msgstr ""
-
 #: lib/pauseai_ca_web/live/user_live/login.ex:117
 #, elixir-autogen, elixir-format
 msgid "Password"
@@ -1745,7 +1675,7 @@ msgstr ""
 msgid "Roughly how many people were there?"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html.ex:56
+#: lib/pauseai_ca_web/controllers/page_html.ex:59
 #, elixir-autogen, elixir-format
 msgid "Suggested first"
 msgstr ""
@@ -2874,7 +2804,6 @@ msgstr ""
 #: lib/pauseai_ca_web/components/layouts/root.html.heex:12
 #: lib/pauseai_ca_web/components/layouts/root.html.heex:13
 #: lib/pauseai_ca_web/controllers/page_html/about.html.heex:8
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:188
 #: lib/pauseai_ca_web/live/donate_live.ex:312
 #, elixir-autogen, elixir-format
 msgid "PauseAI Canada"
@@ -2892,7 +2821,7 @@ msgstr ""
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:734
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:793
 #: lib/pauseai_ca_web/live/newsletters_live.ex:312
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:482
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:505
 #, elixir-autogen, elixir-format
 msgid "Saving…"
 msgstr ""
@@ -3199,14 +3128,8 @@ msgstr ""
 
 #: lib/pauseai_ca_web/components/core_components.ex:600
 #: lib/pauseai_ca_web/components/core_components.ex:601
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:156
 #, elixir-autogen, elixir-format
 msgid "PauseAI"
-msgstr ""
-
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:172
-#, elixir-autogen, elixir-format
-msgid "PauseAI (in English)"
 msgstr ""
 
 #: lib/pauseai_ca_web/controllers/page_html/about.html.heex:54
@@ -3269,7 +3192,7 @@ msgstr ""
 
 #: lib/pauseai_ca_web/live/donate_live.ex:309
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:734
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:482
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:505
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr ""
@@ -3280,37 +3203,12 @@ msgstr ""
 msgid "%{action}: %{title}"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:135
-#, elixir-autogen, elixir-format
-msgid "How could people lose control of an AI system? Read an introduction to the risks researchers are studying."
-msgstr ""
-
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:167
-#, elixir-autogen, elixir-format
-msgid "How inspections of advanced chips and data centres could help countries verify an agreement."
-msgstr ""
-
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:183
-#, elixir-autogen, elixir-format
-msgid "Letters, meetings and public events can show elected representatives that people want action on AI risks."
-msgstr ""
-
 #: lib/pauseai_ca_web/controllers/newsletter_controller.ex:50
 #: lib/pauseai_ca_web/controllers/newsletter_html/action.html.heex:3
 #: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:41
 #: lib/pauseai_ca_web/live/participation_form.ex:277
 #, elixir-autogen, elixir-format
 msgid "Newsletter"
-msgstr ""
-
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:10
-#, elixir-autogen, elixir-format
-msgid "What risks could advanced AI pose, and what can Canada do about them? Explore the research, proposals for a pause, and ways to get involved."
-msgstr ""
-
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:181
-#, elixir-autogen, elixir-format
-msgid "Why public support matters"
 msgstr ""
 
 #: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:18
@@ -3752,7 +3650,7 @@ msgstr ""
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:516
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:556
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:578
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:406
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:429
 #, elixir-autogen, elixir-format
 msgid "Preview ↗"
 msgstr ""
@@ -3860,7 +3758,7 @@ msgstr ""
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:518
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:558
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:580
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:409
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:432
 #, elixir-autogen, elixir-format
 msgid "Allow the preview window, then try again."
 msgstr ""
@@ -3868,7 +3766,7 @@ msgstr ""
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:521
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:561
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:583
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:412
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:435
 #, elixir-autogen, elixir-format
 msgid "Connection interrupted; text retained in this page."
 msgstr ""
@@ -3876,7 +3774,7 @@ msgstr ""
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:519
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:559
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:581
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:410
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:433
 #, elixir-autogen, elixir-format
 msgid "Preview opened"
 msgstr ""
@@ -3884,7 +3782,7 @@ msgstr ""
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:522
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:562
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:584
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:413
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:436
 #, elixir-autogen, elixir-format
 msgid "Preview unavailable. Your text is retained."
 msgstr ""
@@ -3892,7 +3790,7 @@ msgstr ""
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:520
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:560
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:582
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:411
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:434
 #, elixir-autogen, elixir-format
 msgid "Preview updated"
 msgstr ""
@@ -5013,7 +4911,7 @@ msgstr ""
 msgid "Another reviewer saved changes. Copy your edits before reloading their version."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:388
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:411
 #, elixir-autogen, elixir-format
 msgid "Answer choices · one per line"
 msgstr ""
@@ -5024,7 +4922,7 @@ msgid "Check the URLs, answer choices and correct answer. Your changes are retai
 msgstr ""
 
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:208
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:394
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:417
 #, elixir-autogen, elixir-format
 msgid "Correct answer"
 msgstr ""
@@ -5041,29 +4939,29 @@ msgstr ""
 msgid "Discussion"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:472
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:495
 #, elixir-autogen, elixir-format
 msgid "Estimated social proof and possible bias"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:205
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:405
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:428
 #, elixir-autogen, elixir-format
 msgid "Explanation · Markdown"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:450
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:473
 #, elixir-autogen, elixir-format
 msgid "Image and source assessment"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:467
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:490
 #, elixir-autogen, elixir-format
 msgid "Image credit / permission"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:209
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:462
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:485
 #, elixir-autogen, elixir-format
 msgid "Image description"
 msgstr ""
@@ -5073,7 +4971,7 @@ msgstr ""
 msgid "New question"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:446
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:469
 #, elixir-autogen, elixir-format
 msgid "Next action"
 msgstr ""
@@ -5084,7 +4982,7 @@ msgstr ""
 msgid "Opinion"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:456
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:479
 #, elixir-autogen, elixir-format
 msgid "Optional image URL"
 msgstr ""
@@ -5100,8 +4998,8 @@ msgstr ""
 msgid "Question format"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:486
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:488
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:509
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:511
 #, elixir-autogen, elixir-format
 msgid "Question preview"
 msgstr ""
@@ -5111,7 +5009,7 @@ msgstr ""
 msgid "Reload saved version"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:480
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:503
 #, elixir-autogen, elixir-format
 msgid "Reviewer notes"
 msgstr ""
@@ -5129,13 +5027,13 @@ msgid "Scored question"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:207
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:440
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:463
 #, elixir-autogen, elixir-format
 msgid "Source URL"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:206
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:427
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:450
 #, elixir-autogen, elixir-format
 msgid "Source name"
 msgstr ""
@@ -5145,7 +5043,7 @@ msgstr ""
 msgid "Topic"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:396
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:419
 #, elixir-autogen, elixir-format
 msgid "Ungraded / not decided"
 msgstr ""
@@ -5246,7 +5144,7 @@ msgid "Your edits are saved. The published version stays unchanged until you pub
 msgstr ""
 
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:120
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:421
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:444
 #, elixir-autogen, elixir-format
 msgid "Complete this field before publishing."
 msgstr ""
@@ -5266,7 +5164,7 @@ msgstr ""
 msgid "Read the explanation to see why."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/question_drafts_live.ex:432
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:455
 #, elixir-autogen, elixir-format
 msgid "Source language"
 msgstr ""
@@ -6095,7 +5993,7 @@ msgstr ""
 msgid "Enter your details once and choose the options you want."
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:209
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:132
 #: lib/pauseai_ca_web/live/participation_form.ex:254
 #: lib/pauseai_ca_web/live/participation_form.ex:257
 #, elixir-autogen, elixir-format
@@ -6187,7 +6085,7 @@ msgstr ""
 msgid "Subscribe me to the PauseAI Canada newsletter."
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:218
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:141
 #: lib/pauseai_ca_web/live/participation_form.ex:266
 #: lib/pauseai_ca_web/live/participation_form.ex:269
 #, elixir-autogen, elixir-format
@@ -6291,7 +6189,7 @@ msgstr ""
 msgid "On your own or with others"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:200
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:123
 #, elixir-autogen, elixir-format
 msgid "Get updates or take action"
 msgstr ""
@@ -6484,4 +6382,39 @@ msgstr ""
 #: lib/pauseai_ca_web/live/donate_live.ex:237
 #, elixir-autogen, elixir-format
 msgid "Your pledge is recorded. We will contact you about it. No payment has been taken through this form."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:405
+#, elixir-autogen, elixir-format
+msgid "Card category label"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:406
+#, elixir-autogen, elixir-format
+msgid "Card link label"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:398
+#, elixir-autogen, elixir-format
+msgid "Choose a category"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:386
+#, elixir-autogen, elixir-format
+msgid "Learning path / home page"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:396
+#, elixir-autogen, elixir-format
+msgid "Learning path category"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:389
+#, elixir-autogen, elixir-format
+msgid "Publish to apply these settings. Other nuggets remain in the learning library."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/question_drafts_live.ex:387
+#, elixir-autogen, elixir-format
+msgid "Show on home page"
 msgstr ""

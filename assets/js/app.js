@@ -200,10 +200,10 @@ function initializeBeliefCheck() {
     }
 
     document.querySelectorAll(".resource-card").forEach(card => {
-      card.classList.toggle("is-recommended", card.id === recommendation)
+      card.classList.toggle("is-recommended", card.dataset.pathStage === recommendation.replace("resource-", ""))
     })
     explanation.textContent = reason
-    document.querySelector(`#${recommendation}`)?.scrollIntoView({behavior: "smooth", block: "center"})
+    document.querySelector(".resource-card.is-recommended")?.scrollIntoView({behavior: "smooth", block: "center"})
   })
 
   renderAnswers()

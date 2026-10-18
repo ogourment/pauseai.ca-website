@@ -382,6 +382,29 @@ defmodule PauseAiCaWeb.QuestionDraftsLive do
                 ]}
               />
             </div>
+            <fieldset class="space-y-3 rounded-lg border border-stone-300 p-4">
+              <legend class="px-2 font-semibold">{gettext("Learning path / home page")}</legend>
+              <.input field={@form[:home_page]} type="checkbox" label={gettext("Show on home page")} />
+              <p class="text-sm">
+                {gettext(
+                  "Publish to apply these settings. Other nuggets remain in the learning library."
+                )}
+              </p>
+              <.input
+                field={@form[:path_stage]}
+                type="select"
+                label={gettext("Learning path category")}
+                options={[
+                  {gettext("Choose a category"), ""},
+                  {gettext("Understand the risk"), "risk"},
+                  {gettext("Evaluate responses"), "pause"},
+                  {gettext("Test coordination"), "coordination"},
+                  {gettext("Move toward action"), "agency"}
+                ]}
+              />
+              <.input field={@form[:home_label]} label={gettext("Card category label")} />
+              <.input field={@form[:home_cta]} label={gettext("Card link label")} />
+            </fieldset>
             <.input
               field={@form[:options]}
               type="textarea"

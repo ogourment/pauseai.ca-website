@@ -620,10 +620,10 @@ if System.get_env("ATDD") == "true" do
         |> click("#consent-decline")
         |> capture(
           id,
-          "Read current homepage invitation",
-          "Wider attention leads to sourced information and Canadian action"
+          "Read the home page",
+          "Use campaign navigation to reach sourced information and Canadian action"
         )
-        |> click_link("Derniers développements")
+        |> click_link("Signal d’alarme")
         |> assert_has("#mainstream-safety-context")
         |> assert_has("#update-2026-09-09-wired", text: "8 septembre")
         |> assert_has("#update-2026-09-10-pauseai", text: "Réponse publique et politique")
@@ -723,7 +723,8 @@ if System.get_env("ATDD") == "true" do
         context.conn
         |> visit("/en")
         |> click("#consent-decline")
-        |> click_link("Latest developments")
+        |> click("#involvement-menu summary")
+        |> click_link("Warning shot")
         |> assert_has("#mainstream-safety-context")
         |> capture(
           id,

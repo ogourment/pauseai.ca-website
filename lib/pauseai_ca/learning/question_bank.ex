@@ -4,7 +4,7 @@ defmodule PauseAiCa.Learning.QuestionBank do
   alias PauseAiCa.{Repo, Volunteers}
   alias PauseAiCa.Learning.QuestionDraft
 
-  @fields ~w(question options correct answer source url action notes image_url image_alt image_credit social_proof language)
+  @fields ~w(question options correct answer source url action notes image_url image_alt image_credit social_proof language home_page path_stage home_label home_cta)
 
   def list(scope, filter \\ "all") do
     if Volunteers.allowed?(scope) do
@@ -72,6 +72,16 @@ defmodule PauseAiCa.Learning.QuestionBank do
 
     (Enum.reject(PauseAiCa.Learning.nuggets(locale), &(&1["id"] in managed_ids)) ++ replacements)
     |> Enum.sort_by(&(&1["language"] != locale))
+  end
+
+  def homepage(locale) do
+    catalogue(locale)
+    |> Enum.filter(&(&1["home_page"] == "true"))
+    |> Enum.sort_by(
+      &{Enum.find_index(~w(risk pause coordination agency), fn stage ->
+         stage == &1["path_stage"]
+       end) || 4, &1["id"]}
+    )
   end
 
   def valid_ids(ids) when is_list(ids) do
@@ -280,6 +290,12 @@ defmodule PauseAiCa.Learning.QuestionBank do
               do: missing ++ ["image_alt"],
               else: missing
 
+          missing =
+            if edition["home_page"] == "true",
+              do:
+                missing ++ Enum.filter(~w(path_stage home_label home_cta), &blank?(edition[&1])),
+              else: missing
+
           Enum.map(Enum.uniq(missing), &{locale, &1})
         end)
   end
@@ -322,7 +338,9 @@ defmodule PauseAiCa.Learning.QuestionBank do
 
       urls? = Enum.all?([values["url"], values["image_url"]], &safe_url?/1)
 
-      if urls? and values["language"] in [nil, "", "en", "fr"] and length(options) <= 12 and
+      if values["home_page"] in [nil, "", "false", "true"] and
+           values["path_stage"] in [nil, "", "risk", "pause", "coordination", "agency"] and
+           urls? and values["language"] in [nil, "", "en", "fr"] and length(options) <= 12 and
            (is_nil(correct) or (correct >= 0 and correct < length(options))) do
         {:ok, values |> Map.put("options", options) |> Map.put("correct", correct)}
       else
