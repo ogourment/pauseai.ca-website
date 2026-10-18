@@ -68,7 +68,7 @@ defmodule PauseAiCaWeb.Layouts do
             />
             <span
               :if={PauseAiCa.Environment.badged?()}
-              class="pointer-events-none absolute -right-3 top-1/4 -translate-y-1/2 rotate-[-12deg] rounded-[3px] px-1.5 py-0.5 text-[10px] font-black uppercase leading-none tracking-wide text-white shadow-sm"
+              class="pointer-events-none absolute left-1/2 top-1/4 -translate-x-1/2 -translate-y-1/2 rotate-[-12deg] rounded-[3px] px-1.5 py-0.5 text-[10px] font-black uppercase leading-none tracking-wide text-white shadow-sm"
               style={"background: #{env_badge_colour()}"}
             >
               {PauseAiCa.Environment.label()}
