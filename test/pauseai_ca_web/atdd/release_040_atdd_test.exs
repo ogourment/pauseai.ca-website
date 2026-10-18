@@ -275,6 +275,9 @@ if System.get_env("ATDD") == "true" do
     defp log_out(b),
       do:
         b
+        # Visit preferences use a POST redirect. Wait for the new LiveView mount
+        # before opening details, otherwise its initial patch can close the menu.
+        |> assert_has("[data-phx-main].phx-connected")
         |> click("#account-menu summary")
         |> click_link("Log out")
         |> refute_has("#account-menu")
