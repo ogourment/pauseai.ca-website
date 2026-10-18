@@ -623,7 +623,7 @@ if System.get_env("ATDD") == "true" do
           "Read the home page",
           "Use campaign navigation to reach sourced information and Canadian action"
         )
-        |> click_link("Signal d’alarme")
+        |> click_link("Signal d'alarme")
         |> assert_has("#mainstream-safety-context")
         |> assert_has("#update-2026-09-09-wired", text: "8 septembre")
         |> assert_has("#update-2026-09-10-pauseai", text: "Réponse publique et politique")
