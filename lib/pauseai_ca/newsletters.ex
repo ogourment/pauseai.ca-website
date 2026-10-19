@@ -132,7 +132,8 @@ defmodule PauseAiCa.Newsletters do
             confirmation_expires_at: nil
           })
 
-        event(saved, "withdrawn", nil, %{})
+        token_record = Repo.get_by!(WithdrawalToken, token_hash: digest(token))
+        event(saved, "withdrawn", nil, %{"withdrawal_token_id" => token_record.id})
         saved
       end
     end)

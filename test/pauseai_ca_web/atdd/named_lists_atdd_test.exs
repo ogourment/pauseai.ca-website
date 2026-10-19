@@ -80,6 +80,7 @@ if System.get_env("ATDD") == "true" do
         |> assert_path("/")
         |> visit("/manage/mail/newsletters?locale=#{locale}")
         |> assert_has("[data-phx-main].phx-connected")
+        |> click_button(tr(locale, "New list"))
         |> assert_has("#mailing-list-form")
 
       b =

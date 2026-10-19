@@ -15,6 +15,9 @@ defmodule PauseAiCaWeb.NewslettersLive do
          page_title: gettext("Newsletter lists"),
          audience: nil,
          mailing_lists: [],
+         selected_list: nil,
+         list_view: "members",
+         show_list_form: false,
          editing_list: nil,
          list_form: to_form(Lists.form(nil), as: "list"),
          history: [],
@@ -31,7 +34,20 @@ defmodule PauseAiCaWeb.NewslettersLive do
     case Newsletters.audience_page(socket.assigns.current_scope, params) do
       {:ok, audience} ->
         {:ok, lists} = Lists.list(socket.assigns.current_scope)
-        {:noreply, assign(socket, audience: audience, params: params, mailing_lists: lists)}
+        selected = Enum.find(lists, &(&1.id == params["list_id"]))
+        view = if selected && params["view"] == "rules", do: "rules", else: "members"
+
+        {:noreply,
+         assign(socket,
+           audience: audience,
+           params: params,
+           mailing_lists: lists,
+           selected_list: selected,
+           list_view: view,
+           show_list_form: not is_nil(selected) and view == "rules",
+           editing_list: selected,
+           list_form: to_form(Lists.form(selected), as: "list")
+         )}
 
       _ ->
         {:noreply, denied(socket)}
@@ -55,23 +71,18 @@ defmodule PauseAiCaWeb.NewslettersLive do
     attrs = Lists.preset(params["preset"])
 
     {:noreply,
-     assign(socket, editing_list: nil, list_form: to_form(attrs, as: "list"), error: nil)}
+     assign(socket,
+       selected_list: nil,
+       editing_list: nil,
+       show_list_form: true,
+       list_view: "rules",
+       list_form: to_form(attrs, as: "list"),
+       error: nil
+     )}
   end
 
-  def handle_event("list-edit", %{"id" => id}, socket) do
-    case Lists.get(socket.assigns.current_scope, id) do
-      {:ok, list} ->
-        {:noreply,
-         assign(socket,
-           editing_list: list,
-           list_form: to_form(Lists.form(list), as: "list"),
-           error: nil
-         )}
-
-      _ ->
-        {:noreply, denied(socket)}
-    end
-  end
+  def handle_event("list-edit", %{"id" => id}, socket),
+    do: patch(socket, %{"list_id" => id, "view" => "rules"})
 
   def handle_event("list-save", %{"list" => attrs}, socket) do
     case Lists.save(socket.assigns.current_scope, socket.assigns.editing_list, attrs) do
@@ -196,6 +207,9 @@ defmodule PauseAiCaWeb.NewslettersLive do
       |> put_flash(:error, gettext("Superadmin access required."))
       |> redirect(to: ~p"/dashboard")
 
+  defp empty_rule(""), do: gettext("Not configured")
+  defp empty_rule(value), do: value
+
   def render(assigns) do
     ~H"""
     <Layouts.management
@@ -205,14 +219,7 @@ defmodule PauseAiCaWeb.NewslettersLive do
       active_tab="mail"
     >
       <section id="newsletters" class="crm-surface mx-auto max-w-6xl px-5 py-8">
-        <nav aria-label={gettext("Emails")} class="mb-6 flex gap-5 border-b border-stone-300 pb-3">
-          <.link navigate={~p"/manage/mail?locale=#{@locale}"} class="underline">{gettext("Drafts")}</.link>
-          <.link
-            patch={~p"/manage/mail/newsletters?locale=#{@locale}"}
-            aria-current="page"
-            class="font-bold"
-          >{gettext("Newsletter lists")}</.link>
-        </nav>
+        <PauseAiCaWeb.MailNavigation.tabs locale={@locale} active="lists" />
         <h1 class="text-3xl font-bold">{gettext("Newsletter lists")}</h1>
         <p class="mt-3">
           {gettext(
@@ -244,7 +251,16 @@ defmodule PauseAiCaWeb.NewslettersLive do
               id={"mailing-list-#{list.id}"}
               class="flex flex-wrap items-center gap-4 rounded-lg border border-stone-300 p-3"
             >
-              <strong>{list.name}</strong>
+              <.link
+                patch={~p"/manage/mail/newsletters?#{%{locale: @locale, list_id: list.id}}"}
+                class="font-bold underline"
+              >{list.name}</.link>
+              <div class="basis-full text-sm" data-area-summary>
+                <span>{gettext("Cities")}: {Lists.form(list)["city"] |> empty_rule()}</span>
+                ·
+                <span>{gettext("Recorded region")}: {Lists.form(list)["region"] |> empty_rule()}</span>
+                · <span>{gettext("FSAs")}: {Lists.form(list)["fsas"] |> empty_rule()}</span>
+              </div>
               <button type="button" phx-click="list-compose" phx-value-id={list.id} class="crm-button">{gettext(
                 "Compose"
               )}</button>
@@ -260,16 +276,47 @@ defmodule PauseAiCaWeb.NewslettersLive do
               )}</button>
             </li>
           </ul>
-          <div class="flex gap-4">
+          <div class="flex flex-wrap gap-4">
             <button type="button" phx-click="list-new" class="underline">{gettext("New list")}</button>
-            <button type="button" phx-click="list-new" phx-value-preset="montreal" class="underline">{gettext(
-              "Use Montréal rules"
-            )}</button>
-            <button type="button" phx-click="list-new" phx-value-preset="toronto" class="underline">{gettext(
-              "Use Toronto / GTA rules"
-            )}</button>
+            <details>
+              <summary class="cursor-pointer underline">{gettext("Starting templates")}</summary><p>
+                {gettext(
+                  "These editable templates use city names, not postal coverage. Save your own area rules below."
+                )}
+              </p>
+              <button type="button" phx-click="list-new" phx-value-preset="montreal" class="underline">{gettext(
+                "Use Montréal rules"
+              )}</button>
+              <button type="button" phx-click="list-new" phx-value-preset="toronto" class="underline">{gettext(
+                "Use Toronto / GTA rules"
+              )}</button>
+            </details>
           </div>
+          <section
+            :if={@selected_list}
+            id="selected-mailing-list"
+            class="space-y-3 border-t border-stone-300 pt-5"
+          >
+            <h2 class="text-2xl font-bold">{@selected_list.name}</h2>
+            <nav class="flex gap-5" aria-label={gettext("Mailing list")}>
+              <.link
+                patch={
+                  ~p"/manage/mail/newsletters?#{%{locale: @locale, list_id: @selected_list.id, view: "members"}}"
+                }
+                aria-current={if @list_view == "members", do: "page"}
+                class="underline"
+              >{gettext("Members")}</.link>
+              <.link
+                patch={
+                  ~p"/manage/mail/newsletters?#{%{locale: @locale, list_id: @selected_list.id, view: "rules"}}"
+                }
+                aria-current={if @list_view == "rules", do: "page"}
+                class="underline"
+              >{gettext("Area rules")}</.link>
+            </nav>
+          </section>
           <.form
+            :if={@show_list_form}
             for={@list_form}
             id="mailing-list-form"
             phx-submit="list-save"
@@ -291,14 +338,8 @@ defmodule PauseAiCaWeb.NewslettersLive do
             />
             <.input
               field={@list_form[:region]}
-              type="select"
-              label={gettext("Recorded region")}
-              options={[
-                {gettext("No region rule"), ""},
-                {"Montréal", "Montréal"},
-                {"ROQuébec", "ROQuébec"},
-                {"ROCanada", "ROCanada"}
-              ]}
+              label={gettext("Recorded regions")}
+              placeholder="Montréal, Eastern Ontario"
             />
             <.input field={@list_form[:fsas]} label={gettext("FSAs")} placeholder="H2X, H2Y" />
             <p class="text-sm text-stone-600">
@@ -313,7 +354,7 @@ defmodule PauseAiCaWeb.NewslettersLive do
             >{gettext("Save list")}</button>
           </.form>
         </section>
-        <div :if={@audience}>
+        <div :if={@audience && @list_view == "members"}>
           <h2 class="mt-8 text-xl font-semibold">{gettext("Newsletter audience")}</h2>
           <.form
             for={

@@ -46,7 +46,7 @@ defmodule PauseAiCa.MixProject do
       _ ->
         {:phoenix_mail_workflow,
          git: "ssh://git@git.agile-u.com/olivierg/phoenix_mail_workflow.git",
-         ref: "549d9579804b8b0836bd8daddfe29c5e9efc594a"}
+         ref: "8ca9ec8b603cae662875c08c5aacc4e656a7f2f0"}
     end
   end
 
@@ -158,7 +158,7 @@ defmodule PauseAiCa.MixProject do
       _ ->
         {:phoenix_crm,
          git: "ssh://git@git.agile-u.com/olivierg/phoenix_crm.git",
-         ref: "ff47d2bd2e64e79f8a1f39e365bd548d3c1e66f2"}
+         ref: "31313c6947b61262524275630fff93ad9ef2b1b0"}
     end
   end
 

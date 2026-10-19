@@ -16,19 +16,8 @@ defmodule PauseAiCa.Newsletters.Lists do
     end
   end
 
-  def form(nil), do: %{"name" => "", "match" => "any", "city" => "", "region" => "", "fsas" => ""}
-
-  def form(list) do
-    rules = Map.new(list.criteria["rules"], &{&1["field"], Enum.join(&1["values"], ", ")})
-
-    Map.merge(form(nil), %{
-      "name" => list.name,
-      "match" => list.criteria["match"],
-      "city" => rules["city"] || "",
-      "region" => rules["region"] || "",
-      "fsas" => rules["fsa"] || ""
-    })
-  end
+  def form(nil), do: Map.put(PhoenixCRM.AreaRules.form(nil), "name", "")
+  def form(list), do: Map.put(PhoenixCRM.AreaRules.form(list.criteria), "name", list.name)
 
   # GTA municipalities and common Toronto borough city values; consumer-owned.
   # No ROCanada rule or guessed postal coverage.
@@ -53,38 +42,10 @@ defmodule PauseAiCa.Newsletters.Lists do
 
   defp fields(s), do: %{"city" => s.city, "region" => s.region, "fsa" => s.fsa}
 
-  defp criteria(attrs) do
-    fsas = values(attrs["fsas"]) |> Enum.map(&PauseAiCa.PostalArea.normalize/1)
-
-    rules =
-      for {field, value} <- [
-            {"city", values(attrs["city"])},
-            {"region", values(attrs["region"])},
-            {"fsa", fsas}
-          ],
-          value != [],
-          do: %{
-            "field" => field,
-            "operator" => if(field == "fsa", do: "prefix", else: "equals"),
-            "values" => value
-          }
-
-    criteria = %{"match" => "any", "rules" => rules}
-
-    if attrs["match"] in [nil, "", "any"] and ListRules.valid?(criteria) and
-         Enum.all?(fsas, &PauseAiCa.PostalArea.valid?/1) and
-         Enum.all?(values(attrs["region"]), &(&1 in ["Montréal", "ROQuébec", "ROCanada"])),
-       do: {:ok, criteria},
-       else: {:error, :invalid_rules}
-  end
-
-  defp values(s) when is_binary(s),
+  defp criteria(attrs),
     do:
-      s
-      |> String.split([",", "\n"])
-      |> Enum.map(&String.trim/1)
-      |> Enum.reject(&(&1 == ""))
-      |> Enum.uniq()
-
-  defp values(_), do: []
+      PhoenixCRM.AreaRules.criteria(attrs,
+        normalize_postal: &PauseAiCa.PostalArea.normalize/1,
+        valid_postal?: &PauseAiCa.PostalArea.valid?/1
+      )
 end

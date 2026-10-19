@@ -43,6 +43,38 @@ defmodule PauseAiCaWeb.NewsletterListsLiveTest do
     refute html =~ "rules@example.org"
   end
 
+  test "area rules have a reloadable view and show stored FSA values while allowing a new custom area",
+       c do
+    {:ok, list} =
+      Lists.save(c.scope, nil, %{
+        "name" => "Ottawa volunteers",
+        "city" => "Ottawa",
+        "region" => "Eastern Ontario",
+        "fsas" => "K1A"
+      })
+
+    {:ok, view, _} =
+      live(c.conn, "/manage/mail/newsletters?locale=en&list_id=#{list.id}&view=rules")
+
+    assert has_element?(view, "#list_fsas[value='K1A']")
+    assert has_element?(view, "#list_region[value='Eastern Ontario']")
+    assert has_element?(view, "[data-area-summary]", "K1A")
+    refute has_element?(view, "#newsletter-audience")
+    view |> element("button", "New list") |> render_click()
+    assert has_element?(view, "#list_name[value='']")
+
+    view
+    |> form("#mailing-list-form",
+      list: %{name: "New area", city: "Kingston", region: "", fsas: "K7L"}
+    )
+    |> render_submit()
+
+    {:ok, lists} = Lists.list(c.scope)
+    assert Enum.any?(lists, &(&1.name == "New area"))
+    {:ok, unchanged} = Lists.get(c.scope, list.id)
+    assert Lists.form(unchanged)["fsas"] == "K1A"
+  end
+
   test "composer chooses a whole dynamic list, persists it and hides individual selection", c do
     {:ok, list} =
       Lists.save(c.scope, nil, %{"name" => "Montréal", "city" => "Montréal", "match" => "any"})
