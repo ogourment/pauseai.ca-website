@@ -37,6 +37,41 @@ defmodule PauseAiCa.Newsletters.Drafts do
     authorized(scope, fn -> Repo.insert!(%Draft{owner_id: scope.user.id}) end)
   end
 
+  def create_account_invitations(scope, person_ids, attrs) do
+    authorized(scope, fn ->
+      rows =
+        case PauseAiCa.Newsletters.Batches.contact_recipients(scope, person_ids) do
+          {:ok, rows} -> rows
+          {:error, reason} -> Repo.rollback(reason)
+        end
+
+      plan =
+        case PhoenixMailWorkflow.Invitations.plan(
+               rows,
+               attrs,
+               &PauseAiCa.Mail.AccountInvitation.content/2
+             ) do
+          {:ok, plan} -> plan
+          {:error, reason} -> Repo.rollback(reason)
+        end
+
+      drafts =
+        for planned <- plan.drafts do
+          %Draft{owner_id: scope.user.id}
+          |> Draft.changeset(
+            Map.merge(planned.content, %{
+              "edition" => planned.edition,
+              "recipient_mode" => "contacts",
+              "recipient_keys" => planned.recipient_ids
+            })
+          )
+          |> Repo.insert!()
+        end
+
+      %{drafts: drafts, included: plan.included, excluded: plan.excluded}
+    end)
+  end
+
   def create_for_list(scope, list_id) do
     authorized(scope, fn ->
       case PauseAiCa.Newsletters.Lists.get(scope, list_id) do

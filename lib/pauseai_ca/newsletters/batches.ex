@@ -6,6 +6,17 @@ defmodule PauseAiCa.Newsletters.Batches do
   alias PauseAiCa.Newsletters.Edition
   @dispatch_chunk 100
 
+  @doc "Fresh, read-only recipient resolution for contact actions; never creates accounts or consent."
+  def contact_recipients(scope, ids) do
+    if Volunteers.superadmin?(scope) do
+      with {:ok, rows} <- targets(scope, "contacts", ids) do
+        {:ok, Edition.decorate(rows)}
+      end
+    else
+      {:error, :unauthorized}
+    end
+  end
+
   def quota(scope) do
     if Volunteers.superadmin?(scope) do
       limits = PauseAiCa.Newsletters.DeliveryLimits.current()

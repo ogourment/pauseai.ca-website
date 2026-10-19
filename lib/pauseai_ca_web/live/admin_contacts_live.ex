@@ -12,6 +12,13 @@ defmodule PauseAiCaWeb.AdminContactsLive do
          locale: locale,
          page_title: gettext("Contacts"),
          records: [],
+         selected_ids: [],
+         invitation_ids: [],
+         invitation_targets: [],
+         invitation_languages: [],
+         invitation_form: to_form(%{}, as: "invitation"),
+         invitation_drafts: [],
+         invitation_excluded: [],
          directory_origins: %{},
          record: nil,
          origins: [],
@@ -37,6 +44,7 @@ defmodule PauseAiCaWeb.AdminContactsLive do
   @impl true
   def handle_params(params, _, socket) do
     scope = socket.assigns.current_scope
+    socket = assign(socket, search: params["q"] || socket.assigns.search)
 
     result =
       cond do
@@ -80,6 +88,117 @@ defmodule PauseAiCaWeb.AdminContactsLive do
     }
 
     {:noreply, push_patch(socket, to: ~p"/admin/contacts?#{values}")}
+  end
+
+  def handle_event("select-contact", %{"id" => id}, socket) do
+    if Enum.any?(socket.assigns.records, &(&1.person.id == id)) do
+      ids = socket.assigns.selected_ids
+      ids = if id in ids, do: List.delete(ids, id), else: Enum.uniq(ids ++ [id])
+      {:noreply, assign(socket, selected_ids: ids, invitation_ids: [])}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  def handle_event("select-page", _, socket) do
+    ids = for record <- socket.assigns.records, record.addresses != [], do: record.person.id
+
+    {:noreply,
+     assign(socket,
+       selected_ids: Enum.uniq(socket.assigns.selected_ids ++ ids),
+       invitation_ids: []
+     )}
+  end
+
+  def handle_event("clear-selection", _, socket),
+    do: {:noreply, assign(socket, selected_ids: [], invitation_ids: [])}
+
+  def handle_event("invite-account", params, socket) do
+    ids = if params["id"], do: [params["id"]], else: socket.assigns.selected_ids
+
+    case PauseAiCa.Newsletters.Batches.contact_recipients(socket.assigns.current_scope, ids) do
+      {:ok, rows} ->
+        eligible = Enum.filter(rows, &(&1.status == :available))
+
+        if eligible == [] do
+          {:noreply,
+           assign(socket,
+             error:
+               gettext(
+                 "No selected contact can be emailed. Check withdrawals, blocked addresses and preferred addresses."
+               )
+           )}
+        else
+          inviter =
+            socket.assigns.current_scope.user.name || socket.assigns.current_scope.user.email
+
+          values = Map.put_new(socket.assigns.invitation_form.params, "inviter", inviter)
+
+          {:noreply,
+           assign(socket,
+             invitation_ids: ids,
+             invitation_targets: rows,
+             invitation_languages:
+               PauseAiCa.Mail.AccountInvitation.languages(Enum.map(eligible, & &1.edition)),
+             invitation_form: to_form(values, as: "invitation"),
+             error: nil
+           )}
+        end
+
+      _ ->
+        {:noreply,
+         assign(socket,
+           error: gettext("Select available contacts before creating an invitation.")
+         )}
+    end
+  end
+
+  def handle_event("edit-invitation", %{"invitation" => attrs}, socket),
+    do: {:noreply, assign(socket, invitation_form: to_form(attrs, as: "invitation"))}
+
+  def handle_event("cancel-invitation", _, socket),
+    do: {:noreply, assign(socket, invitation_ids: [])}
+
+  def handle_event("create-invitation-drafts", %{"invitation" => attrs}, socket) do
+    case PauseAiCa.Newsletters.Drafts.create_account_invitations(
+           socket.assigns.current_scope,
+           socket.assigns.invitation_ids,
+           attrs
+         ) do
+      {:ok, result} ->
+        {:noreply,
+         assign(socket,
+           invitation_drafts: result.drafts,
+           invitation_excluded: result.excluded,
+           invitation_ids: [],
+           invitation_form: to_form(attrs, as: "invitation"),
+           error: nil,
+           status:
+             gettext(
+               "Invitation drafts created for %{count} contacts. Review each draft before sending.",
+               count: result.included
+             )
+         )}
+
+      {:error, :invitation_context_required} ->
+        {:noreply,
+         assign(socket,
+           invitation_form: to_form(attrs, as: "invitation"),
+           error:
+             gettext(
+               "Enter who the invitation is from and why you are inviting them in each required language."
+             )
+         )}
+
+      _ ->
+        {:noreply,
+         assign(socket,
+           error:
+             gettext(
+               "No drafts were created. Reload and check the selected contacts and their email permissions."
+             )
+         )}
+    end
   end
 
   def handle_event("edit", %{"contact" => attrs}, socket),
@@ -234,6 +353,89 @@ defmodule PauseAiCaWeb.AdminContactsLive do
         </div>
         <p :if={@error} id="crm-error" role="alert" class="crm-error">{@error}</p>
         <p :if={@status} role="status">{@status}</p>
+        <section
+          :if={@invitation_ids != []}
+          id="crm-invitation"
+          class="my-5 rounded-lg border border-stone-300 p-4"
+        >
+          <h2 class="text-xl font-bold">{gettext("Invite to create an account")}</h2>
+          <p>
+            {gettext(
+              "For %{count} selected contacts. This creates email drafts for review; it does not send email or create accounts.",
+              count: length(@invitation_ids)
+            )}
+          </p>
+          <details class="my-3">
+            <summary>{gettext("Selected recipients")}</summary>
+            <ul class="max-h-64 overflow-auto">
+              <li :for={target <- @invitation_targets}>
+                {target.name} · {target.email || gettext("No preferred email address")}
+              </li>
+            </ul>
+          </details>
+          <.form
+            for={@invitation_form}
+            id="crm-invitation-form"
+            phx-change="edit-invitation"
+            phx-submit="create-invitation-drafts"
+            class="mt-4 space-y-4"
+          >
+            <.input
+              field={@invitation_form[:inviter]}
+              label={gettext("Invitation from")}
+              required
+              maxlength="200"
+            />
+            <.input
+              :if={"en" in @invitation_languages}
+              field={@invitation_form[:reason_en]}
+              type="textarea"
+              label={gettext("Why you are inviting them · English")}
+              required
+              maxlength="3000"
+            />
+            <.input
+              :if={"fr" in @invitation_languages}
+              field={@invitation_form[:reason_fr]}
+              type="textarea"
+              label={gettext("Why you are inviting them · French")}
+              required
+              maxlength="3000"
+            />
+            <p>
+              {gettext(
+                "Recorded language determines the edition. Unknown language receives both versions. You can edit the resulting drafts before sending."
+              )}
+            </p>
+            <button class="crm-button" phx-disable-with={gettext("Creating drafts…")}>{gettext(
+              "Create invitation drafts"
+            )}</button>
+            <button type="button" phx-click="cancel-invitation" class="underline">{gettext("Cancel")}</button>
+          </.form>
+        </section>
+        <section :if={@invitation_drafts != []} id="crm-invitation-drafts" class="my-5">
+          <h2 class="text-xl font-bold">{gettext("Review invitation drafts")}</h2>
+          <ul>
+            <li :for={draft <- @invitation_drafts}>
+              <.link
+                navigate={~p"/manage/mail/drafts/#{draft.id}?locale=#{@locale}"}
+                class="underline"
+              >{draft.subject}</.link>
+              · {gettext("%{count} recipients", count: length(draft.recipient_keys))}
+            </li>
+          </ul>
+          <p :if={@invitation_excluded != []}>
+            {gettext(
+              "%{count} contacts excluded because an address or contact permission needs attention.",
+              count: length(@invitation_excluded)
+            )}
+          </p>
+          <ul :if={@invitation_excluded != []} class="my-3">
+            <li :for={target <- @invitation_excluded}>
+              {target.name} · {target.email || gettext("No preferred email address")}
+            </li>
+          </ul>
+        </section>
         <section :if={is_nil(@record)} id="crm-directory">
           <.form
             id="crm-search-form"
@@ -278,10 +480,52 @@ defmodule PauseAiCaWeb.AdminContactsLive do
               "Historical contacts are private. Importing or reconciling them does not create an account or consent."
             )}
           </p>
+          <div class="my-4 flex flex-wrap items-center gap-4" id="crm-selection-actions">
+            <button type="button" phx-click="select-page" class="underline">{gettext(
+              "Select this page"
+            )}</button>
+            <button
+              type="button"
+              phx-click="clear-selection"
+              disabled={@selected_ids == []}
+              class="underline"
+            >{gettext("Clear selection")}</button>
+            <span role="status">{gettext("%{count} selected across pages",
+              count: length(@selected_ids)
+            )}</span>
+            <button
+              type="button"
+              id="crm-invite-selected"
+              phx-click="invite-account"
+              disabled={@selected_ids == []}
+              class="crm-button"
+            >{gettext("Invite selected to create an account")}</button>
+          </div>
           <ul>
             <li :for={record <- @records} id={"crm-contact-#{record.person.id}"} class="py-3 border-b">
-              <strong>{record.person.name}</strong><div :for={address <- record.addresses}>
-                <.link navigate={~p"/admin/contacts/#{record.person.id}?locale=#{@locale}"}>{address.email}</.link>
+              <input
+                type="checkbox"
+                id={"crm-select-#{record.person.id}"}
+                checked={record.person.id in @selected_ids}
+                disabled={record.addresses == []}
+                phx-click="select-contact"
+                phx-value-id={record.person.id}
+                aria-label={gettext("Select %{name}", name: record.person.name || gettext("contact"))}
+                class="mr-2"
+              />
+              <strong>{record.person.name}</strong>
+              <button
+                :if={record.addresses != []}
+                type="button"
+                phx-click="invite-account"
+                phx-value-id={record.person.id}
+                class="ml-3 underline"
+              >{gettext("Invite to create an account")}</button><div :for={
+                address <- record.addresses
+              }>
+                <.link navigate={
+                  ~p"/admin/contacts/#{record.person.id}?locale=#{@locale}&q=#{@search}"
+                }>{address.email}</.link>
               </div>
               <div :for={origin <- Map.get(@directory_origins, record.person.id, [])} class="mt-2">
                 <p
@@ -290,6 +534,10 @@ defmodule PauseAiCaWeb.AdminContactsLive do
                 >
                   {origin.email}
                 </p>
+                <PauseAiCaWeb.ContactSourceComponents.source_matches
+                  data={origin.source_data}
+                  query={@search}
+                />
                 <PauseAiCaWeb.ContactSourceComponents.source_summary
                   id={"directory-source-summary-#{origin.id}"}
                   data={origin.source_data}
@@ -297,6 +545,7 @@ defmodule PauseAiCaWeb.AdminContactsLive do
                 <PauseAiCaWeb.ContactSourceComponents.source_details
                   id={"directory-source-details-#{origin.id}"}
                   data={origin.source_data}
+                  query={@search}
                 />
               </div>
             </li>
@@ -334,6 +583,13 @@ defmodule PauseAiCaWeb.AdminContactsLive do
           </nav>
         </section>
         <section :if={@record} id="crm-record">
+          <button
+            :if={@record.addresses != []}
+            type="button"
+            phx-click="invite-account"
+            phx-value-id={@record.person.id}
+            class="crm-button mb-5"
+          >{gettext("Invite to create an account")}</button>
           <.form
             for={@form}
             id="crm-contact-form"
@@ -379,6 +635,7 @@ defmodule PauseAiCaWeb.AdminContactsLive do
               <PauseAiCaWeb.ContactSourceComponents.source_details
                 id={"profile-source-details-#{origin.id}"}
                 data={origin.source_data}
+                query={@search}
               />
             </div>
           </section>

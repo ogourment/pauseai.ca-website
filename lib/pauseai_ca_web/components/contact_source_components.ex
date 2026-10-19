@@ -43,6 +43,8 @@ defmodule PauseAiCaWeb.ContactSourceComponents do
   attr :id, :string, required: true
   attr :data, :map, required: true
 
+  attr :query, :string, default: ""
+
   def source_details(assigns) do
     ~H"""
     <details id={@id} class="mt-3 text-sm text-stone-600">
@@ -50,14 +52,67 @@ defmodule PauseAiCaWeb.ContactSourceComponents do
         {gettext("Show imported source fields")}
       </summary>
       <dl class="mt-3 grid gap-x-6 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
-        <div :for={{field, value} <- Enum.sort(@data)}>
+        <div
+          :for={{field, value} <- Enum.sort(@data)}
+          class={
+            if PhoenixCRM.SourceMetadata.format_json(value),
+              do: "min-w-0 sm:col-span-2 lg:col-span-3",
+              else: "min-w-0"
+          }
+        >
           <dt class="font-normal text-stone-600">{field_label(field)}</dt>
           <dd class="break-words text-stone-900">
-            {if is_map(value) or is_list(value), do: Jason.encode!(value), else: value}
+            <pre
+              :if={PhoenixCRM.SourceMetadata.format_json(value)}
+              class="mt-1 max-w-full overflow-x-auto whitespace-pre-wrap break-words rounded-lg border border-stone-200 bg-stone-50 p-3 text-xs"
+            ><code><.highlight text={PhoenixCRM.SourceMetadata.format_json(value)} query={@query} /></code></pre>
+            <span :if={!PhoenixCRM.SourceMetadata.format_json(value)}><.highlight
+              text={to_string(if(is_nil(value), do: "", else: value))}
+              query={@query}
+            /></span>
           </dd>
         </div>
       </dl>
     </details>
+    """
+  end
+
+  attr :data, :map, required: true
+  attr :query, :string, default: ""
+
+  def source_matches(assigns) do
+    assigns =
+      assign(assigns, :matches, PhoenixCRM.SourceMetadata.matches(assigns.data, assigns.query))
+
+    ~H"""
+    <ul
+      :if={@matches != []}
+      class="my-2 space-y-1 rounded border-l-4 border-amber-500 bg-amber-50 px-3 py-2 text-sm text-stone-900"
+      data-source-search-matches
+    >
+      <li :for={match <- @matches} class="break-words">
+        <strong>{gettext("Matched source field")}: </strong><code class="break-all"><.highlight
+          text={match.path}
+          query={@query}
+        /></code>
+        · <.highlight text={match.excerpt} query={@query} />
+      </li>
+    </ul>
+    """
+  end
+
+  attr :text, :string, required: true
+  attr :query, :string, default: ""
+
+  defp highlight(assigns) do
+    assigns =
+      assign(assigns, :chunks, PhoenixCRM.SourceMetadata.chunks(assigns.text, assigns.query))
+
+    ~H"""
+    <span :for={{matched?, text} <- @chunks}><mark
+      :if={matched?}
+      class="rounded bg-amber-200 text-stone-950"
+    >{text}</mark><span :if={!matched?}>{text}</span></span>
     """
   end
 

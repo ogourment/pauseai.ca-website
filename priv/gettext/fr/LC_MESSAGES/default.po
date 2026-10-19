@@ -958,9 +958,9 @@ msgstr "Écrire à votre député·e"
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:45
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:134
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:512
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:346
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:449
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:458
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:602
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:706
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:715
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:421
 #: lib/pauseai_ca_web/live/profile_live.ex:147
 #: lib/pauseai_ca_web/newsletter_audience_labels.ex:3
@@ -1044,9 +1044,9 @@ msgid "We recorded this as awaiting confirmation."
 msgstr "Nous l’avons enregistrée comme étant en attente de confirmation."
 
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:131
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:344
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:449
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:458
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:600
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:706
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:715
 #: lib/pauseai_ca_web/live/donate_live.ex:256
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:403
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:653
@@ -1114,8 +1114,8 @@ msgstr "Accorder l’accès superadmin"
 
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:747
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:819
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:328
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:333
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:577
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:582
 #: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:100
 #: lib/pauseai_ca_web/live/local_interest_live.ex:96
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:686
@@ -1135,8 +1135,8 @@ msgstr "Page %{page} sur %{page_count}"
 
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:741
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:812
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:320
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:321
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:569
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:570
 #: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:95
 #: lib/pauseai_ca_web/live/local_interest_live.ex:91
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:678
@@ -1167,7 +1167,7 @@ msgid "Superadmin"
 msgstr "Superadmin"
 
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:319
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:32
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:39
 #: lib/pauseai_ca_web/live/administrators_live.ex:24
 #: lib/pauseai_ca_web/live/administrators_live.ex:50
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:162
@@ -1243,6 +1243,7 @@ msgid "Choose a CSV file to preview."
 msgstr "Choisissez un fichier CSV à prévisualiser."
 
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:481
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:492
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:634
 #, elixir-autogen, elixir-format
 msgid "Clear selection"
@@ -1408,8 +1409,8 @@ msgstr "Activité connue"
 msgid "Needs review"
 msgstr "À réviser"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:70
-#: lib/pauseai_ca_web/components/contact_source_components.ex:97
+#: lib/pauseai_ca_web/components/contact_source_components.ex:125
+#: lib/pauseai_ca_web/components/contact_source_components.ex:152
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:557
 #, elixir-autogen, elixir-format
 msgid "Not provided"
@@ -1428,7 +1429,7 @@ msgstr ""
 msgid "Show all source fields"
 msgstr "Afficher tous les champs sources"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:50
+#: lib/pauseai_ca_web/components/contact_source_components.ex:52
 #, elixir-autogen, elixir-format
 msgid "Show imported source fields"
 msgstr "Afficher les champs sources importés"
@@ -1439,13 +1440,13 @@ msgid "Additional columns preserved: %{columns}"
 msgstr "Colonnes supplémentaires conservées : %{columns}"
 
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:787
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:310
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:559
 #, elixir-autogen, elixir-format
 msgid "Page %{page} of %{pages} · %{total} contacts"
 msgstr "Page %{page} sur %{pages} · %{total} contacts"
 
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:795
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:272
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:474
 #, elixir-autogen, elixir-format
 msgid "Rows per page"
 msgstr "Lignes par page"
@@ -1672,7 +1673,7 @@ msgstr "Me connecter cette fois seulement"
 
 #: lib/pauseai_ca_web/components/core_components.ex:47
 #: lib/pauseai_ca_web/components/learning_journey.ex:200
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:91
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:210
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:183
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:252
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:288
@@ -1697,6 +1698,7 @@ msgstr "Action notée en privé."
 msgid "Action updated."
 msgstr "Action mise à jour."
 
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:413
 #: lib/pauseai_ca_web/live/dashboard_live.ex:524
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:459
 #, elixir-autogen, elixir-format
@@ -2947,7 +2949,7 @@ msgstr "PauseIA Canada"
 msgid "Pledged amount"
 msgstr "Montant promis"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:348
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:604
 #: lib/pauseai_ca_web/live/administrators_live.ex:113
 #: lib/pauseai_ca_web/live/donate_live.ex:309
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:565
@@ -3767,7 +3769,7 @@ msgstr ""
 msgid "This browser is also excluded when signed out."
 msgstr "Ce navigateur est aussi exclu lorsque vous êtes déconnecté."
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:358
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:614
 #, elixir-autogen, elixir-format
 msgid "A preferred address does not grant permission to contact this person."
 msgstr ""
@@ -3779,7 +3781,7 @@ msgstr ""
 msgid "Account and Brevo history"
 msgstr "Compte et historique Brevo"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:412
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:669
 #, elixir-autogen, elixir-format
 msgid "Activity"
 msgstr "Activité"
@@ -3789,7 +3791,7 @@ msgstr "Activité"
 msgid "Add recipient"
 msgstr "Ajouter un destinataire"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:351
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:607
 #, elixir-autogen, elixir-format
 msgid "Addresses"
 msgstr "Adresses"
@@ -3799,27 +3801,27 @@ msgstr "Adresses"
 msgid "Available variables: {{name}}, {{email}}, {{city}}."
 msgstr "Variables disponibles : {{name}}, {{email}}, {{city}}."
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:436
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:693
 #, elixir-autogen, elixir-format
 msgid "Choose a person"
 msgstr "Choisissez une personne"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:459
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:716
 #, elixir-autogen, elixir-format
 msgid "Choose a value"
 msgstr "Choisissez une valeur"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:468
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:725
 #, elixir-autogen, elixir-format
 msgid "Choose an address"
 msgstr "Choisissez une adresse"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:120
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:239
 #, elixir-autogen, elixir-format
 msgid "Choose another available person."
 msgstr "Choisissez une autre personne disponible."
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:138
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:257
 #, elixir-autogen, elixir-format
 msgid "Choose every conflicting field and a preferred address. Reload if the records changed."
 msgstr ""
@@ -3831,12 +3833,12 @@ msgstr ""
 msgid "Choose one to five eligible recipients."
 msgstr "Choisissez de un à cinq destinataires admissibles."
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:438
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:695
 #, elixir-autogen, elixir-format
 msgid "Compare"
 msgstr "Comparer"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:447
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:704
 #, elixir-autogen, elixir-format
 msgid "Comparison is read-only. Confirm your choices to reconcile."
 msgstr ""
@@ -3850,25 +3852,25 @@ msgstr ""
 msgid "Compose"
 msgstr "Rédiger"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:476
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:733
 #, elixir-autogen, elixir-format
 msgid "Confirm reconciliation"
 msgstr "Confirmer le rapprochement"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:96
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:215
 #, elixir-autogen, elixir-format
 msgid "Contact changed or access was revoked. Reload before saving."
 msgstr ""
 "La fiche a changé ou votre accès a été retiré. Rechargez la page avant "
 "d’enregistrer."
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:214
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:333
 #, elixir-autogen, elixir-format
 msgid "Contact unavailable."
 msgstr "Fiche indisponible."
 
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:13
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:228
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:347
 #: lib/pauseai_ca_web/navigation.ex:20
 #, elixir-autogen, elixir-format
 msgid "Contacts"
@@ -3902,7 +3904,7 @@ msgid "Enter a subject and message within the allowed length."
 msgstr ""
 "Saisissez un objet et un message qui respectent les limites de longueur."
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:256
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:458
 #, elixir-autogen, elixir-format
 msgid "Find a contact"
 msgstr "Rechercher un contact"
@@ -3923,7 +3925,7 @@ msgstr "Générer les brouillons"
 msgid "Generating…"
 msgstr "Génération…"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:277
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:479
 #, elixir-autogen, elixir-format
 msgid "Historical contacts are private. Importing or reconciling them does not create an account or consent."
 msgstr ""
@@ -3941,22 +3943,22 @@ msgstr "Modèle de message · Markdown"
 msgid "Message · Markdown"
 msgstr "Message · Markdown"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:362
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:618
 #, elixir-autogen, elixir-format
 msgid "Origins and preserved links"
 msgstr "Origines et liens conservés"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:435
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:692
 #, elixir-autogen, elixir-format
 msgid "Other person"
 msgstr "Autre personne"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:353
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:609
 #, elixir-autogen, elixir-format
 msgid "Preferred"
 msgstr "Préférée"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:467
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:724
 #, elixir-autogen, elixir-format
 msgid "Preferred address"
 msgstr "Adresse préférée"
@@ -3980,17 +3982,17 @@ msgstr "Brouillons par destinataire"
 msgid "Recipients"
 msgstr "Destinataires"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:423
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:680
 #, elixir-autogen, elixir-format
 msgid "Reconcile"
 msgstr "Rapprocher les fiches"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:132
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:251
 #, elixir-autogen, elixir-format
 msgid "Reconciliation saved"
 msgstr "Rapprochement enregistré"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:151
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:270
 #, elixir-autogen, elixir-format
 msgid "Reconciliation undone"
 msgstr "Rapprochement annulé"
@@ -4000,7 +4002,7 @@ msgstr "Rapprochement annulé"
 msgid "Resolve missing variables: %{variables}"
 msgstr "Renseignez les variables manquantes : %{variables}"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:348
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:604
 #, elixir-autogen, elixir-format
 msgid "Save contact"
 msgstr "Enregistrer le contact"
@@ -4044,14 +4046,14 @@ msgstr ""
 "Ce brouillon a changé dans une autre session. Rechargez la page avant "
 "d’enregistrer."
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:156
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:275
 #, elixir-autogen, elixir-format
 msgid "This person changed after reconciliation. Undo is no longer safe."
 msgstr ""
 "Cette fiche a changé après le rapprochement. L’annulation ne peut plus être "
 "effectuée de façon sûre."
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:479
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:736
 #, elixir-autogen, elixir-format
 msgid "Undo reconciliation"
 msgstr "Annuler le rapprochement"
@@ -4370,39 +4372,39 @@ msgstr "Votre parcours est vide. Ajoutez les sujets qui vous intéressent."
 msgid "Support our work"
 msgstr "Soutenir notre action"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:401
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:658
 #, elixir-autogen, elixir-format
 msgid "Date only; time unknown"
 msgstr "Date seulement ; heure inconnue"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:198
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:317
 #, elixir-autogen, elixir-format
 msgid "Earliest recovered processing; earlier runs may exist"
 msgstr ""
 "Premier traitement retrouvé ; des exécutions antérieures peuvent exister"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:386
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:643
 #, elixir-autogen, elixir-format
 msgid "Historical source dates"
 msgstr "Dates historiques des sources"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:203
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:322
 #, elixir-autogen, elixir-format
 msgid "Latest source processing; overwritten by later runs"
 msgstr ""
 "Dernier traitement dans la source ; remplacé lors des exécutions suivantes"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:195
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:314
 #, elixir-autogen, elixir-format
 msgid "Original global notification sent"
 msgstr "Notification initiale de PauseIA Global envoyée"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:192
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:311
 #, elixir-autogen, elixir-format
 msgid "Original source record created"
 msgstr "Fiche originale créée dans la source"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:388
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:645
 #, elixir-autogen, elixir-format
 msgid "Source creation, notification and processing times describe different events. Migration activity below records this database's import time."
 msgstr ""
@@ -4410,91 +4412,91 @@ msgstr ""
 " des événements différents. L’activité de migration ci-dessous indique "
 "l’heure d’importation dans cette base de données."
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:200
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:319
 #, elixir-autogen, elixir-format
 msgid "Source signup / date added"
 msgstr "Inscription ou date d’ajout dans la source"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:405
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:662
 #, elixir-autogen, elixir-format
 msgid "Timezone unknown"
 msgstr "Fuseau horaire inconnu"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:208
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:327
 #, elixir-autogen, elixir-format
 msgid "PauseAI Automations"
 msgstr "Automatisations PauseIA"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:207
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:326
 #, elixir-autogen, elixir-format
 msgid "PauseAI Global email"
 msgstr "Courriel de PauseIA Global"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:86
+#: lib/pauseai_ca_web/components/contact_source_components.ex:141
 #, elixir-autogen, elixir-format
 msgid "Computed from postal code"
 msgstr "Calculée à partir du code postal"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:87
+#: lib/pauseai_ca_web/components/contact_source_components.ex:142
 #, elixir-autogen, elixir-format
 msgid "Computed region"
 msgstr "Région calculée"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:90
+#: lib/pauseai_ca_web/components/contact_source_components.ex:145
 #, elixir-autogen, elixir-format
 msgid "From source sheet"
 msgstr "D’après l’onglet source"
 
 #: lib/pauseai_ca_web/components/contact_source_components.ex:23
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:264
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:466
 #: lib/pauseai_ca_web/live/newsletters_live.ex:346
 #, elixir-autogen, elixir-format
 msgid "Geography"
 msgstr "Géographie"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:92
+#: lib/pauseai_ca_web/components/contact_source_components.ex:147
 #, elixir-autogen, elixir-format
 msgid "Region supplied by source"
 msgstr "Région fournie par la source"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:85
+#: lib/pauseai_ca_web/components/contact_source_components.ex:140
 #, elixir-autogen, elixir-format
 msgid "Self-reported region"
 msgstr "Région déclarée"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:146
+#: lib/pauseai_ca_web/components/contact_source_components.ex:201
 #, elixir-autogen, elixir-format
 msgid "Sheet"
 msgstr "Onglet"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:148
+#: lib/pauseai_ca_web/components/contact_source_components.ex:203
 #, elixir-autogen, elixir-format
 msgid "Sheet status"
 msgstr "Statut dans l’onglet"
 
 #: lib/pauseai_ca_web/components/contact_source_components.ex:17
-#: lib/pauseai_ca_web/components/contact_source_components.ex:144
+#: lib/pauseai_ca_web/components/contact_source_components.ex:199
 #, elixir-autogen, elixir-format
 msgid "Signup date"
 msgstr "Date d’inscription"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:145
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:372
+#: lib/pauseai_ca_web/components/contact_source_components.ex:200
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:628
 #, elixir-autogen, elixir-format
 msgid "Source"
 msgstr "Source"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:147
+#: lib/pauseai_ca_web/components/contact_source_components.ex:202
 #, elixir-autogen, elixir-format
 msgid "Source status"
 msgstr "Statut dans la source"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:149
+#: lib/pauseai_ca_web/components/contact_source_components.ex:204
 #, elixir-autogen, elixir-format
 msgid "Welcomed date"
 msgstr "Date d’accueil"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:265
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:467
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:557
 #: lib/pauseai_ca_web/live/newsletters_live.ex:348
 #, elixir-autogen, elixir-format
@@ -4508,7 +4510,7 @@ msgstr ""
 "Choisissez un compte admissible pour commencer. Vous pourrez ajouter jusqu’à"
 " cinq destinataires au brouillon."
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:306
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:555
 #: lib/pauseai_ca_web/live/local_interest_live.ex:81
 #, elixir-autogen, elixir-format
 msgid "Contact pages"
@@ -4523,7 +4525,7 @@ msgstr "Pages de contacts"
 msgid "Emails"
 msgstr "Courriels"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:233
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:352
 #, elixir-autogen, elixir-format
 msgid "Import Contacts"
 msgstr "Importer des contacts"
@@ -6071,7 +6073,7 @@ msgstr "Voir les lectures enregistrées"
 msgid "Choose a valid geography."
 msgstr "Choisissez une région valide."
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:88
+#: lib/pauseai_ca_web/components/contact_source_components.ex:143
 #, elixir-autogen, elixir-format
 msgid "Confirmed region"
 msgstr "Région confirmée"
@@ -6087,13 +6089,13 @@ msgstr "Région par défaut"
 msgid "Email draft"
 msgstr "Brouillon de courriel"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:89
+#: lib/pauseai_ca_web/components/contact_source_components.ex:144
 #, elixir-autogen, elixir-format
 msgid "From import default"
 msgstr "Valeur par défaut de l’importation"
 
-#: lib/pauseai_ca_web/components/contact_source_components.ex:91
-#: lib/pauseai_ca_web/components/contact_source_components.ex:101
+#: lib/pauseai_ca_web/components/contact_source_components.ex:146
+#: lib/pauseai_ca_web/components/contact_source_components.ex:156
 #, elixir-autogen, elixir-format
 msgid "From source city"
 msgstr "D’après la ville indiquée"
@@ -6906,3 +6908,126 @@ msgstr "Type de source / précisions"
 #, elixir-autogen, elixir-format
 msgid "This address does not match a page on this site."
 msgstr "Cette adresse ne correspond à aucune page de ce site."
+
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:428
+#, elixir-autogen, elixir-format
+msgid "%{count} contacts excluded because an address or contact permission needs attention."
+msgstr "%{count} contacts exclus : une adresse ou une autorisation de communication doit être vérifiée."
+
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:424
+#, elixir-autogen, elixir-format
+msgid "%{count} recipients"
+msgstr "%{count} destinataires"
+
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:493
+#, elixir-autogen, elixir-format
+msgid "%{count} selected across pages"
+msgstr "%{count} sélectionnés sur plusieurs pages"
+
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:410
+#, elixir-autogen, elixir-format
+msgid "Create invitation drafts"
+msgstr "Créer les brouillons d’invitation"
+
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:410
+#, elixir-autogen, elixir-format
+msgid "Creating drafts…"
+msgstr "Création des brouillons…"
+
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:188
+#, elixir-autogen, elixir-format
+msgid "Enter who the invitation is from and why you are inviting them in each required language."
+msgstr "Indiquez qui invite ces personnes et pourquoi, dans chaque langue requise."
+
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:363
+#, elixir-autogen, elixir-format
+msgid "For %{count} selected contacts. This creates email drafts for review; it does not send email or create accounts."
+msgstr "Pour %{count} contacts sélectionnés. Cette action crée des brouillons à relire; aucun courriel n’est envoyé et aucun compte n’est créé."
+
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:177
+#, elixir-autogen, elixir-format
+msgid "Invitation drafts created for %{count} contacts. Review each draft before sending."
+msgstr "Brouillons d’invitation créés pour %{count} contacts. Relisez chaque brouillon avant l’envoi."
+
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:385
+#, elixir-autogen, elixir-format
+msgid "Invitation from"
+msgstr "Invitation de la part de"
+
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:502
+#, elixir-autogen, elixir-format
+msgid "Invite selected to create an account"
+msgstr "Inviter la sélection à créer un compte"
+
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:361
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:523
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:592
+#, elixir-autogen, elixir-format
+msgid "Invite to create an account"
+msgstr "Inviter à créer un compte"
+
+#: lib/pauseai_ca_web/components/contact_source_components.ex:94
+#, elixir-autogen, elixir-format
+msgid "Matched source field"
+msgstr "Champ source correspondant"
+
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:197
+#, elixir-autogen, elixir-format
+msgid "No drafts were created. Reload and check the selected contacts and their email permissions."
+msgstr "Aucun brouillon créé. Rechargez la page et vérifiez les contacts sélectionnés ainsi que leurs autorisations de communication."
+
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:372
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:435
+#, elixir-autogen, elixir-format
+msgid "No preferred email address"
+msgstr "Aucune adresse courriel préférée"
+
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:127
+#, elixir-autogen, elixir-format
+msgid "No selected contact can be emailed. Check withdrawals, blocked addresses and preferred addresses."
+msgstr "Aucun contact sélectionné ne peut recevoir de courriel. Vérifiez les retraits, les adresses bloquées et les adresses préférées."
+
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:406
+#, elixir-autogen, elixir-format
+msgid "Recorded language determines the edition. Unknown language receives both versions. You can edit the resulting drafts before sending."
+msgstr "La langue enregistrée détermine la version. Les personnes dont la langue est inconnue reçoivent les deux versions. Vous pouvez modifier les brouillons avant l’envoi."
+
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:417
+#, elixir-autogen, elixir-format
+msgid "Review invitation drafts"
+msgstr "Relire les brouillons d’invitation"
+
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:513
+#, elixir-autogen, elixir-format
+msgid "Select %{name}"
+msgstr "Sélectionner %{name}"
+
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:151
+#, elixir-autogen, elixir-format
+msgid "Select available contacts before creating an invitation."
+msgstr "Sélectionnez des contacts disponibles avant de créer une invitation."
+
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:484
+#, elixir-autogen, elixir-format
+msgid "Select this page"
+msgstr "Sélectionner cette page"
+
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:369
+#, elixir-autogen, elixir-format
+msgid "Selected recipients"
+msgstr "Destinataires sélectionnés"
+
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:393
+#, elixir-autogen, elixir-format
+msgid "Why you are inviting them · English"
+msgstr "Pourquoi vous les invitez · anglais"
+
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:401
+#, elixir-autogen, elixir-format
+msgid "Why you are inviting them · French"
+msgstr "Pourquoi vous les invitez · français"
+
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:513
+#, elixir-autogen, elixir-format
+msgid "contact"
+msgstr "contact"

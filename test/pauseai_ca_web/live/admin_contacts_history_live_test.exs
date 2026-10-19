@@ -229,4 +229,41 @@ defmodule PauseAiCaWeb.AdminContactsHistoryLiveTest do
     admin |> Ecto.Changeset.change(superadmin: false) |> Repo.update!()
     assert CRM.directory_origins(scope, records) == {:error, :unauthorized}
   end
+
+  test "hidden source matches are explained and encoded JSON is formatted and highlighted", %{
+    conn: conn
+  } do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+
+    payload = %{
+      "user" => %{
+        "bio_short" => "Research @ example-lab.org",
+        "details" => ["Research", "Writing"]
+      }
+    }
+
+    row = %{
+      "email" => "source-match@example.org",
+      "name" => "Synthetic match",
+      "source_observation" => Jason.encode!(payload)
+    }
+
+    assert {:ok, %{contacts: [_]}} =
+             ContactMigration.import_selected([row], "synthetic.csv", "test-source-match", admin)
+
+    {:ok, view, _} = live(log_in_user(conn, admin), "/admin/contacts?locale=en&q=example-lab")
+    assert has_element?(view, "[data-source-search-matches]", "bio_short")
+    assert has_element?(view, "[data-source-search-matches] mark", "example-lab")
+    assert has_element?(view, "details pre code mark", "example-lab")
+    html = render(view) |> LazyHTML.from_fragment()
+
+    formatted =
+      html
+      |> LazyHTML.query("details pre code")
+      |> Enum.find(fn code -> LazyHTML.text(code) =~ "bio_short" end)
+      |> LazyHTML.text()
+
+    assert formatted =~ "\n"
+    assert Jason.decode!(formatted)
+  end
 end
