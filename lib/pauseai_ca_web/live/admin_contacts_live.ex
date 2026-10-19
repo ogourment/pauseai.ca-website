@@ -143,7 +143,10 @@ defmodule PauseAiCaWeb.AdminContactsLive do
           inviter =
             socket.assigns.current_scope.user.name || socket.assigns.current_scope.user.email
 
-          values = Map.put_new(socket.assigns.invitation_form.params, "inviter", inviter)
+          values =
+            socket.assigns.invitation_form.params
+            |> Map.put_new("inviter", inviter)
+            |> Map.put("language", "recorded")
 
           {:noreply,
            assign(socket,
@@ -164,8 +167,24 @@ defmodule PauseAiCaWeb.AdminContactsLive do
     end
   end
 
-  def handle_event("edit-invitation", %{"invitation" => attrs}, socket),
-    do: {:noreply, assign(socket, invitation_form: to_form(attrs, as: "invitation"))}
+  def handle_event("edit-invitation", %{"invitation" => attrs}, socket) do
+    case PhoenixMailWorkflow.Invitations.recipients(
+           socket.assigns.invitation_targets,
+           attrs["language"]
+         ) do
+      {:ok, rows} ->
+        editions = rows |> Enum.filter(&(&1.status == :available)) |> Enum.map(& &1.edition)
+
+        {:noreply,
+         assign(socket,
+           invitation_form: to_form(attrs, as: "invitation"),
+           invitation_languages: PauseAiCa.Mail.AccountInvitation.languages(editions)
+         )}
+
+      _ ->
+        {:noreply, socket}
+    end
+  end
 
   def handle_event("cancel-invitation", _, socket),
     do: {:noreply, assign(socket, invitation_ids: [])}
@@ -176,6 +195,27 @@ defmodule PauseAiCaWeb.AdminContactsLive do
            socket.assigns.invitation_ids,
            attrs
          ) do
+      {:ok, %{drafts: [draft]}} ->
+        base = ~p"/manage/mail/drafts/#{draft.id}?locale=#{socket.assigns.locale}"
+
+        destination =
+          if attrs["eligible"] == "true" do
+            case PauseAiCa.Newsletters.Batches.prepare(
+                   socket.assigns.current_scope,
+                   draft,
+                   "contacts",
+                   draft.recipient_keys,
+                   true
+                 ) do
+              {:ok, batch} -> base <> "&batch=#{batch.id}&step=review"
+              _ -> base
+            end
+          else
+            base
+          end
+
+        {:noreply, redirect(socket, to: destination)}
+
       {:ok, result} ->
         {:noreply,
          assign(socket,
@@ -408,8 +448,17 @@ defmodule PauseAiCaWeb.AdminContactsLive do
       current_scope={@current_scope}
       locale={@locale}
     >
-      <main class="mx-auto max-w-5xl px-5 py-10 crm-surface">
-        <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <main
+        class="mx-auto max-w-6xl px-5 py-8 crm-surface"
+        data-breadcrumb-label={
+          cond do
+            @creating -> gettext("New contact")
+            @record -> @record.person.name || gettext("Contact")
+            true -> gettext("Contacts")
+          end
+        }
+      >
+        <div class="management-controls mb-6 flex flex-wrap items-center justify-between gap-3">
           <h1 class="text-3xl font-bold">{gettext("Contacts")}</h1>
           <.link
             id="crm-new-contact"
@@ -456,6 +505,16 @@ defmodule PauseAiCaWeb.AdminContactsLive do
             class="mt-4 space-y-4"
           >
             <.input
+              field={@invitation_form[:language]}
+              type="select"
+              label={gettext("Invitation language")}
+              options={[
+                {gettext("Use recorded languages · bilingual if unknown"), "recorded"},
+                {gettext("English · record this language for selected contacts"), "en"},
+                {gettext("French · record this language for selected contacts"), "fr"}
+              ]}
+            />
+            <.input
               field={@invitation_form[:inviter]}
               label={gettext("Invitation from")}
               required
@@ -482,8 +541,18 @@ defmodule PauseAiCaWeb.AdminContactsLive do
                 "Recorded language determines the edition. Unknown language receives both versions. You can edit the resulting drafts before sending."
               )}
             </p>
+            <label class="flex gap-3">
+              <input
+                type="checkbox"
+                name="invitation[eligible]"
+                value="true"
+                checked={@invitation_form[:eligible].value == "true"}
+                required
+              />
+              <span>{gettext("I reviewed these contacts’ eligibility for this invitation or message.")}</span>
+            </label>
             <button class="crm-button" phx-disable-with={gettext("Creating drafts…")}>{gettext(
-              "Create invitation drafts"
+              "Review invitation"
             )}</button>
             <button type="button" phx-click="cancel-invitation" class="underline">{gettext("Cancel")}</button>
           </.form>
@@ -493,7 +562,7 @@ defmodule PauseAiCaWeb.AdminContactsLive do
           <ul>
             <li :for={draft <- @invitation_drafts}>
               <.link
-                navigate={~p"/manage/mail/drafts/#{draft.id}?locale=#{@locale}"}
+                href={~p"/manage/mail/drafts/#{draft.id}?locale=#{@locale}"}
                 class="underline"
               >{draft.subject}</.link>
               · {gettext("%{count} recipients", count: length(draft.recipient_keys))}
@@ -546,7 +615,7 @@ defmodule PauseAiCaWeb.AdminContactsLive do
                 "per" => @directory_page.per
               })
             }
-            class="grid gap-3 sm:grid-cols-[2fr_1fr_1fr]"
+            class="management-controls grid gap-3 sm:grid-cols-[2fr_1fr_1fr]"
             phx-change="search"
             phx-submit="search"
           >
@@ -802,7 +871,7 @@ defmodule PauseAiCaWeb.AdminContactsLive do
             <article :for={entry <- @email_history} class="border-b py-3">
               <.link
                 :if={entry.delivery.batch_id}
-                navigate={~p"/manage/mail/results/#{entry.delivery.batch_id}?locale=#{@locale}"}
+                href={~p"/manage/mail/results/#{entry.delivery.batch_id}?locale=#{@locale}"}
                 class="font-bold underline"
               >{entry.subject}</.link>
               <strong :if={is_nil(entry.delivery.batch_id)}>{entry.subject}</strong>

@@ -318,21 +318,23 @@ defmodule PauseAiCaWeb.MailDraftsLive do
       current_scope={@current_scope}
       locale={@locale}
     >
-      <main class="mx-auto max-w-5xl px-5 py-10 crm-surface">
-        <.link
-          :if={@batch}
-          navigate={~p"/manage/accounts/#{@batch.anchor_user_id}?locale=#{@locale}"}
-          class="mb-4 inline-block underline"
-        >{gettext("Account and Brevo history")}</.link>
-        <h1 class="text-3xl font-bold mb-6">{gettext("Emails")}</h1>
-        <p :if={@batch}>
-          {gettext(
-            "Templates save automatically. Individual edits save with Save draft. Drafting does not send email."
-          )}
-        </p>
-        <p :if={@error} id="mail-error" role="alert" class="crm-error">{@error}</p>
-        <p :if={@status} id="mail-save-status" role="status" aria-live="polite">{@status}</p>
-        <PauseAiCaWeb.MailNavigation.tabs locale={@locale} active="drafts" />
+      <main class="mx-auto max-w-6xl px-5 py-8 crm-surface">
+        <div class="management-controls">
+          <.link
+            :if={@batch}
+            navigate={~p"/manage/accounts/#{@batch.anchor_user_id}?locale=#{@locale}"}
+            class="mb-4 inline-block underline"
+          >{gettext("Account and Brevo history")}</.link>
+          <PauseAiCaWeb.MailNavigation.tabs locale={@locale} active="drafts" />
+          <h1 class="text-3xl font-bold mb-6">{gettext("Drafts")}</h1>
+          <p :if={@batch}>
+            {gettext(
+              "Templates save automatically. Individual edits save with Save draft. Drafting does not send email."
+            )}
+          </p>
+          <p :if={@error} id="mail-error" role="alert" class="crm-error">{@error}</p>
+          <p :if={@status} id="mail-save-status" role="status" aria-live="polite">{@status}</p>
+        </div>
         <section :if={@anchor} class="mt-6">
           <p>{@anchor.name} · {@anchor.email}</p><button
             type="button"

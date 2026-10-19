@@ -235,6 +235,15 @@ defmodule PauseAiCaWeb.QuestionDraftsLive do
   defp field_label("correct"), do: gettext("Correct answer")
   defp field_label("image_alt"), do: gettext("Image description")
 
+  defp placement_label("nuggets"), do: gettext("Knowledge nuggets")
+  defp placement_label("home"), do: gettext("Home-page cards")
+  defp placement_label("quiz"), do: gettext("Scored questions")
+  defp placement_label(_), do: gettext("All content")
+  defp filter_status_label("draft"), do: gettext("Drafts")
+  defp filter_status_label("published"), do: gettext("Published")
+  defp filter_status_label("deleted"), do: gettext("Deleted")
+  defp filter_status_label(_), do: gettext("All")
+
   def render(assigns) do
     ~H"""
     <Layouts.management
@@ -243,7 +252,10 @@ defmodule PauseAiCaWeb.QuestionDraftsLive do
       current_scope={@current_scope}
       locale={@locale}
     >
-      <main class="mx-auto max-w-5xl px-5 py-10 crm-surface">
+      <main
+        class="mx-auto max-w-6xl px-5 py-8 crm-surface"
+        data-breadcrumb-label={if @draft, do: content_title(@draft, @locale), else: nil}
+      >
         <h1 class="text-3xl font-bold">{gettext("Knowledge content")}</h1>
         <p class="my-3">
           {gettext(
@@ -254,50 +266,59 @@ defmodule PauseAiCaWeb.QuestionDraftsLive do
           {@error}
         </p>
         <div :if={!@draft}>
-          <button id="question-new" phx-click="new" class="crm-button my-4">{gettext("New content")}</button>
-          <nav
-            id="content-placement-filter"
-            aria-label={gettext("Content placement")}
-            class="my-4 flex flex-wrap gap-4"
+          <div
+            class="management-controls"
+            data-breadcrumb-label={placement_label(@placement) <> " · " <> filter_status_label(@filter)}
           >
-            <.link
-              :for={
-                {value, label} <- [
-                  {"all", gettext("All content")},
-                  {"nuggets", gettext("Knowledge nuggets")},
-                  {"home", gettext("Home-page cards")},
-                  {"quiz", gettext("Scored questions")}
-                ]
-              }
-              patch={~p"/manage/questions?locale=#{@locale}&status=#{@filter}&placement=#{value}"}
-              aria-current={if @placement == value, do: "page"}
-              class={if @placement == value, do: "font-bold underline", else: "underline"}
-            >{label}</.link>
-          </nav>
-          <p class="text-sm">
-            {gettext(
-              "Scored questions are knowledge nuggets with answer choices. Home-page cards are selected separately for each language."
-            )}
-          </p>
-          <nav
-            id="question-status-filter"
-            aria-label={gettext("Publication status")}
-            class="my-4 flex flex-wrap gap-4"
-          >
-            <.link
-              :for={
-                {value, label} <- [
-                  {"all", gettext("All")},
-                  {"draft", gettext("Drafts")},
-                  {"published", gettext("Published")},
-                  {"deleted", gettext("Deleted")}
-                ]
-              }
-              patch={~p"/manage/questions?locale=#{@locale}&status=#{value}&placement=#{@placement}"}
-              aria-current={if @filter == value, do: "page"}
-              class={if @filter == value, do: "font-bold underline", else: "underline"}
-            >{label}</.link>
-          </nav>
+            <button id="question-new" phx-click="new" class="crm-button my-4">{gettext("New content")}</button>
+            <p class="font-semibold">{gettext("Content type")}</p>
+            <nav
+              id="content-placement-filter"
+              aria-label={gettext("Content placement")}
+              class="my-4 flex flex-wrap gap-4"
+            >
+              <.link
+                :for={
+                  {value, label} <- [
+                    {"all", gettext("All content")},
+                    {"nuggets", gettext("Knowledge nuggets")},
+                    {"home", gettext("Home-page cards")},
+                    {"quiz", gettext("Scored questions")}
+                  ]
+                }
+                patch={~p"/manage/questions?locale=#{@locale}&status=#{@filter}&placement=#{value}"}
+                aria-current={if @placement == value, do: "page"}
+                class={if @placement == value, do: "font-bold underline", else: "underline"}
+              >{label}</.link>
+            </nav>
+            <p class="text-sm">
+              {gettext(
+                "Scored questions are knowledge nuggets with answer choices. Home-page cards are selected separately for each language."
+              )}
+            </p>
+            <p class="font-semibold">{gettext("Status")}</p>
+            <nav
+              id="question-status-filter"
+              aria-label={gettext("Publication status")}
+              class="my-4 flex flex-wrap gap-4"
+            >
+              <.link
+                :for={
+                  {value, label} <- [
+                    {"all", gettext("All")},
+                    {"draft", gettext("Drafts")},
+                    {"published", gettext("Published")},
+                    {"deleted", gettext("Deleted")}
+                  ]
+                }
+                patch={
+                  ~p"/manage/questions?locale=#{@locale}&status=#{value}&placement=#{@placement}"
+                }
+                aria-current={if @filter == value, do: "page"}
+                class={if @filter == value, do: "font-bold underline", else: "underline"}
+              >{label}</.link>
+            </nav>
+          </div>
           <p :if={@records == []}>{gettext("No content in this view.")}</p>
           <ul id="question-drafts" class="divide-y divide-stone-200">
             <li :for={q <- @records} class="py-4">

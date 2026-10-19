@@ -45,6 +45,19 @@ defmodule PauseAiCa.Newsletters.Drafts do
           {:error, reason} -> Repo.rollback(reason)
         end
 
+      if attrs["language"] in ["en", "fr"] do
+        Enum.each(Enum.filter(rows, &(&1.status == :available)), fn row ->
+          case PauseAiCa.Newsletters.Edition.confirm_preference(
+                 scope,
+                 row.email,
+                 attrs["language"]
+               ) do
+            {:ok, _} -> :ok
+            {:error, reason} -> Repo.rollback(reason)
+          end
+        end)
+      end
+
       plan =
         case PhoenixMailWorkflow.Invitations.plan(
                rows,

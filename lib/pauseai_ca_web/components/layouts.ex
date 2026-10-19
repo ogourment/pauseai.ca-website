@@ -294,6 +294,13 @@ defmodule PauseAiCaWeb.Layouts do
       href={if(@locale == "fr", do: ~p"/fr/agent-rebelle", else: ~p"/en/rogue-agent")}
     />
 
+    <div class="mx-auto max-w-6xl px-5 pt-3">
+      <PhoenixAppShell.Components.breadcrumbs
+        label={gettext("Breadcrumbs")}
+        scope={if @current_scope && @current_scope.user, do: @current_scope.user.id, else: "guest"}
+        current_label={gettext("Current page")}
+      />
+    </div>
     <main>
       {render_slot(@inner_block)}
     </main>
@@ -389,8 +396,8 @@ defmodule PauseAiCaWeb.Layouts do
 
       <.flash
         id="server-error"
-        kind={:error}
-        title={gettext("Something went wrong!")}
+        kind={:info}
+        title={gettext("Connection interrupted")}
         phx-disconnected={
           show(".phx-server-error #server-error")
           |> JS.remove_attribute("hidden", to: ".phx-server-error #server-error")
@@ -475,11 +482,11 @@ defmodule PauseAiCaWeb.Layouts do
       translated_path={@translated_path}
       show_announcements={false}
     >
-      <.management_tabs current_scope={@current_scope} locale={@locale} active={@active_tab} />
-      <div class="mx-auto max-w-6xl px-5 text-sm">
-        <.dev_mailbox_link />
+      <div class="management-chrome">
+        <.management_tabs current_scope={@current_scope} locale={@locale} active={@active_tab} />
+        <div class="mx-auto max-w-6xl px-5 text-sm"><.dev_mailbox_link /></div>
       </div>
-      {render_slot(@inner_block)}
+      <div class="management-content">{render_slot(@inner_block)}</div>
     </.app>
     """
   end

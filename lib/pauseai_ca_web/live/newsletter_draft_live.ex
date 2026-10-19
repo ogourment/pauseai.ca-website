@@ -15,6 +15,7 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
          assign(socket,
            locale: locale,
            connected: connected?(socket),
+           step: :compose,
            page_title: gettext("Email draft"),
            draft: draft,
            form: to_form(Draft.changeset(draft, %{}), as: "draft"),
@@ -39,7 +40,16 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
     end
   end
 
-  def handle_params(_, _, socket), do: {:noreply, refresh_audience(socket)}
+  def handle_params(params, _, socket) do
+    socket = refresh_audience(socket)
+
+    socket =
+      if params["batch"] && params["step"] == "review",
+        do: socket |> show_batch(params["batch"]) |> assign(step: :review),
+        else: socket
+
+    {:noreply, socket}
+  end
 
   def handle_event("toggle-delivery-limits", _, socket) do
     {:noreply, assign(socket, limits_open: !socket.assigns.limits_open)}
@@ -84,6 +94,62 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
   end
 
   def handle_event("edit", %{"draft" => attrs}, socket), do: {:noreply, edit(socket, attrs)}
+
+  def handle_event("save", %{"draft" => attrs, "intent" => "review"}, socket) do
+    case save(socket, attrs) do
+      {:noreply, %{assigns: %{status: status}} = saved} ->
+        if status == gettext("Saved") do
+          draft = saved.assigns.draft
+
+          case Batches.prepare(
+                 saved.assigns.current_scope,
+                 draft,
+                 draft.recipient_mode,
+                 draft.recipient_keys,
+                 attrs["outreach_reviewed"] == "true"
+               ) do
+            {:ok, batch} ->
+              {:noreply,
+               saved
+               |> show_batch(batch.id)
+               |> assign(step: :review)
+               |> push_patch(
+                 to:
+                   ~p"/manage/mail/drafts/#{draft.id}?locale=#{saved.assigns.locale}&batch=#{batch.id}&step=review"
+               )}
+
+            {:error, reason} ->
+              {:noreply, assign(saved, error: batch_error(reason))}
+          end
+        else
+          {:noreply, saved}
+        end
+    end
+  end
+
+  def handle_event("back-to-edit", _, socket) do
+    {:noreply,
+     socket
+     |> assign(step: :compose)
+     |> push_patch(
+       to: ~p"/manage/mail/drafts/#{socket.assigns.draft.id}?locale=#{socket.assigns.locale}"
+     )}
+  end
+
+  def handle_event("send-now", _, socket) do
+    with false <- dirty?(socket),
+         %{batch: %{id: id, state: state}} <- socket.assigns.batch_review,
+         {:ok, _} <-
+           if(state in ["review", "paused"],
+             do: Batches.approve(socket.assigns.current_scope, id),
+             else: {:ok, nil}
+           ) do
+      handle_event("send-batch", %{}, show_batch(socket, id))
+    else
+      {:error, reason} -> {:noreply, assign(socket, error: batch_error(reason))}
+      _ -> {:noreply, assign(socket, error: batch_error(:stale))}
+    end
+  end
 
   def handle_event("save", %{"draft" => attrs}, socket) do
     if PauseAiCa.Volunteers.superadmin?(socket.assigns.current_scope),
@@ -292,7 +358,7 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
           )
         end
 
-      refresh_audience(socket)
+      socket |> assign(reviewed: attrs["outreach_reviewed"] == "true") |> refresh_audience()
     else
       denied(socket)
     end
@@ -489,17 +555,39 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
       locale={@locale}
       active_tab="mail"
     >
-      <section :if={@draft} id="newsletter-draft" class="crm-surface mx-auto max-w-5xl px-5 py-8">
+      <section
+        :if={@draft}
+        id="newsletter-draft"
+        data-breadcrumb-label={
+          if @draft.subject == "", do: gettext("Untitled draft"), else: @draft.subject
+        }
+        class={["crm-surface mx-auto max-w-6xl px-5 py-8", @step == :review && "compose-step-review"]}
+      >
         <fieldset disabled={!@connected} class="contents">
-          <PauseAiCaWeb.MailNavigation.tabs locale={@locale} active="drafts" />
-          <h1 class="mt-5 text-3xl font-bold">{gettext("Email draft")}</h1>
-          <p class="mt-3">
-            {gettext(
-              "Saving a draft does not approve or send it. Eligibility is checked from current consent when a batch is prepared."
-            )}
-          </p>
-          <p :if={@status} id="newsletter-save-status" role="status" class="mt-3">{@status}</p>
-          <p :if={@error} id="newsletter-draft-error" role="alert" class="mt-3 crm-error">{@error}</p>
+          <div class="management-controls">
+            <PauseAiCaWeb.MailNavigation.tabs locale={@locale} active="drafts" />
+            <h1 class="mt-5 text-3xl font-bold">{gettext("Email draft")}</h1>
+            <div :if={@step == :compose and is_nil(@draft.archived_at)} class="send-action-bar mt-4">
+              <button
+                type="submit"
+                form="newsletter-draft-form"
+                name="intent"
+                value="review"
+                id="email-review-send"
+                class="crm-button"
+              >{gettext("Review & send")}</button>
+              <span>{gettext("Review the complete message and recipients before sending.")}</span>
+            </div>
+            <p class="mt-3">
+              {gettext(
+                "Saving a draft does not approve or send it. Eligibility is checked from current consent when a batch is prepared."
+              )}
+            </p>
+            <p :if={@status} id="newsletter-save-status" role="status" class="mt-3">{@status}</p>
+            <p :if={@error} id="newsletter-draft-error" role="alert" class="mt-3 crm-error">
+              {@error}
+            </p>
+          </div>
           <.form
             :if={is_nil(@draft.archived_at)}
             for={@form}
@@ -508,58 +596,222 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
             phx-submit="save"
             class="mt-6 space-y-5"
           >
-            <section id="newsletter-edition" class="space-y-3 rounded-lg border p-4">
-              <.input
-                field={@form[:edition]}
-                type="select"
-                label={gettext("Language edition")}
-                options={[
-                  {gettext("English · confirmed English recipients"), "en"},
-                  {gettext("French · confirmed French recipients"), "fr"},
-                  {gettext("Bilingual · language unknown only"), "unknown"}
-                ]}
-              />
-              <p>
-                {gettext(
-                  "Write one language per edition. Bilingual content is reserved for recipients whose language is unknown or ambiguous. A website language default is not proof of preference."
-                )}
-              </p>
-              <p :if={@audience} id="newsletter-language-counts">
-                {gettext("English: %{en} · French: %{fr} · Unknown: %{unknown}",
-                  en: Map.get(Map.get(@audience, :edition_counts, %{}), "en", 0),
-                  fr: Map.get(Map.get(@audience, :edition_counts, %{}), "fr", 0),
-                  unknown: Map.get(Map.get(@audience, :edition_counts, %{}), "unknown", 0)
-                )}
-              </p>
-              <div class="flex flex-wrap gap-4">
-                <button
-                  :for={
-                    {label, edition} <- [
-                      {gettext("New English edition"), "en"},
-                      {gettext("New French edition"), "fr"},
-                      {gettext("New bilingual edition"), "unknown"}
-                    ]
-                  }
-                  type="button"
-                  class="underline"
-                  phx-click="new-edition"
-                  phx-value-edition={edition}
-                >{label}</button>
-              </div>
-            </section>
+            <div class="management-controls">
+              <details id="email-recipient-settings" open={@draft.recipient_keys == []}>
+                <summary class="cursor-pointer font-semibold">
+                  {gettext("Recipients & language")} · {@draft.edition} · {length(
+                    @draft.recipient_keys
+                  )} {gettext("selected")}
+                </summary>
+                <section id="newsletter-edition" class="space-y-3 rounded-lg border p-4">
+                  <.input
+                    field={@form[:edition]}
+                    type="select"
+                    label={gettext("Language edition")}
+                    options={[
+                      {gettext("English · confirmed English recipients"), "en"},
+                      {gettext("French · confirmed French recipients"), "fr"},
+                      {gettext("Bilingual · language unknown only"), "unknown"}
+                    ]}
+                  />
+                  <p>
+                    {gettext(
+                      "Write one language per edition. Bilingual content is reserved for recipients whose language is unknown or ambiguous. A website language default is not proof of preference."
+                    )}
+                  </p>
+                  <p :if={@audience} id="newsletter-language-counts">
+                    {gettext("English: %{en} · French: %{fr} · Unknown: %{unknown}",
+                      en: Map.get(Map.get(@audience, :edition_counts, %{}), "en", 0),
+                      fr: Map.get(Map.get(@audience, :edition_counts, %{}), "fr", 0),
+                      unknown: Map.get(Map.get(@audience, :edition_counts, %{}), "unknown", 0)
+                    )}
+                  </p>
+                  <div class="flex flex-wrap gap-4">
+                    <button
+                      :for={
+                        {label, edition} <- [
+                          {gettext("New English edition"), "en"},
+                          {gettext("New French edition"), "fr"},
+                          {gettext("New bilingual edition"), "unknown"}
+                        ]
+                      }
+                      type="button"
+                      class="underline"
+                      phx-click="new-edition"
+                      phx-value-edition={edition}
+                    >{label}</button>
+                  </div>
+                </section>
+                <.input
+                  :if={@form[:recipient_mode].value != "list"}
+                  field={@form[:region]}
+                  type="select"
+                  label={gettext("Audience geography")}
+                  options={[
+                    {gettext("All regions"), ""},
+                    {"Montréal", "Montréal"},
+                    {"ROQuébec", "ROQuébec"},
+                    {"ROCanada", "ROCanada"}
+                  ]}
+                />
+                <section :if={@audience} id="newsletter-recipient-picker" class="space-y-4">
+                  <h2 class="text-xl font-semibold">{gettext("Recipients")}</h2>
+                  <.input
+                    field={@form[:recipient_mode]}
+                    type="select"
+                    label={gettext("Audience source")}
+                    options={[
+                      {gettext("Mailing list · all eligible members"), "list"},
+                      {gettext("Confirmed newsletter subscribers"), "newsletter"},
+                      {gettext("Contacts · manual review"), "contacts"}
+                    ]}
+                  />
+                  <.input
+                    :if={@form[:recipient_mode].value == "list"}
+                    field={@form[:mailing_list_id]}
+                    type="select"
+                    label={gettext("Mailing list")}
+                    options={
+                      [{gettext("Choose a list"), ""}] ++ Enum.map(@mailing_lists, &{&1.name, &1.id})
+                    }
+                  />
+                  <p
+                    :if={@form[:recipient_mode].value == "list"}
+                    id="whole-list-audience"
+                    role="status"
+                  >
+                    <strong>{gettext("Eligible")}: {Map.get(@audience, :counts, %{})[:included] || 0}</strong>. {gettext(
+                      "Whole list selected. Membership and consent are rechecked before sending."
+                    )}
+                  </p>
+                  <.input
+                    :if={@form[:recipient_mode].value != "list"}
+                    name="draft[candidate_q]"
+                    value={@candidate_q}
+                    label={gettext("Find contacts")}
+                  />
+                  <div
+                    :if={@form[:recipient_mode].value != "list"}
+                    class="flex flex-wrap gap-4 items-center"
+                  >
+                    <button type="button" class="crm-button" phx-click="select-visible">{gettext(
+                      "Select visible available recipients"
+                    )}</button>
+                    <button type="button" class="underline" phx-click="clear-recipients">{gettext(
+                      "Clear selection"
+                    )}</button>
+                    <span id="newsletter-selected-count">{gettext("%{count} selected",
+                      count: length(@form[:recipient_keys].value || [])
+                    )}</span>
+                  </div>
+                  <input type="hidden" name="draft[recipient_keys][]" value="" />
+                  <input
+                    :for={
+                      key <- (@form[:recipient_keys].value || []) -- Enum.map(@audience.rows, & &1.id)
+                    }
+                    type="hidden"
+                    name="draft[recipient_keys][]"
+                    value={key}
+                  />
+                  <ul class="space-y-2">
+                    <li
+                      :for={row <- @audience.rows}
+                      id={"newsletter-recipient-#{row.id}"}
+                      class="border border-stone-300 rounded-lg p-3"
+                    >
+                      <label class="flex gap-3 items-start">
+                        <input
+                          :if={@form[:recipient_mode].value != "list"}
+                          id={"newsletter-recipient-choice-#{row.id}"}
+                          type="checkbox"
+                          name="draft[recipient_keys][]"
+                          value={row.id}
+                          checked={row.id in (@form[:recipient_keys].value || [])}
+                          disabled={
+                            row.status != :available and
+                              row.id not in (@form[:recipient_keys].value || [])
+                          }
+                          aria-label={gettext("Select %{email}", email: row.email || row.name)}
+                        />
+                        <span><strong class="break-all">{row.email || row.name}</strong><span
+                          :if={row.name != ""}
+                          class="block text-sm"
+                        >{row.name}</span><span
+                          :if={@form[:recipient_mode].value != "list" and row.status != :available}
+                          class="block text-sm"
+                        >{gettext("Excluded: withdrawal, blocked address or missing preferred email.")}</span><span
+                          :if={@form[:recipient_mode].value == "list" and row.status != :available}
+                          class="block text-sm"
+                        >{status_label(row.exclusion_reason)}</span><span
+                          :if={Map.get(row, :matched_fields, []) != []}
+                          class="block text-sm"
+                        >{gettext("Matches: %{fields}",
+                          fields: Enum.map_join(row.matched_fields, ", ", &rule_label/1)
+                        )}</span></span>
+                      </label>
+                      <div
+                        :if={is_binary(row.email)}
+                        class="mt-2 flex flex-wrap items-center gap-3 text-sm"
+                      >
+                        <span>{gettext("Record a verified language:")}</span>
+                        <button
+                          :for={
+                            {label, language} <- [
+                              {gettext("English"), "en"},
+                              {gettext("French"), "fr"},
+                              {gettext("Unknown"), "unknown"}
+                            ]
+                          }
+                          type="button"
+                          class="underline"
+                          phx-click="confirm-language"
+                          phx-value-email={row.email}
+                          phx-value-language={language}
+                        >{label}</button>
+                      </div>
+                      <PauseAiCaWeb.ContactSourceComponents.source_summary
+                        :for={origin <- Map.get(row, :origins, [])}
+                        id={"blast-source-#{origin.id}"}
+                        data={origin.source_data}
+                      />
+                    </li>
+                  </ul>
+                  <nav aria-label={gettext("Pagination")} class="flex gap-4 items-center">
+                    <button
+                      :if={@audience.page > 1}
+                      type="button"
+                      phx-click="candidate-page"
+                      phx-value-page={@audience.page - 1}
+                      class="underline"
+                    >{gettext("Previous")}</button>
+                    <span>{gettext("Page %{page} of %{pages}",
+                      page: @audience.page,
+                      pages: @audience.pages
+                    )}</span>
+                    <button
+                      :if={@audience.page < @audience.pages}
+                      type="button"
+                      phx-click="candidate-page"
+                      phx-value-page={@audience.page + 1}
+                      class="underline"
+                    >{gettext("Next")}</button>
+                  </nav>
+                </section>
+              </details>
+              <label :if={@form[:recipient_mode].value == "contacts"} class="mt-4 flex gap-3">
+                <input type="hidden" name="draft[outreach_reviewed]" value="false" />
+                <input
+                  type="checkbox"
+                  name="draft[outreach_reviewed]"
+                  value="true"
+                  checked={@reviewed}
+                />
+                <span>{gettext(
+                  "I reviewed these contacts’ eligibility for this invitation or message."
+                )}</span>
+              </label>
+            </div>
             <.input field={@form[:subject]} label={gettext("Subject")} />
-            <.input
-              :if={@form[:recipient_mode].value != "list"}
-              field={@form[:region]}
-              type="select"
-              label={gettext("Audience geography")}
-              options={[
-                {gettext("All regions"), ""},
-                {"Montréal", "Montréal"},
-                {"ROQuébec", "ROQuébec"},
-                {"ROCanada", "ROCanada"}
-              ]}
-            />
             <p
               :if={!PauseAiCa.Mail.Render.complete_links?(@form[:source].value || "")}
               role="alert"
@@ -592,145 +844,6 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
                 end
               }
             />
-            <section :if={@audience} id="newsletter-recipient-picker" class="space-y-4">
-              <h2 class="text-xl font-semibold">{gettext("Recipients")}</h2>
-              <.input
-                field={@form[:recipient_mode]}
-                type="select"
-                label={gettext("Audience source")}
-                options={[
-                  {gettext("Mailing list · all eligible members"), "list"},
-                  {gettext("Confirmed newsletter subscribers"), "newsletter"},
-                  {gettext("Contacts · manual review"), "contacts"}
-                ]}
-              />
-              <.input
-                :if={@form[:recipient_mode].value == "list"}
-                field={@form[:mailing_list_id]}
-                type="select"
-                label={gettext("Mailing list")}
-                options={
-                  [{gettext("Choose a list"), ""}] ++ Enum.map(@mailing_lists, &{&1.name, &1.id})
-                }
-              />
-              <p :if={@form[:recipient_mode].value == "list"} id="whole-list-audience" role="status">
-                <strong>{gettext("Eligible")}: {Map.get(@audience, :counts, %{})[:included] || 0}</strong>. {gettext(
-                  "Whole list selected. Membership and consent are rechecked before sending."
-                )}
-              </p>
-              <.input
-                :if={@form[:recipient_mode].value != "list"}
-                name="draft[candidate_q]"
-                value={@candidate_q}
-                label={gettext("Find contacts")}
-              />
-              <div
-                :if={@form[:recipient_mode].value != "list"}
-                class="flex flex-wrap gap-4 items-center"
-              >
-                <button type="button" class="crm-button" phx-click="select-visible">{gettext(
-                  "Select visible available recipients"
-                )}</button>
-                <button type="button" class="underline" phx-click="clear-recipients">{gettext(
-                  "Clear selection"
-                )}</button>
-                <span id="newsletter-selected-count">{gettext("%{count} selected",
-                  count: length(@form[:recipient_keys].value || [])
-                )}</span>
-              </div>
-              <input type="hidden" name="draft[recipient_keys][]" value="" />
-              <input
-                :for={
-                  key <- (@form[:recipient_keys].value || []) -- Enum.map(@audience.rows, & &1.id)
-                }
-                type="hidden"
-                name="draft[recipient_keys][]"
-                value={key}
-              />
-              <ul class="space-y-2">
-                <li
-                  :for={row <- @audience.rows}
-                  id={"newsletter-recipient-#{row.id}"}
-                  class="border border-stone-300 rounded-lg p-3"
-                >
-                  <label class="flex gap-3 items-start">
-                    <input
-                      :if={@form[:recipient_mode].value != "list"}
-                      id={"newsletter-recipient-choice-#{row.id}"}
-                      type="checkbox"
-                      name="draft[recipient_keys][]"
-                      value={row.id}
-                      checked={row.id in (@form[:recipient_keys].value || [])}
-                      disabled={
-                        row.status != :available and
-                          row.id not in (@form[:recipient_keys].value || [])
-                      }
-                      aria-label={gettext("Select %{email}", email: row.email || row.name)}
-                    />
-                    <span><strong class="break-all">{row.email || row.name}</strong><span
-                      :if={row.name != ""}
-                      class="block text-sm"
-                    >{row.name}</span><span
-                      :if={@form[:recipient_mode].value != "list" and row.status != :available}
-                      class="block text-sm"
-                    >{gettext("Excluded: withdrawal, blocked address or missing preferred email.")}</span><span
-                      :if={@form[:recipient_mode].value == "list" and row.status != :available}
-                      class="block text-sm"
-                    >{status_label(row.exclusion_reason)}</span><span
-                      :if={Map.get(row, :matched_fields, []) != []}
-                      class="block text-sm"
-                    >{gettext("Matches: %{fields}",
-                      fields: Enum.map_join(row.matched_fields, ", ", &rule_label/1)
-                    )}</span></span>
-                  </label>
-                  <div
-                    :if={is_binary(row.email)}
-                    class="mt-2 flex flex-wrap items-center gap-3 text-sm"
-                  >
-                    <span>{gettext("Record a verified language:")}</span>
-                    <button
-                      :for={
-                        {label, language} <- [
-                          {gettext("English"), "en"},
-                          {gettext("French"), "fr"},
-                          {gettext("Unknown"), "unknown"}
-                        ]
-                      }
-                      type="button"
-                      class="underline"
-                      phx-click="confirm-language"
-                      phx-value-email={row.email}
-                      phx-value-language={language}
-                    >{label}</button>
-                  </div>
-                  <PauseAiCaWeb.ContactSourceComponents.source_summary
-                    :for={origin <- Map.get(row, :origins, [])}
-                    id={"blast-source-#{origin.id}"}
-                    data={origin.source_data}
-                  />
-                </li>
-              </ul>
-              <nav aria-label={gettext("Pagination")} class="flex gap-4 items-center">
-                <button
-                  :if={@audience.page > 1}
-                  type="button"
-                  phx-click="candidate-page"
-                  phx-value-page={@audience.page - 1}
-                  class="underline"
-                >{gettext("Previous")}</button>
-                <span>{gettext("Page %{page} of %{pages}",
-                  page: @audience.page,
-                  pages: @audience.pages
-                )}</span>
-                <button
-                  :if={@audience.page < @audience.pages}
-                  type="button"
-                  phx-click="candidate-page"
-                  phx-value-page={@audience.page + 1}
-                  class="underline"
-                >{gettext("Next")}</button>
-              </nav>
-            </section>
             <button type="submit" class="crm-button" phx-disable-with={gettext("Saving…")}>{gettext(
               "Save"
             )}</button>
@@ -824,7 +937,21 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
               </li>
             </ul>
             <section :if={@batch_review} id="newsletter-batch-review" class="space-y-4">
-              <h3 class="font-semibold">{gettext("Frozen batch snapshot")}</h3>
+              <div :if={@step == :review} class="send-action-bar">
+                <button
+                  :if={@batch_review.batch.state in ["review", "paused", "approved", "sending"]}
+                  type="button"
+                  id="email-send-now"
+                  phx-click="send-now"
+                  disabled={@delivery_state == :sending}
+                  class="crm-button"
+                >{gettext("Send now")}</button>
+                <button type="button" phx-click="back-to-edit" class="underline">{gettext(
+                  "Back to editing"
+                )}</button>
+                <strong>{gettext("%{count} recipients", count: length(@batch_review.deliveries))}</strong>
+              </div>
+              <h3 class="font-semibold">{gettext("Message and recipients to send")}</h3>
               <p>
                 {gettext("Language edition")}: {case @batch_review.batch.edition do
                   "en" -> gettext("English")
@@ -862,13 +989,13 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
               </p>
               <div class="flex flex-wrap gap-4">
                 <button
-                  :if={@batch_review.batch.state in ["review", "paused"]}
+                  :if={@step != :review and @batch_review.batch.state in ["review", "paused"]}
                   type="button"
                   class="crm-button"
                   phx-click="approve-batch"
                 >{gettext("Approve batch")}</button>
                 <button
-                  :if={@batch_review.batch.state in ["approved", "sending"]}
+                  :if={@step != :review and @batch_review.batch.state in ["approved", "sending"]}
                   type="button"
                   class="crm-button"
                   phx-click="send-batch"

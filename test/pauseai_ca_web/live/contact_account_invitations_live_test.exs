@@ -48,7 +48,7 @@ defmodule PauseAiCaWeb.ContactAccountInvitationsLiveTest do
     )
     |> render_submit()
 
-    assert has_element?(view, "#crm-invitation-drafts a", "Your invitation")
+    assert_redirect(view)
     [draft] = Repo.all(Draft)
     assert Enum.sort(draft.recipient_keys) == Enum.sort(Enum.map(people, & &1.id))
     assert draft.edition == "unknown"
@@ -75,6 +75,99 @@ defmodule PauseAiCaWeb.ContactAccountInvitationsLiveTest do
     profile |> element("#crm-record button[phx-click=invite-account]") |> render_click()
     assert has_element?(profile, "#crm-invitation-form")
     assert has_element?(profile, "#crm-invitation", "For 1 selected contacts")
+  end
+
+  test "a known English invitation records the choice and requires no French text", %{conn: conn} do
+    actor = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    scope = Accounts.Scope.for_user(actor)
+
+    {:ok, record} =
+      PauseAiCa.CRM.create(scope, %{
+        email: "english-invite@example.org",
+        name: "Synthetic English"
+      })
+
+    {:ok, view, _} =
+      live(log_in_user(conn, actor), "/admin/contacts/#{record.person.id}?locale=en")
+
+    view |> element("#crm-record button[phx-click=invite-account]") |> render_click()
+
+    view
+    |> form("#crm-invitation-form",
+      invitation: %{
+        language: "en",
+        eligible: "true",
+        inviter: "Organizer",
+        reason_en: "Please help with the Toronto group."
+      }
+    )
+    |> render_change()
+
+    refute has_element?(view, "#invitation_reason_fr")
+
+    view
+    |> form("#crm-invitation-form",
+      invitation: %{
+        language: "en",
+        eligible: "true",
+        inviter: "Organizer",
+        reason_en: "Please help with the Toronto group."
+      }
+    )
+    |> render_submit()
+
+    {path, _} = assert_redirect(view)
+    {:ok, draft_view, _} = live(log_in_user(conn, actor), path)
+    assert has_element?(draft_view, "#email-send-now", "Send now")
+    [draft] = Repo.all(Draft)
+    assert draft.edition == "en"
+    refute draft.source =~ "vous invite"
+
+    assert [%{edition: "en"}] =
+             PauseAiCa.Newsletters.Edition.decorate([%{email: "english-invite@example.org"}])
+
+    refute_receive {:email, %{subject: "Your invitation to PauseAI Canada"}}
+  end
+
+  test "the visible review and send action delivers the frozen invitation to the local sink", %{
+    conn: conn
+  } do
+    Swoosh.TestAssertions.set_swoosh_global()
+    actor = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    scope = Accounts.Scope.for_user(actor)
+
+    {:ok, record} =
+      PauseAiCa.CRM.create(scope, %{email: "send-invite@example.org", name: "Synthetic recipient"})
+
+    {:ok, %{drafts: [draft]}} =
+      PauseAiCa.Newsletters.Drafts.create_account_invitations(scope, [record.person.id], %{
+        "language" => "en",
+        "inviter" => "Organizer",
+        "reason_en" => "Please join our local group."
+      })
+
+    {:ok, view, _} = live(log_in_user(conn, actor), "/manage/mail/drafts/#{draft.id}?locale=en")
+    assert has_element?(view, "#email-review-send")
+
+    render_submit(view, "save", %{
+      "intent" => "review",
+      "draft" => %{
+        "subject" => draft.subject,
+        "source" => draft.source,
+        "edition" => "en",
+        "recipient_mode" => "contacts",
+        "recipient_keys" => draft.recipient_keys,
+        "outreach_reviewed" => "true"
+      }
+    })
+
+    assert has_element?(view, "#email-send-now", "Send now")
+    [batch] = Repo.all(PauseAiCa.Newsletters.Batch)
+    assert batch.state == "review"
+    view |> element("#email-send-now") |> render_click()
+    render_async(view)
+    assert Repo.get!(PauseAiCa.Newsletters.Batch, batch.id).state == "completed"
+    assert [%{state: "accepted"}] = Repo.all(PauseAiCa.Newsletters.Delivery)
   end
 
   defp flush_emails do

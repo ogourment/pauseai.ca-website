@@ -12,6 +12,7 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
        page_title: gettext("Sent & results"),
        records: [],
        senders: %{},
+       recipient_counts: %{},
        result: nil,
        provider: nil,
        loading: false,
@@ -39,6 +40,8 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
         {:noreply,
          assign(socket,
            senders: Results.senders(socket.assigns.current_scope, Enum.map(records, & &1.id)),
+           recipient_counts:
+             Results.recipient_counts(socket.assigns.current_scope, Enum.map(records, & &1.id)),
            records: records,
            result: nil,
            page: page,
@@ -47,13 +50,26 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
          )}
 
       {:ok, result} ->
-        {:noreply,
-         assign(socket,
-           senders: Results.senders(socket.assigns.current_scope, [result.batch.id]),
-           result: result,
-           provider: nil,
-           error: nil
-         )}
+        socket =
+          assign(socket,
+            senders: Results.senders(socket.assigns.current_scope, [result.batch.id]),
+            result: result,
+            provider: result.provider,
+            error: nil
+          )
+
+        socket =
+          if connected?(socket) and is_nil(result.provider) and
+               result.batch.delivery_environment == "production" do
+            scope = socket.assigns.current_scope
+
+            assign(socket, loading: true)
+            |> start_async(:results, fn -> Results.refresh(scope, result.batch.id) end)
+          else
+            socket
+          end
+
+        {:noreply, socket}
 
       _ ->
         {:noreply,
@@ -130,14 +146,19 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
       locale={@locale}
       active_tab="mail"
     >
-      <section class="crm-surface mx-auto max-w-6xl px-5 py-8">
-        <PauseAiCaWeb.MailNavigation.tabs locale={@locale} active="results" />
-        <h1 class="text-3xl font-bold">{gettext("Sent & results")}</h1>
-        <p class="mt-3">
-          {gettext(
-            "Open a send to inspect its frozen audience, sending status and provider observations. Drafts that have never been sent are in Drafts."
-          )}
-        </p>
+      <section
+        class="crm-surface mx-auto max-w-6xl px-5 py-8"
+        data-breadcrumb-label={if @result, do: @result.batch.subject, else: gettext("Sent & results")}
+      >
+        <div class="management-controls">
+          <PauseAiCaWeb.MailNavigation.tabs locale={@locale} active="results" />
+          <h1 class="text-3xl font-bold">{gettext("Sent & results")}</h1>
+          <p class="mt-3">
+            {gettext(
+              "Open a send to inspect its frozen audience, sending status and provider observations. Drafts that have never been sent are in Drafts."
+            )}
+          </p>
+        </div>
         <div :if={is_nil(@result)} class="mt-6 space-y-4">
           <p :if={@records == []}>{gettext("No sends on this page.")}</p>
           <article :for={batch <- @records} class="rounded-lg border border-stone-300 p-4">
@@ -145,6 +166,9 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
               class="text-lg font-bold underline"
               navigate={~p"/manage/mail/results/#{batch.id}?locale=#{@locale}"}
             >{batch.subject}</.link>
+            <p class="font-semibold">
+              {gettext("%{count} recipients", count: Map.get(@recipient_counts, batch.id, 0))}
+            </p>
             <p>{gettext("Sent by")}: {sender_labels(@senders, batch.id)}</p>
             <p>
               {gettext("Prepared")}: {Date.to_iso8601(DateTime.to_date(batch.inserted_at))} · {batch.edition} · {batch.delivery_environment}
@@ -202,7 +226,13 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
             {gettext("Provider observations have not been loaded. Unavailable results are not zero.")}
           </p>
           <div :if={@provider}>
-            <p>{gettext("Updated")}: {DateTime.to_iso8601(@provider.refreshed_at)}</p>
+            <p>
+              {gettext("Last refreshed")}:
+              <time id="provider-refreshed-at" datetime={DateTime.to_iso8601(@provider.refreshed_at)}>{Calendar.strftime(
+                @provider.refreshed_at,
+                "%Y-%m-%d %H:%M UTC"
+              )}</time>
+            </p>
             <p :if={@provider.partial} class="crm-error">
               {gettext(
                 "Partial report: the provider page limit was reached. Counts are lower bounds."

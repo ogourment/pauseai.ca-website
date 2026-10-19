@@ -40,6 +40,7 @@ defmodule PauseAiCa.NewsletterResultsTest do
 
     assert {:ok, [%{id: id}]} = Results.list(c.scope)
     assert id == c.batch.id
+    assert Results.recipient_counts(c.scope, [id])[id] == 1
     assert [%{id: actor, email: email}] = Results.senders(c.scope, [id])[id]
     assert actor == c.scope.user.id
     assert email == c.scope.user.email
@@ -111,10 +112,21 @@ defmodule PauseAiCa.NewsletterResultsTest do
     assert report.observed.delivered == 1
     assert report.observed.opened == 0
 
+    assert {:ok, %{provider: %{report: stored, refreshed_at: at}}} =
+             Results.get(c.scope, c.batch.id)
+
+    assert stored.observed.delivered == 1
+    assert %DateTime{} = at
+
     Application.put_env(:pauseai_ca, :brevo_history_req_options,
       plug: fn conn -> Plug.Conn.send_resp(conn, 429, "") end
     )
 
     assert {:error, :rate_limited} = Results.refresh(c.scope, c.batch.id)
+
+    assert {:ok, %{provider: %{report: retained, refreshed_at: ^at}}} =
+             Results.get(c.scope, c.batch.id)
+
+    assert retained.observed.delivered == 1
   end
 end

@@ -377,3 +377,22 @@ h3 {
 
 /* The shared editor's separate preview also uses the consumer's theme. */
 .pme-preview-content{--pme-surface:var(--paper);--pme-text:var(--ink);--pme-border:var(--color-base-300);--pme-accent:var(--color-primary);font-family:var(--font-body)}
+
+/* Management hierarchy inherits the PauseAI palette and typography. */
+.management-chrome{background:var(--color-base-200,#f3eee3);border-block:1px solid var(--color-base-300,#d6d3d1);padding-bottom:1rem}
+.management-content{background:var(--color-base-100,#fffdf7);min-height:55vh}
+.management-content>.crm-surface{max-width:72rem;margin-inline:auto;padding:1.5rem 1.25rem 2.5rem}
+.management-controls{background:var(--color-base-200,#f3eee3);border:1px solid var(--color-base-300,#d6d3d1);border-radius:.6rem;padding:1rem;margin-block:1rem 1.5rem}
+.management-controls nav{margin-block:.6rem}
+.management-controls [aria-current=page],.mail-tabs [aria-current=page]{background:var(--color-primary,#f58220);color:var(--color-base-content,#292524);font-weight:700;text-decoration:none;border-radius:.35rem;padding:.35rem .65rem}
+.mail-tabs{display:flex;flex-wrap:wrap;gap:.75rem;border-bottom:1px solid var(--color-base-300,#d6d3d1);padding-bottom:1rem;margin-bottom:1.5rem;align-items:center}
+.mail-tabs a{padding:.35rem .65rem}
+.app-shell-breadcrumbs{font-size:.875rem;padding:.4rem 0 .75rem;color:var(--color-base-content,#292524)}
+.app-shell-breadcrumbs ol{display:flex;flex-wrap:wrap;gap:.35rem .5rem;list-style:none;margin:0;padding:0}
+.app-shell-breadcrumbs li{display:flex;gap:.5rem;overflow-wrap:anywhere}
+.app-shell-breadcrumbs li+li:before{content:'›';opacity:.6}
+.app-shell-breadcrumbs a{text-decoration:underline}
+.app-shell-breadcrumbs [aria-current=page]{font-weight:650}
+.send-action-bar{position:sticky;bottom:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:1rem;padding:1rem;background:var(--color-base-200,#f3eee3);border:1px solid var(--color-base-300,#d6d3d1);border-radius:.5rem}
+.compose-step-review #newsletter-draft-form,.compose-step-review #newsletter-prepare-form,.compose-step-review #newsletter-delivery-limits,.compose-step-review #newsletter-batch-workspace>ul{display:none}
+.pme-editor textarea{max-height:22rem}

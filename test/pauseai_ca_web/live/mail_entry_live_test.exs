@@ -19,7 +19,7 @@ defmodule PauseAiCaWeb.MailEntryLiveTest do
     flush_fixture_emails()
     conn = log_in_user(conn, admin)
     {:ok, index, _} = live(conn, "/manage/mail?locale=en")
-    assert has_element?(index, "h1", "Emails")
+    assert has_element?(index, "h1", "Drafts")
     assert has_element?(index, "#mail-new-account-draft", "New personalized account drafts")
     uri = index |> element("#mail-new-account-draft") |> render_click() |> follow_redirect(conn)
     assert {:ok, chooser, _} = uri

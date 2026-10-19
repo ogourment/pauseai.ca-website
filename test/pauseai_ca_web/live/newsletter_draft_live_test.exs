@@ -95,10 +95,10 @@ defmodule PauseAiCaWeb.NewsletterDraftLiveTest do
     assert has_element?(reloaded, "#newsletter-draft-error", "reviewed outreach eligibility")
     assert Repo.aggregate(Newsletters.Batch, :count) == 0
     reloaded |> form("#newsletter-prepare-form", review: %{eligible: "true"}) |> render_submit()
-    assert has_element?(reloaded, "#newsletter-batch-review", "Frozen batch snapshot")
+    assert has_element?(reloaded, "#newsletter-batch-review", "Message and recipients to send")
     send(reloaded.pid, {:markdown_editor_changed, "newsletter-content", "# Montréal"})
     assert has_element?(reloaded, "#newsletter-save-status", "Saved")
-    assert has_element?(reloaded, "#newsletter-batch-review", "Frozen batch snapshot")
+    assert has_element?(reloaded, "#newsletter-batch-review", "Message and recipients to send")
     refute has_element?(reloaded, "button[phx-click=send-batch]")
     reloaded |> element("button", "Approve batch") |> render_click()
     assert has_element?(reloaded, "button[phx-click=send-batch]", "Send")

@@ -7,7 +7,7 @@ defmodule PauseAiCaWeb.MailNavigation do
     ~H"""
     <nav
       aria-label={gettext("Emails")}
-      class="mb-6 flex flex-wrap gap-5 border-b border-stone-300 pb-3"
+      class="mail-tabs"
     >
       <.link
         :for={

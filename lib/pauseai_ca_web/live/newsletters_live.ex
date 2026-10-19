@@ -219,13 +219,15 @@ defmodule PauseAiCaWeb.NewslettersLive do
       active_tab="mail"
     >
       <section id="newsletters" class="crm-surface mx-auto max-w-6xl px-5 py-8">
-        <PauseAiCaWeb.MailNavigation.tabs locale={@locale} active="lists" />
-        <h1 class="text-3xl font-bold">{gettext("Newsletter lists")}</h1>
-        <p class="mt-3">
-          {gettext(
-            "Manage confirmed subscribers, withdrawals and subscription history here. Compose emails from Drafts."
-          )}
-        </p>
+        <div class="management-controls">
+          <PauseAiCaWeb.MailNavigation.tabs locale={@locale} active="lists" />
+          <h1 class="text-3xl font-bold">{gettext("Newsletter lists")}</h1>
+          <p class="mt-3">
+            {gettext(
+              "Manage confirmed subscribers, withdrawals and subscription history here. Compose emails from Drafts."
+            )}
+          </p>
+        </div>
         <p
           :if={@provider_state == :loading}
           id="newsletter-provider-status"

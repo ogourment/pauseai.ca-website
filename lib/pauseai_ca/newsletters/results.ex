@@ -2,7 +2,7 @@ defmodule PauseAiCa.Newsletters.Results do
   @moduledoc "Read-only campaign reports over frozen sends and exact provider message observations."
   import Ecto.Query
   alias PauseAiCa.{Repo, Volunteers}
-  alias PauseAiCa.Newsletters.{Batch, Delivery}
+  alias PauseAiCa.Newsletters.{Batch, Delivery, ResultSnapshot}
 
   def list(scope, page \\ 1) do
     if Volunteers.superadmin?(scope) do
@@ -19,6 +19,41 @@ defmodule PauseAiCa.Newsletters.Results do
     end
   end
 
+  def recipient_counts(scope, ids) do
+    if Volunteers.superadmin?(scope) do
+      Repo.all(
+        from d in Delivery,
+          where: d.batch_id in ^ids,
+          group_by: d.batch_id,
+          select: {d.batch_id, count(d.id)}
+      )
+      |> Map.new()
+    else
+      %{}
+    end
+  end
+
+  defp provider_snapshot(batch, deliveries) do
+    case Repo.get(ResultSnapshot, batch.id) do
+      nil ->
+        nil
+
+      snapshot ->
+        report = PhoenixMailWorkflow.Results.summarize(deliveries)
+
+        observed =
+          Map.new(report.observed, fn {key, _} ->
+            {key, Map.get(snapshot.observed, Atom.to_string(key), 0)}
+          end)
+
+        %{
+          report: %{report | observed: observed},
+          partial: snapshot.partial,
+          refreshed_at: snapshot.refreshed_at
+        }
+    end
+  end
+
   def get(scope, id) do
     with true <- Volunteers.superadmin?(scope),
          {:ok, id} <- Ecto.UUID.cast(id),
@@ -32,7 +67,8 @@ defmodule PauseAiCa.Newsletters.Results do
          batch: batch,
          deliveries: deliveries,
          report: PhoenixMailWorkflow.Results.summarize(deliveries),
-         local_unsubscribed: local_unsubscribed(deliveries)
+         local_unsubscribed: local_unsubscribed(deliveries),
+         provider: provider_snapshot(batch, deliveries)
        }}
     else
       _ -> {:error, :unauthorized}
@@ -151,12 +187,25 @@ defmodule PauseAiCa.Newsletters.Results do
 
         with {:ok, events, partial} <- events(request, params, 0, []),
              {:ok, _} <- get(scope, id) do
-          {:ok,
-           %{
-             report: PhoenixMailWorkflow.Results.summarize(result.deliveries, events),
-             partial: partial,
-             refreshed_at: DateTime.utc_now(:second)
-           }}
+          report = PhoenixMailWorkflow.Results.summarize(result.deliveries, events)
+          at = DateTime.utc_now()
+          # Persist only aggregate observations, never raw provider recipient events.
+          Repo.transaction(fn ->
+            if not Volunteers.superadmin?(scope), do: Repo.rollback(:unauthorized)
+
+            Repo.insert!(
+              %ResultSnapshot{
+                batch_id: id,
+                observed: Map.new(report.observed, fn {k, v} -> {Atom.to_string(k), v} end),
+                partial: partial,
+                refreshed_at: at
+              },
+              on_conflict: {:replace, [:observed, :partial, :refreshed_at]},
+              conflict_target: [:batch_id]
+            )
+
+            %{report: report, partial: partial, refreshed_at: at}
+          end)
         end
       end
     else

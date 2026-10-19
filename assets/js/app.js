@@ -1,3 +1,4 @@
+import {installJourneyBreadcrumbs} from "phoenix_app_shell/assets/js/journey.mjs"
 // If you want to use Phoenix channels, run `mix help phx.gen.channel`
 // to get started and then uncomment the line below.
 // import "./user_socket.js"
@@ -47,6 +48,7 @@ window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
 
 // connect if there are any LiveViews on the page
 liveSocket.connect()
+installJourneyBreadcrumbs()
 
 // Controllers have no LiveView to mount shared page hooks. Reuse their exact
 // implementations rather than duplicating consent and outbound tracking.

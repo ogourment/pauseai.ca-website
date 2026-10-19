@@ -566,6 +566,19 @@ digraph Schema {
   ];
 
 
+  "public.newsletter_result_snapshots" [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.newsletter_result_snapshots</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">batch_id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">observed</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">partial</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">boolean NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">refreshed_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
   "public.newsletter_subscriptions" [
     label=<
       <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
@@ -856,16 +869,16 @@ digraph Schema {
 
   "public.volunteer_signups" [
     label=<
-      <TABLE BORDER="2" CELLBORDER="1" CELLPADDING="7" CELLSPACING="0" COLOR="#2563eb">
-        <TR><TD BGCOLOR="#bfdbfe" COLSPAN="2"><FONT POINT-SIZE="16"><B>public.volunteer_signups</B></FONT></TD></TR>
-  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">uuid NOT NULL</FONT></TD></TR>
-  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">email</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">character varying NOT NULL</FONT></TD></TR>
-  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">user_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">uuid NOT NULL</FONT></TD></TR>
-  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">batch_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">uuid NOT NULL</FONT></TD></TR>
-  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">group_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">uuid</FONT></TD></TR>
-  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">notes</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">text NOT NULL</FONT></TD></TR>
-  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp without time zone NOT NULL</FONT></TD></TR>
-  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp without time zone NOT NULL</FONT></TD></TR>
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.volunteer_signups</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">email</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">user_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">batch_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">group_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">notes</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
       </TABLE>
     >
   ];
@@ -907,6 +920,7 @@ digraph Schema {
   "public.newsletter_drafts" -> "public.crm_mailing_lists" [label="mailing_list_id -> id"];
   "public.newsletter_drafts" -> "public.users" [label="owner_id -> id"];
   "public.newsletter_language_preferences" -> "public.users" [label="actor_id -> id"];
+  "public.newsletter_result_snapshots" -> "public.newsletter_batches" [label="batch_id -> id"];
   "public.newsletter_withdrawal_tokens" -> "public.newsletter_subscriptions" [label="subscription_id -> id"];
   "public.participation_requests" -> "public.users" [label="followup_owner_id -> id"];
   "public.participation_requests" -> "public.users" [label="user_id -> id"];
