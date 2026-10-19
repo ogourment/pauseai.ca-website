@@ -60,7 +60,11 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
   def render(assigns) do
     ~H"""
     <Layouts.management active_tab="dashboard" flash={@flash} current_scope={@current_scope}>
-      <section id="admin-dashboard" class="mx-auto max-w-6xl px-5 py-16">
+      <section
+        id="admin-dashboard"
+        data-breadcrumb-label={gettext("Dashboard")}
+        class="mx-auto max-w-6xl px-5 py-16"
+      >
         <p class="eyebrow">{gettext("Superadmin")}</p>
         <h1 class="mt-3 font-heading text-5xl text-stone-950">{gettext("Admin dashboard")}</h1>
 
