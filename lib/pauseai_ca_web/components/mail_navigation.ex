@@ -17,6 +17,7 @@ defmodule PauseAiCaWeb.MailNavigation do
             {"lists", gettext("Lists"), "/manage/mail/newsletters"}
           ]
         }
+        data-navigation-item={"mail." <> key}
         navigate={path <> "?locale=" <> @locale}
         aria-current={if @active == key, do: "page"}
         class={if @active == key, do: "font-bold underline", else: "underline"}
