@@ -158,6 +158,7 @@ if System.get_env("ATDD") == "true" do
         |> assert_has("#list_fsas[value='H2X']")
         |> fill_in(tr(locale, "FSAs"), with: "J4B")
         |> click_button(tr(locale, "Save list"))
+        |> click("#selected-mailing-list a[href*='view=members']")
         |> assert_has("#newsletter-audience > li", count: 1)
         |> visit(path)
         |> click("button[phx-click=review-batch][phx-value-id='#{batch.id}']")
