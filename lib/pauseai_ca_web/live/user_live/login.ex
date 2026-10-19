@@ -58,7 +58,7 @@ defmodule PauseAiCaWeb.UserLive.Login do
             "Check your email for the next step. You can keep browsing while you wait, or request another link below."
           )}
         </p>
-        <.dev_mailbox_link :if={@pending?} />
+        <.dev_mailbox_link />
         <p
           :if={@delivery_error?}
           id="account-email-error"

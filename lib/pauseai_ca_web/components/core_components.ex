@@ -184,7 +184,7 @@ defmodule PauseAiCaWeb.CoreComponents do
 
   @dev_mailbox_enabled Application.compile_env(:pauseai_ca, :dev_routes, false)
 
-  @doc "Development-only shortcut after an email delivery succeeds."
+  @doc "Development-only mailbox shortcut for authentication and email delivery flows."
   def dev_mailbox_link(assigns) do
     local? = Application.get_env(:pauseai_ca, PauseAiCa.Mailer)[:adapter] == Swoosh.Adapters.Local
     preview? = Application.get_env(:pauseai_ca, :dev_review_mailbox, false)
