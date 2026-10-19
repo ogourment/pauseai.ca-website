@@ -5,6 +5,9 @@ defmodule PauseAiCa.CRM do
   alias PauseAiCa.CRM.ContactLink
   alias PauseAiCa.ContactMigration.{Contact, Activity}
 
+  def add_note(scope, record, text),
+    do: PhoenixCRM.add_note(context(), scope, record.person.id, record.person.revision, text)
+
   def create(scope, attrs), do: PhoenixCRM.create(context(), scope, attrs)
 
   def archive(scope, record, archived?),

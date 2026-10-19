@@ -41,6 +41,12 @@ defmodule PauseAiCa.NewsletterResultsTest do
     assert {:ok, [%{id: id}]} = Results.list(c.scope)
     assert id == c.batch.id
     assert Results.recipient_counts(c.scope, [id])[id] == 1
+
+    assert Results.recipient_summaries(c.scope, [id])[id] == %{
+             count: 1,
+             emails: ["results@example.org"]
+           }
+
     assert [%{id: actor, email: email}] = Results.senders(c.scope, [id])[id]
     assert actor == c.scope.user.id
     assert email == c.scope.user.email

@@ -87,6 +87,31 @@ defmodule PauseAiCaWeb.Navigation do
       context_requirements: []
     }
 
+  def breadcrumb_context(scope, locale) do
+    items = assemble(scope, locale)
+    account = Enum.find(items, &(&1.id == "pauseai.my-dashboard"))
+    admin = Enum.find(items, &(&1.id == "pauseai.dashboard"))
+    manager = Enum.find(items, &(&1.id == "pauseai.accounts"))
+
+    roots =
+      if account, do: [%{href: account.href, label: gettext("My account")}], else: []
+
+    roots =
+      roots ++
+        cond do
+          admin -> [%{href: admin.href, label: gettext("Admin")}]
+          manager -> [%{href: manager.href, label: gettext("Manage")}]
+          true -> []
+        end
+
+    sections =
+      for item <- items, item.area in [:admin, :manage] do
+        %{href: item.href, path: URI.parse(item.href).path, label: item.label}
+      end
+
+    %{roots: roots, sections: sections}
+  end
+
   def assemble(scope, locale) do
     # Reload once per assembly: a stale session role cannot keep a menu grant.
     user =

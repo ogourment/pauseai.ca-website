@@ -5,6 +5,35 @@ defmodule PauseAiCaWeb.ContactCrudLiveTest do
   alias PauseAiCa.{CRM, Repo}
   alias PauseAiCa.Accounts.{Scope, User}
 
+  test "private notes survive reload, retain author and reject revoked access", %{conn: conn} do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    scope = Scope.for_user(admin)
+    {:ok, record} = CRM.create(scope, %{email: "note-contact@example.org", name: "Original"})
+    conn = log_in_user(conn, admin)
+    path = "/admin/contacts/#{record.person.id}?locale=en"
+    {:ok, view, _} = live(conn, path)
+
+    view
+    |> form("#crm-contact-form",
+      contact: %{name: "Unsaved name", city: "Toronto", email: "note-contact@example.org"}
+    )
+    |> render_change()
+
+    view
+    |> form("#crm-note-form", note: %{text: "Please follow up about volunteering."})
+    |> render_submit()
+
+    assert has_element?(view, "#crm-notes", admin.email)
+    assert has_element?(view, "#crm-contact-form input[value='Unsaved name']")
+    {:ok, reloaded, _} = live(conn, path)
+    assert has_element?(reloaded, "#crm-notes", "Please follow up about volunteering.")
+    assert has_element?(reloaded, "#crm-contact-form input[value='Original']")
+    Repo.update!(Ecto.Changeset.change(admin, superadmin: false))
+    reloaded |> form("#crm-note-form", note: %{text: "Denied note"}) |> render_submit()
+    refute has_element?(reloaded, "#crm-notes article", "Denied note")
+    assert Repo.aggregate(PhoenixCRM.Activity, :count, :id) == 2
+  end
+
   test "create, correct address, archive and restore with no account or subscription side effects",
        %{conn: conn} do
     admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()

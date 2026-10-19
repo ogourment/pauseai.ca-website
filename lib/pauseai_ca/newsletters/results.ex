@@ -33,6 +33,25 @@ defmodule PauseAiCa.Newsletters.Results do
     end
   end
 
+  def recipient_summaries(scope, ids) do
+    if Volunteers.superadmin?(scope) do
+      Repo.all(
+        from d in Delivery,
+          where: d.batch_id in ^ids,
+          group_by: d.batch_id,
+          select:
+            {d.batch_id,
+             %{
+               count: count(d.id),
+               emails: fragment("(array_agg(? ORDER BY ?))[1:3]", d.email, d.email)
+             }}
+      )
+      |> Map.new()
+    else
+      %{}
+    end
+  end
+
   defp provider_snapshot(batch, deliveries) do
     case Repo.get(ResultSnapshot, batch.id) do
       nil ->

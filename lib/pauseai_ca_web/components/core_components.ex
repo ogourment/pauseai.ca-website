@@ -185,6 +185,8 @@ defmodule PauseAiCaWeb.CoreComponents do
   @dev_mailbox_enabled Application.compile_env(:pauseai_ca, :dev_routes, false)
 
   @doc "Development-only mailbox shortcut for authentication and email delivery flows."
+  attr :class, :string, default: "mt-3 inline-block font-semibold underline underline-offset-4"
+
   def dev_mailbox_link(assigns) do
     local? = Application.get_env(:pauseai_ca, PauseAiCa.Mailer)[:adapter] == Swoosh.Adapters.Local
     preview? = Application.get_env(:pauseai_ca, :dev_review_mailbox, false)
@@ -200,7 +202,7 @@ defmodule PauseAiCaWeb.CoreComponents do
       href="/dev/mailbox"
       target="_blank"
       rel="noopener"
-      class="mt-3 inline-block font-semibold underline underline-offset-4"
+      class={@class}
     >
       {gettext("Open development mailbox")} ↗
     </a>

@@ -54,7 +54,7 @@ defmodule PauseAiCa.MixProject do
     [
       {:phoenix_app_shell,
        git: "ssh://git@git.agile-u.com/olivierg/phoenix_app_shell.git",
-       ref: "054eb43daadb4d31beb8630477d14a98647f1afa"},
+       ref: "f941f6c15c584a1daf48c03be4eebe6701bf1bbb"},
       {:argon2_elixir, "~> 4.0"},
       {:phoenix, "~> 1.8.9"},
       {:phoenix_ecto, "~> 4.5"},
@@ -158,7 +158,7 @@ defmodule PauseAiCa.MixProject do
       _ ->
         {:phoenix_crm,
          git: "ssh://git@git.agile-u.com/olivierg/phoenix_crm.git",
-         ref: "a81e1304037c543ba1f1ca7a62035cf052378f2f"}
+         ref: "96f6ab8f88c3d5e43571e2a4a01b8fe565d0b353"}
     end
   end
 

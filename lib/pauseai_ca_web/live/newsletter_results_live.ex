@@ -12,7 +12,7 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
        page_title: gettext("Sent & results"),
        records: [],
        senders: %{},
-       recipient_counts: %{},
+       recipient_summaries: %{},
        result: nil,
        provider: nil,
        loading: false,
@@ -40,8 +40,8 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
         {:noreply,
          assign(socket,
            senders: Results.senders(socket.assigns.current_scope, Enum.map(records, & &1.id)),
-           recipient_counts:
-             Results.recipient_counts(socket.assigns.current_scope, Enum.map(records, & &1.id)),
+           recipient_summaries:
+             Results.recipient_summaries(socket.assigns.current_scope, Enum.map(records, & &1.id)),
            records: records,
            result: nil,
            page: page,
@@ -138,6 +138,9 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
     end
   end
 
+  defp recipient_count_label(count),
+    do: ngettext("%{count} recipient", "%{count} recipients", count, count: count)
+
   def render(assigns) do
     ~H"""
     <Layouts.management
@@ -167,7 +170,13 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
               navigate={~p"/manage/mail/results/#{batch.id}?locale=#{@locale}"}
             >{batch.subject}</.link>
             <p class="font-semibold">
-              {gettext("%{count} recipients", count: Map.get(@recipient_counts, batch.id, 0))}
+              {recipient_count_label(Map.get(@recipient_summaries, batch.id, %{count: 0}).count)}
+            </p>
+            <p class="break-words" data-recipient-identities>
+              {Enum.join(Map.get(@recipient_summaries, batch.id, %{emails: []}).emails, ", ")}
+              <span :if={Map.get(@recipient_summaries, batch.id, %{count: 0}).count > 3}>
+                · {gettext("and %{count} more", count: @recipient_summaries[batch.id].count - 3)}
+              </span>
             </p>
             <p>{gettext("Sent by")}: {sender_labels(@senders, batch.id)}</p>
             <p>

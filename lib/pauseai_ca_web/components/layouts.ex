@@ -43,6 +43,8 @@ defmodule PauseAiCaWeb.Layouts do
 
   attr :show_announcements, :boolean, default: true
 
+  slot :management_navigation
+  attr :breadcrumb_context, :map, default: %{}
   slot :inner_block, required: true
 
   def app(assigns) do
@@ -183,6 +185,7 @@ defmodule PauseAiCaWeb.Layouts do
                 label={gettext("My account")}
                 compact={true}
               />
+              <.dev_mailbox_link class="block rounded-lg px-3 py-2.5 text-sm font-semibold underline" />
               <div role="separator" class="my-2 border-t border-stone-200"></div>
               <a
                 class="block rounded-lg px-3 py-2.5 font-semibold text-stone-900 hover:bg-brand-wash"
@@ -294,11 +297,13 @@ defmodule PauseAiCaWeb.Layouts do
       href={if(@locale == "fr", do: ~p"/fr/agent-rebelle", else: ~p"/en/rogue-agent")}
     />
 
+    {render_slot(@management_navigation)}
     <div class="mx-auto max-w-6xl px-5 pt-3">
       <PhoenixAppShell.Components.breadcrumbs
         label={gettext("Breadcrumbs")}
         scope={if @current_scope && @current_scope.user, do: @current_scope.user.id, else: "guest"}
         current_label={gettext("Current page")}
+        context_json={Jason.encode!(@breadcrumb_context)}
       />
     </div>
     <main>
@@ -481,11 +486,13 @@ defmodule PauseAiCaWeb.Layouts do
       locale={@locale}
       translated_path={@translated_path}
       show_announcements={false}
+      breadcrumb_context={PauseAiCaWeb.Navigation.breadcrumb_context(@current_scope, @locale)}
     >
-      <div class="management-chrome">
-        <.management_tabs current_scope={@current_scope} locale={@locale} active={@active_tab} />
-        <div class="mx-auto max-w-6xl px-5 text-sm"><.dev_mailbox_link /></div>
-      </div>
+      <:management_navigation>
+        <div class="management-chrome">
+          <.management_tabs current_scope={@current_scope} locale={@locale} active={@active_tab} />
+        </div>
+      </:management_navigation>
       <div class="management-content">{render_slot(@inner_block)}</div>
     </.app>
     """

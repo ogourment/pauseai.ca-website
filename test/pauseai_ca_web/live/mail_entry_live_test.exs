@@ -5,6 +5,45 @@ defmodule PauseAiCaWeb.MailEntryLiveTest do
   alias PauseAiCa.{Repo, Mail, Volunteers}
   alias PauseAiCa.Accounts.{User, Scope}
 
+  test "sent list identifies a single frozen recipient and places management above breadcrumbs",
+       %{conn: conn} do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    scope = Scope.for_user(admin)
+    {:ok, record} = PauseAiCa.CRM.create(scope, %{email: "visible-recipient@example.org"})
+    {:ok, draft} = PauseAiCa.Newsletters.Drafts.create(scope)
+
+    {:ok, draft} =
+      PauseAiCa.Newsletters.Drafts.save(scope, draft, %{
+        "subject" => "Invitation",
+        "source" => "Hello",
+        "recipient_mode" => "contacts",
+        "recipient_keys" => [record.person.id]
+      })
+
+    {:ok, batch} =
+      PauseAiCa.Newsletters.Batches.prepare(scope, draft, "contacts", [record.person.id], true)
+
+    delivery = Repo.get_by!(PauseAiCa.Newsletters.Delivery, batch_id: batch.id)
+
+    delivery
+    |> Ecto.Changeset.change(
+      attempted_at: DateTime.utc_now(),
+      state: "accepted",
+      authorizing_admin_id: admin.id,
+      provider_id: "synthetic-list-item"
+    )
+    |> Repo.update!()
+
+    {:ok, view, html} = live(log_in_user(conn, admin), "/manage/mail/results?locale=en")
+    assert has_element?(view, "[data-recipient-identities]", "visible-recipient@example.org")
+    assert has_element?(view, "article", "1 recipient")
+    refute has_element?(view, "article", "1 recipients")
+    [_, after_menu] = String.split(html, ~s(id="management-tabs"), parts: 2)
+    assert String.contains?(after_menu, ~s(id="journey-breadcrumbs"))
+    context = PauseAiCaWeb.Navigation.breadcrumb_context(scope, "en")
+    assert Enum.map(context.roots, & &1.label) == ["My account", "Admin"]
+  end
+
   test "mail landing creates an owned draft and edits survive reload without delivery", %{
     conn: conn
   } do

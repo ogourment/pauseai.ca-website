@@ -26,6 +26,9 @@ defmodule PauseAiCaWeb.AdminContactsLive do
          origins: [],
          activities: [],
          email_history: [],
+         note_form: to_form(%{}, as: "note"),
+         note_error: nil,
+         note_authors: %{},
          comparison: nil,
          candidates: [],
          reconciling: false,
@@ -290,6 +293,27 @@ defmodule PauseAiCaWeb.AdminContactsLive do
     end
   end
 
+  def handle_event("add-note", %{"note" => attrs}, socket) do
+    case CRM.add_note(socket.assigns.current_scope, socket.assigns.record, attrs["text"]) do
+      {:ok, record} ->
+        form = socket.assigns.form
+
+        {:noreply,
+         socket |> load_record(record) |> assign(form: form, status: gettext("Note added"))}
+
+      {:error, :invalid_note} ->
+        {:noreply,
+         assign(socket,
+           note_form: to_form(attrs, as: "note"),
+           note_error: gettext("Enter a note of 1 to 10,000 characters.")
+         )}
+
+      {:error, reason} ->
+        {:noreply,
+         assign(socket, note_form: to_form(attrs, as: "note"), note_error: contact_error(reason))}
+    end
+  end
+
   def handle_event("reconcile", _, socket) do
     case CRM.search(socket.assigns.current_scope, "") do
       {:ok, records} ->
@@ -398,6 +422,9 @@ defmodule PauseAiCaWeb.AdminContactsLive do
       origins: CRM.origins(scope, record.person.id),
       activities: activities,
       email_history: email_history,
+      note_form: to_form(%{}, as: "note"),
+      note_error: nil,
+      note_authors: note_authors(activities),
       merges: CRM.merges(scope, record.person.id),
       form:
         to_form(
@@ -412,6 +439,20 @@ defmodule PauseAiCaWeb.AdminContactsLive do
         ),
       error: nil
     )
+  end
+
+  defp note_authors(activities) do
+    ids =
+      for %{action: "note_added", actor_id: id} <- activities,
+          {:ok, id} <- [Ecto.UUID.cast(id)],
+          do: id
+
+    import Ecto.Query
+
+    PauseAiCa.Repo.all(
+      from u in PauseAiCa.Accounts.User, where: u.id in ^ids, select: {u.id, u.email}
+    )
+    |> Map.new()
   end
 
   defp historical_date_label("source_created"), do: gettext("Original source record created")
@@ -802,6 +843,33 @@ defmodule PauseAiCaWeb.AdminContactsLive do
             </p>
             <button class="crm-button" phx-disable-with={gettext("Saving…")}>{gettext("Save contact")}</button>
           </.form>
+          <section id="crm-notes" class="mt-8 space-y-4">
+            <h2 class="text-xl font-bold">{gettext("Private contact notes")}</h2>
+            <.form for={@note_form} id="crm-note-form" phx-submit="add-note" class="space-y-3">
+              <.input
+                field={@note_form[:text]}
+                type="textarea"
+                label={gettext("New note")}
+                required
+                maxlength="10000"
+              />
+              <p :if={@note_error} id="crm-note-error" role="alert">{@note_error}</p>
+              <button class="crm-button" phx-disable-with={gettext("Saving…")}>{gettext("Add note")}</button>
+            </.form>
+            <article
+              :for={note <- Enum.filter(@activities, &(&1.action == "note_added"))}
+              class="rounded-lg border border-stone-200 p-4"
+            >
+              <p class="text-sm">
+                {Map.get(@note_authors, note.actor_id, gettext("Not recorded"))} ·
+                <time datetime={DateTime.to_iso8601(note.inserted_at)}>{Calendar.strftime(
+                  note.inserted_at,
+                  "%Y-%m-%d %H:%M UTC"
+                )}</time>
+              </p>
+              <p class="whitespace-pre-wrap break-words">{note.details["text"]}</p>
+            </article>
+          </section>
           <section id="crm-addresses" class="mt-8">
             <h2 class="text-xl font-bold">{gettext("Addresses")}</h2><ul>
               <li :for={address <- @record.addresses}>
