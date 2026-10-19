@@ -158,7 +158,7 @@ defmodule PauseAiCa.MixProject do
       _ ->
         {:phoenix_crm,
          git: "ssh://git@git.agile-u.com/olivierg/phoenix_crm.git",
-         ref: "31313c6947b61262524275630fff93ad9ef2b1b0"}
+         ref: "a81e1304037c543ba1f1ca7a62035cf052378f2f"}
     end
   end
 

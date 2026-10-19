@@ -475,7 +475,10 @@ defmodule PauseAiCa.Newsletters.Batches do
               message(batch, delivery.email, link)
               |> Swoosh.Email.header("X-PauseAI-Delivery-Id", delivery.id)
 
-            Mailer.deliver(message, admin_actor_id: batch.approver_id)
+            Mailer.deliver(message,
+              admin_actor_id: batch.approver_id,
+              newsletter_delivery_id: delivery.id
+            )
 
           _ ->
             Repo.rollback(:invalid_footer)
@@ -631,7 +634,10 @@ defmodule PauseAiCa.Newsletters.Batches do
       rows =
         if mode == "contacts" do
           people =
-            Repo.all(from p in PhoenixCRM.Person, where: p.id in ^keys and is_nil(p.canonical_id))
+            Repo.all(
+              from p in PhoenixCRM.Person,
+                where: p.id in ^keys and is_nil(p.canonical_id) and is_nil(p.archived_at)
+            )
 
           owners =
             Repo.all(from p in PhoenixCRM.Person, where: p.id in ^keys or p.canonical_id in ^keys)

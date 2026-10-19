@@ -40,6 +40,14 @@ defmodule PauseAiCa.NewsletterResultsTest do
 
     assert {:ok, [%{id: id}]} = Results.list(c.scope)
     assert id == c.batch.id
+    assert [%{id: actor, email: email}] = Results.senders(c.scope, [id])[id]
+    assert actor == c.scope.user.id
+    assert email == c.scope.user.email
+    {:ok, contact} = PauseAiCa.CRM.create(c.scope, %{email: "results@example.org"})
+    assert {:ok, [%{admin_email: ^email}]} = Results.contact_history(c.scope, contact.person.id)
+    # Pausing clears approver_id, but the actual authorizing actor survives on the delivery.
+    Repo.get!(Batch, id) |> change(approver_id: nil) |> Repo.update!()
+    assert [%{id: ^actor}] = Results.senders(c.scope, [id])[id]
 
     {:ok, raw} =
       Phoenix.Token.decrypt(

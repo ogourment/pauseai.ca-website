@@ -16,7 +16,7 @@
     title: "Contact identity",
     tables: ~w(crm_people crm_addresses crm_sources crm_activities crm_merges crm_contact_links crm_mailing_lists crm_mailing_list_events)
   },
-  %{id: "mail_drafts", title: "Email drafts", tables: ~w(mail_batches mail_drafts)},
+  %{id: "mail_drafts", title: "Email drafts", tables: ~w(mail_batches mail_drafts mail_delivery_receipts)},
   %{
     id: "newsletter",
     title: "Newsletter consent and delivery",

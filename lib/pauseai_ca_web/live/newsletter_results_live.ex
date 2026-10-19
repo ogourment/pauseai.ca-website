@@ -11,6 +11,7 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
        locale: locale,
        page_title: gettext("Sent & results"),
        records: [],
+       senders: %{},
        result: nil,
        provider: nil,
        loading: false,
@@ -36,10 +37,23 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
     case response do
       {:ok, records} when is_list(records) ->
         {:noreply,
-         assign(socket, records: records, result: nil, page: page, provider: nil, error: nil)}
+         assign(socket,
+           senders: Results.senders(socket.assigns.current_scope, Enum.map(records, & &1.id)),
+           records: records,
+           result: nil,
+           page: page,
+           provider: nil,
+           error: nil
+         )}
 
       {:ok, result} ->
-        {:noreply, assign(socket, result: result, provider: nil, error: nil)}
+        {:noreply,
+         assign(socket,
+           senders: Results.senders(socket.assigns.current_scope, [result.batch.id]),
+           result: result,
+           provider: nil,
+           error: nil
+         )}
 
       _ ->
         {:noreply,
@@ -91,6 +105,23 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
            )
        )}
 
+  defp sender_labels(senders, id) do
+    Map.get(senders, id, [])
+    |> Enum.map(fn sender ->
+      cond do
+        sender.email && sender.name not in [nil, ""] -> "#{sender.name} <#{sender.email}>"
+        sender.email -> sender.email
+        true -> gettext("Not recorded")
+      end
+    end)
+    |> Enum.uniq()
+    |> Enum.join(", ")
+    |> case do
+      "" -> gettext("Not recorded")
+      value -> value
+    end
+  end
+
   def render(assigns) do
     ~H"""
     <Layouts.management
@@ -114,6 +145,7 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
               class="text-lg font-bold underline"
               navigate={~p"/manage/mail/results/#{batch.id}?locale=#{@locale}"}
             >{batch.subject}</.link>
+            <p>{gettext("Sent by")}: {sender_labels(@senders, batch.id)}</p>
             <p>
               {gettext("Prepared")}: {Date.to_iso8601(DateTime.to_date(batch.inserted_at))} · {batch.edition} · {batch.delivery_environment}
             </p>
@@ -133,6 +165,10 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
         </div>
         <div :if={@result} class="mt-6 space-y-5">
           <h2 class="text-2xl font-bold">{@result.batch.subject}</h2>
+          <p>{gettext("Sent by")}: {sender_labels(@senders, @result.batch.id)}</p>
+          <p>
+            {gettext("From address")}: {@result.batch.sender_name} &lt;{@result.batch.sender_email}&gt;
+          </p>
           <p>
             {@result.batch.edition} · {@result.batch.delivery_environment} · {@result.report.total} {gettext(
               "recipients"

@@ -39,6 +39,83 @@ defmodule PauseAiCa.Newsletters.Results do
     end
   end
 
+  # Delivery attribution survives a later pause clearing the batch approver.
+  def senders(scope, batch_ids) do
+    if Volunteers.superadmin?(scope) do
+      rows =
+        Repo.all(
+          from d in Delivery,
+            left_join: u in PauseAiCa.Accounts.User,
+            on: u.id == d.authorizing_admin_id,
+            where: d.batch_id in ^batch_ids and not is_nil(d.attempted_at),
+            select: {d.batch_id, d.authorizing_admin_id, u.name, u.email},
+            distinct: true
+        )
+
+      Enum.group_by(rows, &elem(&1, 0), fn {_, id, name, email} ->
+        %{id: id, name: name, email: email}
+      end)
+    else
+      %{}
+    end
+  end
+
+  def contact_history(scope, person_id) do
+    with {:ok, record} <- PauseAiCa.CRM.get(scope, person_id) do
+      emails = Enum.map(record.addresses, & &1.email)
+
+      rows =
+        Repo.all(
+          from d in Delivery,
+            join: b in Batch,
+            on: b.id == d.batch_id,
+            left_join: u in PauseAiCa.Accounts.User,
+            on: u.id == d.authorizing_admin_id,
+            where: d.email in ^emails and not is_nil(d.attempted_at),
+            order_by: [desc: d.attempted_at, desc: d.id],
+            limit: 100,
+            select: %{
+              delivery: d,
+              subject: b.subject,
+              sender_name: b.sender_name,
+              sender_email: b.sender_email,
+              admin_name: u.name,
+              admin_email: u.email
+            }
+        )
+
+      other =
+        Repo.all(
+          from r in PauseAiCa.Mail.DeliveryReceipt,
+            left_join: u in PauseAiCa.Accounts.User,
+            on: u.id == r.actor_id,
+            where: fragment("? && ?::text[]", r.recipients, ^emails),
+            order_by: [desc: r.inserted_at, desc: r.id],
+            limit: 100,
+            select: %{receipt: r, admin_name: u.name, admin_email: u.email}
+        )
+        |> Enum.map(fn row ->
+          %{
+            delivery: %{
+              batch_id: nil,
+              email: Enum.find(row.receipt.recipients, &(&1 in emails)),
+              state: row.receipt.state,
+              attempted_at: row.receipt.inserted_at
+            },
+            subject: row.receipt.subject,
+            sender_name: nil,
+            sender_email: row.receipt.sender_email,
+            admin_name: row.admin_name,
+            admin_email: row.admin_email
+          }
+        end)
+
+      {:ok,
+       Enum.sort_by(rows ++ other, & &1.delivery.attempted_at, {:desc, DateTime})
+       |> Enum.take(100)}
+    end
+  end
+
   def refresh(scope, id) do
     with {:ok, result} <- get(scope, id),
          true <- result.batch.delivery_environment == "production",

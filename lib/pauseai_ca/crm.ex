@@ -5,6 +5,11 @@ defmodule PauseAiCa.CRM do
   alias PauseAiCa.CRM.ContactLink
   alias PauseAiCa.ContactMigration.{Contact, Activity}
 
+  def create(scope, attrs), do: PhoenixCRM.create(context(), scope, attrs)
+
+  def archive(scope, record, archived?),
+    do: PhoenixCRM.archive(context(), scope, record.person.id, record.person.revision, archived?)
+
   def context, do: PhoenixCRM.new(Repo, PauseAiCa.CRM.Policy)
   def get(scope, id), do: PhoenixCRM.get(context(), scope, id)
   def search(scope, term), do: PhoenixCRM.search(context(), scope, term)
@@ -37,6 +42,11 @@ defmodule PauseAiCa.CRM do
           where: is_nil(p.canonical_id),
           select: p.id,
           distinct: true
+
+      matches =
+        if params["archived"] == "true",
+          do: from([p] in matches, where: not is_nil(p.archived_at)),
+          else: from([p] in matches, where: is_nil(p.archived_at))
 
       matches =
         if query_text == "" do
@@ -126,6 +136,7 @@ defmodule PauseAiCa.CRM do
            per: per,
            q: query_text,
            region: region,
+           archived: params["archived"] == "true",
            regions: Enum.uniq(["Montréal", "ROQuébec", "ROCanada" | regions]) |> Enum.sort()
          }}
       else

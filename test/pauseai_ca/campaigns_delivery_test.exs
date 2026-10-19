@@ -1,5 +1,5 @@
 defmodule PauseAiCa.Campaigns.DeliveryTest do
-  use ExUnit.Case, async: true
+  use PauseAiCa.DataCase, async: true
 
   import Swoosh.TestAssertions
 

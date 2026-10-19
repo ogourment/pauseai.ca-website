@@ -20,9 +20,12 @@ defmodule PauseAiCaWeb.AdminContactsLive do
          invitation_drafts: [],
          invitation_excluded: [],
          directory_origins: %{},
+         creating: false,
+         archived: false,
          record: nil,
          origins: [],
          activities: [],
+         email_history: [],
          comparison: nil,
          candidates: [],
          reconciling: false,
@@ -44,7 +47,13 @@ defmodule PauseAiCaWeb.AdminContactsLive do
   @impl true
   def handle_params(params, _, socket) do
     scope = socket.assigns.current_scope
-    socket = assign(socket, search: params["q"] || socket.assigns.search)
+
+    socket =
+      assign(socket,
+        search: params["q"] || socket.assigns.search,
+        creating: params["new"] == "true",
+        archived: params["archived"] == "true"
+      )
 
     result =
       cond do
@@ -86,6 +95,8 @@ defmodule PauseAiCaWeb.AdminContactsLive do
       per: params["per"] || socket.assigns.directory_page.per,
       page: 1
     }
+
+    values = if socket.assigns.archived, do: Map.put(values, :archived, "true"), else: values
 
     {:noreply, push_patch(socket, to: ~p"/admin/contacts?#{values}")}
   end
@@ -204,16 +215,38 @@ defmodule PauseAiCaWeb.AdminContactsLive do
   def handle_event("edit", %{"contact" => attrs}, socket),
     do: {:noreply, assign(socket, form: to_form(attrs, as: "contact"), status: nil)}
 
+  def handle_event("create", %{"contact" => attrs}, socket) do
+    case CRM.create(socket.assigns.current_scope, attrs) do
+      {:ok, record} ->
+        {:noreply,
+         push_navigate(socket,
+           to: ~p"/admin/contacts/#{record.person.id}?locale=#{socket.assigns.locale}"
+         )}
+
+      {:error, reason} ->
+        {:noreply,
+         assign(socket, form: to_form(attrs, as: "contact"), error: contact_error(reason))}
+    end
+  end
+
+  def handle_event("archive", _, socket) do
+    case CRM.archive(
+           socket.assigns.current_scope,
+           socket.assigns.record,
+           is_nil(socket.assigns.record.person.archived_at)
+         ) do
+      {:ok, record} -> {:noreply, load_record(socket, record)}
+      {:error, reason} -> {:noreply, assign(socket, error: contact_error(reason))}
+    end
+  end
+
   def handle_event("save", %{"contact" => attrs}, socket) do
     case CRM.update(socket.assigns.current_scope, socket.assigns.record, attrs) do
       {:ok, record} ->
         {:noreply, socket |> load_record(record) |> assign(status: gettext("Saved"))}
 
-      _ ->
-        {:noreply,
-         assign(socket,
-           error: gettext("Contact changed or access was revoked. Reload before saving.")
-         )}
+      {:error, reason} ->
+        {:noreply, assign(socket, error: contact_error(reason))}
     end
   end
 
@@ -278,11 +311,36 @@ defmodule PauseAiCaWeb.AdminContactsLive do
   end
 
   defp directory_uri(locale, search, directory, page) do
-    ~p"/admin/contacts?#{%{locale: locale, q: search, region: directory.region, per: directory.per, page: page}}"
+    values = %{
+      locale: locale,
+      q: search,
+      region: directory.region,
+      per: directory.per,
+      page: page
+    }
+
+    values =
+      if Map.get(directory, :archived), do: Map.put(values, :archived, "true"), else: values
+
+    ~p"/admin/contacts?#{values}"
   end
+
+  defp contact_error(%Ecto.Changeset{} = cs) do
+    if Keyword.has_key?(cs.errors, :email),
+      do: gettext("Enter a valid email address that is not already assigned to another contact."),
+      else:
+        gettext("Check the contact fields. Name and city must each be at most 200 characters.")
+  end
+
+  defp contact_error(:address_taken),
+    do: gettext("This email address already belongs to another contact.")
+
+  defp contact_error(_),
+    do: gettext("Contact changed or access was revoked. Reload before saving.")
 
   defp load_record(socket, record) do
     scope = socket.assigns.current_scope
+    {:ok, email_history} = PauseAiCa.Newsletters.Results.contact_history(scope, record.person.id)
     legacy = CRM.legacy_activities(scope, record.person.id)
     activities = record.activities ++ legacy
     # Sort DateTimes explicitly; UUID is a deterministic tie breaker.
@@ -299,9 +357,17 @@ defmodule PauseAiCaWeb.AdminContactsLive do
       record: record,
       origins: CRM.origins(scope, record.person.id),
       activities: activities,
+      email_history: email_history,
       merges: CRM.merges(scope, record.person.id),
       form:
-        to_form(%{"name" => record.person.name || "", "city" => record.person.city || ""},
+        to_form(
+          %{
+            "name" => record.person.name || "",
+            "city" => record.person.city || "",
+            "email" =>
+              (Enum.find(record.addresses, &(&1.id == record.person.preferred_address_id)) || %{})
+              |> Map.get(:email, "")
+          },
           as: "contact"
         ),
       error: nil
@@ -345,6 +411,15 @@ defmodule PauseAiCaWeb.AdminContactsLive do
       <main class="mx-auto max-w-5xl px-5 py-10 crm-surface">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
           <h1 class="text-3xl font-bold">{gettext("Contacts")}</h1>
+          <.link
+            id="crm-new-contact"
+            navigate={~p"/admin/contacts?locale=#{@locale}&new=true"}
+            class="crm-button"
+          >{gettext("New contact")}</.link>
+          <.link
+            navigate={~p"/admin/contacts?locale=#{@locale}&archived=#{!@archived}"}
+            class="underline"
+          >{if @archived, do: gettext("Active contacts"), else: gettext("Archived contacts")}</.link>
           <.link
             id="crm-import-contacts"
             navigate={~p"/admin/contact-imports?locale=#{@locale}"}
@@ -436,7 +511,32 @@ defmodule PauseAiCaWeb.AdminContactsLive do
             </li>
           </ul>
         </section>
-        <section :if={is_nil(@record)} id="crm-directory">
+        <section :if={@creating} id="crm-create" class="mb-6 max-w-xl">
+          <h2 class="text-xl font-bold">{gettext("New contact")}</h2>
+          <.form
+            for={@form}
+            id="crm-create-form"
+            phx-change="edit"
+            phx-submit="create"
+            class="space-y-3"
+          >
+            <.input field={@form[:name]} label={gettext("Name")} maxlength="200" />
+            <.input field={@form[:email]} label={gettext("Email")} type="email" required />
+            <.input field={@form[:city]} label={gettext("City")} maxlength="200" />
+            <p>
+              {gettext(
+                "Creating a contact does not create an account or subscribe them to a newsletter."
+              )}
+            </p>
+            <button class="crm-button" phx-disable-with={gettext("Saving…")}>{gettext(
+              "Create contact"
+            )}</button>
+            <.link navigate={~p"/admin/contacts?locale=#{@locale}"} class="underline">{gettext(
+              "Cancel"
+            )}</.link>
+          </.form>
+        </section>
+        <section :if={is_nil(@record) and !@creating} id="crm-directory">
           <.form
             id="crm-search-form"
             for={
@@ -513,7 +613,10 @@ defmodule PauseAiCaWeb.AdminContactsLive do
                 aria-label={gettext("Select %{name}", name: record.person.name || gettext("contact"))}
                 class="mr-2"
               />
-              <strong>{record.person.name}</strong>
+              <.link
+                navigate={~p"/admin/contacts/#{record.person.id}?locale=#{@locale}"}
+                class="font-bold underline"
+              >{record.person.name || gettext("Contact")}</.link>
               <button
                 :if={record.addresses != []}
                 type="button"
@@ -583,6 +686,27 @@ defmodule PauseAiCaWeb.AdminContactsLive do
           </nav>
         </section>
         <section :if={@record} id="crm-record">
+          <.link navigate={~p"/admin/contacts?locale=#{@locale}"} class="underline">{gettext(
+            "Back to contacts"
+          )}</.link>
+          <p :if={@record.person.archived_at} role="status">{gettext("Archived contact")}</p>
+          <button
+            id="crm-archive-contact"
+            type="button"
+            phx-click="archive"
+            data-confirm={
+              if is_nil(@record.person.archived_at),
+                do:
+                  gettext(
+                    "Archive this contact? Contact-based sends will exclude them. History and newsletter subscription choices are retained."
+                  ),
+                else: gettext("Restore this contact to the active directory?")
+            }
+            class="ml-4 underline"
+          >{if is_nil(@record.person.archived_at),
+            do: gettext("Archive contact"),
+            else: gettext("Restore contact")}</button>
+
           <button
             :if={@record.addresses != []}
             type="button"
@@ -601,6 +725,12 @@ defmodule PauseAiCaWeb.AdminContactsLive do
               field={@form[:city]}
               label={gettext("City")}
             />
+            <.input field={@form[:email]} label={gettext("Preferred email")} type="email" required />
+            <p>
+              {gettext(
+                "Changing the preferred email retains previous addresses and their history. Subscription permissions do not transfer to the new address."
+              )}
+            </p>
             <button class="crm-button" phx-disable-with={gettext("Saving…")}>{gettext("Save contact")}</button>
           </.form>
           <section id="crm-addresses" class="mt-8">
@@ -664,6 +794,30 @@ defmodule PauseAiCaWeb.AdminContactsLive do
                 <span :if={date["source_record_id"]}> · {date["source_record_id"]}</span>
               </li>
             </ul>
+          </section>
+          <section id="crm-email-history" class="mt-8">
+            <h2 class="text-xl font-bold">{gettext("Email history")}</h2>
+            <p>{gettext("Latest 100 recorded send attempts across this contact’s addresses.")}</p>
+            <p :if={@email_history == []}>{gettext("No recorded sends.")}</p>
+            <article :for={entry <- @email_history} class="border-b py-3">
+              <.link
+                :if={entry.delivery.batch_id}
+                navigate={~p"/manage/mail/results/#{entry.delivery.batch_id}?locale=#{@locale}"}
+                class="font-bold underline"
+              >{entry.subject}</.link>
+              <strong :if={is_nil(entry.delivery.batch_id)}>{entry.subject}</strong>
+              <p>
+                {gettext("Sent by")}: {entry.admin_name} {entry.admin_email || gettext("Not recorded")}
+              </p>
+              <p>{gettext("From address")}: {entry.sender_name} &lt;{entry.sender_email}&gt;</p>
+              <p>
+                {entry.delivery.email} · {entry.delivery.state} ·
+                <time datetime={DateTime.to_iso8601(entry.delivery.attempted_at)}>{Calendar.strftime(
+                  entry.delivery.attempted_at,
+                  "%Y-%m-%d %H:%M UTC"
+                )}</time>
+              </p>
+            </article>
           </section>
           <section id="crm-activity" class="mt-8">
             <h2 class="text-xl font-bold">{gettext("Activity")}</h2><ul>
