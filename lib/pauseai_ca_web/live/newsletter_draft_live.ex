@@ -597,11 +597,17 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
             class="mt-6 space-y-5"
           >
             <div class="management-controls">
-              <details id="email-recipient-settings" open={@draft.recipient_keys == []}>
+              <details
+                id="email-recipient-settings"
+                open={@draft.recipient_keys == []}
+                phx-mounted={Phoenix.LiveView.JS.ignore_attributes(["open"])}
+              >
                 <summary class="cursor-pointer font-semibold">
-                  {gettext("Recipients & language")} · {@draft.edition} · {length(
-                    @draft.recipient_keys
-                  )} {gettext("selected")}
+                  {gettext("Recipients & language")} · {@form[:edition].value} ·
+                  <span :if={@form[:recipient_mode].value != "list"} id="newsletter-selected-count">
+                    {gettext("%{count} selected", count: length(@form[:recipient_keys].value || []))}
+                  </span>
+                  <span :if={@form[:recipient_mode].value == "list"}>{gettext("Whole mailing list")}</span>
                 </summary>
                 <section id="newsletter-edition" class="space-y-3 rounded-lg border p-4">
                   <.input
@@ -700,7 +706,7 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
                     <button type="button" class="underline" phx-click="clear-recipients">{gettext(
                       "Clear selection"
                     )}</button>
-                    <span id="newsletter-selected-count">{gettext("%{count} selected",
+                    <span id="newsletter-picker-selected-count">{gettext("%{count} selected",
                       count: length(@form[:recipient_keys].value || [])
                     )}</span>
                   </div>

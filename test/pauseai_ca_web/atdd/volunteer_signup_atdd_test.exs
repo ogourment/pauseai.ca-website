@@ -845,7 +845,7 @@ if System.get_env("ATDD") == "true" do
 
       b =
         b
-        |> click_link("Accounts")
+        |> click_link("#management-tabs a", "Accounts")
         |> fill_in("Search accounts", with: "single@example.org")
         |> assert_has("#managed-accounts", text: "single@example.org")
         |> capture(
@@ -905,7 +905,7 @@ if System.get_env("ATDD") == "true" do
       b =
         open_accounts(c.conn, c.admin, id)
         |> visit("/admin/dashboard")
-        |> click_link("Accounts")
+        |> click_link("#management-tabs a", "Accounts")
         |> assert_path("/manage/accounts", query_params: %{locale: "en"})
         |> assert_has("#account-count", text: "2 accounts")
         |> click_link(target.email)
@@ -1129,7 +1129,7 @@ if System.get_env("ATDD") == "true" do
         "Open account menu",
         "Personal pages, account management, and session actions form separate groups"
       )
-      |> click_link("Accounts")
+      |> click_link("#account-management-links a", "Accounts")
       |> assert_has("#managed-accounts")
       |> capture(
         id,

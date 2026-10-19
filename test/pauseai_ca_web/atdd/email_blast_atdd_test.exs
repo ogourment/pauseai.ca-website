@@ -111,6 +111,7 @@ if System.get_env("ATDD") == "true" do
 
       b =
         b
+        |> click("#email-recipient-settings > summary")
         |> click_button("Clear selection")
         |> assert_has("#newsletter-selected-count", text: "0 selected")
         |> click_button("Select visible available recipients")
@@ -380,7 +381,7 @@ if System.get_env("ATDD") == "true" do
           "Approve exact snapshot",
           "Fresh superadmin approval required before submission"
         )
-        |> click_button(tr(locale, "Send"))
+        |> click_button("button[phx-click=send-batch]", tr(locale, "Send"), exact: true)
         |> assert_has("#newsletter-delivery-progress", text: "14 / 14", timeout: 30_000)
         |> assert_has("#newsletter-delivery-progress",
           text: tr(locale, "Completed"),
