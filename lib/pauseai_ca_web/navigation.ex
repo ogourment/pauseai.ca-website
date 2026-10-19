@@ -88,6 +88,7 @@ defmodule PauseAiCaWeb.Navigation do
     }
 
   def breadcrumb_context(scope, locale) do
+    locale = locale || Gettext.get_locale(PauseAiCaWeb.Gettext)
     items = assemble(scope, locale)
     account = Enum.find(items, &(&1.id == "pauseai.my-dashboard"))
     admin = Enum.find(items, &(&1.id == "pauseai.dashboard"))

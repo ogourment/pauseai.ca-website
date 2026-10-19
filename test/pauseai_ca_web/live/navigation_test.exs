@@ -7,6 +7,18 @@ defmodule PauseAiCaWeb.NavigationTest do
   alias PauseAiCa.Volunteers.Manager
   alias PauseAiCaWeb.Navigation
 
+  test "breadcrumb roots use the current language when a management layout omits locale" do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+
+    Gettext.with_locale(PauseAiCaWeb.Gettext, "fr", fn ->
+      context = Navigation.breadcrumb_context(Scope.for_user(admin), nil)
+      assert hd(context.roots).href == "/fr/tableau-de-bord"
+
+      assert Enum.find(context.sections, &(&1.path == "/manage/mail")).href ==
+               "/manage/mail?locale=fr"
+    end)
+  end
+
   test "superadmin gets separate Admin, Management and own account navigation", %{conn: conn} do
     admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
     {:ok, view, _} = live(log_in_user(conn, admin), "/admin/contacts?locale=en")
