@@ -117,12 +117,27 @@ msgstr "must have at most two decimal places"
 msgid "must be the first three characters of a Canadian postal code"
 msgstr "must be the first three characters of a Canadian postal code"
 
-#: lib/pauseai_ca/participation/request.ex:79
+#: lib/pauseai_ca/participation/request.ex:125
 #, elixir-autogen, elixir-format
 msgid "choose at least one option"
 msgstr "choose at least one option"
 
-#: lib/pauseai_ca/participation/request.ex:73
+#: lib/pauseai_ca/participation/request.ex:119
 #, elixir-autogen, elixir-format
 msgid "enter a city or postal area for local follow-up"
 msgstr "enter a city or postal area for local follow-up"
+
+#: lib/pauseai_ca/participation/request.ex:95
+#, elixir-autogen, elixir-format
+msgid "enter an FSA or city"
+msgstr "enter an FSA or city"
+
+#: lib/pauseai_ca/participation/request.ex:108
+#, elixir-autogen, elixir-format
+msgid "enter an FSA or city for newsletter targeting"
+msgstr "enter an FSA or city for newsletter targeting"
+
+#: lib/pauseai_ca/accounts/user.ex:72
+#, elixir-autogen, elixir-format
+msgid "enter a phone number with 7 to 20 digits"
+msgstr "enter a phone number with 7 to 20 digits"

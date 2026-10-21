@@ -83,6 +83,7 @@ defmodule PauseAiCa.AccountManagement do
           if errors != %{}, do: Repo.rollback(errors)
 
           changes = %{
+            phone: Map.get(attrs, "phone", user.phone),
             organizing_group_id: destination,
             organizer_notes:
               if(Map.has_key?(attrs, "notes"), do: row["notes"], else: user.organizer_notes),
@@ -92,7 +93,11 @@ defmodule PauseAiCa.AccountManagement do
             fsa: if(row["postal_code"] != "", do: String.slice(row["postal_code"], 0, 3))
           }
 
-          updated = user |> change(changes) |> Repo.update!()
+          phone = User.phone_changeset(user, %{"phone" => changes.phone})
+          if !phone.valid?, do: Repo.rollback(%{"phone" => :invalid_phone})
+
+          updated =
+            user |> change(Map.put(changes, :phone, get_field(phone, :phone))) |> Repo.update!()
 
           if signup,
             do:

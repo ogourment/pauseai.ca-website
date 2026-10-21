@@ -35,6 +35,34 @@ defmodule PauseAiCaWeb.AdminAccountsLiveTest do
     assert has_element?(invalid, "#account-page", "Page 1 of 2")
   end
 
+  test "search bookmarks and Enter retain filtering and show empty results", %{conn: conn} do
+    target = unconfirmed_user_fixture(%{email: "search-person@example.org"})
+    unrelated = user_fixture(%{email: "unrelated-person@example.org"})
+
+    {:ok, view, _} = live(conn, "/manage/accounts?locale=en&search=search-person")
+    assert has_element?(view, "#account-search-input[value='search-person']")
+    assert has_element?(view, "#account-count", "1 account")
+    assert has_element?(view, "a", target.email)
+    refute has_element?(view, "a", unrelated.email)
+
+    view |> form("#account-search", %{search: "missing-account"}) |> render_submit()
+    assert_patch(view, "/manage/accounts?locale=en&q=missing-account")
+    assert has_element?(view, "#account-search-input[value='missing-account']")
+    assert has_element?(view, "#account-count", "0 accounts")
+    assert has_element?(view, "p", "No accounts found.")
+    refute has_element?(view, "a", target.email)
+
+    view |> form("#account-search", %{search: "search-person"}) |> render_submit()
+    assert_patch(view, "/manage/accounts?locale=en&q=search-person")
+    assert has_element?(view, "a", target.email)
+    assert has_element?(view, "td", "Account created · email unconfirmed")
+
+    {:ok, canonical, _} =
+      live(conn, "/manage/accounts?locale=en&q=missing-account&search=search-person")
+
+    assert has_element?(canonical, "#account-count", "0 accounts")
+  end
+
   test "confirmed role grant sends once, and unconfirmed and last-admin guards remain", %{
     conn: conn,
     admin: admin

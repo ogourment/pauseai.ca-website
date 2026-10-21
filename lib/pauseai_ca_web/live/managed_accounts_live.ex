@@ -90,7 +90,7 @@ defmodule PauseAiCaWeb.ManagedAccountsLive do
            |> push_navigate(to: ~p"/manage/accounts?locale=#{socket.assigns.locale}")}
       end
     else
-      search = params["q"] || ""
+      search = params["q"] || params["search"] || ""
 
       page =
         case Integer.parse(params["page"] || "1") do
@@ -347,6 +347,7 @@ defmodule PauseAiCaWeb.ManagedAccountsLive do
   defp account_values(record),
     do: %{
       "name" => record.user.name,
+      "phone" => record.user.phone,
       "postal_code" => record.user.postal_code,
       "city" => record.user.city,
       "notes" => record.user.organizer_notes,
@@ -402,6 +403,14 @@ defmodule PauseAiCaWeb.ManagedAccountsLive do
               field={@form[:name]}
               label={gettext("Name")}
               errors={field_errors(@errors, "name")}
+            />
+            <.input
+              field={@form[:phone]}
+              type="tel"
+              label={gettext("Phone (optional)")}
+              autocomplete="tel"
+              maxlength="40"
+              errors={field_errors(@errors, "phone")}
             />
             <.input
               field={@form[:group_id]}
@@ -637,7 +646,12 @@ defmodule PauseAiCaWeb.ManagedAccountsLive do
           <p id="account-count">
             {ngettext("%{count} account", "%{count} accounts", @count, count: @count)}
           </p>
-          <.form for={to_form(%{}, as: "search")} phx-change="search" id="account-search">
+          <.form
+            for={to_form(%{}, as: "search")}
+            phx-change="search"
+            phx-submit="search"
+            id="account-search"
+          >
             <.input
               name="search"
               id="account-search-input"

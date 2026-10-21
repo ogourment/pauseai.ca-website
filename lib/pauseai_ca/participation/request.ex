@@ -7,7 +7,10 @@ defmodule PauseAiCa.Participation.Request do
   schema "participation_requests" do
     field :email, :string
     field :name, :string
+    field :phone, :string
     field :fsa, :string
+    field :location, :string, virtual: true
+    field :residence_city, :string
     field :city, :string
     field :help_text, :string
     field :locale, :string, default: "en"
@@ -33,7 +36,10 @@ defmodule PauseAiCa.Participation.Request do
     |> cast(attrs, [
       :email,
       :name,
+      :phone,
       :fsa,
+      :location,
+      :residence_city,
       :city,
       :help_text,
       :locale,
@@ -44,7 +50,10 @@ defmodule PauseAiCa.Participation.Request do
     ])
     |> update_change(:email, &String.downcase(String.trim(&1)))
     |> update_change(:name, &String.trim/1)
+    |> PauseAiCa.Accounts.User.validate_phone()
     |> update_change(:city, &String.trim/1)
+    |> update_change(:residence_city, &String.trim/1)
+    |> location()
     |> update_change(:fsa, &PauseAiCa.PostalArea.normalize/1)
     |> validate_required([:email, :locale])
     |> validate_format(:email, ~r/^[^@,;\s]+@[^@,;\s]+$/,
@@ -53,6 +62,7 @@ defmodule PauseAiCa.Participation.Request do
     |> validate_length(:email, max: 160)
     |> validate_length(:name, max: 160)
     |> validate_length(:city, max: 160)
+    |> validate_length(:residence_city, max: 160)
     |> validate_length(:help_text, max: 2000)
     |> validate_format(:fsa, PauseAiCa.PostalArea.pattern(),
       message: "must be the first three characters of a Canadian postal code"
@@ -62,7 +72,43 @@ defmodule PauseAiCa.Participation.Request do
     |> choices()
   end
 
+  defp location(c) do
+    case get_change(c, :location) do
+      nil ->
+        c
+
+      value ->
+        value = String.trim(value)
+        fsa = PauseAiCa.PostalArea.normalize(value)
+
+        cond do
+          value == "" ->
+            c |> put_change(:fsa, nil) |> put_change(:residence_city, nil)
+
+          PauseAiCa.PostalArea.valid?(fsa) ->
+            c |> put_change(:fsa, fsa) |> put_change(:residence_city, nil)
+
+          Regex.match?(~r/\p{L}{2}/u, value) ->
+            c |> put_change(:fsa, nil) |> put_change(:residence_city, value)
+
+          true ->
+            add_error(c, :location, dgettext_noop("errors", "enter an FSA or city"))
+        end
+    end
+  end
+
   defp choices(c) do
+    c =
+      if get_field(c, :newsletter) && get_field(c, :fsa) in [nil, ""] &&
+           get_field(c, :residence_city) in [nil, ""],
+         do:
+           add_error(
+             c,
+             :location,
+             dgettext_noop("errors", "enter an FSA or city for newsletter targeting")
+           ),
+         else: c
+
     c =
       if get_field(c, :local_kind) && get_field(c, :city) in [nil, ""] &&
            get_field(c, :fsa) in [nil, ""],

@@ -846,7 +846,11 @@ if System.get_env("ATDD") == "true" do
       b =
         b
         |> click_link("#management-tabs a", "Accounts")
+        |> fill_in("Search accounts", with: "missing-account-search")
+        |> press("#account-search-input", "Enter")
+        |> assert_has("body", text: "No accounts found")
         |> fill_in("Search accounts", with: "single@example.org")
+        |> press("#account-search-input", "Enter")
         |> assert_has("#managed-accounts", text: "single@example.org")
         |> capture(
           id,

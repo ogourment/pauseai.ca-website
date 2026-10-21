@@ -98,7 +98,7 @@ if System.get_env("ATDD") == "true" do
         |> assert_has("[data-phx-main].phx-connected")
         |> fill_in(tr(locale, "Name"), with: "Camille Synthetic")
         |> fill_in(tr(locale, "Your email"), with: email)
-        |> fill_in(tr(locale, "FSA"), with: "h2x")
+        |> fill_in(tr(locale, "FSA or city"), with: "h2x")
         |> check(
           "#participation_newsletter",
           tr(

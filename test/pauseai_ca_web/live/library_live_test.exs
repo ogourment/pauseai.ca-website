@@ -224,13 +224,15 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
   end
 
   describe "getting updates" do
-    test "LEARN-REQ-05 subscription asks for email and consent before location", %{conn: conn} do
+    test "LEARN-REQ-05 subscription collects email, consent and a compact local area", %{
+      conn: conn
+    } do
       for path <- ["/en/learn", "/fr/comprendre"] do
         {:ok, view, _} = live(conn, path)
         assert has_element?(view, "#participation-form input[type=email]")
         refute has_element?(view, "#participation-form input[autocomplete=postal-code]")
         refute has_element?(view, "#participation-form input[autocomplete=address-level2]")
-        assert has_element?(view, "#participation-form input[name='participation[fsa]']")
+        assert has_element?(view, "#participation-form input[name='participation[location]']")
 
         assert has_element?(
                  view,
@@ -257,7 +259,7 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
         participation: %{
           email: "camille@example.org",
           name: "Camille",
-          fsa: "h2x",
+          location: "h2x",
           newsletter: "true"
         }
       )
@@ -285,7 +287,7 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
           participation: %{
             email: "invalid-area@example.org",
             name: "Camille",
-            fsa: "123",
+            location: "123",
             newsletter: "true"
           }
         )
@@ -299,7 +301,7 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
                  "input[name='participation[email]'][value='invalid-area@example.org']"
                )
 
-        assert has_element?(view, "input[name='participation[fsa]'][value='123']")
+        assert has_element?(view, "input[name='participation[location]'][value='123']")
         assert has_element?(view, "#participation_newsletter[checked]")
 
         refute PauseAiCa.Repo.get_by(PauseAiCa.Newsletters.Subscription,
@@ -317,7 +319,9 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
       before = PauseAiCa.Repo.aggregate(PauseAiCa.Accounts.User, :count)
 
       view
-      |> form("#participation-form", participation: %{email: "local@example.org", fsa: "H2X"})
+      |> form("#participation-form",
+        participation: %{email: "local@example.org", location: "H2X"}
+      )
       |> render_submit()
 
       assert has_element?(view, "#account-email-pending")
@@ -330,7 +334,9 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
       {:ok, view, _} = live(conn, ~p"/en/participate?intent=waitlist")
 
       view
-      |> form("#participation-form", participation: %{email: "local@example.org", fsa: "123"})
+      |> form("#participation-form",
+        participation: %{email: "local@example.org", location: "123"}
+      )
       |> render_submit()
 
       assert has_element?(view, "#participation-form input[value='123']")
@@ -354,7 +360,7 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
 
       view
       |> form("#participation-form",
-        participation: %{email: "taken@example.org", newsletter: "true"}
+        participation: %{email: "taken@example.org", location: "H2X", newsletter: "true"}
       )
       |> render_submit()
 

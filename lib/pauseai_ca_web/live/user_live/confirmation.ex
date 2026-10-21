@@ -2,6 +2,7 @@ defmodule PauseAiCaWeb.UserLive.Confirmation do
   use PauseAiCaWeb, :live_view
 
   alias PauseAiCa.Accounts
+  import PauseAiCaWeb.ParticipationChoices
 
   @impl true
   def render(assigns) do
@@ -17,16 +18,7 @@ defmodule PauseAiCaWeb.UserLive.Confirmation do
         </div>
 
         <div :if={@participation_request} class="mt-5">
-          <ul class="mt-3 list-disc space-y-2 pl-5">
-            <li>{gettext("Save and record my actions with an account.")}</li>
-            <li :if={@participation_request.newsletter}>{gettext("PauseAI Canada newsletter")}</li>
-            <li :if={@participation_request.local_kind}>
-              {if @participation_request.local_kind == "help",
-                do: gettext("Offer of help"),
-                else: gettext("Local waitlist")} · {@participation_request.city ||
-                @participation_request.fsa}
-            </li>
-          </ul>
+          <.summary request={@participation_request} />
           <.form
             for={@form}
             id="participation-confirmation-form"

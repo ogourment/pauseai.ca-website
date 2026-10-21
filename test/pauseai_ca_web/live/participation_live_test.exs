@@ -12,7 +12,7 @@ defmodule PauseAiCaWeb.ParticipationLiveTest do
 
     view
     |> form("#participation-form",
-      participation: %{name: "Morgan Example", email: "morgan@example.org", fsa: "M5V"}
+      participation: %{name: "Morgan Example", email: "morgan@example.org", location: "M5V"}
     )
     |> render_change()
 
@@ -20,7 +20,7 @@ defmodule PauseAiCaWeb.ParticipationLiveTest do
     view |> element("#participation-motivations button", "Join the waitlist") |> render_click()
     assert has_element?(view, "input[name='participation[name]'][value='Morgan Example']")
     assert has_element?(view, "input[name='participation[email]'][value='morgan@example.org']")
-    assert has_element?(view, "input[name='participation[fsa]'][value='M5V']")
+    assert has_element?(view, "input[name='participation[location]'][value='M5V']")
     assert has_element?(view, "#participation-local")
 
     assert has_element?(
@@ -41,7 +41,12 @@ defmodule PauseAiCaWeb.ParticipationLiveTest do
 
     view
     |> form("#participation-form",
-      participation: %{email: "combined@example.org", name: "Morgan", fsa: "M5V", city: "Toronto"}
+      participation: %{
+        email: "combined@example.org",
+        name: "Morgan",
+        location: "M5V",
+        city: "Toronto"
+      }
     )
     |> render_submit()
 
@@ -63,5 +68,24 @@ defmodule PauseAiCaWeb.ParticipationLiveTest do
     view |> element("#participation-motivations button", "I can help") |> render_click()
     assert has_element?(view, "textarea[name='participation[help_text]']")
     assert has_element?(view, "#participation-submit", "Offer my help")
+  end
+
+  test "missing newsletter geography stays on the form, and city entry is retained", %{conn: conn} do
+    {:ok, view, _} = live(conn, "/en/participate?intent=newsletter")
+
+    view
+    |> form("#participation-form",
+      participation: %{email: "area@example.org", newsletter: "true"}
+    )
+    |> render_submit()
+
+    assert has_element?(view, "#participation-validation")
+    refute Repo.exists?(Participation.Request)
+    refute_receive {:email, _}
+
+    view |> form("#participation-form", participation: %{location: "Montréal"}) |> render_submit()
+    assert has_element?(view, "#account-email-pending")
+    assert Repo.one!(Participation.Request).residence_city == "Montréal"
+    assert_receive {:email, _}
   end
 end

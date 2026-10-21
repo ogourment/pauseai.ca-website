@@ -45,6 +45,7 @@ defmodule PauseAiCaWeb.Router do
     # Mail scanners may open GET links: consent changes require an explicit CSRF-protected POST.
     get "/participation/confirm", ParticipationController, :show_confirm
     post "/participation/confirm", ParticipationController, :confirm
+    post "/participation/account", ParticipationController, :create_account
     get "/participation/withdraw", ParticipationController, :show_withdraw
     post "/participation/withdraw", ParticipationController, :withdraw
     get "/newsletters/confirm", NewsletterController, :show_confirm

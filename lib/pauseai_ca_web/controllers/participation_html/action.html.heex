@@ -5,15 +5,7 @@
       else: gettext("Confirm your choices")}
   </h1>
   <div :if={@state == :ready} class="mt-5">
-    <ul :if={@action == :confirm} class="list-disc space-y-2 pl-5">
-      <li :if={@request.newsletter}>{gettext("PauseAI Canada newsletter")}</li>
-      <li :if={@request.local_kind == "waitlist"}>
-        {gettext("Local waitlist")} · {@request.city || @request.fsa}
-      </li>
-      <li :if={@request.local_kind == "help"}>
-        {gettext("Offer of help")} · {@request.city || @request.fsa}
-      </li>
-    </ul>
+    <.summary :if={@action == :confirm} request={@request} />
     <p :if={@action == :withdraw}>
       {gettext(
         "Stop follow-up on this local request. Your account and newsletter preferences are managed separately."
@@ -46,10 +38,43 @@
     id="participation-result"
     class="mt-5"
   >
-    {gettext(
-      "Your choices are confirmed. We will email you about your local request when you selected one."
-    )}
+    {gettext("Your choices are confirmed.")}
   </p>
+  <div :if={@state == :done && @action == :confirm}>
+    <.summary request={@request} />
+    <section
+      :if={@account_offer}
+      id="participation-account-offer"
+      class="mt-6 rounded-xl border border-stone-200 p-5"
+    >
+      <h2 class="font-heading text-2xl">{gettext("Would you like to create an account?")}</h2>
+      <p class="mt-2">
+        {gettext(
+          "Save and track your actions, and access your reading list across devices. Your details are already filled in."
+        )}
+      </p>
+      <.form for={%{}} method="post" action={~p"/participation/account"} class="mt-4">
+        <input type="hidden" name="account_offer" value={@account_offer} />
+        <input type="hidden" name="locale" value={@locale} />
+        <.input
+          field={@phone_form[:phone]}
+          name="phone"
+          id="account-offer-phone"
+          type="tel"
+          label={gettext("Phone (optional)")}
+          autocomplete="tel"
+          maxlength="40"
+        />
+        <button type="submit" class="rounded-full bg-brand px-5 py-3 font-heading font-bold">{gettext(
+          "Create my account"
+        )}</button>
+      </.form>
+      <.link
+        href={if(@locale == "fr", do: ~p"/fr", else: ~p"/en")}
+        class="mt-3 inline-block underline"
+      >{gettext("Continue without an account")}</.link>
+    </section>
+  </div>
   <p
     :if={@state == :done && @action == :withdraw}
     role="status"

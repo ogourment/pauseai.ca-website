@@ -244,6 +244,11 @@ defmodule PauseAiCa.Accounts do
 
   def change_user_profile(%User{} = user, attrs \\ %{}), do: User.profile_changeset(user, attrs)
 
+  def change_user_phone(%User{} = user, attrs \\ %{}), do: User.phone_changeset(user, attrs)
+
+  def update_user_phone(%User{} = user, attrs),
+    do: user |> User.phone_changeset(attrs) |> Repo.update()
+
   def update_user_profile(%User{} = user, attrs, representative) when is_map(representative) do
     user
     |> User.profile_changeset(attrs)

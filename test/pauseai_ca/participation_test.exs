@@ -54,11 +54,89 @@ defmodule PauseAiCa.ParticipationTest do
     assert {:error, _} = Participation.confirm(token)
   end
 
+  test "newsletter requires a home area, distinct from the group someone wants to join" do
+    assert {:error, c} =
+             Participation.request(
+               attrs(%{"fsa" => "", "local_kind" => "waitlist"}),
+               context(),
+               urls()
+             )
+
+    assert c.errors[:location]
+    refute_receive {:email, _}
+    refute Repo.exists?(Request)
+
+    assert {:ok, _} =
+             Participation.request(
+               attrs(%{"fsa" => "", "location" => "Ottawa", "local_kind" => "waitlist"}),
+               context(),
+               urls()
+             )
+
+    assert_receive {:email, mail}
+    assert {:ok, request} = Participation.confirm(token(mail, "confirm"))
+    assert request.residence_city == "Ottawa"
+    assert request.city == "Toronto"
+    assert Repo.one!(Newsletters.Subscription).city == "Ottawa"
+  end
+
+  test "a confirmed newsletter signup can explicitly add an account without another email" do
+    assert {:ok, _} =
+             Participation.request(attrs(), Map.put(context(), "basket", ["risk"]), urls())
+
+    assert_receive {:email, mail}
+    pending = Repo.one!(Request)
+    assert is_nil(Participation.account_offer(pending))
+    assert {:ok, request} = Participation.confirm(token(mail, "confirm"))
+    offer = Participation.account_offer(request)
+    refute Accounts.get_user_by_email(request.email)
+
+    assert {:ok, user} = Participation.create_account(offer)
+    assert user.email == request.email
+    assert user.name == request.name
+    assert user.fsa == request.fsa
+    assert user.confirmed_at
+    assert "risk" in user.saved_resources
+    refute user.superadmin
+    refute_receive {:email, _}
+    assert Repo.one!(Newsletters.Subscription).state == "confirmed"
+    stored = Repo.get!(Request, request.id)
+    refute stored.account
+    assert stored.user_id == user.id
+    assert stored.context["account_created_after_confirmation_at"]
+    assert {:error, :invalid_offer} = Participation.create_account(offer)
+    assert Repo.aggregate(Accounts.User, :count) == 1
+  end
+
+  test "account offers reject tampering, expiry, changed state and existing accounts" do
+    assert {:ok, _} = Participation.request(attrs(), context(), urls())
+    assert_receive {:email, mail}
+    assert {:ok, request} = Participation.confirm(token(mail, "confirm"))
+    offer = Participation.account_offer(request)
+
+    expired =
+      Phoenix.Token.encrypt(PauseAiCaWeb.Endpoint, "participation account offer v1", request.id,
+        signed_at: System.system_time(:second) - 901
+      )
+
+    assert {:error, :invalid_offer} = Participation.create_account(expired)
+    assert {:error, :invalid_offer} = Participation.create_account(offer <> "tampered")
+
+    request |> Ecto.Changeset.change(state: "withdrawn") |> Repo.update!()
+    assert {:error, :invalid_offer} = Participation.create_account(offer)
+    Repo.get!(Request, request.id) |> Ecto.Changeset.change(state: "confirmed") |> Repo.update!()
+    {:ok, existing} = Accounts.register_user(%{"email" => request.email})
+    assert {:error, :account_exists} = Participation.create_account(offer)
+    assert Accounts.get_user!(existing.id) == existing
+    assert is_nil(Repo.get!(Request, request.id).user_id)
+  end
+
   test "account plus both purposes uses existing ownership login and applies choices only after POST" do
     assert {:ok, :pending} =
              Participation.request(
                attrs(%{
                  "account" => "true",
+                 "phone" => "+1 613 555 0100",
                  "local_kind" => "help",
                  "help_text" => "I can find a venue"
                }),
@@ -81,6 +159,7 @@ defmodule PauseAiCa.ParticipationTest do
     assert Repo.one!(Newsletters.Subscription).state == "confirmed"
     assert Accounts.get_user!(user.id).name == "Morgan Example"
     assert Accounts.get_user!(user.id).fsa == "M5V"
+    assert Accounts.get_user!(user.id).phone == "+1 613 555 0100"
   end
 
   test "waitlist without other choices sends one link and grants neither subscription nor account" do

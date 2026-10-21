@@ -148,6 +148,7 @@ defmodule PauseAiCaWeb.VolunteerForms do
 
   def error(:required), do: gettext("This field is required.")
   def error(:invalid_email), do: gettext("Enter a valid email address.")
+  def error(:invalid_phone), do: gettext("Enter a phone number with 7 to 20 digits.")
   def error(:invalid_postal_code), do: gettext("Enter a complete Canadian postal code.")
 
   def error(:invalid_skills),

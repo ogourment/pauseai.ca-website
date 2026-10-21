@@ -1,12 +1,14 @@
 defmodule PauseAiCa.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
+  use Gettext, backend: PauseAiCaWeb.Gettext
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "users" do
     field :email, :string
     field :name, :string
+    field :phone, :string
     belongs_to :organizing_group, PauseAiCa.Volunteers.Group
     field :organizer_notes, :string, default: "", redact: true
     field :password, :string, virtual: true, redact: true
@@ -48,9 +50,27 @@ defmodule PauseAiCa.Accounts.User do
   def registration_changeset(user, attrs) do
     user
     |> email_changeset(attrs)
-    |> cast(attrs, [:postal_code, :city])
+    |> cast(attrs, [:postal_code, :city, :phone])
+    |> validate_phone()
     |> update_change(:postal_code, &normalize_postal_code/1)
     |> update_change(:city, &String.trim/1)
+  end
+
+  def phone_changeset(user, attrs), do: user |> cast(attrs, [:phone]) |> validate_phone()
+
+  def validate_phone(changeset) do
+    changeset
+    |> update_change(:phone, fn value ->
+      if is_binary(value), do: String.trim(value), else: nil
+    end)
+    |> validate_length(:phone, max: 40)
+    |> validate_change(:phone, fn :phone, value ->
+      digits = value |> String.replace(~r/\D/, "") |> String.length()
+
+      if value == "" || digits in 7..20,
+        do: [],
+        else: [phone: dgettext_noop("errors", "enter a phone number with 7 to 20 digits")]
+    end)
   end
 
   defp validate_email(changeset, opts) do

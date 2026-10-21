@@ -4,6 +4,7 @@ defmodule PauseAiCa.Participation do
   alias PauseAiCa.{Repo, Newsletters}
   alias PauseAiCa.Accounts.Onboarding
   alias PauseAiCa.Participation.{Request, Notifier}
+  @account_offer_salt "participation account offer v1"
   def change(attrs), do: Request.changeset(%Request{}, attrs)
 
   def request(attrs, context, url_fun) do
@@ -30,7 +31,9 @@ defmodule PauseAiCa.Participation do
           if recent && DateTime.diff(now, recent.inserted_at) < 60 do
             if recent.delivery_state == "failed", do: Repo.rollback(:confirmation_unavailable)
             values = Ecto.Changeset.apply_changes(changeset)
-            fields = ~w(name fsa city help_text newsletter account local_kind locale)a
+
+            fields =
+              ~w(name phone fsa residence_city city help_text newsletter account local_kind locale)a
 
             if Map.take(recent, fields) == Map.take(values, fields),
               do: Repo.rollback(:cooldown),
@@ -143,6 +146,98 @@ defmodule PauseAiCa.Participation do
     end)
   end
 
+  # This short-lived continuation is issued only after the email confirmation POST.
+  # It grants account creation, never access to an account that already existed.
+  def account_offer(%Request{state: "confirmed", account: false, user_id: nil} = request) do
+    Phoenix.Token.encrypt(PauseAiCaWeb.Endpoint, @account_offer_salt, request.id)
+  end
+
+  def account_offer(_), do: nil
+
+  def account_offer_request(token) when is_binary(token) do
+    with {:ok, id} <-
+           Phoenix.Token.decrypt(PauseAiCaWeb.Endpoint, @account_offer_salt, token, max_age: 900),
+         %Request{state: "confirmed", account: false, user_id: nil, withdrawn_at: nil} = request <-
+           Repo.get(Request, id) do
+      {:ok, request}
+    else
+      _ -> {:error, :invalid_offer}
+    end
+  end
+
+  def account_offer_request(_), do: {:error, :invalid_offer}
+
+  def create_account(token, attrs \\ %{})
+
+  def create_account(token, attrs) when is_binary(token) do
+    with {:ok, original} <- account_offer_request(token) do
+      Repo.transaction(fn ->
+        id = original.id
+        request = Repo.get(Request, id) || Repo.rollback(:invalid_offer)
+        lock(request.email)
+        request = Repo.one!(from r in Request, where: r.id == ^id, lock: "FOR UPDATE")
+
+        if request.state != "confirmed" || request.account || request.withdrawn_at ||
+             request.user_id || is_nil(request.confirmed_at),
+           do: Repo.rollback(:invalid_offer)
+
+        if PauseAiCa.Accounts.get_user_by_email(request.email),
+          do: Repo.rollback(:account_exists)
+
+        source = request.context["source"]
+        source = if source in Onboarding.sources(), do: source, else: "unknown"
+
+        user =
+          case PauseAiCa.Accounts.register_user(%{"email" => request.email},
+                 signup_entry_point: source
+               ) do
+            {:ok, user} -> user
+            {:error, _} -> Repo.rollback(:account_exists)
+          end
+
+        phone_changeset =
+          PauseAiCa.Accounts.User.phone_changeset(user, Map.take(attrs, ["phone"]))
+
+        if !phone_changeset.valid?, do: Repo.rollback(phone_changeset)
+
+        user =
+          phone_changeset
+          |> Ecto.Changeset.change(
+            name: request.name,
+            city: request.residence_city,
+            fsa: request.fsa,
+            confirmed_at: DateTime.utc_now(:second)
+          )
+          |> Repo.update!()
+
+        request
+        |> Ecto.Changeset.change(
+          user_id: user.id,
+          context:
+            Map.put(
+              request.context,
+              "account_created_after_confirmation_at",
+              DateTime.to_iso8601(DateTime.utc_now())
+            )
+        )
+        |> Repo.update!()
+
+        :ok =
+          Onboarding.apply_context(
+            user,
+            Map.drop(request.context, ["participation_id", "fsa"]),
+            nil
+          )
+
+        PauseAiCa.Accounts.get_user!(user.id)
+      end)
+    else
+      _ -> {:error, :invalid_offer}
+    end
+  end
+
+  def create_account(_, _), do: {:error, :invalid_offer}
+
   def confirm_for_user(user, id) do
     Repo.transaction(fn ->
       request = Repo.get(Request, id)
@@ -175,11 +270,17 @@ defmodule PauseAiCa.Participation do
              consent: true,
              locale: request.locale,
              name: request.name,
-             fsa: request.fsa
+             fsa: request.fsa,
+             city: request.residence_city
            }) do
         {:ok, %{subscription: subscription, confirmation_token: nil}} ->
           profile =
-            %{name: request.name, fsa: request.fsa, locale: request.locale}
+            %{
+              name: request.name,
+              fsa: request.fsa,
+              city: request.residence_city,
+              locale: request.locale
+            }
             |> Map.reject(fn {_k, v} -> v in [nil, ""] end)
 
           subscription |> Ecto.Changeset.change(profile) |> Repo.update!()
@@ -219,7 +320,12 @@ defmodule PauseAiCa.Participation do
 
     if user do
       profile =
-        %{name: request.name, city: nil, fsa: request.fsa}
+        %{
+          name: request.name,
+          phone: request.phone,
+          city: request.residence_city,
+          fsa: request.fsa
+        }
         |> Map.reject(fn {_k, v} -> v in [nil, ""] end)
 
       user |> Ecto.Changeset.change(profile) |> Repo.update!()

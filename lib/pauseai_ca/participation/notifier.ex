@@ -10,15 +10,20 @@ defmodule PauseAiCa.Participation.Notifier do
         {request.account,
          {"Your account to save and record actions",
           "Votre compte pour conserver et noter vos actions"}},
-        {request.local_kind == "waitlist",
-         {"Local waitlist: #{request.city || request.fsa}",
-          "Liste d’attente locale : #{request.city || request.fsa}"}},
-        {request.local_kind == "help",
-         {"Offer of help: #{request.city || request.fsa}",
-          "Proposition d’aide : #{request.city || request.fsa}"}}
+        {not is_nil(request.local_kind),
+         if(request.local_kind == "help",
+           do:
+             {"Offer of help: #{request.city || request.fsa}",
+              "Proposition d’aide : #{request.city || request.fsa}"},
+           else:
+             {"Local waitlist#{if request.local_kind, do: ": #{request.city || request.fsa}"}",
+              "Liste d’attente locale#{if request.local_kind, do: " : #{request.city || request.fsa}"}"}
+         )}
       ]
-      |> Enum.filter(&elem(&1, 0))
-      |> Enum.map(&elem(&1, 1))
+      |> Enum.map(fn
+        {true, {en, fr}} -> {"Included: " <> en, "Inclus : " <> fr}
+        {false, {en, fr}} -> {"Not selected: " <> en, "Non sélectionné : " <> fr}
+      end)
 
     blocks =
       [

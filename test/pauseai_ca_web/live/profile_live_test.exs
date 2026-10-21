@@ -12,6 +12,18 @@ defmodule PauseAiCaWeb.ProfileLiveTest do
     assert {:error, {:redirect, %{to: "/users/log-in"}}} = live(conn, ~p"/en/profile")
   end
 
+  test "phone is optional and can be saved or cleared without a full postal code", %{
+    conn: conn,
+    user: user
+  } do
+    {:ok, view, _} = live(conn, "/en/profile")
+    view |> form("#profile-phone-form", phone: %{phone: "+1 613 555 0102"}) |> render_submit()
+    assert Accounts.get_user!(user.id).phone == "+1 613 555 0102"
+    assert is_nil(Accounts.get_user!(user.id).postal_code)
+    view |> form("#profile-phone-form", phone: %{phone: ""}) |> render_submit()
+    assert is_nil(Accounts.get_user!(user.id).phone)
+  end
+
   test "stores a full postal code and shows the matched MP honestly", %{conn: conn, user: user} do
     {:ok, view, _html} = live(conn, ~p"/en/profile")
 

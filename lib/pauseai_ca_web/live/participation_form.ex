@@ -17,7 +17,9 @@ defmodule PauseAiCaWeb.ParticipationForm do
       params = %{
         "email" => if(user, do: user.email, else: ""),
         "name" => if(user, do: user.name || "", else: ""),
+        "phone" => if(user, do: user.phone || "", else: ""),
         "fsa" => if(user, do: user.fsa || "", else: ""),
+        "location" => if(user, do: user.fsa || user.city || "", else: ""),
         "city" => Map.get(assigns, :city, ""),
         "help_text" => "",
         "newsletter" => "false",
@@ -209,7 +211,7 @@ defmodule PauseAiCaWeb.ParticipationForm do
       Map.merge(
         prior,
         Map.filter(raw, fn {key, _} ->
-          key in ~w(email name fsa city help_text newsletter account local local_kind) ||
+          key in ~w(email name phone fsa location city help_text newsletter account local local_kind) ||
             String.starts_with?(key, "_unused_")
         end)
       )
@@ -219,7 +221,8 @@ defmodule PauseAiCaWeb.ParticipationForm do
 
   defp attributes(params, locale) do
     params
-    |> Map.take(~w(email name fsa city help_text newsletter account local))
+    |> Map.take(~w(email name phone location city help_text newsletter account local))
+    |> Map.put("phone", if(params["account"] == "true", do: params["phone"]))
     |> Map.put("locale", locale)
     |> Map.put("local_kind", if(params["local"] == "true", do: params["local_kind"]))
     |> Map.put("city", if(params["local"] == "true", do: params["city"]))
@@ -235,6 +238,38 @@ defmodule PauseAiCaWeb.ParticipationForm do
 
   defp submit_label(_, scope),
     do: if(scope, do: gettext("Save my choices"), else: gettext("Create an account"))
+
+  defp selected_submit_label(intent, scope, params) do
+    case Enum.find(ordered_choices(intent, scope), fn {key, _} ->
+           params[Atom.to_string(key)] == "true"
+         end) do
+      {:newsletter, _} -> submit_label("newsletter", scope)
+      {:account, _} -> submit_label("account", scope)
+      {:local, _} -> submit_label(params["local_kind"], scope)
+      nil -> gettext("Continue")
+    end
+  end
+
+  defp ordered_choices(intent, scope) do
+    choices = %{
+      newsletter: gettext("Subscribe me to the PauseAI Canada newsletter."),
+      account:
+        if(scope,
+          do: gettext("Use my account to save and record my actions."),
+          else: gettext("Create an account to save and record my actions.")
+        ),
+      local: gettext("Contact me about joining or helping a local group.")
+    }
+
+    order =
+      cond do
+        intent == "newsletter" -> [:newsletter, :account, :local]
+        intent in ["waitlist", "help"] -> [:local, :account, :newsletter]
+        true -> [:account, :newsletter, :local]
+      end
+
+    Enum.map(order, &{&1, choices[&1]})
+  end
 
   @impl true
   def render(assigns) do
@@ -321,7 +356,7 @@ defmodule PauseAiCaWeb.ParticipationForm do
           phx-target={@myself}
           class="mt-5"
         >
-          <div class="grid grid-cols-[minmax(0,1fr)_8.25rem] gap-3">
+          <div class="grid grid-cols-2 gap-3">
             <.input
               field={@form[:name]}
               label={gettext("Name")}
@@ -329,13 +364,16 @@ defmodule PauseAiCaWeb.ParticipationForm do
               maxlength="160"
             />
             <.input
-              field={@form[:fsa]}
-              label={gettext("FSA")}
-              placeholder="M5V"
-              maxlength="3"
-              autocapitalize="characters"
+              field={@form[:location]}
+              label={gettext("FSA or city")}
+              placeholder="M5V / Toronto"
+              maxlength="160"
               spellcheck="false"
-              title={gettext("First three characters of your Canadian postal code, for example H2X.")}
+              title={
+                gettext(
+                  "Enter the first three characters of your postal code, or your city, so we can send relevant local updates."
+                )
+              }
             />
           </div>
           <.input
@@ -348,27 +386,21 @@ defmodule PauseAiCaWeb.ParticipationForm do
             required
             readonly={!!@current_scope}
           />
+          <.input
+            :if={@params["account"] == "true"}
+            field={@form[:phone]}
+            type="tel"
+            label={gettext("Phone (optional)")}
+            autocomplete="tel"
+            maxlength="40"
+          />
           <fieldset class="mt-3 space-y-3">
             <legend class="sr-only">{gettext("Your choices")}</legend>
             <.input
-              field={@form[:newsletter]}
+              :for={{field, label} <- ordered_choices(@intent, @current_scope)}
+              field={@form[field]}
               type="checkbox"
-              label={gettext("Subscribe me to the PauseAI Canada newsletter.")}
-            />
-            <.input
-              field={@form[:account]}
-              type="checkbox"
-              label={
-                if(@current_scope,
-                  do: gettext("Use my account to save and record my actions."),
-                  else: gettext("Create an account to save and record my actions.")
-                )
-              }
-            />
-            <.input
-              field={@form[:local]}
-              type="checkbox"
-              label={gettext("Contact me about joining or helping a local group.")}
+              label={label}
             />
           </fieldset>
           <div
@@ -407,7 +439,7 @@ defmodule PauseAiCaWeb.ParticipationForm do
             class="mt-5 rounded-full bg-brand px-6 py-3 font-heading text-lg font-bold text-stone-950"
           >{if @registration,
             do: gettext("Email me a secure link"),
-            else: submit_label(@intent, @current_scope)}</button>
+            else: selected_submit_label(@intent, @current_scope, @params)}</button>
         </.form>
         <p
           :if={@state == :invalid}

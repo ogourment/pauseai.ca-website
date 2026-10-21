@@ -6,6 +6,54 @@ defmodule PauseAiCaWeb.ParticipationController do
   def confirm(conn, params), do: apply_choice(conn, params["token"], :confirm)
   def withdraw(conn, params), do: apply_choice(conn, params["token"], :withdraw)
 
+  def create_account(conn, params) do
+    Gettext.put_locale(PauseAiCaWeb.Gettext, if(params["locale"] == "fr", do: "fr", else: "en"))
+    # Avoid switching a signed-in visitor into another identity.
+    if conn.assigns.current_scope && conn.assigns.current_scope.user do
+      redirect(conn, to: ~p"/users/settings")
+    else
+      case Participation.create_account(params["account_offer"], Map.take(params, ["phone"])) do
+        {:ok, user} ->
+          conn
+          |> put_flash(:info, gettext("Your account is ready."))
+          |> put_flash(
+            :signup_metric,
+            Jason.encode!(%{
+              event: "account_confirmed",
+              source: user.signup_entry_point || "unknown"
+            })
+          )
+          |> put_session(
+            :user_return_to,
+            if(conn.params["locale"] == "fr", do: "/fr/tableau-de-bord", else: "/en/dashboard")
+          )
+          |> PauseAiCaWeb.UserAuth.log_in_user(user)
+
+        {:error, :account_exists} ->
+          conn
+          |> put_flash(:info, gettext("You already have an account. Sign in to continue."))
+          |> redirect(to: ~p"/users/log-in?#{Map.take(params, ["locale"])}")
+
+        {:error, %Ecto.Changeset{} = changeset} ->
+          case Participation.account_offer_request(params["account_offer"]) do
+            {:ok, request} ->
+              conn
+              |> assign(
+                :phone_form,
+                Phoenix.Component.to_form(changeset, as: "account", action: :insert)
+              )
+              |> page(nil, request, :confirm, :done)
+
+            _ ->
+              page(conn, nil, nil, :confirm, :invalid)
+          end
+
+        _ ->
+          page(conn, nil, nil, :confirm, :invalid)
+      end
+    end
+  end
+
   defp show(conn, token, action) do
     case Participation.capability(token, action) do
       {:ok, request} -> page(conn, token, request, action, :ready)
@@ -38,6 +86,11 @@ defmodule PauseAiCaWeb.ParticipationController do
     |> render(:action,
       token: token,
       request: request,
+      account_offer:
+        if(state == :done && action == :confirm && is_nil(conn.assigns.current_scope),
+          do: Participation.account_offer(request)
+        ),
+      phone_form: conn.assigns[:phone_form] || Phoenix.Component.to_form(%{}, as: "account"),
       action: action,
       state: state,
       page_title: gettext("Your choices")

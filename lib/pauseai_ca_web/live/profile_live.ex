@@ -14,11 +14,26 @@ defmodule PauseAiCaWeb.ProfileLive do
      |> assign(:locale, locale)
      |> assign(:page_title, gettext("My profile"))
      |> assign(:profile_user, user)
+     |> assign(:phone_form, to_form(Accounts.change_user_phone(user), as: "phone"))
      |> assign_profile_form(user)
      |> assign(:resource_form, to_form(%{"url" => ""}, as: "resource"))}
   end
 
   @impl true
+  def handle_event("save-phone", %{"phone" => attrs}, socket) do
+    case Accounts.update_user_phone(socket.assigns.profile_user, attrs) do
+      {:ok, user} ->
+        {:noreply,
+         socket
+         |> assign(:profile_user, user)
+         |> assign(:phone_form, to_form(Accounts.change_user_phone(user), as: "phone"))
+         |> put_flash(:info, gettext("Phone number saved."))}
+
+      {:error, changeset} ->
+        {:noreply, assign(socket, :phone_form, to_form(changeset, as: "phone"))}
+    end
+  end
+
   def handle_event("save-profile", %{"profile" => params}, socket) do
     changeset = Accounts.change_user_profile(socket.assigns.profile_user, params)
 
@@ -116,11 +131,28 @@ defmodule PauseAiCaWeb.ProfileLive do
           {gettext("My profile")}
         </h1>
 
+        <.form
+          for={@phone_form}
+          id="profile-phone-form"
+          phx-submit="save-phone"
+          class="mt-6 max-w-md space-y-3 rounded-xl border border-stone-200 bg-white p-5"
+        >
+          <.input
+            field={@phone_form[:phone]}
+            type="tel"
+            label={gettext("Phone (optional)")}
+            autocomplete="tel"
+            maxlength="40"
+          />
+          <.button>{gettext("Save phone number")}</.button>
+        </.form>
+
         <div class="mt-10 grid gap-8 lg:grid-cols-2">
           <section class="rounded-3xl border border-stone-200 bg-white p-6 shadow-sm">
             <h2 class="font-serif text-3xl text-stone-950">
               {gettext("My riding")}
             </h2>
+
             <.form
               for={@profile_form}
               id="profile-form"
