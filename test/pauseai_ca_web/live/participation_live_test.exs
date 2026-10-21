@@ -70,7 +70,7 @@ defmodule PauseAiCaWeb.ParticipationLiveTest do
     assert has_element?(view, "#participation-submit", "Offer my help")
   end
 
-  test "missing newsletter geography stays on the form, and city entry is retained", %{conn: conn} do
+  test "missing newsletter geography stays on the form, and FSA entry is retained", %{conn: conn} do
     {:ok, view, _} = live(conn, "/en/participate?intent=newsletter")
 
     view
@@ -83,9 +83,9 @@ defmodule PauseAiCaWeb.ParticipationLiveTest do
     refute Repo.exists?(Participation.Request)
     refute_receive {:email, _}
 
-    view |> form("#participation-form", participation: %{location: "Montréal"}) |> render_submit()
+    view |> form("#participation-form", participation: %{location: "H2X"}) |> render_submit()
     assert has_element?(view, "#account-email-pending")
-    assert Repo.one!(Participation.Request).residence_city == "Montréal"
+    assert Repo.one!(Participation.Request).fsa == "H2X"
     assert_receive {:email, _}
   end
 end

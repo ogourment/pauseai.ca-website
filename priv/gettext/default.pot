@@ -445,7 +445,7 @@ msgstr ""
 msgid "Send the letter"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/participation_form.ex:438
+#: lib/pauseai_ca_web/live/participation_form.ex:439
 #: lib/pauseai_ca_web/live/user_live/login.ex:45
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:1005
 #, elixir-autogen, elixir-format
@@ -643,7 +643,7 @@ msgstr ""
 msgid "Your answers and actions"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/participation_form.ex:383
+#: lib/pauseai_ca_web/live/participation_form.ex:384
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:998
 #, elixir-autogen, elixir-format
 msgid "Your email"
@@ -898,13 +898,14 @@ msgstr ""
 msgid "Want to participate? Join PauseAI Canada."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/participation_form.ex:505
+#: lib/pauseai_ca_web/live/participation_form.ex:506
 #, elixir-autogen, elixir-format
 msgid "Email your MP"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:45
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:134
+#: lib/pauseai_ca_web/controllers/participation_html/edit.html.heex:58
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:512
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:635
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:836
@@ -988,6 +989,7 @@ msgid "We recorded this as awaiting confirmation."
 msgstr ""
 
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:131
+#: lib/pauseai_ca_web/controllers/participation_html/edit.html.heex:16
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:633
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:834
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:997
@@ -1461,7 +1463,7 @@ msgstr ""
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:634
 #: lib/pauseai_ca_web/live/donate_live.ex:259
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:667
-#: lib/pauseai_ca_web/live/participation_form.ex:383
+#: lib/pauseai_ca_web/live/participation_form.ex:384
 #: lib/pauseai_ca_web/live/user_live/login.ex:34
 #: lib/pauseai_ca_web/live/user_live/login.ex:110
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:927
@@ -1470,7 +1472,7 @@ msgstr ""
 msgid "Email"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/participation_form.ex:441
+#: lib/pauseai_ca_web/live/participation_form.ex:442
 #: lib/pauseai_ca_web/live/user_live/login.ex:48
 #, elixir-autogen, elixir-format
 msgid "Email me a secure link"
@@ -2715,7 +2717,7 @@ msgstr ""
 msgid "Unsubscribed"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/participation_form.ex:507
+#: lib/pauseai_ca_web/live/participation_form.ex:508
 #: lib/pauseai_ca_web/live/protest_recap_live.ex:214
 #, elixir-autogen, elixir-format
 msgid "Upcoming events"
@@ -3401,7 +3403,7 @@ msgid "This policy explains how PauseAI Canada uses information from site visits
 msgstr ""
 
 #: lib/pauseai_ca_web/controllers/page_html/about.html.heex:110
-#: lib/pauseai_ca_web/live/participation_form.ex:433
+#: lib/pauseai_ca_web/live/participation_form.ex:434
 #: lib/pauseai_ca_web/live/user_live/login.ex:78
 #, elixir-autogen, elixir-format
 msgid "Read our privacy policy."
@@ -5718,6 +5720,8 @@ msgstr ""
 msgid "Postal area"
 msgstr ""
 
+#: lib/pauseai_ca_web/controllers/participation_html/edit.html.heex:20
+#: lib/pauseai_ca_web/live/participation_form.ex:369
 #: lib/pauseai_ca_web/newsletter_audience_labels.ex:5
 #, elixir-autogen, elixir-format
 msgid "FSA"
@@ -5883,7 +5887,7 @@ msgstr ""
 msgid "Unresolved source profiles"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/participation_form.ex:458
+#: lib/pauseai_ca_web/live/participation_form.ex:459
 #, elixir-autogen, elixir-format
 msgid "Check your email to confirm your choices. You can keep browsing while you wait."
 msgstr ""
@@ -5916,11 +5920,13 @@ msgstr ""
 msgid "Confirming…"
 msgstr ""
 
+#: lib/pauseai_ca_web/controllers/participation_html/edit.html.heex:48
 #: lib/pauseai_ca_web/live/participation_form.ex:261
 #, elixir-autogen, elixir-format
 msgid "Contact me about joining or helping a local group."
 msgstr ""
 
+#: lib/pauseai_ca_web/controllers/participation_html/edit.html.heex:38
 #: lib/pauseai_ca_web/live/participation_form.ex:259
 #, elixir-autogen, elixir-format
 msgid "Create an account to save and record my actions."
@@ -5938,7 +5944,7 @@ msgstr ""
 msgid "Get updates"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/participation_form.ex:422
+#: lib/pauseai_ca_web/live/participation_form.ex:423
 #, elixir-autogen, elixir-format
 msgid "How would you like to help?"
 msgstr ""
@@ -5970,6 +5976,7 @@ msgid "Local participation"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/participation_choices.ex:27
+#: lib/pauseai_ca_web/controllers/participation_html/edit.html.heex:56
 #, elixir-autogen, elixir-format
 msgid "Local waitlist"
 msgstr ""
@@ -5985,6 +5992,7 @@ msgid "Offer my help"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/participation_choices.ex:26
+#: lib/pauseai_ca_web/controllers/participation_html/edit.html.heex:56
 #, elixir-autogen, elixir-format
 msgid "Offer of help"
 msgstr ""
@@ -6000,6 +6008,7 @@ msgstr ""
 msgid "Record my actions"
 msgstr ""
 
+#: lib/pauseai_ca_web/controllers/participation_html/edit.html.heex:67
 #: lib/pauseai_ca_web/live/participation_form.ex:240
 #, elixir-autogen, elixir-format
 msgid "Save my choices"
@@ -6010,6 +6019,7 @@ msgstr ""
 msgid "Stop follow-up on this local request. Your account and newsletter preferences are managed separately."
 msgstr ""
 
+#: lib/pauseai_ca_web/controllers/participation_html/edit.html.heex:33
 #: lib/pauseai_ca_web/live/participation_form.ex:255
 #, elixir-autogen, elixir-format
 msgid "Subscribe me to the PauseAI Canada newsletter."
@@ -6032,12 +6042,12 @@ msgstr ""
 msgid "Use my account to save and record my actions."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/participation_form.ex:477
+#: lib/pauseai_ca_web/live/participation_form.ex:478
 #, elixir-autogen, elixir-format
 msgid "We could not send your confirmation. Your details are still here. Please try again."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/participation_form.ex:426
+#: lib/pauseai_ca_web/live/participation_form.ex:427
 #, elixir-autogen, elixir-format
 msgid "We will email you about your request. You can withdraw it at any time."
 msgstr ""
@@ -6058,8 +6068,8 @@ msgstr ""
 msgid "You are signed in, but your other signup choices could not be applied. Please review them and request a new confirmation."
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/participation_controller.ex:96
-#: lib/pauseai_ca_web/live/participation_form.ex:398
+#: lib/pauseai_ca_web/controllers/participation_controller.ex:172
+#: lib/pauseai_ca_web/live/participation_form.ex:399
 #, elixir-autogen, elixir-format
 msgid "Your choices"
 msgstr ""
@@ -6074,17 +6084,17 @@ msgstr ""
 msgid "%{city}: join the waitlist or offer help"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/participation_form.ex:494
+#: lib/pauseai_ca_web/live/participation_form.ex:495
 #, elixir-autogen, elixir-format
 msgid "More ways to act"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/participation_form.ex:467
+#: lib/pauseai_ca_web/live/participation_form.ex:468
 #, elixir-autogen, elixir-format
 msgid "Please wait one minute before requesting a new confirmation. Your details are still here."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/participation_form.ex:487
+#: lib/pauseai_ca_web/live/participation_form.ex:488
 #, elixir-autogen, elixir-format
 msgid "Sign the PauseAI statement"
 msgstr ""
@@ -6094,7 +6104,7 @@ msgstr ""
 msgid "When you join a local waitlist or offer help, we store your email, optional name and postal area, the location where you want to get involved, and any help details you provide. Authorized administrators use these details for private follow-up. You can withdraw your request using the link in your confirmation email. Withdrawal stops local follow-up; account and newsletter choices remain separate."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/participation_form.ex:413
+#: lib/pauseai_ca_web/live/participation_form.ex:414
 #, elixir-autogen, elixir-format
 msgid "Where would you like to get involved?"
 msgstr ""
@@ -6119,7 +6129,7 @@ msgstr ""
 msgid "Page %{page} of %{pages} · %{total} requests"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/participation_form.ex:450
+#: lib/pauseai_ca_web/live/participation_form.ex:451
 #, elixir-autogen, elixir-format
 msgid "Please check the highlighted fields."
 msgstr ""
@@ -6994,16 +7004,6 @@ msgstr ""
 msgid "Create my account"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/participation_form.ex:373
-#, elixir-autogen, elixir-format
-msgid "Enter the first three characters of your postal code, or your city, so we can send relevant local updates."
-msgstr ""
-
-#: lib/pauseai_ca_web/live/participation_form.ex:368
-#, elixir-autogen, elixir-format
-msgid "FSA or city"
-msgstr ""
-
 #: lib/pauseai_ca_web/components/participation_choices.ex:19
 #, elixir-autogen, elixir-format
 msgid "Included"
@@ -7015,6 +7015,8 @@ msgid "Local group follow-up"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/participation_choices.ex:23
+#: lib/pauseai_ca_web/controllers/participation_html/edit.html.heex:51
+#: lib/pauseai_ca_web/controllers/participation_html/edit.html.heex:55
 #, elixir-autogen, elixir-format
 msgid "Local request"
 msgstr ""
@@ -7034,12 +7036,12 @@ msgstr ""
 msgid "Would you like to create an account?"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/participation_controller.ex:34
+#: lib/pauseai_ca_web/controllers/participation_controller.ex:110
 #, elixir-autogen, elixir-format
 msgid "You already have an account. Sign in to continue."
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/participation_controller.ex:18
+#: lib/pauseai_ca_web/controllers/participation_controller.ex:94
 #, elixir-autogen, elixir-format
 msgid "Your account is ready."
 msgstr ""
@@ -7049,19 +7051,15 @@ msgstr ""
 msgid "Your choices are confirmed."
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:43
-#, elixir-autogen, elixir-format
-msgid "When you subscribe, we store your email, your name if provided, your postal area or city, and the language of the signup page in our Canadian database. Your postal area is the first three characters of your Canadian postal code. We send a confirmation email. You can also choose an account or local follow-up in the same form. One email confirms your selected choices. Brevo delivers email; our website keeps the subscription and withdrawal records. Every newsletter includes an unsubscribe link."
-msgstr ""
-
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:151
 #, elixir-autogen, elixir-format
 msgid "Enter a phone number with 7 to 20 digits."
 msgstr ""
 
 #: lib/pauseai_ca_web/controllers/participation_html/action.html.heex:64
+#: lib/pauseai_ca_web/controllers/participation_html/edit.html.heex:66
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:410
-#: lib/pauseai_ca_web/live/participation_form.ex:393
+#: lib/pauseai_ca_web/live/participation_form.ex:394
 #: lib/pauseai_ca_web/live/profile_live.ex:143
 #, elixir-autogen, elixir-format
 msgid "Phone (optional)"
@@ -7080,4 +7078,37 @@ msgstr ""
 #: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:35
 #, elixir-autogen, elixir-format
 msgid "Your email secures your account and retrieves saved items. You can also provide a phone number and edit or remove it in your profile. We do not sell personal information."
+msgstr ""
+
+#: lib/pauseai_ca_web/components/participation_choices.ex:38
+#: lib/pauseai_ca_web/controllers/participation_controller.ex:81
+#: lib/pauseai_ca_web/controllers/participation_html/edit.html.heex:2
+#, elixir-autogen, elixir-format
+msgid "Change my choices"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/participation_controller.ex:46
+#, elixir-autogen, elixir-format
+msgid "Check your email to confirm your updated choices."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/participation_html/edit.html.heex:26
+#: lib/pauseai_ca_web/live/participation_form.ex:376
+#, elixir-autogen, elixir-format
+msgid "First three characters of your postal code, e.g. H2X."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/participation_html/edit.html.heex:62
+#, elixir-autogen, elixir-format
+msgid "How can you help?"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:43
+#, elixir-autogen, elixir-format
+msgid "When you subscribe, we store your email, your name if provided, your postal area, and the language of the signup page in our Canadian database. Your postal area is the first three characters of your Canadian postal code. We send a confirmation email. You can also choose an account or local follow-up in the same form. One email confirms your selected choices. Brevo delivers email; our website keeps the subscription and withdrawal records. Every newsletter includes an unsubscribe link."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/participation_html/edit.html.heex:5
+#, elixir-autogen, elixir-format
+msgid "Your current choices stay in effect until you confirm the changes by email."
 msgstr ""

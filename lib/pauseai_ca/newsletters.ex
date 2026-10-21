@@ -139,6 +139,29 @@ defmodule PauseAiCa.Newsletters do
     end)
   end
 
+  @doc false
+  def withdraw_participation(email, request_id) do
+    # Called only inside the transaction confirming an ownership-verified choice edit.
+    lock_address(email)
+
+    case Repo.one(from s in Subscription, where: s.email == ^email, lock: "FOR UPDATE") do
+      nil ->
+        :ok
+
+      subscription ->
+        saved =
+          persist(subscription, %{
+            state: "withdrawn",
+            withdrawn_at: DateTime.utc_now(),
+            confirmation_hash: nil,
+            confirmation_expires_at: nil
+          })
+
+        event(saved, "withdrawn", nil, %{"participation_request_id" => request_id})
+        saved
+    end
+  end
+
   @doc "Issues a personal withdrawal capability for reviewed mail; never grants consent or sends."
   def issue_withdrawal_token(scope, subscription_id) do
     with true <- Volunteers.superadmin?(scope), {:ok, id} <- Ecto.UUID.cast(subscription_id) do

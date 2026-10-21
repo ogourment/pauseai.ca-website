@@ -6,6 +6,82 @@ defmodule PauseAiCaWeb.ParticipationController do
   def confirm(conn, params), do: apply_choice(conn, params["token"], :confirm)
   def withdraw(conn, params), do: apply_choice(conn, params["token"], :withdraw)
 
+  def edit(conn, params) do
+    case Participation.choices_request(params["token"]) do
+      {:ok, request} ->
+        edit_page(conn, params["token"], request, Participation.Request.changeset(request, %{}))
+
+      _ ->
+        page(conn, nil, nil, :confirm, :invalid)
+    end
+  end
+
+  def save_choices(conn, params) do
+    token = params["token"]
+
+    with {:ok, request} <- Participation.choices_request(token) do
+      Gettext.put_locale(PauseAiCaWeb.Gettext, request.locale)
+      attrs = params["choices"] || %{}
+      attrs = Map.put(attrs, "locale", request.locale)
+      attrs = Map.put(attrs, "local_kind", if(attrs["local"] == "true", do: attrs["local_kind"]))
+
+      urls = fn
+        :account, {token, flow} ->
+          PauseAiCaWeb.Site.url(
+            request.locale,
+            ~p"/users/log-in/#{token}?#{%{flow: flow, locale: request.locale}}"
+          )
+
+        action, token ->
+          PauseAiCaWeb.Site.url(
+            request.locale,
+            "/participation/#{action}?" <>
+              URI.encode_query(%{token: token, locale: request.locale})
+          )
+      end
+
+      case Participation.update_choices(token, attrs, urls) do
+        {:ok, _} ->
+          conn
+          |> put_flash(:info, gettext("Check your email to confirm your updated choices."))
+          |> redirect(
+            to: if(request.locale == "fr", do: ~p"/fr/participer", else: ~p"/en/participate")
+          )
+
+        {:error, %Ecto.Changeset{} = changeset} ->
+          edit_page(conn, token, request, %{changeset | action: :update})
+
+        _ ->
+          page(conn, nil, nil, :confirm, :invalid)
+      end
+    else
+      _ -> page(conn, nil, nil, :confirm, :invalid)
+    end
+  end
+
+  defp edit_page(conn, token, request, changeset) do
+    Gettext.put_locale(PauseAiCaWeb.Gettext, request.locale)
+
+    conn
+    |> put_resp_header("cache-control", "no-store")
+    |> put_resp_header("referrer-policy", "no-referrer")
+    |> assign(:locale, request.locale)
+    |> render(:edit,
+      token: token,
+      request: request,
+      form:
+        Phoenix.Component.to_form(
+          Ecto.Changeset.put_change(
+            changeset,
+            :location,
+            Ecto.Changeset.get_field(changeset, :fsa)
+          ),
+          as: "choices"
+        ),
+      page_title: gettext("Change my choices")
+    )
+  end
+
   def create_account(conn, params) do
     Gettext.put_locale(PauseAiCaWeb.Gettext, if(params["locale"] == "fr", do: "fr", else: "en"))
     # Avoid switching a signed-in visitor into another identity.

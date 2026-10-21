@@ -28,6 +28,15 @@ defmodule PauseAiCaWeb.ParticipationChoices do
         </dd>
       </div>
     </dl>
+    <.link
+      id="participation-edit-choices"
+      href={
+        ~p"/participation/edit?#{%{token: PauseAiCa.Participation.choices_token(@request), locale: @request.locale}}"
+      }
+      class="mt-4 inline-block font-semibold underline"
+    >
+      {gettext("Change my choices")}
+    </.link>
     """
   end
 end

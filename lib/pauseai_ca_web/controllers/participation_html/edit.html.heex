@@ -1,0 +1,71 @@
+<section class="mx-auto max-w-xl px-5 py-12">
+  <h1 class="font-heading text-3xl">{gettext("Change my choices")}</h1>
+  <p class="mt-3">{@request.email}</p>
+  <p class="mt-2">
+    {gettext("Your current choices stay in effect until you confirm the changes by email.")}
+  </p>
+  <.form
+    for={@form}
+    action={~p"/participation/edit"}
+    method="post"
+    id="participation-edit-form"
+    class="mt-5 space-y-4"
+  >
+    <input type="hidden" name="token" value={@token} />
+    <div class="grid grid-cols-[minmax(0,1fr)_132px] gap-3">
+      <.input field={@form[:name]} label={gettext("Name")} maxlength="160" autocomplete="name" />
+      <div>
+        <.input
+          field={@form[:location]}
+          label={gettext("FSA")}
+          maxlength="3"
+          placeholder="H2X"
+          aria-describedby="edit-fsa-help"
+        />
+        <p id="edit-fsa-help" class="mt-1 text-xs leading-tight text-stone-600">
+          {gettext("First three characters of your postal code, e.g. H2X.")}
+        </p>
+      </div>
+    </div>
+    <.input
+      field={@form[:newsletter]}
+      type="checkbox"
+      label={gettext("Subscribe me to the PauseAI Canada newsletter.")}
+    />
+    <.input
+      field={@form[:account]}
+      type="checkbox"
+      label={gettext("Create an account to save and record my actions.")}
+    />
+    <.input
+      field={@form[:local]}
+      checked={
+        if @form.source.action,
+          do: Phoenix.HTML.Form.normalize_value("checkbox", @form[:local].value),
+          else: not is_nil(@request.local_kind)
+      }
+      type="checkbox"
+      label={gettext("Contact me about joining or helping a local group.")}
+    />
+    <details open={not is_nil(@request.local_kind)} class="rounded-lg border border-stone-200 p-3">
+      <summary class="cursor-pointer font-semibold">{gettext("Local request")}</summary>
+      <.input
+        field={@form[:local_kind]}
+        type="select"
+        label={gettext("Local request")}
+        options={[{gettext("Local waitlist"), "waitlist"}, {gettext("Offer of help"), "help"}]}
+      />
+      <.input field={@form[:city]} label={gettext("City")} maxlength="160" />
+      <.input
+        field={@form[:help_text]}
+        type="textarea"
+        label={gettext("How can you help?")}
+        maxlength="2000"
+      />
+    </details>
+    <.input field={@form[:phone]} type="tel" label={gettext("Phone (optional)")} maxlength="40" />
+    <button type="submit" class="rounded-full bg-brand px-6 py-3 font-heading font-bold">{gettext(
+      "Save my choices"
+    )}</button>
+  </.form>
+</section>

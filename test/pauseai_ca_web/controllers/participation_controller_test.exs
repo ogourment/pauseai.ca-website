@@ -8,7 +8,7 @@ defmodule PauseAiCaWeb.ParticipationControllerTest do
         %{
           "email" => "next-step@example.org",
           "name" => "Morgan",
-          "location" => "Ottawa",
+          "location" => "H2X",
           "newsletter" => true
         },
         %{},
@@ -61,9 +61,41 @@ defmodule PauseAiCaWeb.ParticipationControllerTest do
 
     assert redirected_to(created) == "/en/dashboard"
     assert get_session(created, :user_token)
-    assert Accounts.get_user_by_email("next-step@example.org").city == "Ottawa"
+    assert Accounts.get_user_by_email("next-step@example.org").fsa == "H2X"
     assert Accounts.get_user_by_email("next-step@example.org").phone == "+1 613 555 0101"
     refute_receive {:email, _}
+  end
+
+  test "change choices reopens a prefilled form and requires confirmation of an edit", %{
+    conn: conn
+  } do
+    original_token = signup()
+    request = Repo.one!(Participation.Request)
+    edit_token = Participation.choices_token(request)
+    page = get(conn, "/participation/edit", token: edit_token)
+    html = html_response(page, 200)
+    assert html =~ "participation-edit-form"
+    assert html =~ "Morgan"
+    assert html =~ "H2X"
+    assert html =~ "First three characters"
+    refute Repo.exists?(PauseAiCa.Newsletters.Subscription)
+
+    saved =
+      post(recycle(page), "/participation/edit",
+        token: edit_token,
+        choices: %{
+          "name" => "Morgan Updated",
+          "location" => "M5V",
+          "newsletter" => "true",
+          "account" => "false",
+          "local" => "false"
+        }
+      )
+
+    assert redirected_to(saved) == "/en/participate"
+    assert_receive {:email, _}
+    assert {:error, _} = Participation.confirm(original_token)
+    refute Repo.exists?(PauseAiCa.Newsletters.Subscription)
   end
 
   test "no account can be created through an invented offer", %{conn: conn} do

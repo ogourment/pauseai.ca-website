@@ -7,8 +7,44 @@ defmodule PauseAiCa.Participation do
   @account_offer_salt "participation account offer v1"
   def change(attrs), do: Request.changeset(%Request{}, attrs)
 
-  def request(attrs, context, url_fun) do
-    changeset = change(attrs)
+  @choices_salt "participation choices v1"
+
+  def choices_token(%Request{} = request) do
+    Phoenix.Token.encrypt(
+      PauseAiCaWeb.Endpoint,
+      @choices_salt,
+      {request.id, request.updated_at, request.state}
+    )
+  end
+
+  def choices_request(token) when is_binary(token) do
+    with {:ok, {id, updated_at, state}} <-
+           Phoenix.Token.decrypt(PauseAiCaWeb.Endpoint, @choices_salt, token, max_age: 900),
+         %Request{updated_at: ^updated_at, state: ^state, withdrawn_at: nil} = request <-
+           Repo.get(Request, id),
+         true <- state in ["pending", "confirmed"],
+         true <-
+           state == "confirmed" || DateTime.compare(request.expires_at, DateTime.utc_now()) == :gt do
+      {:ok, request}
+    else
+      _ -> {:error, :invalid_choices}
+    end
+  end
+
+  def choices_request(_), do: {:error, :invalid_choices}
+
+  def update_choices(token, attrs, url_fun) do
+    with {:ok, request} <- choices_request(token) do
+      # Identity and original journey are server-owned. Editing never changes the email address.
+      context = Map.put(request.context, "edited_request_id", request.id)
+      request(Map.put(attrs, "email", request.email), context, url_fun, token)
+    end
+  end
+
+  def request(attrs, context, url_fun), do: request(attrs, context, url_fun, nil)
+
+  defp request(attrs, context, url_fun, edit_token) do
+    changeset = Request.changeset(%Request{}, attrs, not is_nil(edit_token))
 
     if changeset.valid? do
       email = Ecto.Changeset.get_field(changeset, :email)
@@ -18,6 +54,10 @@ defmodule PauseAiCa.Participation do
       result =
         Repo.transaction(fn ->
           lock(email)
+
+          if edit_token && !match?({:ok, _}, choices_request(edit_token)),
+            do: Repo.rollback(:invalid_choices)
+
           now = DateTime.utc_now()
 
           recent =
@@ -28,12 +68,12 @@ defmodule PauseAiCa.Participation do
                 limit: 1
             )
 
-          if recent && DateTime.diff(now, recent.inserted_at) < 60 do
+          if !edit_token && recent && DateTime.diff(now, recent.inserted_at) < 60 do
             if recent.delivery_state == "failed", do: Repo.rollback(:confirmation_unavailable)
             values = Ecto.Changeset.apply_changes(changeset)
 
             fields =
-              ~w(name phone fsa residence_city city help_text newsletter account local_kind locale)a
+              ~w(name phone fsa city help_text newsletter account local_kind locale)a
 
             if Map.take(recent, fields) == Map.take(values, fields),
               do: Repo.rollback(:cooldown),
@@ -204,7 +244,6 @@ defmodule PauseAiCa.Participation do
           phone_changeset
           |> Ecto.Changeset.change(
             name: request.name,
-            city: request.residence_city,
             fsa: request.fsa,
             confirmed_at: DateTime.utc_now(:second)
           )
@@ -265,20 +304,35 @@ defmodule PauseAiCa.Participation do
     request = Repo.one!(from r in Request, where: r.id == ^request.id, lock: "FOR UPDATE")
     if request.state != "pending", do: Repo.rollback(:invalid_request)
 
+    if parent_id = request.context["edited_request_id"] do
+      parent = Repo.get(Request, parent_id)
+
+      if parent && parent.email == request.email do
+        if parent.newsletter && !request.newsletter,
+          do: Newsletters.withdraw_participation(request.email, request.id)
+
+        parent
+        |> Ecto.Changeset.change(
+          local_kind: nil,
+          followup_owner_id: nil,
+          context: Map.put(parent.context, "replaced_by_request_id", request.id)
+        )
+        |> Repo.update!()
+      end
+    end
+
     if request.newsletter do
       case Newsletters.request_signup(request.email, %{
              consent: true,
              locale: request.locale,
              name: request.name,
-             fsa: request.fsa,
-             city: request.residence_city
+             fsa: request.fsa
            }) do
         {:ok, %{subscription: subscription, confirmation_token: nil}} ->
           profile =
             %{
               name: request.name,
               fsa: request.fsa,
-              city: request.residence_city,
               locale: request.locale
             }
             |> Map.reject(fn {_k, v} -> v in [nil, ""] end)
@@ -323,7 +377,6 @@ defmodule PauseAiCa.Participation do
         %{
           name: request.name,
           phone: request.phone,
-          city: request.residence_city,
           fsa: request.fsa
         }
         |> Map.reject(fn {_k, v} -> v in [nil, ""] end)

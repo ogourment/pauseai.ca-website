@@ -43,6 +43,8 @@ defmodule PauseAiCaWeb.Router do
     get "/letters/confirm/:token", LetterController, :confirm
 
     # Mail scanners may open GET links: consent changes require an explicit CSRF-protected POST.
+    get "/participation/edit", ParticipationController, :edit
+    post "/participation/edit", ParticipationController, :save_choices
     get "/participation/confirm", ParticipationController, :show_confirm
     post "/participation/confirm", ParticipationController, :confirm
     post "/participation/account", ParticipationController, :create_account

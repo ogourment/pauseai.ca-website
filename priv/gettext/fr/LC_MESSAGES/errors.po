@@ -108,27 +108,23 @@ msgstr "doit avoir au plus deux décimales"
 msgid "must be the first three characters of a Canadian postal code"
 msgstr "doit correspondre aux trois premiers caractères d’un code postal canadien"
 
-#: lib/pauseai_ca/participation/request.ex:125
+#: lib/pauseai_ca/participation/request.ex:103
 #, elixir-autogen, elixir-format
 msgid "choose at least one option"
 msgstr "choisissez au moins une option"
 
-#: lib/pauseai_ca/participation/request.ex:119
+#: lib/pauseai_ca/participation/request.ex:96
 #, elixir-autogen, elixir-format
 msgid "enter a city or postal area for local follow-up"
 msgstr "indiquez une ville ou une région postale pour le suivi local"
-
-#: lib/pauseai_ca/participation/request.ex:95
-#, elixir-autogen, elixir-format
-msgid "enter an FSA or city"
-msgstr "indiquez une RTA ou une ville"
-
-#: lib/pauseai_ca/participation/request.ex:108
-#, elixir-autogen, elixir-format
-msgid "enter an FSA or city for newsletter targeting"
-msgstr "indiquez une RTA ou une ville pour recevoir les nouvelles pertinentes"
 
 #: lib/pauseai_ca/accounts/user.ex:72
 #, elixir-autogen, elixir-format
 msgid "enter a phone number with 7 to 20 digits"
 msgstr "indiquez un numéro de téléphone contenant de 7 à 20 chiffres"
+
+# From Ecto.Changeset.validate_format/3 (local context)
+#: lib/pauseai_ca/participation/request.ex:85
+#, elixir-autogen, elixir-format
+msgid "enter the first three characters of your postal code"
+msgstr "saisissez les trois premiers caractères de votre code postal"

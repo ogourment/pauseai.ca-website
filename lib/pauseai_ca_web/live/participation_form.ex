@@ -19,7 +19,7 @@ defmodule PauseAiCaWeb.ParticipationForm do
         "name" => if(user, do: user.name || "", else: ""),
         "phone" => if(user, do: user.phone || "", else: ""),
         "fsa" => if(user, do: user.fsa || "", else: ""),
-        "location" => if(user, do: user.fsa || user.city || "", else: ""),
+        "location" => if(user, do: user.fsa || "", else: ""),
         "city" => Map.get(assigns, :city, ""),
         "help_text" => "",
         "newsletter" => "false",
@@ -356,25 +356,26 @@ defmodule PauseAiCaWeb.ParticipationForm do
           phx-target={@myself}
           class="mt-5"
         >
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-[minmax(0,1fr)_132px] gap-3">
             <.input
               field={@form[:name]}
               label={gettext("Name")}
               autocomplete="name"
               maxlength="160"
             />
-            <.input
-              field={@form[:location]}
-              label={gettext("FSA or city")}
-              placeholder="M5V / Toronto"
-              maxlength="160"
-              spellcheck="false"
-              title={
-                gettext(
-                  "Enter the first three characters of your postal code, or your city, so we can send relevant local updates."
-                )
-              }
-            />
+            <div>
+              <.input
+                field={@form[:location]}
+                label={gettext("FSA")}
+                placeholder="H2X"
+                maxlength="3"
+                spellcheck="false"
+                aria-describedby="participation-fsa-help"
+              />
+              <p id="participation-fsa-help" class="mt-1 text-xs leading-tight text-stone-600">
+                {gettext("First three characters of your postal code, e.g. H2X.")}
+              </p>
+            </div>
           </div>
           <.input
             id={if(@registration, do: "registration_form_email", else: "participation_email")}

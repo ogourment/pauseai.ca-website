@@ -68,16 +68,85 @@ defmodule PauseAiCa.ParticipationTest do
 
     assert {:ok, _} =
              Participation.request(
-               attrs(%{"fsa" => "", "location" => "Ottawa", "local_kind" => "waitlist"}),
+               attrs(%{"fsa" => "", "location" => "H2X", "local_kind" => "waitlist"}),
                context(),
                urls()
              )
 
     assert_receive {:email, mail}
     assert {:ok, request} = Participation.confirm(token(mail, "confirm"))
-    assert request.residence_city == "Ottawa"
+    assert request.fsa == "H2X"
     assert request.city == "Toronto"
-    assert Repo.one!(Newsletters.Subscription).city == "Ottawa"
+    assert Repo.one!(Newsletters.Subscription).fsa == "H2X"
+  end
+
+  test "verified edits preserve identity and withdraw deselected purposes only after confirmation" do
+    assert {:ok, _} =
+             Participation.request(attrs(%{"local_kind" => "waitlist"}), context(), urls())
+
+    assert_receive {:email, mail}
+    assert {:ok, original} = Participation.confirm(token(mail, "confirm"))
+    edit = Participation.choices_token(original)
+    assert {:error, :invalid_choices} = Participation.update_choices("invented", attrs(), urls())
+
+    assert {:ok, _} =
+             Participation.update_choices(
+               edit,
+               attrs(%{
+                 "email" => "other@example.org",
+                 "newsletter" => "false",
+                 "local_kind" => nil
+               }),
+               urls()
+             )
+
+    assert_receive {:email, updated_mail}
+    assert updated_mail.to == [{"", original.email}]
+    assert Repo.one!(Newsletters.Subscription).state == "confirmed"
+    assert Repo.get!(Request, original.id).local_kind == "waitlist"
+    assert {:ok, updated} = Participation.confirm(token(updated_mail, "confirm"))
+    assert updated.email == original.email
+    refute updated.newsletter
+    assert is_nil(updated.local_kind)
+    assert Repo.one!(Newsletters.Subscription).state == "withdrawn"
+    assert is_nil(Repo.get!(Request, original.id).local_kind)
+    assert {:error, :invalid_choices} = Participation.choices_request(edit)
+  end
+
+  test "expired edit proof cannot issue a new request or email" do
+    assert {:ok, _} = Participation.request(attrs(), context(), urls())
+    assert_receive {:email, _}
+    original = Repo.one!(Request)
+
+    expired =
+      Phoenix.Token.encrypt(
+        PauseAiCaWeb.Endpoint,
+        "participation choices v1",
+        {original.id, original.updated_at, original.state},
+        signed_at: System.system_time(:second) - 901
+      )
+
+    assert {:error, :invalid_choices} = Participation.update_choices(expired, attrs(), urls())
+    assert Repo.aggregate(Request, :count) == 1
+    refute_receive {:email, _}
+  end
+
+  test "editing a pending request invalidates its old confirmation and preserves selected details" do
+    assert {:ok, _} = Participation.request(attrs(), context(), urls())
+    assert_receive {:email, original_mail}
+    original = Repo.one!(Request)
+    edit = Participation.choices_token(original)
+    assert {:ok, loaded} = Participation.choices_request(edit)
+    assert loaded.name == original.name
+
+    assert {:ok, _} =
+             Participation.update_choices(edit, attrs(%{"name" => "Updated name"}), urls())
+
+    assert_receive {:email, updated_mail}
+    assert {:error, _} = Participation.confirm(token(original_mail, "confirm"))
+    assert {:error, _} = Participation.choices_request(edit)
+    assert {:ok, changed} = Participation.confirm(token(updated_mail, "confirm"))
+    assert changed.name == "Updated name"
   end
 
   test "a confirmed newsletter signup can explicitly add an account without another email" do
