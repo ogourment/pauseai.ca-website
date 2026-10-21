@@ -30,8 +30,8 @@ defmodule PauseAiCaWeb.LetterController do
     end
   end
 
-  defp campaign_path("fr"), do: ~p"/fr/signal-d-alarme"
-  defp campaign_path(_locale), do: ~p"/en/warning-shot"
+  defp campaign_path("fr"), do: ~p"/fr/contacter-votre-depute"
+  defp campaign_path(_locale), do: ~p"/en/contact-your-mp"
 
   defp locale_from(conn) do
     if String.starts_with?(conn.request_path, "/fr"), do: "fr", else: "en"

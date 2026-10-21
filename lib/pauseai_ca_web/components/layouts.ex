@@ -134,6 +134,13 @@ defmodule PauseAiCaWeb.Layouts do
               class="block px-4 py-3 font-semibold hover:bg-brand-wash md:hidden"
             >{gettext("Warning shot")}</.link>
             <.link
+              id="act-contact-mp"
+              navigate={
+                if(@locale == "fr", do: ~p"/fr/contacter-votre-depute", else: ~p"/en/contact-your-mp")
+              }
+              class="block px-4 py-3 font-semibold hover:bg-brand-wash"
+            >{gettext("Email your MP")}</.link>
+            <.link
               id="act-solo"
               navigate={
                 if(@locale == "fr",

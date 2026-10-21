@@ -10,6 +10,7 @@ defmodule PauseAiCa.Participation.Request do
     field :phone, :string
     field :fsa, :string
     field :location, :string, virtual: true
+    field :postal_code, :string, virtual: true
     field :city, :string
     field :help_text, :string
     field :locale, :string, default: "en"

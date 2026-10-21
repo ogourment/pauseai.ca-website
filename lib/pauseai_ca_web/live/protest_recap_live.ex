@@ -196,8 +196,8 @@ defmodule PauseAiCaWeb.ProtestRecapLive do
                 id="protest-write-mp"
                 navigate={
                   if @locale == "fr",
-                    do: ~p"/fr/signal-d-alarme#letter",
-                    else: ~p"/en/warning-shot#letter"
+                    do: ~p"/fr/contacter-votre-depute",
+                    else: ~p"/en/contact-your-mp"
                 }
                 class="mt-auto inline-flex w-fit rounded-full bg-brand px-6 py-3 font-heading text-lg font-bold text-stone-950"
               >{gettext("Prepare your letter")}</.link>

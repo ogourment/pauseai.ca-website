@@ -176,7 +176,7 @@ defmodule PauseAiCa.Accounts.Onboarding do
 
   defp safe_return(value, locale, bookmark) do
     allowed =
-      ~w(/en/dashboard /fr/tableau-de-bord /en/learn /fr/comprendre /en/actions#action-editor /fr/actions#action-editor)
+      ~w(/en/dashboard /fr/tableau-de-bord /en/learn /fr/comprendre /en/actions#action-editor /fr/actions#action-editor /en/contact-your-mp /fr/contacter-votre-depute)
 
     if value in allowed,
       do: value,

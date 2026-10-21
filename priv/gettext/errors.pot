@@ -118,12 +118,12 @@ msgstr ""
 msgid "must be the first three characters of a Canadian postal code"
 msgstr ""
 
-#: lib/pauseai_ca/participation/request.ex:103
+#: lib/pauseai_ca/participation/request.ex:104
 #, elixir-autogen, elixir-format
 msgid "choose at least one option"
 msgstr ""
 
-#: lib/pauseai_ca/participation/request.ex:96
+#: lib/pauseai_ca/participation/request.ex:97
 #, elixir-autogen, elixir-format
 msgid "enter a city or postal area for local follow-up"
 msgstr ""
@@ -133,7 +133,12 @@ msgstr ""
 msgid "enter a phone number with 7 to 20 digits"
 msgstr ""
 
-#: lib/pauseai_ca/participation/request.ex:85
+#: lib/pauseai_ca/participation/request.ex:86
 #, elixir-autogen, elixir-format
 msgid "enter the first three characters of your postal code"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/participation_form.ex:275
+#, elixir-autogen, elixir-format
+msgid "enter a full Canadian postal code"
 msgstr ""

@@ -2,6 +2,15 @@ defmodule PauseAiCaWeb.ParticipationForm do
   use PauseAiCaWeb, :live_component
   alias PauseAiCa.Participation
   @impl true
+  def update(%{submit_mp_choices: params}, socket) do
+    if Enum.any?(~w(account newsletter local), &(params[&1] == "true")) do
+      save_choices(params, socket)
+      |> then(fn {:noreply, socket} -> {:ok, socket} end)
+    else
+      {:ok, socket}
+    end
+  end
+
   def update(assigns, socket) do
     socket = assign(socket, Map.drop(assigns, [:intent, :city]))
     socket = assign_new(socket, :show_ctas, fn -> Map.get(assigns, :show_ctas, true) end)
@@ -20,6 +29,7 @@ defmodule PauseAiCaWeb.ParticipationForm do
         "phone" => if(user, do: user.phone || "", else: ""),
         "fsa" => if(user, do: user.fsa || "", else: ""),
         "location" => if(user, do: user.fsa || "", else: ""),
+        "postal_code" => if(user, do: user.postal_code || "", else: ""),
         "city" => Map.get(assigns, :city, ""),
         "help_text" => "",
         "newsletter" => "false",
@@ -117,7 +127,7 @@ defmodule PauseAiCaWeb.ParticipationForm do
           Enum.filter(changed, &(&1 in ["account", "newsletter", "local"]))
       )
 
-    changeset = Participation.change(attributes(params, socket.assigns.locale))
+    changeset = form_changeset(params, socket.assigns)
 
     {:noreply,
      assign(socket,
@@ -130,6 +140,35 @@ defmodule PauseAiCaWeb.ParticipationForm do
 
   def handle_event("save", %{"participation" => raw}, socket) do
     params = parameters(raw, socket.assigns.current_scope, socket.assigns.params)
+    params = Map.reject(params, fn {key, _} -> String.starts_with?(key, "_unused_") end)
+    params = if socket.assigns.intent == "mp", do: mp_parameters(params), else: params
+
+    if socket.assigns.intent == "mp" do
+      changeset = form_changeset(params, socket.assigns)
+
+      if changeset.valid? do
+        send(self(), {:prepare_mp_letter, params})
+
+        {:noreply,
+         assign(socket,
+           params: params,
+           form: to_form(params, as: socket.assigns.form_as),
+           state: :idle
+         )}
+      else
+        {:noreply,
+         assign(socket,
+           params: params,
+           form: to_form(%{changeset | action: :insert}, as: socket.assigns.form_as),
+           state: :invalid
+         )}
+      end
+    else
+      save_choices(params, socket)
+    end
+  end
+
+  defp save_choices(params, socket) do
     locale = socket.assigns.locale
 
     context =
@@ -209,14 +248,40 @@ defmodule PauseAiCaWeb.ParticipationForm do
   defp parameters(raw, scope, prior) do
     raw =
       Map.merge(
-        prior,
+        Map.reject(prior, fn {key, _} -> String.starts_with?(key, "_unused_") end),
         Map.filter(raw, fn {key, _} ->
-          key in ~w(email name phone fsa location city help_text newsletter account local local_kind) ||
+          key in ~w(email name phone fsa location postal_code city help_text newsletter account local local_kind) ||
             String.starts_with?(key, "_unused_")
         end)
       )
 
     if scope && scope.user, do: Map.put(raw, "email", scope.user.email), else: raw
+  end
+
+  defp form_changeset(params, %{intent: "mp", locale: locale}) do
+    params = mp_parameters(params)
+
+    PauseAiCa.Participation.Request.changeset(
+      %PauseAiCa.Participation.Request{},
+      attributes(params, locale),
+      true
+    )
+    |> Ecto.Changeset.validate_required([:name])
+    |> Ecto.Changeset.cast(params, [:postal_code])
+    |> Ecto.Changeset.validate_required([:postal_code])
+    |> Ecto.Changeset.validate_format(
+      :postal_code,
+      ~r/^[ABCEGHJ-NPRSTVXY][0-9][ABCEGHJ-NPRSTVWXYZ] ?[0-9][ABCEGHJ-NPRSTVWXYZ][0-9]$/i,
+      message: dgettext_noop("errors", "enter a full Canadian postal code")
+    )
+  end
+
+  defp form_changeset(params, assigns),
+    do: Participation.change(attributes(params, assigns.locale))
+
+  defp mp_parameters(params) do
+    postal = (params["postal_code"] || "") |> String.trim() |> String.upcase()
+    params |> Map.put("postal_code", postal) |> Map.put("location", String.slice(postal, 0, 3))
   end
 
   defp attributes(params, locale) do
@@ -238,6 +303,8 @@ defmodule PauseAiCaWeb.ParticipationForm do
 
   defp submit_label(_, scope),
     do: if(scope, do: gettext("Save my choices"), else: gettext("Create an account"))
+
+  defp selected_submit_label("mp", _scope, _params), do: gettext("Continue to my letter")
 
   defp selected_submit_label(intent, scope, params) do
     case Enum.find(ordered_choices(intent, scope), fn {key, _} ->
@@ -268,6 +335,7 @@ defmodule PauseAiCaWeb.ParticipationForm do
         true -> [:account, :newsletter, :local]
       end
 
+    order = if intent == "mp", do: [:account, :newsletter], else: order
     Enum.map(order, &{&1, choices[&1]})
   end
 
@@ -308,6 +376,9 @@ defmodule PauseAiCaWeb.ParticipationForm do
       <div class="max-w-2xl">
         <h2 class="font-heading text-3xl">
           {cond do
+            @intent == "mp" ->
+              gettext("Your details and choices")
+
             @intent == "newsletter" ->
               gettext("Newsletter")
 
@@ -322,7 +393,7 @@ defmodule PauseAiCaWeb.ParticipationForm do
           end}
         </h2>
         <div
-          :if={@intent != "newsletter"}
+          :if={@intent not in ["newsletter", "mp"]}
           id="participation-motivations"
           class="mt-4 flex flex-wrap gap-2"
         >
@@ -350,7 +421,7 @@ defmodule PauseAiCaWeb.ParticipationForm do
           id={@form_id}
           phx-hook="FormDraft"
           data-draft-prefix={@form_as}
-          data-draft-key={"pauseai:participation:" <> if(@current_scope, do: @current_scope.user.id, else: "anonymous")}
+          data-draft-key={"pauseai:participation:" <> if(@current_scope, do: @current_scope.user.id, else: "anonymous") <> if(@intent == "mp", do: ":mp", else: "")}
           phx-change="validate"
           phx-submit="save"
           phx-target={@myself}
@@ -365,17 +436,30 @@ defmodule PauseAiCaWeb.ParticipationForm do
             />
             <div>
               <.input
-                field={@form[:location]}
-                label={gettext("FSA")}
-                placeholder="H2X"
-                maxlength="3"
+                field={if @intent == "mp", do: @form[:postal_code], else: @form[:location]}
+                label={if @intent == "mp", do: gettext("Postal code"), else: gettext("FSA")}
+                placeholder={if @intent == "mp", do: "H2X 1Y4", else: "H2X"}
+                maxlength={if @intent == "mp", do: "7", else: "3"}
                 spellcheck="false"
                 aria-describedby="participation-fsa-help"
               />
-              <p id="participation-fsa-help" class="mt-1 text-xs leading-tight text-stone-600">
+              <p
+                :if={@intent != "mp"}
+                id="participation-fsa-help"
+                class="mt-1 text-xs leading-tight text-stone-600"
+              >
                 {gettext("First three characters of your postal code, e.g. H2X.")}
               </p>
             </div>
+            <p
+              :if={@intent == "mp"}
+              id="participation-fsa-help"
+              class="col-span-2 mb-2 text-xs leading-tight text-stone-600"
+            >
+              {gettext(
+                "Full postal code to find your MP. Its first three characters (FSA) identify your newsletter area."
+              )}
+            </p>
           </div>
           <.input
             id={if(@registration, do: "registration_form_email", else: "participation_email")}
@@ -427,6 +511,11 @@ defmodule PauseAiCaWeb.ParticipationForm do
               {gettext("We will email you about your request. You can withdraw it at any time.")}
             </p>
           </div>
+          <p :if={@intent == "mp"} id="mp-choices-note" class="mt-4 text-sm text-stone-600">
+            {gettext(
+              "You can contact your MP without an account or newsletter subscription. If you select either option, we will also email you a link to confirm your choices."
+            )}
+          </p>
           <p class="mt-4 text-sm">
             <.link
               href={if(@locale == "fr", do: ~p"/fr/confidentialite", else: ~p"/en/privacy")}
@@ -494,12 +583,12 @@ defmodule PauseAiCaWeb.ParticipationForm do
             class="underline"
           >{gettext("More ways to act")}</.link>
         </p>
-        <p class="mt-6 text-sm text-stone-600">
+        <p :if={@intent != "mp"} class="mt-6 text-sm text-stone-600">
           <.link
             href={
               if(@locale == "fr",
-                do: ~p"/fr/signal-d-alarme#letter",
-                else: ~p"/en/warning-shot#letter"
+                do: ~p"/fr/contacter-votre-depute",
+                else: ~p"/en/contact-your-mp"
               )
             }
             class="underline"

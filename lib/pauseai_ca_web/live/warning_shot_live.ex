@@ -31,7 +31,8 @@ defmodule PauseAiCaWeb.WarningShotLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    locale = if socket.assigns.live_action == :fr, do: "fr", else: "en"
+    locale = if socket.assigns.live_action in [:fr, :contact_fr], do: "fr", else: "en"
+    contact_page = socket.assigns.live_action in [:contact_en, :contact_fr]
     Gettext.put_locale(PauseAiCaWeb.Gettext, locale)
 
     campaign = Campaigns.current_warning_shot()
@@ -47,7 +48,8 @@ defmodule PauseAiCaWeb.WarningShotLive do
     {:ok,
      socket
      |> assign(:locale, locale)
-     |> assign(:page_title, copy.title)
+     |> assign(:contact_page, contact_page)
+     |> assign(:page_title, if(contact_page, do: gettext("Email your MP"), else: copy.title))
      |> assign(:campaign, campaign)
      |> assign(:copy, copy)
      |> assign(:sender, sender)
@@ -438,6 +440,60 @@ defmodule PauseAiCaWeb.WarningShotLive do
   defp to_gender("masculine"), do: :masculine
   defp to_gender(_inclusive), do: :inclusive
 
+  @impl true
+  def handle_info({:prepare_mp_letter, params}, socket) do
+    # Identity comes from the shared form, including its signed-in email binding.
+    same_sender =
+      socket.assigns.sender["name"] == params["name"] &&
+        socket.assigns.sender["postal_code"] == params["postal_code"]
+
+    socket =
+      put_sender(socket, %{
+        "name" => params["name"],
+        "postal_code" => params["postal_code"],
+        "gender" => socket.assigns.sender["gender"]
+      })
+
+    previous = Map.new(socket.assigns.send_form.params)
+    send_params = Map.put(previous, "email", params["email"])
+
+    send_params =
+      if previous["email"] == params["email"],
+        do: send_params,
+        else: Map.put(send_params, "consent", "false")
+
+    socket = assign(socket, send_form: to_form(send_params, as: :send), send_state: :idle)
+
+    {:noreply, socket} =
+      if same_sender && socket.assigns.representatives != [],
+        do: {:noreply, socket},
+        else: find_members_of_parliament(socket)
+
+    if socket.assigns.representatives != [] do
+      send_update(PauseAiCaWeb.ParticipationForm,
+        id: "mp-participation",
+        submit_mp_choices: params
+      )
+    end
+
+    socket =
+      if socket.assigns.representatives != [],
+        do: push_event(socket, "mp-letter-ready", %{}),
+        else: socket
+
+    {:noreply, socket}
+  end
+
+  def handle_info(_message, socket), do: {:noreply, socket}
+
+  defp translated_page_path(true, "fr"), do: contact_path("en")
+  defp translated_page_path(true, _), do: contact_path("fr")
+  defp translated_page_path(false, "fr"), do: ~p"/en/warning-shot"
+  defp translated_page_path(false, _), do: ~p"/fr/signal-d-alarme"
+
+  defp contact_path("fr"), do: ~p"/fr/contacter-votre-depute"
+  defp contact_path(_), do: ~p"/en/contact-your-mp"
+
   defp min_seconds_before_send do
     Application.get_env(:pauseai_ca, :campaign_min_seconds, @default_min_seconds_before_send)
   end
@@ -453,17 +509,28 @@ defmodule PauseAiCaWeb.WarningShotLive do
       current_scope={@current_scope}
       locale={@locale}
       promote_warning_shot={false}
-      translated_path={if(@locale == "fr", do: ~p"/en/warning-shot", else: ~p"/fr/signal-d-alarme")}
+      translated_path={translated_page_path(@contact_page, @locale)}
     >
-      <article>
+      <article id="mp-letter-flow" phx-hook=".LetterFlow">
+        <script :type={Phoenix.LiveView.ColocatedHook} name=".LetterFlow">
+          export default {
+            mounted() {
+              this.handleEvent("mp-letter-ready", () => {
+                const results = this.el.querySelector("#mp-results")
+                if (results) { results.focus({preventScroll: true}); results.scrollIntoView({block: "start", behavior: "smooth"}) }
+              })
+            }
+          }
+        </script>
         <p
+          :if={!@contact_page}
           id="warning-shot-page-badge"
           class="sticky top-[var(--header-height)] z-30 bg-brand px-5 py-3 text-center font-heading text-sm font-bold uppercase tracking-[0.16em] text-stone-950"
         >
           {@copy.badge}
         </p>
 
-        <section class="mx-auto max-w-5xl px-5 pt-14 pb-10">
+        <section :if={!@contact_page} class="mx-auto max-w-5xl px-5 pt-14 pb-10">
           <h1 class="max-w-3xl font-heading text-5xl leading-[1.02] tracking-tight text-stone-950 sm:text-6xl">
             {@copy.title}
           </h1>
@@ -482,7 +549,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
           </div>
         </section>
 
-        <section id="act" class="border-y border-stone-200 bg-white">
+        <section :if={!@contact_page} id="act" class="border-y border-stone-200 bg-white">
           <div class="mx-auto max-w-5xl px-5 py-16">
             <h2 class="font-heading text-3xl uppercase tracking-wide text-stone-950">
               {@copy.act_heading}
@@ -494,7 +561,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
                 <p class="leading-7 text-stone-600">{@copy.act_letter_note}</p>
                 <a
                   id="jump-to-letter"
-                  href="#letter"
+                  href={contact_path(@locale)}
                   class="mt-auto inline-flex w-fit rounded-full bg-brand px-6 py-3 font-heading text-lg font-bold text-stone-950 transition hover:-translate-y-0.5 hover:bg-brand-strong"
                 >
                   {@copy.act_letter}
@@ -528,11 +595,35 @@ defmodule PauseAiCaWeb.WarningShotLive do
           </div>
         </section>
 
+        <section :if={@contact_page} class="mx-auto max-w-5xl px-5 pt-12">
+          <h1 class="font-heading text-4xl text-stone-950">{gettext("Email your MP")}</h1>
+          <p class="mt-4 max-w-2xl text-lg text-stone-700">
+            {gettext("Find your MP, edit your letter and choose how to send it.")}
+          </p>
+          <div class="mt-6 rounded-2xl border border-stone-200 bg-brand-wash p-5">
+            <.live_component
+              module={PauseAiCaWeb.ParticipationForm}
+              id="mp-participation"
+              locale={@locale}
+              current_scope={@current_scope}
+              intent="mp"
+              registration={false}
+              show_ctas={false}
+              context={
+                %{"locale" => @locale, "source" => "contact_mp", "return_to" => contact_path(@locale)}
+              }
+            />
+          </div>
+        </section>
         <section id="letter" class="mx-auto max-w-5xl scroll-mt-32 px-5 py-16">
-          <h2 class="font-heading text-3xl uppercase tracking-wide text-stone-950">
+          <h2
+            :if={!@contact_page || @letter}
+            class="font-heading text-3xl uppercase tracking-wide text-stone-950"
+          >
             {@copy.act_letter}
           </h2>
           <.form
+            :if={!@contact_page}
             for={@sender_form}
             id="mp-lookup-form"
             phx-change="update-sender"
@@ -575,7 +666,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
             {lookup_error_message(@lookup_error, @locale)}
           </p>
 
-          <div :if={@representatives != []} id="mp-results" class="mt-10">
+          <div :if={@representatives != []} id="mp-results" tabindex="-1" class="mt-10 scroll-mt-32">
             <h3 class="font-heading text-2xl text-stone-950">{mp_heading(@locale)}</h3>
             <ul class="mt-4 grid gap-3">
               <li
@@ -726,6 +817,9 @@ defmodule PauseAiCaWeb.WarningShotLive do
               >
                 {rehearsal_note(@locale)}
               </p>
+              <p :if={@contact_page} class="mt-4 text-sm text-stone-700">
+                {gettext("From: %{email}", email: @send_form[:email].value)}
+              </p>
               <.form
                 for={@send_form}
                 id="send-form"
@@ -735,7 +829,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
               >
                 <.input
                   field={@send_form[:email]}
-                  type="email"
+                  type={if(@contact_page, do: "hidden", else: "email")}
                   label={email_label(@locale)}
                   autocomplete="email"
                 />
@@ -867,7 +961,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
           </div>
         </section>
 
-        <section id="developments" class="border-t border-stone-200 bg-white">
+        <section :if={!@contact_page} id="developments" class="border-t border-stone-200 bg-white">
           <div class="mx-auto max-w-5xl px-5 py-16">
             <h2 class="font-heading text-3xl uppercase tracking-wide text-stone-950">
               {@copy.updates_heading}
@@ -1078,8 +1172,8 @@ defmodule PauseAiCaWeb.WarningShotLive do
         "An AI escaped its lab and hacked a real company. I just wrote to my MP about it. It takes a minute:"
       )
 
-  defp share_link("fr"), do: PauseAiCaWeb.Site.url("fr", "/fr/signal-d-alarme")
-  defp share_link(_locale), do: PauseAiCaWeb.Site.url("en", "/en/warning-shot")
+  defp share_link("fr"), do: PauseAiCaWeb.Site.url("fr", "/fr/contacter-votre-depute")
+  defp share_link(_locale), do: PauseAiCaWeb.Site.url("en", "/en/contact-your-mp")
 
   defp share_url(:bluesky, locale) do
     "https://bsky.app/intent/compose?text=" <>
