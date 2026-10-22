@@ -764,9 +764,16 @@ if System.get_env("ATDD") == "true" do
           "French recap retains the three credited photographs and Jeremy Eliosoff caption"
         )
         |> click("#protest-write-mp")
-        |> assert_path("/fr/signal-d-alarme")
+        |> assert_path("/fr/contacter-votre-depute")
+        |> assert_has("#participation-form")
+        |> assert_has("input[type='checkbox'][name='participation[account]']")
+        |> assert_has("input[type='checkbox'][name='participation[newsletter]']")
         |> assert_has("#letter")
-        |> capture(id, "Prepare a letter", "French Warning Shot letter form is available")
+        |> capture(
+          id,
+          "Prepare a letter",
+          "Standalone French MP entry offers account and newsletter choices"
+        )
         |> click_link("English")
 
       assert Repo.aggregate(
