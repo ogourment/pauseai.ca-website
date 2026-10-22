@@ -72,7 +72,9 @@ permissions:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    # Release ERTS/NIFs must target the deployment host's Ubuntu 24.04 / GLIBC 2.39.
+    # A rolling ubuntu-latest image can produce an archive the server cannot boot.
+    runs-on: ubuntu-24.04
     services:
       postgres:
         image: postgres:18.4-alpine
