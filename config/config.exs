@@ -80,6 +80,7 @@ editor_alias =
   end
 
 config :esbuild,
+  path: System.get_env("MIX_ESBUILD_PATH"),
   version: "0.25.4",
   pauseai_ca: [
     args:

@@ -174,11 +174,19 @@ jobs:
         run: mix compile --warnings-as-errors
       - name: Run tests
         run: ${{ inputs.test-command }}
-      - name: Install Playwright Chromium
-        if: ${{ inputs.run-acceptance }}
+      - name: Install pinned JavaScript tools
+        if: ${{ inputs.run-acceptance || inputs.build-release }}
         run: |
           npm --prefix assets ci
-          npm --prefix assets exec -- playwright install --with-deps chromium chromium-headless-shell
+          npm --prefix assets audit signatures
+          expected="$(node -p "require('./assets/package.json').devDependencies.esbuild")"
+          actual="$(assets/node_modules/.bin/esbuild --version)"
+          test "$actual" = "$expected"
+          printf 'MIX_ESBUILD_PATH=%s/assets/node_modules/.bin/esbuild\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+          MIX_ESBUILD_PATH="$GITHUB_WORKSPACE/assets/node_modules/.bin/esbuild" mix run --no-start -e 'unless Esbuild.bin_version() == {:ok, Esbuild.configured_version()}, do: Mix.raise("Pinned esbuild version mismatch")'
+      - name: Install Playwright Chromium
+        if: ${{ inputs.run-acceptance }}
+        run: npm --prefix assets exec -- playwright install --with-deps chromium chromium-headless-shell
       - name: Run browser acceptance tests
         if: ${{ inputs.run-acceptance }}
         env:
