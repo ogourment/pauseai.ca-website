@@ -84,6 +84,7 @@ defmodule PauseAiCa.Release do
     {:ok, summary} =
       AcceptanceHarness.EvidenceRetention.apply(runs,
         root: root,
+      generate_missing_thumbnails: true,
         full_days: 1,
         daily_days: 7,
         weekly_days: 30,
