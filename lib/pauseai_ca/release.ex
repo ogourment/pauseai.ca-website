@@ -63,6 +63,46 @@ defmodule PauseAiCa.Release do
     end
   end
 
+  @doc "Bound retained screenshots with the shared evidence policy; keep run metadata."
+  def maintain_acceptance_evidence do
+    load_app()
+
+    for repo <- repos() do
+      {:ok, summary, _} = Ecto.Migrator.with_repo(repo, &prune_acceptance_evidence/1)
+      IO.puts(Jason.encode!(summary))
+    end
+  end
+
+  defp prune_acceptance_evidence(repo) do
+    root =
+      System.fetch_env!("PAUSEAI_CA_DEPLOYMENT_HISTORY_PATH")
+      |> Path.dirname()
+      |> Path.join("acceptance_evidence")
+
+    runs = AcceptanceHarness.AdminStore.retention_runs(repo: repo)
+
+    {:ok, summary} =
+      AcceptanceHarness.EvidenceRetention.apply(runs,
+        root: root,
+        full_days: 1,
+        daily_days: 7,
+        weekly_days: 30,
+        monthly_days: 90,
+        max_bytes: 512 * 1024 * 1024
+      )
+
+    if summary.over_limit_bytes > 0, do: raise("Acceptance evidence exceeds its disk budget")
+
+    Map.take(summary, [
+      :bytes,
+      :max_bytes,
+      :over_limit_bytes,
+      :archived,
+      :forced_archived,
+      :deleted
+    ])
+  end
+
   def record_deployment(release_id, target_env, color, version) do
     path = System.fetch_env!("PAUSEAI_CA_DEPLOYMENT_HISTORY_PATH")
 
