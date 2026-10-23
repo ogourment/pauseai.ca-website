@@ -84,7 +84,7 @@ defmodule PauseAiCa.Release do
     {:ok, summary} =
       AcceptanceHarness.EvidenceRetention.apply(runs,
         root: root,
-        generate_missing_thumbnails: true,
+        thumbnailer: &thumbnail_evidence/3,
         full_days: 1,
         daily_days: 7,
         weekly_days: 30,
@@ -102,6 +102,23 @@ defmodule PauseAiCa.Release do
       :forced_archived,
       :deleted
     ])
+  end
+
+  # Historical capture folders include PNG HTML sidecars. Their visual thumbnail
+  # is the corresponding PNG; retained page HTML also lives in AdminStore.
+  defp thumbnail_evidence(source, temporary, geometry) do
+    image = String.replace_suffix(source, ".png.html", ".png")
+
+    if Path.extname(image) in [".png", ".jpg", ".jpeg", ".webp"] do
+      case System.cmd("convert", [image, "-thumbnail", geometry, "-strip", temporary],
+             stderr_to_stdout: true
+           ) do
+        {_output, 0} -> :ok
+        {_output, status} -> {:error, {:thumbnail_exit, status}}
+      end
+    else
+      {:error, :unsupported_evidence_image}
+    end
   end
 
   def record_deployment(release_id, target_env, color, version) do
