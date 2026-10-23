@@ -85,6 +85,7 @@ if System.get_env("ATDD") == "true" do
         |> click_link("Contacts")
         |> click_link("Import Contacts")
         |> assert_path("/admin/contact-imports")
+        |> assert_has(".phx-connected")
         |> capture(
           "contact-import-01-workspace.png",
           "1/5",
@@ -177,12 +178,7 @@ if System.get_env("ATDD") == "true" do
     end
 
     defp open_first_source_fields(conn) do
-      PhoenixTest.Playwright.evaluate(
-        conn,
-        "document.querySelector('#contact-preview details').open = true"
-      )
-
-      conn
+      PhoenixTest.Playwright.click(conn, "#preview-row-2 + tr details > summary")
     end
 
     defp capture(conn, filename, step, title, description) do
