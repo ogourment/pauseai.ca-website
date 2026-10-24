@@ -13,10 +13,10 @@ defmodule PauseAiCa.Health do
   end
 
   defp database_query do
-    Ecto.Adapters.SQL.query(PauseAiCa.Repo, "SELECT 1", [],
+    PauseAiCa.Repo.query("SELECT 1", [],
       timeout: 500,
       pool_timeout: 500,
-      queue: false,
+      queue: true,
       log: false
     )
   end
