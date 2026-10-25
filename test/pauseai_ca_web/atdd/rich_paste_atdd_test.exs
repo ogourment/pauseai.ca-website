@@ -107,6 +107,10 @@ if System.get_env("ATDD") == "true" do
 
         assert Repo.aggregate(Newsletters.Delivery, :count) == 0
         assert Repo.aggregate(Newsletters.Batch, :count) == 0
+
+        AtddEvidence.mark_scenario_success!(
+          Enum.find(@scenarios, &(&1.id == "PA-NEWS-PASTE-01-#{locale}"))
+        )
       end
     end
 

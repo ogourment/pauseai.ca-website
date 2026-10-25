@@ -51,6 +51,7 @@ defmodule PauseAiCaWeb.Navigation do
         :admin,
         60
       ),
+      item("pauseai.tasks", gettext_noop("Tasks"), :manage, :tasks, :tasks, 15),
       item("pauseai.accounts", gettext_noop("Accounts"), :manage, :accounts, :organizer, 10),
       item("pauseai.mail", gettext_noop("Emails"), :manage, :mail, :organizer, 20),
       item(
@@ -138,6 +139,10 @@ defmodule PauseAiCaWeb.Navigation do
   def superadmin?(context), do: context.admin
   @impl true
   def authorize(%{required_capability: :admin}, context), do: context.admin
+
+  def authorize(%{required_capability: :tasks}, context),
+    do: context.organizer and Application.get_env(:pauseai_ca, :tasks_enabled, false)
+
   def authorize(%{required_capability: :organizer}, context), do: context.organizer
 
   def authorize(%{required_capability: :self}, %{actor: %Scope{user: %User{confirmed_at: at}}}),
@@ -156,6 +161,7 @@ defmodule PauseAiCaWeb.Navigation do
         :donation_pledges -> "/admin/donation-pledges"
         :versions -> "/admin/versions"
         :acceptance -> "/admin/acceptance"
+        :tasks -> "/manage/tasks"
         :accounts -> "/manage/accounts"
         :mail -> "/manage/mail"
         :questions -> "/manage/questions"

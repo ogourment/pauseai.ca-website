@@ -67,6 +67,7 @@ defmodule PauseAiCa.MixProject do
       acceptance_harness_dependency(),
       mail_workflow_dependency(),
       cms_dependency(),
+      tasks_dependency(),
       crm_dependency(),
       markdown_editor_dependency(),
       {:mdex, "~> 0.13.5"},
@@ -148,6 +149,18 @@ defmodule PauseAiCa.MixProject do
         "test"
       ]
     ]
+  end
+
+  defp tasks_dependency do
+    case System.get_env("PHOENIX_TASKS_PATH") do
+      nil ->
+        {:phoenix_tasks,
+         git: "ssh://git@git.agile-u.com/olivierg/phoenix_tasks.git",
+         ref: "f343d7e440826bd7e6a1848355c11c9e1a07b54b"}
+
+      path ->
+        {:phoenix_tasks, path: path}
+    end
   end
 
   defp crm_dependency do

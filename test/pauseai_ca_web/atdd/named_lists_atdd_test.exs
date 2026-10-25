@@ -197,6 +197,11 @@ if System.get_env("ATDD") == "true" do
                Enum.sort_by(baseline.subscriptions, & &1.id)
 
       {:ok, %{revision: 2}} = Lists.get(scope, list.id)
+
+      AtddEvidence.mark_scenario_success!(
+        Enum.find(@scenarios, &(&1.id == "LIST-NEWS-01-#{locale}"))
+      )
+
       b
     end
 

@@ -139,6 +139,9 @@ defmodule PauseAiCaWeb.Router do
 
     live_session :require_authenticated_user,
       on_mount: [{PauseAiCaWeb.UserAuth, :require_authenticated}] do
+      live "/manage/tasks", TasksLive, :index
+      live "/manage/tasks/new", TasksLive, :new
+      live "/manage/tasks/:id", TasksLive, :show
       live "/manage/accounts", ManagedAccountsLive, :index
       live "/manage/administrators", AdministratorsLive, :index
       live "/manage/accounts/new", VolunteerSignupsLive, :new

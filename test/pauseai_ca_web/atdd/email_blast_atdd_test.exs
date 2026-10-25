@@ -46,6 +46,7 @@ if System.get_env("ATDD") == "true" do
       end
     end
 
+    @tag screenshot: true
     @tag browser_context_opts: [viewport: %{width: 1280, height: 900}]
     test "PA-SEND-01 control path preserves paged selections, expires approval and redirects a throttled staging batch",
          c do
@@ -93,6 +94,7 @@ if System.get_env("ATDD") == "true" do
         |> click_button("Keep me logged in on this device")
         |> assert_path("/")
         |> visit(path)
+        |> assert_has("[data-phx-main].phx-connected")
         |> click_button("Select visible available recipients")
         |> assert_has("#newsletter-selected-count", text: "25 selected")
         |> click_button("Next")
@@ -102,6 +104,7 @@ if System.get_env("ATDD") == "true" do
         |> click_button("Save")
         |> assert_has("#newsletter-save-status", text: "Saved", exact: true)
         |> visit(path)
+        |> assert_has("[data-phx-main].phx-connected")
         |> assert_has("#newsletter-selected-count", text: "26 selected")
         |> capture(
           "controls",
@@ -117,11 +120,14 @@ if System.get_env("ATDD") == "true" do
         |> click_button("Select visible available recipients")
         |> assert_has("#newsletter-selected-count", text: "25 selected")
         |> click_button("Save")
+        |> assert_has("#newsletter-save-status", text: "Saved", exact: true)
         |> check(
           "I reviewed the selected contacts' eligibility for this communication. This does not grant newsletter consent."
         )
         |> click_button("Prepare batch")
+        |> assert_has("#newsletter-batch-review")
         |> click_button("Approve batch")
+        |> assert_has("#newsletter-batch-review", text: "25 · Approved", exact: false)
 
       [old_batch] = Repo.all(Newsletters.Batch)
 
@@ -129,6 +135,7 @@ if System.get_env("ATDD") == "true" do
         b
         |> fill_in("Subject", with: "Changed approved control batch")
         |> click_button("Save")
+        |> assert_has("#newsletter-save-status", text: "Saved", exact: true)
         |> click_button("#{old_batch.subject} · 25 · Approved")
         |> click_button("button[phx-click=send-batch]", "Send", exact: true)
         |> assert_has("#newsletter-delivery-progress", text: "Approval expired")

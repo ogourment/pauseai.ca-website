@@ -54,6 +54,9 @@ on:
       cms-package-deploy-key:
         description: Read-only phoenix_cms Forgejo deploy key
         required: true
+      tasks-package-deploy-key:
+        description: Read-only phoenix_tasks Forgejo deploy key
+        required: true
       shell-package-deploy-key:
         description: Read-only phoenix_app_shell Forgejo deploy key
         required: true
@@ -124,6 +127,7 @@ jobs:
           MAIL_DEPLOY_KEY: ${{ secrets.mail-package-deploy-key }}
           CMS_DEPLOY_KEY: ${{ secrets.cms-package-deploy-key }}
           CRM_DEPLOY_KEY: ${{ secrets.crm-package-deploy-key }}
+          TASKS_DEPLOY_KEY: ${{ secrets.tasks-package-deploy-key }}
           SHELL_DEPLOY_KEY: ${{ secrets.shell-package-deploy-key }}
           EDITOR_DEPLOY_KEY: ${{ secrets.editor-package-deploy-key }}
           FORGEJO_KNOWN_HOSTS: ${{ secrets.forgejo-known-hosts }}
@@ -133,6 +137,7 @@ jobs:
           test -n "$CMS_DEPLOY_KEY"
           test -n "$CRM_DEPLOY_KEY"
           test -n "$EDITOR_DEPLOY_KEY"
+          test -n "$TASKS_DEPLOY_KEY"
           test -n "$SHELL_DEPLOY_KEY"
           test -n "$FORGEJO_KNOWN_HOSTS"
           install -d -m 700 "$HOME/.ssh"
@@ -141,11 +146,13 @@ jobs:
           printf '%s\n' "$CMS_DEPLOY_KEY" > "$HOME/.ssh/phoenix_cms_ci"
           printf '%s\n' "$CRM_DEPLOY_KEY" > "$HOME/.ssh/phoenix_crm_ci"
           printf '%s\n' "$EDITOR_DEPLOY_KEY" > "$HOME/.ssh/phoenix_editor_ci"
+          printf '%s\n' "$TASKS_DEPLOY_KEY" > "$HOME/.ssh/phoenix_tasks_ci"
+          chmod 600 "$HOME/.ssh/phoenix_tasks_ci"
           printf '%s\n' "$SHELL_DEPLOY_KEY" > "$HOME/.ssh/phoenix_shell_ci"
           chmod 600 "$HOME/.ssh/phoenix_cms_ci" "$HOME/.ssh/phoenix_crm_ci" "$HOME/.ssh/phoenix_editor_ci" "$HOME/.ssh/phoenix_shell_ci"
           printf '%s\n' "$FORGEJO_KNOWN_HOSTS" >> "$HOME/.ssh/known_hosts"
           cat >> "$HOME/.ssh/config" <<EOF
-          Host forgejo-mail forgejo-cms forgejo-crm forgejo-editor forgejo-shell
+          Host forgejo-mail forgejo-cms forgejo-crm forgejo-editor forgejo-shell forgejo-tasks
             HostName git.agile-u.com
             User git
             HostKeyAlias git.agile-u.com
@@ -157,6 +164,8 @@ jobs:
             IdentityFile $HOME/.ssh/phoenix_cms_ci
           Host forgejo-crm
             IdentityFile $HOME/.ssh/phoenix_crm_ci
+          Host forgejo-tasks
+            IdentityFile $HOME/.ssh/phoenix_tasks_ci
           Host forgejo-shell
             IdentityFile $HOME/.ssh/phoenix_shell_ci
           Host forgejo-editor
@@ -168,6 +177,7 @@ jobs:
           git config --global url."ssh://git@forgejo-crm/olivierg/phoenix_crm.git".insteadOf "ssh://git@git.agile-u.com/olivierg/phoenix_crm.git"
           git config --global url."ssh://git@forgejo-editor/olivierg/phoenix_markdown_editor.git".insteadOf "ssh://git@git.agile-u.com/olivierg/phoenix_markdown_editor.git"
           git config --global url."ssh://git@forgejo-shell/olivierg/phoenix_app_shell.git".insteadOf "ssh://git@git.agile-u.com/olivierg/phoenix_app_shell.git"
+          git config --global url."ssh://git@forgejo-tasks/olivierg/phoenix_tasks.git".insteadOf "ssh://git@git.agile-u.com/olivierg/phoenix_tasks.git"
       - name: Fetch dependencies
         run: mix deps.get
       - name: Check formatting

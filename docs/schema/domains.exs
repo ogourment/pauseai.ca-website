@@ -1,4 +1,9 @@
 [
+  %{
+    id: "organizer_tasks",
+    title: "Organizer tasks and Activity",
+    tables: ~w(organizer_tasks organizer_task_dependencies organizer_task_events)
+  },
   %{id: "identity", title: "Identity", tables: ["users", "users_tokens"]},
   %{
     id: "engagement",
@@ -14,21 +19,37 @@
   %{
     id: "crm",
     title: "Contact identity",
-    tables: ~w(crm_people crm_addresses crm_sources crm_activities crm_merges crm_contact_links crm_mailing_lists crm_mailing_list_events)
+    tables:
+      ~w(crm_people crm_addresses crm_sources crm_activities crm_merges crm_contact_links crm_mailing_lists crm_mailing_list_events)
   },
-  %{id: "mail_drafts", title: "Email drafts", tables: ~w(mail_batches mail_drafts mail_delivery_receipts)},
+  %{
+    id: "mail_drafts",
+    title: "Email drafts",
+    tables: ~w(mail_batches mail_drafts mail_delivery_receipts)
+  },
   %{
     id: "newsletter",
     title: "Newsletter consent and delivery",
     tables:
       ~w(newsletter_result_snapshots newsletter_delivery_limits newsletter_language_preferences newsletter_subscriptions newsletter_consent_events newsletter_withdrawal_tokens newsletter_drafts newsletter_batches newsletter_deliveries)
   },
-  %{id: "participation", title: "Signup choices and local interest", tables: ["participation_requests"]},
+  %{
+    id: "participation",
+    title: "Signup choices and local interest",
+    tables: ["participation_requests"]
+  },
   %{id: "outreach", title: "Outreach", tables: ["pending_letters"]},
   %{
     id: "contact_migration",
     title: "Contact migration",
-    tables: ["contact_activities", "contact_imports", "contacts", "crm_intake_receipts", "crm_intake_suppressions", "crm_pending_sources"]
+    tables: [
+      "contact_activities",
+      "contact_imports",
+      "contacts",
+      "crm_intake_receipts",
+      "crm_intake_suppressions",
+      "crm_pending_sources"
+    ]
   },
   %{
     id: "volunteers",
