@@ -33,6 +33,18 @@ mail_environment =
 
 config :pauseai_ca, :mail_environment, mail_environment
 
+# Local/staging rollout is enabled by default. A deployment can explicitly
+# enable or disable Tasks without rebuilding the release artifact.
+tasks_enabled =
+  case System.get_env("PAUSEAI_TASKS_ENABLED") do
+    nil -> mail_environment in [:dev, :test, :staging]
+    "true" -> true
+    "false" -> false
+    _ -> false
+  end
+
+config :pauseai_ca, :tasks_enabled, tasks_enabled
+
 # Operator-controlled durable newsletter queue; isolated dev/test rehearsals keep it disabled.
 config :pauseai_ca,
        :newsletter_dispatcher,
