@@ -70,6 +70,7 @@
     ]
   },
   %{id: "donations", title: "Donation pledges", tables: ["donation_pledges"]},
+  %{id: "welcome", title: "Welcome cohorts", tables: ~w(welcome_sessions welcome_participants welcome_events)},
   %{id: "analytics", title: "First-party analytics", tables: ["daily_visits"]},
   %{
     id: "acceptance_evidence",

@@ -8530,3 +8530,326 @@ msgstr "Toronto / GTA comprend les municipalités énumérées; Vancouver désig
 #, elixir-autogen, elixir-format
 msgid "Yukon"
 msgstr "Yukon"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:589
+#, elixir-autogen, elixir-format
+msgid "Actor"
+msgstr "Auteur de l’action"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:474
+#, elixir-autogen, elixir-format
+msgid "Add selected people"
+msgstr "Ajouter les personnes sélectionnées"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:347
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:368
+#, elixir-autogen, elixir-format
+msgid "Add welcome call"
+msgstr "Ajouter un appel d’accueil"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:568
+#, elixir-autogen, elixir-format
+msgid "Another welcome call"
+msgstr "Autre appel d’accueil"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:498
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:534
+#, elixir-autogen, elixir-format
+msgid "Attendance"
+msgstr "Présence"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:324
+#, elixir-autogen, elixir-format
+msgid "Attendance can be recorded only after the call starts."
+msgstr "La présence peut être enregistrée seulement après le début de l’appel."
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:289
+#, elixir-autogen, elixir-format
+msgid "Attended"
+msgstr "Présence confirmée"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:441
+#, elixir-autogen, elixir-format
+msgid "Back to welcome calls"
+msgstr "Retour aux appels d’accueil"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:329
+#, elixir-autogen, elixir-format
+msgid "Check the session, current eligibility and permissions. Nothing was sent."
+msgstr "Vérifiez l’appel, l’admissibilité actuelle et les autorisations. Aucun message n’a été envoyé."
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:569
+#, elixir-autogen, elixir-format
+msgid "Choose a call"
+msgstr "Choisir un appel"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:451
+#, elixir-autogen, elixir-format
+msgid "Choose up to five eligible accounts. Selection does not send an invitation, subscribe anyone or grant membership."
+msgstr "Choisissez jusqu’à cinq comptes admissibles. La sélection n’envoie aucune invitation, n’inscrit personne à une infolettre et ne crée aucune adhésion."
+
+#: lib/pauseai_ca_web/live/welcome_calls_live.ex:75
+#, elixir-autogen, elixir-format
+msgid "Choose whether to attend. Your reply does not subscribe you to a newsletter or grant group membership."
+msgstr "Vous choisissez de participer ou non. Votre réponse ne vous inscrit pas à une infolettre et ne crée aucune adhésion à un groupe."
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:290
+#, elixir-autogen, elixir-format
+msgid "Did not attend"
+msgstr "Absence confirmée"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:368
+#, elixir-autogen, elixir-format
+msgid "Edit welcome call"
+msgstr "Modifier l’appel d’accueil"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:307
+#, elixir-autogen, elixir-format
+msgid "Enter valid local start/end times and an IANA time zone, such as America/Toronto."
+msgstr "Indiquez des heures locales de début et de fin valides ainsi qu’un fuseau horaire IANA, comme America/Toronto."
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:470
+#, elixir-autogen, elixir-format
+msgid "Excluded: welcome withdrawal or contact suppression."
+msgstr "Exclusion : retrait des appels d’accueil ou contact bloqué."
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:501
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:541
+#, elixir-autogen, elixir-format
+msgid "Follow-up"
+msgstr "Suivi"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:429
+#, elixir-autogen, elixir-format
+msgid "HTTPS meeting link"
+msgstr "Lien de réunion HTTPS"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:581
+#, elixir-autogen, elixir-format
+msgid "History"
+msgstr "Historique"
+
+#: lib/pauseai_ca_web/live/welcome_calls_live.ex:62
+#: lib/pauseai_ca_web/live/welcome_calls_live.ex:94
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:390
+#, elixir-autogen, elixir-format
+msgid "Host"
+msgstr "Animation"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:492
+#, elixir-autogen, elixir-format
+msgid "Invitation"
+msgstr "Invitation"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:319
+#, elixir-autogen, elixir-format
+msgid "Invitation drafts already exist. Create a replacement session and move participants before preparing new drafts."
+msgstr "Des brouillons d’invitation existent déjà. Créez un nouvel appel et déplacez les personnes avant de préparer de nouveaux brouillons."
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:274
+#, elixir-autogen, elixir-format
+msgid "Invitation drafts prepared"
+msgstr "Brouillons d’invitation préparés"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:275
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:282
+#, elixir-autogen, elixir-format
+msgid "Invitation recorded"
+msgstr "Invitation notée"
+
+#: lib/pauseai_ca_web/live/welcome_calls_live.ex:126
+#, elixir-autogen, elixir-format
+msgid "Join the call"
+msgstr "Rejoindre l’appel"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:412
+#, elixir-autogen, elixir-format
+msgid "Local end time"
+msgstr "Fin (heure locale)"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:405
+#, elixir-autogen, elixir-format
+msgid "Local start time"
+msgstr "Début (heure locale)"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:576
+#, elixir-autogen, elixir-format
+msgid "Move selection"
+msgstr "Déplacer la sélection"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:278
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:283
+#, elixir-autogen, elixir-format
+msgid "Moved to another call"
+msgstr "Autre appel prévu"
+
+#: lib/pauseai_ca_web/live/welcome_calls_live.ex:13
+#: lib/pauseai_ca_web/live/welcome_calls_live.ex:73
+#: lib/pauseai_ca_web/navigation.ex:77
+#, elixir-autogen, elixir-format
+msgid "My welcome calls"
+msgstr "Mes appels d’accueil"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:467
+#, elixir-autogen, elixir-format
+msgid "No eligible accounts in this group."
+msgstr "Aucun compte admissible dans ce groupe."
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:595
+#, elixir-autogen, elixir-format
+msgid "No welcome calls yet."
+msgstr "Aucun appel d’accueil pour le moment."
+
+#: lib/pauseai_ca_web/live/welcome_calls_live.ex:80
+#, elixir-autogen, elixir-format
+msgid "No welcome invitations yet."
+msgstr "Aucune invitation à un appel d’accueil pour le moment."
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:510
+#, elixir-autogen, elixir-format
+msgid "Open invitation drafts (author only)"
+msgstr "Ouvrir les brouillons d’invitation (auteur seulement)"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:277
+#, elixir-autogen, elixir-format
+msgid "Outcome recorded"
+msgstr "Bilan enregistré"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:273
+#, elixir-autogen, elixir-format
+msgid "People selected"
+msgstr "Personnes sélectionnées"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:481
+#, elixir-autogen, elixir-format
+msgid "Prepare invitation drafts"
+msgstr "Préparer les brouillons d’invitation"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:477
+#, elixir-autogen, elixir-format
+msgid "Prepare private drafts, review them in Emails, and share invitations yourself. Record an invitation only after sharing it. No message or calendar booking is automatic."
+msgstr "Préparez des brouillons privés, vérifiez-les dans Courriels et transmettez les invitations vous-même. Enregistrez une invitation seulement après l’avoir transmise. Aucun message ni rendez-vous n’est créé automatiquement."
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:547
+#, elixir-autogen, elixir-format
+msgid "Private follow-up notes"
+msgstr "Notes privées de suivi"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:495
+#, elixir-autogen, elixir-format
+msgid "RSVP"
+msgstr "Réponse"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:326
+#, elixir-autogen, elixir-format
+msgid "Record a no-show only after the call ends."
+msgstr "Enregistrez une absence seulement après la fin de l’appel."
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:517
+#, elixir-autogen, elixir-format
+msgid "Record invitation shared"
+msgstr "Noter l’invitation transmise"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:549
+#, elixir-autogen, elixir-format
+msgid "Record outcome"
+msgstr "Enregistrer le bilan"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:276
+#, elixir-autogen, elixir-format
+msgid "Reply recorded"
+msgstr "Réponse enregistrée"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:292
+#, elixir-autogen, elixir-format
+msgid "Scheduled"
+msgstr "Prévu"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:309
+#, elixir-autogen, elixir-format
+msgid "Select one to five people for this first cohort."
+msgstr "Sélectionnez une à cinq personnes pour cette première cohorte."
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:281
+#, elixir-autogen, elixir-format
+msgid "Selected"
+msgstr "Sélectionnée"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:449
+#, elixir-autogen, elixir-format
+msgid "Selected people"
+msgstr "Personnes sélectionnées"
+
+#: lib/pauseai_ca_web/live/welcome_calls_live.ex:91
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:398
+#, elixir-autogen, elixir-format
+msgid "Session language"
+msgstr "Langue de l’appel"
+
+#: lib/pauseai_ca_web/live/welcome_calls_live.ex:43
+#, elixir-autogen, elixir-format
+msgid "This invitation changed or is unavailable. Reload before replying."
+msgstr "Cette invitation a changé ou n’est plus accessible. Rechargez la page avant de répondre."
+
+#: lib/pauseai_ca_web/live/welcome_calls_live.ex:128
+#, elixir-autogen, elixir-format
+msgid "This invitation is no longer active."
+msgstr "Cette invitation n’est plus active."
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:303
+#, elixir-autogen, elixir-format
+msgid "This local time falls in a clock change. Choose an unambiguous time."
+msgstr "Cette heure locale tombe pendant un changement d’heure. Choisissez une heure sans ambiguïté."
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:313
+#, elixir-autogen, elixir-format
+msgid "This person already has an upcoming welcome call. Move their existing selection instead."
+msgstr "Cette personne a déjà un appel d’accueil à venir. Déplacez sa sélection actuelle vers l’autre appel."
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:298
+#, elixir-autogen, elixir-format
+msgid "This record changed. Your draft is retained; reload the current session before saving."
+msgstr "Cette fiche a changé. Votre brouillon est conservé; rechargez l’appel actuel avant d’enregistrer."
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:225
+#, elixir-autogen, elixir-format
+msgid "This welcome session is unavailable."
+msgstr "Cet appel d’accueil n’est pas accessible."
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:419
+#, elixir-autogen, elixir-format
+msgid "Time zone"
+msgstr "Fuseau horaire"
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:423
+#, elixir-autogen, elixir-format
+msgid "Use an IANA time zone, for example America/Toronto or America/Vancouver."
+msgstr "Indiquez un fuseau horaire IANA, par exemple America/Toronto ou America/Vancouver."
+
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:15
+#: lib/pauseai_ca_web/live/welcome_management_live.ex:343
+#: lib/pauseai_ca_web/navigation.ex:55
+#, elixir-autogen, elixir-format
+msgid "Welcome calls"
+msgstr "Appels d’accueil"
+
+#: lib/pauseai_ca_web/live/welcome_calls_live.ex:111
+#: lib/pauseai_ca_web/live/welcome_calls_live.ex:140
+#, elixir-autogen, elixir-format
+msgid "Withdraw from welcome calls"
+msgstr "Me retirer des appels d’accueil"
+
+#: lib/pauseai_ca_web/live/welcome_calls_live.ex:97
+#, elixir-autogen, elixir-format
+msgid "Your reply"
+msgstr "Votre réponse"
+
+#: lib/pauseai_ca_web/live/welcome_calls_live.ex:89
+#, elixir-autogen, elixir-format
+msgid "Ends"
+msgstr "Fin"
+
+#: lib/pauseai_ca_web/live/welcome_calls_live.ex:88
+#, elixir-autogen, elixir-format
+msgid "Starts"
+msgstr "Début"

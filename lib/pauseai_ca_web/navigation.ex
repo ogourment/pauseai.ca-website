@@ -61,6 +61,7 @@ defmodule PauseAiCaWeb.Navigation do
         25
       ),
       item("pauseai.tasks", gettext_noop("Tasks"), :manage, :tasks, :tasks, 15),
+      item("pauseai.welcome", gettext_noop("Welcome calls"), :manage, :welcome, :welcome, 17),
       item("pauseai.accounts", gettext_noop("Accounts"), :manage, :accounts, :organizer, 10),
       item("pauseai.mail", gettext_noop("Emails"), :manage, :mail, :organizer, 20),
       item(
@@ -80,6 +81,14 @@ defmodule PauseAiCaWeb.Navigation do
         10
       ),
       item("pauseai.my-profile", gettext_noop("My profile"), :account, :my_profile, :self, 20),
+      item(
+        "pauseai.my-welcome",
+        gettext_noop("My welcome calls"),
+        :account,
+        :my_welcome,
+        :welcome_self,
+        25
+      ),
       item("pauseai.settings", gettext_noop("Settings"), :account, :settings, :self, 30),
       item("pauseai.password", gettext_noop("Change password"), :account, :password, :self, 40)
     ]
@@ -160,6 +169,14 @@ defmodule PauseAiCaWeb.Navigation do
   def authorize(%{required_capability: :tasks}, context),
     do: context.organizer and Application.get_env(:pauseai_ca, :tasks_enabled, false)
 
+  def authorize(%{required_capability: :welcome}, context),
+    do: context.organizer and Application.get_env(:pauseai_ca, :welcome_calls_enabled, false)
+
+  def authorize(%{required_capability: :welcome_self}, %{
+        actor: %Scope{user: %User{confirmed_at: at}}
+      }),
+      do: not is_nil(at) and Application.get_env(:pauseai_ca, :welcome_calls_enabled, false)
+
   def authorize(%{required_capability: :organizer}, context), do: context.organizer
 
   def authorize(%{required_capability: :self}, %{actor: %Scope{user: %User{confirmed_at: at}}}),
@@ -181,6 +198,8 @@ defmodule PauseAiCaWeb.Navigation do
         :groups -> "/manage/groups"
         :my_groups -> if(locale == "fr", do: "/fr/groupes", else: "/en/groups")
         :tasks -> "/manage/tasks"
+        :welcome -> "/manage/welcome-calls"
+        :my_welcome -> if(locale == "fr", do: "/fr/appels-accueil", else: "/en/welcome-calls")
         :accounts -> "/manage/accounts"
         :mail -> "/manage/mail"
         :questions -> "/manage/questions"

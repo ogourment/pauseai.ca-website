@@ -14,6 +14,7 @@ config :pauseai_ca, :manifund_donations_enabled, false
 config :pauseai_ca, :manifund_campaign,
   project_id: "a7c581e9-fb40-e046-5996-1920a622fef7",
   url: "https://manifund.org/projects/pauseai-canada-national-expansion--core-operations"
+config :pauseai_ca, :welcome_calls_enabled, false
 
 config :pauseai_ca, :scopes,
   user: [

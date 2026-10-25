@@ -37,7 +37,8 @@ defmodule PauseAiCa.Repo.Migrations.AddWelcomeCohorts do
             type: :binary_id,
             with: [group_id: :group_id],
             on_delete: :restrict
-          ), null: false
+          ),
+          null: false
 
       add :user_id, references(:users, type: :binary_id, on_delete: :restrict), null: false
       add :draft_batch_id, references(:mail_batches, type: :binary_id, on_delete: :restrict)

@@ -18,10 +18,30 @@ defmodule PauseAiCa.Welcome.Session do
     has_many :participants, PauseAiCa.Welcome.Participant
     timestamps(type: :utc_datetime_usec)
   end
+
   def changeset(session, attrs) do
-    session |> cast(attrs, [:title, :host_id, :language, :timezone, :starts_at, :ends_at, :meeting_url, :status])
+    session
+    |> cast(attrs, [
+      :title,
+      :host_id,
+      :language,
+      :timezone,
+      :starts_at,
+      :ends_at,
+      :meeting_url,
+      :status
+    ])
     |> update_change(:title, &String.trim/1)
-    |> validate_required([:title, :host_id, :language, :timezone, :starts_at, :ends_at, :meeting_url, :status])
+    |> validate_required([
+      :title,
+      :host_id,
+      :language,
+      :timezone,
+      :starts_at,
+      :ends_at,
+      :meeting_url,
+      :status
+    ])
     |> validate_length(:title, max: 200)
     |> validate_length(:meeting_url, max: 2000)
     |> validate_inclusion(:language, ~w(en fr))

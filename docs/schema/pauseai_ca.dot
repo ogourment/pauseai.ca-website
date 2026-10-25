@@ -1009,6 +1009,75 @@ digraph Schema {
   ];
 
 
+  "public.welcome_events" [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.welcome_events</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">group_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">session_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">participant_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">actor_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">action</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">command_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">fingerprint</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">bytea NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">result_kind</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">result_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">details</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
+  "public.welcome_participants" [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.welcome_participants</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">group_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">session_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">user_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">draft_batch_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">invitation_state</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">invited_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">rsvp</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">responded_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">attendance</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">attendance_by_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">follow_up</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">notes</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">revision</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">integer NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
+  "public.welcome_sessions" [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.welcome_sessions</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">group_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">host_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">creator_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">title</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">language</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timezone</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">starts_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">ends_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">meeting_url</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">status</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">revision</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">integer NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
   "public.acceptance_harness_scenarios" -> "public.acceptance_harness_runs" [label="run_id -> id"];
   "public.acceptance_harness_steps" -> "public.acceptance_harness_runs" [label="run_id -> id"];
   "public.actions" -> "public.users" [label="user_id -> id"];
@@ -1086,4 +1155,16 @@ digraph Schema {
   "public.volunteer_signups" -> "public.volunteer_batches" [label="batch_id -> id"];
   "public.volunteer_signups" -> "public.volunteer_groups" [label="group_id -> id"];
   "public.volunteer_signups" -> "public.users" [label="user_id -> id"];
+  "public.welcome_events" -> "public.users" [label="actor_id -> id"];
+  "public.welcome_events" -> "public.volunteer_groups" [label="group_id -> id"];
+  "public.welcome_events" -> "public.welcome_participants" [label="participant_id -> id"];
+  "public.welcome_events" -> "public.welcome_sessions" [label="session_id -> id"];
+  "public.welcome_participants" -> "public.users" [label="attendance_by_id -> id"];
+  "public.welcome_participants" -> "public.mail_batches" [label="draft_batch_id -> id"];
+  "public.welcome_participants" -> "public.welcome_sessions" [label="group_id -> group_id"];
+  "public.welcome_participants" -> "public.welcome_sessions" [label="session_id -> id"];
+  "public.welcome_participants" -> "public.users" [label="user_id -> id"];
+  "public.welcome_sessions" -> "public.users" [label="creator_id -> id"];
+  "public.welcome_sessions" -> "public.volunteer_groups" [label="group_id -> id"];
+  "public.welcome_sessions" -> "public.users" [label="host_id -> id"];
 }
