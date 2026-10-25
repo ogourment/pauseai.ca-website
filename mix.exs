@@ -68,6 +68,7 @@ defmodule PauseAiCa.MixProject do
       mail_workflow_dependency(),
       cms_dependency(),
       tasks_dependency(),
+      community_dependency(),
       crm_dependency(),
       markdown_editor_dependency(),
       {:mdex, "~> 0.13.5"},
@@ -149,6 +150,18 @@ defmodule PauseAiCa.MixProject do
         "test"
       ]
     ]
+  end
+
+  defp community_dependency do
+    case System.get_env("PHOENIX_COMMUNITY_PATH") do
+      path when is_binary(path) and path != "" ->
+        {:phoenix_community, path: path}
+
+      _ ->
+        {:phoenix_community,
+         git: "ssh://git@git.agile-u.com/olivierg/phoenix_community.git",
+         ref: "ab86789a911be70fe6340359d0891bd0b4cf4eff"}
+    end
   end
 
   defp tasks_dependency do

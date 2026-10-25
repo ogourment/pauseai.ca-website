@@ -67,6 +67,7 @@ defmodule PauseAiCaWeb.NavigationTest do
     assert Enum.map(Navigation.assemble(Scope.for_user(user), "en"), & &1.id) == [
              "pauseai.my-dashboard",
              "pauseai.my-profile",
+             "pauseai.my-groups",
              "pauseai.settings",
              "pauseai.password"
            ]

@@ -36,6 +36,7 @@ jobs:
       cms-package-deploy-key: ${{ secrets.CMS_PACKAGE_DEPLOY_KEY }}
       crm-package-deploy-key: ${{ secrets.CRM_PACKAGE_DEPLOY_KEY }}
       tasks-package-deploy-key: ${{ secrets.TASKS_PACKAGE_DEPLOY_KEY }}
+      community-package-deploy-key: ${{ secrets.COMMUNITY_PACKAGE_DEPLOY_KEY }}
       shell-package-deploy-key: ${{ secrets.SHELL_PACKAGE_DEPLOY_KEY }}
       editor-package-deploy-key: ${{ secrets.EDITOR_PACKAGE_DEPLOY_KEY }}
       forgejo-known-hosts: ${{ secrets.FORGEJO_PACKAGE_KNOWN_HOSTS }}

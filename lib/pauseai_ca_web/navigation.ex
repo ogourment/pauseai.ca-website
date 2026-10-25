@@ -51,6 +51,15 @@ defmodule PauseAiCaWeb.Navigation do
         :admin,
         60
       ),
+      item("pauseai.groups", gettext_noop("Local groups"), :manage, :groups, :groups, 14),
+      item(
+        "pauseai.my-groups",
+        gettext_noop("Local groups"),
+        :account,
+        :my_groups,
+        :incubators,
+        25
+      ),
       item("pauseai.tasks", gettext_noop("Tasks"), :manage, :tasks, :tasks, 15),
       item("pauseai.accounts", gettext_noop("Accounts"), :manage, :accounts, :organizer, 10),
       item("pauseai.mail", gettext_noop("Emails"), :manage, :mail, :organizer, 20),
@@ -140,6 +149,14 @@ defmodule PauseAiCaWeb.Navigation do
   @impl true
   def authorize(%{required_capability: :admin}, context), do: context.admin
 
+  def authorize(%{required_capability: :groups}, context),
+    do: context.organizer and Application.get_env(:pauseai_ca, :incubators_enabled, false)
+
+  def authorize(%{required_capability: :incubators}, %{
+        actor: %Scope{user: %User{confirmed_at: at}}
+      }),
+      do: at != nil and Application.get_env(:pauseai_ca, :incubators_enabled, false)
+
   def authorize(%{required_capability: :tasks}, context),
     do: context.organizer and Application.get_env(:pauseai_ca, :tasks_enabled, false)
 
@@ -161,6 +178,8 @@ defmodule PauseAiCaWeb.Navigation do
         :donation_pledges -> "/admin/donation-pledges"
         :versions -> "/admin/versions"
         :acceptance -> "/admin/acceptance"
+        :groups -> "/manage/groups"
+        :my_groups -> if(locale == "fr", do: "/fr/groupes", else: "/en/groups")
         :tasks -> "/manage/tasks"
         :accounts -> "/manage/accounts"
         :mail -> "/manage/mail"
@@ -174,7 +193,16 @@ defmodule PauseAiCaWeb.Navigation do
 
     if route do
       {:ok,
-       if(key in [:my_dashboard, :my_profile, :settings, :password, :versions, :acceptance],
+       if(
+         key in [
+           :my_dashboard,
+           :my_profile,
+           :my_groups,
+           :settings,
+           :password,
+           :versions,
+           :acceptance
+         ],
          do: route,
          else: with_locale(route, locale)
        )}

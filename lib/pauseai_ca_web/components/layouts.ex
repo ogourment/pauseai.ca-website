@@ -134,6 +134,12 @@ defmodule PauseAiCaWeb.Layouts do
               class="block px-4 py-3 font-semibold hover:bg-brand-wash md:hidden"
             >{gettext("Warning shot")}</.link>
             <.link
+              :if={Application.get_env(:pauseai_ca, :incubators_enabled, false)}
+              id="act-local-groups"
+              href={if(@locale == "fr", do: "/fr/groupes", else: "/en/groups")}
+              class="block px-4 py-3 font-semibold hover:bg-brand-wash"
+            >{gettext("Local groups")}</.link>
+            <.link
               id="act-contact-mp"
               navigate={
                 if(@locale == "fr", do: ~p"/fr/contacter-votre-depute", else: ~p"/en/contact-your-mp")

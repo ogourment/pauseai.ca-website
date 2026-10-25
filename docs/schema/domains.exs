@@ -4,6 +4,11 @@
     title: "Organizer tasks and Activity",
     tables: ~w(organizer_tasks organizer_task_dependencies organizer_task_events)
   },
+  %{
+    id: "incubator_admission",
+    title: "Local groups and admission",
+    tables: ~w(incubator_profiles incubator_memberships incubator_membership_events)
+  },
   %{id: "identity", title: "Identity", tables: ["users", "users_tokens"]},
   %{
     id: "engagement",

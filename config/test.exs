@@ -1,6 +1,7 @@
 import Config
 
 config :pauseai_ca, :tasks_enabled, true
+config :pauseai_ca, :incubators_enabled, true
 
 atdd_port = System.get_env("ATDD_PORT", "4116") |> String.to_integer()
 
