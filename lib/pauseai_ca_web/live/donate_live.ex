@@ -12,6 +12,8 @@ defmodule PauseAiCaWeb.DonateLive do
      assign(socket,
        locale: locale,
        page_title: gettext("Donate"),
+       campaign_mode: Application.get_env(:pauseai_ca, :manifund_donations_enabled, false),
+       campaign: PauseAiCa.Donations.Campaign.current(),
        saved: false,
        selected_suggestion: nil,
        form: to_form(Donations.change(%{"locale" => locale}), as: "pledge")
@@ -19,6 +21,8 @@ defmodule PauseAiCaWeb.DonateLive do
   end
 
   @impl true
+  def handle_event(_, _, %{assigns: %{campaign_mode: true}} = socket), do: {:noreply, socket}
+
   def handle_event("validate", %{"pledge" => attrs}, socket) do
     changeset = Donations.change(Map.put(attrs, "locale", socket.assigns.locale))
 
@@ -73,6 +77,93 @@ defmodule PauseAiCaWeb.DonateLive do
 
   @impl true
   def render(assigns) do
+    ~H"""
+    <%= if @campaign_mode do %>
+      <.campaign_page {assigns} />
+    <% else %>
+      <.legacy_pledge_page {assigns} />
+    <% end %>
+    """
+  end
+
+  defp campaign_page(assigns) do
+    ~H"""
+    <Layouts.app
+      flash={@flash}
+      current_scope={@current_scope}
+      locale={@locale}
+      promote_warning_shot={false}
+      translated_path={if @locale == "fr", do: ~p"/en/donate", else: ~p"/fr/faire-un-don"}
+    >
+      <section id="donate-page" class="mx-auto max-w-3xl px-5 py-12">
+        <h1 class="font-heading text-4xl sm:text-5xl text-stone-950">
+          {gettext("Support PauseAI Canada")}
+        </h1>
+        <p class="mt-5 text-xl leading-8 text-stone-700">
+          {gettext(
+            "Help us organize across Canada for an international pause on the development of the most powerful AI systems."
+          )}
+        </p>
+        <section
+          id="manifund-campaign"
+          class="mt-7 rounded-xl border border-stone-200 bg-white p-5 sm:p-6"
+        >
+          <h2 class="font-heading text-2xl">{gettext("National expansion and core operations")}</h2>
+          <p class="mt-3 leading-7 text-stone-700">
+            {gettext(
+              "The campaign supports organizing in Toronto and other Canadian cities, public events, media work, and the people and tools that keep these activities running."
+            )}
+          </p>
+          <%= if match?({:ok, _}, @campaign) do %>
+            <% {:ok, campaign} = @campaign %>
+            <a
+              id="manifund-donate"
+              href={campaign.url}
+              class="mt-5 inline-block rounded-lg bg-brand px-5 py-3 font-semibold text-stone-950 hover:bg-brand-strong"
+            >
+              {gettext("Donate on Manifund")}
+            </a>
+            <p id="manifund-account-requirement" class="mt-3 text-sm leading-6 text-stone-700">
+              {gettext(
+                "A Manifund account is required to donate. You can read the full proposal without an account."
+              )}
+            </p>
+            <p class="mt-2 text-sm leading-6">
+              <a id="manifund-proposal" href={campaign.url} class="underline underline-offset-4">{gettext(
+                "Read the full proposal"
+              )}</a>
+            </p>
+          <% else %>
+            <p id="manifund-unavailable" role="status" class="mt-4 leading-7">
+              {gettext(
+                "The Manifund campaign link is unavailable here. You can still donate by Interac below."
+              )}
+            </p>
+          <% end %>
+        </section>
+        <section id="donate-interac" class="mt-8 border-l-4 border-brand bg-brand-wash p-5 sm:p-6">
+          <h2 class="font-heading text-2xl">{gettext("Or donate by Interac e-Transfer")}</h2>
+          <p class="mt-3 leading-7">
+            {gettext(
+              "Send your donation from your banking app to the address below. Autodeposit is enabled. Check that the recipient name is PauseAI Canada before confirming."
+            )}
+          </p>
+          <p class="mt-3 break-all font-semibold">
+            <span id="donation-email" class="select-all">pauseaicanada@proton.me</span>
+          </p>
+          <p class="mt-2">{gettext("Recipient")}: <strong>PauseAI Canada</strong></p>
+        </section>
+        <p class="mt-8 text-sm text-stone-600">
+          {gettext("PauseAI Canada")} · {gettext("Corporation number")}: 1819452-1 · {gettext(
+            "Business Number"
+          )}: 791107246
+        </p>
+      </section>
+    </Layouts.app>
+    """
+  end
+
+  defp legacy_pledge_page(assigns) do
     ~H"""
     <Layouts.app
       flash={@flash}
