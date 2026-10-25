@@ -8,9 +8,9 @@ defmodule PauseAiCa.Mail do
   alias PhoenixCRM.{Person, Address}
   alias PauseAiCa.Mail.{Batch, Draft, Render}
 
-  def recipient(scope, id) do
+  def recipient(scope, id, context \\ %{}) do
     with {:ok, %{user: %{confirmed_at: at} = user}} when not is_nil(at) <-
-           AccountManagement.get(scope, id),
+           authorized_account(scope, id, context),
          false <- suppressed?(user.email) do
       {:ok,
        %{
@@ -41,22 +41,23 @@ defmodule PauseAiCa.Mail do
     with true <- Volunteers.allowed?(scope),
          {:ok, _} <- Ecto.UUID.cast(id),
          %Batch{} = batch <- Repo.get_by(Batch, id: id, owner_id: scope.user.id),
-         :ok <- recipients_allowed(scope, workspace_ids(batch)) do
+         :ok <- recipients_allowed(scope, workspace_ids(batch), batch.recipient_context) do
       {:ok, batch}
     else
       _ -> {:error, :unauthorized}
     end
   end
 
-  def create(scope, account_id) do
+  def create(scope, account_id, context \\ %{}) do
     transact(fn ->
       lock_actor(scope)
 
-      case recipient(scope, account_id) do
+      case recipient(scope, account_id, context) do
         {:ok, _} ->
           Repo.insert!(%Batch{
             owner_id: scope.user.id,
             anchor_user_id: account_id,
+            recipient_context: context,
             recipient_ids: [account_id]
           })
 
@@ -73,7 +74,11 @@ defmodule PauseAiCa.Mail do
       cs = Batch.changeset(stored, attrs)
       ids = Ecto.Changeset.get_field(cs, :recipient_ids) |> Enum.uniq()
       cs = Ecto.Changeset.put_change(cs, :recipient_ids, ids)
-      require_allowed(scope, ids)
+
+      if stored.recipient_context != %{} and Enum.sort(ids) != Enum.sort(stored.recipient_ids),
+        do: Repo.rollback(:unauthorized)
+
+      require_allowed(scope, ids, stored.recipient_context)
 
       case Repo.update(cs, stale_error_field: :revision) do
         {:ok, saved} -> saved
@@ -90,7 +95,7 @@ defmodule PauseAiCa.Mail do
 
   def save_draft(scope, %Draft{} = draft, attrs) do
     transact(fn ->
-      lock_batch(scope, draft.batch_id)
+      batch = lock_batch(scope, draft.batch_id)
 
       stored =
         Repo.one(
@@ -101,7 +106,7 @@ defmodule PauseAiCa.Mail do
 
       if is_nil(stored) or stored.revision != draft.revision, do: Repo.rollback(:stale)
 
-      case recipient(scope, stored.user_id) do
+      case recipient(scope, stored.user_id, batch.recipient_context) do
         {:ok, contact} when contact.email == stored.email -> :ok
         _ -> Repo.rollback(:unauthorized)
       end
@@ -124,7 +129,7 @@ defmodule PauseAiCa.Mail do
             draft
 
           nil ->
-            {:ok, contact} = recipient(scope, id)
+            {:ok, contact} = recipient(scope, id, batch.recipient_context)
 
             with {:ok, subject} <- Render.merge(batch.subject, contact.variables),
                  {:ok, source} <- Render.merge(batch.source, contact.variables) do
@@ -211,19 +216,40 @@ defmodule PauseAiCa.Mail do
     MapSet.new(direct ++ linked)
   end
 
+  defp authorized_account(scope, id, context) when context == %{},
+    do: AccountManagement.get(scope, id)
+
+  defp authorized_account(
+         scope,
+         id,
+         %{
+           "purpose" => "welcome",
+           "group_id" => group_id,
+           "session_id" => session_id
+         } = context
+       )
+       when map_size(context) == 3 do
+    case PauseAiCa.Welcome.mail_recipient(scope, group_id, session_id, id) do
+      {:ok, user} -> {:ok, %{user: user}}
+      error -> error
+    end
+  end
+
+  defp authorized_account(_, _, _), do: {:error, :unauthorized}
+
   defp workspace_ids(batch) do
     saved = Repo.all(from d in Draft, where: d.batch_id == ^batch.id, select: d.user_id)
     Enum.uniq(batch.recipient_ids ++ saved)
   end
 
-  defp recipients_allowed(scope, ids) do
-    if ids != [] and Enum.all?(ids, &match?({:ok, _}, recipient(scope, &1))),
+  defp recipients_allowed(scope, ids, context) do
+    if ids != [] and Enum.all?(ids, &match?({:ok, _}, recipient(scope, &1, context))),
       do: :ok,
       else: {:error, :unauthorized}
   end
 
-  defp require_allowed(scope, ids),
-    do: if(recipients_allowed(scope, ids) != :ok, do: Repo.rollback(:unauthorized))
+  defp require_allowed(scope, ids, context),
+    do: if(recipients_allowed(scope, ids, context) != :ok, do: Repo.rollback(:unauthorized))
 
   defp lock_actor(%{user: %{id: id}} = scope) do
     Repo.one!(from u in User, where: u.id == ^id, lock: "FOR UPDATE")
@@ -253,7 +279,7 @@ defmodule PauseAiCa.Mail do
         from u in User, where: u.id in ^batch.recipient_ids, order_by: u.id, lock: "FOR UPDATE"
       )
 
-      require_allowed(scope, workspace_ids(batch))
+      require_allowed(scope, workspace_ids(batch), batch.recipient_context)
       batch
     else
       _ -> Repo.rollback(:unauthorized)

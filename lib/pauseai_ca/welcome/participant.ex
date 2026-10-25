@@ -3,6 +3,7 @@ defmodule PauseAiCa.Welcome.Participant do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "welcome_participants" do
+    field :active, :boolean, virtual: true, default: false
     belongs_to :group, PauseAiCa.Volunteers.Group
     belongs_to :session, PauseAiCa.Welcome.Session
     belongs_to :user, PauseAiCa.Accounts.User

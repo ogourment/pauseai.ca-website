@@ -245,7 +245,9 @@ defmodule PauseAiCaWeb.MailDraftsLive do
       {:ok, batch} ->
         recipients =
           Enum.map(batch.recipient_ids, fn id ->
-            {:ok, contact} = Mail.recipient(socket.assigns.current_scope, id)
+            {:ok, contact} =
+              Mail.recipient(socket.assigns.current_scope, id, batch.recipient_context)
+
             contact
           end)
 
@@ -274,7 +276,7 @@ defmodule PauseAiCaWeb.MailDraftsLive do
 
     recipients =
       Enum.map(batch.recipient_ids, fn id ->
-        {:ok, contact} = Mail.recipient(socket.assigns.current_scope, id)
+        {:ok, contact} = Mail.recipient(socket.assigns.current_scope, id, batch.recipient_context)
         contact
       end)
 
@@ -456,6 +458,7 @@ defmodule PauseAiCaWeb.MailDraftsLive do
             <h2 class="text-xl font-bold">{gettext("Recipients")}</h2><ul>
               <li :for={contact <- @recipients} class="flex flex-wrap gap-4 items-center py-3">
                 <span>{contact.name} · {contact.email}</span><button
+                  :if={@batch.recipient_context == %{}}
                   type="button"
                   phx-click="remove"
                   phx-value-id={contact.id}
@@ -463,7 +466,17 @@ defmodule PauseAiCaWeb.MailDraftsLive do
                 >{gettext("Remove")}</button>
               </li>
             </ul>
+            <p :if={@batch.recipient_context["purpose"] == "welcome"} class="text-sm">
+              {gettext("Recipients are selected in the welcome call.")}
+              <.link
+                navigate={"/manage/welcome-calls/#{@batch.recipient_context["session_id"]}?#{URI.encode_query(%{group: @batch.recipient_context["group_id"], locale: @locale})}"}
+                class="underline"
+              >
+                {gettext("Welcome calls")}
+              </.link>
+            </p>
             <.form
+              :if={@batch.recipient_context == %{}}
               id="mail-recipient-search-form"
               for={to_form(%{"query" => @query})}
               phx-change="search"
@@ -478,7 +491,7 @@ defmodule PauseAiCaWeb.MailDraftsLive do
                 phx-debounce="250"
               />
             </.form>
-            <ul>
+            <ul :if={@batch.recipient_context == %{}}>
               <li :for={contact <- @results} class="flex flex-wrap gap-4 items-center py-3">
                 <span>{contact.name} · {contact.email}</span><button
                   type="button"

@@ -147,6 +147,24 @@ defmodule PauseAiCa.Welcome do
     end)
   end
 
+  @doc "Fresh, purpose-bound draft access; this never grants account administration or newsletter consent."
+  def mail_recipient(scope, group_id, session_id, user_id) do
+    with :ok <- manager(scope, group_id),
+         true <- uuid?(session_id) and uuid?(user_id),
+         %Session{status: "scheduled"} = session <-
+           Repo.get_by(Session, id: session_id, group_id: group_id),
+         true <- host_current?(group_id, session.host_id),
+         true <- DateTime.compare(session.ends_at, DateTime.utc_now()) == :gt,
+         %Participant{invitation_state: state, rsvp: rsvp} <-
+           Repo.get_by(Participant, session_id: session_id, group_id: group_id, user_id: user_id),
+         true <- state in ["selected", "invited"] and rsvp not in ["declined", "withdrawn"],
+         :ok <- eligible(scope, group_id, user_id) do
+      {:ok, Repo.get!(User, user_id)}
+    else
+      _ -> {:error, :unauthorized}
+    end
+  end
+
   def prepare_drafts(scope, group_id, id, user_ids, revision, command_id) do
     transact(
       scope,
@@ -176,7 +194,8 @@ defmodule PauseAiCa.Welcome do
             p
           end
 
-        batch = unwrap!(Mail.create(scope, hd(ids)))
+        context = %{"purpose" => "welcome", "group_id" => group_id, "session_id" => id}
+        batch = unwrap!(Mail.create(scope, hd(ids), context))
 
         batch =
           unwrap!(
@@ -240,7 +259,17 @@ defmodule PauseAiCa.Welcome do
            where: p.user_id == ^scope.user.id and p.invitation_state != "selected",
            order_by: [desc: p.updated_at],
            preload: [session: :host]
-       )}
+       )
+       |> Enum.map(fn p ->
+         active = active_participation?(p, p.session)
+
+         session = %{
+           p.session
+           | meeting_url: if(active and p.rsvp == "accepted", do: p.session.meeting_url)
+         }
+
+         %{p | active: active, session: session}
+       end)}
     end
   end
 
@@ -261,7 +290,8 @@ defmodule PauseAiCa.Welcome do
           s = session!(p.group_id, p.session_id)
 
           if p.user_id != scope.user.id or p.invitation_state != "invited" or
-               s.status != "scheduled",
+               s.status != "scheduled" or
+               (reply == "accepted" and not active_participation?(p, s)),
              do: Repo.rollback(:ineligible)
 
           updated =
@@ -462,6 +492,14 @@ defmodule PauseAiCa.Welcome do
     end
   end
 
+  defp active_participation?(participant, session) do
+    participant.invitation_state == "invited" and session.status == "scheduled" and
+      DateTime.compare(session.ends_at, DateTime.utc_now()) == :gt and
+      host_current?(participant.group_id, session.host_id) and
+      function_exported?(adapter(), :related?, 2) and
+      adapter().related?(participant.user_id, participant.group_id)
+  end
+
   defp adapter,
     do:
       Application.get_env(
@@ -590,9 +628,9 @@ defmodule PauseAiCa.Welcome do
     url = PauseAiCaWeb.Site.url(session.language, path)
 
     if session.language == "fr" do
-      "Bonjour,\n\nNous vous invitons à notre appel d’accueil : **#{session.title}**.\n\n#{display_time(session.starts_at, session.timezone)}\n\n[Répondre à l’invitation](#{url})\n\nVotre réponse ne vous inscrit pas à une infolettre et n’accorde aucune adhésion à un groupe."
+      "Bonjour,\n\nNous vous invitons à notre appel d’accueil : **#{session.title}**.\n\n#{display_time(session.starts_at, session.timezone)} → #{display_time(session.ends_at, session.timezone)}\n\n[Répondre à l’invitation](#{url})\n\nVotre réponse ne vous inscrit pas à une infolettre et n’accorde aucune adhésion à un groupe."
     else
-      "Hello,\n\nYou're invited to our welcome call: **#{session.title}**.\n\n#{display_time(session.starts_at, session.timezone)}\n\n[Respond to the invitation](#{url})\n\nYour reply does not subscribe you to a newsletter or grant group membership."
+      "Hello,\n\nYou're invited to our welcome call: **#{session.title}**.\n\n#{display_time(session.starts_at, session.timezone)} → #{display_time(session.ends_at, session.timezone)}\n\n[Respond to the invitation](#{url})\n\nYour reply does not subscribe you to a newsletter or grant group membership."
     end
   end
 end

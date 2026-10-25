@@ -5,6 +5,8 @@ defmodule PauseAiCa.Mail.Batch do
   schema "mail_batches" do
     field :owner_id, :binary_id
     field :anchor_user_id, :binary_id
+    # Set by a purpose-specific context at creation; never editable through draft params.
+    field :recipient_context, :map, default: %{}
     field :recipient_ids, {:array, :binary_id}, default: []
     field :subject, :string, default: ""
     field :source, :string, default: "", redact: true

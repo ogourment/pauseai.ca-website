@@ -57,7 +57,9 @@ defmodule PauseAiCa.WelcomeTest do
 
     assert batch.recipient_ids == [c.newcomer.id]
     assert {:ok, drafts} = Mail.drafts(c.scope, batch.id)
-    assert [%{email: email}] = drafts
+    assert [%{email: email, source: source}] = drafts
+    assert source =~ Welcome.display_time(session.starts_at, session.timezone)
+    assert source =~ Welcome.display_time(session.ends_at, session.timezone)
     assert email == c.newcomer.email
     p = Repo.one!(Participant)
     assert p.invitation_state == "selected" and p.rsvp == "pending" and p.attendance == "unknown"
@@ -292,5 +294,115 @@ defmodule PauseAiCa.WelcomeTest do
 
     assert Repo.aggregate(PauseAiCa.Mail.Batch, :count) == 0
     assert Repo.get!(Participant, p.id).invitation_state == "selected"
+  end
+
+  test "pending incubator applicants get only purpose-bound welcome drafts and withdrawal revokes access",
+       c do
+    newcomer = user_fixture()
+    outsider = user_fixture()
+
+    {:ok, _} =
+      PauseAiCa.Incubators.configure(c.admin, c.group.id, %{
+        "name_en" => "Configured group",
+        "name_fr" => "Groupe configuré",
+        "published" => true
+      })
+
+    {:ok, request} =
+      PauseAiCa.Incubators.request(Scope.for_user(newcomer), c.group.id, %{
+        "display_name" => "New applicant",
+        "conduct" => true
+      })
+
+    assert {:ok, %{included: candidates}} = Welcome.candidates(c.scope, c.group.id)
+    assert Enum.any?(candidates, &(&1.id == newcomer.id))
+    refute Enum.any?(candidates, &(&1.id == outsider.id))
+    assert {:error, :unauthorized} = PauseAiCa.AccountManagement.get(c.scope, newcomer.id)
+    assert {:error, :unauthorized} = Mail.create(c.scope, newcomer.id)
+    assert {:error, :unauthorized} = Mail.create(c.scope, newcomer.id, %{"purpose" => "anything"})
+
+    {:ok, session} = Welcome.create(c.scope, c.group.id, attrs(c), "pending-create")
+
+    {:ok, selected} =
+      Welcome.select(
+        c.scope,
+        c.group.id,
+        session.id,
+        [newcomer.id, c.newcomer.id],
+        session.revision,
+        "pending-select"
+      )
+
+    {:ok, batch} =
+      Welcome.prepare_drafts(
+        c.scope,
+        c.group.id,
+        session.id,
+        [newcomer.id, c.newcomer.id],
+        selected.revision,
+        "pending-draft"
+      )
+
+    assert batch.recipient_context == %{
+             "purpose" => "welcome",
+             "group_id" => c.group.id,
+             "session_id" => session.id
+           }
+
+    assert {:ok, drafts} = Mail.drafts(c.scope, batch.id)
+    assert Enum.sort(Enum.map(drafts, & &1.email)) == Enum.sort([newcomer.email, c.newcomer.email])
+    assert {:error, :unauthorized} = Mail.save_batch(c.scope, batch, %{"recipient_ids" => [newcomer.id]})
+
+    assert {:error, :unauthorized} =
+             Mail.save_batch(c.scope, batch, %{"recipient_ids" => [outsider.id]})
+
+    assert {:ok, retained} = Mail.save_batch(c.scope, batch, %{"recipient_context" => %{}})
+    assert retained.recipient_context == batch.recipient_context
+    assert Repo.get!(PauseAiCa.Accounts.User, newcomer.id).organizing_group_id == nil
+    assert Repo.aggregate(PauseAiCa.Volunteers.Manager, :count) == 1
+    assert Repo.aggregate(PauseAiCa.Newsletters.Subscription, :count) == 0
+
+    participant = Repo.get_by!(Participant, session_id: session.id, user_id: newcomer.id)
+
+    {:ok, invited} =
+      Welcome.record_invited(
+        c.scope,
+        c.group.id,
+        session.id,
+        participant.id,
+        participant.revision,
+        "pending-invited"
+      )
+
+    {:ok, accepted} =
+      Welcome.respond(
+        Scope.for_user(newcomer),
+        participant.id,
+        "accepted",
+        invited.revision,
+        "pending-accept"
+      )
+
+    assert {:ok, [%{active: true, session: %{meeting_url: "https://example.org/welcome"}}]} =
+             Welcome.mine(Scope.for_user(newcomer))
+
+    assert {:ok, _} =
+             PauseAiCa.Incubators.withdraw(Scope.for_user(newcomer), c.group.id, request.revision)
+
+    assert {:ok, [%{active: false, rsvp: "accepted", session: %{meeting_url: nil}}]} =
+             Welcome.mine(Scope.for_user(newcomer))
+
+    assert {:error, :ineligible} =
+             Welcome.respond(
+               Scope.for_user(newcomer),
+               participant.id,
+               "accepted",
+               accepted.revision,
+               "revoked-accept"
+             )
+
+    assert {:error, :unauthorized} = Mail.get(c.scope, batch.id)
+    assert {:error, :unauthorized} = Mail.generate(c.scope, batch.id)
+    assert {:error, :unauthorized} = PauseAiCa.AccountManagement.get(c.scope, newcomer.id)
   end
 end
