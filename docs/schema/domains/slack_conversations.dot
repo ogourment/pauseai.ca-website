@@ -1,0 +1,68 @@
+digraph slack_conversations {
+  graph [rankdir=TB, bgcolor="white", pad=0.35, nodesep=0.6, ranksep=0.9, fontname="Helvetica"];
+  node [shape=plain, fontname="Helvetica"];
+  edge [fontname="Helvetica", fontsize=10, arrowsize=0.7];
+  labelloc="t";
+  label=< <B>Slack conversations and private account links</B><BR/><FONT POINT-SIZE="12">Local tables show every column. Amber dashed arrows cross a domain boundary.</FONT> >;
+
+  subgraph cluster_local {
+    label="Slack conversations and private account links";
+    color="#94a3b8";
+    penwidth=1.5;
+    style="rounded";
+  "chat_slack_oauth_states" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.chat_slack_oauth_states</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">user_id</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">state_hash</TD><TD ALIGN="LEFT">bytea NOT NULL</TD></TR><TR><TD ALIGN="LEFT">session_hash</TD><TD ALIGN="LEFT">bytea NOT NULL</TD></TR><TR><TD ALIGN="LEFT">expires_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">consumed_at</TD><TD ALIGN="LEFT">timestamp without time zone NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
+  "chat_slack_links" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.chat_slack_links</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">user_id</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">team_id</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">provider_user_id</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">token_cipher</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">refresh_cipher</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">expires_at</TD><TD ALIGN="LEFT">timestamp without time zone NULL</TD></TR><TR><TD ALIGN="LEFT">scopes</TD><TD ALIGN="LEFT">_varchar NOT NULL</TD></TR><TR><TD ALIGN="LEFT">active</TD><TD ALIGN="LEFT">boolean NOT NULL</TD></TR><TR><TD ALIGN="LEFT">revision</TD><TD ALIGN="LEFT">integer NOT NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
+  "chat_slack_inbox" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.chat_slack_inbox</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">team_id</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">event_id</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">payload</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">status</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">processed_at</TD><TD ALIGN="LEFT">timestamp without time zone NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
+  "chat_slack_messages" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.chat_slack_messages</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">team_id</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">channel_id</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">external_ts</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">version</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">text</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">provider_user_id</TD><TD ALIGN="LEFT">character varying NULL</TD></TR><TR><TD ALIGN="LEFT">bot_id</TD><TD ALIGN="LEFT">character varying NULL</TD></TR><TR><TD ALIGN="LEFT">thread_ts</TD><TD ALIGN="LEFT">character varying NULL</TD></TR><TR><TD ALIGN="LEFT">deleted</TD><TD ALIGN="LEFT">boolean NOT NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
+  "chat_slack_outbox" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.chat_slack_outbox</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">user_id</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">link_id</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">link_revision</TD><TD ALIGN="LEFT">integer NOT NULL</TD></TR><TR><TD ALIGN="LEFT">team_id</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">channel_id</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">thread_ts</TD><TD ALIGN="LEFT">character varying NULL</TD></TR><TR><TD ALIGN="LEFT">text</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">status</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">external_ts</TD><TD ALIGN="LEFT">character varying NULL</TD></TR><TR><TD ALIGN="LEFT">permalink</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">revision</TD><TD ALIGN="LEFT">integer NOT NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
+  }
+
+  subgraph cluster_external {
+    label="External-domain references — other relationships are intentionally omitted";
+    color="#cbd5e1";
+    penwidth=1;
+    style="rounded";
+  "users" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#d97706">
+      <TR><TD BGCOLOR="#fef3c7"><B>external: users</B></TD></TR>
+      <TR><TD><FONT POINT-SIZE="10">other fields and relationships omitted</FONT></TD></TR>
+    </TABLE>
+  >];
+
+  }
+
+  "chat_slack_links" -> "users" [label="user_id -> id", color="#d97706", style="dashed", penwidth=1.5];
+  "chat_slack_oauth_states" -> "users" [label="user_id -> id", color="#d97706", style="dashed", penwidth=1.5];
+  "chat_slack_outbox" -> "chat_slack_links" [label="link_id -> id", color="#64748b"];
+  "chat_slack_outbox" -> "users" [label="user_id -> id", color="#d97706", style="dashed", penwidth=1.5];
+}

@@ -289,3 +289,34 @@ if config_env() == :prod do
   #
   # See https://swoosh.hexdocs.pm/Swoosh.html#module-installation for details.
 end
+
+# An installation is configured only through consumer-owned deployment settings.
+# This code neither creates an app nor joins channels. Missing audiences deny access.
+config :pauseai_ca, :slack_enabled, System.get_env("PAUSEAI_SLACK_ENABLED") == "true"
+
+slack_channels =
+  case Jason.decode(System.get_env("PAUSEAI_SLACK_CHANNELS", "{}")) do
+    {:ok, channels} when is_map(channels) -> channels
+    _ -> %{}
+  end
+
+config :pauseai_ca, :slack, %{
+  client_id: System.get_env("PAUSEAI_SLACK_CLIENT_ID"),
+  client_secret: System.get_env("PAUSEAI_SLACK_CLIENT_SECRET"),
+  team_id: System.get_env("PAUSEAI_SLACK_TEAM_ID"),
+  app_id: System.get_env("PAUSEAI_SLACK_APP_ID"),
+  signing_secret: System.get_env("PAUSEAI_SLACK_SIGNING_SECRET"),
+  redirect_uri: System.get_env("PAUSEAI_SLACK_REDIRECT_URI"),
+  channel_ids: Map.keys(slack_channels),
+  channel_names:
+    Map.new(slack_channels, fn {id, attrs} ->
+      {id, if(is_map(attrs), do: attrs["name"] || id, else: id)}
+    end),
+  channel_audiences:
+    Map.new(slack_channels, fn {id, attrs} -> {id, if(is_map(attrs), do: attrs["audience"])} end),
+  authorize: &PauseAiCa.Chat.SlackPolicy.allowed?/3
+}
+
+config :pauseai_ca,
+       :slack_inbox_worker_enabled,
+       System.get_env("PAUSEAI_SLACK_INBOX_ENABLED") == "true"

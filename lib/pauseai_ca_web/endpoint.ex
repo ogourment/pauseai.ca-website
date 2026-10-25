@@ -43,6 +43,9 @@ defmodule PauseAiCaWeb.Endpoint do
   plug Plug.RequestId
   plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
 
+  # Verify Slack against exact bytes before JSON parsing or parameter logging.
+  plug PauseAiCaWeb.SlackEventsPlug
+
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
     pass: ["*/*"],

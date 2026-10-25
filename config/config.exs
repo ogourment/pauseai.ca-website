@@ -137,5 +137,17 @@ config :phoenix, :filter_parameters, [
   "paste",
   "subscribe",
   "draft",
-  "template"
+  "template",
+  "chat_draft",
+  "chat_search",
+  "code",
+  "state",
+  "access_token",
+  "refresh_token",
+  "client_secret"
 ]
+
+# Slack remains disabled until an installation and channel audiences are configured.
+config :pauseai_ca, :slack_enabled, false
+
+config :pauseai_ca, :slack_inbox_worker_enabled, false

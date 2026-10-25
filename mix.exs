@@ -152,18 +152,6 @@ defmodule PauseAiCa.MixProject do
     ]
   end
 
-  defp community_dependency do
-    case System.get_env("PHOENIX_COMMUNITY_PATH") do
-      path when is_binary(path) and path != "" ->
-        {:phoenix_community, path: path}
-
-      _ ->
-        {:phoenix_community,
-         git: "ssh://git@git.agile-u.com/olivierg/phoenix_community.git",
-         ref: "ab86789a911be70fe6340359d0891bd0b4cf4eff"}
-    end
-  end
-
   defp tasks_dependency do
     case System.get_env("PHOENIX_TASKS_PATH") do
       nil ->
@@ -173,6 +161,18 @@ defmodule PauseAiCa.MixProject do
 
       path ->
         {:phoenix_tasks, path: path}
+    end
+  end
+
+  defp community_dependency do
+    case System.get_env("PHOENIX_COMMUNITY_PATH") do
+      path when is_binary(path) and path != "" ->
+        {:phoenix_community, path: path}
+
+      _ ->
+        {:phoenix_community,
+         git: "ssh://git@git.agile-u.com/olivierg/phoenix_community.git",
+         ref: "76dc9d2ea2f7b45018462d4f7d9ae57c50100e0d"}
     end
   end
 

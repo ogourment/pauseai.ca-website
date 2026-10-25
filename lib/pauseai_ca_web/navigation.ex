@@ -89,6 +89,7 @@ defmodule PauseAiCaWeb.Navigation do
         :welcome_self,
         25
       ),
+      item("pauseai.conversations", gettext_noop("Conversations"), :account, :slack, :slack, 26),
       item("pauseai.settings", gettext_noop("Settings"), :account, :settings, :self, 30),
       item("pauseai.password", gettext_noop("Change password"), :account, :password, :self, 40)
     ]
@@ -165,6 +166,8 @@ defmodule PauseAiCaWeb.Navigation do
         actor: %Scope{user: %User{confirmed_at: at}}
       }),
       do: at != nil and Application.get_env(:pauseai_ca, :incubators_enabled, false)
+  def authorize(%{required_capability: :slack}, %{actor: %Scope{user: %User{confirmed_at: at}}}),
+    do: at != nil and Application.get_env(:pauseai_ca, :slack_enabled, false)
 
   def authorize(%{required_capability: :tasks}, context),
     do: context.organizer and Application.get_env(:pauseai_ca, :tasks_enabled, false)
@@ -197,6 +200,7 @@ defmodule PauseAiCaWeb.Navigation do
         :acceptance -> "/admin/acceptance"
         :groups -> "/manage/groups"
         :my_groups -> if(locale == "fr", do: "/fr/groupes", else: "/en/groups")
+        :slack -> "/community/slack"
         :tasks -> "/manage/tasks"
         :welcome -> "/manage/welcome-calls"
         :my_welcome -> if(locale == "fr", do: "/fr/appels-accueil", else: "/en/welcome-calls")

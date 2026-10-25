@@ -1,5 +1,11 @@
 [
   %{
+    id: "slack_conversations",
+    title: "Slack conversations and private account links",
+    tables:
+      ~w(chat_slack_oauth_states chat_slack_links chat_slack_inbox chat_slack_messages chat_slack_outbox)
+  },
+  %{
     id: "organizer_tasks",
     title: "Organizer tasks and Activity",
     tables: ~w(organizer_tasks organizer_task_dependencies organizer_task_events)

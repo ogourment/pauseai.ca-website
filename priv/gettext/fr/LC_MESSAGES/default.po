@@ -8896,3 +8896,247 @@ msgstr "Les destinataires sont sélectionnés dans l’appel d’accueil."
 #, elixir-autogen, elixir-format
 msgid "Withdraw from this group’s welcome calls"
 msgstr "Ne plus recevoir d’invitations aux appels d’accueil de ce groupe"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:443
+#, elixir-autogen
+msgid "Application"
+msgstr "Application"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:421
+#, elixir-autogen
+msgid "Capture recent Slack history"
+msgstr "Copier l’historique Slack récent"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:394
+#: lib/pauseai_ca_web/live/slack_community_live.ex:440
+#: lib/pauseai_ca_web/live/slack_community_live.ex:517
+#, elixir-autogen
+msgid "Channel"
+msgstr "Canal"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:312
+#, elixir-autogen
+msgid "Channel access is unavailable. Connect Slack or ask your group manager about access."
+msgstr "L’accès au canal n’est pas disponible. Connectez Slack ou renseignez-vous auprès du responsable de votre groupe."
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:529
+#, elixir-autogen
+msgid "Check the actual Slack conversation before any recovery. This attempt will not be retried automatically."
+msgstr "Vérifiez la conversation dans Slack avant toute reprise. Cette tentative ne sera pas répétée automatiquement."
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:415
+#, elixir-autogen
+msgid "Clear search"
+msgstr "Effacer la recherche"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:377
+#, elixir-autogen
+msgid "Connect Slack"
+msgstr "Connecter Slack"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:14
+#: lib/pauseai_ca_web/live/slack_community_live.ex:358
+#: lib/pauseai_ca_web/navigation.ex:74
+#, elixir-autogen
+msgid "Conversations"
+msgstr "Conversations"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:341
+#, elixir-autogen
+msgid "Delivery uncertain — do not retry"
+msgstr "Publication incertaine — ne réessayez pas"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:384
+#, elixir-autogen
+msgid "Disconnect Slack"
+msgstr "Déconnecter Slack"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:382
+#, elixir-autogen
+msgid "Disconnect Slack and cancel pending posts?"
+msgstr "Déconnecter Slack et annuler les publications en attente ?"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:138
+#, elixir-autogen
+msgid "Enter a message of up to 4,000 characters."
+msgstr "Saisissez un message de 4 000 caractères au maximum."
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:466
+#, elixir-autogen
+msgid "Get original link"
+msgstr "Obtenir le lien d’origine"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:500
+#, elixir-autogen
+msgid "Message"
+msgstr "Message"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:433
+#, elixir-autogen
+msgid "No retained messages match this view."
+msgstr "Aucun message conservé ne correspond à cette vue."
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:424
+#, elixir-autogen
+msgid "Only captured text is searchable here. Each capture reads at most 50 recent messages; older history and attachment bytes may be missing."
+msgstr "La recherche porte sur le texte déjà copié ici. Chaque copie comprend au plus 50 messages récents ; l’historique antérieur et les fichiers joints peuvent manquer."
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:483
+#, elixir-autogen
+msgid "Open original in Slack"
+msgstr "Ouvrir l’original dans Slack"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:524
+#, elixir-autogen
+msgid "Post this exact message to the displayed Slack channel or thread?"
+msgstr "Publier ce message exact dans le canal ou le fil Slack affiché ?"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:528
+#, elixir-autogen
+msgid "Post to Slack"
+msgstr "Publier dans Slack"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:339
+#, elixir-autogen
+msgid "Posted to Slack"
+msgstr "Publié dans Slack"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:338
+#, elixir-autogen
+msgid "Posting"
+msgstr "Publication en cours"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:189
+#, elixir-autogen
+msgid "Posting is unavailable. Check your current access and the saved draft status before trying again."
+msgstr "La publication n’est pas disponible. Vérifiez vos droits actuels et l’état du brouillon enregistré avant de réessayer."
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:461
+#, elixir-autogen
+msgid "Reply"
+msgstr "Répondre"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:493
+#, elixir-autogen
+msgid "Reply to"
+msgstr "Réponse à"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:516
+#, elixir-autogen
+msgid "Review Slack post"
+msgstr "Vérifier la publication Slack"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:410
+#, elixir-autogen
+msgid "Search"
+msgstr "Rechercher"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:408
+#, elixir-autogen
+msgid "Search retained conversations"
+msgstr "Rechercher dans les conversations conservées"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:369
+#, elixir-autogen
+msgid "Slack account connected"
+msgstr "Compte Slack connecté"
+
+#: lib/pauseai_ca_web/controllers/slack_oauth_controller.ex:43
+#, elixir-autogen
+msgid "Slack connection could not be verified. Start a new connection request."
+msgstr "La connexion Slack n’a pas pu être vérifiée. Commencez une nouvelle demande de connexion."
+
+#: lib/pauseai_ca_web/controllers/slack_oauth_controller.ex:16
+#, elixir-autogen
+msgid "Slack connection is unavailable. Please contact the site team."
+msgstr "La connexion Slack n’est pas disponible. Veuillez contacter l’équipe du site."
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:364
+#, elixir-autogen
+msgid "Slack conversations are awaiting site configuration. Please contact the site team."
+msgstr "Les conversations Slack attendent la configuration du site. Veuillez contacter l’équipe du site."
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:206
+#, elixir-autogen
+msgid "Slack history is unavailable. Refresh your connection before trying again."
+msgstr "L’historique Slack n’est pas disponible. Actualisez votre connexion avant de réessayer."
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:443
+#, elixir-autogen
+msgid "Slack member"
+msgstr "Membre Slack"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:340
+#, elixir-autogen
+msgid "Slack rejected this attempt"
+msgstr "Slack a refusé cette tentative"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:429
+#, elixir-autogen
+msgid "Slack reports more history beyond this captured page. Coverage is incomplete."
+msgstr "Slack signale un historique plus ancien que cette page copiée. La couverture est incomplète."
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:240
+#, elixir-autogen
+msgid "The connection changed. Reload before disconnecting."
+msgstr "La connexion a changé. Rechargez la page avant de vous déconnecter."
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:227
+#, elixir-autogen
+msgid "The original Slack link is unavailable."
+msgstr "Le lien Slack d’origine n’est pas disponible."
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:144
+#, elixir-autogen
+msgid "This draft could not be saved. Your text is retained."
+msgstr "Le brouillon n’a pas pu être enregistré. Votre texte est conservé."
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:96
+#, elixir-autogen
+msgid "This message is unavailable. Refresh the channel before replying."
+msgstr "Ce message n’est pas disponible. Actualisez le canal avant de répondre."
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:518
+#, elixir-autogen
+msgid "Thread"
+msgstr "Fil de discussion"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:454
+#, elixir-autogen
+msgid "Thread reply"
+msgstr "Réponse dans un fil"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:492
+#, elixir-autogen
+msgid "Write a message"
+msgstr "Écrire un message"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:494
+#, elixir-autogen
+msgid "Write a new channel message"
+msgstr "Écrire un nouveau message dans le canal"
+
+#: lib/pauseai_ca_web/controllers/slack_oauth_controller.ex:36
+#, elixir-autogen
+msgid "Your Slack account is connected."
+msgstr "Votre compte Slack est connecté."
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:132
+#, elixir-autogen
+msgid "Your conversation draft is saved."
+msgstr "Votre brouillon de conversation est enregistré."
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:535
+#, elixir-autogen
+msgid "Your conversation drafts"
+msgstr "Vos brouillons de conversation"
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:386
+#, elixir-autogen
+msgid "Your website account must be explicitly linked to your Slack account. Access depends on your current website audience and Slack channel membership."
+msgstr "Votre compte sur le site doit être explicitement lié à votre compte Slack. L’accès dépend de vos droits actuels sur le site et de votre appartenance au canal Slack."
+
+#: lib/pauseai_ca_web/live/slack_community_live.ex:473
+#, elixir-autogen
+msgid "Capture thread replies"
+msgstr "Copier les réponses du fil"

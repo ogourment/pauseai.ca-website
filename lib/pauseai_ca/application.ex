@@ -10,6 +10,7 @@ defmodule PauseAiCa.Application do
     children = [
       PauseAiCaWeb.Telemetry,
       PauseAiCa.Repo,
+      PauseAiCa.Chat.SlackInboxWorker,
       PauseAiCa.Volunteers.Dispatcher,
       PauseAiCa.Newsletters.Dispatcher,
       PauseAiCa.Campaigns.RateLimit,

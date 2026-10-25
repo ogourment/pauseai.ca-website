@@ -135,12 +135,16 @@ defmodule PauseAiCaWeb.Router do
   scope "/", PauseAiCaWeb do
     pipe_through [:browser, :require_authenticated_user]
 
+    post "/community/slack/connect", SlackOAuthController, :connect
+    get "/community/slack/callback", SlackOAuthController, :callback
+
     get "/volunteer-profile", VolunteerProfileRedirectController, :index
 
     live_session :require_authenticated_user,
       on_mount: [{PauseAiCaWeb.UserAuth, :require_authenticated}] do
       live "/groups/:id/join", IncubatorsLive, :join
       live "/manage/groups", IncubatorManagementLive, :index
+      live "/community/slack", SlackCommunityLive, :index
       live "/manage/tasks", TasksLive, :index
       live "/manage/tasks/new", TasksLive, :new
       live "/manage/tasks/:id", TasksLive, :show
