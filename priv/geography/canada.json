@@ -1,0 +1,341 @@
+{
+  "version": "canada-crm-v2",
+  "country_aliases": [
+    "CA",
+    "CAN",
+    "Canada"
+  ],
+  "subdivisions": [
+    {
+      "id": "AB",
+      "name": "Alberta",
+      "aliases": []
+    },
+    {
+      "id": "BC",
+      "name": "British Columbia",
+      "aliases": [
+        "Colombie-Britannique"
+      ]
+    },
+    {
+      "id": "MB",
+      "name": "Manitoba",
+      "aliases": []
+    },
+    {
+      "id": "NB",
+      "name": "New Brunswick",
+      "aliases": [
+        "Nouveau-Brunswick"
+      ]
+    },
+    {
+      "id": "NL",
+      "name": "Newfoundland and Labrador",
+      "aliases": [
+        "Terre-Neuve-et-Labrador"
+      ]
+    },
+    {
+      "id": "NS",
+      "name": "Nova Scotia",
+      "aliases": [
+        "Nouvelle-Écosse"
+      ]
+    },
+    {
+      "id": "NT",
+      "name": "Northwest Territories",
+      "aliases": [
+        "Territoires du Nord-Ouest"
+      ]
+    },
+    {
+      "id": "NU",
+      "name": "Nunavut",
+      "aliases": []
+    },
+    {
+      "id": "ON",
+      "name": "Ontario",
+      "aliases": []
+    },
+    {
+      "id": "PE",
+      "name": "Prince Edward Island",
+      "aliases": [
+        "Île-du-Prince-Édouard",
+        "PEI"
+      ]
+    },
+    {
+      "id": "QC",
+      "name": "Québec",
+      "aliases": [
+        "Quebec",
+        "ROQuébec"
+      ]
+    },
+    {
+      "id": "SK",
+      "name": "Saskatchewan",
+      "aliases": []
+    },
+    {
+      "id": "YT",
+      "name": "Yukon",
+      "aliases": []
+    }
+  ],
+  "cities": [
+    {
+      "name": "Toronto",
+      "subdivision": "ON",
+      "aliases": [
+        "North York",
+        "Scarborough",
+        "Etobicoke",
+        "East York",
+        "York",
+        "Toronto, ON",
+        "Toronto, Ontario"
+      ]
+    },
+    {
+      "name": "Ajax",
+      "subdivision": "ON",
+      "aliases": []
+    },
+    {
+      "name": "Brock",
+      "subdivision": "ON",
+      "aliases": []
+    },
+    {
+      "name": "Clarington",
+      "subdivision": "ON",
+      "aliases": []
+    },
+    {
+      "name": "Oshawa",
+      "subdivision": "ON",
+      "aliases": []
+    },
+    {
+      "name": "Pickering",
+      "subdivision": "ON",
+      "aliases": []
+    },
+    {
+      "name": "Scugog",
+      "subdivision": "ON",
+      "aliases": []
+    },
+    {
+      "name": "Uxbridge",
+      "subdivision": "ON",
+      "aliases": []
+    },
+    {
+      "name": "Whitby",
+      "subdivision": "ON",
+      "aliases": []
+    },
+    {
+      "name": "Burlington",
+      "subdivision": "ON",
+      "aliases": []
+    },
+    {
+      "name": "Halton Hills",
+      "subdivision": "ON",
+      "aliases": []
+    },
+    {
+      "name": "Milton",
+      "subdivision": "ON",
+      "aliases": []
+    },
+    {
+      "name": "Oakville",
+      "subdivision": "ON",
+      "aliases": []
+    },
+    {
+      "name": "Brampton",
+      "subdivision": "ON",
+      "aliases": []
+    },
+    {
+      "name": "Caledon",
+      "subdivision": "ON",
+      "aliases": []
+    },
+    {
+      "name": "Mississauga",
+      "subdivision": "ON",
+      "aliases": []
+    },
+    {
+      "name": "Aurora",
+      "subdivision": "ON",
+      "aliases": []
+    },
+    {
+      "name": "East Gwillimbury",
+      "subdivision": "ON",
+      "aliases": []
+    },
+    {
+      "name": "Georgina",
+      "subdivision": "ON",
+      "aliases": []
+    },
+    {
+      "name": "King",
+      "subdivision": "ON",
+      "aliases": []
+    },
+    {
+      "name": "Markham",
+      "subdivision": "ON",
+      "aliases": []
+    },
+    {
+      "name": "Newmarket",
+      "subdivision": "ON",
+      "aliases": []
+    },
+    {
+      "name": "Richmond Hill",
+      "subdivision": "ON",
+      "aliases": []
+    },
+    {
+      "name": "Vaughan",
+      "subdivision": "ON",
+      "aliases": []
+    },
+    {
+      "name": "Whitchurch-Stouffville",
+      "subdivision": "ON",
+      "aliases": []
+    },
+    {
+      "name": "Ottawa",
+      "subdivision": "ON",
+      "aliases": [
+        "Ottawa, ON"
+      ]
+    },
+    {
+      "name": "Vancouver",
+      "subdivision": "BC",
+      "aliases": [
+        "Vancouver, BC",
+        "Vancouver BC"
+      ]
+    },
+    {
+      "name": "Montréal",
+      "subdivision": "QC",
+      "aliases": [
+        "Montreal",
+        "mtl"
+      ]
+    },
+    {
+      "name": "Laval",
+      "subdivision": "QC",
+      "aliases": []
+    },
+    {
+      "name": "Québec",
+      "subdivision": "QC",
+      "aliases": [
+        "Quebec City",
+        "Québec City"
+      ]
+    }
+  ],
+  "areas": [
+    {
+      "id": "toronto_gta",
+      "name": "Toronto / GTA",
+      "cities": [
+        "Toronto",
+        "Ajax",
+        "Brock",
+        "Clarington",
+        "Oshawa",
+        "Pickering",
+        "Scugog",
+        "Uxbridge",
+        "Whitby",
+        "Burlington",
+        "Halton Hills",
+        "Milton",
+        "Oakville",
+        "Brampton",
+        "Caledon",
+        "Mississauga",
+        "Aurora",
+        "East Gwillimbury",
+        "Georgina",
+        "King",
+        "Markham",
+        "Newmarket",
+        "Richmond Hill",
+        "Vaughan",
+        "Whitchurch-Stouffville"
+      ],
+      "definition": "Explicit municipality list retained from the existing approved Toronto/GTA newsletter starting template. Toronto borough city values normalize to Toronto. No postal coverage is inferred."
+    }
+  ],
+  "postal_pattern": "^[ABCEGHJKLMNPRSTVXY]\\d[ABCEGHJKLMNPRSTVWXYZ](?:\\d[ABCEGHJKLMNPRSTVWXYZ]\\d)?$",
+  "postal_subdivisions": {
+    "A": "NL",
+    "B": "NS",
+    "C": "PE",
+    "E": "NB",
+    "G": "QC",
+    "H": "QC",
+    "J": "QC",
+    "K": "ON",
+    "L": "ON",
+    "M": "ON",
+    "N": "ON",
+    "P": "ON",
+    "R": "MB",
+    "S": "SK",
+    "T": "AB",
+    "V": "BC",
+    "Y": "YT"
+  },
+  "notes": [
+    "Vancouver means the city only; no Metro Vancouver expansion.",
+    "A province-only observation does not imply any city. X is shared by NT/NU and deliberately has no inferred subdivision.",
+    "City and subdivision aliases normalize only for this read-only CRM projection; original source observations and saved list rules are untouched.",
+    "Version2 prevents broad legacy city-field tokens from outranking a specific recorded city and excludes Canadian inference for an explicitly foreign country."
+  ],
+  "references": [
+    {
+      "url": "https://www.canadapost-postescanada.ca/cpc/en/support/articles/addressing-guidelines/postal-codes.page",
+      "checked_on": "2026-10-25",
+      "use": "Postal first-character province mapping only, never municipal boundaries."
+    },
+    {
+      "source": "PauseAI existing Toronto/GTA list starting template, c489d69",
+      "use": "Explicit municipality/borough vocabulary retained; not an FSA-to-city database."
+    }
+  ],
+  "non_city_values": [
+    "ROCanada",
+    "ROQuebec",
+    "ROQuébec",
+    "Rest of Canada",
+    "Rest of Quebec",
+    "Rest of Québec"
+  ]
+}

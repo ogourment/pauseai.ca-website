@@ -18,6 +18,7 @@ defmodule PauseAiCa.CRM do
   def search(scope, term), do: PhoenixCRM.search(context(), scope, term)
   require PauseAiCa.ContactMigration.Geography
   alias PauseAiCa.ContactMigration.Geography
+  alias PauseAiCa.CRM.Geography, as: DirectoryGeography
 
   @directory_sizes [10, 25, 50, 100]
 
@@ -27,6 +28,7 @@ defmodule PauseAiCa.CRM do
     if Volunteers.superadmin?(scope) do
       query_text = String.slice(directory_string(params["q"]), 0, 500)
       region = String.slice(directory_string(params["region"]), 0, 200)
+      geography_filters = DirectoryGeography.filters(params)
       all_rows? = params[:all_rows] == true
       per = positive_integer(params["per"], 25)
       per = if per in @directory_sizes, do: per, else: 25
@@ -72,25 +74,38 @@ defmodule PauseAiCa.CRM do
                 )
         end
 
-      matches =
-        if region == "" do
-          matches
-        else
-          from [p, ap, a, l, c] in matches,
-            where: Geography.expression(c.source_data) == ^region
-        end
+      candidates =
+        Repo.all(
+          from p in PhoenixCRM.Person,
+            where: p.id in subquery(matches),
+            order_by: [asc: p.name, asc: p.id],
+            select: %{id: p.id, city: p.city}
+        )
 
-      people = from p in PhoenixCRM.Person, where: p.id in subquery(matches)
-      total = Repo.aggregate(people, :count)
+      geographies = DirectoryGeography.project_people(candidates)
+
+      filtered =
+        Enum.filter(
+          candidates,
+          &DirectoryGeography.matches?(geographies[&1.id], geography_filters, region)
+        )
+
+      total = length(filtered)
       pages = max(1, div(total + per - 1, per))
       page = min(positive_integer(params["page"], 1), pages)
 
+      chosen =
+        if all_rows?,
+          do: Enum.take(filtered, 5000),
+          else: Enum.slice(filtered, (page - 1) * per, per)
+
+      selected_ids = Enum.map(chosen, & &1.id)
+
       selected =
         Repo.all(
-          from p in people,
-            order_by: [asc: p.name, asc: p.id],
-            limit: ^if(all_rows?, do: 5000, else: per),
-            offset: ^if(all_rows?, do: 0, else: (page - 1) * per)
+          from p in PhoenixCRM.Person,
+            where: p.id in ^selected_ids,
+            order_by: [asc: p.name, asc: p.id]
         )
 
       ids = Enum.map(selected, & &1.id)
@@ -114,20 +129,21 @@ defmodule PauseAiCa.CRM do
 
           %{
             person: person,
+            geography: geographies[person.id],
             aliases: person_aliases,
             addresses: Enum.flat_map(person_aliases, &Map.get(grouped_addresses, &1, []))
           }
         end
 
-      regions =
-        Repo.all(
-          from c in Contact,
-            join: l in ContactLink,
-            on: l.contact_id == c.id,
-            select: Geography.expression(c.source_data),
-            distinct: true
-        )
+      regions = geographies |> Map.values() |> Enum.flat_map(& &1.regions) |> Enum.uniq()
+
+      cities =
+        geographies
+        |> Map.values()
+        |> Enum.map(& &1.city)
         |> Enum.reject(&is_nil/1)
+        |> Enum.uniq()
+        |> Enum.sort()
 
       if Volunteers.superadmin?(scope) do
         {:ok,
@@ -139,6 +155,10 @@ defmodule PauseAiCa.CRM do
            per: per,
            q: query_text,
            region: region,
+           geography_filters: geography_filters,
+           geography_version: DirectoryGeography.version(),
+           cities: cities,
+           truncated?: all_rows? and total > 5000,
            archived: params["archived"] == "true",
            regions: Enum.uniq(["Montréal", "ROQuébec", "ROCanada" | regions]) |> Enum.sort()
          }}

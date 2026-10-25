@@ -37,7 +37,16 @@ defmodule PauseAiCaWeb.AdminContactsLive do
          status: nil,
          form: to_form(%{}, as: "contact"),
          search: "",
-         directory_page: %{region: "", regions: [], page: 1, pages: 1, per: 25, total: 0}
+         directory_page: %{
+           region: "",
+           regions: [],
+           geography_filters: PauseAiCa.CRM.Geography.filters(%{}),
+           cities: [],
+           page: 1,
+           pages: 1,
+           per: 25,
+           total: 0
+         }
        )}
     else
       {:ok,
@@ -72,6 +81,21 @@ defmodule PauseAiCaWeb.AdminContactsLive do
       :directory ->
         with {:ok, page} <- CRM.directory_page(scope, params),
              {:ok, origins} <- CRM.directory_origins(scope, page.records) do
+          previous = socket.assigns.directory_page
+
+          socket =
+            if previous.region != page.region or
+                 previous.geography_filters != page.geography_filters do
+              assign(socket,
+                selected_ids: [],
+                invitation_ids: [],
+                invitation_drafts: [],
+                invitation_excluded: []
+              )
+            else
+              socket
+            end
+
           {:noreply,
            assign(socket,
              record: nil,
@@ -98,6 +122,12 @@ defmodule PauseAiCaWeb.AdminContactsLive do
       per: params["per"] || socket.assigns.directory_page.per,
       page: 1
     }
+
+    values =
+      Map.merge(
+        values,
+        PauseAiCa.CRM.Geography.filter_params(PauseAiCa.CRM.Geography.filters(params))
+      )
 
     values = if socket.assigns.archived, do: Map.put(values, :archived, "true"), else: values
 
@@ -374,6 +404,36 @@ defmodule PauseAiCaWeb.AdminContactsLive do
     end
   end
 
+  defp province_label(nil), do: nil
+  defp province_label("AB"), do: gettext("Alberta")
+  defp province_label("BC"), do: gettext("British Columbia")
+  defp province_label("MB"), do: gettext("Manitoba")
+  defp province_label("NB"), do: gettext("New Brunswick")
+  defp province_label("NL"), do: gettext("Newfoundland and Labrador")
+  defp province_label("NS"), do: gettext("Nova Scotia")
+  defp province_label("NT"), do: gettext("Northwest Territories")
+  defp province_label("NU"), do: gettext("Nunavut")
+  defp province_label("ON"), do: gettext("Ontario")
+  defp province_label("PE"), do: gettext("Prince Edward Island")
+  defp province_label("QC"), do: gettext("Quebec")
+  defp province_label("SK"), do: gettext("Saskatchewan")
+  defp province_label("YT"), do: gettext("Yukon")
+  defp province_label(code), do: code
+
+  defp geography_label(geography) do
+    values =
+      [
+        geography.city,
+        province_label(geography.subdivision),
+        geography.postal_area
+      ]
+      |> Enum.reject(&is_nil/1)
+      |> Enum.uniq()
+
+    values = if values == [], do: geography.regions, else: values
+    if values == [], do: gettext("Location not provided"), else: Enum.join(values, " · ")
+  end
+
   defp directory_uri(locale, search, directory, page) do
     values = %{
       locale: locale,
@@ -382,6 +442,8 @@ defmodule PauseAiCaWeb.AdminContactsLive do
       per: directory.per,
       page: page
     }
+
+    values = Map.merge(values, PauseAiCa.CRM.Geography.filter_params(directory.geography_filters))
 
     values =
       if Map.get(directory, :archived), do: Map.put(values, :archived, "true"), else: values
@@ -673,7 +735,7 @@ defmodule PauseAiCaWeb.AdminContactsLive do
               id="crm-region"
               name="region"
               value={@directory_page.region}
-              label={gettext("Geography")}
+              label={gettext("Recorded region")}
               options={[{gettext("All regions"), ""} | Enum.map(@directory_page.regions, &{&1, &1})]}
             />
             <.input
@@ -684,7 +746,79 @@ defmodule PauseAiCaWeb.AdminContactsLive do
               label={gettext("Rows per page")}
               options={Enum.map([10, 25, 50, 100], &{to_string(&1), &1})}
             />
+            <input type="hidden" name="provinces[]" value="" />
+            <.input
+              type="select"
+              multiple
+              id="crm-provinces"
+              name="provinces[]"
+              value={@directory_page.geography_filters["provinces"]}
+              label={gettext("Provinces and territories")}
+              options={
+                Enum.map(
+                  PauseAiCa.CRM.Geography.catalogue()["subdivisions"],
+                  &{province_label(&1["id"]), &1["id"]}
+                )
+              }
+            />
+            <input type="hidden" name="cities[]" value="" />
+            <.input
+              type="select"
+              multiple
+              id="crm-cities"
+              name="cities[]"
+              value={@directory_page.geography_filters["cities"]}
+              label={gettext("Cities")}
+              options={
+                Enum.uniq(
+                  @directory_page.cities ++
+                    Enum.map(PauseAiCa.CRM.Geography.catalogue()["cities"], & &1["name"]) ++
+                    @directory_page.geography_filters["cities"]
+                )
+                |> Enum.sort()
+                |> Enum.map(&{&1, &1})
+              }
+            />
+            <input type="hidden" name="areas[]" value="" />
+            <.input
+              type="select"
+              multiple
+              id="crm-areas"
+              name="areas[]"
+              value={@directory_page.geography_filters["areas"]}
+              label={gettext("Named areas")}
+              options={
+                Enum.map(PauseAiCa.CRM.Geography.catalogue()["areas"], &{&1["name"], &1["id"]})
+              }
+            />
+            <.input
+              id="crm-fsas"
+              name="fsas"
+              value={Enum.join(@directory_page.geography_filters["fsas"], ", ")}
+              label={gettext("FSA (first three postal-code characters)")}
+              placeholder="H2X"
+            />
+            <.input
+              type="checkbox"
+              id="crm-unknown-geography"
+              name="unknown"
+              value="true"
+              checked={@directory_page.geography_filters["unknown"] == "true"}
+              label={gettext("Include contacts without a city, province or FSA")}
+            />
+            <p class="sm:col-span-3 text-sm" id="crm-geography-help">
+              {gettext(
+                "Geographic selections match any selected province, city, named area or FSA (OR). Separate FSAs with commas, for example H2X, H2Y."
+              )}
+              {gettext(
+                "Toronto / GTA uses the listed municipalities; Vancouver means the city. Unknown places are not assigned to a city or province."
+              )}
+            </p>
           </.form>
+          <details id="crm-area-definition" class="my-3 text-sm">
+            <summary>{gettext("Toronto / GTA municipalities")}</summary>
+            <p>{Enum.join(hd(PauseAiCa.CRM.Geography.catalogue()["areas"])["cities"], ", ")}</p>
+          </details>
           <p>
             {gettext(
               "Historical contacts are private. Importing or reconciling them does not create an account or consent."
@@ -740,6 +874,18 @@ defmodule PauseAiCaWeb.AdminContactsLive do
                   ~p"/admin/contacts/#{record.person.id}?locale=#{@locale}&q=#{@search}"
                 }>{address.email}</.link>
               </div>
+              <p
+                id={"crm-geography-" <> record.person.id}
+                class="mt-2 text-sm"
+                data-geography-version={record.geography.version}
+              >
+                <strong>{gettext("Current location")}:</strong>
+                {geography_label(record.geography)}
+                <span :if={record.geography.conflicting?}> · {gettext("Conflicting source locations")}</span>
+                <span :if={record.geography.unresolved?}> · {gettext(
+                  "Some location details are unresolved"
+                )}</span>
+              </p>
               <div :for={origin <- Map.get(@directory_origins, record.person.id, [])} class="mt-2">
                 <p
                   :if={length(Map.get(@directory_origins, record.person.id, [])) > 1}
