@@ -751,6 +751,7 @@ defmodule PauseAiCaWeb.AdminContactsLive do
               type="select"
               multiple
               id="crm-provinces"
+              class="block w-full min-w-0 rounded-lg border border-base-300 bg-base-100 px-3 py-2 text-base-content"
               name="provinces[]"
               value={@directory_page.geography_filters["provinces"]}
               label={gettext("Provinces and territories")}
@@ -766,6 +767,7 @@ defmodule PauseAiCaWeb.AdminContactsLive do
               type="select"
               multiple
               id="crm-cities"
+              class="block w-full min-w-0 rounded-lg border border-base-300 bg-base-100 px-3 py-2 text-base-content"
               name="cities[]"
               value={@directory_page.geography_filters["cities"]}
               label={gettext("Cities")}
@@ -784,6 +786,7 @@ defmodule PauseAiCaWeb.AdminContactsLive do
               type="select"
               multiple
               id="crm-areas"
+              class="block w-full min-w-0 rounded-lg border border-base-300 bg-base-100 px-3 py-2 text-base-content"
               name="areas[]"
               value={@directory_page.geography_filters["areas"]}
               label={gettext("Named areas")}

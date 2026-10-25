@@ -245,6 +245,12 @@ if System.get_env("ATDD") == "true" do
         end)
 
     defp capture(browser, locale, control, outcome) do
+      PhoenixTest.Playwright.evaluate(
+        browser,
+        "document.documentElement.scrollWidth <= innerWidth",
+        &assert(&1)
+      )
+
       step = Process.get({:geo_step, locale}, 0) + 1
       Process.put({:geo_step, locale}, step)
       filename = "GEO-PAI-01-#{locale}-#{step}.png"
