@@ -54,9 +54,14 @@ for {feature, variable} <- [
     ] do
   enabled =
     case System.get_env(variable) do
-      nil -> config_env() == :test and feature == :incubators_enabled
-      "true" -> true
-      _ -> false
+      nil ->
+        config_env() == :test and feature in [:incubators_enabled, :manifund_donations_enabled]
+
+      "true" ->
+        true
+
+      _ ->
+        false
     end
 
   config :pauseai_ca, feature, enabled

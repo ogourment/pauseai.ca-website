@@ -23,9 +23,10 @@ if System.get_env("ATDD") == "true" do
                     "Desktop"},
                    {"WARN-02", "Protest recap leads to continued engagement", "English / French",
                     "Mobile"},
-                   {"DON-01", "Bilingual donation pledge without payment", "English / French",
-                    "Mobile"},
-                   {"DON-02", "Superadmin follows up on a real pledge", "English", "Desktop"}
+                   {"DON-01", "Bilingual Manifund handoff without local pledge intake",
+                    "English / French", "Mobile"},
+                   {"DON-02", "Superadmin retains historical pledge follow-up", "English",
+                    "Desktop"}
                  ],
                  fn {id, title, language, device} ->
                    %{
@@ -805,118 +806,89 @@ if System.get_env("ATDD") == "true" do
     end
 
     @tag browser_context_opts: [viewport: %{width: 390, height: 844}]
-    test "DON-01 bilingual pledge → validation → save → reload and duplicate", context do
+    test "DON-01 bilingual campaign summary → Manifund handoff → Interac fallback", context do
       id = "DON-01"
 
-      for {locale, donate, name, email_label, amount, notes, consent, save, acknowledgement} <- [
-            {"en", "Donate", "Name", "Email", "Amount you intend to give (CAD, optional)",
-             "Notes (optional)", "You may contact me about this pledge.", "Save",
-             "No payment has been taken"},
-            {"fr", "Faire un don", "Nom", "Courriel",
-             "Montant que vous souhaitez donner (CAD, facultatif)", "Commentaires (facultatif)",
-             "Vous pouvez me contacter au sujet de cette promesse de don.", "Enregistrer",
-             "Aucun paiement"}
+      baseline =
+        {Repo.aggregate(PauseAiCa.Donations.Pledge, :count), Repo.aggregate(User, :count),
+         Repo.aggregate(PauseAiCa.Newsletters.Subscription, :count)}
+
+      configured = Application.fetch_env!(:pauseai_ca, :manifund_campaign)
+      on_exit(fn -> Application.put_env(:pauseai_ca, :manifund_campaign, configured) end)
+      url = "https://manifund.org/projects/pauseai-canada-national-expansion--core-operations"
+
+      for {locale, donate, cta, disclosure} <- [
+            {"en", "Donate", "Donate on Manifund", "A Manifund account is required"},
+            {"fr", "Faire un don", "Faire un don sur Manifund",
+             "Un compte Manifund est nécessaire"}
           ] do
-        email = "pledge-#{locale}@example.org"
-
-        frequency_label =
-          if locale == "fr", do: "Fréquence de la contribution", else: "Contribution frequency"
-
-        monthly_label = if locale == "fr", do: "Mensuelle", else: "Monthly"
-        one_time_label = if locale == "fr", do: "Ponctuelle", else: "One-time"
+        path = if locale == "fr", do: "/fr/faire-un-don", else: "/en/donate"
 
         b =
           context.conn
           |> visit("/#{locale}")
-          |> capture(id, "Open #{locale} learning page", "Donate is available in the header")
+          |> capture(id, "Open the public home page", "Click Donate in the header")
           |> click_link(donate)
-          |> assert_has("#donate-page ul li", count: 9)
-          |> assert_has("#donate-page", text: "1819452-1")
-          |> assert_has("#donate-page", text: "791107246")
+          |> assert_path(path)
+          |> assert_has("#manifund-donate[href='#{url}']", text: cta)
+          |> assert_has("#manifund-account-requirement", text: disclosure, exact: false)
+          |> assert_has("#manifund-proposal[href='#{url}']")
           |> assert_has("#donation-email", text: "pauseaicanada@proton.me")
           |> assert_has("#donate-interac strong", text: "PauseAI Canada")
+          |> refute_has("#pledge-form")
+          |> refute_has("#pledge-suggestions")
           |> capture(
             id,
-            "Open #{locale} Donate",
-            "Verified Interac recipient and Autodeposit instructions; a separate pledge form remains available"
-          )
-          |> assert_has("#pledge_frequency", selected: one_time_label)
-          |> select(frequency_label, option: monthly_label, exact: false)
-          |> fill_in(name, with: "Camille Example")
-          |> fill_in(email_label, with: "invalid@example")
-          |> assert_has("#pledge_email.input-error")
-          |> assert_has("#pledge_name[value='Camille Example']")
-          |> assert_has("#pledge_frequency", selected: monthly_label)
-          |> capture(id, "Enter an invalid email", "Inline error preserves the entered name")
-          |> fill_in(email_label, with: email)
-          |> fill_in(amount, with: "50.25")
-          |> fill_in(notes, with: "Please contact me in #{locale}")
-          |> check(consent)
-          |> capture(
-            id,
-            "Enter contact details and permission",
-            "Monthly amount and notes ready for submission"
-          )
-          |> click_button(save)
-          |> assert_has("#pledge-saved", text: acknowledgement)
-          |> capture(
-            id,
-            "Save the pledge",
-            "Acknowledgement explains follow-up and confirms no payment"
+            "Open Donate",
+            "Public summary and explicit external account requirement; Interac remains secondary"
           )
 
-        pledge = Repo.get_by!(PauseAiCa.Donations.Pledge, email: email)
-        assert pledge.locale == locale and pledge.consented_at != nil
-        assert pledge.frequency == "monthly"
-        assert Decimal.equal?(pledge.amount_cad, Decimal.new("50.25"))
-        assert Repo.aggregate(User, :count) == 0
-        refute_receive {:email, _}
-        path = if locale == "fr", do: "/fr/faire-un-don", else: "/en/donate"
+        assert_no_overflow(b)
+
+        Application.put_env(:pauseai_ca, :manifund_campaign,
+          project_id: "invalid",
+          url: "https://invalid.example.org"
+        )
 
         b =
           b
           |> visit(path)
-          |> fill_in(name, with: "Repeated submission")
-          |> fill_in(email_label, with: email)
-          |> check(consent)
-          |> click_button(save)
-          |> assert_has("#pledge-saved")
+          |> assert_has("#manifund-unavailable")
+          |> assert_has("#donation-email", text: "pauseaicanada@proton.me")
+          |> refute_has("#manifund-donate")
           |> capture(
             id,
-            "Reload and submit the same email again",
-            "Generic acknowledgement preserves the original pledge"
+            "Reload with unusable campaign configuration",
+            "Local summary and verified Interac remain available"
           )
 
-        assert Repo.get_by!(PauseAiCa.Donations.Pledge, email: email).name == "Camille Example"
-        assert Repo.get_by!(PauseAiCa.Donations.Pledge, email: email).frequency == "monthly"
         assert_no_overflow(b)
+        Application.put_env(:pauseai_ca, :manifund_campaign, configured)
       end
 
-      assert Repo.aggregate(PauseAiCa.Donations.Pledge, :count) == 2
+      assert baseline ==
+               {Repo.aggregate(PauseAiCa.Donations.Pledge, :count), Repo.aggregate(User, :count),
+                Repo.aggregate(PauseAiCa.Newsletters.Subscription, :count)}
+
+      refute_receive {:email, _}
       finish(id)
     end
 
-    test "DON-02 real pledge → superadmin follow-up → manager and visitor denial", context do
+    test "DON-02 historical pledge → superadmin follow-up → manager and visitor denial",
+         context do
       id = "DON-02"
 
-      context.conn
-      |> visit("/en")
-      |> click("#consent-decline")
-      |> capture(id, "Start as a visitor", "Donate is available without an account")
-      |> click_link("Donate")
-      |> fill_in("Name", with: "Camille Example")
-      |> fill_in("Email", with: "followup@example.org")
-      |> select("Contribution frequency", option: "Monthly", exact: false)
-      |> fill_in("Amount you intend to give (CAD, optional)", with: "125")
-      |> fill_in("Notes (optional)", with: "For printing")
-      |> check("You may contact me about this pledge.")
-      |> click_button("Save")
-      |> assert_has("#pledge-saved")
-      |> capture(
-        id,
-        "Submit contact permission and pledge",
-        "A real saved pledge will appear in admin tools"
-      )
+      # This is a pre-existing historical fixture; the public page accepts no new pledges.
+      {:ok, :recorded} =
+        PauseAiCa.Donations.pledge(%{
+          "name" => "Camille Example",
+          "email" => "followup@example.org",
+          "locale" => "en",
+          "frequency" => "monthly",
+          "amount_cad" => "125",
+          "notes" => "For printing",
+          "contact_consent" => true
+        })
 
       assert Repo.aggregate(User, :count) == 0
       refute_receive {:email, _}

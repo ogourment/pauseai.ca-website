@@ -6,9 +6,17 @@ defmodule PauseAiCaWeb.DonateLiveTest do
   alias PauseAiCa.Accounts.{Scope, User}
   alias PauseAiCa.Donations.Pledge
 
-  test "bilingual form preserves errors and saves a pledge once without creating an account", %{
-    conn: conn
-  } do
+  setup do
+    previous = Application.get_env(:pauseai_ca, :manifund_donations_enabled)
+    Application.put_env(:pauseai_ca, :manifund_donations_enabled, false)
+    on_exit(fn -> Application.put_env(:pauseai_ca, :manifund_donations_enabled, previous) end)
+    :ok
+  end
+
+  test "legacy rollback form preserves errors and saves a pledge once without creating an account",
+       %{
+         conn: conn
+       } do
     {:ok, view, _} = live(conn, "/fr/faire-un-don")
     assert has_element?(view, "#donate-page", "PauseIA Canada")
     assert has_element?(view, "#donate-page", "1819452-1")
@@ -82,9 +90,10 @@ defmodule PauseAiCaWeb.DonateLiveTest do
     assert {:error, :unauthorized} = Donations.list(scope)
   end
 
-  test "suggested pledge amount updates the short form without losing contact details", %{
-    conn: conn
-  } do
+  test "legacy rollback suggested pledge amount updates the short form without losing contact details",
+       %{
+         conn: conn
+       } do
     {:ok, view, _} = live(conn, "/en/donate")
 
     assert has_element?(view, "#funding-themes > section:nth-child(4)")
