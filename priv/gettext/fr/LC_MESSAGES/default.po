@@ -2407,7 +2407,7 @@ msgid "This draft is unavailable."
 msgstr "Ce brouillon est indisponible."
 
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:149
-#: lib/pauseai_ca_web/live/tasks_live.ex:328
+#: lib/pauseai_ca_web/live/tasks_live.ex:327
 #, elixir-autogen, elixir-format
 msgid "This field is required."
 msgstr "Ce champ est obligatoire."
@@ -2585,8 +2585,8 @@ msgstr "Rechercher des comptes"
 
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:669
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:299
-#: lib/pauseai_ca_web/live/tasks_live.ex:282
-#: lib/pauseai_ca_web/live/tasks_live.ex:468
+#: lib/pauseai_ca_web/live/tasks_live.ex:281
+#: lib/pauseai_ca_web/live/tasks_live.ex:467
 #: lib/pauseai_ca_web/live/welcome_management_live.ex:437
 #, elixir-autogen, elixir-format
 msgid "Status"
@@ -2860,8 +2860,8 @@ msgid "Transactional emails"
 msgstr "Courriels transactionnels"
 
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:419
-#: lib/pauseai_ca_web/live/tasks_live.ex:247
-#: lib/pauseai_ca_web/live/tasks_live.ex:442
+#: lib/pauseai_ca_web/live/tasks_live.ex:246
+#: lib/pauseai_ca_web/live/tasks_live.ex:441
 #, elixir-autogen, elixir-format
 msgid "Unassigned"
 msgstr "Non attribué"
@@ -2997,7 +2997,7 @@ msgstr "Montant promis"
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:912
 #: lib/pauseai_ca_web/live/newsletters_live.ex:355
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:586
-#: lib/pauseai_ca_web/live/tasks_live.ex:507
+#: lib/pauseai_ca_web/live/tasks_live.ex:506
 #: lib/pauseai_ca_web/live/welcome_management_live.ex:440
 #, elixir-autogen, elixir-format
 msgid "Saving…"
@@ -3454,7 +3454,7 @@ msgstr ""
 #: lib/pauseai_ca_web/live/donate_live.ex:400
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:853
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:586
-#: lib/pauseai_ca_web/live/tasks_live.ex:509
+#: lib/pauseai_ca_web/live/tasks_live.ex:508
 #: lib/pauseai_ca_web/live/welcome_management_live.ex:440
 #, elixir-autogen, elixir-format
 msgid "Save"
@@ -3829,7 +3829,7 @@ msgstr "Compte et historique Brevo"
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:1109
 #: lib/pauseai_ca_web/live/incubator_management_live.ex:491
 #: lib/pauseai_ca_web/live/tasks_live.ex:62
-#: lib/pauseai_ca_web/live/tasks_live.ex:377
+#: lib/pauseai_ca_web/live/tasks_live.ex:376
 #, elixir-autogen, elixir-format
 msgid "Activity"
 msgstr "Activité"
@@ -5457,7 +5457,7 @@ msgstr "Notes des réviseurs"
 
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:333
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:350
-#: lib/pauseai_ca_web/live/tasks_live.ex:392
+#: lib/pauseai_ca_web/live/tasks_live.ex:391
 #, elixir-autogen, elixir-format
 msgid "Revision"
 msgstr "Révision"
@@ -6714,7 +6714,7 @@ msgid "The last Markdown link is incomplete. Finish its URL and closing parenthe
 msgstr "Le dernier lien Markdown est incomplet. Terminez son URL et fermez la parenthèse avant de préparer un lot."
 
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:768
-#: lib/pauseai_ca_web/live/tasks_live.ex:265
+#: lib/pauseai_ca_web/live/tasks_live.ex:264
 #: lib/pauseai_ca_web/live/welcome_management_live.ex:294
 #, elixir-autogen, elixir-format
 msgid "Unknown"
@@ -7646,267 +7646,262 @@ msgstr "Vos coordonnées et vos choix"
 msgid "From: %{email}"
 msgstr "De : %{email}"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:332
+#: lib/pauseai_ca_web/live/tasks_live.ex:331
 #, elixir-autogen, elixir-format
 msgid "A prerequisite is unavailable in this group."
 msgstr "Un préalable est indisponible dans ce groupe."
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:283
-#: lib/pauseai_ca_web/live/tasks_live.ex:431
+#: lib/pauseai_ca_web/live/tasks_live.ex:282
+#: lib/pauseai_ca_web/live/tasks_live.ex:430
 #, elixir-autogen, elixir-format
 msgid "Accountable owner"
 msgstr "Responsable"
 
 #: lib/pauseai_ca_web/live/tasks_live.ex:61
-#: lib/pauseai_ca_web/live/tasks_live.ex:356
-#: lib/pauseai_ca_web/live/tasks_live.ex:389
+#: lib/pauseai_ca_web/live/tasks_live.ex:355
+#: lib/pauseai_ca_web/live/tasks_live.ex:388
 #, elixir-autogen, elixir-format
 msgid "Add task"
 msgstr "Ajouter une tâche"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:284
-#: lib/pauseai_ca_web/live/tasks_live.ex:440
-#: lib/pauseai_ca_web/live/tasks_live.ex:530
+#: lib/pauseai_ca_web/live/tasks_live.ex:283
+#: lib/pauseai_ca_web/live/tasks_live.ex:439
+#: lib/pauseai_ca_web/live/tasks_live.ex:529
 #, elixir-autogen, elixir-format
 msgid "Assigned to"
 msgstr "Attribuée à"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:510
+#: lib/pauseai_ca_web/live/tasks_live.ex:509
 #, elixir-autogen, elixir-format
 msgid "Back to tasks"
 msgstr "Retour aux tâches"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:285
-#: lib/pauseai_ca_web/live/tasks_live.ex:449
+#: lib/pauseai_ca_web/live/tasks_live.ex:284
+#: lib/pauseai_ca_web/live/tasks_live.ex:448
 #, elixir-autogen, elixir-format
 msgid "Backup"
 msgstr "Relève"
 
 #: lib/pauseai_ca_web/live/slack_community_live.ex:342
-#: lib/pauseai_ca_web/live/tasks_live.ex:264
+#: lib/pauseai_ca_web/live/tasks_live.ex:263
 #: lib/pauseai_ca_web/live/welcome_management_live.ex:293
 #, elixir-autogen, elixir-format
 msgid "Cancelled"
 msgstr "Annulée"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:270
+#: lib/pauseai_ca_web/live/tasks_live.ex:269
 #, elixir-autogen, elixir-format
 msgid "Changed"
 msgstr "Modification"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:311
+#: lib/pauseai_ca_web/live/tasks_live.ex:310
 #, elixir-autogen, elixir-format
 msgid "Check the title, date, assignments, reassignment reason and prerequisites. Your draft has been retained."
 msgstr "Vérifiez le titre, la date, les attributions, le motif de réattribution et les préalables. Votre brouillon a été conservé."
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:337
+#: lib/pauseai_ca_web/live/tasks_live.ex:336
 #, elixir-autogen, elixir-format
 msgid "Check this value."
 msgstr "Vérifiez cette valeur."
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:326
+#: lib/pauseai_ca_web/live/tasks_live.ex:325
 #, elixir-autogen, elixir-format
 msgid "Choose a current confirmed manager of this group."
 msgstr "Choisissez une personne actuellement responsable de ce groupe dont le compte est confirmé."
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:323
+#: lib/pauseai_ca_web/live/tasks_live.ex:322
 #, elixir-autogen, elixir-format
 msgid "Choose a different person from the assignee."
 msgstr "Choisissez une autre personne que celle à qui la tâche est attribuée."
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:433
+#: lib/pauseai_ca_web/live/tasks_live.ex:432
 #, elixir-autogen, elixir-format
 msgid "Choose a manager"
 msgstr "Choisir une personne responsable"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:303
+#: lib/pauseai_ca_web/live/tasks_live.ex:302
 #, elixir-autogen, elixir-format
 msgid "Complete these prerequisites first: %{titles}"
 msgstr "Terminez d’abord ces préalables : %{titles}"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:266
+#: lib/pauseai_ca_web/live/tasks_live.ex:265
 #: lib/pauseai_ca_web/live/welcome_management_live.ex:271
 #, elixir-autogen, elixir-format
 msgid "Created"
 msgstr "Création"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:493
-#: lib/pauseai_ca_web/live/tasks_live.ex:499
+#: lib/pauseai_ca_web/live/tasks_live.ex:492
+#: lib/pauseai_ca_web/live/tasks_live.ex:498
 #, elixir-autogen, elixir-format
 msgid "Description"
 msgstr "Description"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:263
+#: lib/pauseai_ca_web/live/tasks_live.ex:262
 #, elixir-autogen, elixir-format
 msgid "Done"
 msgstr "Terminée"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:286
-#: lib/pauseai_ca_web/live/tasks_live.ex:460
-#: lib/pauseai_ca_web/live/tasks_live.ex:532
+#: lib/pauseai_ca_web/live/tasks_live.ex:285
+#: lib/pauseai_ca_web/live/tasks_live.ex:459
+#: lib/pauseai_ca_web/live/tasks_live.ex:531
 #, elixir-autogen, elixir-format
 msgid "Due date"
 msgstr "Échéance"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:389
+#: lib/pauseai_ca_web/live/tasks_live.ex:388
 #, elixir-autogen, elixir-format
 msgid "Edit task"
 msgstr "Modifier la tâche"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:580
+#: lib/pauseai_ca_web/live/tasks_live.ex:579
 #, elixir-autogen, elixir-format
 msgid "Event ID"
 msgstr "ID de l’événement"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:256
+#: lib/pauseai_ca_web/live/tasks_live.ex:255
 #, elixir-autogen, elixir-format
 msgid "Former group manager"
 msgstr "Ancien responsable du groupe"
 
 #: lib/pauseai_ca_web/live/incubator_management_live.ex:255
-#: lib/pauseai_ca_web/live/tasks_live.ex:362
+#: lib/pauseai_ca_web/live/tasks_live.ex:361
 #: lib/pauseai_ca_web/live/welcome_management_live.ex:354
 #, elixir-autogen, elixir-format
 msgid "Group"
 msgstr "Groupe"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:261
+#: lib/pauseai_ca_web/live/tasks_live.ex:260
 #, elixir-autogen, elixir-format
 msgid "In progress"
 msgstr "En cours"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:262
+#: lib/pauseai_ca_web/live/tasks_live.ex:261
 #, elixir-autogen, elixir-format
 msgid "In review"
 msgstr "En révision"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:405
+#: lib/pauseai_ca_web/live/tasks_live.ex:404
 #, elixir-autogen, elixir-format
 msgid "Keep my draft for review"
 msgstr "Conserver mon brouillon pour révision"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:451
+#: lib/pauseai_ca_web/live/tasks_live.ex:450
 #, elixir-autogen, elixir-format
 msgid "No backup"
 msgstr "Aucune relève"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:551
+#: lib/pauseai_ca_web/live/tasks_live.ex:550
 #, elixir-autogen, elixir-format
 msgid "No task activity yet."
 msgstr "Aucune activité liée aux tâches pour le moment."
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:526
+#: lib/pauseai_ca_web/live/tasks_live.ex:525
 #, elixir-autogen, elixir-format
 msgid "No tasks yet. Add the first task for this group."
 msgstr "Aucune tâche pour le moment. Ajoutez la première tâche de ce groupe."
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:260
+#: lib/pauseai_ca_web/live/tasks_live.ex:259
 #, elixir-autogen, elixir-format
 msgid "Open"
 msgstr "À faire"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:564
+#: lib/pauseai_ca_web/live/tasks_live.ex:563
 #, elixir-autogen, elixir-format
 msgid "Open task"
 msgstr "Ouvrir la tâche"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:307
+#: lib/pauseai_ca_web/live/tasks_live.ex:306
 #, elixir-autogen, elixir-format
 msgid "Please correct the highlighted fields."
 msgstr "Veuillez corriger les champs signalés."
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:485
+#: lib/pauseai_ca_web/live/tasks_live.ex:484
 #, elixir-autogen, elixir-format
 msgid "Prerequisites"
 msgstr "Préalables"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:477
+#: lib/pauseai_ca_web/live/tasks_live.ex:476
 #, elixir-autogen, elixir-format
 msgid "Reason for reassignment"
 msgstr "Motif de réattribution"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:268
+#: lib/pauseai_ca_web/live/tasks_live.ex:267
 #, elixir-autogen, elixir-format
 msgid "Reassigned"
 msgstr "Réattribution"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:404
+#: lib/pauseai_ca_web/live/tasks_live.ex:403
 #, elixir-autogen, elixir-format
 msgid "Reload current values"
 msgstr "Recharger les valeurs actuelles"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:335
+#: lib/pauseai_ca_web/live/tasks_live.ex:334
 #, elixir-autogen, elixir-format
 msgid "Reopen a completed or cancelled task before changing its status."
 msgstr "Rouvrez une tâche terminée ou annulée avant de modifier son état."
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:401
+#: lib/pauseai_ca_web/live/tasks_live.ex:400
 #, elixir-autogen, elixir-format
 msgid "Requested by"
 msgstr "Demandée par"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:269
+#: lib/pauseai_ca_web/live/tasks_live.ex:268
 #, elixir-autogen, elixir-format
 msgid "Status changed"
 msgstr "Changement d’état"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:392
+#: lib/pauseai_ca_web/live/tasks_live.ex:391
 #, elixir-autogen, elixir-format
 msgid "Task ID"
 msgstr "ID de la tâche"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:516
+#: lib/pauseai_ca_web/live/tasks_live.ex:515
 #, elixir-autogen, elixir-format
 msgid "Task history"
 msgstr "Historique de la tâche"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:175
-#, elixir-autogen, elixir-format
-msgid "Task saved."
-msgstr "Tâche enregistrée."
-
-#: lib/pauseai_ca_web/live/tasks_live.ex:367
+#: lib/pauseai_ca_web/live/tasks_live.ex:366
 #, elixir-autogen, elixir-format
 msgid "Task views"
 msgstr "Vues des tâches"
 
 #: lib/pauseai_ca_web/live/tasks_live.ex:16
 #: lib/pauseai_ca_web/live/tasks_live.ex:63
-#: lib/pauseai_ca_web/live/tasks_live.ex:352
-#: lib/pauseai_ca_web/live/tasks_live.ex:372
+#: lib/pauseai_ca_web/live/tasks_live.ex:351
+#: lib/pauseai_ca_web/live/tasks_live.ex:371
 #: lib/pauseai_ca_web/navigation.ex:63
 #, elixir-autogen, elixir-format
 msgid "Tasks"
 msgstr "Tâches"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:329
+#: lib/pauseai_ca_web/live/tasks_live.ex:328
 #, elixir-autogen, elixir-format
 msgid "These prerequisites would create a cycle."
 msgstr "Ces préalables créeraient un cycle."
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:210
+#: lib/pauseai_ca_web/live/tasks_live.ex:209
 #, elixir-autogen, elixir-format
 msgid "This group or task is unavailable."
 msgstr "Ce groupe ou cette tâche est indisponible."
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:299
+#: lib/pauseai_ca_web/live/tasks_live.ex:298
 #, elixir-autogen, elixir-format
 msgid "This save key was already used. Reload the task before saving again."
 msgstr "Cette clé d’enregistrement a déjà été utilisée. Rechargez la tâche avant de l’enregistrer à nouveau."
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:296
+#: lib/pauseai_ca_web/live/tasks_live.ex:295
 #, elixir-autogen, elixir-format
 msgid "This task changed in another tab. Your draft has been retained."
 msgstr "Cette tâche a été modifiée dans un autre onglet. Votre brouillon a été conservé."
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:281
-#: lib/pauseai_ca_web/live/tasks_live.ex:421
+#: lib/pauseai_ca_web/live/tasks_live.ex:280
+#: lib/pauseai_ca_web/live/tasks_live.ex:420
 #: lib/pauseai_ca_web/live/welcome_management_live.ex:382
 #, elixir-autogen, elixir-format
 msgid "Title"
 msgstr "Titre"
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:267
+#: lib/pauseai_ca_web/live/tasks_live.ex:266
 #: lib/pauseai_ca_web/live/welcome_management_live.ex:272
 #: lib/pauseai_ca_web/live/welcome_management_live.ex:279
 #, elixir-autogen, elixir-format
@@ -7918,7 +7913,7 @@ msgstr "Mise à jour"
 msgid "Your draft is retained. Review it, then save against the current revision."
 msgstr "Votre brouillon est conservé. Vérifiez-le, puis enregistrez-le à partir de la révision actuelle."
 
-#: lib/pauseai_ca_web/live/tasks_live.ex:247
+#: lib/pauseai_ca_web/live/tasks_live.ex:246
 #, elixir-autogen, elixir-format
 msgid "Recorded account %{id}"
 msgstr "Compte enregistré %{id}"

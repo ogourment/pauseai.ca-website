@@ -172,7 +172,6 @@ defmodule PauseAiCaWeb.TasksLive do
       {:ok, task} ->
         {:noreply,
          socket
-         |> put_flash(:info, gettext("Task saved."))
          |> push_patch(to: task_path(task.id, a.group_id, a.locale))}
 
       {:error, reason} when reason in [:unauthorized, :not_found] ->
