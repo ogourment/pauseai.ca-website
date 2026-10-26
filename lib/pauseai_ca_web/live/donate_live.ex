@@ -101,27 +101,32 @@ defmodule PauseAiCaWeb.DonateLive do
         </h1>
         <p class="mt-5 text-xl leading-8 text-stone-700">
           {gettext(
-            "Help us organize across Canada for an international pause on the development of the most powerful AI systems."
+            "Help Canadians make the case for an international pause on the development of the most powerful AI systems. Your donation helps people organize locally, explain the risks, and bring concrete requests to elected representatives."
           )}
         </p>
         <section
           id="manifund-campaign"
           class="mt-7 rounded-xl border border-stone-200 bg-white p-5 sm:p-6"
         >
-          <h2 class="font-heading text-2xl">{gettext("National expansion and core operations")}</h2>
+          <h2 class="font-heading text-2xl">{gettext("What your support makes possible")}</h2>
           <p class="mt-3 leading-7 text-stone-700">
             {gettext(
-              "The campaign supports organizing in Toronto and other Canadian cities, public events, media work, and the people and tools that keep these activities running."
+              "Support local groups in Toronto and across Canada, public meetings and outreach materials, and research and briefings for conversations with MPs."
             )}
           </p>
           <%= if match?({:ok, _}, @campaign) do %>
             <% {:ok, campaign} = @campaign %>
             <a
               id="manifund-donate"
+              phx-hook="PauseAiCaWeb.Layouts.TrackOutbound"
+              data-donation="manifund"
+              target="_blank"
+              rel="noopener noreferrer"
               href={campaign.url}
               class="mt-5 inline-block rounded-lg bg-brand px-5 py-3 font-semibold text-stone-950 hover:bg-brand-strong"
             >
-              {gettext("Donate on Manifund")}
+              {gettext("Donate on Manifund")} <span aria-hidden="true">↗</span>
+              <span class="sr-only">{gettext("Opens in a new tab")}</span>
             </a>
             <p id="manifund-account-requirement" class="mt-3 text-sm leading-6 text-stone-700">
               {gettext(

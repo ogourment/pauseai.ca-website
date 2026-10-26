@@ -3,7 +3,7 @@ defmodule PauseAiCaWeb.IncubatorsLive do
   alias PauseAiCa.Incubators
 
   @impl true
-  def mount(params, _, socket) do
+  def mount(params, session, socket) do
     locale =
       case socket.assigns.live_action do
         :fr -> "fr"
@@ -17,6 +17,11 @@ defmodule PauseAiCaWeb.IncubatorsLive do
       assign(socket,
         locale: locale,
         page_title: gettext("Local groups"),
+        participation_context:
+          PauseAiCa.Accounts.Onboarding.context(
+            Map.put(params, "locale", locale),
+            session["learning_visitor_id"]
+          ),
         groups: [],
         group: nil,
         membership: nil,
@@ -204,6 +209,8 @@ defmodule PauseAiCaWeb.IncubatorsLive do
     end
   end
 
+  def handle_info(_message, socket), do: {:noreply, socket}
+
   defp application_form(socket) do
     m = socket.assigns.membership
     user = socket.assigns.current_scope && socket.assigns.current_scope.user
@@ -300,7 +307,7 @@ defmodule PauseAiCaWeb.IncubatorsLive do
         <div :if={!@group} class="space-y-4">
           <p>{gettext("Find a local group, see its activities and request to join.")}</p>
           <p :if={@groups == []}>
-            {gettext("No local groups are listed yet. Please check back soon.")}
+            {gettext("Join a local waitlist below or offer to help start an incubator in your area.")}
           </p>
           <article
             :for={group <- @groups}
@@ -319,6 +326,13 @@ defmodule PauseAiCaWeb.IncubatorsLive do
                 href={"/groups/#{group.group_id}/join?#{URI.encode_query(%{locale: @locale})}"}
                 class="btn btn-primary"
               >{gettext("Request to join")}</.link>
+              <button
+                type="button"
+                phx-click="choose-group"
+                phx-value-group-id={group.group_id}
+                phx-target="#participation"
+                class="btn btn-outline"
+              >{gettext("Join the waitlist")}</button>
               <.link
                 :if={group.events_url not in [nil, ""]}
                 href={group.events_url}
@@ -328,6 +342,21 @@ defmodule PauseAiCaWeb.IncubatorsLive do
               >{gettext("Group events")}</.link>
             </div>
           </article>
+          <div id="group-participation" class="rounded-xl border border-base-300 p-5">
+            <.live_component
+              module={PauseAiCaWeb.ParticipationForm}
+              id="groups-participation-entry"
+              locale={@locale}
+              current_scope={@current_scope}
+              context={@participation_context}
+              intent="waitlist"
+              city=""
+              registration={false}
+              show_ctas={false}
+              group_focused={true}
+              group_cities={Application.get_env(:pauseai_ca, :local_waitlist_cities, [])}
+            />
+          </div>
         </div>
         <div :if={@group} class="space-y-5">
           <p class="whitespace-pre-line">{summary(@group, @locale)}</p>

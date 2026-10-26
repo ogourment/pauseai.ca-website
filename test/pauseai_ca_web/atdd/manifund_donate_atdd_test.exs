@@ -80,7 +80,9 @@ if System.get_env("ATDD") == "true" do
                 "A Manifund account is required to donate. You can read the full proposal without an account."
               )
           )
-          |> assert_has("#manifund-donate[href='#{@url}']")
+          |> assert_has(
+            "#manifund-donate[href='#{@url}'][target='_blank'][data-donation='manifund']"
+          )
           |> assert_has("#manifund-proposal[href='#{@url}']")
           |> assert_has("#donation-email", text: "pauseaicanada@proton.me")
           |> assert_has("#donate-interac strong", text: "PauseAI Canada")

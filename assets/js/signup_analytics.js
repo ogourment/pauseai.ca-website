@@ -8,7 +8,7 @@ const events = ["sign_up", "account_confirmed"]
 
 export function publicAnalyticsPage(path = window.location.pathname) {
   return path === "/" || /^\/(en|fr)(\/)?$/.test(path) ||
-    /^\/(en\/(learn|rogue-agent|warning-shot|strategy|about|privacy)|fr\/(comprendre|learn|agent-rebelle|signal-d-alarme|strategie|a-propos|confidentialite))$/.test(path)
+    /^\/(en\/(learn|rogue-agent|warning-shot|strategy|about|privacy|donate)|fr\/(comprendre|learn|agent-rebelle|signal-d-alarme|strategie|a-propos|confidentialite|faire-un-don))$/.test(path)
 }
 
 export function queueSignupMetric(detail) {

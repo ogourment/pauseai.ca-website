@@ -26,7 +26,13 @@ defmodule PauseAiCaWeb.ManifundDonateLiveTest do
           {"/fr/faire-un-don", "Faire un don sur Manifund", "Un compte Manifund est nécessaire"}
         ] do
       {:ok, view, _} = live(conn, path)
-      assert has_element?(view, "#manifund-donate[href='#{@url}']", action)
+
+      assert has_element?(
+               view,
+               "#manifund-donate[href='#{@url}'][target='_blank'][rel='noopener noreferrer'][data-donation='manifund']",
+               action
+             )
+
       assert has_element?(view, "#manifund-proposal[href='#{@url}']")
       assert has_element?(view, "#manifund-account-requirement", disclosure)
       assert has_element?(view, "#donation-email", "pauseaicanada@proton.me")
@@ -57,7 +63,7 @@ defmodule PauseAiCaWeb.ManifundDonateLiveTest do
 
       assert Campaign.current() == {:error, :not_configured}
       {:ok, view, _} = live(conn, "/en/donate")
-      assert has_element?(view, "#manifund-campaign", "National expansion and core operations")
+      assert has_element?(view, "#manifund-campaign", "What your support makes possible")
       assert has_element?(view, "#manifund-unavailable", "Interac below")
       assert has_element?(view, "#donation-email", "pauseaicanada@proton.me")
       refute has_element?(view, "#manifund-donate")

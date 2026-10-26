@@ -157,6 +157,7 @@ defmodule PauseAiCaWeb.Layouts do
               class="block px-4 py-3 font-semibold hover:bg-brand-wash"
             >{gettext("Record my actions")}</.link>
             <.link
+              :if={!Application.get_env(:pauseai_ca, :incubators_enabled, false)}
               id="act-local"
               navigate={
                 if(@locale == "fr",
@@ -266,7 +267,34 @@ defmodule PauseAiCaWeb.Layouts do
       <script :type={Phoenix.LiveView.ColocatedHook} name=".TrackOutbound">
         export default {
           mounted() {
+            const donation = () => {
+              if (this.el.dataset.donation !== "manifund") return
+              const csrfToken = document.querySelector("meta[name='csrf-token']")?.content
+              fetch("/engagement/donation-links/manifund", {
+                method: "POST",
+                headers: {"x-csrf-token": csrfToken},
+                keepalive: true
+              }).catch(() => {})
+
+              try {
+                if (localStorage.getItem("pauseai-ca:analytics-consent") === "granted" &&
+                    window.gtag && window.pauseaiSignupAnalytics.publicPage()) {
+                  window.gtag("event", "donation_link_opened", {
+                    destination: "manifund",
+                    page_location: window.pauseaiSignupAnalytics.publicLocation(),
+                    page_referrer: window.location.origin
+                  })
+                }
+              } catch (_) { /* Tracking never blocks opening the donation page. */ }
+            }
+            this.el.addEventListener("auxclick", event => {
+              if (event.button === 1 && this.el.dataset.donation) donation()
+            })
             this.el.addEventListener("click", () => {
+              if (this.el.dataset.donation) {
+                donation()
+                return
+              }
               const event = this.el.dataset.event
               const csrfToken = document.querySelector("meta[name='csrf-token']")?.content
 
@@ -286,29 +314,7 @@ defmodule PauseAiCaWeb.Layouts do
           }
         }
       </script>
-
-      <.link
-        :if={@promote_warning_shot}
-        id="warning-shot-banner"
-        navigate={if(@locale == "fr", do: ~p"/fr/signal-d-alarme", else: ~p"/en/warning-shot")}
-        class="block bg-brand px-5 py-3 text-center text-stone-950 transition hover:bg-brand-strong"
-      >
-        <span class="font-heading text-sm font-bold uppercase tracking-[0.16em]">
-          {gettext("Warning Shot Protocol · Second activation")}
-        </span>
-        <span class="ml-2 text-sm underline underline-offset-4">
-          {gettext("An AI escaped its lab and hacked a real company")}
-          <span aria-hidden="true">→</span>
-        </span>
-      </.link>
     </div>
-
-    <.campaign_prompt
-      :if={@show_announcements and @promote_warning_shot}
-      locale={@locale}
-      campaign_id="rogue-agent-1"
-      href={if(@locale == "fr", do: ~p"/fr/agent-rebelle", else: ~p"/en/rogue-agent")}
-    />
 
     {render_slot(@management_navigation)}
     <div class="mx-auto max-w-6xl px-5 pt-3">

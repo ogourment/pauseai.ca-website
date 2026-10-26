@@ -12,9 +12,10 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
                "#montreal-protest-banner[href='/en/montreal-protest-2026-09-26']"
              )
 
-      assert has_element?(view, "#warning-shot-banner[href='/en/warning-shot']")
+      refute has_element?(view, "#warning-shot-banner")
       assert render(view) =~ "September 26 · Read the recap"
-      assert has_element?(view, "#campaign-prompt[data-campaign='rogue-agent-1']")
+      refute has_element?(view, "#campaign-prompt")
+      assert has_element?(view, "a[data-rogue-launch='true']")
       assert has_element?(view, "#voices")
       assert has_element?(view, "#voice-bengio")
       assert has_element?(view, "#voice-tessari")
@@ -29,7 +30,7 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
       {:ok, view, _html} = live(conn, ~p"/fr/comprendre")
 
       assert has_element?(view, "#announcement-banners > #montreal-protest-banner:first-child")
-      assert has_element?(view, "#announcement-banners > #warning-shot-banner:last-child")
+      refute has_element?(view, "#warning-shot-banner")
       assert has_element?(view, "#voices")
       assert has_element?(view, "#voice-saba")
       assert has_element?(view, "#voice-guay")
@@ -123,8 +124,8 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
 
       assert has_element?(
                view,
-               "#act-local[href='/en/participate?intent=waitlist']",
-               "Join or help a local group"
+               "#act-local-groups[href='/en/groups']",
+               "Local groups"
              )
 
       assert has_element?(
@@ -133,6 +134,7 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
                "Events"
              )
 
+      refute has_element?(view, "#act-local")
       refute has_element?(view, "#involvement-menu a[href='/en/strategy']")
     end
 
@@ -179,8 +181,8 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
 
       assert has_element?(
                view,
-               "#act-local[href='/fr/participer?intent=waitlist']",
-               "Rejoindre ou aider un groupe local"
+               "#act-local-groups[href='/fr/groupes']",
+               "Groupes locaux"
              )
     end
 

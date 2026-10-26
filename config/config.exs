@@ -151,3 +151,6 @@ config :phoenix, :filter_parameters, [
 config :pauseai_ca, :slack_enabled, false
 
 config :pauseai_ca, :slack_inbox_worker_enabled, false
+
+# Existing local waitlist suggestions; these do not publish incubator profiles.
+config :pauseai_ca, :local_waitlist_cities, ["Toronto", "Montréal"]

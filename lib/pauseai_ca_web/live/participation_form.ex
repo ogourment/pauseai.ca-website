@@ -14,6 +14,10 @@ defmodule PauseAiCaWeb.ParticipationForm do
   def update(assigns, socket) do
     socket = assign(socket, Map.drop(assigns, [:intent, :city]))
     socket = assign_new(socket, :show_ctas, fn -> Map.get(assigns, :show_ctas, true) end)
+    socket = assign_new(socket, :group_focused, fn -> false end)
+    socket = assign_new(socket, :group_cities, fn -> [] end)
+    socket = assign_new(socket, :selected_group, fn -> nil end)
+    socket = assign_new(socket, :selected_group_id, fn -> nil end)
 
     if Map.has_key?(socket.assigns, :form) do
       {:ok, socket}
@@ -32,8 +36,8 @@ defmodule PauseAiCaWeb.ParticipationForm do
         "postal_code" => if(user, do: user.postal_code || "", else: ""),
         "city" => Map.get(assigns, :city, ""),
         "help_text" => "",
-        "newsletter" => "false",
-        "account" => to_string(intent in ~w(account action)),
+        "newsletter" => to_string(intent == "mp"),
+        "account" => to_string(intent in ~w(account action mp)),
         "local" => to_string(local),
         "local_kind" => if(intent == "help", do: "help", else: "waitlist")
       }
@@ -61,6 +65,35 @@ defmodule PauseAiCaWeb.ParticipationForm do
     handle_event(event, Map.put(Map.delete(params, "user"), "participation", raw), socket)
   end
 
+  def handle_event(
+        "choose-group",
+        %{"group-id" => group_id},
+        %{assigns: %{group_focused: true}} = socket
+      ) do
+    case PauseAiCa.Incubators.public_group(group_id) do
+      {:ok, group} ->
+        params =
+          socket.assigns.params
+          |> Map.put("local", "true")
+          |> Map.put("local_kind", "waitlist")
+
+        name = if socket.assigns.locale == "fr", do: group.name_fr, else: group.name_en
+
+        {:noreply,
+         assign(socket,
+           intent: "waitlist",
+           params: params,
+           selected_group: name,
+           selected_group_id: group.group_id,
+           form: to_form(params, as: socket.assigns.form_as),
+           state: :idle
+         )}
+
+      _ ->
+        {:noreply, socket}
+    end
+  end
+
   def handle_event("choose", %{"intent" => intent}, socket)
       when intent in ~w(newsletter action account waitlist help) do
     explicit = socket.assigns.explicit_choices
@@ -78,6 +111,11 @@ defmodule PauseAiCaWeb.ParticipationForm do
 
     params =
       if intent in ["waitlist", "help"], do: Map.put(params, "local_kind", intent), else: params
+
+    socket =
+      if socket.assigns.group_focused && intent == "help",
+        do: assign(socket, selected_group: nil, selected_group_id: nil),
+        else: socket
 
     {:noreply,
      assign(socket,
@@ -193,6 +231,11 @@ defmodule PauseAiCaWeb.ParticipationForm do
            ),
          else: context
 
+    context =
+      if socket.assigns.selected_group_id && params["local"] == "true",
+        do: Map.put(context, "incubator_group_id", socket.assigns.selected_group_id),
+        else: context
+
     url_fun = fn
       :account, {token, flow} ->
         PauseAiCaWeb.Site.url(locale, ~p"/users/log-in/#{token}?#{%{flow: flow, locale: locale}}")
@@ -250,7 +293,7 @@ defmodule PauseAiCaWeb.ParticipationForm do
       Map.merge(
         Map.reject(prior, fn {key, _} -> String.starts_with?(key, "_unused_") end),
         Map.filter(raw, fn {key, _} ->
-          key in ~w(email name phone fsa location postal_code city help_text newsletter account local local_kind) ||
+          key in ~w(email name phone fsa location postal_code city help_text newsletter account local) ||
             String.starts_with?(key, "_unused_")
         end)
       )
@@ -376,6 +419,9 @@ defmodule PauseAiCaWeb.ParticipationForm do
       <div class="max-w-2xl">
         <h2 class="font-heading text-3xl">
           {cond do
+            @group_focused ->
+              gettext("Join a waitlist or help start an incubator")
+
             @intent == "mp" ->
               gettext("Your details and choices")
 
@@ -399,11 +445,17 @@ defmodule PauseAiCaWeb.ParticipationForm do
         >
           <button
             :for={
-              {kind, label} <- [
-                {"account", gettext("Record my actions")},
-                {"waitlist", gettext("Join the waitlist")},
-                {"help", gettext("I can help")}
-              ]
+              {kind, label} <-
+                [
+                  {"account", gettext("Record my actions")},
+                  {"waitlist", gettext("Join the waitlist")},
+                  {"help",
+                   if(@group_focused,
+                     do: gettext("Help start an incubator"),
+                     else: gettext("I can help")
+                   )}
+                ]
+                |> Enum.reject(fn {kind, _} -> @group_focused && kind == "account" end)
             }
             type="button"
             phx-click="choose"
@@ -493,12 +545,23 @@ defmodule PauseAiCaWeb.ParticipationForm do
             id="participation-local"
             class="mt-4 rounded-lg border border-stone-200 p-4"
           >
+            <p
+              :if={@selected_group}
+              id="participation-selected-group"
+              class="mb-3 text-sm font-semibold"
+            >
+              {gettext("Waitlist for %{group}", group: @selected_group)}
+            </p>
             <.input
               field={@form[:city]}
               label={gettext("Where would you like to get involved?")}
               autocomplete="address-level2"
               placeholder="Toronto"
+              list={if @group_focused, do: "participation-group-cities"}
             />
+            <datalist :if={@group_focused} id="participation-group-cities">
+              <option :for={city <- @group_cities} value={city} />
+            </datalist>
             <input type="hidden" name={@form_as <> "[local_kind]"} value={@params["local_kind"]} />
             <.input
               :if={@params["local_kind"] == "help"}

@@ -56,4 +56,34 @@ defmodule PauseAiCaWeb.LearningSignalControllerTest do
     assert conn |> post(~p"/engagement/event-links/unknown-event") |> response(422)
     refute Repo.one(LearningSignal)
   end
+
+  test "donation interest counts each browser once, without recording payment details", %{
+    conn: conn
+  } do
+    path = ~p"/engagement/donation-links/manifund"
+    conn = post(conn, path, %{amount: "100", email: "ignored@example.org"})
+    assert response(conn, 204)
+    assert conn |> recycle() |> post(path) |> response(204)
+
+    assert [%{kind: "donation_link_opened", subject: "manifund", value: nil, user_id: nil}] =
+             Repo.all(LearningSignal)
+
+    assert build_conn() |> post(path) |> response(204)
+    assert Repo.aggregate(LearningSignal, :count) == 2
+  end
+
+  test "unknown donation destinations cannot create signals", %{conn: conn} do
+    assert conn |> post(~p"/engagement/donation-links/unknown") |> response(422)
+    refute Repo.one(LearningSignal)
+  end
+
+  test "donation signal requires browser CSRF protection", %{conn: conn} do
+    assert_raise Plug.CSRFProtection.InvalidCSRFTokenError, fn ->
+      conn
+      |> put_private(:plug_skip_csrf_protection, false)
+      |> post(~p"/engagement/donation-links/manifund")
+    end
+
+    refute Repo.one(LearningSignal)
+  end
 end

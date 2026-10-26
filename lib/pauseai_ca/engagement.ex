@@ -365,7 +365,9 @@ defmodule PauseAiCa.Engagement do
   def learning_metrics do
     identities_by_kind =
       Repo.all(
-        from signal in LearningSignal, select: {signal.kind, signal.user_id, signal.visitor_id}
+        from signal in LearningSignal,
+          where: signal.kind != "donation_link_opened",
+          select: {signal.kind, signal.user_id, signal.visitor_id}
       )
       |> Enum.group_by(
         fn {kind, _user_id, _visitor_id} -> kind end,

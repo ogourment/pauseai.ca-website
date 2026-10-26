@@ -40,7 +40,7 @@ defmodule PauseAiCaWeb.ManagementLayoutTest do
     for path <- ["/en/learn", "/fr/comprendre"] do
       {:ok, view, _} = live(conn, path)
       assert has_element?(view, "#montreal-protest-banner")
-      assert has_element?(view, "#warning-shot-banner")
+      refute has_element?(view, "#warning-shot-banner")
     end
   end
 end

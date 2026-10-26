@@ -77,6 +77,7 @@ defmodule PauseAiCaWeb.Router do
     post "/learning/basket", LearningBasketController, :update
     post "/learning/questions/:question", LearningSignalController, :question
     post "/engagement/event-links/:event", LearningSignalController, :event_link
+    post "/engagement/donation-links/:destination", LearningSignalController, :donation_link
     post "/engagement/visits", LearningSignalController, :visit
     get "/learning/resources/:resource", LearningResourceController, :open
   end

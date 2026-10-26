@@ -17,18 +17,52 @@ defmodule PauseAiCaWeb.ContactMpLiveTest do
 
       assert has_element?(
                view,
-               "input[type=checkbox][name='participation[account]']:not([checked])"
+               "input[type=checkbox][name='participation[account]'][checked]"
              )
 
       assert has_element?(
                view,
-               "input[type=checkbox][name='participation[newsletter]']:not([checked])"
+               "input[type=checkbox][name='participation[newsletter]'][checked]"
              )
 
       refute has_element?(view, "#warning-shot-page-badge")
       refute has_element?(view, "#developments")
       refute has_element?(view, "#participation-motivations")
     end
+  end
+
+  test "MP choices remain unchecked after validation and rerender when the visitor opts out", %{
+    conn: conn
+  } do
+    {:ok, view, _} = live(conn, "/en/contact-your-mp")
+
+    view
+    |> form("#participation-form",
+      participation: %{
+        account: "false",
+        newsletter: "false",
+        email: "optout@example.org",
+        postal_code: "H2X"
+      }
+    )
+    |> render_change()
+
+    view |> form("#participation-form") |> render_submit()
+    assert has_element?(view, "#participation-validation")
+    view |> form("#participation-form", participation: %{name: "Morgan"}) |> render_change()
+
+    assert has_element?(
+             view,
+             "input[type=checkbox][name='participation[account]']:not([checked])"
+           )
+
+    assert has_element?(
+             view,
+             "input[type=checkbox][name='participation[newsletter]']:not([checked])"
+           )
+
+    refute Repo.exists?(Participation.Request)
+    refute_receive {:email, _}
   end
 
   test "one set of details prepares a letter with no account/subscription side effect", %{
@@ -41,6 +75,8 @@ defmodule PauseAiCaWeb.ContactMpLiveTest do
       participation: %{
         name: "Morgan Example",
         email: "mp-only@example.org",
+        account: "false",
+        newsletter: "false",
         postal_code: "H2X 1Y4"
       }
     )
@@ -74,9 +110,7 @@ defmodule PauseAiCaWeb.ContactMpLiveTest do
       participation: %{
         name: "Morgan Example",
         email: "mp-choices@example.org",
-        postal_code: "h2x 1y4",
-        account: "true",
-        newsletter: "true"
+        postal_code: "h2x 1y4"
       }
     )
     |> render_submit()
@@ -120,7 +154,13 @@ defmodule PauseAiCaWeb.ContactMpLiveTest do
 
     view
     |> form("#participation-form",
-      participation: %{name: "Morgan", email: "mp-edit@example.org", postal_code: "H2X 1Y4"}
+      participation: %{
+        name: "Morgan",
+        email: "mp-edit@example.org",
+        postal_code: "H2X 1Y4",
+        account: "false",
+        newsletter: "false"
+      }
     )
     |> render_submit()
 
