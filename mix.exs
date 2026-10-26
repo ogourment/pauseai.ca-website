@@ -4,7 +4,7 @@ defmodule PauseAiCa.MixProject do
   def project do
     [
       app: :pauseai_ca,
-      version: "0.5.39",
+      version: "0.5.40",
       elixir: "~> 1.17",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -45,16 +45,16 @@ defmodule PauseAiCa.MixProject do
 
       _ ->
         {:phoenix_mail_workflow,
-         git: "ssh://git@git.agile-u.com/olivierg/phoenix_mail_workflow.git",
-         ref: "8bc69d2c0550cd1f9d981f26e2bd5ad732cde14d"}
+         git: "https://github.com/ogourment/phoenix_mail_workflow-compiled.git",
+         ref: "44aa9ed521123654144e22fc7ac721be4ef434a3"}
     end
   end
 
   defp deps do
     [
       {:phoenix_app_shell,
-       git: "ssh://git@git.agile-u.com/olivierg/phoenix_app_shell.git",
-       ref: "f941f6c15c584a1daf48c03be4eebe6701bf1bbb"},
+       git: "https://github.com/ogourment/phoenix_app_shell-compiled.git",
+       ref: "49a142978a6b62c5261ed2363c3e9d14f91bb02a"},
       {:argon2_elixir, "~> 4.0"},
       {:phoenix, "~> 1.8.9"},
       {:phoenix_ecto, "~> 4.5"},
@@ -156,8 +156,8 @@ defmodule PauseAiCa.MixProject do
     case System.get_env("PHOENIX_TASKS_PATH") do
       nil ->
         {:phoenix_tasks,
-         git: "ssh://git@git.agile-u.com/olivierg/phoenix_tasks.git",
-         ref: "f343d7e440826bd7e6a1848355c11c9e1a07b54b"}
+         git: "https://github.com/ogourment/phoenix_tasks-compiled.git",
+         ref: "f4204b41ea2f84aa9c6f64d3b97c4b774b7027d7"}
 
       path ->
         {:phoenix_tasks, path: path}
@@ -171,8 +171,8 @@ defmodule PauseAiCa.MixProject do
 
       _ ->
         {:phoenix_community,
-         git: "ssh://git@git.agile-u.com/olivierg/phoenix_community.git",
-         ref: "76dc9d2ea2f7b45018462d4f7d9ae57c50100e0d"}
+         git: "https://github.com/ogourment/phoenix_community-compiled.git",
+         ref: "4bcc56dca718c8720414f0d89ef4bbf5d4b0c2be"}
     end
   end
 
@@ -183,8 +183,8 @@ defmodule PauseAiCa.MixProject do
 
       _ ->
         {:phoenix_crm,
-         git: "ssh://git@git.agile-u.com/olivierg/phoenix_crm.git",
-         ref: "288823824dd6a508163925b325844f5216d04022"}
+         git: "https://github.com/ogourment/phoenix_crm-compiled.git",
+         ref: "967ca2f1cda4e0a28f5d8996e34fc6e36bc1113c"}
     end
   end
 
@@ -195,8 +195,8 @@ defmodule PauseAiCa.MixProject do
 
       _ ->
         {:phoenix_markdown_editor,
-         git: "ssh://git@git.agile-u.com/olivierg/phoenix_markdown_editor.git",
-         ref: "4399bb45c1b8f6931ce88a768d94426cdb943149"}
+         git: "https://github.com/ogourment/phoenix_markdown_editor-compiled.git",
+         ref: "79b34277a851bddc415fc236a91f670470056f7b"}
     end
   end
 
@@ -207,8 +207,8 @@ defmodule PauseAiCa.MixProject do
 
       _ ->
         {:phoenix_cms,
-         git: "ssh://git@git.agile-u.com/olivierg/phoenix_cms.git",
-         ref: "4157162fd65e30e202f47c506688dda2a00362a4"}
+         git: "https://github.com/ogourment/phoenix_cms-compiled.git",
+         ref: "8d750caebdc0e0d99a380bd9feaea6ea676be3eb"}
     end
   end
 
@@ -218,23 +218,9 @@ defmodule PauseAiCa.MixProject do
         {:acceptance_harness, path: Path.expand(path), override: true}
 
       _unset ->
-        {:acceptance_harness, git: acceptance_harness_git_url(), tag: "v0.10.6"}
-    end
-  end
-
-  defp acceptance_harness_git_url do
-    case System.get_env("ACCEPTANCE_HARNESS_TOKEN") do
-      credentials when is_binary(credentials) and credentials != "" ->
-        {username, token} =
-          case String.split(credentials, ":", parts: 2) do
-            [username, token] -> {username, token}
-            [token] -> {"oauth2", token}
-          end
-
-        "https://#{URI.encode_www_form(username)}:#{URI.encode_www_form(token)}@framagit.org/olivierg/acceptance_harness.git"
-
-      _unset ->
-        "git@framagit.org:olivierg/acceptance_harness.git"
+        {:acceptance_harness,
+         git: "https://github.com/ogourment/acceptance_harness-compiled.git",
+         ref: "3705689866e59627a2c072fbf88ce39f98922c64"}
     end
   end
 end
