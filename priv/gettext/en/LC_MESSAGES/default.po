@@ -2760,7 +2760,7 @@ msgstr "Amount you intend to give (CAD, optional)"
 msgid "Browser visits — all time"
 msgstr "Browser visits — all time"
 
-#: lib/pauseai_ca_web/components/donation_page_content.ex:258
+#: lib/pauseai_ca_web/components/donation_page_content.ex:242
 #: lib/pauseai_ca_web/live/donate_live.ex:217
 #: lib/pauseai_ca_web/live/donate_live.ex:464
 #, elixir-autogen, elixir-format
@@ -2777,7 +2777,7 @@ msgstr "Contact permission applies to the pledge. No payment has been collected 
 msgid "Contact permission recorded"
 msgstr "Contact permission recorded"
 
-#: lib/pauseai_ca_web/components/donation_page_content.ex:258
+#: lib/pauseai_ca_web/components/donation_page_content.ex:242
 #: lib/pauseai_ca_web/live/donate_live.ex:217
 #: lib/pauseai_ca_web/live/donate_live.ex:464
 #, elixir-autogen, elixir-format
@@ -2831,7 +2831,7 @@ msgid "Pagination"
 msgstr "Pagination"
 
 #: lib/pauseai_ca_web/components/auth_layout.ex:20
-#: lib/pauseai_ca_web/components/donation_page_content.ex:258
+#: lib/pauseai_ca_web/components/donation_page_content.ex:242
 #: lib/pauseai_ca_web/components/layouts.ex:79
 #: lib/pauseai_ca_web/components/layouts.ex:339
 #: lib/pauseai_ca_web/components/layouts/root.html.heex:12
@@ -8708,8 +8708,8 @@ msgstr "Join a waitlist or help start an incubator"
 msgid "Help Canadians make the case for an international pause on the development of the most powerful AI systems. Your donation helps people organize locally, explain the risks, and bring concrete requests to elected representatives."
 msgstr "Help Canadians make the case for an international pause on the development of the most powerful AI systems. Your donation helps people organize locally, explain the risks, and bring concrete requests to elected representatives."
 
-#: lib/pauseai_ca_web/components/donation_page_content.ex:196
-#: lib/pauseai_ca_web/components/donation_page_content.ex:209
+#: lib/pauseai_ca_web/components/donation_page_content.ex:180
+#: lib/pauseai_ca_web/components/donation_page_content.ex:193
 #: lib/pauseai_ca_web/live/donate_live.ex:182
 #: lib/pauseai_ca_web/live/donate_live.ex:486
 #, elixir-autogen, elixir-format
@@ -9181,3 +9181,14 @@ msgstr "Leave blank to preview unknown funding."
 #, elixir-autogen, elixir-format
 msgid "The threshold applies separately to the active stage budget and to the full programme budget."
 msgstr "The threshold applies separately to the active stage budget and to the full programme budget."
+
+#: lib/pauseai_ca_web/components/donation_page_content.ex:408
+#, elixir-autogen, elixir-format
+msgid "Close"
+msgstr "Close"
+
+#: lib/pauseai_ca_web/components/donation_page_content.ex:391
+#: lib/pauseai_ca_web/components/donation_page_content.ex:401
+#, elixir-autogen, elixir-format
+msgid "Try a donation"
+msgstr "Try a donation"

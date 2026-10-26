@@ -109,36 +109,17 @@ defmodule PauseAiCaWeb.DonationPageContent do
         </p>
         <div class="donation-budget-layout mt-5">
           <div class="donation-budget-column">
-            <div
-              id={"#{@prefix}-buckets"}
-              phx-hook=".BucketProjection"
-              phx-update="ignore"
-              data-cards={@card_json}
-              class="donation-bucket-stack"
-            >
-              <article
-                :for={card <- @cards}
-                data-key={card.key}
-                data-kind={card.kind}
-                class={"donation-bucket-card #{if card.full, do: "is-complete", else: "is-current"} #{card.kind}"}
-              >
-                <h3>{card.label}</h3>
-                <div
-                  class="donation-bucket-vessel"
-                  role={if card.numeric, do: "progressbar"}
-                  aria-hidden={if !card.numeric, do: "true"}
-                  aria-label={card.aria_label}
-                  aria-valuemin={if card.numeric, do: 0}
-                  aria-valuemax={if card.numeric, do: card.goal_minor / 100}
-                  aria-valuenow={if card.numeric, do: card.allocated_minor / 100}
-                  aria-valuetext={if card.numeric, do: card.primary <> " " <> card.secondary}
-                >
-                  <div class="donation-bucket-fill" style={"height:#{card.level}%"}></div>
-                </div>
-                <p class="donation-bucket-primary">{card.primary}</p>
-                <p class="donation-bucket-secondary">{card.secondary}</p>
-              </article>
-            </div>
+            <.mobile_simulator
+              copy={@copy}
+              prefix={@prefix}
+              cards={@cards}
+              card_json={@card_json}
+              gift_value={@gift_value}
+              input_error={@input_error}
+              preview_mode={@preview_mode}
+              preview_event={@preview_event}
+            />
+            <.bucket_stack prefix={@prefix} cards={@cards} card_json={@card_json} />
             <p
               :if={@projection && @projection.complete?}
               id={"#{@prefix}-complete"}
@@ -169,7 +150,7 @@ defmodule PauseAiCaWeb.DonationPageContent do
                 error={@input_error}
               />
             </form>
-            <div :if={@preview_mode and is_nil(@preview_event)}>
+            <div :if={@preview_mode and is_nil(@preview_event)} class="donation-static-gift">
               <.gift_input
                 copy={@copy}
                 prefix={@prefix}
@@ -177,6 +158,9 @@ defmodule PauseAiCaWeb.DonationPageContent do
                 disabled={true}
               />
             </div>
+            <p class="donation-mobile-note mt-3 whitespace-pre-line text-sm text-stone-600">
+              {text(@copy, "gift_note")}
+            </p>
             <div class="mt-4 flex flex-col items-start gap-3">
               <a
                 :if={@campaign_url && present?(@copy, "cta_label")}
@@ -261,7 +245,51 @@ defmodule PauseAiCaWeb.DonationPageContent do
       </p>
       <style>
         .donation-budget-layout{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:26px;align-items:start}.donation-bucket-stack{display:flex;flex-direction:column;gap:10px;overflow-anchor:none}.donation-bucket-card{display:grid;grid-template-columns:48px minmax(0,1fr);gap:3px 12px;border:1px solid #d6d3d1;border-radius:12px;padding:13px;overflow:hidden}.donation-bucket-card.is-current{border:2px solid var(--color-brand,#f97316)}.donation-bucket-card.is-complete{background:var(--color-brand-wash,#fff7ed)}.donation-bucket-card h3{grid-column:2;grid-row:1;font-size:16px;font-weight:650;line-height:1.35}.donation-bucket-vessel{grid-column:1;grid-row:1 / 4;align-self:center;position:relative;width:42px;height:58px;border:2px solid #a8a29e;border-top:0;border-radius:0 0 11px 11px;background:#fafaf9;overflow:hidden}.donation-bucket-fill{position:absolute;bottom:0;left:0;right:0;background:var(--color-brand,#f97316);transition:height 550ms cubic-bezier(.22,.61,.36,1)}.donation-bucket-primary{grid-column:2;font-weight:700;font-size:17px;line-height:1.3;margin:2px 0}.donation-bucket-secondary{grid-column:2;font-size:12px;line-height:1.4;color:#57534e;overflow-wrap:anywhere}.donation-bucket-card.stage{background:#fafaf9}.donation-bucket-card.stage h3{font-size:17px}.donation-gift-controls{border-left:1px solid #e7e5e4;padding-left:23px;min-width:0}.donation-authored p,.donation-authored h1,.donation-authored h3,.donation-authored a{overflow-wrap:anywhere}.donation-authored a{max-width:100%}@media(max-width:700px){.donation-budget-layout{grid-template-columns:1fr;gap:18px}.donation-gift-controls{grid-row:1;border-left:0;border-bottom:1px solid #e7e5e4;padding:0 0 18px}.donation-budget-column{grid-row:2}.donation-bucket-card{padding:11px;grid-template-columns:42px minmax(0,1fr);gap:3px 10px}.donation-bucket-vessel{width:38px;height:54px}}@media(prefers-reduced-motion:reduce){.donation-bucket-fill{transition:none!important}.donation-bucket-card{animation:none!important}}
+        .donation-mobile-simulator,.donation-mobile-note{display:none}.donation-simulator-dialog{width:calc(100% - 24px);max-width:620px;height:min(85dvh,var(--simulator-height,85dvh));max-height:calc(100dvh - 24px);margin:12px auto 0;top:var(--simulator-top,0px);bottom:auto;padding:0;border:1px solid #a8a29e;border-radius:16px;overflow:hidden;background:#fff;color:var(--ink,#1c1917)}.donation-simulator-dialog[open]{display:flex;flex-direction:column}.donation-simulator-dialog::backdrop{background:#1c191780}.donation-simulator-header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0;padding:12px 16px;border-bottom:1px solid #e7e5e4}.donation-simulator-amount{flex-shrink:0;padding:12px 16px;background:#fff;border-bottom:1px solid #e7e5e4}.donation-simulator-cards{overflow-y:auto;overscroll-behavior:contain;min-height:0;padding:12px 16px;scroll-behavior:auto}.donation-simulator-amount input{margin-top:6px}@media(max-width:700px){.donation-mobile-simulator,.donation-mobile-note{display:block}.donation-gift-controls>form,.donation-gift-controls>.donation-static-gift{display:none}.donation-budget-column{grid-row:1}.donation-gift-controls{grid-row:2}}
       </style>
+      <script :type={Phoenix.LiveView.ColocatedHook} name=".MobileSimulator">
+        export default {
+          mounted() {
+            this.dialog = this.el.querySelector('dialog')
+            this.mobile = matchMedia('(max-width: 700px)')
+            this.size = () => {
+              const viewport = window.visualViewport
+              this.dialog.style.setProperty('--simulator-height', Math.max(160, (viewport?.height || innerHeight) - 24) + 'px')
+              this.dialog.style.setProperty('--simulator-top', (viewport?.offsetTop || 0) + 'px')
+            }
+            this.restore = () => {
+              if (this.locked) { document.body.style.overflow = this.previousOverflow; this.locked = false }
+              const launcher = this.el.querySelector('[data-simulator-open]')
+              if (launcher?.getClientRects().length) launcher.focus({preventScroll: true})
+            }
+            this.click = event => {
+              if (event.target.closest('[data-simulator-close]')) { this.dialog.close(); return }
+              if (!event.target.closest('[data-simulator-open]') || !this.mobile.matches || this.dialog.open) return
+              this.size()
+              this.previousOverflow = document.body.style.overflow
+              document.body.style.overflow = 'hidden'
+              this.locked = true
+              this.dialog.showModal()
+              this.el.querySelector('[data-simulator-close]').focus({preventScroll: true})
+            }
+            this.resize = () => { if (!this.mobile.matches && this.dialog.open) this.dialog.close(); else this.size() }
+            this.el.addEventListener('click', this.click)
+            this.dialog.addEventListener('close', this.restore)
+            this.mobile.addEventListener('change', this.resize)
+            window.visualViewport?.addEventListener('resize', this.size)
+            window.visualViewport?.addEventListener('scroll', this.size)
+          },
+          updated() { this.size() },
+          destroyed() {
+            this.el.removeEventListener('click', this.click)
+            this.dialog.removeEventListener('close', this.restore)
+            this.mobile.removeEventListener('change', this.resize)
+            window.visualViewport?.removeEventListener('resize', this.size)
+            window.visualViewport?.removeEventListener('scroll', this.size)
+            if (this.locked) document.body.style.overflow = this.previousOverflow
+          }
+        }
+      </script>
       <script :type={Phoenix.LiveView.ColocatedHook} name=".BucketProjection">
         export default {
           mounted(){this.revision=0;this.motion=matchMedia('(prefers-reduced-motion: reduce)');this.onMotion=()=>{if(this.motion.matches)this.el.querySelectorAll('.donation-bucket-card').forEach(card=>card.getAnimations().forEach(a=>a.finish()));this.renderCards()};this.motion.addEventListener('change',this.onMotion)},
@@ -297,11 +325,128 @@ defmodule PauseAiCaWeb.DonationPageContent do
     """
   end
 
+  attr :prefix, :string, required: true
+  attr :cards, :list, required: true
+  attr :card_json, :string, required: true
+
+  defp bucket_stack(assigns) do
+    ~H"""
+    <div
+      id={"#{@prefix}-buckets"}
+      phx-hook=".BucketProjection"
+      phx-update="ignore"
+      data-cards={@card_json}
+      class="donation-bucket-stack"
+    >
+      <article
+        :for={card <- @cards}
+        data-key={card.key}
+        data-kind={card.kind}
+        class={"donation-bucket-card #{if card.full, do: "is-complete", else: "is-current"} #{card.kind}"}
+      >
+        <h3>{card.label}</h3>
+        <div
+          class="donation-bucket-vessel"
+          role={if card.numeric, do: "progressbar"}
+          aria-hidden={if !card.numeric, do: "true"}
+          aria-label={card.aria_label}
+          aria-valuemin={if card.numeric, do: 0}
+          aria-valuemax={if card.numeric, do: card.goal_minor / 100}
+          aria-valuenow={if card.numeric, do: card.allocated_minor / 100}
+          aria-valuetext={if card.numeric, do: card.primary <> " " <> card.secondary}
+        >
+          <div class="donation-bucket-fill" style={"height:#{card.level}%"}></div>
+        </div>
+        <p class="donation-bucket-primary">{card.primary}</p>
+        <p class="donation-bucket-secondary">{card.secondary}</p>
+      </article>
+    </div>
+    """
+  end
+
+  attr :copy, :map, required: true
+  attr :prefix, :string, required: true
+  attr :cards, :list, required: true
+  attr :card_json, :string, required: true
+  attr :gift_value, :string, required: true
+  attr :input_error, :string, default: nil
+  attr :preview_mode, :boolean, required: true
+  attr :preview_event, :string, default: nil
+
+  defp mobile_simulator(assigns) do
+    ~H"""
+    <div
+      id={"#{@prefix}-mobile-simulator"}
+      phx-hook=".MobileSimulator"
+      class="donation-mobile-simulator"
+    >
+      <button
+        id={"#{@prefix}-mobile-open"}
+        type="button"
+        data-simulator-open
+        aria-haspopup="dialog"
+        aria-controls={"#{@prefix}-mobile-dialog"}
+        class="mb-4 inline-flex min-h-11 items-center rounded-lg border border-brand bg-brand px-4 py-2 font-semibold text-stone-950 hover:bg-brand-strong"
+      >
+        {gettext("Try a donation")}
+      </button>
+      <dialog
+        id={"#{@prefix}-mobile-dialog"}
+        aria-labelledby={"#{@prefix}-mobile-title"}
+        class="donation-simulator-dialog"
+        phx-mounted={Phoenix.LiveView.JS.ignore_attributes(["open"])}
+      >
+        <header class="donation-simulator-header">
+          <h2 id={"#{@prefix}-mobile-title"} class="font-heading text-xl">
+            {gettext("Try a donation")}
+          </h2>
+          <button
+            id={"#{@prefix}-mobile-close"}
+            type="button"
+            data-simulator-close
+            class="min-h-11 shrink-0 rounded-lg border border-stone-400 bg-white px-3 py-2 font-semibold"
+          >{gettext("Close")}</button>
+        </header>
+        <div class="donation-simulator-amount">
+          <form
+            :if={!@preview_mode or is_binary(@preview_event)}
+            id={"#{@prefix}-mobile-gift-form"}
+            phx-change={@preview_event || "preview_gift"}
+            phx-submit={@preview_event || "preview_gift"}
+          >
+            <.gift_input
+              copy={@copy}
+              prefix={@prefix <> "-mobile"}
+              value={@gift_value}
+              disabled={false}
+              error={@input_error}
+              compact={true}
+            />
+          </form>
+          <div :if={@preview_mode and is_nil(@preview_event)}>
+            <.gift_input
+              copy={@copy}
+              prefix={@prefix <> "-mobile"}
+              value={@gift_value}
+              disabled={true}
+              compact={true}
+            />
+          </div>
+        </div>
+        <div class="donation-simulator-cards">
+          <.bucket_stack prefix={@prefix <> "-mobile"} cards={@cards} card_json={@card_json} />
+        </div>
+      </dialog>
+    </div>
+    """
+  end
+
   attr :copy, :map, required: true
   attr :prefix, :string, required: true
   attr :value, :string, required: true
   attr :disabled, :boolean, required: true
   attr :error, :string, default: nil
+  attr :compact, :boolean, default: false
 
   defp gift_input(assigns) do
     ~H"""
@@ -317,10 +462,18 @@ defmodule PauseAiCaWeb.DonationPageContent do
       value={@value}
       disabled={@disabled}
       aria-invalid={if @error, do: "true"}
-      aria-describedby={"#{@prefix}-gift-note #{@prefix}-projection-note"}
+      aria-describedby={
+        if @compact,
+          do: if(@error, do: "#{@prefix}-gift-error"),
+          else: "#{@prefix}-gift-note #{@prefix}-projection-note"
+      }
       class="mt-2 block w-44 max-w-full rounded-md border border-stone-400 bg-white px-3 py-2"
     />
-    <p id={"#{@prefix}-gift-note"} class="mt-2 whitespace-pre-line text-sm text-stone-600">
+    <p
+      :if={!@compact}
+      id={"#{@prefix}-gift-note"}
+      class="mt-2 whitespace-pre-line text-sm text-stone-600"
+    >
       {text(@copy, "gift_note")}
     </p>
     <p :if={@error} id={"#{@prefix}-gift-error"} role="alert" class="mt-2 text-sm text-error">

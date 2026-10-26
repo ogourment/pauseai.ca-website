@@ -134,10 +134,88 @@ defmodule PauseAiCaWeb.PublishedDonateLiveTest do
         )
 
       document = LazyHTML.from_fragment(html)
-      assert LazyHTML.query(document, "[aria-labelledby]") |> Enum.empty?()
+      assert LazyHTML.query(document, "section[aria-labelledby]") |> Enum.empty?()
       assert LazyHTML.query(document, "#donation-allocation-heading") |> Enum.empty?()
       refute LazyHTML.query(document, "#donation-buckets") |> Enum.empty?()
     end
+  end
+
+  test "mobile dialog shares one projected result with unique IDs and a compact input" do
+    html =
+      render_component(&DonationPageContent.content/1,
+        page: payload(),
+        locale: "en",
+        gift_minor: 5_000,
+        gift_value: "50"
+      )
+
+    document = LazyHTML.from_fragment(html)
+    ids = document |> LazyHTML.query("[id]") |> LazyHTML.attribute("id")
+    assert Enum.uniq(ids) == ids
+
+    assert LazyHTML.query(document, "#donation-mobile-open[aria-haspopup=dialog]")
+           |> LazyHTML.text()
+           |> String.trim() == "Try a donation"
+
+    assert LazyHTML.query(document, "#donation-mobile-dialog[open]") |> Enum.empty?()
+
+    assert LazyHTML.query(document, "#donation-mobile-dialog")
+           |> LazyHTML.attribute("aria-labelledby") == ["donation-mobile-title"]
+
+    assert LazyHTML.query(document, "#donation-mobile-gift[value='50']") |> Enum.count() == 1
+    assert LazyHTML.query(document, "#donation-mobile-dialog [autofocus]") |> Enum.empty?()
+    assert LazyHTML.query(document, "#donation-mobile-dialog a[href]") |> Enum.empty?()
+
+    refute LazyHTML.query(document, "#donation-mobile-dialog") |> LazyHTML.text() =~
+             payload()["editions"]["en"]["gift_note"]
+
+    desktop =
+      LazyHTML.query(document, "#donation-buckets")
+      |> LazyHTML.attribute("data-cards")
+      |> hd()
+      |> Jason.decode!()
+
+    mobile =
+      LazyHTML.query(document, "#donation-mobile-buckets")
+      |> LazyHTML.attribute("data-cards")
+      |> hd()
+      |> Jason.decode!()
+
+    assert mobile == desktop
+    assert Enum.any?(mobile, &(&1["key"] == "bucket:first:small-first" and &1["full"]))
+    assert Enum.any?(mobile, &(&1["key"] == "bucket:first:small-second"))
+  end
+
+  test "mobile CMS preview uses its own form namespace and keeps links inert" do
+    html =
+      render_component(&DonationPageContent.content/1,
+        page: payload(),
+        locale: "en",
+        preview_mode: true,
+        preview_event: "preview-gift",
+        gift_minor: 5_000,
+        gift_value: "50"
+      )
+
+    document = LazyHTML.from_fragment(html)
+
+    assert LazyHTML.query(document, "#donation-cms-preview-mobile-gift-form")
+           |> LazyHTML.attribute("phx-change") == ["preview-gift"]
+
+    assert LazyHTML.query(document, "#donation-cms-preview-mobile-gift[value='50']")
+           |> Enum.count() == 1
+
+    assert LazyHTML.query(document, "#donation-cms-preview-mobile-dialog a[href]")
+           |> Enum.empty?()
+
+    assert LazyHTML.query(document, "#donation-cms-preview-mobile-dialog [data-donation]")
+           |> Enum.empty?()
+
+    assert LazyHTML.query(
+             document,
+             "#donation-cms-preview-mobile-dialog [phx-hook*='TrackOutbound']"
+           )
+           |> Enum.empty?()
   end
 
   defp admin_scope do
