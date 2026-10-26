@@ -25,12 +25,12 @@ defmodule PauseAiCa.Donations.PageDefaults do
             "Send your donation from your banking app to the address below. Autodeposit is enabled. Check that the recipient name is PauseAI Canada before confirming.",
           "recipient_label" => "Recipient",
           "allocation_heading" => "How your donation could help",
-          "allocation_note" =>
-            "Explore successive funding stages. Each stage is a complete planning scenario; the stage budgets are not added together.",
+          "allocation_note" => "Explore successive funding stages.",
           "remaining_heading" => "Remaining costs",
           "remaining_note" => "See the remaining costs in this funding stage.",
           "gift_label" => "Your donation (CAD)",
-          "gift_note" => "Try an amount to see how it could help cover planned costs.",
+          "gift_note" =>
+            "Every amount counts. If you can’t contribute right now, you can still follow our project on Manifund.",
           "funding_unknown" =>
             "Verified donation totals are unavailable. The illustration starts from zero.",
           "projection_note" =>
@@ -44,7 +44,7 @@ defmodule PauseAiCa.Donations.PageDefaults do
           "gift_invalid" => "Enter a non-negative CAD amount with at most two decimal places."
         },
         "fr" => %{
-          "title" => "Soutenez PauseIA Canada",
+          "title" => "PauseIA Canada a besoin de vous !",
           "lead" =>
             "Aidez les Canadiennes et les Canadiens à défendre une pause internationale dans le développement des systèmes d’IA les plus puissants. Votre don aide à organiser des activités locales, à expliquer les risques et à présenter des demandes concrètes aux personnes élues.",
           "brochure_label" => "Lire notre brochure (PDF)",
@@ -62,13 +62,12 @@ defmodule PauseAiCa.Donations.PageDefaults do
             "Envoyez votre don depuis votre application bancaire à l’adresse ci-dessous. Le dépôt automatique est activé. Vérifiez que le nom du destinataire est PauseAI Canada avant de confirmer.",
           "recipient_label" => "Destinataire",
           "allocation_heading" => "Comment votre don pourrait aider",
-          "allocation_note" =>
-            "Explorez les étapes successives de financement. Chaque étape présente un scénario complet; les budgets des étapes ne sont pas additionnés.",
+          "allocation_note" => "Explorez les étapes successives de financement.",
           "remaining_heading" => "Coûts restants",
           "remaining_note" => "Consultez les coûts restants de cette étape de financement.",
           "gift_label" => "Votre don (CAD)",
           "gift_note" =>
-            "Essayez un montant pour voir comment il pourrait couvrir les coûts prévus.",
+            "Chaque montant compte. Si vous ne pouvez pas contribuer pour le moment, vous pouvez aussi suivre notre projet sur Manifund avec le bouton « Follow ».",
           "funding_unknown" =>
             "Le total vérifié des dons est indisponible. Cette illustration commence à zéro.",
           "projection_note" =>

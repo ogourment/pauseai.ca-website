@@ -5,6 +5,7 @@ defmodule PauseAiCaWeb.DonationPageContent do
   attr :page, :map, required: true
   attr :locale, :string, required: true
   attr :preview_mode, :boolean, default: false
+  attr :campaign_active, :boolean, default: true
   attr :gift_minor, :integer, default: 0
   attr :gift_value, :string, default: "0"
   attr :observation, :any, default: nil
@@ -186,12 +187,13 @@ defmodule PauseAiCaWeb.DonationPageContent do
                 target={if !@preview_mode, do: "_blank"}
                 rel={if !@preview_mode, do: "noopener noreferrer"}
                 aria-disabled={if @preview_mode, do: "true"}
-                class="inline-block rounded-lg bg-brand px-5 py-3 font-semibold text-stone-950 hover:bg-brand-strong"
+                class="inline-flex items-center gap-1.5 rounded-lg bg-brand px-5 py-3 font-semibold text-stone-950 hover:bg-brand-strong"
               >
-                {text(@copy, "cta_label")}
-                <span aria-hidden="true">↗</span><span :if={!@preview_mode} class="sr-only">{gettext(
-                  "Opens in a new tab"
-                )}</span>
+                <span class="min-w-0">{text(@copy, "cta_label")}</span>
+                <span class="shrink-0" aria-hidden="true">↗</span><span
+                  :if={!@preview_mode}
+                  class="sr-only"
+                >{gettext("Opens in a new tab")}</span>
               </a>
               <a
                 :if={@brochure_url && present?(@copy, "brochure_label")}
@@ -233,10 +235,14 @@ defmodule PauseAiCaWeb.DonationPageContent do
           </aside>
         </div>
       </section>
-      <section id="donate-interac" class="mt-8 border-l-4 border-brand bg-brand-wash p-5 sm:p-6">
-        <h2 :if={present?(@copy, "interac_heading")} class="font-heading text-2xl">
+      <details
+        id="donate-interac"
+        open={!@campaign_active}
+        class="mt-8 border-l-4 border-brand bg-brand-wash p-5 sm:p-6"
+      >
+        <summary class="cursor-pointer font-heading text-2xl">
           {text(@copy, "interac_heading")}
-        </h2>
+        </summary>
         <p :if={present?(@copy, "interac_body")} class="mt-3 whitespace-pre-line leading-7">
           {text(@copy, "interac_body")}
         </p>
@@ -247,7 +253,7 @@ defmodule PauseAiCaWeb.DonationPageContent do
           >pauseaicanada@proton.me</span>
         </p>
         <p class="mt-2">{text(@copy, "recipient_label")}: <strong>PauseAI Canada</strong></p>
-      </section>
+      </details>
       <p class="mt-8 text-sm text-stone-600">
         {gettext("PauseAI Canada")} · {gettext("Corporation number")}: 1819452-1 · {gettext(
           "Business Number"

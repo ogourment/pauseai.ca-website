@@ -14,7 +14,7 @@ defmodule PauseAiCaWeb.UserSessionController do
   end
 
   def create(conn, params) do
-    create(conn, params, "Welcome back. · Bon retour.")
+    create(conn, params, nil)
   end
 
   # magic link login
@@ -52,7 +52,7 @@ defmodule PauseAiCaWeb.UserSessionController do
           end
 
         conn
-        |> put_flash(:info, info)
+        |> login_notice(info)
         |> confirmation_metric(before, user)
         |> UserAuth.log_in_user(user, user_params)
 
@@ -72,7 +72,7 @@ defmodule PauseAiCaWeb.UserSessionController do
 
     if user = Accounts.get_user_by_email_and_password(email, password) do
       conn
-      |> put_flash(:info, info)
+      |> login_notice(info)
       |> UserAuth.log_in_user(user, user_params)
     else
       # In order to prevent user enumeration attacks, don't disclose whether the email is registered.
@@ -85,6 +85,9 @@ defmodule PauseAiCaWeb.UserSessionController do
       |> redirect(to: ~p"/users/log-in")
     end
   end
+
+  defp login_notice(conn, nil), do: conn
+  defp login_notice(conn, message), do: put_flash(conn, :info, message)
 
   defp save_continuation(conn, user, params) do
     if params["bookmark"] do

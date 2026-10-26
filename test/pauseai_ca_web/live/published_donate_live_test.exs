@@ -46,6 +46,19 @@ defmodule PauseAiCaWeb.PublishedDonateLiveTest do
     refute render(view) =~ "Secret unfinished draft"
   end
 
+  test "Interac starts closed during the active campaign and open afterwards", %{conn: conn} do
+    previous = Application.get_env(:pauseai_ca, :manifund_donations_enabled)
+    on_exit(fn -> Application.put_env(:pauseai_ca, :manifund_donations_enabled, previous) end)
+    publish(payload())
+
+    for active <- [true, false] do
+      Application.put_env(:pauseai_ca, :manifund_donations_enabled, active)
+      {:ok, view, _} = live(conn, "/fr/faire-un-don")
+      assert has_element?(view, "details#donate-interac > summary")
+      assert has_element?(view, "details#donate-interac[open]") == not active
+    end
+  end
+
   test "gift preview retains newly completed goals, preserves ties and never saves a pledge", %{
     conn: conn
   } do

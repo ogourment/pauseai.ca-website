@@ -92,8 +92,7 @@ defmodule PauseAiCaWeb.UserLive.ConfirmationTest do
 
       conn = follow_trigger_action(form, conn)
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~
-               "Welcome back. · Bon retour."
+      refute Phoenix.Flash.get(conn.assigns.flash, :info)
 
       assert Accounts.get_user!(user.id).confirmed_at == user.confirmed_at
 

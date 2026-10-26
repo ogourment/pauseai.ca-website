@@ -58,7 +58,7 @@ defmodule PauseAiCaWeb.UserSessionControllerTest do
         })
 
       assert redirected_to(conn) == "/foo/bar"
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Welcome back. · Bon retour."
+      refute Phoenix.Flash.get(conn.assigns.flash, :info)
     end
 
     test "redirects to login page with invalid credentials", %{conn: conn, user: user} do

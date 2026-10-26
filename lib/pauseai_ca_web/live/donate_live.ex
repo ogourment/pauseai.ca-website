@@ -121,6 +121,7 @@ defmodule PauseAiCaWeb.DonateLive do
           gift_value={@gift_value}
           input_error={@gift_error}
           observation={nil}
+          campaign_active={@campaign_mode}
         />
       </Layouts.app>
     <% else %>
@@ -164,6 +165,9 @@ defmodule PauseAiCaWeb.DonateLive do
           </p>
           <%= if match?({:ok, _}, @campaign) do %>
             <% {:ok, campaign} = @campaign %>
+            <p id="manifund-support-note" class="mt-4 leading-7 text-stone-700">
+              {get_in(Pages.defaults(), ["editions", @locale, "gift_note"])}
+            </p>
             <a
               id="manifund-donate"
               phx-hook="PauseAiCaWeb.Layouts.TrackOutbound"
@@ -171,9 +175,10 @@ defmodule PauseAiCaWeb.DonateLive do
               target="_blank"
               rel="noopener noreferrer"
               href={campaign.url}
-              class="mt-5 inline-block rounded-lg bg-brand px-5 py-3 font-semibold text-stone-950 hover:bg-brand-strong"
+              class="mt-5 inline-flex items-center gap-1.5 rounded-lg bg-brand px-5 py-3 font-semibold text-stone-950 hover:bg-brand-strong"
             >
-              {gettext("Donate on Manifund")} <span aria-hidden="true">↗</span>
+              <span>{gettext("Donate on Manifund")}</span>
+              <span class="shrink-0" aria-hidden="true">↗</span>
               <span class="sr-only">{gettext("Opens in a new tab")}</span>
             </a>
             <p id="manifund-account-requirement" class="mt-3 text-sm leading-6 text-stone-700">
@@ -194,8 +199,10 @@ defmodule PauseAiCaWeb.DonateLive do
             </p>
           <% end %>
         </section>
-        <section id="donate-interac" class="mt-8 border-l-4 border-brand bg-brand-wash p-5 sm:p-6">
-          <h2 class="font-heading text-2xl">{gettext("Or donate by Interac e-Transfer")}</h2>
+        <details id="donate-interac" class="mt-8 border-l-4 border-brand bg-brand-wash p-5 sm:p-6">
+          <summary class="cursor-pointer font-heading text-2xl">
+            {gettext("Or donate by Interac e-Transfer")}
+          </summary>
           <p class="mt-3 leading-7">
             {gettext(
               "Send your donation from your banking app to the address below. Autodeposit is enabled. Check that the recipient name is PauseAI Canada before confirming."
@@ -205,7 +212,7 @@ defmodule PauseAiCaWeb.DonateLive do
             <span id="donation-email" class="select-all">pauseaicanada@proton.me</span>
           </p>
           <p class="mt-2">{gettext("Recipient")}: <strong>PauseAI Canada</strong></p>
-        </section>
+        </details>
         <p class="mt-8 text-sm text-stone-600">
           {gettext("PauseAI Canada")} · {gettext("Corporation number")}: 1819452-1 · {gettext(
             "Business Number"
