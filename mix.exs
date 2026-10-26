@@ -4,7 +4,7 @@ defmodule PauseAiCa.MixProject do
   def project do
     [
       app: :pauseai_ca,
-      version: "0.5.40",
+      version: "0.5.41",
       elixir: "~> 1.17",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -50,11 +50,21 @@ defmodule PauseAiCa.MixProject do
     end
   end
 
+  defp app_shell_dependency do
+    case System.get_env("PHOENIX_APP_SHELL_PATH") do
+      path when is_binary(path) and path != "" ->
+        {:phoenix_app_shell, path: Path.expand(path)}
+
+      _ ->
+        {:phoenix_app_shell,
+         git: "https://github.com/ogourment/phoenix_app_shell-compiled.git",
+         ref: "49a142978a6b62c5261ed2363c3e9d14f91bb02a"}
+    end
+  end
+
   defp deps do
     [
-      {:phoenix_app_shell,
-       git: "https://github.com/ogourment/phoenix_app_shell-compiled.git",
-       ref: "49a142978a6b62c5261ed2363c3e9d14f91bb02a"},
+      app_shell_dependency(),
       {:argon2_elixir, "~> 4.0"},
       {:phoenix, "~> 1.8.9"},
       {:phoenix_ecto, "~> 4.5"},
