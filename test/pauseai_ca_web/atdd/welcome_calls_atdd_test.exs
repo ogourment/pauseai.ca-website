@@ -2,7 +2,7 @@ if System.get_env("ATDD") == "true" do
   defmodule PauseAiCaWeb.Atdd.WelcomeCallsTest do
     use AcceptanceHarness.Playwright.Case, async: false
     import PauseAiCa.AccountsFixtures
-    alias PauseAiCa.{Accounts, Repo, Welcome, Volunteers}
+    alias PauseAiCa.{Accounts, Incubators, Repo, Welcome, Volunteers}
     alias PauseAiCa.Welcome.{Session, Participant}
     alias PauseAiCaWeb.AtddEvidence
     @moduletag :atdd
@@ -53,8 +53,15 @@ if System.get_env("ATDD") == "true" do
 
         person =
           user_fixture()
-          |> Ecto.Changeset.change(name: "Camille", organizing_group_id: group.id)
+          |> Ecto.Changeset.change(name: "Camille")
           |> Repo.update!()
+
+        {:ok, _} =
+          Incubators.configure(admin_scope, group.id, %{
+            "name_en" => "Synthetic welcome group",
+            "name_fr" => "Groupe d’accueil synthétique",
+            "published" => true
+          })
 
         scope = Accounts.Scope.for_user(manager)
         # Fixture setup emits account-confirmation emails. Consume exactly those
@@ -70,7 +77,29 @@ if System.get_env("ATDD") == "true" do
 
         b =
           c.conn
-          |> login(manager)
+          |> login(person)
+          |> visit("/#{locale}")
+          |> PhoenixTest.Playwright.click("#involvement-menu summary")
+          |> capture(id, "Applicant opens Get involved", "Click Local groups")
+          |> click_link("#act-local-groups", tr(locale, "Local groups"), exact: true)
+          |> assert_has("[data-phx-main].phx-connected")
+          |> capture(id, "Configured local group directory", "Click Request to join")
+          |> click_link(tr(locale, "Request to join"))
+          |> assert_has("[data-phx-main].phx-connected")
+          |> check(tr(locale, "I agree to follow these conduct rules."))
+          |> click_button(tr(locale, "Save request"))
+          |> assert_has("#my-membership", text: tr(locale, "Pending review"), exact: false)
+          |> capture(
+            id,
+            "Applicant saves a pending group request",
+            "The manager can now select this applicant for a welcome call without granting an organizer role"
+          )
+
+        assert Repo.get!(Accounts.User, person.id).organizing_group_id == nil
+        assert {:error, :unauthorized} = PauseAiCa.AccountManagement.get(scope, person.id)
+
+        b =
+          switch_browser_identity(b, &login(&1, manager))
           |> visit("/manage/accounts?locale=#{locale}")
           |> assert_has("[data-phx-main].phx-connected")
           |> capture(id, "Accounts workspace", "Click Welcome calls in Management")
@@ -122,8 +151,25 @@ if System.get_env("ATDD") == "true" do
         assert Repo.aggregate(PauseAiCa.Mail.Draft, :count) == 1
         assert Repo.get!(Participant, p.id).invitation_state == "selected"
 
+        assert batch.recipient_context == %{
+                 "purpose" => "welcome",
+                 "group_id" => group.id,
+                 "session_id" => session.id
+               }
+
         b =
           b
+          |> click_link(tr(locale, "Open invitation drafts (author only)"))
+          |> assert_has("[data-phx-main].phx-connected")
+          |> assert_has("#mail-recipients", text: person.email)
+          |> refute_has("#mail-recipient-search-form")
+          |> capture(
+            id,
+            "Author opens the purpose-bound invitation draft",
+            "Recipients stay bound to this welcome call; no account-management grant or send"
+          )
+          |> click_link("#mail-recipients a", tr(locale, "Welcome calls"), exact: true)
+          |> assert_has("#welcome-editor")
           |> click_button(tr(locale, "Record invitation shared"))
           |> assert_has("#welcome-person-#{p.id}", text: tr(locale, "Invitation recorded"))
 
@@ -230,6 +276,12 @@ if System.get_env("ATDD") == "true" do
         end)
 
     defp capture(b, id, control, outcome) do
+      PhoenixTest.Playwright.evaluate(
+        b,
+        "document.documentElement.scrollWidth <= window.innerWidth",
+        &assert(&1)
+      )
+
       step = Process.get({:welcome_step, id}, 0) + 1
       Process.put({:welcome_step, id}, step)
       name = "#{id}-#{step}.png"
@@ -241,7 +293,7 @@ if System.get_env("ATDD") == "true" do
         "url" => AtddEvidence.safe_url(Process.get(:welcome_url)),
         "control" => control,
         "source" =>
-          "Actual local proposed UI; synthetic existing group accounts; no send/calendar/media",
+          "Actual local proposed UI; synthetic pending incubator applicant; no send/calendar/media",
         "external_systems" => "None"
       }
 

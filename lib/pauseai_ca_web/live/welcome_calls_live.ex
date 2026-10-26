@@ -85,6 +85,7 @@ defmodule PauseAiCaWeb.WelcomeCallsLive do
           class="rounded-xl border border-base-300 p-5 space-y-3"
         >
           <h2 class="text-2xl font-semibold">{p.session.title}</h2>
+          <p>{p.group.name}</p>
           <p>{gettext("Starts")}: {Welcome.display_time(p.session.starts_at, p.session.timezone)}</p>
           <p>{gettext("Ends")}: {Welcome.display_time(p.session.ends_at, p.session.timezone)}</p>
           <p>
@@ -108,7 +109,7 @@ defmodule PauseAiCaWeb.WelcomeCallsLive do
                   {reply, label} <- [
                     {"accepted", gettext("Accept")},
                     {"declined", gettext("Decline")},
-                    {"withdrawn", gettext("Withdraw from welcome calls")}
+                    {"withdrawn", gettext("Withdraw from this group’s welcome calls")}
                   ]
                 }
                 phx-click="respond"
@@ -116,7 +117,7 @@ defmodule PauseAiCaWeb.WelcomeCallsLive do
                 phx-value-reply={reply}
                 phx-value-revision={p.revision}
                 phx-value-key={@keys[p.id]}
-                class="btn btn-outline"
+                class={if reply == "withdrawn", do: "min-w-0 max-w-full text-left text-sm underline whitespace-normal", else: "btn btn-outline"}
               >{label}</button>
             </div>
             <a
@@ -137,7 +138,7 @@ defmodule PauseAiCaWeb.WelcomeCallsLive do
                 :for={
                   {reply, label} <- [
                     {"declined", gettext("Decline")},
-                    {"withdrawn", gettext("Withdraw from welcome calls")}
+                    {"withdrawn", gettext("Withdraw from this group’s welcome calls")}
                   ]
                 }
                 phx-click="respond"
@@ -145,7 +146,7 @@ defmodule PauseAiCaWeb.WelcomeCallsLive do
                 phx-value-reply={reply}
                 phx-value-revision={p.revision}
                 phx-value-key={@keys[p.id]}
-                class="btn btn-outline"
+                class={if reply == "withdrawn", do: "min-w-0 max-w-full text-left text-sm underline whitespace-normal", else: "btn btn-outline"}
               >{label}</button>
             </div>
           <% end %>

@@ -84,7 +84,9 @@ if System.get_env("ATDD") == "true" do
         )
         |> click_link(
           "#account-management-links [data-navigation-item='pauseai.groups']",
-          tr(locale, "Local groups"), exact: true)
+          tr(locale, "Local groups"),
+          exact: true
+        )
         |> connected()
         |> capture(
           locale,

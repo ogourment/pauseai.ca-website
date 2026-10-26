@@ -350,8 +350,12 @@ defmodule PauseAiCa.WelcomeTest do
            }
 
     assert {:ok, drafts} = Mail.drafts(c.scope, batch.id)
-    assert Enum.sort(Enum.map(drafts, & &1.email)) == Enum.sort([newcomer.email, c.newcomer.email])
-    assert {:error, :unauthorized} = Mail.save_batch(c.scope, batch, %{"recipient_ids" => [newcomer.id]})
+
+    assert Enum.sort(Enum.map(drafts, & &1.email)) ==
+             Enum.sort([newcomer.email, c.newcomer.email])
+
+    assert {:error, :unauthorized} =
+             Mail.save_batch(c.scope, batch, %{"recipient_ids" => [newcomer.id]})
 
     assert {:error, :unauthorized} =
              Mail.save_batch(c.scope, batch, %{"recipient_ids" => [outsider.id]})
@@ -404,5 +408,101 @@ defmodule PauseAiCa.WelcomeTest do
     assert {:error, :unauthorized} = Mail.get(c.scope, batch.id)
     assert {:error, :unauthorized} = Mail.generate(c.scope, batch.id)
     assert {:error, :unauthorized} = PauseAiCa.AccountManagement.get(c.scope, newcomer.id)
+  end
+
+  test "withdrawal through an older invitation also closes a later accepted call in that group",
+       c do
+    {:ok, old} = Welcome.create(c.scope, c.group.id, attrs(c), "older-create")
+
+    {:ok, _} =
+      Welcome.select(c.scope, c.group.id, old.id, [c.newcomer.id], old.revision, "older-select")
+
+    old_person = Repo.get_by!(Participant, session_id: old.id)
+
+    {:ok, old_invite} =
+      Welcome.record_invited(
+        c.scope,
+        c.group.id,
+        old.id,
+        old_person.id,
+        old_person.revision,
+        "older-invite"
+      )
+
+    # Simulate the first call ending; no real meeting or external operation occurs.
+    old
+    |> change(
+      starts_at: DateTime.add(DateTime.utc_now(), -7200),
+      ends_at: DateTime.add(DateTime.utc_now(), -3600)
+    )
+    |> Repo.update!()
+
+    {:ok, later} = Welcome.create(c.scope, c.group.id, attrs(c), "later-create")
+
+    {:ok, selected} =
+      Welcome.select(
+        c.scope,
+        c.group.id,
+        later.id,
+        [c.newcomer.id],
+        later.revision,
+        "later-select"
+      )
+
+    {:ok, batch} =
+      Welcome.prepare_drafts(
+        c.scope,
+        c.group.id,
+        later.id,
+        [c.newcomer.id],
+        selected.revision,
+        "later-draft"
+      )
+
+    later_person = Repo.get_by!(Participant, session_id: later.id)
+
+    {:ok, later_invite} =
+      Welcome.record_invited(
+        c.scope,
+        c.group.id,
+        later.id,
+        later_person.id,
+        later_person.revision,
+        "later-invite"
+      )
+
+    own = Scope.for_user(c.newcomer)
+
+    {:ok, accepted} =
+      Welcome.respond(own, later_invite.id, "accepted", later_invite.revision, "later-accept")
+
+    {:ok, before_calls} = Welcome.mine(own)
+    assert Enum.find(before_calls, &(&1.id == later_person.id)).active
+
+    assert {:ok, _} =
+             Welcome.respond(
+               own,
+               old_invite.id,
+               "withdrawn",
+               old_invite.revision,
+               "group-withdrawal"
+             )
+
+    {:ok, calls} = Welcome.mine(own)
+    retained = Enum.find(calls, &(&1.id == later_person.id))
+    assert retained.rsvp == "accepted" and retained.attendance == "unknown"
+    refute retained.active
+    assert retained.session.meeting_url == nil
+
+    assert {:error, :ineligible} =
+             Welcome.respond(
+               own,
+               accepted.id,
+               "accepted",
+               accepted.revision,
+               "reaccept-after-withdrawal"
+             )
+
+    assert {:error, :unauthorized} = Mail.get(c.scope, batch.id)
   end
 end

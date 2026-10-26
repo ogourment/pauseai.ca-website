@@ -195,7 +195,7 @@ defmodule PauseAiCa.Welcome do
           end
 
         context = %{"purpose" => "welcome", "group_id" => group_id, "session_id" => id}
-        batch = unwrap!(Mail.create(scope, hd(ids), context))
+        batch = unwrap!(Mail.create(scope, hd(ids), context, ids))
 
         batch =
           unwrap!(
@@ -258,7 +258,7 @@ defmodule PauseAiCa.Welcome do
          from p in Participant,
            where: p.user_id == ^scope.user.id and p.invitation_state != "selected",
            order_by: [desc: p.updated_at],
-           preload: [session: :host]
+           preload: [:group, session: :host]
        )
        |> Enum.map(fn p ->
          active = active_participation?(p, p.session)
@@ -481,22 +481,26 @@ defmodule PauseAiCa.Welcome do
          {:ok, %User{id: ^user_id}} <- adapter().fetch(scope, group_id, user_id),
          %User{confirmed_at: at, email: email} when not is_nil(at) <- Repo.get(User, user_id),
          false <- Mail.suppressed?(email),
-         false <-
-           Repo.exists?(
-             from p in Participant,
-               where: p.group_id == ^group_id and p.user_id == ^user_id and p.rsvp == "withdrawn"
-           ) do
+         false <- withdrawn_from_group?(user_id, group_id) do
       :ok
     else
       _ -> {:error, :ineligible}
     end
   end
 
+  defp withdrawn_from_group?(user_id, group_id),
+    do:
+      Repo.exists?(
+        from p in Participant,
+          where: p.group_id == ^group_id and p.user_id == ^user_id and p.rsvp == "withdrawn"
+      )
+
   defp active_participation?(participant, session) do
     participant.invitation_state == "invited" and session.status == "scheduled" and
       DateTime.compare(session.ends_at, DateTime.utc_now()) == :gt and
       host_current?(participant.group_id, session.host_id) and
-      function_exported?(adapter(), :related?, 2) and
+      not withdrawn_from_group?(participant.user_id, participant.group_id) and
+      Code.ensure_loaded?(adapter()) and function_exported?(adapter(), :related?, 2) and
       adapter().related?(participant.user_id, participant.group_id)
   end
 

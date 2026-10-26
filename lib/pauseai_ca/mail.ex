@@ -48,9 +48,12 @@ defmodule PauseAiCa.Mail do
     end
   end
 
-  def create(scope, account_id, context \\ %{}) do
+  def create(scope, account_id, context \\ %{}, recipient_ids \\ nil) do
     transact(fn ->
       lock_actor(scope)
+      ids = Enum.uniq(recipient_ids || [account_id])
+      if length(ids) not in 1..5 or account_id not in ids, do: Repo.rollback(:batch_size)
+      require_allowed(scope, ids, context)
 
       case recipient(scope, account_id, context) do
         {:ok, _} ->
@@ -58,7 +61,7 @@ defmodule PauseAiCa.Mail do
             owner_id: scope.user.id,
             anchor_user_id: account_id,
             recipient_context: context,
-            recipient_ids: [account_id]
+            recipient_ids: ids
           })
 
         {:error, reason} ->
