@@ -3,7 +3,8 @@ defmodule PauseAiCa.TasksRuntimeConfigTest do
 
   @environment_keys ~w(PAUSEAI_TASKS_ENABLED PAUSEAI_CA_DISPLAY_ENV PHX_HOST PHX_SERVER
     PAUSEAI_CA_DEPLOYMENT_HISTORY_PATH DATABASE_URL SECRET_KEY_BASE BREVO_API_KEY
-    PAUSEAI_CRM_INTAKE_TOKEN_FILE)
+    PAUSEAI_CRM_INTAKE_TOKEN_FILE PAUSEAI_INCUBATORS_ENABLED PAUSEAI_WELCOME_CALLS_ENABLED
+    PAUSEAI_MANIFUND_DONATIONS_ENABLED)
 
   setup do
     previous = Map.new(@environment_keys, &{&1, System.get_env(&1)})
@@ -64,6 +65,35 @@ defmodule PauseAiCa.TasksRuntimeConfigTest do
     for value <- ["TRUE", "1", "", "unexpected"] do
       System.put_env("PAUSEAI_TASKS_ENABLED", value)
       refute enabled?(:prod)
+    end
+  end
+
+  test "new pipeline features require an explicit per-environment rollout" do
+    features = [
+      incubators_enabled: "PAUSEAI_INCUBATORS_ENABLED",
+      welcome_calls_enabled: "PAUSEAI_WELCOME_CALLS_ENABLED",
+      manifund_donations_enabled: "PAUSEAI_MANIFUND_DONATIONS_ENABLED"
+    ]
+
+    for deployment <- ["staging", "production"] do
+      System.put_env("PAUSEAI_CA_DISPLAY_ENV", deployment)
+
+      for {feature, variable} <- features do
+        read = fn ->
+          Config.Reader.read!("config/runtime.exs", env: :prod, target: :host)
+          |> Keyword.fetch!(:pauseai_ca)
+          |> Keyword.fetch!(feature)
+        end
+
+        refute read.()
+        System.put_env(variable, "true")
+        assert read.()
+        System.put_env(variable, "false")
+        refute read.()
+        System.put_env(variable, "TRUE")
+        refute read.()
+        System.delete_env(variable)
+      end
     end
   end
 

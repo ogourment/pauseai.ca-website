@@ -45,6 +45,23 @@ tasks_enabled =
 
 config :pauseai_ca, :tasks_enabled, tasks_enabled
 
+# New pipeline features require an explicit rollout per environment. Keep the
+# existing synthetic incubator test configuration without enabling a deployment.
+for {feature, variable} <- [
+      incubators_enabled: "PAUSEAI_INCUBATORS_ENABLED",
+      welcome_calls_enabled: "PAUSEAI_WELCOME_CALLS_ENABLED",
+      manifund_donations_enabled: "PAUSEAI_MANIFUND_DONATIONS_ENABLED"
+    ] do
+  enabled =
+    case System.get_env(variable) do
+      nil -> config_env() == :test and feature == :incubators_enabled
+      "true" -> true
+      _ -> false
+    end
+
+  config :pauseai_ca, feature, enabled
+end
+
 # Operator-controlled durable newsletter queue; isolated dev/test rehearsals keep it disabled.
 config :pauseai_ca,
        :newsletter_dispatcher,

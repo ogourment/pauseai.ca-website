@@ -166,6 +166,7 @@ defmodule PauseAiCaWeb.Navigation do
         actor: %Scope{user: %User{confirmed_at: at}}
       }),
       do: at != nil and Application.get_env(:pauseai_ca, :incubators_enabled, false)
+
   def authorize(%{required_capability: :slack}, %{actor: %Scope{user: %User{confirmed_at: at}}}),
     do: at != nil and Application.get_env(:pauseai_ca, :slack_enabled, false)
 

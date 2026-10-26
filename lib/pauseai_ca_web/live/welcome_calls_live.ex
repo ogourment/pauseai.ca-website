@@ -117,7 +117,11 @@ defmodule PauseAiCaWeb.WelcomeCallsLive do
                 phx-value-reply={reply}
                 phx-value-revision={p.revision}
                 phx-value-key={@keys[p.id]}
-                class={if reply == "withdrawn", do: "min-w-0 max-w-full text-left text-sm underline whitespace-normal", else: "btn btn-outline"}
+                class={
+                  if reply == "withdrawn",
+                    do: "min-w-0 max-w-full text-left text-sm underline whitespace-normal",
+                    else: "btn btn-outline"
+                }
               >{label}</button>
             </div>
             <a
@@ -146,7 +150,11 @@ defmodule PauseAiCaWeb.WelcomeCallsLive do
                 phx-value-reply={reply}
                 phx-value-revision={p.revision}
                 phx-value-key={@keys[p.id]}
-                class={if reply == "withdrawn", do: "min-w-0 max-w-full text-left text-sm underline whitespace-normal", else: "btn btn-outline"}
+                class={
+                  if reply == "withdrawn",
+                    do: "min-w-0 max-w-full text-left text-sm underline whitespace-normal",
+                    else: "btn btn-outline"
+                }
               >{label}</button>
             </div>
           <% end %>
