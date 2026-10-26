@@ -268,9 +268,11 @@ defmodule PauseAiCaWeb.Layouts do
         export default {
           mounted() {
             const donation = () => {
-              if (this.el.dataset.donation !== "manifund") return
+              const destination = this.el.dataset.donation
+              if (!["manifund", "brochure"].includes(destination)) return
+              const signal = destination === "brochure" ? "brochure_opened" : "donation_link_opened"
               const csrfToken = document.querySelector("meta[name='csrf-token']")?.content
-              fetch("/engagement/donation-links/manifund", {
+              fetch(`/engagement/donation-links/${destination}`, {
                 method: "POST",
                 headers: {"x-csrf-token": csrfToken},
                 keepalive: true
@@ -279,8 +281,8 @@ defmodule PauseAiCaWeb.Layouts do
               try {
                 if (localStorage.getItem("pauseai-ca:analytics-consent") === "granted" &&
                     window.gtag && window.pauseaiSignupAnalytics.publicPage()) {
-                  window.gtag("event", "donation_link_opened", {
-                    destination: "manifund",
+                  window.gtag("event", signal, {
+                    destination,
                     page_location: window.pauseaiSignupAnalytics.publicLocation(),
                     page_referrer: window.location.origin
                   })

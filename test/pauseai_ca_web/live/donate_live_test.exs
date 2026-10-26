@@ -13,6 +13,23 @@ defmodule PauseAiCaWeb.DonateLiveTest do
     :ok
   end
 
+  test "brochure link is available in both languages and page modes", %{conn: conn} do
+    for enabled <- [false, true],
+        {path, label} <- [
+          {"/en/donate", "Read our brochure (PDF)"},
+          {"/fr/faire-un-don", "Lire notre brochure (PDF)"}
+        ] do
+      Application.put_env(:pauseai_ca, :manifund_donations_enabled, enabled)
+      {:ok, view, _} = live(conn, path)
+
+      assert has_element?(
+               view,
+               "#donation-brochure[target='_blank'][rel='noopener noreferrer'][data-donation='brochure'][href='https://drive.google.com/file/d/1AzvdAml-q0DAWhhSu-Q7K5RiTvFObFXu/view']",
+               label
+             )
+    end
+  end
+
   test "legacy rollback form preserves errors and saves a pledge once without creating an account",
        %{
          conn: conn

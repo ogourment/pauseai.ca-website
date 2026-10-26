@@ -366,7 +366,7 @@ defmodule PauseAiCa.Engagement do
     identities_by_kind =
       Repo.all(
         from signal in LearningSignal,
-          where: signal.kind != "donation_link_opened",
+          where: signal.kind not in ["donation_link_opened", "brochure_opened"],
           select: {signal.kind, signal.user_id, signal.visitor_id}
       )
       |> Enum.group_by(

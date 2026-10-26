@@ -86,4 +86,19 @@ defmodule PauseAiCaWeb.LearningSignalControllerTest do
 
     refute Repo.one(LearningSignal)
   end
+
+  test "brochure interest deduplicates browsers separately from Manifund", %{conn: conn} do
+    path = ~p"/engagement/donation-links/brochure"
+    conn = post(conn, path, %{email: "ignored@example.org", amount: "100"})
+    assert response(conn, 204)
+    assert conn |> recycle() |> post(path) |> response(204)
+    assert conn |> recycle() |> post(~p"/engagement/donation-links/manifund") |> response(204)
+
+    assert %{kind: "brochure_opened", subject: "brochure", value: nil, user_id: nil} =
+             Repo.get_by!(LearningSignal, kind: "brochure_opened")
+
+    assert Repo.aggregate(LearningSignal, :count) == 2
+    assert build_conn() |> post(path) |> response(204)
+    assert Repo.aggregate(LearningSignal, :count) == 3
+  end
 end

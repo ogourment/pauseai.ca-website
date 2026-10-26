@@ -140,11 +140,14 @@ defmodule PauseAiCa.EngagementTest do
   end
 
   describe "learning metrics" do
-    test "donation link interest does not count as learning activity" do
+    test "donation and brochure interest do not count as learning activity" do
       browser = Ecto.UUID.generate()
 
       assert {:ok, _} =
                Engagement.record_learning_signal(browser, nil, "donation_link_opened", "manifund")
+
+      assert {:ok, _} =
+               Engagement.record_learning_signal(browser, nil, "brochure_opened", "brochure")
 
       assert %{people: 0, breakdown: breakdown} = Engagement.learning_metrics()
       assert Enum.all?(Map.values(breakdown), &(&1 == 0))

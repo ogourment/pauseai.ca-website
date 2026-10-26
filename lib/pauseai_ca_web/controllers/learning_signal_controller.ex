@@ -53,14 +53,15 @@ defmodule PauseAiCaWeb.LearningSignalController do
   def event_link(conn, _params), do: send_resp(conn, :unprocessable_entity, "")
 
   # One signal per browser and destination: this measures link interest, not payments.
-  def donation_link(conn, %{"destination" => "manifund"}) do
+  def donation_link(conn, %{"destination" => destination})
+      when destination in ["manifund", "brochure"] do
     user = conn.assigns[:current_scope] && conn.assigns.current_scope.user
 
     Engagement.record_learning_signal(
       conn.assigns.learning_visitor_id,
       user,
-      "donation_link_opened",
-      "manifund"
+      if(destination == "brochure", do: "brochure_opened", else: "donation_link_opened"),
+      destination
     )
 
     send_resp(conn, :no_content, "")

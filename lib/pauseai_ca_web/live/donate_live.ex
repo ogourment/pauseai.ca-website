@@ -99,6 +99,7 @@ defmodule PauseAiCaWeb.DonateLive do
         <h1 class="font-heading text-4xl sm:text-5xl text-stone-950">
           {gettext("Support PauseAI Canada")}
         </h1>
+        <.brochure_link />
         <p class="mt-5 text-xl leading-8 text-stone-700">
           {gettext(
             "Help Canadians make the case for an international pause on the development of the most powerful AI systems. Your donation helps people organize locally, explain the risks, and bring concrete requests to elected representatives."
@@ -181,6 +182,7 @@ defmodule PauseAiCaWeb.DonateLive do
         <h1 class="font-heading text-5xl text-stone-950">
           {gettext("Support PauseAI Canada")}
         </h1>
+        <.brochure_link />
         <div class="mt-7 grid items-start gap-8 md:grid-cols-[1fr_0.9fr]">
           <div>
             <p class="max-w-3xl text-xl leading-8 text-stone-700">
@@ -411,6 +413,25 @@ defmodule PauseAiCaWeb.DonateLive do
         </p>
       </section>
     </Layouts.app>
+    """
+  end
+
+  defp brochure_link(assigns) do
+    ~H"""
+    <p class="mt-5">
+      <a
+        id="donation-brochure"
+        href="https://drive.google.com/file/d/1AzvdAml-q0DAWhhSu-Q7K5RiTvFObFXu/view"
+        phx-hook="PauseAiCaWeb.Layouts.TrackOutbound"
+        data-donation="brochure"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="font-semibold underline underline-offset-4"
+      >
+        {gettext("Read our brochure (PDF)")} <span aria-hidden="true">↗</span>
+        <span class="sr-only">{gettext("Opens in a new tab")}</span>
+      </a>
+    </p>
     """
   end
 end

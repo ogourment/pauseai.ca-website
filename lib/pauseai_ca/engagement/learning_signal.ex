@@ -4,12 +4,14 @@ defmodule PauseAiCa.Engagement.LearningSignal do
 
   `donation_link_opened` with subject `manifund` counts unique browsers that
   opened the donation link. It does not count clicks, donors, payments or amounts.
+  `brochure_opened` with subject `brochure` separately counts unique browsers
+  opening the brochure link, without measuring a PDF download or completed read.
   """
 
   use Ecto.Schema
   import Ecto.Changeset
 
-  @kinds ~w(question_answered questionnaire_completed learn_page_visited resource_opened resource_bookmarked event_link_opened donation_link_opened)
+  @kinds ~w(question_answered questionnaire_completed learn_page_visited resource_opened resource_bookmarked event_link_opened donation_link_opened brochure_opened)
 
   schema "learning_signals" do
     field :visitor_id, Ecto.UUID
