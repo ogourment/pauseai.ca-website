@@ -67,6 +67,7 @@ defmodule PauseAiCa.MixProject do
       acceptance_harness_dependency(),
       mail_workflow_dependency(),
       cms_dependency(),
+      donations_dependency(),
       tasks_dependency(),
       community_dependency(),
       crm_dependency(),
@@ -150,6 +151,12 @@ defmodule PauseAiCa.MixProject do
         "test"
       ]
     ]
+  end
+
+  # Local integration until the private package's first publication is verified.
+  # Replace the default with its exact private Git pin before staging/release.
+  defp donations_dependency do
+    {:phoenix_donations, path: System.get_env("PHOENIX_DONATIONS_PATH", "../phoenix_donations")}
   end
 
   defp tasks_dependency do

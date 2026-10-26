@@ -144,6 +144,7 @@ defmodule PauseAiCaWeb.Router do
     live_session :require_authenticated_user,
       on_mount: [{PauseAiCaWeb.UserAuth, :require_authenticated}] do
       live "/groups/:id/join", IncubatorsLive, :join
+      live "/manage/donations", DonationPageLive, :index
       live "/manage/groups", IncubatorManagementLive, :index
       live "/community/slack", SlackCommunityLive, :index
       live "/manage/tasks", TasksLive, :index

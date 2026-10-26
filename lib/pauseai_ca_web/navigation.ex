@@ -51,6 +51,7 @@ defmodule PauseAiCaWeb.Navigation do
         :admin,
         60
       ),
+      item("pauseai.donations", gettext_noop("Donation page"), :manage, :donations, :admin, 35),
       item("pauseai.groups", gettext_noop("Local groups"), :manage, :groups, :groups, 14),
       item(
         "pauseai.my-groups",
@@ -196,6 +197,7 @@ defmodule PauseAiCaWeb.Navigation do
         :local_interest -> "/admin/local-interest"
         :administrators -> "/manage/administrators"
         :dashboard -> "/admin/dashboard"
+        :donations -> "/manage/donations"
         :donation_pledges -> "/admin/donation-pledges"
         :versions -> "/admin/versions"
         :acceptance -> "/admin/acceptance"

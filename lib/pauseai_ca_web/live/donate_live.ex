@@ -1,6 +1,7 @@
 defmodule PauseAiCaWeb.DonateLive do
   use PauseAiCaWeb, :live_view
   alias PauseAiCa.Donations
+  alias PauseAiCa.Donations.Pages
   alias Phoenix.LiveView.JS
 
   @impl true
@@ -12,6 +13,10 @@ defmodule PauseAiCaWeb.DonateLive do
      assign(socket,
        locale: locale,
        page_title: gettext("Donate"),
+       donation_page: Pages.published(),
+       gift_minor: 0,
+       gift_value: "0",
+       gift_error: nil,
        campaign_mode: Application.get_env(:pauseai_ca, :manifund_donations_enabled, false),
        campaign: PauseAiCa.Donations.Campaign.current(),
        saved: false,
@@ -21,6 +26,29 @@ defmodule PauseAiCaWeb.DonateLive do
   end
 
   @impl true
+  def handle_event(
+        "preview_gift",
+        %{"gift" => %{"amount" => value}},
+        %{assigns: %{donation_page: page}} = socket
+      )
+      when is_map(page) do
+    case PauseAiCaWeb.DonationPageContent.gift_amount_minor(value) do
+      {:ok, minor} ->
+        {:noreply, assign(socket, gift_minor: minor, gift_value: value, gift_error: nil)}
+
+      :error ->
+        {:noreply,
+         assign(socket,
+           gift_minor: 0,
+           gift_value: value,
+           gift_error: get_in(page, ["editions", socket.assigns.locale, "gift_invalid"])
+         )}
+    end
+  end
+
+  def handle_event(_, _, %{assigns: %{donation_page: page}} = socket) when is_map(page),
+    do: {:noreply, socket}
+
   def handle_event(_, _, %{assigns: %{campaign_mode: true}} = socket), do: {:noreply, socket}
 
   def handle_event("validate", %{"pledge" => attrs}, socket) do
@@ -78,10 +106,29 @@ defmodule PauseAiCaWeb.DonateLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <%= if @campaign_mode do %>
-      <.campaign_page {assigns} />
+    <%= if @donation_page do %>
+      <Layouts.app
+        flash={@flash}
+        current_scope={@current_scope}
+        locale={@locale}
+        promote_warning_shot={false}
+        translated_path={if @locale == "fr", do: ~p"/en/donate", else: ~p"/fr/faire-un-don"}
+      >
+        <PauseAiCaWeb.DonationPageContent.content
+          page={@donation_page}
+          locale={@locale}
+          gift_minor={@gift_minor}
+          gift_value={@gift_value}
+          input_error={@gift_error}
+          observation={nil}
+        />
+      </Layouts.app>
     <% else %>
-      <.legacy_pledge_page {assigns} />
+      <%= if @campaign_mode do %>
+        <.campaign_page {assigns} />
+      <% else %>
+        <.legacy_pledge_page {assigns} />
+      <% end %>
     <% end %>
     """
   end
