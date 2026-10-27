@@ -163,10 +163,16 @@ defmodule PauseAiCa.MixProject do
     ]
   end
 
-  # Local integration until the private package's first publication is verified.
-  # Replace the default with its exact private Git pin before staging/release.
   defp donations_dependency do
-    {:phoenix_donations, path: System.get_env("PHOENIX_DONATIONS_PATH", "../phoenix_donations")}
+    case System.get_env("PHOENIX_DONATIONS_PATH") do
+      path when is_binary(path) and path != "" ->
+        {:phoenix_donations, path: Path.expand(path)}
+
+      _ ->
+        {:phoenix_donations,
+         git: "https://github.com/ogourment/phoenix_donations-compiled.git",
+         ref: "f4b679b1d5037436086dda990fa81f3f6a3440c1"}
+    end
   end
 
   defp tasks_dependency do

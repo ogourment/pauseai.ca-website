@@ -107,11 +107,27 @@ if System.get_env("ATDD") == "true" do
           |> fill_in("#donation-preview-funding", tr(locale, "Illustrative funding (CAD)"),
             with: "8000"
           )
-          |> fill_in(
-            "#donation-cms-preview-gift",
-            original.payload["editions"][locale]["gift_label"],
-            with: "25"
-          )
+
+        browser =
+          if unquote(width) < 700 do
+            browser
+            |> click("#donation-cms-preview-mobile-open")
+            |> assert_has("#donation-cms-preview-mobile-dialog[open]")
+            |> fill_in(
+              "#donation-cms-preview-mobile-gift",
+              original.payload["editions"][locale]["gift_label"], with: "25")
+            |> assert_has("#donation-cms-preview-mobile-gift[value='25']")
+            |> click("#donation-cms-preview-mobile-dialog [data-simulator-close]")
+            |> refute_has("#donation-cms-preview-mobile-dialog[open]")
+          else
+            fill_in(
+              browser,
+              "#donation-cms-preview-gift",
+              original.payload["editions"][locale]["gift_label"], with: "25")
+          end
+
+        browser =
+          browser
           |> assert_has("#donation-preview-funding[value='8000']")
           |> assert_has("#donation-cms-preview [data-kind='bucket']", count: 3)
           |> capture(
@@ -124,6 +140,10 @@ if System.get_env("ATDD") == "true" do
           |> visit(public_path)
           |> assert_has("[data-phx-main].phx-connected")
           |> assert_has("h1", text: title)
+          |> assert_has("#manifund-donate")
+          |> refute_has("#donation-funding-unknown")
+          |> refute_has("#donation-gift-form")
+          |> refute_has("#donation-buckets")
           |> capture(
             id,
             "Published synthetic donation page",

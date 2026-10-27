@@ -10,6 +10,8 @@ import Config
 # The campaign handoff is consumer-owned; no donor data or provider requests
 # are needed to render the public summary. Enable the replacement after review.
 config :pauseai_ca, :manifund_donations_enabled, true
+# Background public API reads are active only while the campaign handoff is enabled.
+config :pauseai_ca, :donation_funding_enabled, true
 
 config :pauseai_ca, :manifund_campaign,
   project_id: "a7c581e9-fb40-e046-5996-1920a622fef7",

@@ -33,7 +33,9 @@ defmodule PauseAiCaWeb.PublishedDonateLiveTest do
         ] do
       {:ok, view, _} = live(conn, path)
       assert has_element?(view, "h1", title)
-      assert has_element?(view, "#donation-funding-unknown")
+      refute has_element?(view, "#donation-funding-unknown")
+      refute has_element?(view, "#donation-gift-form")
+      refute has_element?(view, "#donation-buckets")
       assert has_element?(view, "#manifund-donate[data-donation='manifund'][target='_blank']")
       assert has_element?(view, "#donation-brochure[data-donation='brochure']")
       assert has_element?(view, "#donation-email", "pauseaicanada@proton.me")
@@ -62,6 +64,7 @@ defmodule PauseAiCaWeb.PublishedDonateLiveTest do
   test "gift preview retains newly completed goals, preserves ties and never saves a pledge", %{
     conn: conn
   } do
+    enable_funding(0)
     publish(payload())
     revision_count = Repo.aggregate(PageRevision, :count)
     {:ok, view, _} = live(conn, "/en/donate")
@@ -69,7 +72,7 @@ defmodule PauseAiCaWeb.PublishedDonateLiveTest do
 
     html = view |> form("#donation-gift-form", gift: %{amount: "50"}) |> render_change()
     assert bucket_ids(html) == ["bucket:first:small-first", "bucket:first:small-second"]
-    assert has_element?(view, "#donation-funding-unknown")
+    refute has_element?(view, "#donation-funding-unknown")
 
     html = view |> form("#donation-gift-form", gift: %{amount: ""}) |> render_change()
     assert bucket_ids(html) == ["bucket:first:small-first"]
@@ -130,13 +133,14 @@ defmodule PauseAiCaWeb.PublishedDonateLiveTest do
         render_component(&DonationPageContent.content/1,
           page: page,
           locale: "en",
-          observation: observation
+          observation: observation,
+          preview_mode: true
         )
 
       document = LazyHTML.from_fragment(html)
       assert LazyHTML.query(document, "section[aria-labelledby]") |> Enum.empty?()
-      assert LazyHTML.query(document, "#donation-allocation-heading") |> Enum.empty?()
-      refute LazyHTML.query(document, "#donation-buckets") |> Enum.empty?()
+      assert LazyHTML.query(document, "#donation-cms-preview-allocation-heading") |> Enum.empty?()
+      refute LazyHTML.query(document, "#donation-cms-preview-buckets") |> Enum.empty?()
     end
   end
 
@@ -145,6 +149,7 @@ defmodule PauseAiCaWeb.PublishedDonateLiveTest do
       render_component(&DonationPageContent.content/1,
         page: payload(),
         locale: "en",
+        observation: %{amount_minor: 0, currency: "CAD"},
         gift_minor: 5_000,
         gift_value: "50"
       )
@@ -216,6 +221,82 @@ defmodule PauseAiCaWeb.PublishedDonateLiveTest do
              "#donation-cms-preview-mobile-dialog [phx-hook*='TrackOutbound']"
            )
            |> Enum.empty?()
+  end
+
+  test "public funding uses only the configured campaign and discloses the dated pending-offer measure",
+       %{conn: conn} do
+    enable_funding(15_001)
+    published = publish(payload())
+    {:ok, view, html} = live(conn, "/en/donate")
+    assert has_element?(view, "#donation-funding-source", "Pending Manifund offers")
+    assert html =~ "These offers have not been received"
+    assert html =~ "1.4038"
+    assert has_element?(view, "#donation-gift-form")
+    assert html =~ "Remaining authored heading"
+
+    changed =
+      put_in(payload(), ["links", "campaign"], "https://manifund.org/projects/another-project")
+
+    scope = admin_scope()
+    {:ok, draft} = Pages.save(scope, published, changed)
+    {:ok, _} = Pages.publish(scope, draft)
+    {:ok, mismatched, _} = live(conn, "/en/donate")
+    refute has_element?(mismatched, "#donation-funding-source")
+    refute has_element?(mismatched, "#donation-gift-form")
+    assert has_element?(mismatched, "#manifund-donate")
+  end
+
+  defp enable_funding(amount) do
+    keys = [:donation_funding_enabled, :manifund_donations_enabled, :donation_funding_cache]
+    previous = Map.new(keys, &{&1, Application.fetch_env(:pauseai_ca, &1)})
+
+    on_exit(fn ->
+      for {key, value} <- previous do
+        case value do
+          {:ok, value} -> Application.put_env(:pauseai_ca, key, value)
+          :error -> Application.delete_env(:pauseai_ca, key)
+        end
+      end
+    end)
+
+    {:ok, campaign} = PauseAiCa.Donations.Campaign.current()
+    now = DateTime.utc_now()
+
+    value = %{
+      project_id: campaign.project_id,
+      amount_minor: amount,
+      currency: "CAD",
+      measure: :pending_offers,
+      received_minor: nil,
+      fx_rate: "1.4038",
+      fx_date: DateTime.to_date(now),
+      fetched_at: now
+    }
+
+    parent = self()
+
+    cache =
+      start_supervised!(
+        {PhoenixDonations.Cache,
+         fetcher: fn ->
+           send(parent, {:fetch_started, self()})
+
+           receive do
+             :release -> {:ok, value}
+           end
+         end,
+         refresh_interval_ms: :infinity,
+         max_age_seconds: 900}
+      )
+
+    assert_receive {:fetch_started, worker}
+    ref = Process.monitor(worker)
+    send(worker, :release)
+    assert_receive {:DOWN, ^ref, :process, ^worker, :normal}
+    assert {:ok, _} = PauseAiCa.Donations.Funding.observation(cache, now)
+    Application.put_env(:pauseai_ca, :donation_funding_enabled, true)
+    Application.put_env(:pauseai_ca, :manifund_donations_enabled, true)
+    Application.put_env(:pauseai_ca, :donation_funding_cache, cache)
   end
 
   defp admin_scope do

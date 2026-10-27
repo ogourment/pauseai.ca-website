@@ -342,3 +342,9 @@ config :pauseai_ca, :slack, %{
 config :pauseai_ca,
        :slack_inbox_worker_enabled,
        System.get_env("PAUSEAI_SLACK_INBOX_ENABLED") == "true"
+
+# Optional operational kill switch. Campaign enablement is also required; tests
+# keep their explicit no-network default unless this switch is supplied.
+if value = System.get_env("PAUSEAI_DONATION_FUNDING_ENABLED") do
+  config :pauseai_ca, :donation_funding_enabled, value == "true"
+end

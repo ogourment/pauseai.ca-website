@@ -1,5 +1,8 @@
 import Config
 
+# Tests inject funding observations; never call public providers at application startup.
+config :pauseai_ca, :donation_funding_enabled, false
+
 config :pauseai_ca, :tasks_enabled, true
 config :pauseai_ca, :incubators_enabled, true
 

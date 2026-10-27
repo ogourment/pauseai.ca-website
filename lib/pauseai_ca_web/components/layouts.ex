@@ -53,7 +53,7 @@ defmodule PauseAiCaWeb.Layouts do
     ~H"""
     <header class="sticky top-0 z-40 border-b border-stone-200/80 bg-[#f8f5ed]/95 backdrop-blur">
       <nav
-        class="mx-auto flex max-w-6xl items-center gap-2 px-3 py-4 sm:gap-5 sm:px-5"
+        class="mx-auto flex max-w-6xl items-center gap-2 px-3 py-4 sm:px-5 lg:gap-5"
         aria-label="Main navigation"
       >
         <a
@@ -232,8 +232,8 @@ defmodule PauseAiCaWeb.Layouts do
             class="whitespace-nowrap rounded-full bg-stone-900 px-3 py-2 text-sm font-semibold text-white hover:bg-stone-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand sm:px-4 sm:text-base"
             href={~p"/users/log-in?#{%{from: "header", locale: @locale}}"}
           >
-            <span class="sm:hidden">{gettext("Account")}</span>
-            <span class="hidden sm:inline">{gettext("Sign in / Sign up")}</span>
+            <span class="lg:hidden">{gettext("Account")}</span>
+            <span class="hidden lg:inline">{gettext("Sign in / Sign up")}</span>
           </.link>
         <% end %>
       </nav>

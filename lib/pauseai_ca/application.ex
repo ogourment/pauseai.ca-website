@@ -7,20 +7,22 @@ defmodule PauseAiCa.Application do
 
   @impl true
   def start(_type, _args) do
-    children = [
-      PauseAiCaWeb.Telemetry,
-      PauseAiCa.Repo,
-      PauseAiCa.Chat.SlackInboxWorker,
-      PauseAiCa.Volunteers.Dispatcher,
-      PauseAiCa.Newsletters.Dispatcher,
-      PauseAiCa.Campaigns.RateLimit,
-      {DNSCluster, query: Application.get_env(:pauseai_ca, :dns_cluster_query) || :ignore},
-      {Phoenix.PubSub, name: PauseAiCa.PubSub},
-      # Start a worker by calling: PauseAiCa.Worker.start_link(arg)
-      # {PauseAiCa.Worker, arg},
-      # Start to serve requests, typically the last entry
-      PauseAiCaWeb.Endpoint
-    ]
+    children =
+      PauseAiCa.Donations.Funding.children() ++
+        [
+          PauseAiCaWeb.Telemetry,
+          PauseAiCa.Repo,
+          PauseAiCa.Chat.SlackInboxWorker,
+          PauseAiCa.Volunteers.Dispatcher,
+          PauseAiCa.Newsletters.Dispatcher,
+          PauseAiCa.Campaigns.RateLimit,
+          {DNSCluster, query: Application.get_env(:pauseai_ca, :dns_cluster_query) || :ignore},
+          {Phoenix.PubSub, name: PauseAiCa.PubSub},
+          # Start a worker by calling: PauseAiCa.Worker.start_link(arg)
+          # {PauseAiCa.Worker, arg},
+          # Start to serve requests, typically the last entry
+          PauseAiCaWeb.Endpoint
+        ]
 
     # See https://elixir.hexdocs.pm/Supervisor.html
     # for other strategies and supported options

@@ -53,6 +53,7 @@ defmodule PauseAiCaWeb.DonationPageContent do
       assign(assigns,
         copy: copy,
         projection: projection,
+        show_projection: assigns.preview_mode || (projection && projection.baseline_known?),
         active_stage: active,
         cards: rows,
         card_json: Jason.encode!(rows),
@@ -84,31 +85,53 @@ defmodule PauseAiCaWeb.DonationPageContent do
       <section
         class="mt-7 rounded-xl border border-stone-200 bg-white p-4 sm:p-6"
         aria-labelledby={
-          if present?(@copy, heading(@projection)), do: "#{@prefix}-allocation-heading"
+          if @show_projection && present?(@copy, heading(@projection)),
+            do: "#{@prefix}-allocation-heading"
         }
       >
         <h2
-          :if={present?(@copy, heading(@projection))}
+          :if={@show_projection && present?(@copy, heading(@projection))}
           id={"#{@prefix}-allocation-heading"}
           class="font-heading text-2xl"
         >
           {text(@copy, heading(@projection))}
         </h2>
-        <p :if={present?(@copy, note(@projection))} class="mt-2 whitespace-pre-line text-stone-700">
+        <p
+          :if={@show_projection && present?(@copy, note(@projection))}
+          class="mt-2 whitespace-pre-line text-stone-700"
+        >
           {text(@copy, note(@projection))}
         </p>
         <p
-          :if={!@projection || !@projection.baseline_known?}
+          :if={@preview_mode && (!@projection || !@projection.baseline_known?)}
           id={"#{@prefix}-funding-unknown"}
           class="mt-3 text-sm font-semibold text-stone-700"
         >
           {text(@copy, "funding_unknown")}
         </p>
-        <p id={"#{@prefix}-projection-note"} class="mt-2 text-sm text-stone-600">
+        <p
+          :if={@show_projection}
+          id={"#{@prefix}-projection-note"}
+          class="mt-2 text-sm text-stone-600"
+        >
           {text(@copy, "projection_note")}
         </p>
-        <div class="donation-budget-layout mt-5">
-          <div class="donation-budget-column">
+        <p
+          :if={
+            !@preview_mode && @show_projection && Map.get(@observation, :measure) == :pending_offers
+          }
+          id="donation-funding-source"
+          class="mt-3 text-sm text-stone-600"
+        >
+          {gettext(
+            "Pending Manifund offers: %{amount}. These offers have not been received. USD converted at %{rate} CAD on %{date} (Bank of Canada).",
+            amount: money(@observation.amount_minor, @locale),
+            rate: @observation.fx_rate,
+            date: Date.to_iso8601(@observation.fx_date)
+          )}
+        </p>
+        <div class={if @show_projection, do: "donation-budget-layout mt-5", else: "mt-2"}>
+          <div :if={@show_projection} class="donation-budget-column">
             <.mobile_simulator
               copy={@copy}
               prefix={@prefix}
@@ -135,9 +158,9 @@ defmodule PauseAiCaWeb.DonationPageContent do
               {text(@copy, "budget_label")}: {money(@active_stage["target_minor"], @locale)}
             </p>
           </div>
-          <aside class="donation-gift-controls">
+          <aside class={if @show_projection, do: "donation-gift-controls"}>
             <form
-              :if={!@preview_mode or is_binary(@preview_event)}
+              :if={@show_projection && (!@preview_mode or is_binary(@preview_event))}
               id={"#{@prefix}-gift-form"}
               phx-change={@preview_event || "preview_gift"}
               phx-submit={@preview_event || "preview_gift"}
@@ -150,7 +173,10 @@ defmodule PauseAiCaWeb.DonationPageContent do
                 error={@input_error}
               />
             </form>
-            <div :if={@preview_mode and is_nil(@preview_event)} class="donation-static-gift">
+            <div
+              :if={(@show_projection && @preview_mode) and is_nil(@preview_event)}
+              class="donation-static-gift"
+            >
               <.gift_input
                 copy={@copy}
                 prefix={@prefix}
@@ -158,7 +184,10 @@ defmodule PauseAiCaWeb.DonationPageContent do
                 disabled={true}
               />
             </div>
-            <p class="donation-mobile-note mt-3 whitespace-pre-line text-sm text-stone-600">
+            <p
+              :if={@show_projection}
+              class="donation-mobile-note mt-3 whitespace-pre-line text-sm text-stone-600"
+            >
               {text(@copy, "gift_note")}
             </p>
             <div class="mt-4 flex flex-col items-start gap-3">

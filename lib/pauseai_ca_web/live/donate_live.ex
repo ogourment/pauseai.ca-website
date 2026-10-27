@@ -9,11 +9,14 @@ defmodule PauseAiCaWeb.DonateLive do
     locale = if socket.assigns.live_action == :fr, do: "fr", else: "en"
     Gettext.put_locale(PauseAiCaWeb.Gettext, locale)
 
+    page = Pages.published()
+
     {:ok,
      assign(socket,
        locale: locale,
        page_title: gettext("Donate"),
-       donation_page: Pages.published(),
+       donation_page: page,
+       funding_observation: public_observation(page),
        gift_minor: 0,
        gift_value: "0",
        gift_error: nil,
@@ -120,7 +123,7 @@ defmodule PauseAiCaWeb.DonateLive do
           gift_minor={@gift_minor}
           gift_value={@gift_value}
           input_error={@gift_error}
-          observation={nil}
+          observation={@funding_observation}
           campaign_active={@campaign_mode}
         />
       </Layouts.app>
@@ -133,6 +136,20 @@ defmodule PauseAiCaWeb.DonateLive do
     <% end %>
     """
   end
+
+  defp public_observation(page) when is_map(page) do
+    with {:ok, campaign} <- PauseAiCa.Donations.Campaign.current(),
+         true <- get_in(page, ["links", "campaign"]) == campaign.url,
+         {:ok, %{project_id: project_id} = observation} <-
+           PauseAiCa.Donations.Funding.observation(),
+         true <- project_id == campaign.project_id do
+      observation
+    else
+      _ -> nil
+    end
+  end
+
+  defp public_observation(_), do: nil
 
   defp campaign_page(assigns) do
     ~H"""
