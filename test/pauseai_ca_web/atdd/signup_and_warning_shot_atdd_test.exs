@@ -446,7 +446,7 @@ if System.get_env("ATDD") == "true" do
         |> click_link("Sign in")
         |> click_button("Keep me logged in on this device")
         |> assert_has("#action-editor")
-        |> click("#flash-info button")
+        |> refute_has("#flash-info")
         |> click("#account-menu summary")
         |> click_link("Admin dashboard")
         |> assert_has("#signup-created", text: "4")
@@ -833,7 +833,16 @@ if System.get_env("ATDD") == "true" do
           |> assert_has("#manifund-donate[href='#{url}']", text: cta)
           |> assert_has("#manifund-account-requirement", text: disclosure, exact: false)
           |> assert_has("#manifund-proposal[href='#{url}']")
-          |> assert_has("#donation-email", text: "pauseaicanada@proton.me")
+          |> assert_has("details#donate-interac:not([open]) > summary")
+          |> refute_has("#donation-email")
+          |> capture(
+            id,
+            "Interac details start collapsed",
+            "Click the Interac summary to reveal the transfer address and recipient"
+          )
+          |> click("#donate-interac > summary")
+          |> assert_has("details#donate-interac[open]")
+          |> assert_has("#donation-email", text: "pauseaicanada@proton.me", exact: true)
           |> assert_has("#donate-interac strong", text: "PauseAI Canada")
           |> refute_has("#pledge-form")
           |> refute_has("#pledge-suggestions")
@@ -854,7 +863,16 @@ if System.get_env("ATDD") == "true" do
           b
           |> visit(path)
           |> assert_has("#manifund-unavailable")
-          |> assert_has("#donation-email", text: "pauseaicanada@proton.me")
+          |> assert_has("details#donate-interac:not([open]) > summary")
+          |> refute_has("#donation-email")
+          |> capture(
+            id,
+            "Interac details start collapsed",
+            "Click the Interac summary to reveal the transfer address and recipient"
+          )
+          |> click("#donate-interac > summary")
+          |> assert_has("details#donate-interac[open]")
+          |> assert_has("#donation-email", text: "pauseaicanada@proton.me", exact: true)
           |> refute_has("#manifund-donate")
           |> capture(
             id,
@@ -908,7 +926,7 @@ if System.get_env("ATDD") == "true" do
         |> visit("/users/log-in/#{token}")
         |> click_button("Keep me logged in on this device")
         |> assert_has("#account-menu")
-        |> click("#flash-info button")
+        |> refute_has("#flash-info")
         |> click("#account-menu summary")
         |> capture(
           id,
@@ -948,7 +966,7 @@ if System.get_env("ATDD") == "true" do
       |> visit("/users/log-in/#{token}")
       |> click_button("Keep me logged in on this device")
       |> assert_has("#account-menu")
-      |> click("#flash-info button")
+      |> refute_has("#flash-info")
       |> click("#account-menu summary")
       |> refute_has("#account-menu", text: "Admin dashboard")
       |> capture(

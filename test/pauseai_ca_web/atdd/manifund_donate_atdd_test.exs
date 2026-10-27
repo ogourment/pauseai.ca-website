@@ -84,7 +84,16 @@ if System.get_env("ATDD") == "true" do
             "#manifund-donate[href='#{@url}'][target='_blank'][data-donation='manifund']"
           )
           |> assert_has("#manifund-proposal[href='#{@url}']")
-          |> assert_has("#donation-email", text: "pauseaicanada@proton.me")
+          |> assert_has("details#donate-interac:not([open]) > summary")
+          |> refute_has("#donation-email")
+          |> capture(
+            id,
+            "Interac details start collapsed",
+            "Click the Interac summary to reveal the transfer address and recipient"
+          )
+          |> click("#donate-interac > summary")
+          |> assert_has("details#donate-interac[open]")
+          |> assert_has("#donation-email", text: "pauseaicanada@proton.me", exact: true)
           |> assert_has("#donate-interac strong", text: "PauseAI Canada")
           |> refute_has("#pledge-form")
           |> refute_has("#pledge-suggestions")
@@ -111,7 +120,16 @@ if System.get_env("ATDD") == "true" do
           |> assert_has("[data-phx-main].phx-connected")
           |> assert_has("#manifund-unavailable")
           |> refute_has("#manifund-donate")
-          |> assert_has("#donation-email", text: "pauseaicanada@proton.me")
+          |> assert_has("details#donate-interac:not([open]) > summary")
+          |> refute_has("#donation-email")
+          |> capture(
+            id,
+            "Interac details start collapsed",
+            "Click the Interac summary to reveal the transfer address and recipient"
+          )
+          |> click("#donate-interac > summary")
+          |> assert_has("details#donate-interac[open]")
+          |> assert_has("#donation-email", text: "pauseaicanada@proton.me", exact: true)
           |> capture(
             id,
             "Reload with unusable campaign configuration",
