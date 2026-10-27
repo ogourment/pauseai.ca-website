@@ -11,9 +11,6 @@ defmodule PauseAiCa.GithubDeliveryContractTest do
 
     assert ci =~ "uses: ./.github/workflows/phoenix-crm.yml"
     assert ci =~ "#{@harness}phoenix-delivery.yml@#{@delivery_ref}"
-    assert ci =~ "acceptance-harness-github-ref: v0.10.6"
-    assert ci =~ "acceptance-harness-github-sha: fb318c868be948316fcb1ebbd144d1a075f6d8fd"
-    assert ci =~ "secrets.ACCEPTANCE_HARNESS_GITHUB_DEPLOY_KEY"
     assert ci =~ "build-release: true"
     assert ci =~ "run-acceptance: true"
     assert ci =~ "deploy-staging: true"
@@ -22,7 +19,7 @@ defmodule PauseAiCa.GithubDeliveryContractTest do
     refute ci =~ "secrets.PRODUCTION_"
   end
 
-  test "the private package adapter retains the reviewed Phoenix quality and release gates" do
+  test "public package CI retains the reviewed quality gates without private dependency credentials" do
     adapter = File.read!(Path.join(@workflows, "phoenix-crm.yml"))
     ci = File.read!(Path.join(@workflows, "ci.yml"))
 
@@ -42,15 +39,24 @@ defmodule PauseAiCa.GithubDeliveryContractTest do
       assert adapter =~ gate
     end
 
-    assert adapter =~ "StrictHostKeyChecking yes"
-    assert adapter =~ "IdentitiesOnly yes"
-    assert adapter =~ "IdentityFile $HOME/.ssh/phoenix_crm_ci"
-    assert adapter =~ "IdentityFile $HOME/.ssh/phoenix_editor_ci"
-    refute adapter =~ "secrets.PRODUCTION_"
+    refute adapter =~ "secrets."
+    refute adapter =~ "ACCEPTANCE_HARNESS_PATH"
     refute adapter =~ "deploy-production: true"
 
-    for secret <- ~w(CRM_PACKAGE_DEPLOY_KEY EDITOR_PACKAGE_DEPLOY_KEY FORGEJO_PACKAGE_KNOWN_HOSTS) do
-      assert ci =~ "secrets.#{secret}"
+    for secret <- ~w(MAIL_PACKAGE_DEPLOY_KEY CMS_PACKAGE_DEPLOY_KEY CRM_PACKAGE_DEPLOY_KEY
+                     EDITOR_PACKAGE_DEPLOY_KEY TASKS_PACKAGE_DEPLOY_KEY COMMUNITY_PACKAGE_DEPLOY_KEY
+                     SHELL_PACKAGE_DEPLOY_KEY ACCEPTANCE_HARNESS_GITHUB_DEPLOY_KEY) do
+      refute ci =~ "secrets.#{secret}"
+    end
+
+    {lock, _} = Code.eval_file(Path.expand("../../mix.lock", __DIR__))
+
+    for package <- ~w(phoenix_app_shell phoenix_cms phoenix_crm phoenix_community phoenix_tasks
+                      phoenix_mail_workflow phoenix_markdown_editor acceptance_harness)a do
+      assert {:git, url, sha, options} = Map.fetch!(lock, package)
+      assert url == "https://github.com/ogourment/#{package}-compiled.git"
+      assert sha =~ ~r/\A[0-9a-f]{40}\z/
+      assert options[:ref] == sha
     end
   end
 

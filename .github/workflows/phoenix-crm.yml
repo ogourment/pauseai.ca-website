@@ -1,5 +1,5 @@
 # Consumer-local adapter based on ogourment/github-ci-cd-harness v0.4.45.
-# Retains its quality/release gates; adds separate read-only Forgejo package keys.
+# Retains its quality/release gates; fetches public compiled package distributions.
 name: PauseAI Phoenix CI
 
 on:
@@ -33,45 +33,6 @@ on:
         description: Consumer test/quality command
         type: string
         default: mix test
-      acceptance-harness-github-ref:
-        description: Optional private GitHub archive tag for a temporary Framagit outage
-        type: string
-        default: ""
-      acceptance-harness-github-sha:
-        description: Expected commit for the private GitHub archive tag
-        type: string
-        default: ""
-    secrets:
-      mail-package-deploy-key:
-        description: Read-only phoenix_mail_workflow Forgejo deploy key
-        required: true
-      crm-package-deploy-key:
-        description: Read-only phoenix_crm Forgejo deploy key
-        required: true
-      editor-package-deploy-key:
-        description: Read-only phoenix_markdown_editor Forgejo deploy key
-        required: true
-      cms-package-deploy-key:
-        description: Read-only phoenix_cms Forgejo deploy key
-        required: true
-      community-package-deploy-key:
-        description: Read-only phoenix_community Forgejo deploy key
-        required: true
-      tasks-package-deploy-key:
-        description: Read-only phoenix_tasks Forgejo deploy key
-        required: true
-      shell-package-deploy-key:
-        description: Read-only phoenix_app_shell Forgejo deploy key
-        required: true
-      forgejo-known-hosts:
-        description: Verified git.agile-u.com host key
-        required: true
-      acceptance-harness-token:
-        description: Optional Framagit token for the private acceptance_harness dependency
-        required: false
-      acceptance-harness-github-deploy-key:
-        description: Read-only deploy key for the private GitHub archive
-        required: false
 
 permissions:
   contents: read
@@ -97,26 +58,8 @@ jobs:
           --health-retries 5
     env:
       MIX_ENV: test
-      ACCEPTANCE_HARNESS_TOKEN: ${{ secrets.acceptance-harness-token }}
-      ACCEPTANCE_HARNESS_PATH: ${{ inputs.acceptance-harness-github-ref != '' && format('{0}/.ci-deps/acceptance_harness', github.workspace) || '' }}
     steps:
       - uses: actions/checkout@v6
-      - name: Checkout pinned private AcceptanceHarness archive
-        if: ${{ inputs.acceptance-harness-github-ref != '' }}
-        uses: actions/checkout@v6
-        with:
-          repository: ogourment/acceptance_harness-private-archive
-          ref: ${{ inputs.acceptance-harness-github-ref }}
-          path: .ci-deps/acceptance_harness
-          ssh-key: ${{ secrets.acceptance-harness-github-deploy-key }}
-          persist-credentials: false
-      - name: Verify private AcceptanceHarness commit
-        if: ${{ inputs.acceptance-harness-github-ref != '' }}
-        env:
-          EXPECTED_SHA: ${{ inputs.acceptance-harness-github-sha }}
-        run: |
-          test -n "$EXPECTED_SHA"
-          test "$(git -C .ci-deps/acceptance_harness rev-parse HEAD)" = "$EXPECTED_SHA"
       - uses: erlef/setup-beam@v1.24.1
         with:
           elixir-version: ${{ inputs.elixir-version }}
@@ -125,69 +68,6 @@ jobs:
         run: |
           mix local.hex --force
           mix local.rebar --force
-      - name: Configure read-only private package access
-        env:
-          MAIL_DEPLOY_KEY: ${{ secrets.mail-package-deploy-key }}
-          CMS_DEPLOY_KEY: ${{ secrets.cms-package-deploy-key }}
-          CRM_DEPLOY_KEY: ${{ secrets.crm-package-deploy-key }}
-          COMMUNITY_DEPLOY_KEY: ${{ secrets.community-package-deploy-key }}
-          TASKS_DEPLOY_KEY: ${{ secrets.tasks-package-deploy-key }}
-          SHELL_DEPLOY_KEY: ${{ secrets.shell-package-deploy-key }}
-          EDITOR_DEPLOY_KEY: ${{ secrets.editor-package-deploy-key }}
-          FORGEJO_KNOWN_HOSTS: ${{ secrets.forgejo-known-hosts }}
-        run: |
-          set -euo pipefail
-          test -n "$MAIL_DEPLOY_KEY"
-          test -n "$CMS_DEPLOY_KEY"
-          test -n "$CRM_DEPLOY_KEY"
-          test -n "$EDITOR_DEPLOY_KEY"
-          test -n "$COMMUNITY_DEPLOY_KEY"
-          test -n "$TASKS_DEPLOY_KEY"
-          test -n "$SHELL_DEPLOY_KEY"
-          test -n "$FORGEJO_KNOWN_HOSTS"
-          install -d -m 700 "$HOME/.ssh"
-          printf '%s\n' "$MAIL_DEPLOY_KEY" > "$HOME/.ssh/phoenix_mail_ci"
-          chmod 600 "$HOME/.ssh/phoenix_mail_ci"
-          printf '%s\n' "$CMS_DEPLOY_KEY" > "$HOME/.ssh/phoenix_cms_ci"
-          printf '%s\n' "$CRM_DEPLOY_KEY" > "$HOME/.ssh/phoenix_crm_ci"
-          printf '%s\n' "$EDITOR_DEPLOY_KEY" > "$HOME/.ssh/phoenix_editor_ci"
-          printf '%s\n' "$TASKS_DEPLOY_KEY" > "$HOME/.ssh/phoenix_tasks_ci"
-          chmod 600 "$HOME/.ssh/phoenix_tasks_ci"
-          printf '%s\n' "$COMMUNITY_DEPLOY_KEY" > "$HOME/.ssh/phoenix_community_ci"
-          chmod 600 "$HOME/.ssh/phoenix_community_ci"
-          printf '%s\n' "$SHELL_DEPLOY_KEY" > "$HOME/.ssh/phoenix_shell_ci"
-          chmod 600 "$HOME/.ssh/phoenix_cms_ci" "$HOME/.ssh/phoenix_crm_ci" "$HOME/.ssh/phoenix_editor_ci" "$HOME/.ssh/phoenix_shell_ci"
-          printf '%s\n' "$FORGEJO_KNOWN_HOSTS" >> "$HOME/.ssh/known_hosts"
-          cat >> "$HOME/.ssh/config" <<EOF
-          Host forgejo-mail forgejo-cms forgejo-crm forgejo-editor forgejo-shell forgejo-tasks forgejo-community
-            HostName git.agile-u.com
-            User git
-            HostKeyAlias git.agile-u.com
-            StrictHostKeyChecking yes
-            IdentitiesOnly yes
-          Host forgejo-mail
-            IdentityFile $HOME/.ssh/phoenix_mail_ci
-          Host forgejo-cms
-            IdentityFile $HOME/.ssh/phoenix_cms_ci
-          Host forgejo-crm
-            IdentityFile $HOME/.ssh/phoenix_crm_ci
-          Host forgejo-community
-            IdentityFile $HOME/.ssh/phoenix_community_ci
-          Host forgejo-tasks
-            IdentityFile $HOME/.ssh/phoenix_tasks_ci
-          Host forgejo-shell
-            IdentityFile $HOME/.ssh/phoenix_shell_ci
-          Host forgejo-editor
-            IdentityFile $HOME/.ssh/phoenix_editor_ci
-          EOF
-          chmod 600 "$HOME/.ssh/config" "$HOME/.ssh/known_hosts"
-          git config --global url."ssh://git@forgejo-mail/olivierg/phoenix_mail_workflow.git".insteadOf "ssh://git@git.agile-u.com/olivierg/phoenix_mail_workflow.git"
-          git config --global url."ssh://git@forgejo-cms/olivierg/phoenix_cms.git".insteadOf "ssh://git@git.agile-u.com/olivierg/phoenix_cms.git"
-          git config --global url."ssh://git@forgejo-crm/olivierg/phoenix_crm.git".insteadOf "ssh://git@git.agile-u.com/olivierg/phoenix_crm.git"
-          git config --global url."ssh://git@forgejo-editor/olivierg/phoenix_markdown_editor.git".insteadOf "ssh://git@git.agile-u.com/olivierg/phoenix_markdown_editor.git"
-          git config --global url."ssh://git@forgejo-shell/olivierg/phoenix_app_shell.git".insteadOf "ssh://git@git.agile-u.com/olivierg/phoenix_app_shell.git"
-          git config --global url."ssh://git@forgejo-tasks/olivierg/phoenix_tasks.git".insteadOf "ssh://git@git.agile-u.com/olivierg/phoenix_tasks.git"
-          git config --global url."ssh://git@forgejo-community/olivierg/phoenix_community.git".insteadOf "ssh://git@git.agile-u.com/olivierg/phoenix_community.git"
       - name: Fetch dependencies
         run: mix deps.get
       - name: Check formatting
