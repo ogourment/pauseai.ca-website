@@ -53,7 +53,7 @@ defmodule PauseAiCaWeb.Layouts do
     ~H"""
     <header class="sticky top-0 z-40 border-b border-stone-200/80 bg-[#f8f5ed]/95 backdrop-blur">
       <nav
-        class="mx-auto flex max-w-6xl items-center gap-2 px-3 py-4 sm:px-5 lg:gap-5"
+        class="mx-auto flex max-w-6xl items-center gap-1 px-2 py-4 sm:gap-2 sm:px-5 lg:gap-5"
         aria-label="Main navigation"
       >
         <a
@@ -104,7 +104,7 @@ defmodule PauseAiCaWeb.Layouts do
         <.link
           id="donate-link"
           navigate={if @locale == "fr", do: ~p"/fr/faire-un-don", else: ~p"/en/donate"}
-          class="shrink-0 whitespace-nowrap rounded-full bg-brand px-3 py-2 text-sm font-bold text-stone-950 hover:bg-brand-strong sm:px-4"
+          class="shrink-0 whitespace-nowrap rounded-full bg-brand px-2 py-2 text-sm font-bold text-stone-950 hover:bg-brand-strong sm:px-4"
         >
           {gettext("Donate")}
         </.link>
@@ -229,7 +229,7 @@ defmodule PauseAiCaWeb.Layouts do
           </a>
           <.link
             id="account-entry"
-            class="whitespace-nowrap rounded-full bg-stone-900 px-3 py-2 text-sm font-semibold text-white hover:bg-stone-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand sm:px-4 sm:text-base"
+            class="whitespace-nowrap rounded-full bg-stone-900 px-2 py-2 text-sm font-semibold text-white hover:bg-stone-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand sm:px-4 sm:text-base"
             href={~p"/users/log-in?#{%{from: "header", locale: @locale}}"}
           >
             <span class="lg:hidden">{gettext("Account")}</span>
