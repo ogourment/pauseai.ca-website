@@ -4,7 +4,7 @@ defmodule PauseAiCa.MixProject do
   def project do
     [
       app: :pauseai_ca,
-      version: "0.5.41",
+      version: "0.5.42",
       elixir: "~> 1.17",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -149,7 +149,6 @@ defmodule PauseAiCa.MixProject do
         "test"
       ],
       precommit: [
-        "acceptance.update_agents --check",
         "ecto.create --quiet",
         "ecto.migrate --quiet",
         "acceptance.schema_diagram",

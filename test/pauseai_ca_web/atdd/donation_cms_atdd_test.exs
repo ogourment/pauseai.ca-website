@@ -115,7 +115,9 @@ if System.get_env("ATDD") == "true" do
             |> assert_has("#donation-cms-preview-mobile-dialog[open]")
             |> fill_in(
               "#donation-cms-preview-mobile-gift",
-              original.payload["editions"][locale]["gift_label"], with: "25")
+              original.payload["editions"][locale]["gift_label"],
+              with: "25"
+            )
             |> assert_has("#donation-cms-preview-mobile-gift[value='25']")
             |> click("#donation-cms-preview-mobile-dialog [data-simulator-close]")
             |> refute_has("#donation-cms-preview-mobile-dialog[open]")
@@ -123,7 +125,9 @@ if System.get_env("ATDD") == "true" do
             fill_in(
               browser,
               "#donation-cms-preview-gift",
-              original.payload["editions"][locale]["gift_label"], with: "25")
+              original.payload["editions"][locale]["gift_label"],
+              with: "25"
+            )
           end
 
         browser =
