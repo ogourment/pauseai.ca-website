@@ -240,6 +240,55 @@ defmodule PauseAiCa.NewsletterProviderReconciliationTest do
     assert invalid.counts["invalid"] == 1
   end
 
+  test "literal provider timestamps persist through the ledger and newsletter withdrawal", c do
+    cases = [
+      {c, "hardBounces", "2026-10-15T12:34:56.000Z", ~U[2026-10-15 12:34:56.000000Z]},
+      {receipt(c.scope, "seconds@example.org", "seconds-message"), "unsubscribed",
+       "2026-10-15T12:34:56Z", ~U[2026-10-15 12:34:56.000000Z]},
+      {receipt(c.scope, "milliseconds@example.org", "milliseconds-message"), "unsubscribed",
+       "2026-10-15T12:34:56.123Z", ~U[2026-10-15 12:34:56.123000Z]},
+      {receipt(c.scope, "microseconds@example.org", "microseconds-message"), "unsubscribed",
+       "2026-10-15T12:34:56.123456Z", ~U[2026-10-15 12:34:56.123456Z]}
+    ]
+
+    for {fixture, kind, source_date, expected} <- cases do
+      fixture.subscription
+      |> change(
+        requested_at: ~U[2026-10-01 00:00:00.000000Z],
+        confirmed_at: ~U[2026-10-01 00:01:00.000000Z]
+      )
+      |> Repo.update!()
+
+      fixture.delivery
+      |> change(
+        attempted_at: ~U[2026-10-15 01:00:00.000000Z],
+        accepted_at: ~U[2026-10-15 01:00:01.000000Z]
+      )
+      |> Repo.update!()
+
+      observation = event(fixture, kind) |> Map.put("date", source_date)
+
+      assert {:ok, %{"new_events" => 1}} = ProviderReconciliation.reconcile([observation])
+      recorded = Repo.get_by!(ProviderEvent, delivery_id: fixture.delivery.id)
+      assert recorded.occurred_at == expected
+      assert recorded.occurred_at.microsecond == expected.microsecond
+
+      if kind == "unsubscribed" do
+        subscription = Repo.get!(Subscription, fixture.subscription.id)
+        assert subscription.state == "withdrawn"
+        assert subscription.withdrawn_at == expected
+        assert subscription.withdrawn_at.microsecond == expected.microsecond
+        consent = Repo.get_by!(ConsentEvent, subscription_id: subscription.id, kind: "withdrawn")
+        assert consent.evidence["observed_at"] == DateTime.to_iso8601(expected)
+      end
+
+      assert {:ok, %{"new_events" => 0, "already_recorded" => 1}} =
+               ProviderReconciliation.reconcile([observation])
+    end
+
+    assert Repo.aggregate(ProviderEvent, :count) == 4
+  end
+
   test "production opt-in and environment guards prevent staging polling and provider reads" do
     previous = Application.get_env(:pauseai_ca, :mail_environment)
     enabled = Application.get_env(:pauseai_ca, :newsletter_provider_sync_enabled)
