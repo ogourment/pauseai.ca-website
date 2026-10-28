@@ -42,7 +42,7 @@
     id: "newsletter",
     title: "Newsletter consent and delivery",
     tables:
-      ~w(newsletter_result_snapshots newsletter_delivery_limits newsletter_language_preferences newsletter_subscriptions newsletter_consent_events newsletter_withdrawal_tokens newsletter_drafts newsletter_batches newsletter_deliveries)
+      ~w(newsletter_provider_events newsletter_provider_sync_states newsletter_result_snapshots newsletter_delivery_limits newsletter_language_preferences newsletter_subscriptions newsletter_consent_events newsletter_withdrawal_tokens newsletter_drafts newsletter_batches newsletter_deliveries)
   },
   %{
     id: "participation",

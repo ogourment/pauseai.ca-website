@@ -10,6 +10,20 @@ digraph newsletter {
     color="#94a3b8";
     penwidth=1.5;
     style="rounded";
+  "newsletter_provider_events" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.newsletter_provider_events</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">delivery_id</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">event_key</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">email</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">kind</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">reason</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">consent_conflict</TD><TD ALIGN="LEFT">boolean NOT NULL</TD></TR><TR><TD ALIGN="LEFT">occurred_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
+  "newsletter_provider_sync_states" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.newsletter_provider_sync_states</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">cursor_at</TD><TD ALIGN="LEFT">timestamp without time zone NULL</TD></TR><TR><TD ALIGN="LEFT">last_full_scan_at</TD><TD ALIGN="LEFT">timestamp without time zone NULL</TD></TR><TR><TD ALIGN="LEFT">full_scan</TD><TD ALIGN="LEFT">boolean NOT NULL</TD></TR><TR><TD ALIGN="LEFT">window_start</TD><TD ALIGN="LEFT">date NULL</TD></TR><TR><TD ALIGN="LEFT">window_end</TD><TD ALIGN="LEFT">date NULL</TD></TR><TR><TD ALIGN="LEFT">offset</TD><TD ALIGN="LEFT">integer NOT NULL</TD></TR><TR><TD ALIGN="LEFT">partial</TD><TD ALIGN="LEFT">boolean NOT NULL</TD></TR><TR><TD ALIGN="LEFT">last_attempt_at</TD><TD ALIGN="LEFT">timestamp without time zone NULL</TD></TR><TR><TD ALIGN="LEFT">last_success_at</TD><TD ALIGN="LEFT">timestamp without time zone NULL</TD></TR><TR><TD ALIGN="LEFT">last_error</TD><TD ALIGN="LEFT">character varying NULL</TD></TR><TR><TD ALIGN="LEFT">counts</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
   "newsletter_result_snapshots" [label=<
     <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
       <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.newsletter_result_snapshots</B></TD></TR>
@@ -108,6 +122,7 @@ digraph newsletter {
   "newsletter_drafts" -> "crm_mailing_lists" [label="mailing_list_id -> id", color="#d97706", style="dashed", penwidth=1.5];
   "newsletter_drafts" -> "users" [label="owner_id -> id", color="#d97706", style="dashed", penwidth=1.5];
   "newsletter_language_preferences" -> "users" [label="actor_id -> id", color="#d97706", style="dashed", penwidth=1.5];
+  "newsletter_provider_events" -> "newsletter_deliveries" [label="delivery_id -> id", color="#64748b"];
   "newsletter_result_snapshots" -> "newsletter_batches" [label="batch_id -> id", color="#64748b"];
   "newsletter_withdrawal_tokens" -> "newsletter_subscriptions" [label="subscription_id -> id", color="#64748b"];
 }
