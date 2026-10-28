@@ -59,6 +59,8 @@ defmodule PauseAiCa.Newsletters.ProviderHistory do
 
       case Req.get(request, url: "/smtp/statistics/events", params: params) do
         {:ok, %{status: 200, body: %{"events" => rows}}} when is_list(rows) -> {:ok, rows}
+        # Brevo returns an empty JSON object for a valid window with no events.
+        {:ok, %{status: 200, body: body}} when body == %{} -> {:ok, []}
         {:ok, %{status: 200}} -> {:error, :invalid_response}
         {:ok, %{status: 429}} -> {:error, :rate_limited}
         _ -> {:error, :unavailable}

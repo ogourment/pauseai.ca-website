@@ -336,6 +336,58 @@ defmodule PauseAiCa.NewsletterProviderReconciliationTest do
     end
   end
 
+  test "a legitimate empty Brevo report advances a quiet worker pass and clears prior errors" do
+    keys = [
+      :mail_environment,
+      :newsletter_provider_sync_enabled,
+      :brevo_api_key,
+      :brevo_history_req_options
+    ]
+
+    previous = Map.new(keys, &{&1, Application.fetch_env(:pauseai_ca, &1)})
+
+    on_exit(fn ->
+      for {key, old} <- previous do
+        case old do
+          {:ok, value} -> Application.put_env(:pauseai_ca, key, value)
+          :error -> Application.delete_env(:pauseai_ca, key)
+        end
+      end
+    end)
+
+    Application.put_env(:pauseai_ca, :mail_environment, :production)
+    Application.put_env(:pauseai_ca, :newsletter_provider_sync_enabled, true)
+    Application.put_env(:pauseai_ca, :brevo_api_key, "synthetic")
+    now = DateTime.utc_now()
+
+    assert {:ok, %{last_error: "rate_limited"}} =
+             ProviderSync.run(fn _ -> {:error, :rate_limited} end, now)
+
+    for empty_body <- [%{}, %{"events" => []}] do
+      Application.put_env(:pauseai_ca, :brevo_history_req_options,
+        plug: fn conn -> Req.Test.json(conn, empty_body) end
+      )
+
+      assert {:ok, []} = ProviderHistory.fetch_page([])
+
+      log =
+        ExUnit.CaptureLog.capture_log(fn ->
+          assert {:noreply, nil} = ProviderSyncWorker.handle_info(:reconcile, nil)
+        end)
+
+      refute log =~ "Newsletter provider reconciliation"
+      state = ProviderSync.status()
+      assert is_nil(state.last_error)
+      assert state.offset == 0
+      refute state.partial
+      assert DateTime.compare(state.cursor_at, now) in [:eq, :gt]
+      assert state.last_success_at == state.cursor_at
+      assert state.counts["new_events"] == 0
+      assert state.counts["invalid"] == 0
+      assert Repo.aggregate(ProviderEvent, :count) == 0
+    end
+  end
+
   test "results refresh updates statistics with activation off and reconciles only after fresh production activation",
        c do
     keys = [
@@ -373,7 +425,7 @@ defmodule PauseAiCa.NewsletterProviderReconciliationTest do
     refute Newsletters.eligible?(c.subscription.email)
 
     Application.put_env(:pauseai_ca, :brevo_history_req_options,
-      plug: fn conn -> Req.Test.json(conn, %{}) end
+      plug: fn conn -> Req.Test.json(conn, %{"unexpected" => "response shape"}) end
     )
 
     assert {:error, :invalid_response} = ProviderHistory.fetch_page([])
