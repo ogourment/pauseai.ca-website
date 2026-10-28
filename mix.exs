@@ -46,7 +46,7 @@ defmodule PauseAiCa.MixProject do
       _ ->
         {:phoenix_mail_workflow,
          git: "https://github.com/ogourment/phoenix_mail_workflow-compiled.git",
-         ref: "b6313db6c2db5a049ca9fef619a51341783585a1"}
+         ref: "a4b3a55a05b8d0b86c1e9e31db369504d2dd5dda"}
     end
   end
 
