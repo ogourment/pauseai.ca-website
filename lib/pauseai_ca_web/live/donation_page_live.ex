@@ -758,8 +758,12 @@ defmodule PauseAiCaWeb.DonationPageLive do
                     formnovalidate
                     data-action="stage-up"
                     disabled={stage_index == 0}
-                    class={button_class()}
-                  >{gettext("Move stage up")}</button>
+                    aria-label={gettext("Move stage up")}
+                    title={gettext("Move stage up")}
+                    class={icon_button_class(false)}
+                  >
+                    <span aria-hidden="true"><.icon name="hero-arrow-up" class="size-4" /></span>
+                  </button>
                   <button
                     type="submit"
                     name="intent"
@@ -767,8 +771,12 @@ defmodule PauseAiCaWeb.DonationPageLive do
                     formnovalidate
                     data-action="stage-down"
                     disabled={stage_index == length(@payload["stages"]) - 1}
-                    class={button_class()}
-                  >{gettext("Move stage down")}</button>
+                    aria-label={gettext("Move stage down")}
+                    title={gettext("Move stage down")}
+                    class={icon_button_class(false)}
+                  >
+                    <span aria-hidden="true"><.icon name="hero-arrow-down" class="size-4" /></span>
+                  </button>
                   <button
                     type="submit"
                     name="intent"
@@ -776,8 +784,12 @@ defmodule PauseAiCaWeb.DonationPageLive do
                     formnovalidate
                     data-action="stage-remove"
                     data-confirm={gettext("Remove this stage and its buckets from the draft?")}
-                    class={button_class()}
-                  >{gettext("Remove stage")}</button>
+                    aria-label={gettext("Remove stage")}
+                    title={gettext("Remove stage")}
+                    class={icon_button_class(true)}
+                  >
+                    <span aria-hidden="true"><.icon name="hero-trash" class="size-4" /></span>
+                  </button>
                 </div>
                 <article
                   :for={{bucket, bucket_index} <- Enum.with_index(stage["buckets"] || [])}
@@ -801,41 +813,57 @@ defmodule PauseAiCaWeb.DonationPageLive do
                       value={bucket["label_fr"]}
                     />
                   </div>
-                  <.input
-                    name={"page[stages][#{stage_index}][buckets][#{bucket_index}][amount_cad]"}
-                    type="number"
-                    step="0.01"
-                    min="0.01"
-                    label={gettext("Bucket budget (CAD)")}
-                    value={cad(bucket["amount_minor"])}
-                  />
-                  <div class="flex flex-wrap gap-2">
-                    <button
-                      type="submit"
-                      name="intent"
-                      value={"bucket-up:" <> stage["id"] <> ":" <> bucket["id"]}
-                      formnovalidate
-                      data-action="bucket-up"
-                      disabled={bucket_index == 0}
-                      class={button_class()}
-                    >{gettext("Move bucket up")}</button>
-                    <button
-                      type="submit"
-                      name="intent"
-                      value={"bucket-down:" <> stage["id"] <> ":" <> bucket["id"]}
-                      formnovalidate
-                      data-action="bucket-down"
-                      disabled={bucket_index == length(stage["buckets"]) - 1}
-                      class={button_class()}
-                    >{gettext("Move bucket down")}</button>
-                    <button
-                      type="submit"
-                      name="intent"
-                      value={"bucket-remove:" <> stage["id"] <> ":" <> bucket["id"]}
-                      formnovalidate
-                      data-action="bucket-remove"
-                      class={button_class()}
-                    >{gettext("Remove bucket")}</button>
+                  <div class="flex flex-wrap items-end gap-3">
+                    <div class="min-w-0 flex-1">
+                      <.input
+                        name={"page[stages][#{stage_index}][buckets][#{bucket_index}][amount_cad]"}
+                        type="number"
+                        step="0.01"
+                        min="0.01"
+                        label={gettext("Bucket budget (CAD)")}
+                        value={cad(bucket["amount_minor"])}
+                      />
+                    </div>
+                    <div class="flex shrink-0 gap-1 pb-0.5">
+                      <button
+                        type="submit"
+                        name="intent"
+                        value={"bucket-up:" <> stage["id"] <> ":" <> bucket["id"]}
+                        formnovalidate
+                        data-action="bucket-up"
+                        disabled={bucket_index == 0}
+                        aria-label={gettext("Move bucket up")}
+                        title={gettext("Move bucket up")}
+                        class={icon_button_class(false)}
+                      >
+                        <span aria-hidden="true"><.icon name="hero-arrow-up" class="size-4" /></span>
+                      </button>
+                      <button
+                        type="submit"
+                        name="intent"
+                        value={"bucket-down:" <> stage["id"] <> ":" <> bucket["id"]}
+                        formnovalidate
+                        data-action="bucket-down"
+                        disabled={bucket_index == length(stage["buckets"]) - 1}
+                        aria-label={gettext("Move bucket down")}
+                        title={gettext("Move bucket down")}
+                        class={icon_button_class(false)}
+                      >
+                        <span aria-hidden="true"><.icon name="hero-arrow-down" class="size-4" /></span>
+                      </button>
+                      <button
+                        type="submit"
+                        name="intent"
+                        value={"bucket-remove:" <> stage["id"] <> ":" <> bucket["id"]}
+                        formnovalidate
+                        data-action="bucket-remove"
+                        aria-label={gettext("Remove bucket")}
+                        title={gettext("Remove bucket")}
+                        class={icon_button_class(true)}
+                      >
+                        <span aria-hidden="true"><.icon name="hero-trash" class="size-4" /></span>
+                      </button>
+                    </div>
                   </div>
                 </article>
                 <button
@@ -1023,6 +1051,17 @@ defmodule PauseAiCaWeb.DonationPageLive do
       </script>
     </Layouts.management>
     """
+  end
+
+  defp icon_button_class(destructive) do
+    base =
+      "inline-flex size-11 shrink-0 items-center justify-center rounded-md border border-stone-300 bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-700 disabled:cursor-not-allowed disabled:opacity-40"
+
+    base <>
+      if(destructive,
+        do: " text-red-700 hover:bg-red-50",
+        else: " text-stone-700 hover:bg-stone-100"
+      )
   end
 
   defp button_class(primary \\ false),
