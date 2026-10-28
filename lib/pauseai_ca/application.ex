@@ -15,6 +15,7 @@ defmodule PauseAiCa.Application do
           PauseAiCa.Chat.SlackInboxWorker,
           PauseAiCa.Volunteers.Dispatcher,
           PauseAiCa.Newsletters.Dispatcher,
+          PauseAiCa.Newsletters.ProviderSyncWorker,
           PauseAiCa.Campaigns.RateLimit,
           {DNSCluster, query: Application.get_env(:pauseai_ca, :dns_cluster_query) || :ignore},
           {Phoenix.PubSub, name: PauseAiCa.PubSub},

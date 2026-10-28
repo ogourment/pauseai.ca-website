@@ -9,6 +9,14 @@ defmodule PauseAiCa.MailSafety do
   def environment, do: Application.get_env(:pauseai_ca, :mail_environment, :blocked)
 
   def prepare(email, opts) do
+    if address_hold?(email) do
+      {:error, :recipient_delivery_hold}
+    else
+      prepare_environment(email, opts)
+    end
+  end
+
+  defp prepare_environment(email, opts) do
     case environment() do
       mode when mode in [:dev, :test, :production] -> {:ok, email}
       :staging -> prepare_staging(email, Keyword.get(opts, :admin_actor_id))
@@ -20,6 +28,20 @@ defmodule PauseAiCa.MailSafety do
 
   @doc "Single-account authentication exception; never used by generic or bulk delivery."
   def prepare_sign_in(email, user_id) do
+    if address_hold?(email),
+      do: {:error, :recipient_delivery_hold},
+      else: prepare_sign_in_environment(email, user_id)
+  end
+
+  defp address_hold?(email) do
+    recipients =
+      (email.to ++ email.cc ++ email.bcc)
+      |> Enum.map(fn {_, address} -> String.downcase(String.trim(address)) end)
+
+    MapSet.size(PauseAiCa.Newsletters.ProviderReconciliation.suppressed_emails(recipients)) > 0
+  end
+
+  defp prepare_sign_in_environment(email, user_id) do
     case environment() do
       mode when mode in [:dev, :test, :production] ->
         {:ok, email}

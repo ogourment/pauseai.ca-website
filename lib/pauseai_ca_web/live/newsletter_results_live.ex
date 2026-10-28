@@ -15,6 +15,7 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
        recipient_summaries: %{},
        result: nil,
        provider: nil,
+       sync_status: nil,
        loading: false,
        error: nil,
        page: 1
@@ -43,6 +44,7 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
            recipient_summaries:
              Results.recipient_summaries(socket.assigns.current_scope, Enum.map(records, & &1.id)),
            records: records,
+           sync_status: PauseAiCa.Newsletters.ProviderSync.status(),
            result: nil,
            page: page,
            provider: nil,
@@ -54,6 +56,7 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
           assign(socket,
             senders: Results.senders(socket.assigns.current_scope, [result.batch.id]),
             result: result,
+            sync_status: result.synchronization,
             provider: result.provider,
             error: nil
           )
@@ -94,13 +97,22 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
   end
 
   def handle_async(:results, {:ok, {:ok, provider}}, socket) do
-    if PauseAiCa.Volunteers.superadmin?(socket.assigns.current_scope),
-      do: {:noreply, assign(socket, provider: provider, loading: false)},
-      else:
+    case Results.get(socket.assigns.current_scope, socket.assigns.result.batch.id) do
+      {:ok, result} ->
+        {:noreply,
+         assign(socket,
+           result: result,
+           sync_status: result.synchronization,
+           provider: provider,
+           loading: false
+         )}
+
+      _ ->
         {:noreply,
          socket
          |> assign(result: nil, provider: nil, loading: false)
          |> redirect(to: ~p"/dashboard")}
+    end
   end
 
   def handle_async(:results, {:ok, {:error, :unauthorized}}, socket),
@@ -162,6 +174,37 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
             )}
           </p>
         </div>
+        <section id="provider-synchronization" class="my-5 rounded border border-stone-300 p-4">
+          <h2 class="font-semibold">{gettext("Provider synchronization")}</h2>
+          <p :if={!PauseAiCa.Newsletters.ProviderSyncWorker.enabled?()}>
+            {gettext("Automatic synchronization is disabled in this environment.")}
+          </p>
+          <p :if={PauseAiCa.Newsletters.ProviderSyncWorker.enabled?()}>
+            {gettext(
+              "Read-only reconciliation runs every 15 minutes. Recent history overlaps, with a daily scan of the available 90-day history."
+            )}
+          </p>
+          <p :if={@sync_status && @sync_status.last_success_at}>
+            {gettext("Last successful reconciliation")}:
+            <time datetime={DateTime.to_iso8601(@sync_status.last_success_at)}>{Calendar.strftime(
+              @sync_status.last_success_at,
+              "%Y-%m-%d %H:%M UTC"
+            )}</time>
+          </p>
+          <p :if={@sync_status && @sync_status.partial} role="status">
+            {gettext("History is incomplete. The next pass continues from its saved cursor.")}
+          </p>
+          <p :if={@sync_status && @sync_status.last_error} role="alert" class="crm-error">
+            {gettext(
+              "Provider reconciliation needs attention. Existing address holds and withdrawals remain in effect."
+            )}
+          </p>
+          <p :if={@sync_status && Map.get(@sync_status.counts, "invalid", 0) > 0} role="alert">
+            {gettext("%{count} provider events could not be classified and need review.",
+              count: @sync_status.counts["invalid"]
+            )}
+          </p>
+        </section>
         <div :if={is_nil(@result)} class="mt-6 space-y-4">
           <p :if={@records == []}>{gettext("No sends on this page.")}</p>
           <article :for={batch <- @records} class="rounded-lg border border-stone-300 p-4">
@@ -219,17 +262,75 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
             )}
           </p>
           <p>
-            <strong>{gettext("Local unsubscribes from this send")}: {@result.local_unsubscribed}</strong>
+            <strong>{gettext("Recipients currently withdrawn")}: {@result.current_withdrawn}</strong>
+          </p>
+          <p>
+            <strong>{gettext("Withdrawals attributed to this send")}: {@result.local_unsubscribed}</strong>
           </p>
           <p>
             {gettext(
-              "Exact link attribution is recorded from this release onward. Earlier local withdrawals cannot be attributed reliably to a particular send."
+              "Includes exact local withdrawal links and matched provider unsubscribe events. Earlier unattributed withdrawals remain separate."
             )}
           </p>
+          <section id="newsletter-deliverability" class="rounded border border-stone-300 p-4">
+            <h3 class="text-xl font-semibold">{gettext("Recipient deliverability review")}</h3>
+            <dl class="mt-3 grid grid-cols-2 gap-4 md:grid-cols-4">
+              <div>
+                <dt>{gettext("Permanent address failures")}</dt><dd data-review="hard-bounce">
+                  {@result.reconciliation["hard_bounce"]}
+                </dd>
+              </div>
+              <div>
+                <dt>{gettext("Provider unsubscribe withdrawals")}</dt><dd data-review="unsubscribe">
+                  {@result.reconciliation["unsubscribe"]}
+                </dd>
+              </div>
+              <div>
+                <dt>{gettext("Soft bounces to review")}</dt><dd data-review="soft-bounce">
+                  {@result.reconciliation["review"]}
+                </dd>
+              </div>
+              <div>
+                <dt>{gettext("Invalid-domain address holds")}</dt><dd data-review="invalid-domain">
+                  {@result.reconciliation["invalid_domain"]}
+                </dd>
+              </div>
+            </dl>
+            <p class="mt-3">
+              {gettext(
+                "Address failures do not revoke newsletter consent. Invalid domains are held for verification; other soft bounces remain review flags. Addresses are never changed automatically."
+              )}
+            </p>
+            <p :if={@result.reconciliation["conflicts"] > 0} role="alert" class="crm-error">
+              {gettext(
+                "%{count} historical unsubscribes conflict with a later signup choice. The later choice is preserved; newsletter delivery remains held for review.",
+                count: @result.reconciliation["conflicts"]
+              )}
+            </p>
+            <details :if={@result.deliverability_rows != []} class="mt-3">
+              <summary class="cursor-pointer underline">
+                {gettext("Review affected recipients")}
+              </summary>
+              <ul id="deliverability-review-rows" class="mt-3 space-y-2">
+                <li :for={row <- @result.deliverability_rows} class="break-words">
+                  {row.email} · {delivery_reason(row.reason)} ·
+                  <time datetime={DateTime.to_iso8601(row.occurred_at)}>{Calendar.strftime(
+                    row.occurred_at,
+                    "%Y-%m-%d %H:%M UTC"
+                  )}</time>
+                </li>
+              </ul>
+            </details>
+          </section>
           <h3 class="text-xl font-semibold">{gettext("Campaign performance")}</h3>
           <button type="button" phx-click="refresh" disabled={@loading} class="crm-button">{if @loading,
             do: gettext("Refreshing…"),
-            else: gettext("Refresh provider results")}</button>
+            else: gettext("Refresh results and recipient status")}</button>
+          <p class="text-sm">
+            {gettext(
+              "Refreshing reads provider history. When reconciliation is enabled, matching failures and unsubscribes update recipient status. It never resends mail."
+            )}
+          </p>
           <p :if={@error} role="alert" class="crm-error">{@error}</p>
           <p :if={is_nil(@provider)}>
             {gettext("Provider observations have not been loaded. Unavailable results are not zero.")}
@@ -254,7 +355,7 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
             </dl>
             <p class="mt-3">
               {gettext(
-                "Counts are unique recipients with an observed event for this send. Delivery means receiving-server acceptance. Opens and clicks can be automated; proxy opens are separate. Unsubscribes count provider events only; local unsubscribes are counted separately using the exact withdrawal link."
+                "Counts are unique recipients with an observed event for this send. Delivery means receiving-server acceptance. Opens and clicks can be automated; proxy opens are separate. Provider unsubscribes are also recorded as local purpose withdrawals; repeated observations do not create another withdrawal."
               )}
             </p>
           </div>
@@ -272,6 +373,18 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
     </Layouts.management>
     """
   end
+
+  defp delivery_reason("hard_bounce"), do: gettext("Permanent address failure")
+  defp delivery_reason("unsubscribed"), do: gettext("Newsletter withdrawal")
+  defp delivery_reason("invalid_domain"), do: gettext("Invalid domain: verify the address")
+  defp delivery_reason("mailbox_full"), do: gettext("Mailbox full")
+
+  defp delivery_reason("sender_reputation"),
+    do: gettext("Sender reputation: review delivery configuration")
+
+  defp delivery_reason("recipient_policy"), do: gettext("Recipient server policy")
+  defp delivery_reason("transient"), do: gettext("Temporary delivery failure")
+  defp delivery_reason(_), do: gettext("Unclassified soft bounce")
 
   defp state_label("accepted"), do: gettext("Accepted by provider")
   defp state_label("pending"), do: gettext("Pending")

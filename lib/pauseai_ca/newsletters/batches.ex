@@ -490,6 +490,9 @@ defmodule PauseAiCa.Newsletters.Batches do
         {:ok, {:ok, metadata}} ->
           {"accepted", provider_id(metadata), nil}
 
+        {:ok, {:error, :recipient_delivery_hold}} ->
+          {"excluded", nil, "recipient_delivery_hold"}
+
         {:ok, {:error, reason}}
         when reason in [:staging_admin_required, :mail_environment_blocked] ->
           {"failed", nil, to_string(reason)}

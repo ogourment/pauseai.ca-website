@@ -1,5 +1,5 @@
 defmodule PauseAiCa.Newsletters.Results do
-  @moduledoc "Read-only campaign reports over frozen sends and exact provider message observations."
+  @moduledoc "Campaign reports and guarded provider-event reconciliation over frozen sends."
   import Ecto.Query
   alias PauseAiCa.{Repo, Volunteers}
   alias PauseAiCa.Newsletters.{Batch, Delivery, ResultSnapshot}
@@ -87,7 +87,12 @@ defmodule PauseAiCa.Newsletters.Results do
          deliveries: deliveries,
          report: PhoenixMailWorkflow.Results.summarize(deliveries),
          local_unsubscribed: local_unsubscribed(deliveries),
-         provider: provider_snapshot(batch, deliveries)
+         current_withdrawn: current_withdrawn(deliveries),
+         provider: provider_snapshot(batch, deliveries),
+         reconciliation: PauseAiCa.Newsletters.ProviderReconciliation.summary(deliveries),
+         deliverability_rows:
+           PauseAiCa.Newsletters.ProviderReconciliation.review_rows(deliveries),
+         synchronization: PauseAiCa.Newsletters.ProviderSync.status()
        }}
     else
       _ -> {:error, :unauthorized}
@@ -187,30 +192,22 @@ defmodule PauseAiCa.Newsletters.Results do
       if Date.diff(Date.utc_today(), from) > 89 do
         {:error, :outside_retention_window}
       else
-        request =
-          Req.new(
-            base_url:
-              Application.get_env(:pauseai_ca, :brevo_base_url, "https://api.brevo.com/v3"),
-            headers: [{"api-key", key}],
-            receive_timeout: 8_000,
-            retry: false
-          )
-          |> Req.merge(Application.get_env(:pauseai_ca, :brevo_history_req_options, []))
-
-        params = [
-          startDate: Date.to_iso8601(from),
-          endDate: Date.to_iso8601(Date.utc_today()),
-          limit: 5000,
-          sort: "asc"
-        ]
-
-        with {:ok, events, partial} <- events(request, params, 0, []),
+        with {:ok, page} <- PauseAiCa.Newsletters.ProviderHistory.pages(from, Date.utc_today()),
              {:ok, _} <- get(scope, id) do
+          events = page.events
+          partial = page.partial
           report = PhoenixMailWorkflow.Results.summarize(result.deliveries, events)
           at = DateTime.utc_now()
           # Persist only aggregate observations, never raw provider recipient events.
           Repo.transaction(fn ->
             if not Volunteers.superadmin?(scope), do: Repo.rollback(:unauthorized)
+
+            if PauseAiCa.Newsletters.ProviderSyncWorker.enabled?() do
+              case PauseAiCa.Newsletters.ProviderReconciliation.reconcile(events) do
+                {:ok, _} -> :ok
+                {:error, reason} -> Repo.rollback(reason)
+              end
+            end
 
             Repo.insert!(
               %ResultSnapshot{
@@ -223,7 +220,13 @@ defmodule PauseAiCa.Newsletters.Results do
               conflict_target: [:batch_id]
             )
 
-            %{report: report, partial: partial, refreshed_at: at}
+            %{
+              report: report,
+              partial: partial,
+              refreshed_at: at,
+              reconciliation:
+                PauseAiCa.Newsletters.ProviderReconciliation.summary(result.deliveries)
+            }
           end)
         end
       end
@@ -231,6 +234,19 @@ defmodule PauseAiCa.Newsletters.Results do
       {:error, reason} -> {:error, reason}
       _ -> {:error, :not_configured}
     end
+  end
+
+  defp current_withdrawn(deliveries) do
+    emails = Enum.map(deliveries, & &1.email)
+
+    Repo.aggregate(
+      from(s in PauseAiCa.Newsletters.Subscription,
+        where: s.email in ^emails and s.state == "withdrawn",
+        distinct: s.email
+      ),
+      :count,
+      :email
+    )
   end
 
   defp local_unsubscribed(deliveries) do
@@ -254,38 +270,18 @@ defmodule PauseAiCa.Newsletters.Results do
           select: t.id
       )
 
+    delivery_ids = Enum.map(deliveries, & &1.id)
+
     Repo.aggregate(
       from(e in PauseAiCa.Newsletters.ConsentEvent,
         where:
-          e.kind == "withdrawn" and fragment("?->>'withdrawal_token_id'", e.evidence) in ^ids,
+          e.kind == "withdrawn" and
+            (fragment("?->>'withdrawal_token_id'", e.evidence) in ^ids or
+               fragment("?->>'newsletter_delivery_id'", e.evidence) in ^delivery_ids),
         distinct: e.subscription_id
       ),
       :count,
       :subscription_id
     )
-  end
-
-  defp events(req, params, offset, acc) do
-    case Req.get(req, url: "/smtp/statistics/events", params: params ++ [offset: offset]) do
-      {:ok, %{status: 200, body: %{"events" => rows}}} when is_list(rows) ->
-        all = acc ++ rows
-
-        cond do
-          length(rows) < 5000 -> {:ok, all, false}
-          offset >= 15000 -> {:ok, all, true}
-          true -> events(req, params, offset + 5000, all)
-        end
-
-      {:ok, %{status: 200, body: body}} when body == %{} ->
-        {:ok, acc, false}
-
-      {:ok, %{status: 429}} ->
-        {:error, :rate_limited}
-
-      _ ->
-        {:error, :unavailable}
-    end
-  rescue
-    _ -> {:error, :unavailable}
   end
 end

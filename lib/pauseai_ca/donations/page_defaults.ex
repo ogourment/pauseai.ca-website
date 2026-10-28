@@ -7,7 +7,7 @@ defmodule PauseAiCa.Donations.PageDefaults do
       "currency" => "CAD",
       "editions" => %{
         "en" => %{
-          "title" => "Support PauseAI Canada",
+          "title" => "PauseAI Canada needs you!",
           "lead" =>
             "Help Canadians make the case for an international pause on the development of the most powerful AI systems. Your donation helps people organize locally, explain the risks, and bring concrete requests to elected representatives.",
           "brochure_label" => "Read our brochure (PDF)",

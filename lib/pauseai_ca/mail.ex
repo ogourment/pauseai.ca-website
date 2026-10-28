@@ -177,7 +177,7 @@ defmodule PauseAiCa.Mail do
           select: coalesce(p.canonical_id, p.id)
       )
 
-    direct or
+    PauseAiCa.Newsletters.ProviderReconciliation.address_suppressed?(email) or direct or
       (not is_nil(canonical) and
          Repo.exists?(
            from c in Contact,
@@ -216,7 +216,10 @@ defmodule PauseAiCa.Mail do
           distinct: true
       )
 
-    MapSet.new(direct ++ linked)
+    MapSet.union(
+      MapSet.new(direct ++ linked),
+      PauseAiCa.Newsletters.ProviderReconciliation.suppressed_emails(emails)
+    )
   end
 
   defp authorized_account(scope, id, context) when context == %{},

@@ -1064,7 +1064,7 @@ msgstr ""
 #: lib/pauseai_ca_web/live/local_interest_live.ex:96
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:700
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:803
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:196
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:239
 #: lib/pauseai_ca_web/live/newsletters_live.ex:486
 #: lib/pauseai_ca_web/live/volunteer_profile_live.ex:138
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:742
@@ -1086,7 +1086,7 @@ msgstr ""
 #: lib/pauseai_ca_web/live/local_interest_live.ex:91
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:692
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:792
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:191
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:234
 #: lib/pauseai_ca_web/live/newsletters_live.ex:479
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:1065
 #, elixir-autogen, elixir-format
@@ -1118,7 +1118,7 @@ msgstr ""
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:227
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:258
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:547
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:77
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:80
 #: lib/pauseai_ca_web/live/newsletters_live.ex:207
 #, elixir-autogen, elixir-format
 msgid "Superadmin access required."
@@ -1958,7 +1958,7 @@ msgstr ""
 msgid "Existing account"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:280
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:393
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:692
 #, elixir-autogen, elixir-format
 msgid "Failed"
@@ -2499,7 +2499,7 @@ msgid "Account"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:772
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:291
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:404
 #, elixir-autogen, elixir-format
 msgid "Blocked"
 msgstr ""
@@ -2545,7 +2545,7 @@ msgid "Deferred"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:759
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:286
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:399
 #, elixir-autogen, elixir-format
 msgid "Delivered"
 msgstr ""
@@ -5163,7 +5163,7 @@ msgstr ""
 msgid "Source language"
 msgstr ""
 
-#: lib/pauseai_ca_web/newsletter_audience_labels.ex:7
+#: lib/pauseai_ca_web/newsletter_audience_labels.ex:9
 #, elixir-autogen, elixir-format
 msgid "Awaiting confirmation"
 msgstr ""
@@ -5215,7 +5215,7 @@ msgid "Consent withdrawn"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:689
-#: lib/pauseai_ca_web/newsletter_audience_labels.ex:6
+#: lib/pauseai_ca_web/newsletter_audience_labels.ex:8
 #, elixir-autogen, elixir-format
 msgid "Eligible"
 msgstr ""
@@ -5245,7 +5245,7 @@ msgstr ""
 msgid "Legacy evidence recorded"
 msgstr ""
 
-#: lib/pauseai_ca_web/newsletter_audience_labels.ex:9
+#: lib/pauseai_ca_web/newsletter_audience_labels.ex:11
 #, elixir-autogen, elixir-format
 msgid "Legacy evidence to review"
 msgstr ""
@@ -5268,7 +5268,7 @@ msgstr ""
 
 #: lib/pauseai_ca_web/live/newsletters_live.ex:438
 #: lib/pauseai_ca_web/live/newsletters_live.ex:498
-#: lib/pauseai_ca_web/newsletter_audience_labels.ex:10
+#: lib/pauseai_ca_web/newsletter_audience_labels.ex:12
 #, elixir-autogen, elixir-format
 msgid "Provider blocked"
 msgstr ""
@@ -5309,7 +5309,7 @@ msgstr ""
 msgid "Signup requested"
 msgstr ""
 
-#: lib/pauseai_ca_web/newsletter_audience_labels.ex:11
+#: lib/pauseai_ca_web/newsletter_audience_labels.ex:13
 #, elixir-autogen, elixir-format
 msgid "Suppressed"
 msgstr ""
@@ -5328,7 +5328,7 @@ msgstr ""
 #: lib/pauseai_ca_web/live/newsletters_live.ex:456
 #: lib/pauseai_ca_web/live/welcome_calls_live.ex:101
 #: lib/pauseai_ca_web/live/welcome_management_live.ex:284
-#: lib/pauseai_ca_web/newsletter_audience_labels.ex:8
+#: lib/pauseai_ca_web/newsletter_audience_labels.ex:10
 #, elixir-autogen, elixir-format
 msgid "Withdrawn"
 msgstr ""
@@ -5428,7 +5428,7 @@ msgid "Accepted by local mailbox"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:478
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:276
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:389
 #, elixir-autogen, elixir-format
 msgid "Accepted by provider"
 msgstr ""
@@ -5524,7 +5524,7 @@ msgid "Email preferences"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:481
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:281
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:394
 #, elixir-autogen, elixir-format
 msgid "Excluded"
 msgstr ""
@@ -5551,7 +5551,7 @@ msgstr ""
 
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:473
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:483
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:279
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:392
 #, elixir-autogen, elixir-format
 msgid "Needs delivery review"
 msgstr ""
@@ -5633,7 +5633,7 @@ msgid "Submission already in progress"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:480
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:278
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:391
 #, elixir-autogen, elixir-format
 msgid "Submission in progress"
 msgstr ""
@@ -6642,7 +6642,7 @@ msgstr ""
 msgid "contact"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:217
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:260
 #, elixir-autogen, elixir-format
 msgid "Accepted means the provider accepted the submission; it does not establish delivery or reading."
 msgstr ""
@@ -6652,29 +6652,19 @@ msgstr ""
 msgid "Area rules"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:290
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:403
 #, elixir-autogen, elixir-format
 msgid "Bounced"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:229
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:325
 #, elixir-autogen, elixir-format
 msgid "Campaign performance"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:292
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:405
 #, elixir-autogen, elixir-format
 msgid "Complaints"
-msgstr ""
-
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:256
-#, elixir-autogen, elixir-format
-msgid "Counts are unique recipients with an observed event for this send. Delivery means receiving-server acceptance. Opens and clicks can be automated; proxy opens are separate. Unsubscribes count provider events only; local unsubscribes are counted separately using the exact withdrawal link."
-msgstr ""
-
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:225
-#, elixir-autogen, elixir-format
-msgid "Exact link attribution is recorded from this release onward. Earlier local withdrawals cannot be attributed reliably to a particular send."
 msgstr ""
 
 #: lib/pauseai_ca_web/components/mail_navigation.ex:17
@@ -6682,17 +6672,12 @@ msgstr ""
 msgid "Lists"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:222
-#, elixir-autogen, elixir-format
-msgid "Local unsubscribes from this send"
-msgstr ""
-
 #: lib/pauseai_ca_web/live/newsletters_live.ex:310
 #, elixir-autogen, elixir-format
 msgid "Members"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:166
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:209
 #, elixir-autogen, elixir-format
 msgid "No sends on this page."
 msgstr ""
@@ -6702,27 +6687,27 @@ msgstr ""
 msgid "Not configured"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:289
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:402
 #, elixir-autogen, elixir-format
 msgid "Observed clicks"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:287
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:400
 #, elixir-autogen, elixir-format
 msgid "Observed opens"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:160
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:172
 #, elixir-autogen, elixir-format
 msgid "Open a send to inspect its frozen audience, sending status and provider observations. Drafts that have never been sent are in Drafts."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:246
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:347
 #, elixir-autogen, elixir-format
 msgid "Partial report: the provider page limit was reached. Counts are lower bounds."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:277
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:390
 #: lib/pauseai_ca_web/live/slack_community_live.ex:337
 #: lib/pauseai_ca_web/live/welcome_calls_live.ex:102
 #: lib/pauseai_ca_web/live/welcome_management_live.ex:285
@@ -6730,32 +6715,32 @@ msgstr ""
 msgid "Pending"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:183
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:226
 #, elixir-autogen, elixir-format
 msgid "Prepared"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:235
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:336
 #, elixir-autogen, elixir-format
 msgid "Provider observations have not been loaded. Unavailable results are not zero."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:119
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:131
 #, elixir-autogen, elixir-format
 msgid "Provider results are unavailable. Check configuration, retention or rate limits and try again. Sending records remain available."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:293
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:406
 #, elixir-autogen, elixir-format
 msgid "Provider unsubscribes"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:288
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:401
 #, elixir-autogen, elixir-format
 msgid "Proxy opens"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:263
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:364
 #, elixir-autogen, elixir-format
 msgid "Recipient sending receipts"
 msgstr ""
@@ -6765,25 +6750,20 @@ msgstr ""
 msgid "Recorded regions"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:232
-#, elixir-autogen, elixir-format
-msgid "Refresh provider results"
-msgstr ""
-
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:231
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:327
 #, elixir-autogen, elixir-format
 msgid "Refreshing…"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:210
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:253
 #, elixir-autogen, elixir-format
 msgid "Sending status"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/mail_navigation.ex:16
 #: lib/pauseai_ca_web/live/newsletter_results_live.ex:12
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:154
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:158
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:166
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:170
 #, elixir-autogen, elixir-format
 msgid "Sent & results"
 msgstr ""
@@ -6798,7 +6778,7 @@ msgstr ""
 msgid "These editable templates use city names, not postal coverage. Save your own area rules below."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:206
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:249
 #, elixir-autogen, elixir-format
 msgid "recipients"
 msgstr ""
@@ -6886,7 +6866,7 @@ msgid "This email address already belongs to another contact."
 msgstr ""
 
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:1098
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:203
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:246
 #, elixir-autogen, elixir-format
 msgid "From address"
 msgstr ""
@@ -6903,16 +6883,16 @@ msgstr ""
 
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:1013
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:1096
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:130
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:136
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:142
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:148
 #: lib/pauseai_ca_web/live/welcome_management_live.ex:288
 #, elixir-autogen, elixir-format
 msgid "Not recorded"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:1096
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:181
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:201
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:224
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:244
 #, elixir-autogen, elixir-format
 msgid "Sent by"
 msgstr ""
@@ -6964,7 +6944,7 @@ msgstr ""
 msgid "Invitation language"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:239
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:340
 #, elixir-autogen, elixir-format
 msgid "Last refreshed"
 msgstr ""
@@ -7009,7 +6989,7 @@ msgstr ""
 msgid "Whole mailing list"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:142
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:154
 #, elixir-autogen, elixir-format
 msgid "%{count} recipient"
 msgid_plural "%{count} recipients"
@@ -7046,7 +7026,7 @@ msgstr ""
 msgid "Private contact notes"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/newsletter_results_live.ex:178
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:221
 #, elixir-autogen, elixir-format
 msgid "and %{count} more"
 msgstr ""
@@ -9196,4 +9176,151 @@ msgstr ""
 #: lib/pauseai_ca_web/components/donation_page_content.ex:126
 #, elixir-autogen, elixir-format
 msgid "Pending Manifund offers: %{amount}. These offers have not been received. USD converted at %{rate} CAD on %{date} (Bank of Canada)."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:305
+#, elixir-autogen, elixir-format
+msgid "%{count} historical unsubscribes conflict with a later signup choice. The later choice is preserved; newsletter delivery remains held for review."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:203
+#, elixir-autogen, elixir-format
+msgid "%{count} provider events could not be classified and need review."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:300
+#, elixir-autogen, elixir-format
+msgid "Address failures do not revoke newsletter consent. Invalid domains are held for verification; other soft bounces remain review flags. Addresses are never changed automatically."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:180
+#, elixir-autogen, elixir-format
+msgid "Automatic synchronization is disabled in this environment."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:357
+#, elixir-autogen, elixir-format
+msgid "Counts are unique recipients with an observed event for this send. Delivery means receiving-server acceptance. Opens and clicks can be automated; proxy opens are separate. Provider unsubscribes are also recorded as local purpose withdrawals; repeated observations do not create another withdrawal."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:195
+#, elixir-autogen, elixir-format
+msgid "History is incomplete. The next pass continues from its saved cursor."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:271
+#, elixir-autogen, elixir-format
+msgid "Includes exact local withdrawal links and matched provider unsubscribe events. Earlier unattributed withdrawals remain separate."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:379
+#: lib/pauseai_ca_web/newsletter_audience_labels.ex:7
+#, elixir-autogen, elixir-format
+msgid "Invalid domain: verify the address"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:294
+#, elixir-autogen, elixir-format
+msgid "Invalid-domain address holds"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:188
+#, elixir-autogen, elixir-format
+msgid "Last successful reconciliation"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:380
+#, elixir-autogen, elixir-format
+msgid "Mailbox full"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:378
+#, elixir-autogen, elixir-format
+msgid "Newsletter withdrawal"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:377
+#: lib/pauseai_ca_web/newsletter_audience_labels.ex:6
+#, elixir-autogen, elixir-format
+msgid "Permanent address failure"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:279
+#, elixir-autogen, elixir-format
+msgid "Permanent address failures"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:198
+#, elixir-autogen, elixir-format
+msgid "Provider reconciliation needs attention. Existing address holds and withdrawals remain in effect."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:178
+#, elixir-autogen, elixir-format
+msgid "Provider synchronization"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:284
+#, elixir-autogen, elixir-format
+msgid "Provider unsubscribe withdrawals"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:183
+#, elixir-autogen, elixir-format
+msgid "Read-only reconciliation runs every 15 minutes. Recent history overlaps, with a daily scan of the available 90-day history."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:276
+#, elixir-autogen, elixir-format
+msgid "Recipient deliverability review"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:385
+#, elixir-autogen, elixir-format
+msgid "Recipient server policy"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:265
+#, elixir-autogen, elixir-format
+msgid "Recipients currently withdrawn"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:328
+#, elixir-autogen, elixir-format
+msgid "Refresh results and recipient status"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:330
+#, elixir-autogen, elixir-format
+msgid "Refreshing reads provider history. When reconciliation is enabled, matching failures and unsubscribes update recipient status. It never resends mail."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:312
+#, elixir-autogen, elixir-format
+msgid "Review affected recipients"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:383
+#, elixir-autogen, elixir-format
+msgid "Sender reputation: review delivery configuration"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:289
+#, elixir-autogen, elixir-format
+msgid "Soft bounces to review"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:386
+#, elixir-autogen, elixir-format
+msgid "Temporary delivery failure"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:387
+#, elixir-autogen, elixir-format
+msgid "Unclassified soft bounce"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/newsletter_results_live.ex:268
+#, elixir-autogen, elixir-format
+msgid "Withdrawals attributed to this send"
 msgstr ""

@@ -72,6 +72,12 @@ config :pauseai_ca,
        :newsletter_dispatcher,
        System.get_env("PAUSEAI_NEWSLETTER_DISPATCHER_ENABLED") == "true"
 
+# Read-only provider reconciliation is opt-in and cannot run on staging/dev/test.
+config :pauseai_ca,
+       :newsletter_provider_sync_enabled,
+       mail_environment == :production and
+         System.get_env("PAUSEAI_NEWSLETTER_PROVIDER_SYNC_ENABLED") == "true"
+
 # config/runtime.exs is executed for all environments, including
 # during releases. It is executed after compilation and before the
 # system starts, so it is typically used to load production configuration

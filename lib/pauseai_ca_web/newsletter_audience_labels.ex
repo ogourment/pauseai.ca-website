@@ -3,6 +3,8 @@ defmodule PauseAiCaWeb.NewsletterAudienceLabels do
   def rule_label("city"), do: gettext("City")
   def rule_label("region"), do: gettext("Region")
   def rule_label("fsa"), do: gettext("FSA")
+  def status_label(:hard_bounce), do: gettext("Permanent address failure")
+  def status_label(:invalid_domain), do: gettext("Invalid domain: verify the address")
   def status_label(:included), do: gettext("Eligible")
   def status_label(:unconfirmed), do: gettext("Awaiting confirmation")
   def status_label(:withdrawn), do: gettext("Withdrawn")

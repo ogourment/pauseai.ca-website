@@ -162,6 +162,43 @@ defmodule PauseAiCa.Newsletters do
     end
   end
 
+  @doc false
+  def withdraw_provider(email, evidence, occurred_at) do
+    # Exact production-receipt matching precedes this operation. Preserve any
+    # later explicit choice; unresolved provider withdrawals still hold this purpose.
+    lock_address(email)
+    subscription = Repo.one(from s in Subscription, where: s.email == ^email, lock: "FOR UPDATE")
+
+    newer_choice =
+      subscription &&
+        Enum.any?(
+          [subscription.confirmed_at, subscription.requested_at],
+          &(not is_nil(&1) and DateTime.compare(&1, occurred_at) == :gt)
+        )
+
+    cond do
+      subscription && subscription.state == "withdrawn" ->
+        :already_withdrawn
+
+      newer_choice ->
+        event(subscription, "provider_unsubscribe_conflict", nil, evidence)
+        :conflict
+
+      true ->
+        saved =
+          persist(subscription, %{
+            email: email,
+            state: "withdrawn",
+            withdrawn_at: occurred_at,
+            confirmation_hash: nil,
+            confirmation_expires_at: nil
+          })
+
+        event(saved, "withdrawn", nil, evidence)
+        :withdrawn
+    end
+  end
+
   @doc "Issues a personal withdrawal capability for reviewed mail; never grants consent or sends."
   def issue_withdrawal_token(scope, subscription_id) do
     with true <- Volunteers.superadmin?(scope), {:ok, id} <- Ecto.UUID.cast(subscription_id) do
@@ -273,9 +310,10 @@ defmodule PauseAiCa.Newsletters do
          false <- provider_blocked?(email) do
       aliases = linked_addresses(email)
 
-      not Repo.exists?(
-        from s in Subscription, where: s.email in ^aliases and not is_nil(s.withdrawn_at)
-      )
+      not MapSet.member?(withdrawn_aliases([email]), email) and
+        not Repo.exists?(
+          from s in Subscription, where: s.email in ^aliases and not is_nil(s.withdrawn_at)
+        )
     else
       _ -> false
     end
@@ -384,6 +422,7 @@ defmodule PauseAiCa.Newsletters do
 
       emails = Enum.map(subscriptions, & &1.email)
       observations = provider_evidence(emails)
+      delivery_holds = PauseAiCa.Newsletters.ProviderReconciliation.hold_reasons(emails)
 
       provider =
         Map.new(observations, fn {email, evidence} -> {email, evidence["email_blacklisted"]} end)
@@ -398,6 +437,8 @@ defmodule PauseAiCa.Newsletters do
               subscription.state == "withdrawn" -> :withdrawn
               subscription.state == "legacy_review" -> :legacy_uncertain
               subscription.state != "confirmed" -> :unconfirmed
+              delivery_holds[subscription.email] == :hard_bounce -> :hard_bounce
+              delivery_holds[subscription.email] == :invalid_domain -> :invalid_domain
               provider[subscription.email] == true -> :provider_blocked
               MapSet.member?(suppressed, subscription.email) -> :suppressed
               true -> :included
@@ -422,7 +463,7 @@ defmodule PauseAiCa.Newsletters do
       counts =
         Map.merge(
           Map.new(
-            ~w(included withdrawn legacy_uncertain unconfirmed provider_blocked suppressed)a,
+            ~w(included withdrawn legacy_uncertain unconfirmed provider_blocked suppressed hard_bounce invalid_domain)a,
             &{&1, 0}
           ),
           Enum.frequencies_by(rows, & &1.status)
@@ -448,10 +489,17 @@ defmodule PauseAiCa.Newsletters do
   end
 
   defp withdrawn_aliases(emails) do
+    unresolved_provider =
+      from e in PauseAiCa.Newsletters.ProviderEvent,
+        where: e.kind == "unsubscribe",
+        select: e.email
+
     direct =
       Repo.all(
         from s in Subscription,
-          where: s.email in ^emails and not is_nil(s.withdrawn_at),
+          where:
+            s.email in ^emails and
+              (not is_nil(s.withdrawn_at) or s.email in subquery(unresolved_provider)),
           select: s.email
       )
 
@@ -467,7 +515,9 @@ defmodule PauseAiCa.Newsletters do
           on: other_address.person_id == other_person.id,
           join: s in Subscription,
           on: s.email == other_address.email,
-          where: a.email in ^emails and not is_nil(s.withdrawn_at),
+          where:
+            a.email in ^emails and
+              (not is_nil(s.withdrawn_at) or s.email in subquery(unresolved_provider)),
           select: a.email,
           distinct: true
       )
