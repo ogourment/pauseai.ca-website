@@ -192,7 +192,9 @@ defmodule PauseAiCa.Newsletters.Results do
       if Date.diff(Date.utc_today(), from) > 89 do
         {:error, :outside_retention_window}
       else
-        with {:ok, page} <- PauseAiCa.Newsletters.ProviderHistory.pages(from, Date.utc_today()),
+        with {:ok, page} <-
+               PauseAiCa.Newsletters.ProviderHistory.report_pages(from, Date.utc_today()),
+             :ok <- complete_report(page),
              {:ok, _} <- get(scope, id) do
           events = page.events
           partial = page.partial
@@ -235,6 +237,9 @@ defmodule PauseAiCa.Newsletters.Results do
       _ -> {:error, :not_configured}
     end
   end
+
+  defp complete_report(%{partial: false}), do: :ok
+  defp complete_report(_), do: {:error, :incomplete_history}
 
   defp current_withdrawn(deliveries) do
     emails = Enum.map(deliveries, & &1.email)
