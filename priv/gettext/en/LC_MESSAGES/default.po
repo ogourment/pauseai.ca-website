@@ -1594,7 +1594,7 @@ msgstr "Log me in only this time"
 #: lib/pauseai_ca_web/live/donation_page_live.ex:68
 #: lib/pauseai_ca_web/live/donation_page_live.ex:365
 #: lib/pauseai_ca_web/live/donation_page_live.ex:460
-#: lib/pauseai_ca_web/live/donation_page_live.ex:1038
+#: lib/pauseai_ca_web/live/donation_page_live.ex:1077
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:183
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:254
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:290
@@ -5054,7 +5054,7 @@ msgstr "Reload saved version"
 msgid "Reviewer notes"
 msgstr "Reviewer notes"
 
-#: lib/pauseai_ca_web/live/donation_page_live.ex:974
+#: lib/pauseai_ca_web/live/donation_page_live.ex:1002
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:333
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:350
 #: lib/pauseai_ca_web/live/tasks_live.ex:391
@@ -5129,7 +5129,7 @@ msgid "Publish"
 msgstr "Publish"
 
 #: lib/pauseai_ca_web/live/donation_page_live.ex:190
-#: lib/pauseai_ca_web/live/donation_page_live.ex:1039
+#: lib/pauseai_ca_web/live/donation_page_live.ex:1078
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:225
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:243
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:310
@@ -7268,7 +7268,7 @@ msgstr "Choose a manager"
 msgid "Complete these prerequisites first: %{titles}"
 msgstr "Complete these prerequisites first: %{titles}"
 
-#: lib/pauseai_ca_web/live/donation_page_live.ex:1037
+#: lib/pauseai_ca_web/live/donation_page_live.ex:1076
 #: lib/pauseai_ca_web/live/tasks_live.ex:265
 #: lib/pauseai_ca_web/live/welcome_management_live.ex:271
 #, elixir-autogen, elixir-format
@@ -7446,7 +7446,7 @@ msgstr "This task changed in another tab. Your draft has been retained."
 msgid "Title"
 msgstr "Title"
 
-#: lib/pauseai_ca_web/live/donation_page_live.ex:1041
+#: lib/pauseai_ca_web/live/donation_page_live.ex:1080
 #: lib/pauseai_ca_web/live/tasks_live.ex:266
 #: lib/pauseai_ca_web/live/welcome_management_live.ex:272
 #: lib/pauseai_ca_web/live/welcome_management_live.ex:279
@@ -8716,12 +8716,12 @@ msgstr "Read our brochure (PDF)"
 msgid "Account requirement"
 msgstr "Account requirement"
 
-#: lib/pauseai_ca_web/live/donation_page_live.ex:848
+#: lib/pauseai_ca_web/live/donation_page_live.ex:876
 #, elixir-autogen, elixir-format
 msgid "Add bucket"
 msgstr "Add bucket"
 
-#: lib/pauseai_ca_web/live/donation_page_live.ex:858
+#: lib/pauseai_ca_web/live/donation_page_live.ex:886
 #, elixir-autogen, elixir-format
 msgid "Add stage"
 msgstr "Add stage"
@@ -8737,7 +8737,7 @@ msgid "Another editor saved a newer version. Your fields are retained. Reload on
 msgstr "Another editor saved a newer version. Your fields are retained. Reload only when you are ready to discard your edits."
 
 #: lib/pauseai_ca_web/live/donation_page_live.ex:511
-#: lib/pauseai_ca_web/live/donation_page_live.ex:869
+#: lib/pauseai_ca_web/live/donation_page_live.ex:897
 #, elixir-autogen, elixir-format
 msgid "Brochure URL"
 msgstr "Brochure URL"
@@ -8747,17 +8747,17 @@ msgstr "Brochure URL"
 msgid "Brochure link label"
 msgstr "Brochure link label"
 
-#: lib/pauseai_ca_web/live/donation_page_live.ex:809
+#: lib/pauseai_ca_web/live/donation_page_live.ex:823
 #, elixir-autogen, elixir-format
 msgid "Bucket budget (CAD)"
 msgstr "Bucket budget (CAD)"
 
-#: lib/pauseai_ca_web/live/donation_page_live.ex:795
+#: lib/pauseai_ca_web/live/donation_page_live.ex:807
 #, elixir-autogen, elixir-format
 msgid "Bucket name — English"
 msgstr "Bucket name — English"
 
-#: lib/pauseai_ca_web/live/donation_page_live.ex:800
+#: lib/pauseai_ca_web/live/donation_page_live.ex:812
 #, elixir-autogen, elixir-format
 msgid "Bucket name — French"
 msgstr "Bucket name — French"
@@ -8794,7 +8794,7 @@ msgid "Budget or link settings"
 msgstr "Budget or link settings"
 
 #: lib/pauseai_ca_web/live/donation_page_live.ex:508
-#: lib/pauseai_ca_web/live/donation_page_live.ex:877
+#: lib/pauseai_ca_web/live/donation_page_live.ex:905
 #, elixir-autogen, elixir-format
 msgid "Campaign URL"
 msgstr "Campaign URL"
@@ -8851,7 +8851,7 @@ msgstr "Discard your edits and load the latest saved draft?"
 
 #: lib/pauseai_ca_web/live/donation_page_live.ex:517
 #: lib/pauseai_ca_web/live/donation_page_live.ex:594
-#: lib/pauseai_ca_web/live/donation_page_live.ex:886
+#: lib/pauseai_ca_web/live/donation_page_live.ex:914
 #, elixir-autogen, elixir-format
 msgid "Display settings"
 msgstr "Display settings"
@@ -8868,7 +8868,7 @@ msgstr "Donation button label"
 msgid "Donation page"
 msgstr "Donation page"
 
-#: lib/pauseai_ca_web/live/donation_page_live.ex:922
+#: lib/pauseai_ca_web/live/donation_page_live.ex:950
 #, elixir-autogen, elixir-format
 msgid "Draft preview"
 msgstr "Draft preview"
@@ -8927,26 +8927,30 @@ msgid "Invalid gift amount message"
 msgstr "Invalid gift amount message"
 
 #: lib/pauseai_ca_web/live/donation_page_live.ex:593
-#: lib/pauseai_ca_web/live/donation_page_live.ex:864
+#: lib/pauseai_ca_web/live/donation_page_live.ex:892
 #, elixir-autogen, elixir-format
 msgid "Links"
 msgstr "Links"
 
-#: lib/pauseai_ca_web/live/donation_page_live.ex:830
+#: lib/pauseai_ca_web/live/donation_page_live.ex:848
+#: lib/pauseai_ca_web/live/donation_page_live.ex:849
 #, elixir-autogen, elixir-format
 msgid "Move bucket down"
 msgstr "Move bucket down"
 
-#: lib/pauseai_ca_web/live/donation_page_live.ex:821
+#: lib/pauseai_ca_web/live/donation_page_live.ex:835
+#: lib/pauseai_ca_web/live/donation_page_live.ex:836
 #, elixir-autogen, elixir-format
 msgid "Move bucket up"
 msgstr "Move bucket up"
 
-#: lib/pauseai_ca_web/live/donation_page_live.ex:771
+#: lib/pauseai_ca_web/live/donation_page_live.ex:774
+#: lib/pauseai_ca_web/live/donation_page_live.ex:775
 #, elixir-autogen, elixir-format
 msgid "Move stage down"
 msgstr "Move stage down"
 
+#: lib/pauseai_ca_web/live/donation_page_live.ex:761
 #: lib/pauseai_ca_web/live/donation_page_live.ex:762
 #, elixir-autogen, elixir-format
 msgid "Move stage up"
@@ -8973,7 +8977,7 @@ msgstr "Page copy"
 msgid "Page title"
 msgstr "Page title"
 
-#: lib/pauseai_ca_web/live/donation_page_live.ex:923
+#: lib/pauseai_ca_web/live/donation_page_live.ex:951
 #, elixir-autogen, elixir-format
 msgid "Preview only. No publication, payment or message is created."
 msgstr "Preview only. No publication, payment or message is created."
@@ -9019,38 +9023,40 @@ msgid "Remaining budget heading"
 msgstr "Remaining budget heading"
 
 #: lib/pauseai_ca_web/live/donation_page_live.ex:514
-#: lib/pauseai_ca_web/live/donation_page_live.ex:905
+#: lib/pauseai_ca_web/live/donation_page_live.ex:933
 #, elixir-autogen, elixir-format
 msgid "Remaining budget threshold (%)"
 msgstr "Remaining budget threshold (%)"
 
-#: lib/pauseai_ca_web/live/donation_page_live.ex:838
+#: lib/pauseai_ca_web/live/donation_page_live.ex:860
+#: lib/pauseai_ca_web/live/donation_page_live.ex:861
 #, elixir-autogen, elixir-format
 msgid "Remove bucket"
 msgstr "Remove bucket"
 
-#: lib/pauseai_ca_web/live/donation_page_live.ex:780
+#: lib/pauseai_ca_web/live/donation_page_live.ex:787
+#: lib/pauseai_ca_web/live/donation_page_live.ex:788
 #, elixir-autogen, elixir-format
 msgid "Remove stage"
 msgstr "Remove stage"
 
-#: lib/pauseai_ca_web/live/donation_page_live.ex:778
+#: lib/pauseai_ca_web/live/donation_page_live.ex:786
 #, elixir-autogen, elixir-format
 msgid "Remove this stage and its buckets from the draft?"
 msgstr "Remove this stage and its buckets from the draft?"
 
-#: lib/pauseai_ca_web/live/donation_page_live.ex:983
+#: lib/pauseai_ca_web/live/donation_page_live.ex:1011
 #, elixir-autogen, elixir-format
 msgid "Replace the current draft with this revision? The public page stays unchanged until Publish."
 msgstr "Replace the current draft with this revision? The public page stays unchanged until Publish."
 
-#: lib/pauseai_ca_web/live/donation_page_live.ex:988
+#: lib/pauseai_ca_web/live/donation_page_live.ex:1016
 #, elixir-autogen, elixir-format
 msgid "Restore to draft"
 msgstr "Restore to draft"
 
 #: lib/pauseai_ca_web/live/donation_page_live.ex:211
-#: lib/pauseai_ca_web/live/donation_page_live.ex:1040
+#: lib/pauseai_ca_web/live/donation_page_live.ex:1079
 #, elixir-autogen, elixir-format
 msgid "Restored to draft"
 msgstr "Restored to draft"
@@ -9061,7 +9067,7 @@ msgid "Review %{field}."
 msgstr "Review %{field}."
 
 #: lib/pauseai_ca_web/live/donation_page_live.ex:595
-#: lib/pauseai_ca_web/live/donation_page_live.ex:967
+#: lib/pauseai_ca_web/live/donation_page_live.ex:995
 #, elixir-autogen, elixir-format
 msgid "Revision history"
 msgstr "Revision history"
@@ -9071,7 +9077,7 @@ msgstr "Revision history"
 msgid "Save your changes before publishing."
 msgstr "Save your changes before publishing."
 
-#: lib/pauseai_ca_web/live/donation_page_live.ex:888
+#: lib/pauseai_ca_web/live/donation_page_live.ex:916
 #, elixir-autogen, elixir-format
 msgid "Show the remaining budget when recorded funding is strictly above this percentage of the full budget."
 msgstr "Show the remaining budget when recorded funding is strictly above this percentage of the full budget."
@@ -9112,7 +9118,7 @@ msgstr "Suggested gift explanation"
 msgid "Suggested gift label"
 msgstr "Suggested gift label"
 
-#: lib/pauseai_ca_web/live/donation_page_live.ex:912
+#: lib/pauseai_ca_web/live/donation_page_live.ex:940
 #, elixir-autogen, elixir-format
 msgid "Switch to remaining buckets above the threshold"
 msgstr "Switch to remaining buckets above the threshold"
@@ -9142,22 +9148,22 @@ msgstr "Your edits remain in the form. Reloading replaces them with the latest s
 msgid "Enter a non-negative CAD amount with at most two decimal places."
 msgstr "Enter a non-negative CAD amount with at most two decimal places."
 
-#: lib/pauseai_ca_web/live/donation_page_live.ex:942
+#: lib/pauseai_ca_web/live/donation_page_live.ex:970
 #, elixir-autogen, elixir-format
 msgid "Illustrative funding (CAD)"
 msgstr "Illustrative funding (CAD)"
 
-#: lib/pauseai_ca_web/live/donation_page_live.ex:925
+#: lib/pauseai_ca_web/live/donation_page_live.ex:953
 #, elixir-autogen, elixir-format
 msgid "Illustrative preview only. The funding amount below is synthetic and is never saved as provider data."
 msgstr "Illustrative preview only. The funding amount below is synthetic and is never saved as provider data."
 
-#: lib/pauseai_ca_web/live/donation_page_live.ex:947
+#: lib/pauseai_ca_web/live/donation_page_live.ex:975
 #, elixir-autogen, elixir-format
 msgid "Leave blank to preview unknown funding."
 msgstr "Leave blank to preview unknown funding."
 
-#: lib/pauseai_ca_web/live/donation_page_live.ex:893
+#: lib/pauseai_ca_web/live/donation_page_live.ex:921
 #, elixir-autogen, elixir-format
 msgid "The threshold applies separately to the active stage budget and to the full programme budget."
 msgstr "The threshold applies separately to the active stage budget and to the full programme budget."
