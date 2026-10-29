@@ -14,8 +14,9 @@ permissions:
 
 jobs:
   production:
-    uses: ogourment/github-ci-cd-harness/.github/workflows/phoenix-promote-production.yml@v0.4.41
+    uses: ogourment/github-ci-cd-harness/.github/workflows/phoenix-promote-production.yml@v0.4.54
     with:
+      security-hotfix-policy: .github/security-hotfixes.json
       source-run-id: ${{ inputs.source-run-id }}
       source-workflow: .github/workflows/ci.yml
       artifact-name: pauseai-ca-release
