@@ -329,6 +329,7 @@ if System.get_env("ATDD") == "true" do
         sign_in(new_device(c), c.manager)
         |> visit("/manage/mail/#{batch.id}?locale=en&draft=#{draft.id}")
         |> assert_has("#mail-draft-source", value: "## Personally reviewed\nKeep this edit.")
+        |> assert_has("[data-phx-main].phx-connected")
         |> capture(
           id,
           "Resume on another browser identity",
@@ -379,6 +380,7 @@ if System.get_env("ATDD") == "true" do
         resumed
         |> visit("/manage/mail/#{batch.id}?locale=en&draft=#{draft.id}")
         |> assert_has("#mail-draft-source", value: "## Personally reviewed\nKeep this edit.")
+        |> assert_has("[data-phx-main].phx-connected")
 
       manager_assignment =
         Repo.get_by!(PauseAiCa.Volunteers.Manager, user_id: c.manager.id, group_id: c.montreal.id)

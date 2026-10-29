@@ -170,6 +170,48 @@ defmodule PauseAiCaWeb.MailEntryLiveTest do
     assert Repo.aggregate(PauseAiCa.Newsletters.Draft, :count) == 1
   end
 
+  test "revoked group access denies an open draft save and reconnect without changing its source",
+       %{conn: conn} do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    scope = Scope.for_user(admin)
+    {:ok, group} = Volunteers.create_group(scope, %{"name" => "Draft group"})
+    {:ok, other_group} = Volunteers.create_group(scope, %{"name" => "Other group"})
+    manager = user_fixture()
+    {:ok, assignment} = Volunteers.assign_manager(scope, group.id, manager.email)
+    {:ok, _} = Volunteers.assign_manager(scope, other_group.id, manager.email)
+
+    member =
+      user_fixture() |> Ecto.Changeset.change(organizing_group_id: group.id) |> Repo.update!()
+
+    manager_scope = Scope.for_user(manager)
+    {:ok, batch} = Mail.create(manager_scope, member.id)
+
+    {:ok, batch} =
+      Mail.save_batch(manager_scope, batch, %{
+        "subject" => "Draft",
+        "source" => "Preserved source"
+      })
+
+    {:ok, [draft]} = Mail.generate(manager_scope, batch.id)
+    conn = log_in_user(conn, manager)
+    path = "/manage/mail/#{batch.id}?locale=en&draft=#{draft.id}"
+    {:ok, view, _} = live(conn, path)
+    assert has_element?(view, "#mail-draft-form")
+
+    :ok = Volunteers.revoke_manager(scope, assignment.id)
+
+    view
+    |> form("#mail-draft-form", %{
+      "draft" => %{"subject" => "Draft", "source" => "Forbidden edit"}
+    })
+    |> render_submit()
+
+    assert has_element?(view, "#mail-error", "access")
+    assert Repo.get!(Mail.Draft, draft.id).source == "Preserved source"
+    assert {:error, {:live_redirect, %{to: "/manage/accounts?locale=en"}}} = live(conn, path)
+    assert Repo.get!(Mail.Draft, draft.id).source == "Preserved source"
+  end
+
   defp flush_fixture_emails do
     receive do
       {:email, _} -> flush_fixture_emails()
