@@ -4,7 +4,7 @@ defmodule PauseAiCa.GithubDeliveryContractTest do
   @workflows Path.expand("../../.github/workflows", __DIR__)
   @harness "ogourment/github-ci-cd-harness/.github/workflows/"
   @ci_ref "v0.4.45"
-  @delivery_ref "v0.4.41"
+  @delivery_ref "v0.4.54"
 
   test "normal CI builds the release and stages it without production credentials" do
     ci = File.read!(Path.join(@workflows, "ci.yml"))
