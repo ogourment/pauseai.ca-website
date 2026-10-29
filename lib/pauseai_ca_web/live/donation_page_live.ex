@@ -930,7 +930,7 @@ defmodule PauseAiCaWeb.DonationPageLive do
             class="mt-6 space-y-4 rounded-xl border border-stone-300 bg-white p-5"
           >
             <h2 class="text-xl font-semibold">{gettext("Display settings")}</h2>
-            <fieldset class="space-y-3 border-b border-stone-200 pb-4">
+            <fieldset class="min-w-0 max-w-full space-y-3 border-b border-stone-200 pb-4 [&_.label]:whitespace-normal">
               <legend class="font-semibold">{gettext("Campaign countdown")}</legend>
               <.input
                 id="donation-countdown-enabled"
