@@ -65,26 +65,24 @@ defmodule PauseAiCaWeb.MailDraftsLive do
         end
 
       params["id"] ->
-        case Mail.get(scope, params["id"]) do
-          {:ok, batch} ->
-            socket = load_batch(socket, batch)
-            draft = Enum.find(socket.assigns.drafts, &(&1.id == params["draft"]))
+        with {:ok, batch} <- Mail.get(scope, params["id"]),
+             {:ok, socket} <- load_batch(socket, batch) do
+          draft = Enum.find(socket.assigns.drafts, &(&1.id == params["draft"]))
 
-            {:noreply,
-             assign(socket,
-               draft: draft,
-               draft_form:
-                 to_form(
-                   if(draft,
-                     do: %{"subject" => draft.subject, "source" => draft.source},
-                     else: %{}
-                   ),
-                   as: "draft"
-                 )
-             )}
-
-          _ ->
-            {:noreply, denied(socket)}
+          {:noreply,
+           assign(socket,
+             draft: draft,
+             draft_form:
+               to_form(
+                 if(draft,
+                   do: %{"subject" => draft.subject, "source" => draft.source},
+                   else: %{}
+                 ),
+                 as: "draft"
+               )
+           )}
+        else
+          _ -> {:noreply, denied(socket)}
         end
 
       true ->
@@ -272,23 +270,34 @@ defmodule PauseAiCaWeb.MailDraftsLive do
   defp existing_key(_), do: nil
 
   defp load_batch(socket, batch) do
-    {:ok, drafts} = Mail.drafts(socket.assigns.current_scope, batch.id)
+    scope = socket.assigns.current_scope
 
-    recipients =
-      Enum.map(batch.recipient_ids, fn id ->
-        {:ok, contact} = Mail.recipient(socket.assigns.current_scope, id, batch.recipient_context)
-        contact
-      end)
+    with {:ok, drafts} <- Mail.drafts(scope, batch.id),
+         {:ok, recipients} <- load_recipients(scope, batch) do
+      {:ok,
+       assign(socket,
+         batch: batch,
+         anchor: nil,
+         recipients: recipients,
+         drafts: drafts,
+         form: to_form(%{"subject" => batch.subject, "source" => batch.source}, as: "template"),
+         error: nil,
+         status: gettext("Saved")
+       )}
+    end
+  end
 
-    assign(socket,
-      batch: batch,
-      anchor: nil,
-      recipients: recipients,
-      drafts: drafts,
-      form: to_form(%{"subject" => batch.subject, "source" => batch.source}, as: "template"),
-      error: nil,
-      status: gettext("Saved")
-    )
+  defp load_recipients(scope, batch) do
+    Enum.reduce_while(batch.recipient_ids, {:ok, []}, fn id, {:ok, contacts} ->
+      case Mail.recipient(scope, id, batch.recipient_context) do
+        {:ok, contact} -> {:cont, {:ok, [contact | contacts]}}
+        error -> {:halt, error}
+      end
+    end)
+    |> case do
+      {:ok, contacts} -> {:ok, Enum.reverse(contacts)}
+      error -> error
+    end
   end
 
   defp denied(socket),
