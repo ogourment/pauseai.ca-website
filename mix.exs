@@ -4,7 +4,7 @@ defmodule PauseAiCa.MixProject do
   def project do
     [
       app: :pauseai_ca,
-      version: "0.5.48",
+      version: "0.5.50",
       elixir: "~> 1.17",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -46,7 +46,7 @@ defmodule PauseAiCa.MixProject do
       _ ->
         {:phoenix_mail_workflow,
          git: "https://github.com/ogourment/phoenix_mail_workflow-compiled.git",
-         ref: "a4b3a55a05b8d0b86c1e9e31db369504d2dd5dda"}
+         ref: "18c05815b8d11921c36808dc1ccb9c47ba238afe"}
     end
   end
 

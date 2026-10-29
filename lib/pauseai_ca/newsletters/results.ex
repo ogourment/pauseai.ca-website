@@ -19,6 +19,72 @@ defmodule PauseAiCa.Newsletters.Results do
     end
   end
 
+  # Local receipts and persisted provider aggregates only: browsing never calls Brevo.
+  def overview(scope, ids) do
+    if Volunteers.superadmin?(scope) do
+      states =
+        Repo.all(
+          from d in Delivery,
+            where: d.batch_id in ^ids,
+            group_by: [d.batch_id, d.state],
+            select: {d.batch_id, d.state, count(d.id)}
+        )
+        |> Enum.group_by(&elem(&1, 0))
+
+      snapshots =
+        Repo.all(from s in ResultSnapshot, where: s.batch_id in ^ids)
+        |> Map.new(&{&1.batch_id, &1})
+
+      Map.new(ids, fn id ->
+        {id,
+         %{
+           states: Map.new(Map.get(states, id, []), fn {_, state, count} -> {state, count} end),
+           provider: Map.get(snapshots, id)
+         }}
+      end)
+    else
+      %{}
+    end
+  end
+
+  # Retain the originating list order across detail patches, even when a newer send arrives.
+  # IDs from URLs are bounded, UUID-checked and intersected with authorized attempted sends.
+  def navigation(scope, id, ids) do
+    if Volunteers.superadmin?(scope) do
+      ids =
+        Enum.take(ids, 25) |> Enum.filter(&match?({:ok, _}, Ecto.UUID.cast(&1))) |> Enum.uniq()
+
+      attempted = from d in Delivery, where: not is_nil(d.attempted_at), select: d.batch_id
+
+      allowed =
+        Repo.all(
+          from b in Batch, where: b.id in ^ids and b.id in subquery(attempted), select: b.id
+        )
+        |> MapSet.new()
+
+      ids = Enum.filter(ids, &MapSet.member?(allowed, &1))
+      index = Enum.find_index(ids, &(&1 == id))
+
+      %{
+        ids: ids,
+        previous: if(index && index > 0, do: Enum.at(ids, index - 1)),
+        next: if(index, do: Enum.at(ids, index + 1))
+      }
+    else
+      %{ids: [], previous: nil, next: nil}
+    end
+  end
+
+  def list_context(scope, ids) do
+    if Volunteers.superadmin?(scope) do
+      navigation = navigation(scope, nil, ids)
+      batches = Repo.all(from b in Batch, where: b.id in ^navigation.ids) |> Map.new(&{&1.id, &1})
+      {:ok, Enum.map(navigation.ids, &Map.fetch!(batches, &1))}
+    else
+      {:error, :unauthorized}
+    end
+  end
+
   def recipient_counts(scope, ids) do
     if Volunteers.superadmin?(scope) do
       Repo.all(
@@ -67,6 +133,7 @@ defmodule PauseAiCa.Newsletters.Results do
 
         %{
           report: %{report | observed: observed},
+          links: saved_links(snapshot.observed),
           partial: snapshot.partial,
           refreshed_at: snapshot.refreshed_at
         }
@@ -199,6 +266,7 @@ defmodule PauseAiCa.Newsletters.Results do
           events = page.events
           partial = page.partial
           report = PhoenixMailWorkflow.Results.summarize(result.deliveries, events)
+          links = link_report(result.batch.source, result.deliveries, events)
           at = DateTime.utc_now()
           # Persist only aggregate observations, never raw provider recipient events.
           Repo.transaction(fn ->
@@ -214,7 +282,9 @@ defmodule PauseAiCa.Newsletters.Results do
             Repo.insert!(
               %ResultSnapshot{
                 batch_id: id,
-                observed: Map.new(report.observed, fn {k, v} -> {Atom.to_string(k), v} end),
+                observed:
+                  Map.new(report.observed, fn {k, v} -> {Atom.to_string(k), v} end)
+                  |> Map.put("links", links),
                 partial: partial,
                 refreshed_at: at
               },
@@ -224,6 +294,7 @@ defmodule PauseAiCa.Newsletters.Results do
 
             %{
               report: report,
+              links: links,
               partial: partial,
               refreshed_at: at,
               reconciliation:
@@ -236,6 +307,95 @@ defmodule PauseAiCa.Newsletters.Results do
       {:error, reason} -> {:error, reason}
       _ -> {:error, :not_configured}
     end
+  end
+
+  # Only generic destinations present in immutable authored content are retained.
+  # Raw provider rows, recipient identities and authentication/footer URLs stay out of this JSON.
+  defp link_report(source, deliveries, events) do
+    links =
+      (source || "")
+      |> MDEx.parse_document!()
+      |> Enum.flat_map(fn
+        %MDEx.Link{url: url, nodes: nodes} ->
+          if safe_authored_url?(url),
+            do: [%{"url" => url, "label" => String.slice(String.trim(link_text(nodes)), 0, 200)}],
+            else: []
+
+        _ ->
+          []
+      end)
+      |> Enum.uniq_by(& &1["url"])
+
+    allowed = MapSet.new(links, & &1["url"])
+
+    recipients =
+      deliveries
+      |> Enum.filter(&(is_binary(&1.provider_id) and &1.provider_id != ""))
+      |> MapSet.new(&{&1.provider_id, String.downcase(String.trim(&1.email))})
+
+    clicks =
+      Enum.reduce(events, %{}, fn
+        %{"event" => type, "messageId" => id, "email" => email, "link" => url}, counts
+        when type in ["clicked", "clicks"] and is_binary(id) and is_binary(email) and
+               is_binary(url) ->
+          pair = {id, String.downcase(String.trim(email))}
+
+          if MapSet.member?(allowed, url) and MapSet.member?(recipients, pair) do
+            Map.update(counts, url, MapSet.new([pair]), &MapSet.put(&1, pair))
+          else
+            counts
+          end
+
+        _, counts ->
+          counts
+      end)
+
+    %{
+      "version" => 1,
+      "complete" => true,
+      "items" =>
+        Enum.map(links, fn link ->
+          Map.put(link, "clicked", MapSet.size(Map.get(clicks, link["url"], MapSet.new())))
+        end)
+    }
+  end
+
+  defp link_text(nodes) do
+    Enum.map_join(nodes, fn
+      %{literal: text} when is_binary(text) -> text
+      %{nodes: children} -> link_text(children)
+      _ -> ""
+    end)
+  end
+
+  defp saved_links(%{"links" => %{"version" => 1, "complete" => true, "items" => items} = links})
+       when is_list(items), do: links
+
+  defp saved_links(_), do: nil
+
+  defp safe_authored_url?(url) do
+    uri = URI.parse(url)
+    decoded = url |> URI.decode() |> URI.decode() |> String.downcase()
+    path = (uri.path || "") |> URI.decode() |> String.downcase()
+    params = URI.query_decoder(uri.query || "") |> Enum.to_list()
+
+    uri.scheme in ["http", "https"] and is_binary(uri.host) and uri.host != "" and
+      is_nil(uri.userinfo) and
+      not String.contains?(decoded, ["@", "{{", "}}", "${", "[[", "]]", "<", ">"]) and
+      not Regex.match?(
+        ~r{(?:^|/)(?:unsubscribe|withdraw|confirm|confirm-email|log-in|login|sign-in|signin|auth|oauth|track|tracking)(?:/|$)},
+        path
+      ) and
+      not Regex.match?(~r"(?:^|/)[a-z0-9_-]{64,}(?:/|$)", path) and
+      not Enum.any?(params, fn {key, value} ->
+        Regex.match?(
+          ~r/token|secret|password|signature|auth|email|recipient|subscriber|contact_id|user_id|code|key/i,
+          key
+        ) or
+          String.length(value) > 128 or String.contains?(URI.decode(value), ["@", "{{", "${"])
+      end)
+  rescue
+    ArgumentError -> false
   end
 
   defp complete_report(%{partial: false}), do: :ok

@@ -30,6 +30,17 @@ defmodule PauseAiCa.Incubators do
 
   def managed_groups(scope), do: Volunteers.groups(scope)
 
+  def superadmin_nonmember?(scope, group_id) do
+    Volunteers.superadmin?(scope) && uuid?(group_id) &&
+      Repo.exists?(from g in Group, where: g.id == ^group_id) &&
+      not Repo.exists?(
+        from m in Membership,
+          where:
+            m.group_id == ^group_id and m.user_id == ^scope.user.id and
+              m.status in ["approved", "admitted"]
+      )
+  end
+
   def configure(scope, group_id, attrs, revision \\ nil) do
     attrs = Map.new(attrs, fn {key, value} -> {to_string(key), value} end)
 

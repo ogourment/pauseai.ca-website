@@ -36,7 +36,8 @@ defmodule PauseAiCaWeb.MailEntryLiveTest do
 
     {:ok, view, html} = live(log_in_user(conn, admin), "/manage/mail/results?locale=en")
     assert has_element?(view, "[data-recipient-identities]", "visible-recipient@example.org")
-    assert has_element?(view, "article", "1 recipient")
+    assert has_element?(view, "article", "Planned recipients: 1")
+    assert has_element?(view, "[data-manual-recipients]", "visible-recipient@example.org")
     refute has_element?(view, "article", "1 recipients")
     [_, after_menu] = String.split(html, ~s(id="management-tabs"), parts: 2)
     assert String.contains?(after_menu, ~s(id="journey-breadcrumbs"))

@@ -14,12 +14,14 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
         page_title: gettext("Local groups"),
         groups: [],
         group_id: nil,
+        requested_group: false,
         profile: nil,
         roster: [],
         events: [],
         error: nil,
         form: to_form(%{}, as: "profile"),
-        superadmin: false
+        superadmin: false,
+        superadmin_nonmember: false
       )
 
     if enabled?() do
@@ -34,7 +36,11 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
   def handle_params(params, _, socket) do
     groups = Incubators.managed_groups(socket.assigns.current_scope)
     group_id = params["group"] || (List.first(groups) && List.first(groups).id)
-    {:noreply, reload(assign(socket, groups: groups, group_id: group_id))}
+
+    {:noreply,
+     reload(
+       assign(socket, groups: groups, group_id: group_id, requested_group: params["group"] != nil)
+     )}
   end
 
   @impl true
@@ -148,13 +154,29 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
     if enabled?() do
       scope = socket.assigns.current_scope
       groups = Incubators.managed_groups(scope)
-      # Keep an in-progress configuration form; only refresh authorization and roster.
-      with {:ok, _} <- Incubators.configuration(scope, socket.assigns.group_id),
-           {:ok, roster} <- Incubators.roster(scope, socket.assigns.group_id) do
-        {:noreply,
-         assign(socket, groups: groups, roster: roster, superadmin: Volunteers.superadmin?(scope))}
+      socket = assign(socket, groups: groups)
+
+      new_selection? =
+        is_nil(socket.assigns.group_id) and not socket.assigns.requested_group and groups != []
+
+      socket = if new_selection?, do: assign(socket, group_id: hd(groups).id), else: socket
+
+      if empty_index?(socket) or new_selection? do
+        {:noreply, reload(socket)}
       else
-        _ -> {:noreply, denied(assign(socket, groups: groups))}
+        # Keep an in-progress configuration form; only refresh authorization and roster.
+        with {:ok, _} <- Incubators.configuration(scope, socket.assigns.group_id),
+             {:ok, roster} <- Incubators.roster(scope, socket.assigns.group_id) do
+          {:noreply,
+           assign(socket,
+             roster: roster,
+             superadmin: Volunteers.superadmin?(scope),
+             superadmin_nonmember:
+               Incubators.superadmin_nonmember?(scope, socket.assigns.group_id)
+           )}
+        else
+          _ -> {:noreply, denied(assign(socket, groups: groups))}
+        end
       end
     else
       {:noreply, redirect(socket, to: "/dashboard")}
@@ -162,6 +184,26 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
   end
 
   defp reload(socket, reset_form \\ true) do
+    if empty_index?(socket) do
+      assign(socket,
+        profile: nil,
+        roster: [],
+        events: [],
+        error: nil,
+        superadmin: true,
+        superadmin_nonmember: false
+      )
+    else
+      reload_group(socket, reset_form)
+    end
+  end
+
+  defp empty_index?(socket) do
+    enabled?() and not socket.assigns.requested_group and is_nil(socket.assigns.group_id) and
+      socket.assigns.groups == [] and Volunteers.superadmin?(socket.assigns.current_scope)
+  end
+
+  defp reload_group(socket, reset_form) do
     scope = socket.assigns.current_scope
     id = socket.assigns.group_id
 
@@ -191,7 +233,8 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
         events: events,
         form: if(reset_form, do: to_form(attrs, as: "profile"), else: socket.assigns.form),
         error: nil,
-        superadmin: Volunteers.superadmin?(scope)
+        superadmin: Volunteers.superadmin?(scope),
+        superadmin_nonmember: Incubators.superadmin_nonmember?(scope, id)
       )
     else
       _ -> denied(socket)
@@ -205,13 +248,17 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
         roster: [],
         events: [],
         group_id: nil,
+        superadmin_nonmember: false,
         error: gettext("This group is unavailable or your access has changed.")
       )
 
   defp enabled?, do: Application.get_env(:pauseai_ca, :incubators_enabled, false)
 
+  defp management_path(nil, locale),
+    do: "/manage/groups?" <> URI.encode_query(%{locale: locale})
+
   defp management_path(id, locale),
-    do: "/manage/groups?" <> URI.encode_query(%{group: id || "", locale: locale})
+    do: "/manage/groups?" <> URI.encode_query(%{group: id, locale: locale})
 
   defp event_label("configure"), do: gettext("Configuration updated")
   defp event_label("request"), do: gettext("Join request saved")
@@ -258,7 +305,19 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
               options={Enum.map(@groups, &{&1.name, &1.id})}
             />
           </form>
-          <p :if={@groups == []}>{gettext("You do not manage any groups.")}</p>
+          <div :if={@groups == [] and @superadmin and !@error} id="incubator-empty" class="space-y-2">
+            <p>{gettext("No groups have been created yet.")}</p>
+            <.link
+              href={"/volunteer-signups?" <> URI.encode_query(%{locale: @locale}) <> "#group-management"}
+              class="underline"
+            >
+              {gettext("Create a group")}
+            </.link>
+          </div>
+          <p :if={@groups == [] and !@superadmin}>{gettext("You do not manage any groups.")}</p>
+          <p :if={@superadmin_nonmember} id="incubator-superadmin-nonmember" class="text-sm">
+            {gettext("You have full access as a superadmin. You are not a member of this group.")}
+          </p>
         </header>
         <p :if={@error} role="alert" class="rounded border border-warning p-4">{@error}</p>
         <div :if={@group_id} class="space-y-8">

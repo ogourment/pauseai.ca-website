@@ -5,7 +5,7 @@ defmodule PauseAiCaWeb.IncubatorsLiveTest do
   alias PauseAiCa.{Incubators, Repo, Volunteers}
   alias PauseAiCa.Accounts.Scope
 
-  setup do
+  setup context do
     admin =
       user_fixture()
       |> Ecto.Changeset.change(superadmin: true)
@@ -14,29 +14,161 @@ defmodule PauseAiCaWeb.IncubatorsLiveTest do
 
     manager = user_fixture()
     member = user_fixture() |> Ecto.Changeset.change(name: "Review member") |> Repo.update!()
-    {:ok, group} = Volunteers.create_group(admin, %{name: "Review incubator"})
-    {:ok, grant} = Volunteers.assign_manager(admin, group.id, manager.email)
 
-    {:ok, profile} =
-      Incubators.configure(admin, group.id, %{
-        "name_en" => "Review local group",
-        "name_fr" => "Groupe local de démonstration",
-        "published" => true,
-        "fsas" => "H2X",
-        "whatsapp_enabled" => true,
-        "whatsapp_approval_confirmed" => true,
-        "moderator_contact" => "manager@example.org",
-        "whatsapp_invite_url" => "https://chat.whatsapp.com/private-review-only"
+    if context[:empty_groups] do
+      %{admin: admin}
+    else
+      {:ok, group} = Volunteers.create_group(admin, %{name: "Review incubator"})
+      {:ok, grant} = Volunteers.assign_manager(admin, group.id, manager.email)
+
+      {:ok, profile} =
+        Incubators.configure(admin, group.id, %{
+          "name_en" => "Review local group",
+          "name_fr" => "Groupe local de démonstration",
+          "published" => true,
+          "fsas" => "H2X",
+          "whatsapp_enabled" => true,
+          "whatsapp_approval_confirmed" => true,
+          "moderator_contact" => "manager@example.org",
+          "whatsapp_invite_url" => "https://chat.whatsapp.com/private-review-only"
+        })
+
+      %{
+        admin: admin,
+        manager: manager,
+        member: member,
+        group: group,
+        grant: grant,
+        profile: profile
+      }
+    end
+  end
+
+  test "superadmins manage all groups without membership or per-group grants", c do
+    {:ok, other} = Volunteers.create_group(c.admin, %{name: "Other group"})
+    memberships = Repo.aggregate(PauseAiCa.Incubators.Membership, :count)
+    grants = Repo.aggregate(PauseAiCa.Volunteers.Manager, :count)
+
+    {:ok, view, _} =
+      live(
+        log_in_user(build_conn(), c.admin.user),
+        "/manage/groups?group=#{c.group.id}&locale=en"
+      )
+
+    assert has_element?(view, "#incubator-group-form option[value='#{c.group.id}']")
+    assert has_element?(view, "#incubator-group-form option[value='#{other.id}']")
+
+    assert has_element?(
+             view,
+             "#incubator-superadmin-nonmember",
+             "You have full access as a superadmin."
+           )
+
+    assert has_element?(view, "#incubator-config")
+    assert has_element?(view, "#incubator-roster")
+
+    view |> form("#incubator-group-form", group: other.id) |> render_change()
+
+    view
+    |> form("#incubator-config",
+      profile: %{
+        name_en: "Other group",
+        name_fr: "Autre groupe",
+        summary_en: "Superadmin configuration"
+      }
+    )
+    |> render_submit()
+
+    assert {:ok, %{summary_en: "Superadmin configuration"}} =
+             Incubators.configuration(c.admin, other.id)
+
+    send(view.pid, :refresh_access)
+    assert has_element?(view, "#incubator-superadmin-nonmember")
+    assert Repo.aggregate(PauseAiCa.Incubators.Membership, :count) == memberships
+    assert Repo.aggregate(PauseAiCa.Volunteers.Manager, :count) == grants
+    refute Repo.get_by(PauseAiCa.Volunteers.Manager, user_id: c.admin.user.id)
+    refute Repo.get_by(PauseAiCa.Incubators.Membership, user_id: c.admin.user.id)
+  end
+
+  @tag :empty_groups
+  test "superadmin index with no groups remains an empty state through access refresh", c do
+    {:ok, view, html} = live(log_in_user(build_conn(), c.admin.user), "/manage/groups?locale=en")
+    assert has_element?(view, "#incubator-empty", "No groups have been created yet.")
+
+    assert has_element?(
+             view,
+             "a[href='/volunteer-signups?locale=en#group-management']",
+             "Create a group"
+           )
+
+    refute html =~ "You do not manage any groups."
+    refute html =~ "This group is unavailable"
+
+    send(view.pid, :refresh_access)
+    assert has_element?(view, "#incubator-empty")
+    refute has_element?(view, "#incubator-management > [role='alert']")
+    assert Repo.aggregate(PauseAiCa.Volunteers.Group, :count) == 0
+    assert Repo.aggregate(PauseAiCa.Volunteers.Manager, :count) == 0
+    assert Repo.aggregate(PauseAiCa.Incubators.Membership, :count) == 0
+    {:ok, group} = Volunteers.create_group(c.admin, %{name: "Newly created group"})
+    send(view.pid, :refresh_access)
+    assert has_element?(view, "#incubator-group-form option[value='#{group.id}']")
+    assert has_element?(view, "#incubator-config")
+    assert has_element?(view, "#incubator-superadmin-nonmember")
+    refute has_element?(view, "#incubator-management > [role='alert']")
+    assert Repo.aggregate(PauseAiCa.Volunteers.Manager, :count) == 0
+    assert Repo.aggregate(PauseAiCa.Incubators.Membership, :count) == 0
+  end
+
+  @tag :empty_groups
+  test "an explicitly unavailable group remains denied for a superadmin", c do
+    for id <- ["invalid", Ecto.UUID.generate()] do
+      {:ok, view, _} =
+        live(log_in_user(build_conn(), c.admin.user), "/manage/groups?group=#{id}&locale=en")
+
+      assert has_element?(view, "[role='alert']", "This group is unavailable")
+      refute has_element?(view, "#incubator-empty")
+      refute has_element?(view, "#incubator-superadmin-nonmember")
+      send(view.pid, :refresh_access)
+      assert has_element?(view, "[role='alert']", "This group is unavailable")
+    end
+  end
+
+  test "nonmember notice follows active membership and fresh superadmin authority", c do
+    assert Incubators.superadmin_nonmember?(c.admin, c.group.id)
+    refute Incubators.superadmin_nonmember?(c.admin, "invalid")
+    refute Incubators.superadmin_nonmember?(c.admin, Ecto.UUID.generate())
+    refute Incubators.superadmin_nonmember?(Scope.for_user(c.manager), c.group.id)
+    refute Incubators.superadmin_nonmember?(nil, c.group.id)
+
+    membership =
+      Repo.insert!(%PauseAiCa.Incubators.Membership{
+        group_id: c.group.id,
+        user_id: c.admin.user.id,
+        display_name: "Superadmin",
+        conduct_at: DateTime.utc_now(),
+        status: "approved"
       })
 
-    %{
-      admin: admin,
-      manager: manager,
-      member: member,
-      group: group,
-      grant: grant,
-      profile: profile
-    }
+    {:ok, view, _} =
+      live(
+        log_in_user(build_conn(), c.admin.user),
+        "/manage/groups?group=#{c.group.id}&locale=en"
+      )
+
+    refute has_element?(view, "#incubator-superadmin-nonmember")
+    Repo.update!(Ecto.Changeset.change(membership, status: "admitted"))
+    refute Incubators.superadmin_nonmember?(c.admin, c.group.id)
+    Repo.update!(Ecto.Changeset.change(membership, status: "suspended"))
+    send(view.pid, :refresh_access)
+    assert has_element?(view, "#incubator-superadmin-nonmember")
+
+    Repo.update!(Ecto.Changeset.change(c.admin.user, superadmin: false))
+    refute Incubators.superadmin_nonmember?(c.admin, c.group.id)
+    send(view.pid, :refresh_access)
+    assert has_element?(view, "[role='alert']", "This group is unavailable")
+    refute has_element?(view, "#incubator-config")
+    refute has_element?(view, "#incubator-superadmin-nonmember")
   end
 
   test "bilingual public directory exposes configured groups without invitation or roster", c do

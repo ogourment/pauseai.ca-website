@@ -67,6 +67,25 @@ defmodule PauseAiCaWeb.TasksLiveTest do
     assert Repo.aggregate(PauseAiCa.Tasks.Task, :count) == 1
   end
 
+  test "superadmin sees and edits every group's tasks without joining", c do
+    {:ok, other} = Volunteers.create_group(c.admin, %{"name" => "Other group"})
+    {:ok, task} = Tasks.create(c.scope, c.group.id, %{title: "Room"}, "admin-access")
+    before_managers = Repo.aggregate(PauseAiCa.Volunteers.Manager, :count)
+    before_memberships = Repo.aggregate(PauseAiCa.Incubators.Membership, :count)
+    conn = build_conn() |> log_in_user(c.admin.user)
+    {:ok, list, _} = live(conn, "/manage/tasks?locale=en")
+    assert has_element?(list, "#task-group-form option[value='#{c.group.id}']")
+    assert has_element?(list, "#task-group-form option[value='#{other.id}']")
+    {:ok, view, _} = live(conn, "/manage/tasks/#{task.id}?group=#{c.group.id}&locale=en")
+    assert has_element?(view, "#task-superadmin-access-note", "full access as a superadmin")
+    view |> form("[data-task-form]", task: %{title: "Admin updated room"}) |> render_submit()
+    assert {:ok, %{title: "Admin updated room"}} = Tasks.get(c.admin, c.group.id, task.id)
+    send(view.pid, :refresh_access)
+    assert has_element?(view, "#task-superadmin-access-note")
+    assert Repo.aggregate(PauseAiCa.Volunteers.Manager, :count) == before_managers
+    assert Repo.aggregate(PauseAiCa.Incubators.Membership, :count) == before_memberships
+  end
+
   test "stale save retains draft and requires deliberate reapplication", c do
     {:ok, task} = Tasks.create(c.scope, c.group.id, %{title: "Room"}, "create")
     {:ok, view, _} = live(c.conn, "/manage/tasks/#{task.id}?group=#{c.group.id}&locale=en")

@@ -1,6 +1,6 @@
 defmodule PauseAiCaWeb.TasksLive do
   use PauseAiCaWeb, :live_view
-  alias PauseAiCa.Tasks
+  alias PauseAiCa.{Tasks, Incubators}
 
   @impl true
   def mount(params, _, socket) do
@@ -15,6 +15,7 @@ defmodule PauseAiCaWeb.TasksLive do
          locale: locale,
          page_title: gettext("Tasks"),
          groups: [],
+         admin_nonmember: false,
          group_id: nil,
          members: [],
          tasks: [],
@@ -75,6 +76,7 @@ defmodule PauseAiCaWeb.TasksLive do
                true -> gettext("Tasks")
              end,
            groups: groups,
+           admin_nonmember: Incubators.superadmin_nonmember?(scope, group_id),
            group_id: group_id,
            tasks: tasks,
            members: members,
@@ -222,7 +224,14 @@ defmodule PauseAiCaWeb.TasksLive do
          {:ok, events} <- Tasks.activity(a.current_scope, a.group_id),
          {:ok, members} <- Tasks.members(a.current_scope, a.group_id) do
       Process.send_after(self(), :refresh_access, 30_000)
-      {:noreply, assign(socket, tasks: tasks, events: events, members: members)}
+
+      {:noreply,
+       assign(socket,
+         tasks: tasks,
+         events: events,
+         members: members,
+         admin_nonmember: Incubators.superadmin_nonmember?(a.current_scope, a.group_id)
+       )}
     else
       _ -> {:noreply, unavailable(socket)}
     end
@@ -380,6 +389,9 @@ defmodule PauseAiCaWeb.TasksLive do
               class="btn btn-primary"
             >{gettext("Add task")}</.link>
           </div>
+          <p :if={@admin_nonmember} id="task-superadmin-access-note" class="text-sm text-stone-600">
+            {gettext("You have full access as a superadmin. You are not a member of this group.")}
+          </p>
           <form :if={@group_id} phx-change="group" phx-submit="group" id="task-group-form">
             <.input
               type="select"
