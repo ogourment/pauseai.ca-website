@@ -22,6 +22,22 @@ defmodule PauseAiCaWeb.TasksLiveTest do
     }
   end
 
+  test "empty organizer workspace stays open without a misleading access error", c do
+    Repo.delete_all(PauseAiCa.Volunteers.Manager)
+    Repo.delete_all(PauseAiCa.Volunteers.Group)
+    conn = build_conn() |> log_in_user(c.admin.user)
+    {:ok, view, _} = live(conn, "/manage/tasks?locale=en")
+    assert has_element?(view, "#tasks-no-groups", "No organizer groups yet")
+    assert has_element?(view, "a[href='/volunteer-signups?locale=en#group-management']")
+    refute has_element?(view, "a", "Add task")
+    refute has_element?(view, "#task-group-form")
+    send(view.pid, :refresh_access)
+    assert has_element?(view, "#tasks-no-groups")
+    refute render(view) =~ "This group or task is unavailable."
+    assert Repo.aggregate(PauseAiCa.Volunteers.Group, :count) == 0
+    assert Repo.aggregate(PauseAiCa.Tasks.Task, :count) == 0
+  end
+
   test "organizer creates a task, reloads it and follows canonical activity", c do
     {:ok, view, _} = live(c.conn, "/manage/tasks?locale=en")
     assert has_element?(view, "#task-list", "No tasks yet")

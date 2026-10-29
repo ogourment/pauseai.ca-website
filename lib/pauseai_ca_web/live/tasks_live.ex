@@ -40,45 +40,58 @@ defmodule PauseAiCaWeb.TasksLive do
     groups = Tasks.groups(scope)
     group_id = params["group"] || (List.first(groups) && List.first(groups).id)
 
-    with true <- Enum.any?(groups, &(&1.id == group_id)),
-         {:ok, tasks} <- Tasks.list(scope, group_id),
-         {:ok, members} <- Tasks.members(scope, group_id),
-         {:ok, events} <- Tasks.activity(scope, group_id),
-         {:ok, record} <- record(scope, group_id, params["id"]) do
-      values =
-        if record,
-          do: values(record),
-          else:
-            defaults(
-              if(Enum.any?(members, &(&1.id == scope.user.id)), do: scope.user.id, else: "")
-            )
-
+    if groups == [] and is_nil(params["group"]) and socket.assigns.live_action == :index do
       {:noreply,
        assign(socket,
-         page_title:
-           cond do
-             record -> record.title
-             socket.assigns.live_action == :new -> gettext("Add task")
-             params["view"] == "activity" -> gettext("Activity")
-             true -> gettext("Tasks")
-           end,
-         groups: groups,
-         group_id: group_id,
-         tasks: tasks,
-         members: members,
-         events: events,
-         record: record,
-         editing: socket.assigns.live_action in [:new, :show],
-         view: if(params["view"] == "activity", do: "activity", else: "tasks"),
-         form: to_form(values, as: "task"),
-         command_id: Ecto.UUID.generate(),
-         error: nil,
-         field_errors: %{},
-         blocked: [],
-         conflict: false
+         groups: [],
+         group_id: nil,
+         tasks: [],
+         members: [],
+         events: [],
+         record: nil,
+         editing: false
        )}
     else
-      _ -> {:noreply, unavailable(socket)}
+      with true <- Enum.any?(groups, &(&1.id == group_id)),
+           {:ok, tasks} <- Tasks.list(scope, group_id),
+           {:ok, members} <- Tasks.members(scope, group_id),
+           {:ok, events} <- Tasks.activity(scope, group_id),
+           {:ok, record} <- record(scope, group_id, params["id"]) do
+        values =
+          if record,
+            do: values(record),
+            else:
+              defaults(
+                if(Enum.any?(members, &(&1.id == scope.user.id)), do: scope.user.id, else: "")
+              )
+
+        {:noreply,
+         assign(socket,
+           page_title:
+             cond do
+               record -> record.title
+               socket.assigns.live_action == :new -> gettext("Add task")
+               params["view"] == "activity" -> gettext("Activity")
+               true -> gettext("Tasks")
+             end,
+           groups: groups,
+           group_id: group_id,
+           tasks: tasks,
+           members: members,
+           events: events,
+           record: record,
+           editing: socket.assigns.live_action in [:new, :show],
+           view: if(params["view"] == "activity", do: "activity", else: "tasks"),
+           form: to_form(values, as: "task"),
+           command_id: Ecto.UUID.generate(),
+           error: nil,
+           field_errors: %{},
+           blocked: [],
+           conflict: false
+         )}
+      else
+        _ -> {:noreply, unavailable(socket)}
+      end
     end
   end
 
@@ -190,6 +203,18 @@ defmodule PauseAiCaWeb.TasksLive do
   end
 
   @impl true
+  def handle_info(:refresh_access, %{assigns: %{group_id: nil}} = socket) do
+    Process.send_after(self(), :refresh_access, 30_000)
+
+    case Tasks.groups(socket.assigns.current_scope) do
+      [] ->
+        {:noreply, socket}
+
+      [group | _] ->
+        {:noreply, push_patch(socket, to: list_path(group.id, socket.assigns.locale))}
+    end
+  end
+
   def handle_info(:refresh_access, socket) do
     a = socket.assigns
 
@@ -350,11 +375,12 @@ defmodule PauseAiCaWeb.TasksLive do
           <div class="flex flex-wrap justify-between items-center gap-3">
             <h1 class="text-2xl font-bold">{gettext("Tasks")}</h1>
             <.link
+              :if={@group_id}
               patch={~p"/manage/tasks/new?#{%{group: @group_id, locale: @locale}}"}
               class="btn btn-primary"
             >{gettext("Add task")}</.link>
           </div>
-          <form phx-change="group" phx-submit="group" id="task-group-form">
+          <form :if={@group_id} phx-change="group" phx-submit="group" id="task-group-form">
             <.input
               type="select"
               name="group"
@@ -363,7 +389,7 @@ defmodule PauseAiCaWeb.TasksLive do
               options={Enum.map(@groups, &{&1.name, &1.id})}
             />
           </form>
-          <nav class="flex gap-4" aria-label={gettext("Task views")}>
+          <nav :if={@group_id} class="flex gap-4" aria-label={gettext("Task views")}>
             <.link
               patch={list_path(@group_id, @locale)}
               aria-current={if @view == "tasks", do: "page"}
@@ -375,6 +401,19 @@ defmodule PauseAiCaWeb.TasksLive do
               class="underline"
             >{gettext("Activity")}</.link>
           </nav>
+        </div>
+        <div :if={is_nil(@group_id)} id="tasks-no-groups" class="mt-6 space-y-3">
+          <h2 class="text-xl font-semibold">{gettext("No organizer groups yet")}</h2>
+          <p>
+            {gettext(
+              "Tasks belong to organizer groups. Create a group and assign its managers to start organizing tasks."
+            )}
+          </p>
+          <.link
+            :if={PauseAiCa.Volunteers.superadmin?(@current_scope)}
+            navigate={~p"/volunteer-signups?#{%{locale: @locale}}" <> "#group-management"}
+            class="underline"
+          >{gettext("Manage groups and managers")}</.link>
         </div>
         <div
           :if={@editing}
@@ -521,7 +560,11 @@ defmodule PauseAiCaWeb.TasksLive do
             locale={@locale}
           />
         </div>
-        <div :if={!@editing and @view == "tasks"} class="mt-6 space-y-3" id="task-list">
+        <div
+          :if={not is_nil(@group_id) and !@editing and @view == "tasks"}
+          class="mt-6 space-y-3"
+          id="task-list"
+        >
           <p :if={@tasks == []}>{gettext("No tasks yet. Add the first task for this group.")}</p>
           <article :for={task <- @tasks} class="rounded-xl border border-base-300 p-4">
             <.link patch={task_path(task.id, @group_id, @locale)} class="font-semibold underline">{task.title}</.link>

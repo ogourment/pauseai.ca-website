@@ -39,6 +39,7 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
     socket
     |> assign(:page_title, gettext("Admin dashboard"))
     |> assign(:metrics, metrics)
+    |> assign(:movement_metrics, PauseAiCa.MovementMetrics.summary())
     |> assign(:game_metrics, Engagement.game_metrics())
     |> assign(:signup_funnel, Engagement.signup_funnel())
     |> assign(:trend_period_label, trend_period_label(metrics.trend_period))
@@ -190,6 +191,88 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
               trend_period={@trend_period_label}
             />
           </div>
+          <section id="movement-participation-metrics" class="mt-10">
+            <h2 class="font-heading text-2xl">{gettext("Newsletters and local organizing")}</h2>
+            <p class="mt-2 text-sm text-stone-600">
+              {gettext("All-time recorded totals and current membership and task states.")}
+            </p>
+            <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <.metric
+                id="metric-newsletter-opens"
+                label={gettext("Reported newsletter opens")}
+                value={@movement_metrics.newsletter.reported_opens}
+                trend={[]}
+                trend_period=""
+              />
+              <.metric
+                id="metric-newsletter-proxy-opens"
+                label={gettext("Reported proxy opens")}
+                value={@movement_metrics.newsletter.proxy_opens}
+                trend={[]}
+                trend_period=""
+              />
+              <.metric
+                id="metric-incubators"
+                label={gettext("Published local incubators")}
+                value={@movement_metrics.incubators.published}
+                trend={[]}
+                trend_period=""
+              />
+              <.metric
+                id="metric-incubator-memberships"
+                label={gettext("Approved incubator memberships")}
+                value={@movement_metrics.incubators.approved_memberships}
+                trend={[]}
+                trend_period=""
+              />
+              <.metric
+                id="metric-incubator-pending"
+                label={gettext("Pending incubator requests")}
+                value={@movement_metrics.incubators.pending_requests}
+                trend={[]}
+                trend_period=""
+              />
+              <.metric
+                id="metric-organizer-tasks-active"
+                label={gettext("Active organizer tasks")}
+                value={@movement_metrics.tasks.active}
+                trend={[]}
+                trend_period=""
+              />
+              <.metric
+                id="metric-organizer-tasks-completed"
+                label={gettext("Completed organizer tasks")}
+                value={@movement_metrics.tasks.completed}
+                trend={[]}
+                trend_period=""
+              />
+            </div>
+            <p id="newsletter-metrics-coverage" class="mt-4 text-sm text-stone-600">
+              {gettext(
+                "Stored provider reports: %{reports} of %{campaigns} production campaigns with attempted sends; %{partial} partial reports.",
+                reports: @movement_metrics.newsletter.reports,
+                campaigns: @movement_metrics.newsletter.campaigns,
+                partial: @movement_metrics.newsletter.partial_reports
+              )}
+              <span :if={@movement_metrics.newsletter.oldest_refresh}>
+                {gettext("Oldest report refresh")}: {Calendar.strftime(
+                  @movement_metrics.newsletter.oldest_refresh,
+                  "%Y-%m-%d %H:%M"
+                )} UTC.
+              </span>
+            </p>
+            <details class="mt-2 text-sm text-stone-600">
+              <summary class="cursor-pointer">{gettext("Metric definitions")}</summary>
+              <p id="movement-metrics-units" class="mt-2 max-w-3xl text-sm text-stone-600">
+                {gettext(
+                  "Opens count recipient-message pairs within each stored campaign report. Repeat campaigns can count the same address again. Proxy opens may overlap other opens; neither proves reading. Missing reports are unmeasured, and this dashboard does not fetch provider data."
+                )}
+                {gettext(
+                  "Memberships count approved or admitted requests, including unpublished groups; one account can join several incubators. Tasks cover organizer groups. These totals do not establish attendance or distinct people and are not added to confirmed actions."
+                )}
+              </p>
+            </details>
+          </section>
           <section
             id="signup-funnel"
             class="mt-10 rounded-2xl border border-stone-200 bg-white p-5 sm:p-8"
