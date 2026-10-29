@@ -31,10 +31,11 @@ jobs:
       test-command: mix ci.test
 
   delivery:
-    if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+    if: ${{ github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && startsWith(github.ref, 'refs/heads/security/'))) }}
     needs: [repository-boundary, phoenix]
-    uses: ogourment/github-ci-cd-harness/.github/workflows/phoenix-delivery.yml@v0.4.41
+    uses: ogourment/github-ci-cd-harness/.github/workflows/phoenix-delivery.yml@v0.4.54
     with:
+      security-hotfix-policy: .github/security-hotfixes.json
       artifact-name: pauseai-ca-release
       otp-app: pauseai_ca
       remote-env-prefix: PAUSEAI_CA
