@@ -345,12 +345,19 @@ defmodule PauseAiCaWeb.DonationPageLive do
 
   defp edit(socket, values) do
     values =
-      values |> strip_form_metadata() |> Map.take(["editions", "links", "display", "stages"])
+      values
+      |> strip_form_metadata()
+      |> Map.take(["editions", "links", "display", "stages", "campaign"])
 
     values = if values["stages"], do: Map.update!(values, "stages", &parse_stages/1), else: values
 
     values =
       if values["display"], do: Map.update!(values, "display", &normalize_display/1), else: values
+
+    values =
+      if values["campaign"],
+        do: Map.update!(values, "campaign", &normalize_campaign/1),
+        else: values
 
     mutate(socket, deep_merge(socket.assigns.payload, values))
   end
@@ -377,6 +384,17 @@ defmodule PauseAiCaWeb.DonationPageLive do
     do: Enum.map(values, &strip_form_metadata/1)
 
   defp strip_form_metadata(value), do: value
+
+  defp normalize_campaign(campaign) do
+    campaign
+    |> Map.update("enabled", true, &(&1 in [true, "true"]))
+    |> Map.update("urgent_window_days", 7, fn value ->
+      case Integer.parse(to_string(value)) do
+        {number, ""} -> number
+        _ -> value
+      end
+    end)
+  end
 
   defp normalize_display(display) do
     display
@@ -912,6 +930,38 @@ defmodule PauseAiCaWeb.DonationPageLive do
             class="mt-6 space-y-4 rounded-xl border border-stone-300 bg-white p-5"
           >
             <h2 class="text-xl font-semibold">{gettext("Display settings")}</h2>
+            <fieldset class="space-y-3 border-b border-stone-200 pb-4">
+              <legend class="font-semibold">{gettext("Campaign countdown")}</legend>
+              <.input
+                id="donation-countdown-enabled"
+                type="checkbox"
+                name="page[campaign][enabled]"
+                label={gettext("Show the campaign banner and countdown")}
+                value={PauseAiCa.Donations.Campaign.settings(@payload)["enabled"]}
+              />
+              <.input
+                id="donation-countdown-deadline"
+                name="page[campaign][closes_at]"
+                label={gettext("Closing date and time (with UTC offset)")}
+                value={PauseAiCa.Donations.Campaign.settings(@payload)["closes_at"]}
+                phx-debounce="300"
+              />
+              <p class="text-sm text-stone-600">
+                {gettext(
+                  "Match the deadline published by the fundraising platform, including its UTC offset. Example: 2026-11-27T23:59:59-07:00."
+                )}
+              </p>
+              <.input
+                id="donation-countdown-window"
+                type="number"
+                min="0"
+                max="90"
+                step="1"
+                name="page[campaign][urgent_window_days]"
+                label={gettext("Show the compact banner timer during the final days")}
+                value={PauseAiCa.Donations.Campaign.settings(@payload)["urgent_window_days"]}
+              />
+            </fieldset>
             <p>
               {gettext(
                 "Show the remaining budget when recorded funding is strictly above this percentage of the full budget."

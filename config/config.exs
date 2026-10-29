@@ -15,6 +15,9 @@ config :pauseai_ca, :donation_funding_enabled, true
 
 config :pauseai_ca, :manifund_campaign,
   project_id: "a7c581e9-fb40-e046-5996-1920a622fef7",
+  # Match Manifund time-left-display.tsx fixed closing offset, not an inferred browser timezone.
+  closes_at: "2026-11-27T23:59:59-07:00",
+  urgent_window_days: 7,
   url: "https://manifund.org/projects/pauseai-canada-national-expansion--core-operations"
 
 config :pauseai_ca, :welcome_calls_enabled, false

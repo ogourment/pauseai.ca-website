@@ -144,6 +144,8 @@ defmodule PauseAiCaWeb.Router do
     live_session :require_authenticated_user,
       on_mount: [{PauseAiCaWeb.UserAuth, :require_authenticated}] do
       live "/groups/:id/join", IncubatorsLive, :join
+      live "/manage/blog", BlogEditorLive, :index
+      live "/manage/blog/:id", BlogEditorLive, :show
       live "/manage/donations", DonationPageLive, :index
       live "/manage/groups", IncubatorManagementLive, :index
       live "/community/slack", SlackCommunityLive, :index
@@ -196,6 +198,10 @@ defmodule PauseAiCaWeb.Router do
     # closes them on staging only. The sign-in routes below must not carry it.
     live_session :public_content,
       on_mount: [{PauseAiCaWeb.UserAuth, :require_invited}] do
+      live "/en/blog", BlogLive, :index_en
+      live "/en/blog/:slug", BlogLive, :show_en
+      live "/fr/blogue", BlogLive, :index_fr
+      live "/fr/blogue/:slug", BlogLive, :show_fr
       live "/en/groups", IncubatorsLive, :en
       live "/fr/groupes", IncubatorsLive, :fr
       live "/en/donate", DonateLive, :en

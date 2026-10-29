@@ -5,6 +5,7 @@ defmodule PauseAiCa.Donations.PageDefaults do
   def payload do
     %{
       "currency" => "CAD",
+      "campaign" => PauseAiCa.Donations.Campaign.defaults(),
       "editions" => %{
         "en" => %{
           "title" => "PauseAI Canada needs you!",

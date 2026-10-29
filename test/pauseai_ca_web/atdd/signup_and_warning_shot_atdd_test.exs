@@ -732,10 +732,10 @@ if System.get_env("ATDD") == "true" do
           "Follow current information",
           "Evidence and Canadian choices available on mobile"
         )
-        |> click("#montreal-protest-banner")
+        |> visit("/en/montreal-protest-2026-09-26")
         |> capture(
           id,
-          "Open Sept. 26 recap",
+          "Open the Sept. 26 recap URL",
           "Local bilingual recap credits reporting and all three Clara Lacasse photographs"
         )
         |> assert_path("/en/montreal-protest-2026-09-26")

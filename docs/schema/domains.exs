@@ -1,4 +1,5 @@
 [
+  %{id: "blog", title: "Blog articles and CMS history", tables: ~w(blog_articles blog_article_revisions)},
   %{
     id: "slack_conversations",
     title: "Slack conversations and private account links",

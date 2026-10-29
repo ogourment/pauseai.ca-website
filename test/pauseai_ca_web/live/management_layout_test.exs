@@ -39,7 +39,11 @@ defmodule PauseAiCaWeb.ManagementLayoutTest do
   test "public pages keep their campaign announcements", %{conn: conn} do
     for path <- ["/en/learn", "/fr/comprendre"] do
       {:ok, view, _} = live(conn, path)
-      assert has_element?(view, "#montreal-protest-banner")
+
+      if PauseAiCa.Donations.Campaign.countdown(),
+        do: assert(has_element?(view, "#fundraising-campaign-banner")),
+        else: refute(has_element?(view, "#fundraising-campaign-banner"))
+
       refute has_element?(view, "#warning-shot-banner")
     end
   end

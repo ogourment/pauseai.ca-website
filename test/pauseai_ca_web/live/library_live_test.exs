@@ -7,13 +7,16 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
     test "an English visitor sees every stage and the Canadian voices", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/en/learn")
 
-      assert has_element?(
-               view,
-               "#montreal-protest-banner[href='/en/montreal-protest-2026-09-26']"
-             )
+      refute has_element?(view, "#montreal-protest-banner")
+
+      if PauseAiCa.Donations.Campaign.countdown() do
+        assert has_element?(view, "#fundraising-campaign-banner[href='/en/donate']")
+        assert render(view) =~ "Support the campaign"
+      else
+        refute has_element?(view, "#fundraising-campaign-banner")
+      end
 
       refute has_element?(view, "#warning-shot-banner")
-      assert render(view) =~ "September 26 · Read the recap"
       refute has_element?(view, "#campaign-prompt")
       assert has_element?(view, "a[data-rogue-launch='true']")
       assert has_element?(view, "#voices")
@@ -29,13 +32,16 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
     test "a French visitor gets the page in French", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/fr/comprendre")
 
-      assert has_element?(view, "#announcement-banners > #montreal-protest-banner:first-child")
+      assert has_element?(
+               view,
+               "#announcement-banners > #fundraising-campaign-banner:first-child"
+             )
+
       refute has_element?(view, "#warning-shot-banner")
       assert has_element?(view, "#voices")
       assert has_element?(view, "#voice-saba")
       assert has_element?(view, "#voice-guay")
       html = render(view)
-      assert html =~ "26 septembre · Lire le compte rendu"
       assert html =~ "Des voix canadiennes"
     end
 

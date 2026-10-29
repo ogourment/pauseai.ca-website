@@ -48,7 +48,15 @@ defmodule PauseAiCaWeb.Layouts do
   slot :inner_block, required: true
 
   def app(assigns) do
-    assigns = assign(assigns, :locale, assigns.locale || Gettext.get_locale(PauseAiCaWeb.Gettext))
+    assigns =
+      assigns
+      |> assign(:locale, assigns.locale || Gettext.get_locale(PauseAiCaWeb.Gettext))
+      |> assign(
+        :campaign_countdown,
+        if(assigns.show_announcements,
+          do: PauseAiCa.Donations.Campaign.countdown(PauseAiCa.Donations.Pages.published())
+        )
+      )
 
     ~H"""
     <header class="sticky top-0 z-40 border-b border-stone-200/80 bg-[#f8f5ed]/95 backdrop-blur">
@@ -245,22 +253,21 @@ defmodule PauseAiCaWeb.Layouts do
       class="sticky top-[var(--header-height)] z-30"
     >
       <a
-        id="montreal-protest-banner"
-        href={
-          if @locale == "fr",
-            do: ~p"/fr/manifestation-montreal-2026-09-26",
-            else: ~p"/en/montreal-protest-2026-09-26"
-        }
-        phx-hook=".TrackOutbound"
-        data-event="montreal-protest-2026-09-26"
-        class="block bg-stone-950 px-5 py-3 text-center text-white transition hover:bg-stone-800 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-white"
+        :if={@campaign_countdown}
+        id="fundraising-campaign-banner"
+        data-campaign-promotion
+        href={if @locale == "fr", do: ~p"/fr/faire-un-don", else: ~p"/en/donate"}
+        class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 bg-stone-950 px-4 py-2.5 text-center text-white hover:bg-stone-800 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-white"
       >
-        <span class="font-heading text-sm font-bold uppercase tracking-[0.16em]">
-          {gettext("Montréal · Public protest")}
-        </span>
-        <span class="ml-2 text-sm underline underline-offset-4">
-          {gettext("September 26 · Read the recap")}
-          <span aria-hidden="true">→</span>
+        <span class="font-semibold">{gettext("Help build the movement for an AI pause")}</span>
+        <span class="text-sm">{PauseAiCaWeb.CampaignCountdown.deadline(@campaign_countdown)}</span>
+        <PauseAiCaWeb.CampaignCountdown.timer
+          id="banner-countdown"
+          state={@campaign_countdown}
+          compact
+        />
+        <span class="whitespace-nowrap text-sm font-semibold underline underline-offset-4">
+          {gettext("Support the campaign")} <span aria-hidden="true">→</span>
         </span>
       </a>
 
@@ -477,6 +484,7 @@ defmodule PauseAiCaWeb.Layouts do
 
   defp learn_items(locale) do
     [
+      {"blog", gettext("Blog"), if(locale == "fr", do: ~p"/fr/blogue", else: ~p"/en/blog")},
       {"test", gettext("Take the test"),
        if(locale == "fr", do: ~p"/fr#questions", else: ~p"/en#questions")},
       {"rogue-game", gettext("Play the Rogue Agent Popup Game"),

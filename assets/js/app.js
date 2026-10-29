@@ -55,7 +55,7 @@ installJourneyBreadcrumbs()
 if (!document.querySelector('[data-phx-main]')) {
   document.querySelectorAll('[phx-hook]').forEach(el => {
     const name = el.getAttribute('phx-hook')
-    const shared = ['PauseAiCaWeb.CampaignPrompt.CampaignPrompt', 'PauseAiCaWeb.Analytics.Analytics', 'PauseAiCaWeb.Layouts.TrackOutbound', 'PauseAiCaWeb.Layouts.SignupSuccess']
+    const shared = ['PauseAiCaWeb.CampaignPrompt.CampaignPrompt', 'PauseAiCaWeb.Analytics.Analytics', 'PauseAiCaWeb.Layouts.TrackOutbound', 'PauseAiCaWeb.Layouts.SignupSuccess', 'PauseAiCaWeb.CampaignCountdown.Countdown']
     if (shared.includes(name)) colocatedHooks[name]?.mounted.call({el})
   })
 }

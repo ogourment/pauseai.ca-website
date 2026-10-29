@@ -15,11 +15,12 @@ defmodule PauseAiCa.Donations.PagePayload do
           [{"payload", "must be a map"}]
 
         true ->
-          unknown(payload, ~w(currency editions links stages display), "payload") ++
+          unknown(payload, ~w(currency editions links stages display campaign), "payload") ++
             require_value(payload["currency"] == "CAD", "currency", "must be CAD") ++
             editions(payload["editions"], mode) ++
             links(payload["links"], mode) ++
-            stages(payload["stages"], mode) ++ display(payload["display"])
+            stages(payload["stages"], mode) ++
+            display(payload["display"]) ++ campaign(payload["campaign"])
       end
 
     if errors == [] do
@@ -192,6 +193,32 @@ defmodule PauseAiCa.Donations.PagePayload do
       end
     end)
   end
+
+  # Optional for older published snapshots; explicit edits use the same CMS lifecycle.
+  defp campaign(nil), do: []
+
+  defp campaign(value) when is_map(value) do
+    valid_deadline =
+      case value["closes_at"] do
+        date when is_binary(date) -> match?({:ok, _, _}, DateTime.from_iso8601(date))
+        _ -> false
+      end
+
+    unknown(value, ~w(enabled closes_at urgent_window_days), "campaign") ++
+      require_value(is_boolean(value["enabled"]), "campaign.enabled", "must be a boolean") ++
+      require_value(
+        valid_deadline,
+        "campaign.closes_at",
+        "must be an ISO date and time with a UTC offset"
+      ) ++
+      require_value(
+        is_integer(value["urgent_window_days"]) and value["urgent_window_days"] in 0..90,
+        "campaign.urgent_window_days",
+        "must be an integer from zero to ninety"
+      )
+  end
+
+  defp campaign(_), do: [{"campaign", "must contain campaign settings"}]
 
   defp display(value) when is_map(value) do
     unknown(value, ~w(mode remaining_threshold_percent show_remaining_above), "display") ++

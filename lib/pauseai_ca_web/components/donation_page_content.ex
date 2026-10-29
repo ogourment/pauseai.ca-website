@@ -52,6 +52,8 @@ defmodule PauseAiCaWeb.DonationPageContent do
     assigns =
       assign(assigns,
         copy: copy,
+        countdown:
+          if(assigns.campaign_active, do: PauseAiCa.Donations.Campaign.countdown(assigns.page)),
         projection: projection,
         show_projection: assigns.preview_mode || (projection && projection.baseline_known?),
         active_stage: active,
@@ -74,6 +76,9 @@ defmodule PauseAiCaWeb.DonationPageContent do
       >
         {text(@copy, "lead")}
       </p>
+      <div :if={@countdown} class="mt-6 rounded-xl border border-brand bg-brand-wash p-4 sm:p-5">
+        <PauseAiCaWeb.CampaignCountdown.timer id={"#{@prefix}-countdown"} state={@countdown} />
+      </div>
       <section id={"#{@prefix}-campaign"} class="mt-7 space-y-3">
         <h2 :if={present?(@copy, "campaign_heading")} class="font-heading text-2xl">
           {text(@copy, "campaign_heading")}

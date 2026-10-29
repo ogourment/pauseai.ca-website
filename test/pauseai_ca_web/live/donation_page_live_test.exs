@@ -10,6 +10,38 @@ defmodule PauseAiCaWeb.DonationPageLiveTest do
     %{admin: admin, scope: Scope.for_user(admin), conn: log_in_user(conn, admin)}
   end
 
+  test "countdown settings stay draft-only until saved and published", %{conn: conn, scope: scope} do
+    {:ok, view, _} = live(conn, "/manage/donations?locale=en")
+    assert has_element?(view, "#donation-countdown-deadline")
+
+    deadline =
+      DateTime.utc_now()
+      |> DateTime.add(30 * 86_400)
+      |> DateTime.truncate(:second)
+      |> DateTime.to_iso8601()
+
+    values = %{
+      "page" => %{
+        "campaign" => %{
+          "enabled" => "true",
+          "closes_at" => deadline,
+          "urgent_window_days" => "3"
+        }
+      }
+    }
+
+    view |> form("#donation-page-form", values) |> render_submit(%{"intent" => "save"})
+    {:ok, page} = Pages.get_or_create(scope)
+    assert page.payload["campaign"]["urgent_window_days"] == 3
+    assert page.payload["campaign"]["closes_at"] == deadline
+    assert Pages.published() == nil
+    assert {:ok, _} = Pages.publish(scope, page)
+    {:ok, public, _} = live(build_conn(), "/en/donate")
+    assert has_element?(public, "#donation-countdown[data-closes-at='#{deadline}']")
+    assert render(public) =~ "Campaign closes #{String.slice(deadline, 0, 10)}."
+    refute has_element?(public, "#montreal-protest-banner")
+  end
+
   test "draft edits, preview, publish and restoration remain separate", %{
     conn: conn,
     scope: scope
