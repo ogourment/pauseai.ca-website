@@ -10,7 +10,9 @@ defmodule PauseAiCa.MovementMetrics do
 
     campaigns =
       from b in Batch,
-        where: b.delivery_environment == "production" and b.id in subquery(attempted)
+        where:
+          b.delivery_environment == "production" and b.recipient_mode in ["newsletter", "list"] and
+            b.id in subquery(attempted)
 
     reports =
       from s in ResultSnapshot,

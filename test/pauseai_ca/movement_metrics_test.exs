@@ -15,11 +15,14 @@ defmodule PauseAiCa.MovementMetricsTest do
     campaign(scope, "staging", true, %{opened: 99}, at, false)
     campaign(scope, "production", false, %{opened: 99}, at, false)
 
+    campaign(scope, "production", true, %{opened: 99}, at, false, "contacts")
+    campaign(scope, "production", true, %{opened: 0}, at, false, "list")
+
     assert MovementMetrics.summary().newsletter == %{
              reported_opens: 3,
              proxy_opens: 2,
-             campaigns: 3,
-             reports: 2,
+             campaigns: 4,
+             reports: 3,
              partial_reports: 1,
              oldest_refresh: at
            }
@@ -76,7 +79,7 @@ defmodule PauseAiCa.MovementMetricsTest do
     assert metrics.newsletter.oldest_refresh == nil
   end
 
-  defp campaign(scope, environment, attempted?, observations, at, partial?) do
+  defp campaign(scope, environment, attempted?, observations, at, partial?, mode \\ "newsletter") do
     {:ok, draft} = Drafts.create(scope)
 
     batch =
@@ -84,7 +87,7 @@ defmodule PauseAiCa.MovementMetricsTest do
         draft_id: draft.id,
         owner_id: scope.user.id,
         draft_revision: 1,
-        recipient_mode: "newsletter",
+        recipient_mode: mode,
         recipient_keys: [],
         sender_name: "Synthetic sender",
         sender_email: "sender@example.org",
