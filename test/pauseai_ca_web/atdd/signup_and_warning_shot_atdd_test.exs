@@ -777,10 +777,12 @@ if System.get_env("ATDD") == "true" do
         )
         |> click_link("English")
 
+      # Direct navigation preserves the recap without reporting a click on the
+      # retired announcement banner.
       assert Repo.aggregate(
                from(s in Engagement.LearningSignal, where: s.kind == "event_link_opened"),
                :count
-             ) == 1
+             ) == 0
 
       browser =
         browser
