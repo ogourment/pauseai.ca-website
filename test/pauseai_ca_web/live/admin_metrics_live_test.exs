@@ -37,11 +37,25 @@ defmodule PauseAiCaWeb.AdminMetricsLiveTest do
     assert has_element?(view, "#metric-montreal-protest-interest", "1")
     assert has_element?(view, "#metric-montreal-protest-interest", "September 26 event link")
     assert has_element?(view, "#movement-participation-metrics")
-    assert has_element?(view, "#metric-newsletter-opens", "Reported newsletter opens")
+    assert has_element?(view, "#organizer-task-metrics #metric-organizer-tasks-active", "Active")
+
+    assert has_element?(
+             view,
+             "#incubator-metrics #metric-incubator-memberships",
+             "Approved memberships"
+           )
+
+    assert has_element?(view, "#newsletter-metrics #metric-newsletter-opens", "Reported opens")
     assert has_element?(view, "#newsletter-metrics-coverage", "0 of 0")
     refute has_element?(view, "#metric-newsletter-opens svg")
-    assert has_element?(view, "#metric-incubators", "Published local incubators")
-    assert has_element?(view, "#metric-organizer-tasks-completed", "Completed organizer tasks")
+    assert has_element?(view, "#incubator-metrics #metric-incubators", "Published")
+
+    assert has_element?(
+             view,
+             "#organizer-task-metrics #metric-organizer-tasks-completed",
+             "Completed"
+           )
+
     assert has_element?(view, "#movement-metrics-units", "neither proves reading")
     assert has_element?(view, "#metrics-by-type")
     refute has_element?(view, "#metrics-by-type [data-role='ladder-trend'][data-label='Learn']")

@@ -197,54 +197,37 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
               {gettext("All-time recorded totals and current membership and task states.")}
             </p>
             <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <.metric
-                id="metric-newsletter-opens"
-                label={gettext("Reported newsletter opens")}
-                value={@movement_metrics.newsletter.reported_opens}
-                trend={[]}
-                trend_period=""
+              <.metric_group
+                id="newsletter-metrics"
+                title={gettext("Newsletters")}
+                rows={[
+                  {"metric-newsletter-opens", gettext("Reported opens"),
+                   @movement_metrics.newsletter.reported_opens},
+                  {"metric-newsletter-proxy-opens", gettext("Proxy opens"),
+                   @movement_metrics.newsletter.proxy_opens}
+                ]}
               />
-              <.metric
-                id="metric-newsletter-proxy-opens"
-                label={gettext("Reported proxy opens")}
-                value={@movement_metrics.newsletter.proxy_opens}
-                trend={[]}
-                trend_period=""
+              <.metric_group
+                id="incubator-metrics"
+                title={gettext("Local incubators")}
+                rows={[
+                  {"metric-incubators", pgettext("incubator metrics", "Published"),
+                   @movement_metrics.incubators.published},
+                  {"metric-incubator-memberships", gettext("Approved memberships"),
+                   @movement_metrics.incubators.approved_memberships},
+                  {"metric-incubator-pending", gettext("Pending requests"),
+                   @movement_metrics.incubators.pending_requests}
+                ]}
               />
-              <.metric
-                id="metric-incubators"
-                label={gettext("Published local incubators")}
-                value={@movement_metrics.incubators.published}
-                trend={[]}
-                trend_period=""
-              />
-              <.metric
-                id="metric-incubator-memberships"
-                label={gettext("Approved incubator memberships")}
-                value={@movement_metrics.incubators.approved_memberships}
-                trend={[]}
-                trend_period=""
-              />
-              <.metric
-                id="metric-incubator-pending"
-                label={gettext("Pending incubator requests")}
-                value={@movement_metrics.incubators.pending_requests}
-                trend={[]}
-                trend_period=""
-              />
-              <.metric
-                id="metric-organizer-tasks-active"
-                label={gettext("Active organizer tasks")}
-                value={@movement_metrics.tasks.active}
-                trend={[]}
-                trend_period=""
-              />
-              <.metric
-                id="metric-organizer-tasks-completed"
-                label={gettext("Completed organizer tasks")}
-                value={@movement_metrics.tasks.completed}
-                trend={[]}
-                trend_period=""
+              <.metric_group
+                id="organizer-task-metrics"
+                title={gettext("Organizer tasks")}
+                rows={[
+                  {"metric-organizer-tasks-active", pgettext("task metrics", "Active"),
+                   @movement_metrics.tasks.active},
+                  {"metric-organizer-tasks-completed", pgettext("task metrics", "Completed"),
+                   @movement_metrics.tasks.completed}
+                ]}
               />
             </div>
             <p id="newsletter-metrics-coverage" class="mt-4 text-sm text-stone-600">
@@ -497,6 +480,25 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
       <dt>{@label}</dt>
       <dd class="font-bold">{@value}</dd>
     </div>
+    """
+  end
+
+  attr :id, :string, required: true
+  attr :title, :string, required: true
+  attr :rows, :list, required: true
+
+  defp metric_group(assigns) do
+    ~H"""
+    <section
+      id={@id}
+      aria-labelledby={@id <> "-heading"}
+      class="min-w-0 rounded-2xl bg-stone-900 p-5 text-white"
+    >
+      <h3 id={@id <> "-heading"} class="font-heading text-xl">{@title}</h3>
+      <dl class="mt-4 space-y-3 text-sm [&_dd]:text-xl">
+        <.breakdown_row :for={{id, label, value} <- @rows} id={id} label={label} value={value} />
+      </dl>
+    </section>
     """
   end
 

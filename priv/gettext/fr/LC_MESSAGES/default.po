@@ -1468,22 +1468,22 @@ msgstr ""
 "navigateurs et des actions privées confirmées. Google Analytics constitue "
 "une source de mesure distincte."
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:307
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:290
 #, elixir-autogen, elixir-format
 msgid "All sources"
 msgstr "Toutes les sources"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:317
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:300
 #, elixir-autogen, elixir-format
 msgid "Apply filters"
 msgstr "Appliquer les filtres"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:322
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:305
 #, elixir-autogen, elixir-format
 msgid "As of"
 msgstr "Au"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:350
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:333
 #, elixir-autogen, elixir-format
 msgid "Awaiting email confirmation"
 msgstr "En attente de confirmation du courriel"
@@ -1512,22 +1512,22 @@ msgstr "Continuer à naviguer"
 msgid "Create an account"
 msgstr "Créer un compte"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:329
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:312
 #, elixir-autogen, elixir-format
 msgid "Created accounts"
 msgstr "Comptes créés"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:292
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:275
 #, elixir-autogen, elixir-format
 msgid "Created from"
 msgstr "Créés à partir du"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:298
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:281
 #, elixir-autogen, elixir-format
 msgid "Created through"
 msgstr "Créés jusqu’au"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:365
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:348
 #, elixir-autogen, elixir-format
 msgid "Database counts do not depend on GA consent. GA sees only consenting browsers; signup events wait for the next non-sensitive page and may never be delivered. Historical sources remain unknown. Browser-days are not a visitor-to-account conversion denominator."
 msgstr ""
@@ -1557,27 +1557,27 @@ msgstr "Courriel"
 msgid "Email me a secure link"
 msgstr "Recevoir un lien de connexion"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:336
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:319
 #, elixir-autogen, elixir-format
 msgid "Email-confirmed accounts"
 msgstr "Comptes au courriel confirmé"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:343
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:326
 #, elixir-autogen, elixir-format
 msgid "First recorded member action"
 msgstr "Première action de membre consignée"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:432
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:415
 #, elixir-autogen, elixir-format
 msgid "Header"
 msgstr "En-tête"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:435
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:418
 #, elixir-autogen, elixir-format
 msgid "Homepage footer"
 msgstr "Bas de la page d’accueil"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:433
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:416
 #, elixir-autogen, elixir-format
 msgid "Homepage questions"
 msgstr "Questions de la page d’accueil"
@@ -1610,12 +1610,12 @@ msgstr "Vous préférez un mot de passe?"
 msgid "Public and political response"
 msgstr "Réponse publique et politique"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:280
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:263
 #, elixir-autogen, elixir-format
 msgid "Recruitment funnel"
 msgstr "Parcours de recrutement"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:434
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:417
 #, elixir-autogen, elixir-format
 msgid "Resource bookmark"
 msgstr "Ressource enregistrée"
@@ -1626,12 +1626,12 @@ msgstr "Ressource enregistrée"
 msgid "Sign in / Sign up"
 msgstr "Connexion / Inscription"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:304
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:287
 #, elixir-autogen, elixir-format
 msgid "Signup source"
 msgstr "Source d’inscription"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:353
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:336
 #, elixir-autogen, elixir-format
 msgid "Sparklines group results by account creation day. Restored answers and bookmarks are not recorded member actions. Date ranges are limited to 366 days."
 msgstr ""
@@ -1639,7 +1639,7 @@ msgstr ""
 "comptes. Les réponses et ressources restaurées ne sont pas des actions de "
 "membre consignées. Les périodes sont limitées à 366 jours."
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:436
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:419
 #, elixir-autogen, elixir-format
 msgid "Unknown / historical"
 msgstr "Inconnue / historique"
@@ -2462,7 +2462,7 @@ msgstr "Résultat vérifié du fournisseur"
 msgid "Volunteer profile"
 msgstr "Profil bénévole"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:431
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:414
 #, elixir-autogen, elixir-format
 msgid "Volunteer signup"
 msgstr "Inscription bénévole"
@@ -3034,7 +3034,7 @@ msgstr "Vous n’avez pas accès à cette page."
 msgid "You may contact me about this pledge."
 msgstr "Vous pouvez me contacter au sujet de cette promesse de don."
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:282
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:265
 #, elixir-autogen, elixir-format
 msgid "Accounts created in the selected Toronto-time cohort, completed as of the report time. Superadmins are excluded. Email confirmation proves email control, not a unique person, attendance or incubator membership."
 msgstr ""
@@ -3056,7 +3056,7 @@ msgstr ""
 "navigateur, et non des personnes distinctes."
 
 #: lib/pauseai_ca_web/live/admin_metrics_live.ex:152
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:373
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:356
 #, elixir-autogen, elixir-format
 msgid "Daily trends"
 msgstr "Tendances quotidiennes"
@@ -3076,7 +3076,7 @@ msgstr ""
 "recalculer."
 
 #: lib/pauseai_ca_web/live/admin_metrics_live.ex:153
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:374
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:357
 #, elixir-autogen, elixir-format
 msgid "Today is incomplete. Days end at midnight Eastern time, with daylight saving changes."
 msgstr ""
@@ -7181,6 +7181,7 @@ msgstr "Les résultats du fournisseur sont indisponibles. Vérifiez la configura
 msgid "Provider unsubscribes"
 msgstr "Désabonnements du fournisseur"
 
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:206
 #: lib/pauseai_ca_web/live/newsletter_results_live.ex:401
 #, elixir-autogen, elixir-format
 msgid "Proxy opens"
@@ -9792,32 +9793,17 @@ msgstr "Aucun groupe d’organisation pour le moment"
 msgid "Tasks belong to organizer groups. Create a group and assign its managers to start organizing tasks."
 msgstr "Les tâches sont rattachées aux groupes d’organisation. Créez un groupe et désignez ses responsables pour commencer à organiser les tâches."
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:237
-#, elixir-autogen, elixir-format
-msgid "Active organizer tasks"
-msgstr "Tâches d’organisation actives"
-
 #: lib/pauseai_ca_web/live/admin_metrics_live.ex:197
 #, elixir-autogen, elixir-format
 msgid "All-time recorded totals and current membership and task states."
 msgstr "Totaux enregistrés depuis le début et état actuel des adhésions et des tâches."
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:223
-#, elixir-autogen, elixir-format
-msgid "Approved incubator memberships"
-msgstr "Adhésions approuvées aux incubateurs"
-
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:244
-#, elixir-autogen, elixir-format
-msgid "Completed organizer tasks"
-msgstr "Tâches d’organisation terminées"
-
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:270
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:253
 #, elixir-autogen, elixir-format
 msgid "Memberships count approved or admitted requests, including unpublished groups; one account can join several incubators. Tasks cover organizer groups. These totals do not establish attendance or distinct people and are not added to confirmed actions."
 msgstr "Les adhésions comptent les demandes approuvées ou admises, y compris pour les groupes non publiés; un compte peut rejoindre plusieurs incubateurs. Les tâches concernent les groupes d’organisation. Ces totaux ne représentent ni la présence ni un nombre de personnes distinctes et ne sont pas ajoutés aux actions confirmées."
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:265
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:248
 #, elixir-autogen, elixir-format
 msgid "Metric definitions"
 msgstr "Définition des indicateurs"
@@ -9827,37 +9813,65 @@ msgstr "Définition des indicateurs"
 msgid "Newsletters and local organizing"
 msgstr "Infolettres et organisation locale"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:258
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:241
 #, elixir-autogen, elixir-format
 msgid "Oldest report refresh"
 msgstr "Actualisation du rapport le plus ancien"
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:267
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:250
 #, elixir-autogen, elixir-format
 msgid "Opens count recipient-message pairs within each stored campaign report. Repeat campaigns can count the same address again. Proxy opens may overlap other opens; neither proves reading. Missing reports are unmeasured, and this dashboard does not fetch provider data."
 msgstr "Les ouvertures comptent les paires destinataire-message dans chaque rapport de campagne enregistré. Une adresse peut être comptée à nouveau dans une autre campagne. Les ouvertures par serveur mandataire peuvent recouper les autres ouvertures; aucune ne prouve la lecture. Les rapports manquants ne sont pas mesurés. Ce tableau de bord ne récupère pas les données du fournisseur."
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:230
-#, elixir-autogen, elixir-format
-msgid "Pending incubator requests"
-msgstr "Demandes d’adhésion en attente"
-
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:216
-#, elixir-autogen, elixir-format
-msgid "Published local incubators"
-msgstr "Incubateurs locaux publiés"
-
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:202
-#, elixir-autogen, elixir-format
-msgid "Reported newsletter opens"
-msgstr "Ouvertures d’infolettres signalées"
-
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:209
-#, elixir-autogen, elixir-format
-msgid "Reported proxy opens"
-msgstr "Ouvertures signalées par des serveurs mandataires"
-
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:251
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:234
 #, elixir-autogen, elixir-format
 msgid "Stored provider reports: %{reports} of %{campaigns} production campaigns with attempted sends; %{partial} partial reports."
 msgstr "Rapports enregistrés : %{reports} sur %{campaigns} campagnes de production avec tentative d’envoi; %{partial} rapports partiels."
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:216
+#, elixir-autogen, elixir-format
+msgid "Approved memberships"
+msgstr "Adhésions approuvées"
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:212
+#, elixir-autogen, elixir-format
+msgid "Local incubators"
+msgstr "Incubateurs locaux"
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:202
+#, elixir-autogen, elixir-format
+msgid "Newsletters"
+msgstr "Infolettres"
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:224
+#, elixir-autogen, elixir-format
+msgid "Organizer tasks"
+msgstr "Tâches d’organisation"
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:218
+#, elixir-autogen, elixir-format
+msgid "Pending requests"
+msgstr "Demandes en attente"
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:204
+#, elixir-autogen, elixir-format
+msgid "Reported opens"
+msgstr "Ouvertures signalées"
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:214
+#, elixir-autogen, elixir-format
+msgctxt "incubator metrics"
+msgid "Published"
+msgstr "Publiés"
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:226
+#, elixir-autogen, elixir-format
+msgctxt "task metrics"
+msgid "Active"
+msgstr "Actives"
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:228
+#, elixir-autogen, elixir-format
+msgctxt "task metrics"
+msgid "Completed"
+msgstr "Terminées"

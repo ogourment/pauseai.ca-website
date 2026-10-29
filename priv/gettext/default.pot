@@ -1395,22 +1395,22 @@ msgstr ""
 msgid "First-party database totals from accounts, browser activity, and confirmed private action records. Google Analytics is a separate measurement source."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:307
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:290
 #, elixir-autogen, elixir-format
 msgid "All sources"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:317
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:300
 #, elixir-autogen, elixir-format
 msgid "Apply filters"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:322
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:305
 #, elixir-autogen, elixir-format
 msgid "As of"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:350
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:333
 #, elixir-autogen, elixir-format
 msgid "Awaiting email confirmation"
 msgstr ""
@@ -1437,22 +1437,22 @@ msgstr ""
 msgid "Create an account"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:329
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:312
 #, elixir-autogen, elixir-format
 msgid "Created accounts"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:292
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:275
 #, elixir-autogen, elixir-format
 msgid "Created from"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:298
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:281
 #, elixir-autogen, elixir-format
 msgid "Created through"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:365
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:348
 #, elixir-autogen, elixir-format
 msgid "Database counts do not depend on GA consent. GA sees only consenting browsers; signup events wait for the next non-sensitive page and may never be delivered. Historical sources remain unknown. Browser-days are not a visitor-to-account conversion denominator."
 msgstr ""
@@ -1477,27 +1477,27 @@ msgstr ""
 msgid "Email me a secure link"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:336
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:319
 #, elixir-autogen, elixir-format
 msgid "Email-confirmed accounts"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:343
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:326
 #, elixir-autogen, elixir-format
 msgid "First recorded member action"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:432
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:415
 #, elixir-autogen, elixir-format
 msgid "Header"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:435
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:418
 #, elixir-autogen, elixir-format
 msgid "Homepage footer"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:433
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:416
 #, elixir-autogen, elixir-format
 msgid "Homepage questions"
 msgstr ""
@@ -1527,12 +1527,12 @@ msgstr ""
 msgid "Public and political response"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:280
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:263
 #, elixir-autogen, elixir-format
 msgid "Recruitment funnel"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:434
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:417
 #, elixir-autogen, elixir-format
 msgid "Resource bookmark"
 msgstr ""
@@ -1543,17 +1543,17 @@ msgstr ""
 msgid "Sign in / Sign up"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:304
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:287
 #, elixir-autogen, elixir-format
 msgid "Signup source"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:353
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:336
 #, elixir-autogen, elixir-format
 msgid "Sparklines group results by account creation day. Restored answers and bookmarks are not recorded member actions. Date ranges are limited to 366 days."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:436
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:419
 #, elixir-autogen, elixir-format
 msgid "Unknown / historical"
 msgstr ""
@@ -2351,7 +2351,7 @@ msgstr ""
 msgid "Volunteer profile"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:431
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:414
 #, elixir-autogen, elixir-format
 msgid "Volunteer signup"
 msgstr ""
@@ -2895,7 +2895,7 @@ msgstr ""
 msgid "You may contact me about this pledge."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:282
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:265
 #, elixir-autogen, elixir-format
 msgid "Accounts created in the selected Toronto-time cohort, completed as of the report time. Superadmins are excluded. Email confirmation proves email control, not a unique person, attendance or incubator membership."
 msgstr ""
@@ -2906,7 +2906,7 @@ msgid "Browser visits count visible public pages after JavaScript runs, once per
 msgstr ""
 
 #: lib/pauseai_ca_web/live/admin_metrics_live.ex:152
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:373
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:356
 #, elixir-autogen, elixir-format
 msgid "Daily trends"
 msgstr ""
@@ -2922,7 +2922,7 @@ msgid "The visit total includes earlier UTC daily aggregates. The browser-visit 
 msgstr ""
 
 #: lib/pauseai_ca_web/live/admin_metrics_live.ex:153
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:374
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:357
 #, elixir-autogen, elixir-format
 msgid "Today is incomplete. Days end at midnight Eastern time, with daylight saving changes."
 msgstr ""
@@ -6735,6 +6735,7 @@ msgstr ""
 msgid "Provider unsubscribes"
 msgstr ""
 
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:206
 #: lib/pauseai_ca_web/live/newsletter_results_live.ex:401
 #, elixir-autogen, elixir-format
 msgid "Proxy opens"
@@ -9346,32 +9347,17 @@ msgstr ""
 msgid "Tasks belong to organizer groups. Create a group and assign its managers to start organizing tasks."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:237
-#, elixir-autogen, elixir-format
-msgid "Active organizer tasks"
-msgstr ""
-
 #: lib/pauseai_ca_web/live/admin_metrics_live.ex:197
 #, elixir-autogen, elixir-format
 msgid "All-time recorded totals and current membership and task states."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:223
-#, elixir-autogen, elixir-format
-msgid "Approved incubator memberships"
-msgstr ""
-
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:244
-#, elixir-autogen, elixir-format
-msgid "Completed organizer tasks"
-msgstr ""
-
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:270
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:253
 #, elixir-autogen, elixir-format
 msgid "Memberships count approved or admitted requests, including unpublished groups; one account can join several incubators. Tasks cover organizer groups. These totals do not establish attendance or distinct people and are not added to confirmed actions."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:265
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:248
 #, elixir-autogen, elixir-format
 msgid "Metric definitions"
 msgstr ""
@@ -9381,37 +9367,65 @@ msgstr ""
 msgid "Newsletters and local organizing"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:258
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:241
 #, elixir-autogen, elixir-format
 msgid "Oldest report refresh"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:267
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:250
 #, elixir-autogen, elixir-format
 msgid "Opens count recipient-message pairs within each stored campaign report. Repeat campaigns can count the same address again. Proxy opens may overlap other opens; neither proves reading. Missing reports are unmeasured, and this dashboard does not fetch provider data."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:230
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:234
 #, elixir-autogen, elixir-format
-msgid "Pending incubator requests"
+msgid "Stored provider reports: %{reports} of %{campaigns} production campaigns with attempted sends; %{partial} partial reports."
 msgstr ""
 
 #: lib/pauseai_ca_web/live/admin_metrics_live.ex:216
 #, elixir-autogen, elixir-format
-msgid "Published local incubators"
+msgid "Approved memberships"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:212
+#, elixir-autogen, elixir-format
+msgid "Local incubators"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/admin_metrics_live.ex:202
 #, elixir-autogen, elixir-format
-msgid "Reported newsletter opens"
+msgid "Newsletters"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:209
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:224
 #, elixir-autogen, elixir-format
-msgid "Reported proxy opens"
+msgid "Organizer tasks"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/admin_metrics_live.ex:251
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:218
 #, elixir-autogen, elixir-format
-msgid "Stored provider reports: %{reports} of %{campaigns} production campaigns with attempted sends; %{partial} partial reports."
+msgid "Pending requests"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:204
+#, elixir-autogen, elixir-format
+msgid "Reported opens"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:214
+#, elixir-autogen, elixir-format
+msgctxt "incubator metrics"
+msgid "Published"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:226
+#, elixir-autogen, elixir-format
+msgctxt "task metrics"
+msgid "Active"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/admin_metrics_live.ex:228
+#, elixir-autogen, elixir-format
+msgctxt "task metrics"
+msgid "Completed"
 msgstr ""
