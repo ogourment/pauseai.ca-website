@@ -62,11 +62,33 @@ defmodule PauseAiCa.Blog.Markdown do
     id = unique_id(slug, counts, 1)
     counts = Map.put(counts, id, true)
     {body, rest} = Enum.split_while(rest, &(not match?(%MDEx.Heading{}, &1)))
+    {open?, body} = expansion(body)
     {children, rest, counts} = sections(rest, level, counts)
-    section = %{id: id, title: title, level: level, html: html(body), sections: children}
+
+    section = %{
+      id: id,
+      title: title,
+      level: level,
+      open?: open?,
+      html: html(body),
+      sections: children
+    }
+
     {siblings, rest, counts} = sections(rest, parent, counts)
     {[section | siblings], rest, counts}
   end
+
+  # Only the first body block can set a section default. Code fences, quotations,
+  # inline comments and later comments remain ordinary authored content.
+  defp expansion([%MDEx.HtmlBlock{literal: literal} | rest] = body) do
+    case String.trim(literal) do
+      "<!-- open -->" -> {true, rest}
+      "<!-- closed -->" -> {false, rest}
+      _ -> {false, body}
+    end
+  end
+
+  defp expansion(body), do: {false, body}
 
   # Each old field was parsed separately. Normalize it independently so an unclosed
   # fence or a reference definition cannot consume the following field on conversion.

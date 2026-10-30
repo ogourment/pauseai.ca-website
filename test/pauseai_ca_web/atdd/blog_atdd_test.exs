@@ -45,11 +45,11 @@ if System.get_env("ATDD") == "true" do
         payload = %{
           "en" => %{
             "markdown" =>
-              "# Synthetic article\n\nThe introduction is always visible.\n\n## Key details\n\nA little more context.\n\n### Source\n\nThe complete synthetic explanation.\n\n## Next steps\n\nA sibling section."
+              "# Synthetic article\n\nThe introduction is always visible.\n\n## Key details\n<!-- open -->\n\nA little more context.\n\n### Source\n<!-- closed -->\n\nThe complete synthetic explanation.\n\n## Next steps\n\nA sibling section.\n\n### Prepared source\n<!-- open -->\n\nAn independently open subsection."
           },
           "fr" => %{
             "markdown" =>
-              "# Article fictif\n\nL’introduction est toujours visible.\n\n## Points clés\n\nUn peu plus de contexte.\n\n### Source\n\nL’explication fictive au complet.\n\n## Prochaines étapes\n\nUne section de même niveau."
+              "# Article fictif\n\nL’introduction est toujours visible.\n\n## Points clés\n<!-- open -->\n\nUn peu plus de contexte.\n\n### Source\n<!-- closed -->\n\nL’explication fictive au complet.\n\n## Prochaines étapes\n\nUne section de même niveau.\n\n### Source préparée\n<!-- open -->\n\nUne sous-section ouverte indépendamment."
           }
         }
 
@@ -63,6 +63,7 @@ if System.get_env("ATDD") == "true" do
         source = String.replace(payload[locale]["markdown"], ~r/^# [^\n]+/, "# " <> title)
         section = if locale == "fr", do: "points-clés", else: "key-details"
         sibling = if locale == "fr", do: "prochaines-étapes", else: "next-steps"
+        prepared = if locale == "fr", do: "source-préparée", else: "prepared-source"
 
         path = BlogLive.path(locale) <> "/" <> article.slug
 
@@ -92,18 +93,24 @@ if System.get_env("ATDD") == "true" do
           browser
           |> PhoenixTest.Playwright.click("button[name='intent'][value='preview']")
           |> assert_has("#blog-preview", text: title)
+          |> assert_has("#blog-preview-#{locale}-section-#{section}[open]")
+          |> refute_has("#blog-preview-#{locale}-section-source[open]")
           |> capture(id, "Preview", "Both language editions use the actual article renderer")
           |> click_button(tr(locale, "Publish"))
           |> visit(path)
           |> assert_has("[data-phx-main].phx-connected")
           |> assert_has("h1", text: title)
           |> assert_has("#blog-intro")
-          |> refute_has("details[open]")
+          |> assert_has("#blog-section-#{section}[open]")
+          |> refute_has("#blog-section-source[open]")
+          |> refute_has("#blog-section-#{sibling}[open]")
           |> capture(
             id,
             "Publish then open article",
-            "Reader sees the title and introduction, with sections derived from Markdown headings"
+            "The authored open section is expanded; its child and the unspecified sibling start closed"
           )
+          |> PhoenixTest.Playwright.click("#blog-section-#{section} > summary")
+          |> refute_has("#blog-section-#{section}[open]")
           |> PhoenixTest.Playwright.click("#blog-section-#{section} > summary")
           |> assert_has("#blog-section-#{section}[open]")
           |> refute_has("#blog-section-source[open]")
@@ -121,10 +128,11 @@ if System.get_env("ATDD") == "true" do
           )
           |> PhoenixTest.Playwright.click("#blog-section-#{sibling} > summary")
           |> assert_has("#blog-section-#{sibling}[open]")
+          |> assert_has("#blog-section-#{prepared}[open]")
           |> capture(
             id,
             "Sibling heading",
-            "Same-level Markdown headings yield independent expandable sections"
+            "The sibling opens with its independently authored open subsection"
           )
           |> visit(path <> "?depth=full")
           |> assert_has("#blog-section-#{section}[open] #blog-section-source[open]")
@@ -133,8 +141,16 @@ if System.get_env("ATDD") == "true" do
             "Existing full-depth URL",
             "Previously shared links remain valid and open all sections"
           )
-          |> visit(path)
+          |> visit(path <> "?depth=summary")
           |> refute_has("details[open]")
+          |> visit(path <> "?depth=details")
+          |> assert_has("#blog-section-#{section}[open]")
+          |> assert_has("#blog-section-#{sibling}[open]")
+          |> refute_has("#blog-section-#{prepared}[open]")
+          |> visit(path)
+          |> assert_has("#blog-section-#{section}[open]")
+          |> refute_has("#blog-section-source[open]")
+          |> refute_has("#blog-section-#{sibling}[open]")
 
         assert counts() == baseline
         refute_receive {:email, _}

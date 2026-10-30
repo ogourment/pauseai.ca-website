@@ -9,7 +9,7 @@ defmodule PauseAiCaWeb.BlogLive do
   def handle_params(params, _, socket) do
     locale = if socket.assigns.live_action in [:index_fr, :show_fr], do: "fr", else: "en"
     Gettext.put_locale(PauseAiCaWeb.Gettext, locale)
-    depth = if params["depth"] in ~w(summary details full), do: params["depth"], else: "summary"
+    depth = if params["depth"] in ~w(summary details full), do: params["depth"], else: "authored"
     article = if params["slug"], do: Blog.published(params["slug"])
     article = if article && article.payload[locale], do: article
     alternate = if locale == "en", do: "fr", else: "en"
@@ -17,7 +17,7 @@ defmodule PauseAiCaWeb.BlogLive do
     translated_path =
       path(alternate) <>
         if(article && article.payload[alternate],
-          do: "/" <> article.slug <> "?depth=" <> depth,
+          do: "/" <> article.slug <> if(depth == "authored", do: "", else: "?depth=" <> depth),
           else: ""
         )
 

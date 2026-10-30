@@ -3,7 +3,7 @@ defmodule PauseAiCaWeb.BlogContent do
   alias PauseAiCa.Blog.Markdown
   attr :edition, :map, required: true
   attr :id, :string, default: "blog"
-  attr :depth, :string, default: "summary"
+  attr :depth, :string, default: "authored"
   attr :locale, :string, default: "en"
 
   def article(assigns) do
@@ -20,6 +20,23 @@ defmodule PauseAiCaWeb.BlogContent do
     """
   end
 
+  def preview(source) do
+    article(%{
+      __changed__: nil,
+      edition: %{"markdown" => source},
+      id: "blog-preview",
+      depth: "authored",
+      locale: "en"
+    })
+    |> Phoenix.HTML.Safe.to_iodata()
+    |> IO.iodata_to_binary()
+  end
+
+  defp expanded?(_section, "full", _nesting), do: true
+  defp expanded?(_section, "details", nesting), do: nesting == 0
+  defp expanded?(_section, "summary", _nesting), do: false
+  defp expanded?(section, _depth, _nesting), do: section.open?
+
   attr :sections, :list, required: true
   attr :depth, :string, required: true
   attr :nesting, :integer, required: true
@@ -30,7 +47,7 @@ defmodule PauseAiCaWeb.BlogContent do
     <details
       :for={section <- @sections}
       id={@prefix <> "-section-" <> section.id}
-      open={@depth == "full" or (@depth == "details" and @nesting == 0)}
+      open={expanded?(section, @depth, @nesting)}
       class="my-5 rounded-xl border border-stone-300 p-4 sm:p-5"
     >
       <summary class="cursor-pointer py-2 font-heading text-xl font-semibold">

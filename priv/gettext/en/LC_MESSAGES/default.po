@@ -3693,7 +3693,7 @@ msgstr "Preferred"
 msgid "Preferred address"
 msgstr "Preferred address"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:333
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:339
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:531
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:571
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:836
@@ -3807,7 +3807,7 @@ msgstr "Unsaved changes"
 msgid "Untitled draft"
 msgstr "Untitled draft"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:335
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:341
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:533
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:573
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:838
@@ -3816,7 +3816,7 @@ msgstr "Untitled draft"
 msgid "Allow the preview window, then try again."
 msgstr "Allow the preview window, then try again."
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:338
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:344
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:536
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:576
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:841
@@ -3825,7 +3825,7 @@ msgstr "Allow the preview window, then try again."
 msgid "Connection interrupted; text retained in this page."
 msgstr "Connection interrupted; text retained in this page."
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:336
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:342
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:534
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:574
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:839
@@ -3834,7 +3834,7 @@ msgstr "Connection interrupted; text retained in this page."
 msgid "Preview opened"
 msgstr "Preview opened"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:339
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:345
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:537
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:577
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:842
@@ -3843,7 +3843,7 @@ msgstr "Preview opened"
 msgid "Preview unavailable. Your text is retained."
 msgstr "Preview unavailable. Your text is retained."
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:337
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:343
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:535
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:575
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:840
@@ -5062,7 +5062,7 @@ msgstr "Reload saved version"
 msgid "Reviewer notes"
 msgstr "Reviewer notes"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:388
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:393
 #: lib/pauseai_ca_web/live/donation_page_live.ex:1052
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:333
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:350
@@ -5356,7 +5356,7 @@ msgstr "Your newsletter signup is confirmed. Thank you."
 msgid "Active drafts"
 msgstr "Active drafts"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:377
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:382
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:1059
 #: lib/pauseai_ca_web/live/newsletters_live.ex:276
 #, elixir-autogen, elixir-format
@@ -8876,8 +8876,8 @@ msgstr "Donation button label"
 msgid "Donation page"
 msgstr "Donation page"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:334
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:348
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:340
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:354
 #: lib/pauseai_ca_web/live/donation_page_live.ex:1000
 #, elixir-autogen, elixir-format
 msgid "Draft preview"
@@ -9060,7 +9060,7 @@ msgstr "Remove this stage and its buckets from the draft?"
 msgid "Replace the current draft with this revision? The public page stays unchanged until Publish."
 msgstr "Replace the current draft with this revision? The public page stays unchanged until Publish."
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:401
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:406
 #: lib/pauseai_ca_web/live/donation_page_live.ex:1066
 #, elixir-autogen, elixir-format
 msgid "Restore to draft"
@@ -9078,7 +9078,7 @@ msgstr "Restored to draft"
 msgid "Review %{field}."
 msgstr "Review %{field}."
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:381
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:386
 #: lib/pauseai_ca_web/live/donation_page_live.ex:613
 #: lib/pauseai_ca_web/live/donation_page_live.ex:1045
 #, elixir-autogen, elixir-format
@@ -9182,13 +9182,13 @@ msgstr "Leave blank to preview unknown funding."
 msgid "The threshold applies separately to the active stage budget and to the full programme budget."
 msgstr "The threshold applies separately to the active stage budget and to the full programme budget."
 
-#: lib/pauseai_ca_web/components/donation_page_content.ex:453
+#: lib/pauseai_ca_web/components/donation_page_content.ex:456
 #, elixir-autogen, elixir-format
 msgid "Close"
 msgstr "Close"
 
-#: lib/pauseai_ca_web/components/donation_page_content.ex:436
-#: lib/pauseai_ca_web/components/donation_page_content.ex:446
+#: lib/pauseai_ca_web/components/donation_page_content.ex:439
+#: lib/pauseai_ca_web/components/donation_page_content.ex:449
 #, elixir-autogen, elixir-format
 msgid "Try a donation"
 msgstr "Try a donation"
@@ -9557,7 +9557,7 @@ msgstr "No deliveries, opens or clicks reported yet. Accepted submissions do not
 msgid "All articles"
 msgstr "All articles"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:372
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:377
 #, elixir-autogen, elixir-format
 msgid "Archive this article and remove it from the public blog? Revision history is retained."
 msgstr "Archive this article and remove it from the public blog? Revision history is retained."
@@ -9618,12 +9618,12 @@ msgstr "Help build the movement for an AI pause"
 msgid "Match the deadline published by the fundraising platform, including its UTC offset. Example: 2026-11-27T23:59:59-07:00."
 msgstr "Match the deadline published by the fundraising platform, including its UTC offset. Example: 2026-11-27T23:59:59-07:00."
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:364
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:369
 #, elixir-autogen, elixir-format
 msgid "Remove this article from the public blog?"
 msgstr "Remove this article from the public blog?"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:396
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:401
 #, elixir-autogen, elixir-format
 msgid "Replace the current draft with this revision? Publication stays unchanged."
 msgstr "Replace the current draft with this revision? Publication stays unchanged."
@@ -9664,7 +9664,7 @@ msgstr "This campaign has ended."
 msgid "Time left to support the campaign"
 msgstr "Time left to support the campaign"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:366
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:371
 #, elixir-autogen, elixir-format
 msgid "Unpublish"
 msgstr "Unpublish"
@@ -9727,7 +9727,7 @@ msgstr "Article links"
 msgid "Unpublished"
 msgstr "Unpublished"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:331
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:337
 #, elixir-autogen, elixir-format
 msgid "Article Markdown"
 msgstr "Article Markdown"
@@ -9751,3 +9751,28 @@ msgstr "Start at least one language edition with a level-one heading (# Title) b
 #, elixir-autogen, elixir-format
 msgid "Show the compact menu timer during the final days"
 msgstr "Show the compact menu timer during the final days"
+
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:331
+#, elixir-autogen, elixir-format
+msgid "Section heading"
+msgstr "Section heading"
+
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:331
+#, elixir-autogen, elixir-format
+msgid "Section text"
+msgstr "Section text"
+
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:327
+#, elixir-autogen, elixir-format
+msgid "Sections start closed. Put <!-- open --> or <!-- closed --> on its own line immediately after a section heading to choose its initial state. Each subsection has its own setting."
+msgstr "Sections start closed. Put <!-- open --> or <!-- closed --> on its own line immediately after a section heading to choose its initial state. Each subsection has its own setting."
+
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:331
+#, elixir-autogen, elixir-format
+msgid "Subsection heading"
+msgstr "Subsection heading"
+
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:331
+#, elixir-autogen, elixir-format
+msgid "Subsection text"
+msgstr "Subsection text"

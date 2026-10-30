@@ -323,13 +323,19 @@ defmodule PauseAiCaWeb.BlogEditorLive do
                   "Begin with # Title, then write the introduction. Use ## and ### headings for expandable sections."
                 )}
               </p>
+              <p class="text-sm leading-6">
+                {gettext(
+                  "Sections start closed. Put <!-- open --> or <!-- closed --> on its own line immediately after a section heading to choose its initial state. Each subsection has its own setting."
+                )}
+              </p>
+              <pre class="overflow-x-auto rounded-lg bg-stone-100 p-3 text-sm"><code>{"## " <> gettext("Section heading") <> "\n<!-- open -->\n\n" <> gettext("Section text") <> "\n\n### " <> gettext("Subsection heading") <> "\n<!-- closed -->\n\n" <> gettext("Subsection text")}</code></pre>
               <.live_component
                 module={PhoenixMarkdownEditor.Component}
                 id={"blog-#{locale}-markdown"}
                 source={@payload[locale]["markdown"]}
                 name={"article[#{locale}][markdown]"}
                 label={gettext("Article Markdown")}
-                render_preview={&PauseAiCa.Mail.Render.html/1}
+                render_preview={&PauseAiCaWeb.BlogContent.preview/1}
                 preview_label={gettext("Preview ↗")}
                 preview_title={gettext("Draft preview")}
                 popup_blocked_message={gettext("Allow the preview window, then try again.")}
@@ -351,7 +357,6 @@ defmodule PauseAiCaWeb.BlogEditorLive do
                 id={"blog-preview-" <> locale}
                 edition={@payload[locale]}
                 locale={locale}
-                depth="full"
               />
             </div>
           </section>

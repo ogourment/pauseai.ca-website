@@ -62,6 +62,85 @@ defmodule PauseAiCa.Blog.MarkdownTest do
     assert [%{title: "Real section", sections: []}] = document.sections
   end
 
+  test "only a section's first HTML comment block sets its independent default" do
+    document =
+      Markdown.document(%{
+        "markdown" => """
+        # Title
+
+        ## Open parent
+        <!-- open -->
+
+        Parent body.
+
+        ### Closed child
+        <!-- closed -->
+
+        Child body.
+
+        ## Closed parent
+        <!-- closed -->
+
+        ### Open child
+        <!-- open -->
+
+        Child body.
+
+        ## Unspecified
+
+        Body before a comment.
+
+        <!-- open -->
+
+        ## Fenced
+
+        ```html
+        <!-- open -->
+        ```
+
+        ## Quoted
+
+        > <!-- open -->
+
+        ## Inline
+
+        Example <!-- open -->
+
+        ## Other comment
+        <!-- editorial note -->
+
+        <!-- open -->
+
+        ## Unsafe directive
+        <!-- open --><script>alert(1)</script>
+        """
+      })
+
+    [open_parent, closed_parent | ordinary] = document.sections
+    assert open_parent.open?
+    refute hd(open_parent.sections).open?
+    refute closed_parent.open?
+    assert hd(closed_parent.sections).open?
+    assert open_parent.html =~ "Parent body."
+    refute open_parent.html =~ "<!-- open -->"
+    refute hd(open_parent.sections).html =~ "<!-- closed -->"
+    assert Enum.all?(ordinary, &(not &1.open?))
+    assert Enum.at(ordinary, 1).html =~ "&lt;!-- open --&gt;"
+    refute Enum.at(ordinary, -1).html =~ "<script>"
+  end
+
+  test "shared editor popup uses the same authored section states and safe renderer" do
+    html =
+      PauseAiCaWeb.BlogContent.preview(
+        "# Title\n\n## Open\n<!-- open -->\n\n<script>alert(1)</script>\n\n### Closed\n<!-- closed -->"
+      )
+
+    tree = LazyHTML.from_fragment(html)
+    refute Enum.empty?(LazyHTML.query(tree, "#blog-preview-section-open[open]"))
+    assert Enum.empty?(LazyHTML.query(tree, "#blog-preview-section-closed[open]"))
+    refute html =~ "<script>"
+  end
+
   test "reference links defined in another section retain their destination" do
     document =
       Markdown.document(%{

@@ -62,6 +62,10 @@ if System.get_env("ATDD") == "true" do
           c.conn
           |> visit("/#{locale}")
           |> refute_has("#montreal-protest-banner")
+          |> PhoenixTest.Playwright.evaluate(
+            "(() => {const d=document.querySelector('#donate-link'), t=document.querySelector('#menu-countdown'),g=document.querySelector('#involvement-menu');return d.parentElement===t.parentElement && t.parentElement===g.parentElement && d.nextElementSibling===t && t.nextElementSibling===g})()",
+            &assert(&1)
+          )
           |> assert_has("#menu-countdown [data-countdown-digits]:not([hidden])")
           |> capture(
             scenario,
@@ -89,7 +93,7 @@ if System.get_env("ATDD") == "true" do
           |> capture(
             scenario,
             "Larger donation-page timer",
-            "Click Donate in the main menu; compact timer remains inside that menu control"
+            "Click Donate in the main menu; compact timer is a separate menu item before Get involved"
           )
 
         browser =

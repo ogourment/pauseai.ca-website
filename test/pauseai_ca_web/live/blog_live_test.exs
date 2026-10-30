@@ -44,6 +44,46 @@ defmodule PauseAiCaWeb.BlogLiveTest do
     assert has_element?(fr, "#blog-section-detail-fr[open] #blog-section-complete-fr[open]")
   end
 
+  test "authored defaults, explicit depth overrides and language links remain distinct", %{
+    conn: conn,
+    scope: scope
+  } do
+    source =
+      "# Authored\n\nIntro.\n\n## Open parent\n<!-- open -->\n\nBody.\n\n### Closed child\n<!-- closed -->\n\nChild.\n\n## Closed parent\n<!-- closed -->\n\n### Open child\n<!-- open -->\n\nChild."
+
+    values = Map.new(~w(en fr), &{&1, %{"markdown" => source}})
+    {:ok, article} = Blog.create(scope, "authored-defaults")
+    {:ok, article} = Blog.save(scope, article, values)
+    {:ok, _} = Blog.publish(scope, article)
+    {:ok, view, _} = live(conn, "/en/blog/authored-defaults")
+    assert has_element?(view, "#blog-section-open-parent[open]")
+    refute has_element?(view, "#blog-section-closed-child[open]")
+    refute has_element?(view, "#blog-section-closed-parent[open]")
+    assert has_element?(view, "#blog-section-open-child[open]")
+    assert has_element?(view, "a[href='/fr/blogue/authored-defaults']")
+
+    {:ok, summary, _} = live(conn, "/en/blog/authored-defaults?depth=summary")
+    refute has_element?(summary, "#blog-article details[open]")
+    assert has_element?(summary, "a[href='/fr/blogue/authored-defaults?depth=summary']")
+    {:ok, details, _} = live(conn, "/en/blog/authored-defaults?depth=details")
+    assert has_element?(details, "#blog-section-closed-parent[open]")
+    refute has_element?(details, "#blog-section-open-child[open]")
+    {:ok, full, _} = live(conn, "/en/blog/authored-defaults?depth=full")
+    assert has_element?(full, "#blog-section-open-parent[open] #blog-section-closed-child[open]")
+    assert has_element?(full, "#blog-section-closed-parent[open] #blog-section-open-child[open]")
+
+    {:ok, editor, _} = live(conn, "/manage/blog/#{article.id}?locale=en")
+
+    editor
+    |> form("#blog-editor", %{"article" => values})
+    |> render_submit(%{"intent" => "preview"})
+
+    assert has_element?(editor, "#blog-preview-en-section-open-parent[open]")
+    refute has_element?(editor, "#blog-preview-en-section-closed-child[open]")
+    refute has_element?(editor, "#blog-preview-en-section-closed-parent[open]")
+    assert has_element?(editor, "#blog-preview-en-section-open-child[open]")
+  end
+
   test "editor creation, save, preview and publication use independent steps", %{conn: conn} do
     {:ok, view, _} = live(conn, "/manage/blog?locale=en")
     result = view |> form("#blog-create", article: %{slug: "editor-flow"}) |> render_submit()

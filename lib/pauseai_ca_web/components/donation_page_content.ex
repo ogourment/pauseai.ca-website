@@ -289,6 +289,9 @@ defmodule PauseAiCaWeb.DonationPageContent do
         )}: 791107246
       </p>
       <style>
+        @keyframes donation-gift-arrival{0%{transform:scale(.96)}55%{transform:scale(1.045)}100%{transform:scale(1)}}
+        .donation-gift-arrival{width:fit-content;max-width:100%;transform-origin:left center;animation:donation-gift-arrival 720ms ease-out 120ms 1 both}
+        @media(prefers-reduced-motion:reduce){.donation-gift-arrival{animation:none!important;transform:none!important}}
         .donation-budget-layout{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:26px;align-items:start}.donation-bucket-stack{display:flex;flex-direction:column;gap:10px;overflow-anchor:none}.donation-bucket-card{display:grid;grid-template-columns:48px minmax(0,1fr);gap:3px 12px;border:1px solid #d6d3d1;border-radius:12px;padding:13px;overflow:hidden}.donation-bucket-card.is-current{border:2px solid var(--color-brand,#f97316)}.donation-bucket-card.is-complete{background:var(--color-brand-wash,#fff7ed)}.donation-bucket-card h3{grid-column:2;grid-row:1;font-size:16px;font-weight:650;line-height:1.35}.donation-bucket-vessel{grid-column:1;grid-row:1 / 4;align-self:center;position:relative;width:42px;height:58px;border:2px solid #a8a29e;border-top:0;border-radius:0 0 11px 11px;background:#fafaf9;overflow:hidden}.donation-bucket-fill{position:absolute;bottom:0;left:0;right:0;background:var(--color-brand,#f97316);transition:height 550ms cubic-bezier(.22,.61,.36,1)}.donation-bucket-primary{grid-column:2;font-weight:700;font-size:17px;line-height:1.3;margin:2px 0}.donation-bucket-secondary{grid-column:2;font-size:12px;line-height:1.4;color:#57534e;overflow-wrap:anywhere}.donation-bucket-card.stage{background:#fafaf9}.donation-bucket-card.stage h3{font-size:17px}.donation-gift-controls{border-left:1px solid #e7e5e4;padding-left:23px;min-width:0}.donation-authored p,.donation-authored h1,.donation-authored h3,.donation-authored a{overflow-wrap:anywhere}.donation-authored a{max-width:100%}@media(max-width:700px){.donation-budget-layout{grid-template-columns:1fr;gap:18px}.donation-gift-controls{grid-row:1;border-left:0;border-bottom:1px solid #e7e5e4;padding:0 0 18px}.donation-budget-column{grid-row:2}.donation-bucket-card{padding:11px;grid-template-columns:42px minmax(0,1fr);gap:3px 10px}.donation-bucket-vessel{width:38px;height:54px}}@media(prefers-reduced-motion:reduce){.donation-bucket-fill{transition:none!important}.donation-bucket-card{animation:none!important}}
         .donation-mobile-simulator,.donation-mobile-note{display:none}.donation-simulator-dialog{width:calc(100% - 24px);max-width:620px;height:auto;max-height:min(85dvh,var(--simulator-height,85dvh));margin:12px auto 0;top:var(--simulator-top,0px);bottom:auto;padding:0;border:1px solid #a8a29e;border-radius:16px;overflow:hidden;background:#fff;color:var(--ink,#1c1917)}.donation-simulator-dialog[open]{display:flex;flex-direction:column}.donation-simulator-dialog::backdrop{background:#1c191780}.donation-simulator-header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0;padding:12px 16px;border-bottom:1px solid #e7e5e4}.donation-simulator-amount{flex-shrink:0;padding:12px 16px;background:#fff;border-bottom:1px solid #e7e5e4}.donation-simulator-cards{overflow-y:auto;overscroll-behavior:contain;min-height:0;padding:12px 16px;scroll-behavior:auto}.donation-simulator-amount input{margin-top:6px}@media(max-width:700px){.donation-mobile-simulator,.donation-mobile-note{display:block}.donation-gift-controls>form,.donation-gift-controls>.donation-static-gift{display:none}.donation-budget-column{grid-row:1}.donation-gift-controls{grid-row:2}}
       </style>
@@ -495,25 +498,27 @@ defmodule PauseAiCaWeb.DonationPageContent do
 
   defp gift_input(assigns) do
     ~H"""
-    <label for={"#{@prefix}-gift"} class="block font-semibold">{text(@copy, "gift_label")}</label>
-    <input
-      id={"#{@prefix}-gift"}
-      name="gift[amount]"
-      type="number"
-      min="0"
-      max="999999999.99"
-      step="0.01"
-      inputmode="decimal"
-      value={@value}
-      disabled={@disabled}
-      aria-invalid={if @error, do: "true"}
-      aria-describedby={
-        if @compact,
-          do: if(@error, do: "#{@prefix}-gift-error"),
-          else: "#{@prefix}-gift-note #{@prefix}-projection-note"
-      }
-      class="mt-2 block w-44 max-w-full rounded-md border border-stone-400 bg-white px-3 py-2"
-    />
+    <div id={"#{@prefix}-gift-attention"} class="donation-gift-arrival">
+      <label for={"#{@prefix}-gift"} class="block font-semibold">{text(@copy, "gift_label")}</label>
+      <input
+        id={"#{@prefix}-gift"}
+        name="gift[amount]"
+        type="number"
+        min="0"
+        max="999999999.99"
+        step="0.01"
+        inputmode="decimal"
+        value={@value}
+        disabled={@disabled}
+        aria-invalid={if @error, do: "true"}
+        aria-describedby={
+          if @compact,
+            do: if(@error, do: "#{@prefix}-gift-error"),
+            else: "#{@prefix}-gift-note #{@prefix}-projection-note"
+        }
+        class="mt-2 block w-44 max-w-full rounded-md border border-stone-400 bg-white px-3 py-2"
+      />
+    </div>
     <p
       :if={!@compact}
       id={"#{@prefix}-gift-note"}

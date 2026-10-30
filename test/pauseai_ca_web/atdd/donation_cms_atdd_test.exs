@@ -99,6 +99,10 @@ if System.get_env("ATDD") == "true" do
           browser
           |> click_button(tr(locale, "Preview"))
           |> assert_has("#donation-preview", text: title)
+          |> PhoenixTest.Playwright.evaluate(
+            "(() => {const el=document.querySelector('#donation-cms-preview-gift-attention');if(matchMedia('(prefers-reduced-motion: reduce)').matches)return el.getAnimations().length===0;if(!el.getClientRects().length)return true;const a=el.getAnimations()[0];return !!a && (a.effect.getComputedTiming().iterations===1 && a.effect.getKeyframes().some(k=>(k.transform||'').includes('1.045')))})()",
+            &assert(&1)
+          )
           |> capture(
             id,
             "Inert draft preview",

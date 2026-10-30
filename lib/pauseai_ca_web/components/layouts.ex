@@ -104,7 +104,7 @@ defmodule PauseAiCaWeb.Layouts do
           </div>
         </details>
         <.link
-          class="hidden text-base font-medium text-brand-ink hover:text-stone-950 md:inline"
+          class="hidden text-base font-medium text-brand-ink hover:text-stone-950 lg:inline"
           navigate={if(@locale == "fr", do: ~p"/fr/signal-d-alarme", else: ~p"/en/warning-shot")}
         >
           {gettext("Warning shot")}
@@ -112,16 +112,16 @@ defmodule PauseAiCaWeb.Layouts do
         <.link
           id="donate-link"
           navigate={if @locale == "fr", do: ~p"/fr/faire-un-don", else: ~p"/en/donate"}
-          class="inline-flex min-h-9 shrink-0 flex-col items-center justify-center whitespace-nowrap rounded-full bg-brand px-2 py-1 text-sm font-bold text-stone-950 hover:bg-brand-strong sm:px-4"
+          class="inline-flex min-h-9 shrink-0 items-center justify-center whitespace-nowrap rounded-full bg-brand px-2 py-1 text-sm font-bold text-stone-950 hover:bg-brand-strong sm:px-4"
         >
           <span class="leading-4">{gettext("Donate")}</span>
-          <PauseAiCaWeb.CampaignCountdown.timer
-            :if={@campaign_countdown}
-            id="menu-countdown"
-            state={@campaign_countdown}
-            compact
-          />
         </.link>
+        <PauseAiCaWeb.CampaignCountdown.timer
+          :if={@campaign_countdown}
+          id="menu-countdown"
+          state={@campaign_countdown}
+          compact
+        />
         <%!-- The menu is CSS-only, so it still works before JavaScript loads. --%>
         <details id="involvement-menu" class="act-menu relative">
           <summary class="cursor-pointer list-none text-base font-medium text-stone-700 hover:text-stone-950">
@@ -145,7 +145,7 @@ defmodule PauseAiCaWeb.Layouts do
             </div>
             <.link
               navigate={if(@locale == "fr", do: ~p"/fr/signal-d-alarme", else: ~p"/en/warning-shot")}
-              class="block px-4 py-3 font-semibold hover:bg-brand-wash md:hidden"
+              class="block px-4 py-3 font-semibold hover:bg-brand-wash lg:hidden"
             >{gettext("Warning shot")}</.link>
             <.link
               :if={Application.get_env(:pauseai_ca, :incubators_enabled, false)}
@@ -197,7 +197,7 @@ defmodule PauseAiCaWeb.Layouts do
 
         <%= if @current_scope do %>
           <details id="account-menu" class="act-menu relative">
-            <summary class="max-w-24 cursor-pointer list-none truncate text-base font-medium text-stone-700 hover:text-stone-950 xl:max-w-48">
+            <summary class="max-w-20 cursor-pointer list-none truncate text-base font-medium text-stone-700 hover:text-stone-950 xl:max-w-32">
               {@current_scope.user.email}
               <span aria-hidden="true" class="text-xs">▾</span>
             </summary>
