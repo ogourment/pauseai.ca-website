@@ -7,7 +7,8 @@ if System.get_env("ATDD") == "true" do
     @moduletag :atdd
     @scenarios (for {locale, language, device} <- [
                       {"en", "English", "Desktop"},
-                      {"fr", "French", "Phone"}
+                      {"fr", "French", "Phone"},
+                      {"fr-tablet", "French", "Tablet"}
                     ] do
                   %{
                     id: "CAMPAIGN-COUNTDOWN-01-#{locale}",
@@ -29,12 +30,16 @@ if System.get_env("ATDD") == "true" do
       :ok
     end
 
-    for {locale, width, height} <- [{"en", 1280, 900}, {"fr", 390, 844}] do
+    for {key, locale, width, height} <- [
+          {"en", "en", 1280, 900},
+          {"fr", "fr", 390, 844},
+          {"fr-tablet", "fr", 768, 1024}
+        ] do
       @tag screenshot: true
       @tag browser_context_opts: [viewport: %{width: width, height: height}]
-      test "CAMPAIGN-COUNTDOWN-01 shared timer and expiry #{locale}", c do
+      test "CAMPAIGN-COUNTDOWN-01 shared timer and expiry #{key}", c do
         locale = unquote(locale)
-        scenario = "CAMPAIGN-COUNTDOWN-01-#{locale}"
+        scenario = "CAMPAIGN-COUNTDOWN-01-#{unquote(key)}"
         Ecto.Adapters.SQL.Sandbox.mode(Repo, {:shared, self()})
         admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
         scope = Accounts.Scope.for_user(admin)
@@ -57,27 +62,48 @@ if System.get_env("ATDD") == "true" do
           c.conn
           |> visit("/#{locale}")
           |> refute_has("#montreal-protest-banner")
-          |> assert_has("#banner-countdown [data-countdown-digits]:not([hidden])")
+          |> assert_has("#menu-countdown [data-countdown-digits]:not([hidden])")
           |> capture(
             scenario,
             "Campaign replaces the recap",
             "Open the public home page; synthetic deadline is within the final seven days"
           )
           |> PhoenixTest.Playwright.evaluate(
-            "document.querySelector('#banner-countdown [data-countdown-unit=seconds]').textContent.trim()",
-            &Process.put(:banner_seconds_before, &1)
+            "[...document.querySelectorAll('#menu-countdown [data-countdown-part]:not([hidden])')].map(e=>e.dataset.countdownPart)",
+            &assert(&1 == ["days", "hours"])
           )
-          |> refute_has("#banner-countdown [data-countdown-unit=seconds]",
-            text: Process.get(:banner_seconds_before)
+          |> PhoenixTest.Playwright.evaluate(
+            "document.querySelector('#menu-countdown [data-countdown-unit=hours]').textContent.trim()",
+            &Process.put(:menu_hours_before, &1)
           )
-          |> click("#fundraising-campaign-banner")
+          |> PhoenixTest.Playwright.evaluate(
+            "(() => { const base=performance.now.bind(performance); Object.defineProperty(performance,'now',{value:()=>base()+3600000,configurable:true}); return true })()",
+            &assert(&1)
+          )
+          |> refute_has("#menu-countdown [data-countdown-unit=hours]",
+            text: Process.get(:menu_hours_before)
+          )
+          |> click("#donate-link")
           |> assert_path(if(locale == "fr", do: "/fr/faire-un-don", else: "/en/donate"))
           |> assert_has("#donation-countdown [data-countdown-unit=seconds]")
           |> capture(
             scenario,
             "Larger donation-page timer",
-            "Click the fundraising campaign banner"
+            "Click Donate in the main menu; compact timer remains inside that menu control"
           )
+
+        browser =
+          browser
+          |> PhoenixTest.Playwright.evaluate(
+            "(() => { const p=document.querySelector('#donation-countdown-panel').getBoundingClientRect();const c=document.querySelector('#donation-campaign-copy').getBoundingClientRect();return p.height<210 && (innerWidth<768 || p.left>=c.right) })()",
+            &assert(&1)
+          )
+          |> PhoenixTest.Playwright.evaluate(
+            "(() => { const base=performance.now.bind(performance); Object.defineProperty(performance,'now',{value:()=>base()+1.5*86400000,configurable:true});return true })()",
+            &assert(&1)
+          )
+          |> assert_has("#menu-countdown [data-countdown-part=minutes]:not([hidden])")
+          |> refute_has("#menu-countdown [data-countdown-part=days]:not([hidden])")
 
         browser
         |> PhoenixTest.Playwright.evaluate(

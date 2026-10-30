@@ -84,7 +84,7 @@ defmodule PauseAiCaWeb.Layouts do
               {PauseAiCa.Environment.label()}
             </span>
           </span>
-          <span class="hidden font-semibold tracking-tight text-stone-900 sm:inline">{gettext(
+          <span class="hidden font-semibold tracking-tight text-stone-900 xl:inline">{gettext(
             "PauseAI Canada"
           )}</span>
         </a>
@@ -112,9 +112,15 @@ defmodule PauseAiCaWeb.Layouts do
         <.link
           id="donate-link"
           navigate={if @locale == "fr", do: ~p"/fr/faire-un-don", else: ~p"/en/donate"}
-          class="shrink-0 whitespace-nowrap rounded-full bg-brand px-2 py-2 text-sm font-bold text-stone-950 hover:bg-brand-strong sm:px-4"
+          class="inline-flex min-h-9 shrink-0 flex-col items-center justify-center whitespace-nowrap rounded-full bg-brand px-2 py-1 text-sm font-bold text-stone-950 hover:bg-brand-strong sm:px-4"
         >
-          {gettext("Donate")}
+          <span class="leading-4">{gettext("Donate")}</span>
+          <PauseAiCaWeb.CampaignCountdown.timer
+            :if={@campaign_countdown}
+            id="menu-countdown"
+            state={@campaign_countdown}
+            compact
+          />
         </.link>
         <%!-- The menu is CSS-only, so it still works before JavaScript loads. --%>
         <details id="involvement-menu" class="act-menu relative">
@@ -191,7 +197,7 @@ defmodule PauseAiCaWeb.Layouts do
 
         <%= if @current_scope do %>
           <details id="account-menu" class="act-menu relative">
-            <summary class="max-w-24 cursor-pointer list-none truncate text-base font-medium text-stone-700 hover:text-stone-950 sm:max-w-48">
+            <summary class="max-w-24 cursor-pointer list-none truncate text-base font-medium text-stone-700 hover:text-stone-950 xl:max-w-48">
               {@current_scope.user.email}
               <span aria-hidden="true" class="text-xs">▾</span>
             </summary>
@@ -240,8 +246,8 @@ defmodule PauseAiCaWeb.Layouts do
             class="whitespace-nowrap rounded-full bg-stone-900 px-2 py-2 text-sm font-semibold text-white hover:bg-stone-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand sm:px-4 sm:text-base"
             href={~p"/users/log-in?#{%{from: "header", locale: @locale}}"}
           >
-            <span class="lg:hidden">{gettext("Account")}</span>
-            <span class="hidden lg:inline">{gettext("Sign in / Sign up")}</span>
+            <span class="xl:hidden">{gettext("Account")}</span>
+            <span class="hidden xl:inline">{gettext("Sign in / Sign up")}</span>
           </.link>
         <% end %>
       </nav>
@@ -256,16 +262,12 @@ defmodule PauseAiCaWeb.Layouts do
         :if={@campaign_countdown}
         id="fundraising-campaign-banner"
         data-campaign-promotion
+        data-campaign-closes-at={DateTime.to_iso8601(@campaign_countdown.closes_at)}
         href={if @locale == "fr", do: ~p"/fr/faire-un-don", else: ~p"/en/donate"}
         class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 bg-stone-950 px-4 py-2.5 text-center text-white hover:bg-stone-800 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-white"
       >
         <span class="font-semibold">{gettext("Help build the movement for an AI pause")}</span>
         <span class="text-sm">{PauseAiCaWeb.CampaignCountdown.deadline(@campaign_countdown)}</span>
-        <PauseAiCaWeb.CampaignCountdown.timer
-          id="banner-countdown"
-          state={@campaign_countdown}
-          compact
-        />
         <span class="whitespace-nowrap text-sm font-semibold underline underline-offset-4">
           {gettext("Support the campaign")} <span aria-hidden="true">→</span>
         </span>

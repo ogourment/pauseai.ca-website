@@ -958,7 +958,7 @@ defmodule PauseAiCaWeb.DonationPageLive do
                 max="90"
                 step="1"
                 name="page[campaign][urgent_window_days]"
-                label={gettext("Show the compact banner timer during the final days")}
+                label={gettext("Show the compact menu timer during the final days")}
                 value={PauseAiCa.Donations.Campaign.settings(@payload)["urgent_window_days"]}
               />
             </fieldset>

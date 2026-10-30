@@ -1,6 +1,7 @@
 defmodule PauseAiCaWeb.BlogEditorLive do
   use PauseAiCaWeb, :live_view
   alias PauseAiCa.Blog
+  alias PauseAiCa.Blog.Markdown
   alias PauseAiCaWeb.BlogLive
 
   @impl true
@@ -127,7 +128,7 @@ defmodule PauseAiCaWeb.BlogEditorLive do
     if (Blog.permitted?(socket.assigns.current_scope) and socket.assigns.article) &&
          is_binary(source) do
       case String.split(key, "-", parts: 2) do
-        [locale, field] when locale in ~w(en fr) and field in ~w(details full) ->
+        [locale, field] when locale in ~w(en fr) and field == "markdown" ->
           {:noreply, edit(socket, %{locale => %{field => source}})}
 
         _ ->
@@ -151,14 +152,14 @@ defmodule PauseAiCaWeb.BlogEditorLive do
             &1,
             Map.take(
               if(is_map(values[locale]), do: values[locale], else: %{}),
-              ~w(title summary details full)
+              ~w(markdown)
             )
           )
         )
       end)
 
     payload = if Blog.validate(payload, :draft) == :ok, do: payload, else: socket.assigns.payload
-    dirty = payload != socket.assigns.article.payload
+    dirty = payload != Markdown.payload(socket.assigns.article.payload)
 
     assign(socket,
       payload: payload,
@@ -175,7 +176,7 @@ defmodule PauseAiCaWeb.BlogEditorLive do
     |> push_event("blog-draft-saved", %{})
     |> assign(
       article: article,
-      payload: article.payload,
+      payload: Markdown.payload(article.payload),
       history: history,
       dirty: false,
       status: gettext("Saved"),
@@ -202,7 +203,7 @@ defmodule PauseAiCaWeb.BlogEditorLive do
        assign(socket,
          error:
            gettext(
-             "Complete all four fields in at least one language before publication. Titles allow 200 characters, summaries 1,000 and each detail section 100,000."
+             "Start at least one language edition with a level-one heading (# Title) before publication. Each Markdown article allows 250,000 characters."
            )
        )}
 
@@ -211,8 +212,8 @@ defmodule PauseAiCaWeb.BlogEditorLive do
       {:noreply,
        assign(socket, error: gettext("The change could not be saved. Your text is still shown."))}
 
-  defp public_url(slug, locale, depth),
-    do: PauseAiCaWeb.Endpoint.url() <> BlogLive.path(locale) <> "/" <> slug <> "?depth=" <> depth
+  defp public_url(slug, locale),
+    do: PauseAiCaWeb.Endpoint.url() <> BlogLive.path(locale) <> "/" <> slug
 
   defp revision_action("created"), do: gettext("Created")
   defp revision_action("saved"), do: gettext("Saved")
@@ -263,9 +264,9 @@ defmodule PauseAiCaWeb.BlogEditorLive do
               <.link
                 navigate={"/manage/blog/" <> article.id <> "?locale=" <> @locale}
                 class="underline"
-              >{if article.payload[@locale]["title"] == "",
+              >{if Markdown.document(article.payload[@locale], @locale).title == "",
                 do: article.slug,
-                else: article.payload[@locale]["title"]}</.link>
+                else: Markdown.document(article.payload[@locale], @locale).title}</.link>
               · {if article.published_payload, do: gettext("Published"), else: gettext("Draft")}
             </li>
           </ul>
@@ -278,22 +279,12 @@ defmodule PauseAiCaWeb.BlogEditorLive do
             class="space-y-3 rounded-xl border border-stone-300 p-4"
           >
             <h2 class="text-lg font-semibold">{gettext("Article links")}</h2>
-            <p>{gettext("Choose the starting level of detail when sharing this article.")}</p>
-            <p :for={
-              {depth, label} <- [
-                {"summary", gettext("In brief")},
-                {"details", gettext("More details")},
-                {"full", gettext("Everything")}
-              ]
-            }>
-              <span class="font-semibold">{label}: </span>
-              <.link
-                href={public_url(@article.slug, @locale, depth)}
-                target="_blank"
-                rel="noopener"
-                class="break-all underline"
-              >{public_url(@article.slug, @locale, depth)}</.link>
-            </p>
+            <.link
+              href={public_url(@article.slug, @locale)}
+              target="_blank"
+              rel="noopener"
+              class="break-all underline"
+            >{public_url(@article.slug, @locale)}</.link>
           </section>
           <.form
             for={to_form(%{}, as: "article")}
@@ -327,33 +318,17 @@ defmodule PauseAiCaWeb.BlogEditorLive do
               <legend class="px-2 text-xl font-semibold">
                 {if locale == "en", do: "English", else: "Français"}
               </legend>
-              <.input
-                id={"blog-#{locale}-title"}
-                name={"article[#{locale}][title]"}
-                label={gettext("Title")}
-                value={@payload[locale]["title"]}
-                maxlength="200"
-              />
-              <.input
-                id={"blog-#{locale}-summary"}
-                name={"article[#{locale}][summary]"}
-                type="textarea"
-                label={gettext("Short summary")}
-                value={@payload[locale]["summary"]}
-                maxlength="1000"
-              />
+              <p class="text-sm leading-6">
+                {gettext(
+                  "Begin with # Title, then write the introduction. Use ## and ### headings for expandable sections."
+                )}
+              </p>
               <.live_component
-                :for={
-                  {field, label} <- [
-                    {"details", gettext("More details")},
-                    {"full", gettext("Everything")}
-                  ]
-                }
                 module={PhoenixMarkdownEditor.Component}
-                id={"blog-#{locale}-#{field}"}
-                source={@payload[locale][field]}
-                name={"article[#{locale}][#{field}]"}
-                label={label}
+                id={"blog-#{locale}-markdown"}
+                source={@payload[locale]["markdown"]}
+                name={"article[#{locale}][markdown]"}
+                label={gettext("Article Markdown")}
                 render_preview={&PauseAiCa.Mail.Render.html/1}
                 preview_label={gettext("Preview ↗")}
                 preview_title={gettext("Draft preview")}
@@ -375,6 +350,7 @@ defmodule PauseAiCaWeb.BlogEditorLive do
               <h3 class="mb-4 font-semibold">{if locale == "en", do: "English", else: "Français"}</h3><PauseAiCaWeb.BlogContent.article
                 id={"blog-preview-" <> locale}
                 edition={@payload[locale]}
+                locale={locale}
                 depth="full"
               />
             </div>

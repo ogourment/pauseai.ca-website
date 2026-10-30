@@ -21,8 +21,8 @@ msgstr "Une pause ou un traité pourrait réduire sensiblement ce risque."
 msgid "AI poses a genuine existential risk."
 msgstr "L’IA pose un véritable risque existentiel."
 
-#: lib/pauseai_ca_web/components/layouts.ex:190
-#: lib/pauseai_ca_web/components/layouts.ex:346
+#: lib/pauseai_ca_web/components/layouts.ex:196
+#: lib/pauseai_ca_web/components/layouts.ex:348
 #, elixir-autogen, elixir-format
 msgid "About"
 msgstr "À propos"
@@ -75,8 +75,8 @@ msgstr ""
 "Une IA s'est échappée de son laboratoire et a piraté une vraie entreprise. "
 "Je viens d'écrire à ma députée. Ça prend une minute:"
 
-#: lib/pauseai_ca_web/components/layouts.ex:426
-#: lib/pauseai_ca_web/components/layouts.ex:441
+#: lib/pauseai_ca_web/components/layouts.ex:428
+#: lib/pauseai_ca_web/components/layouts.ex:443
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
 msgstr "Tentative de reconnexion"
@@ -191,7 +191,7 @@ msgstr "Temps estimé"
 msgid "Evaluate responses"
 msgstr "Évaluer les réponses"
 
-#: lib/pauseai_ca_web/components/layouts.ex:183
+#: lib/pauseai_ca_web/components/layouts.ex:189
 #, elixir-autogen, elixir-format
 msgid "Events"
 msgstr "Événements"
@@ -202,8 +202,8 @@ msgstr "Événements"
 msgid "Find my MP"
 msgstr "Trouver mon député·e"
 
-#: lib/pauseai_ca_web/components/layouts.ex:218
-#: lib/pauseai_ca_web/components/layouts.ex:236
+#: lib/pauseai_ca_web/components/layouts.ex:224
+#: lib/pauseai_ca_web/components/layouts.ex:242
 #: lib/pauseai_ca_web/controllers/rogue_game_html.ex:16
 #, elixir-autogen, elixir-format
 msgid "Français"
@@ -219,7 +219,7 @@ msgstr "Code postal complet"
 msgid "Further reading"
 msgstr "Pour aller plus loin"
 
-#: lib/pauseai_ca_web/components/layouts.ex:122
+#: lib/pauseai_ca_web/components/layouts.ex:128
 #: lib/pauseai_ca_web/live/participation_live.ex:16
 #, elixir-autogen, elixir-format
 msgid "Get involved"
@@ -233,7 +233,7 @@ msgstr ""
 "peuvent s’entendre, respecter l’accord et le faire appliquer."
 
 #: lib/pauseai_ca_web/components/layouts.ex:93
-#: lib/pauseai_ca_web/components/layouts.ex:129
+#: lib/pauseai_ca_web/components/layouts.ex:135
 #, elixir-autogen, elixir-format
 msgid "Learn"
 msgstr "Comprendre"
@@ -243,7 +243,7 @@ msgstr "Comprendre"
 msgid "Letter language"
 msgstr "Langue de la lettre"
 
-#: lib/pauseai_ca_web/components/layouts.ex:225
+#: lib/pauseai_ca_web/components/layouts.ex:231
 #, elixir-autogen, elixir-format
 msgid "Log out"
 msgstr "Déconnexion"
@@ -258,7 +258,7 @@ msgstr "Recherche…"
 msgid "Manage my learning path"
 msgstr "Gérer mon parcours"
 
-#: lib/pauseai_ca_web/components/layouts.ex:352
+#: lib/pauseai_ca_web/components/layouts.ex:354
 #, elixir-autogen, elixir-format
 msgid "Montréal events"
 msgstr "Événements à Montréal"
@@ -375,7 +375,7 @@ msgstr "Position sur une pause de l’IA avancée : pas encore documentée."
 msgid "Postal code"
 msgstr "Code postal"
 
-#: lib/pauseai_ca_web/components/layouts.ex:356
+#: lib/pauseai_ca_web/components/layouts.ex:358
 #: lib/pauseai_ca_web/live/donate_live.ex:476
 #, elixir-autogen, elixir-format
 msgid "Privacy"
@@ -584,12 +584,12 @@ msgid "Unknown resource."
 msgstr "Ressource inconnue."
 
 #: lib/pauseai_ca_web/components/layouts.ex:110
-#: lib/pauseai_ca_web/components/layouts.ex:143
+#: lib/pauseai_ca_web/components/layouts.ex:149
 #, elixir-autogen, elixir-format
 msgid "Warning shot"
 msgstr "Signal d'alarme"
 
-#: lib/pauseai_ca_web/components/layouts.ex:418
+#: lib/pauseai_ca_web/components/layouts.ex:420
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
 msgstr "Nous ne trouvons pas la connexion Internet"
@@ -938,7 +938,7 @@ msgstr "Nous rejoindre"
 msgid "Want to participate? Join PauseAI Canada."
 msgstr "Vous souhaitez participer? Rejoignez PauseIA Canada."
 
-#: lib/pauseai_ca_web/components/layouts.ex:156
+#: lib/pauseai_ca_web/components/layouts.ex:162
 #: lib/pauseai_ca_web/live/participation_form.ex:658
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:52
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:599
@@ -1301,7 +1301,7 @@ msgid "No imported contacts match this search."
 msgstr "Aucun contact importé ne correspond à cette recherche."
 
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:437
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:310
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:301
 #: lib/pauseai_ca_web/live/donation_page_live.ex:593
 #, elixir-autogen, elixir-format
 msgid "Preview"
@@ -1616,7 +1616,7 @@ msgstr "Parcours de recrutement"
 msgid "Resource bookmark"
 msgstr "Ressource enregistrée"
 
-#: lib/pauseai_ca_web/components/layouts.ex:244
+#: lib/pauseai_ca_web/components/layouts.ex:250
 #: lib/pauseai_ca_web/live/user_live/login.ex:156
 #, elixir-autogen, elixir-format
 msgid "Sign in / Sign up"
@@ -1675,10 +1675,10 @@ msgstr "Me connecter cette fois seulement"
 #: lib/pauseai_ca_web/components/core_components.ex:47
 #: lib/pauseai_ca_web/components/learning_journey.ex:200
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:319
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:21
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:166
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:181
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:218
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:22
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:167
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:182
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:219
 #: lib/pauseai_ca_web/live/donation_page_live.ex:68
 #: lib/pauseai_ca_web/live/donation_page_live.ex:372
 #: lib/pauseai_ca_web/live/donation_page_live.ex:478
@@ -1989,8 +1989,8 @@ msgstr "Supprimer ce brouillon non envoyé?"
 msgid "Do not contact. Invitation excluded."
 msgstr "Ne pas contacter. Invitation exclue."
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:269
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:275
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:270
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:276
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:712
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:226
 #: lib/pauseai_ca_web/live/slack_community_live.ex:336
@@ -2496,7 +2496,7 @@ msgstr "Résultat du fournisseur vérifié"
 msgid "Provider reference"
 msgstr "Référence du fournisseur"
 
-#: lib/pauseai_ca_web/components/layouts.ex:553
+#: lib/pauseai_ca_web/components/layouts.ex:555
 #: lib/pauseai_ca_web/navigation.ex:259
 #, elixir-autogen, elixir-format
 msgid "Management"
@@ -2607,7 +2607,7 @@ msgstr "Accepté"
 msgid "Access"
 msgstr "Accès"
 
-#: lib/pauseai_ca_web/components/layouts.ex:243
+#: lib/pauseai_ca_web/components/layouts.ex:249
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:450
 #, elixir-autogen, elixir-format
 msgid "Account"
@@ -2890,7 +2890,7 @@ msgstr "Montant que vous souhaitez donner (CAD, facultatif)"
 msgid "Browser visits — all time"
 msgstr "Visites de navigateurs — total cumulé"
 
-#: lib/pauseai_ca_web/components/donation_page_content.ex:276
+#: lib/pauseai_ca_web/components/donation_page_content.ex:287
 #: lib/pauseai_ca_web/live/donate_live.ex:234
 #: lib/pauseai_ca_web/live/donate_live.ex:481
 #, elixir-autogen, elixir-format
@@ -2909,7 +2909,7 @@ msgstr ""
 msgid "Contact permission recorded"
 msgstr "Autorisation de contact enregistrée"
 
-#: lib/pauseai_ca_web/components/donation_page_content.ex:276
+#: lib/pauseai_ca_web/components/donation_page_content.ex:287
 #: lib/pauseai_ca_web/live/donate_live.ex:234
 #: lib/pauseai_ca_web/live/donate_live.ex:481
 #, elixir-autogen, elixir-format
@@ -2966,9 +2966,9 @@ msgid "Pagination"
 msgstr "Pagination"
 
 #: lib/pauseai_ca_web/components/auth_layout.ex:20
-#: lib/pauseai_ca_web/components/donation_page_content.ex:276
+#: lib/pauseai_ca_web/components/donation_page_content.ex:287
 #: lib/pauseai_ca_web/components/layouts.ex:87
-#: lib/pauseai_ca_web/components/layouts.ex:346
+#: lib/pauseai_ca_web/components/layouts.ex:348
 #: lib/pauseai_ca_web/components/layouts/root.html.heex:12
 #: lib/pauseai_ca_web/components/layouts/root.html.heex:13
 #: lib/pauseai_ca_web/controllers/page_html/about.html.heex:8
@@ -3448,7 +3448,7 @@ msgstr ""
 "les organisateurs et une centaine de brochures éducatives ont été "
 "distribuées."
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:309
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:300
 #: lib/pauseai_ca_web/live/donate_live.ex:478
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:853
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:586
@@ -3478,12 +3478,12 @@ msgstr "Infolettre"
 msgid "Hosting"
 msgstr "Hébergement"
 
-#: lib/pauseai_ca_web/components/layouts.ex:492
+#: lib/pauseai_ca_web/components/layouts.ex:494
 #, elixir-autogen, elixir-format
 msgid "Learn about the risks"
 msgstr "Comprendre les risques"
 
-#: lib/pauseai_ca_web/components/layouts.ex:488
+#: lib/pauseai_ca_web/components/layouts.ex:490
 #, elixir-autogen, elixir-format
 msgid "Take the test"
 msgstr "Faire le test"
@@ -3744,7 +3744,7 @@ msgstr ""
 msgid "How to contribute"
 msgstr "Comment contribuer"
 
-#: lib/pauseai_ca_web/components/layouts.ex:361
+#: lib/pauseai_ca_web/components/layouts.ex:363
 #, elixir-autogen, elixir-format
 msgid "Made in Canada"
 msgstr "Fait au Canada"
@@ -4011,7 +4011,7 @@ msgstr "Préférée"
 msgid "Preferred address"
 msgstr "Adresse préférée"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:358
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:333
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:531
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:571
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:836
@@ -4108,7 +4108,7 @@ msgstr ""
 msgid "Undo reconciliation"
 msgstr "Annuler le rapprochement"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:166
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:167
 #: lib/pauseai_ca_web/live/donation_page_live.ex:316
 #: lib/pauseai_ca_web/live/donation_page_live.ex:372
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:168
@@ -4132,7 +4132,7 @@ msgstr "Modifications non enregistrées"
 msgid "Untitled draft"
 msgstr "Brouillon sans titre"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:360
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:335
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:533
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:573
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:838
@@ -4141,7 +4141,7 @@ msgstr "Brouillon sans titre"
 msgid "Allow the preview window, then try again."
 msgstr "Autorisez la fenêtre d’aperçu, puis réessayez."
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:363
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:338
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:536
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:576
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:841
@@ -4150,7 +4150,7 @@ msgstr "Autorisez la fenêtre d’aperçu, puis réessayez."
 msgid "Connection interrupted; text retained in this page."
 msgstr "Connexion interrompue; le texte est conservé dans cette page."
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:361
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:336
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:534
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:574
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:839
@@ -4159,7 +4159,7 @@ msgstr "Connexion interrompue; le texte est conservé dans cette page."
 msgid "Preview opened"
 msgstr "Aperçu ouvert"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:364
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:339
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:537
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:577
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:842
@@ -4168,7 +4168,7 @@ msgstr "Aperçu ouvert"
 msgid "Preview unavailable. Your text is retained."
 msgstr "Aperçu indisponible. Votre texte est conservé."
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:362
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:337
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:535
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:575
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:840
@@ -4209,7 +4209,7 @@ msgstr "Courriel non confirmé"
 msgid "Group managers"
 msgstr "Responsables de groupes"
 
-#: lib/pauseai_ca_web/components/layouts.ex:551
+#: lib/pauseai_ca_web/components/layouts.ex:553
 #, elixir-autogen, elixir-format
 msgid "More"
 msgstr "Autres"
@@ -4316,7 +4316,7 @@ msgstr "Les notions à comprendre"
 msgid "Later"
 msgstr "Plus tard"
 
-#: lib/pauseai_ca_web/components/layouts.ex:494
+#: lib/pauseai_ca_web/components/layouts.ex:496
 #: lib/pauseai_ca_web/components/learning_journey.ex:132
 #, elixir-autogen, elixir-format
 msgid "My learning list"
@@ -5318,7 +5318,7 @@ msgstr "Lien du jeu"
 msgid "Invite someone to try the game."
 msgstr "Invitez quelqu’un à essayer le jeu."
 
-#: lib/pauseai_ca_web/components/layouts.ex:490
+#: lib/pauseai_ca_web/components/layouts.ex:492
 #, elixir-autogen, elixir-format
 msgid "Play the Rogue Agent Popup Game"
 msgstr "Jouer avec l’agent rebelle"
@@ -5465,7 +5465,7 @@ msgstr "Recharger la version enregistrée"
 msgid "Reviewer notes"
 msgstr "Notes des réviseurs"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:412
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:388
 #: lib/pauseai_ca_web/live/donation_page_live.ex:1052
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:333
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:350
@@ -5536,16 +5536,16 @@ msgstr "Brouillons"
 msgid "Move to draft"
 msgstr "Remettre en brouillon"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:320
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:311
 #: lib/pauseai_ca_web/live/donation_page_live.ex:602
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:394
 #, elixir-autogen, elixir-format
 msgid "Publish"
 msgstr "Publier"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:219
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:269
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:275
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:220
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:270
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:276
 #: lib/pauseai_ca_web/live/donation_page_live.ex:190
 #: lib/pauseai_ca_web/live/donation_page_live.ex:1128
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:225
@@ -5767,7 +5767,7 @@ msgstr "Votre inscription à l’infolettre est confirmée. Merci."
 msgid "Active drafts"
 msgstr "Brouillons actifs"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:401
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:377
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:1059
 #: lib/pauseai_ca_web/live/newsletters_live.ex:276
 #, elixir-autogen, elixir-format
@@ -5842,7 +5842,7 @@ msgstr ""
 msgid "Admin"
 msgstr "Administration"
 
-#: lib/pauseai_ca_web/components/layouts.ex:207
+#: lib/pauseai_ca_web/components/layouts.ex:213
 #: lib/pauseai_ca_web/navigation.ex:120
 #: lib/pauseai_ca_web/navigation.ex:259
 #, elixir-autogen, elixir-format
@@ -6464,7 +6464,7 @@ msgstr "Comment souhaitez-vous aider?"
 msgid "I can help"
 msgstr "Je peux aider"
 
-#: lib/pauseai_ca_web/components/layouts.ex:177
+#: lib/pauseai_ca_web/components/layouts.ex:183
 #, elixir-autogen, elixir-format
 msgid "Join or help a local group"
 msgstr "Rejoindre ou aider un groupe local"
@@ -6512,7 +6512,7 @@ msgstr "Proposition d’aide"
 msgid "PauseAI Canada newsletter"
 msgstr "Infolettre de PauseAI Canada"
 
-#: lib/pauseai_ca_web/components/layouts.ex:166
+#: lib/pauseai_ca_web/components/layouts.ex:172
 #: lib/pauseai_ca_web/live/participation_form.ex:450
 #, elixir-autogen, elixir-format
 msgid "Record my actions"
@@ -7361,13 +7361,13 @@ msgstr "Envoyé par"
 msgid "Back to editing"
 msgstr "Modifier le message"
 
-#: lib/pauseai_ca_web/components/layouts.ex:331
+#: lib/pauseai_ca_web/components/layouts.ex:333
 #: lib/pauseai_ca_web/live/incubators_live.ex:293
 #, elixir-autogen, elixir-format
 msgid "Breadcrumbs"
 msgstr "Fil d’Ariane"
 
-#: lib/pauseai_ca_web/components/layouts.ex:433
+#: lib/pauseai_ca_web/components/layouts.ex:435
 #, elixir-autogen, elixir-format
 msgid "Connection interrupted"
 msgstr "Connexion interrompue"
@@ -7377,7 +7377,7 @@ msgstr "Connexion interrompue"
 msgid "Content type"
 msgstr "Type de contenu"
 
-#: lib/pauseai_ca_web/components/layouts.ex:333
+#: lib/pauseai_ca_web/components/layouts.ex:335
 #, elixir-autogen, elixir-format
 msgid "Current page"
 msgstr "Page actuelle"
@@ -7721,7 +7721,7 @@ msgstr "Choisir une personne responsable"
 msgid "Complete these prerequisites first: %{titles}"
 msgstr "Terminez d’abord ces préalables : %{titles}"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:217
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:218
 #: lib/pauseai_ca_web/live/donation_page_live.ex:1126
 #: lib/pauseai_ca_web/live/tasks_live.ex:299
 #: lib/pauseai_ca_web/live/welcome_management_live.ex:271
@@ -7893,7 +7893,6 @@ msgstr "Cette clé d’enregistrement a déjà été utilisée. Rechargez la tâ
 msgid "This task changed in another tab. Your draft has been retained."
 msgstr "Cette tâche a été modifiée dans un autre onglet. Votre brouillon a été conservé."
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:333
 #: lib/pauseai_ca_web/live/tasks_live.ex:314
 #: lib/pauseai_ca_web/live/tasks_live.ex:471
 #: lib/pauseai_ca_web/live/welcome_management_live.ex:382
@@ -8104,7 +8103,7 @@ msgstr "Identifiant vérifié"
 msgid "Join request saved"
 msgstr "Demande de participation enregistrée"
 
-#: lib/pauseai_ca_web/components/layouts.ex:149
+#: lib/pauseai_ca_web/components/layouts.ex:155
 #: lib/pauseai_ca_web/live/incubator_management_live.ex:14
 #: lib/pauseai_ca_web/live/incubator_management_live.ex:293
 #: lib/pauseai_ca_web/live/incubators_live.ex:19
@@ -9143,8 +9142,8 @@ msgstr "Rejoindre une liste d’attente ou aider à créer un incubateur"
 msgid "Help Canadians make the case for an international pause on the development of the most powerful AI systems. Your donation helps people organize locally, explain the risks, and bring concrete requests to elected representatives."
 msgstr "Aidez les Canadiennes et les Canadiens à défendre une pause internationale dans le développement des systèmes d’IA les plus puissants. Votre don aide à organiser des activités locales, à expliquer les risques et à présenter des demandes concrètes aux personnes élues."
 
-#: lib/pauseai_ca_web/components/donation_page_content.ex:214
-#: lib/pauseai_ca_web/components/donation_page_content.ex:227
+#: lib/pauseai_ca_web/components/donation_page_content.ex:225
+#: lib/pauseai_ca_web/components/donation_page_content.ex:238
 #: lib/pauseai_ca_web/live/donate_live.ex:199
 #: lib/pauseai_ca_web/live/donate_live.ex:503
 #, elixir-autogen, elixir-format
@@ -9323,8 +9322,8 @@ msgstr "Libellé du bouton de don"
 msgid "Donation page"
 msgstr "Page de dons"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:359
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:373
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:334
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:348
 #: lib/pauseai_ca_web/live/donation_page_live.ex:1000
 #, elixir-autogen, elixir-format
 msgid "Draft preview"
@@ -9507,13 +9506,13 @@ msgstr "Retirer cette étape et ses postes du brouillon?"
 msgid "Replace the current draft with this revision? The public page stays unchanged until Publish."
 msgstr "Remplacer le brouillon actuel par cette révision? La page publique reste inchangée jusqu’à la publication."
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:425
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:401
 #: lib/pauseai_ca_web/live/donation_page_live.ex:1066
 #, elixir-autogen, elixir-format
 msgid "Restore to draft"
 msgstr "Restaurer comme brouillon"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:220
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:221
 #: lib/pauseai_ca_web/live/donation_page_live.ex:211
 #: lib/pauseai_ca_web/live/donation_page_live.ex:1129
 #, elixir-autogen, elixir-format
@@ -9525,14 +9524,14 @@ msgstr "Restauré comme brouillon"
 msgid "Review %{field}."
 msgstr "Vérifiez le champ « %{field} »."
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:405
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:381
 #: lib/pauseai_ca_web/live/donation_page_live.ex:613
 #: lib/pauseai_ca_web/live/donation_page_live.ex:1045
 #, elixir-autogen, elixir-format
 msgid "Revision history"
 msgstr "Historique des révisions"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:97
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:98
 #: lib/pauseai_ca_web/live/donation_page_live.ex:182
 #, elixir-autogen, elixir-format
 msgid "Save your changes before publishing."
@@ -9629,18 +9628,18 @@ msgstr "Laissez ce champ vide pour afficher un financement inconnu dans l’aper
 msgid "The threshold applies separately to the active stage budget and to the full programme budget."
 msgstr "Le seuil s’applique séparément au budget de l’étape active et au budget du programme complet."
 
-#: lib/pauseai_ca_web/components/donation_page_content.ex:442
+#: lib/pauseai_ca_web/components/donation_page_content.ex:453
 #, elixir-autogen, elixir-format
 msgid "Close"
 msgstr "Fermer"
 
-#: lib/pauseai_ca_web/components/donation_page_content.ex:425
-#: lib/pauseai_ca_web/components/donation_page_content.ex:435
+#: lib/pauseai_ca_web/components/donation_page_content.ex:436
+#: lib/pauseai_ca_web/components/donation_page_content.ex:446
 #, elixir-autogen, elixir-format
 msgid "Try a donation"
 msgstr "Simuler un don"
 
-#: lib/pauseai_ca_web/components/donation_page_content.ex:131
+#: lib/pauseai_ca_web/components/donation_page_content.ex:142
 #, elixir-autogen, elixir-format
 msgid "Pending Manifund offers: %{amount}. These offers have not been received. USD converted at %{rate} CAD on %{date} (Bank of Canada)."
 msgstr "Offres Manifund en attente : %{amount}. Ces fonds n’ont pas été reçus. Conversion des dollars américains au taux de %{rate} CAD le %{date} (Banque du Canada)."
@@ -9997,39 +9996,39 @@ msgstr "Aperçu du contenu envoyé"
 msgid "No deliveries, opens or clicks reported yet. Accepted submissions do not establish delivery or reading."
 msgstr "Aucune livraison, ouverture ou clic signalé pour le moment. L’acceptation des messages ne prouve ni leur livraison ni leur lecture."
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:236
-#: lib/pauseai_ca_web/live/blog_live.ex:51
-#: lib/pauseai_ca_web/live/blog_live.ex:97
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:237
+#: lib/pauseai_ca_web/live/blog_live.ex:56
+#: lib/pauseai_ca_web/live/blog_live.ex:85
 #, elixir-autogen, elixir-format
 msgid "All articles"
 msgstr "Tous les articles"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:396
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:372
 #, elixir-autogen, elixir-format
 msgid "Archive this article and remove it from the public blog? Revision history is retained."
 msgstr "Archiver cet article et le retirer du blogue public? L’historique des révisions sera conservé."
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:248
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:249
 #, elixir-autogen, elixir-format
 msgid "Article address"
 msgstr "Adresse de l’article"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:40
-#: lib/pauseai_ca_web/live/blog_live.ex:96
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:41
+#: lib/pauseai_ca_web/live/blog_live.ex:84
 #, elixir-autogen, elixir-format
 msgid "Article unavailable"
 msgstr "Article indisponible"
 
-#: lib/pauseai_ca_web/live/blog_live.ex:84
+#: lib/pauseai_ca_web/live/blog_live.ex:70
 #, elixir-autogen, elixir-format
 msgid "Articles will appear here when published."
 msgstr "Les articles paraîtront ici après leur publication."
 
-#: lib/pauseai_ca_web/components/layouts.ex:487
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:15
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:234
-#: lib/pauseai_ca_web/live/blog_live.ex:31
-#: lib/pauseai_ca_web/live/blog_live.ex:79
+#: lib/pauseai_ca_web/components/layouts.ex:489
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:16
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:235
+#: lib/pauseai_ca_web/live/blog_live.ex:35
+#: lib/pauseai_ca_web/live/blog_live.ex:65
 #: lib/pauseai_ca_web/navigation.ex:54
 #, elixir-autogen, elixir-format
 msgid "Blog"
@@ -10050,169 +10049,151 @@ msgstr "Compte à rebours de la campagne"
 msgid "Closing date and time (with UTC offset)"
 msgstr "Date et heure de clôture (avec décalage UTC)"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:259
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:260
 #, elixir-autogen, elixir-format
 msgid "Create article"
 msgstr "Créer un article"
 
-#: lib/pauseai_ca_web/components/blog_content.ex:31
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:286
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:349
-#: lib/pauseai_ca_web/live/blog_live.ex:65
-#, elixir-autogen, elixir-format
-msgid "Everything"
-msgstr "Tout lire"
-
-#: lib/pauseai_ca_web/components/layouts.ex:262
+#: lib/pauseai_ca_web/components/layouts.ex:269
 #, elixir-autogen, elixir-format
 msgid "Help build the movement for an AI pause"
 msgstr "Aidez à bâtir le mouvement pour une pause de l’IA"
-
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:284
-#: lib/pauseai_ca_web/live/blog_live.ex:63
-#, elixir-autogen, elixir-format
-msgid "In brief"
-msgstr "En bref"
 
 #: lib/pauseai_ca_web/live/donation_page_live.ex:950
 #, elixir-autogen, elixir-format
 msgid "Match the deadline published by the fundraising platform, including its UTC offset. Example: 2026-11-27T23:59:59-07:00."
 msgstr "Reprenez l’échéance publiée par la plateforme de financement, avec son décalage UTC. Exemple : 2026-11-27T23:59:59-07:00."
 
-#: lib/pauseai_ca_web/components/blog_content.ex:22
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:285
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:348
-#: lib/pauseai_ca_web/live/blog_live.ex:64
-#, elixir-autogen, elixir-format
-msgid "More details"
-msgstr "Plus de détails"
-
-#: lib/pauseai_ca_web/live/blog_live.ex:81
-#, elixir-autogen, elixir-format
-msgid "Read the summary, explore the details or open the full article."
-msgstr "Lisez le résumé, explorez les détails ou ouvrez l’article au complet."
-
-#: lib/pauseai_ca_web/live/blog_live.ex:59
-#, elixir-autogen, elixir-format
-msgid "Reading depth"
-msgstr "Niveau de détail"
-
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:388
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:364
 #, elixir-autogen, elixir-format
 msgid "Remove this article from the public blog?"
 msgstr "Retirer cet article du blogue public?"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:420
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:396
 #, elixir-autogen, elixir-format
 msgid "Replace the current draft with this revision? Publication stays unchanged."
 msgstr "Remplacer le brouillon actuel par cette révision? La version publiée restera inchangée."
-
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:341
-#, elixir-autogen, elixir-format
-msgid "Short summary"
-msgstr "Résumé court"
 
 #: lib/pauseai_ca_web/live/donation_page_live.ex:939
 #, elixir-autogen, elixir-format
 msgid "Show the campaign banner and countdown"
 msgstr "Afficher la bannière et le compte à rebours de la campagne"
 
-#: lib/pauseai_ca_web/live/donation_page_live.ex:961
-#, elixir-autogen, elixir-format
-msgid "Show the compact banner timer during the final days"
-msgstr "Afficher le petit compteur dans la bannière durant les derniers jours"
-
-#: lib/pauseai_ca_web/components/layouts.ex:270
+#: lib/pauseai_ca_web/components/layouts.ex:272
 #, elixir-autogen, elixir-format
 msgid "Support the campaign"
 msgstr "Soutenir la campagne"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:255
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:256
 #, elixir-autogen, elixir-format
 msgid "The address stays the same after creation. Use lowercase letters, numbers and hyphens."
 msgstr "L’adresse restera la même après la création. Utilisez des lettres minuscules, des chiffres et des traits d’union."
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:212
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:213
 #, elixir-autogen, elixir-format
 msgid "The change could not be saved. Your text is still shown."
 msgstr "La modification n’a pas pu être enregistrée. Votre texte est toujours affiché."
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:194
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:195
 #, elixir-autogen, elixir-format
 msgid "This article changed elsewhere. Reload before saving; your text is still shown."
 msgstr "Cet article a été modifié ailleurs. Rechargez la page avant d’enregistrer; votre texte est toujours affiché."
 
-#: lib/pauseai_ca_web/components/campaign_countdown.ex:67
+#: lib/pauseai_ca_web/components/campaign_countdown.ex:36
+#: lib/pauseai_ca_web/components/campaign_countdown.ex:90
 #, elixir-autogen, elixir-format
 msgid "This campaign has ended."
 msgstr "Cette campagne est terminée."
 
-#: lib/pauseai_ca_web/components/campaign_countdown.ex:24
+#: lib/pauseai_ca_web/components/campaign_countdown.ex:46
 #, elixir-autogen, elixir-format
 msgid "Time left to support the campaign"
 msgstr "Il reste pour soutenir la campagne"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:390
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:366
 #, elixir-autogen, elixir-format
 msgid "Unpublish"
 msgstr "Dépublier"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:79
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:80
 #, elixir-autogen, elixir-format
 msgid "Use a unique address with lowercase letters, numbers and hyphens."
 msgstr "Choisissez une adresse unique composée de lettres minuscules, de chiffres et de traits d’union."
 
-#: lib/pauseai_ca_web/components/campaign_countdown.ex:37
+#: lib/pauseai_ca_web/components/campaign_countdown.ex:32
+#: lib/pauseai_ca_web/components/campaign_countdown.ex:57
+#: lib/pauseai_ca_web/components/campaign_countdown.ex:138
 #, elixir-autogen, elixir-format
 msgid "days"
 msgstr "jours"
 
-#: lib/pauseai_ca_web/components/campaign_countdown.ex:38
+#: lib/pauseai_ca_web/components/campaign_countdown.ex:33
+#: lib/pauseai_ca_web/components/campaign_countdown.ex:58
+#: lib/pauseai_ca_web/components/campaign_countdown.ex:139
 #, elixir-autogen, elixir-format
 msgid "hours"
 msgstr "heures"
 
-#: lib/pauseai_ca_web/components/campaign_countdown.ex:39
+#: lib/pauseai_ca_web/components/campaign_countdown.ex:34
+#: lib/pauseai_ca_web/components/campaign_countdown.ex:59
+#: lib/pauseai_ca_web/components/campaign_countdown.ex:140
 #, elixir-autogen, elixir-format
 msgid "minutes"
 msgstr "minutes"
 
-#: lib/pauseai_ca_web/components/campaign_countdown.ex:40
+#: lib/pauseai_ca_web/components/campaign_countdown.ex:35
+#: lib/pauseai_ca_web/components/campaign_countdown.ex:60
+#: lib/pauseai_ca_web/components/campaign_countdown.ex:141
 #, elixir-autogen, elixir-format
 msgid "seconds"
 msgstr "secondes"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:204
-#, elixir-autogen, elixir-format
-msgid "Complete all four fields in at least one language before publication. Titles allow 200 characters, summaries 1,000 and each detail section 100,000."
-msgstr "Remplissez les quatre champs dans au moins une langue avant de publier. Les titres peuvent contenir 200 caractères, les résumés 1 000 et chaque section de détails 100 000."
-
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:303
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:294
 #, elixir-autogen, elixir-format
 msgid "Leave this page and discard unsaved changes?"
 msgstr "Quitter cette page et abandonner les modifications non enregistrées?"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:317
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:308
 #, elixir-autogen, elixir-format
 msgid "Publish the complete language editions of this saved article?"
 msgstr "Publier les versions linguistiques complètes de cet article enregistré?"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:222
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:223
 #, elixir-autogen, elixir-format
 msgid "Archived"
 msgstr "Archivé"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:280
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:281
 #, elixir-autogen, elixir-format
 msgid "Article links"
 msgstr "Liens de l’article"
 
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:281
-#, elixir-autogen, elixir-format
-msgid "Choose the starting level of detail when sharing this article."
-msgstr "Choisissez le niveau de détail initial lorsque vous partagez cet article."
-
-#: lib/pauseai_ca_web/live/blog_editor_live.ex:221
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:222
 #, elixir-autogen, elixir-format
 msgid "Unpublished"
 msgstr "Dépublié"
+
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:331
+#, elixir-autogen, elixir-format
+msgid "Article Markdown"
+msgstr "Article en Markdown"
+
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:322
+#, elixir-autogen, elixir-format
+msgid "Begin with # Title, then write the introduction. Use ## and ### headings for expandable sections."
+msgstr "Commencez par # Titre, puis rédigez l’introduction. Utilisez les titres ## et ### pour les sections dépliables."
+
+#: lib/pauseai_ca_web/live/blog_live.ex:67
+#, elixir-autogen, elixir-format
+msgid "Read an article and expand the sections you want to explore."
+msgstr "Lisez un article et dépliez les sections qui vous intéressent."
+
+#: lib/pauseai_ca_web/live/blog_editor_live.ex:205
+#, elixir-autogen, elixir-format
+msgid "Start at least one language edition with a level-one heading (# Title) before publication. Each Markdown article allows 250,000 characters."
+msgstr "Avant la publication, commencez au moins une version linguistique par un titre de niveau un (# Titre). Chaque article Markdown accepte 250 000 caractères."
+
+#: lib/pauseai_ca_web/live/donation_page_live.ex:961
+#, elixir-autogen, elixir-format
+msgid "Show the compact menu timer during the final days"
+msgstr "Afficher le petit compteur du menu durant les derniers jours"

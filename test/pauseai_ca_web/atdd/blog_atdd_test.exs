@@ -11,7 +11,7 @@ if System.get_env("ATDD") == "true" do
                     ] do
                   %{
                     id: "BLOG-01-#{locale}",
-                    title: "Reader chooses article depth · #{language}",
+                    title: "Reader expands Markdown sections · #{language}",
                     tags: ["blog", "cms"],
                     roles: ["Superadmin / reader"],
                     language: language,
@@ -44,16 +44,12 @@ if System.get_env("ATDD") == "true" do
 
         payload = %{
           "en" => %{
-            "title" => "Synthetic article",
-            "summary" => "The short summary is always visible.",
-            "details" => "## Key details\n\nA little more context.",
-            "full" => "## Complete source\n\nThe complete synthetic explanation."
+            "markdown" =>
+              "# Synthetic article\n\nThe introduction is always visible.\n\n## Key details\n\nA little more context.\n\n### Source\n\nThe complete synthetic explanation.\n\n## Next steps\n\nA sibling section."
           },
           "fr" => %{
-            "title" => "Article fictif",
-            "summary" => "Le résumé court est toujours visible.",
-            "details" => "## Points clés\n\nUn peu plus de contexte.",
-            "full" => "## Source complète\n\nL’explication fictive au complet."
+            "markdown" =>
+              "# Article fictif\n\nL’introduction est toujours visible.\n\n## Points clés\n\nUn peu plus de contexte.\n\n### Source\n\nL’explication fictive au complet.\n\n## Prochaines étapes\n\nUne section de même niveau."
           }
         }
 
@@ -62,7 +58,11 @@ if System.get_env("ATDD") == "true" do
         {token, _} = generate_user_magic_link_token(admin)
 
         title =
-          if locale == "fr", do: "Choisir le niveau de détail", else: "Choose how much to read"
+          if locale == "fr", do: "Lire selon les sections", else: "Read by section"
+
+        source = String.replace(payload[locale]["markdown"], ~r/^# [^\n]+/, "# " <> title)
+        section = if locale == "fr", do: "points-clés", else: "key-details"
+        sibling = if locale == "fr", do: "prochaines-étapes", else: "next-steps"
 
         path = BlogLive.path(locale) <> "/" <> article.slug
 
@@ -76,9 +76,11 @@ if System.get_env("ATDD") == "true" do
           |> capture(
             id,
             "Open saved draft",
-            "The editor shows bilingual article fields before publication"
+            "The editor shows one CMS Markdown source for each language before publication"
           )
-          |> fill_in("#blog-#{locale}-title", tr(locale, "Title"), with: title)
+          |> fill_in("#blog-#{locale}-markdown-source", tr(locale, "Article Markdown"),
+            with: source
+          )
           |> assert_has("#blog-save-status", text: tr(locale, "Unsaved changes"))
           |> click_button(tr(locale, "Save"))
           |> assert_has("#blog-save-status", text: tr(locale, "Saved"))
@@ -95,41 +97,44 @@ if System.get_env("ATDD") == "true" do
           |> visit(path)
           |> assert_has("[data-phx-main].phx-connected")
           |> assert_has("h1", text: title)
-          |> assert_has("#blog-summary", text: payload[locale]["summary"])
-          |> refute_has("#blog-details[open]")
+          |> assert_has("#blog-intro")
+          |> refute_has("details[open]")
           |> capture(
             id,
             "Publish then open article",
-            "Reader sees title and short summary; optional sections are collapsed"
+            "Reader sees the title and introduction, with sections derived from Markdown headings"
           )
-          |> click_link(
-            "nav[aria-label='#{tr(locale, "Reading depth")}'] a",
-            tr(locale, "More details")
-          )
-          |> assert_has("#blog-details[open]")
-          |> refute_has("#blog-full[open]")
+          |> PhoenixTest.Playwright.click("#blog-section-#{section} > summary")
+          |> assert_has("#blog-section-#{section}[open]")
+          |> refute_has("#blog-section-source[open]")
           |> capture(
             id,
-            "More details",
-            "Reader opens key detail while the full text remains collapsed"
+            "First section heading",
+            "The selected section opens while its subsection stays collapsed"
           )
-          |> click_link(
-            "nav[aria-label='#{tr(locale, "Reading depth")}'] a",
-            tr(locale, "Everything")
-          )
-          |> assert_has("#blog-full[open]")
+          |> PhoenixTest.Playwright.click("#blog-section-source > summary")
+          |> assert_has("#blog-section-source[open]")
           |> capture(
             id,
-            "Everything",
-            "Reader can select the full text and share its stable depth URL"
+            "Nested Source heading",
+            "A nested heading independently opens the complete source"
+          )
+          |> PhoenixTest.Playwright.click("#blog-section-#{sibling} > summary")
+          |> assert_has("#blog-section-#{sibling}[open]")
+          |> capture(
+            id,
+            "Sibling heading",
+            "Same-level Markdown headings yield independent expandable sections"
           )
           |> visit(path <> "?depth=full")
-          |> assert_has("#blog-full[open]")
-          |> click_link(
-            "nav[aria-label='#{tr(locale, "Reading depth")}'] a",
-            tr(locale, "In brief")
+          |> assert_has("#blog-section-#{section}[open] #blog-section-source[open]")
+          |> capture(
+            id,
+            "Existing full-depth URL",
+            "Previously shared links remain valid and open all sections"
           )
-          |> refute_has("#blog-details[open]")
+          |> visit(path)
+          |> refute_has("details[open]")
 
         assert counts() == baseline
         refute_receive {:email, _}

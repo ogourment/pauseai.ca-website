@@ -14,15 +14,13 @@ defmodule PauseAiCaWeb.BlogLiveTest do
     Map.new(~w(en fr), fn locale ->
       {locale,
        %{
-         "title" => "Title #{locale}",
-         "summary" => "Short #{locale}",
-         "details" => "## Detail #{locale}",
-         "full" => "Complete #{locale}"
+         "markdown" =>
+           "# Title #{locale}\n\nShort #{locale}\n\n## Detail #{locale}\n\nDetails #{locale}\n\n### Complete #{locale}\n\nComplete #{locale}"
        }}
     end)
   end
 
-  test "readers choose all three depths and drafts never appear publicly", %{
+  test "readers get Markdown sections and old depth links still open the hierarchy", %{
     conn: conn,
     scope: scope
   } do
@@ -31,17 +29,19 @@ defmodule PauseAiCaWeb.BlogLiveTest do
     {:ok, view, _} = live(conn, "/en/blog")
     refute render(view) =~ "Title en"
     {:ok, _} = Blog.publish(scope, article)
+    {:ok, index, _} = live(conn, "/en/blog")
+    assert has_element?(index, "h2", "Title en")
+    assert render(index) =~ "Short en"
     {:ok, view, _} = live(conn, "/en/blog/reader-choice")
-    assert has_element?(view, "#blog-summary", "Short en")
-    refute has_element?(view, "#blog-details[open]")
-    view |> element("a", "More details") |> render_click()
-    assert has_element?(view, "#blog-details[open]")
-    refute has_element?(view, "#blog-full[open]")
-    view |> element("a", "Everything") |> render_click()
-    assert has_element?(view, "#blog-full[open]", "Complete en")
+    assert has_element?(view, "#blog-intro", "Short en")
+    assert has_element?(view, "#blog-section-detail-en #blog-section-complete-en")
+    refute has_element?(view, "details[open]")
+    {:ok, details, _} = live(conn, "/en/blog/reader-choice?depth=details")
+    assert has_element?(details, "#blog-section-detail-en[open]")
+    refute has_element?(details, "#blog-section-complete-en[open]")
     {:ok, fr, _} = live(conn, "/fr/blogue/reader-choice?depth=full")
     assert has_element?(fr, "h1", "Title fr")
-    assert has_element?(fr, "#blog-full[open]")
+    assert has_element?(fr, "#blog-section-detail-fr[open] #blog-section-complete-fr[open]")
   end
 
   test "editor creation, save, preview and publication use independent steps", %{conn: conn} do
@@ -82,7 +82,7 @@ defmodule PauseAiCaWeb.BlogLiveTest do
     assert has_element?(index, "#blog-create")
     {:ok, editor, _} = live(conn, "/manage/blog/#{article.id}?locale=en")
     render_hook(editor, "edit", %{"article" => %{"en" => %{"title" => %{}}}})
-    send(editor.pid, {:markdown_editor_changed, "blog-en-details", payload["en"]["details"]})
+    send(editor.pid, {:markdown_editor_changed, "blog-en-markdown", payload["en"]["markdown"]})
     assert has_element?(editor, "#blog-save-status", "Saved")
   end
 
@@ -94,20 +94,24 @@ defmodule PauseAiCaWeb.BlogLiveTest do
     {:ok, article} = Blog.save(scope, article, payload())
     {:ok, article} = Blog.publish(scope, article)
     {:ok, view, _} = live(conn, "/manage/blog/#{article.id}?locale=en")
-    values = %{"article" => put_in(payload(), ["en", "full"], "Unsaved complete body")}
+
+    values = %{
+      "article" => put_in(payload(), ["en", "markdown"], "# Changed\n\nUnsaved complete body")
+    }
+
     view |> form("#blog-editor", values) |> render_change()
     assert has_element?(view, "button[phx-click=unpublish][disabled]")
     assert has_element?(view, "button[phx-click=archive][disabled]")
     render_hook(view, "unpublish", %{})
     render_hook(view, "archive", %{})
-    assert Blog.published(article.slug).payload["en"]["full"] == "Complete en"
-    assert has_element?(view, "#blog-en-full-source", "Unsaved complete body")
+    assert Blog.published(article.slug).payload["en"]["markdown"] == payload()["en"]["markdown"]
+    assert has_element?(view, "#blog-en-markdown-source", "Unsaved complete body")
     view |> form("#blog-editor", values) |> render_submit(%{"intent" => "save"})
     refute has_element?(view, "button[phx-click=unpublish][disabled]")
     view |> element("button[phx-click=unpublish]") |> render_click()
     assert Blog.published(article.slug) == nil
     {:ok, saved} = Blog.get(scope, article.id)
-    assert saved.payload["en"]["full"] == "Unsaved complete body"
+    assert saved.payload["en"]["markdown"] == "# Changed\n\nUnsaved complete body"
   end
 
   test "role revocation clears the connected editor", %{conn: conn, admin: admin} do

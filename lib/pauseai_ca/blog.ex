@@ -3,10 +3,11 @@ defmodule PauseAiCa.Blog do
   import Ecto.Query
   alias PauseAiCa.{Repo, Volunteers}
   alias PauseAiCa.Blog.{Article, Revision}
-  @fields ~w(title summary details full)
+  alias PauseAiCa.Blog.Markdown
+  @legacy_fields ~w(title summary details full)
 
   def permitted?(scope), do: Volunteers.superadmin?(scope)
-  def empty_payload, do: Map.new(~w(en fr), &{&1, Map.new(@fields, fn field -> {field, ""} end)})
+  def empty_payload, do: Map.new(~w(en fr), &{&1, %{"markdown" => ""}})
 
   def published do
     Repo.all(
@@ -144,12 +145,7 @@ defmodule PauseAiCa.Blog do
         Enum.all?(~w(en fr), fn locale ->
           edition = payload[locale]
 
-          is_map(edition) and Enum.sort(Map.keys(edition)) == Enum.sort(@fields) and
-            Enum.all?(@fields, fn field ->
-              text = edition[field]
-
-              is_binary(text) and String.valid?(text) and String.length(text) <= limit(field)
-            end)
+          valid_edition?(edition)
         end)
 
     if valid and (mode != :publish or Enum.any?(Map.values(payload), &complete?/1)),
@@ -157,15 +153,31 @@ defmodule PauseAiCa.Blog do
       else: {:error, :invalid_content}
   end
 
-  defp complete?(edition),
-    do:
-      Enum.all?(@fields, fn field ->
-        is_binary(edition[field]) and String.trim(edition[field]) != ""
-      end)
+  defp valid_edition?(%{"markdown" => source} = edition) do
+    Map.keys(edition) == ["markdown"] and valid_text?(source, 250_000)
+  end
 
-  defp limit("title"), do: 200
-  defp limit("summary"), do: 1000
-  defp limit(_), do: 100_000
+  defp valid_edition?(edition), do: valid_legacy?(edition)
+
+  defp valid_legacy?(edition) when is_map(edition) do
+    Enum.sort(Map.keys(edition)) == Enum.sort(@legacy_fields) and
+      Enum.all?(@legacy_fields, &valid_text?(edition[&1], legacy_limit(&1)))
+  end
+
+  defp valid_legacy?(_), do: false
+
+  defp valid_text?(text, limit),
+    do: is_binary(text) and String.valid?(text) and String.length(text) <= limit
+
+  defp legacy_limit("title"), do: 200
+  defp legacy_limit("summary"), do: 1000
+  defp legacy_limit(_), do: 100_000
+
+  defp complete?(%{"markdown" => source} = edition) do
+    String.trim(source) != "" and String.trim(Markdown.document(edition).title) != ""
+  end
+
+  defp complete?(edition), do: Enum.all?(@legacy_fields, &(String.trim(edition[&1]) != ""))
 
   defp find(id) do
     case Ecto.UUID.cast(id) do

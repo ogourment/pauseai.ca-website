@@ -13,10 +13,8 @@ defmodule PauseAiCa.BlogTest do
     Map.new(~w(en fr), fn locale ->
       {locale,
        %{
-         "title" => "Title #{locale}",
-         "summary" => "Short #{locale}",
-         "details" => "## Detail #{locale}",
-         "full" => "Complete #{locale}"
+         "markdown" =>
+           "# Title #{locale}\n\nShort #{locale}\n\n## Detail #{locale}\n\nDetails #{locale}\n\n### Complete #{locale}\n\nComplete #{locale}"
        }}
     end)
   end
@@ -31,7 +29,7 @@ defmodule PauseAiCa.BlogTest do
     {:ok, article} = Blog.publish(scope, article)
     published = Blog.published(article.slug)
     assert published.payload == payload()
-    changed = put_in(payload(), ["en", "summary"], "Changed draft")
+    changed = put_in(payload(), ["en", "markdown"], "# Changed draft\n\nNew introduction")
     {:ok, changed_article} = Blog.save(scope, article, changed)
     assert Blog.published(article.slug) == published
     assert {:error, :stale} = Blog.save(scope, article, payload())
@@ -58,6 +56,36 @@ defmodule PauseAiCa.BlogTest do
     {:ok, article} = Blog.publish(scope, article)
     assert Blog.published(article.slug).payload == Map.take(payload, ["en"])
     assert article.payload["fr"] == Blog.empty_payload()["fr"]
+  end
+
+  test "legacy snapshots survive edit, Markdown publication and restoring the exact old revision",
+       %{scope: scope} do
+    legacy =
+      Map.new(~w(en fr), fn locale ->
+        {locale,
+         %{
+           "title" => "Old #{locale}",
+           "summary" => "Original intro #{locale}",
+           "details" => "## Existing heading\n\nDetailed original.",
+           "full" => "Full original.\n"
+         }}
+      end)
+
+    {:ok, article} = Blog.create(scope, "legacy-history")
+    {:ok, article} = Blog.save(scope, article, legacy)
+    {:ok, article} = Blog.publish(scope, article)
+    {:ok, before} = Blog.history(scope, article)
+    original_revision = Enum.find(before, &(&1.action == "published"))
+    converted = PauseAiCa.Blog.Markdown.payload(legacy)
+    {:ok, article} = Blog.save(scope, article, converted)
+    assert Blog.published(article.slug).payload == legacy
+    {:ok, article} = Blog.publish(scope, article)
+    assert Blog.published(article.slug).payload == converted
+    {:ok, restored} = Blog.restore(scope, article, original_revision.id)
+    assert restored.payload == legacy
+    assert Blog.published(article.slug).payload == converted
+    {:ok, after_history} = Blog.history(scope, restored)
+    assert Enum.find(after_history, &(&1.id == original_revision.id)) == original_revision
   end
 
   test "fresh role revocation and malformed inputs cannot mutate articles", %{

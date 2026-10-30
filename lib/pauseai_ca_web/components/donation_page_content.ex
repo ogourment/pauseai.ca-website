@@ -70,23 +70,34 @@ defmodule PauseAiCaWeb.DonationPageContent do
       class="donation-authored mx-auto max-w-5xl px-5 py-10"
     >
       <h1 class="font-heading text-4xl text-stone-950 sm:text-5xl">{text(@copy, "title")}</h1>
-      <p
-        :if={present?(@copy, "lead")}
-        class="mt-5 max-w-4xl whitespace-pre-line text-xl leading-8 text-stone-700"
-      >
-        {text(@copy, "lead")}
-      </p>
-      <div :if={@countdown} class="mt-6 rounded-xl border border-brand bg-brand-wash p-4 sm:p-5">
-        <PauseAiCaWeb.CampaignCountdown.timer id={"#{@prefix}-countdown"} state={@countdown} />
+      <div class={["mt-5 grid items-start gap-5", @countdown && "md:grid-cols-[minmax(0,1fr)_20rem]"]}>
+        <aside
+          :if={@countdown}
+          id={"#{@prefix}-countdown-panel"}
+          class="w-full max-w-sm rounded-lg border border-brand bg-brand-wash p-3 justify-self-center md:order-2 md:max-w-none md:justify-self-stretch md:p-4"
+        >
+          <PauseAiCaWeb.CampaignCountdown.timer id={"#{@prefix}-countdown"} state={@countdown} />
+        </aside>
+        <div id={"#{@prefix}-campaign-copy"} class="min-w-0 md:order-1">
+          <p
+            :if={present?(@copy, "lead")}
+            class="whitespace-pre-line text-xl leading-8 text-stone-700"
+          >
+            {text(@copy, "lead")}
+          </p>
+          <section id={"#{@prefix}-campaign"} class="mt-5 space-y-3">
+            <h2 :if={present?(@copy, "campaign_heading")} class="font-heading text-2xl">
+              {text(@copy, "campaign_heading")}
+            </h2>
+            <p
+              :if={present?(@copy, "campaign_body")}
+              class="whitespace-pre-line leading-7 text-stone-700"
+            >
+              {text(@copy, "campaign_body")}
+            </p>
+          </section>
+        </div>
       </div>
-      <section id={"#{@prefix}-campaign"} class="mt-7 space-y-3">
-        <h2 :if={present?(@copy, "campaign_heading")} class="font-heading text-2xl">
-          {text(@copy, "campaign_heading")}
-        </h2>
-        <p :if={present?(@copy, "campaign_body")} class="whitespace-pre-line leading-7 text-stone-700">
-          {text(@copy, "campaign_body")}
-        </p>
-      </section>
       <section
         class="mt-7 rounded-xl border border-stone-200 bg-white p-4 sm:p-6"
         aria-labelledby={
