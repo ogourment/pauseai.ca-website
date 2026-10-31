@@ -4,7 +4,7 @@ defmodule PauseAiCa.MixProject do
   def project do
     [
       app: :pauseai_ca,
-      version: "0.5.49",
+      version: "0.5.54",
       elixir: "~> 1.17",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -65,6 +65,8 @@ defmodule PauseAiCa.MixProject do
   defp deps do
     [
       app_shell_dependency(),
+      # Security-only backport; avoid the broader arithmetic changes in 3.2.0.
+      {:decimal, "== 3.1.2", override: true},
       {:argon2_elixir, "~> 4.0"},
       {:phoenix, "~> 1.8.9"},
       {:phoenix_ecto, "~> 4.5"},

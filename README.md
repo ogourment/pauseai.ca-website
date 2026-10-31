@@ -31,6 +31,13 @@ Superadmins can review donation pledges and site activity. Browser-visit totals
 use Toronto calendar days; signed-in superadmins and explicitly excluded
 browsers do not count. These are browser-visit measurements, not a count of people.
 
+## Security maintenance
+
+The 0.5.54 security candidate is based on production 0.5.49 and pins Decimal
+3.1.2 to address CVE-2026-97853. It contains no feature-line changes or schema
+migrations. Production adoption requires the existing CI, staging, exact rollback
+and security-only promotion checks.
+
 ## Stack
 
 - Elixir 1.20.2 / Erlang OTP 29
