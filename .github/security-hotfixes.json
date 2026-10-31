@@ -3,15 +3,15 @@
   "approvals": [
     {
       "purpose": "security-only",
-      "sha": "831d80a6141def33cb7b582a7bbb69e8a53682b5",
-      "base_sha": "5edd4440acc925aefbe0794a444699f35696142f",
-      "branch": "security/deployed-runtime-20261028",
-      "diff_sha256": "22995b5ff8f308f25f9de8f9796370d1aa02f18c68f1b4405ebc4880c5249fb9",
-      "expires_at": "2026-10-30T04:00:00Z",
+      "sha": "762db967699e0d0f7da179fb811bdf19df0a22e5",
+      "base_sha": "831d80a6141def33cb7b582a7bbb69e8a53682b5",
+      "branch": "security/decimal-20261031",
+      "diff_sha256": "648084eeee041acd2f35bec3f2b400759cfc27b9900644a4e0fdda3974d07c9d",
+      "expires_at": "2026-11-01T16:00:00Z",
       "production_base": {
-        "version": "0.5.46",
-        "release_id": "pauseai-ca-0.5.46-40713592487",
-        "pipeline_id": "40713592487"
+        "version": "0.5.49",
+        "release_id": "pauseai-ca-0.5.49-40819372097",
+        "pipeline_id": "40819372097"
       }
     }
   ]
