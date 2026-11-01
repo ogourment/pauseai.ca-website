@@ -33,10 +33,12 @@ browsers do not count. These are browser-visit measurements, not a count of peop
 
 ## Security maintenance
 
-The 0.5.54 security candidate is based on production 0.5.49 and pins Decimal
-3.1.2 to address CVE-2026-97853. It contains no feature-line changes or schema
-migrations. Production adoption requires the existing CI, staging, exact rollback
-and security-only promotion checks.
+The 0.5.56 security candidate is based on production 0.5.54 and pins Bandit
+1.14.1 with its required HPAX 1.1.0 and Thousand Island 1.6.0 dependencies.
+It addresses Bandit's HTTP and WebSocket security advisories while retaining
+Decimal 3.1.2 and plug_crypto 2.2.1. It contains no feature-line changes or
+schema migrations. Production adoption requires the existing CI, staging,
+exact rollback and security-only promotion checks.
 
 ## Stack
 
