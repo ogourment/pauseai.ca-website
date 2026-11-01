@@ -126,6 +126,8 @@ if System.get_env("ATDD") == "true" do
           "Deadline expires without reset",
           "Advance only this isolated browser's monotonic clock beyond the deadline"
         )
+
+        AtddEvidence.mark_scenario_success!(Enum.find(@scenarios, &(&1.id == scenario)))
       end
     end
 
