@@ -1001,9 +1001,18 @@ if System.get_env("ATDD") == "true" do
 
       b
       |> visit("/manage/accounts/#{target.id}?locale=en")
+      |> assert_has("[data-phx-main].phx-connected #managed-account-form")
+      |> dismiss_info_flash()
+      |> refute_has("#flash-info")
       |> select("Incubator / group", option: "Unassigned")
       |> click_button("Save account")
       |> assert_has("body", text: "Account saved")
+
+      # Establish the persisted revocation before exercising the manager's stale form.
+      assert Accounts.get_user!(target.id).organizing_group_id == nil
+
+      assert PauseAiCa.AccountManagement.get(Scope.for_user(manager_user), target.id) ==
+               {:error, :unauthorized}
 
       manager_browser
       |> fill_in("Name", with: "Preserve this correction")
@@ -1153,15 +1162,16 @@ if System.get_env("ATDD") == "true" do
       )
     end
 
-    defp account_menu(b) do
+    defp account_menu(b), do: b |> dismiss_info_flash() |> click("#account-menu summary")
+
+    defp dismiss_info_flash(b) do
       evaluate(
         b,
         "!!document.querySelector('#flash-info')?.getBoundingClientRect().height",
         &Process.put(:has_info, &1)
       )
 
-      b = if Process.get(:has_info), do: click(b, "#flash-info button"), else: b
-      click(b, "#account-menu summary")
+      if Process.get(:has_info), do: click(b, "#flash-info button"), else: b
     end
 
     defp new_device(c, width \\ 1280) do
