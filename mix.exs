@@ -242,7 +242,7 @@ defmodule PauseAiCa.MixProject do
       _unset ->
         {:acceptance_harness,
          git: "https://github.com/ogourment/acceptance_harness-compiled.git",
-         ref: "3705689866e59627a2c072fbf88ce39f98922c64"}
+         ref: "71100b379dd501c2aa2f08613fbeca98782a54b2"}
     end
   end
 end
