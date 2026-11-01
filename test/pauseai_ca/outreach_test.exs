@@ -190,6 +190,45 @@ defmodule PauseAiCa.OutreachTest do
     assert own_reply.outreach_email == "partner@example.org"
   end
 
+  test "staging reply notification passes fresh admin identity through actual mail safety", c do
+    c.owner
+    |> change(confirmed_at: DateTime.utc_now(:second))
+    |> Repo.update!()
+
+    previous_origins = Application.get_env(:pauseai_ca, :public_origins)
+
+    Application.put_env(:pauseai_ca, :public_origins, %{
+      "en" => "https://staging.pauseai.ca",
+      "fr" => "https://staging.pauseai.ca"
+    })
+
+    Application.put_env(:pauseai_ca, :mail_environment, :staging)
+
+    on_exit(fn ->
+      if previous_origins,
+        do: Application.put_env(:pauseai_ca, :public_origins, previous_origins),
+        else: Application.delete_env(:pauseai_ca, :public_origins)
+    end)
+
+    assert {:ok, %{messages: [message]}} =
+             Outreach.ingest(incoming("<staging-reply@example.org>"))
+
+    assert [{:ok, accepted}] =
+             Outreach.dispatch_notifications(&PauseAiCa.OutreachNotifier.deliver/1)
+
+    assert accepted.state == "accepted"
+    assert_receive {:email, delivered}
+    assert delivered.to == [{"Staging admin", c.owner.email}]
+    assert delivered.cc == [] and delivered.bcc == []
+    assert delivered.subject =~ "[STAGING] "
+
+    assert delivered.text_body =~
+             "https://staging.pauseai.ca/manage/mail/conversations/#{message.conversation_id}"
+
+    assert Outreach.dispatch_notifications(fn _ -> flunk("No duplicate guarded notification") end) ==
+             []
+  end
+
   test "unthreaded inbound falls back to mailbox owner; uncertain notifications never auto resend",
        c do
     assert {:ok, %{messages: [message]}} = Outreach.ingest(incoming("<unrelated@example.org>"))

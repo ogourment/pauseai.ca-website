@@ -49,7 +49,7 @@ defmodule PauseAiCa.OutreachNotifier do
       |> Swoosh.Email.subject(subject)
       |> Swoosh.Email.html_body(html)
       |> Swoosh.Email.text_body(text)
-      |> Mailer.deliver()
+      |> Mailer.deliver(admin_actor_id: user.id)
     end
   end
 end
