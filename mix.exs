@@ -46,7 +46,7 @@ defmodule PauseAiCa.MixProject do
       _ ->
         {:phoenix_mail_workflow,
          git: "https://github.com/ogourment/phoenix_mail_workflow-compiled.git",
-         ref: "18c05815b8d11921c36808dc1ccb9c47ba238afe"}
+         ref: "9e9738f8e9fddc1297df0e004a442030f8909763"}
     end
   end
 
@@ -206,7 +206,7 @@ defmodule PauseAiCa.MixProject do
       _ ->
         {:phoenix_crm,
          git: "https://github.com/ogourment/phoenix_crm-compiled.git",
-         ref: "967ca2f1cda4e0a28f5d8996e34fc6e36bc1113c"}
+         ref: "d5039ca69e2434f7d4019acaaa90546491bb4e86"}
     end
   end
 
