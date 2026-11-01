@@ -65,7 +65,7 @@ defmodule PauseAiCaWeb.AtddEvidence do
   def scrub_html(html) do
     html =
       Regex.replace(
-        ~r/<(?:meta|input)\b[^>]*(?:csrf-token|_csrf_token|user\[token\]|user\[flow\]|name="token")[^>]*>/,
+        ~r/<(?:meta|input)\b[^>]*(?:csrf-token|_csrf_token|user\[token\]|user\[flow\]|interac\[submission_token\]|name="token")[^>]*>/,
         html,
         fn tag ->
           Regex.replace(~r/(content|value)="[^"]*"/, tag, "\\1=\"REDACTED\"")

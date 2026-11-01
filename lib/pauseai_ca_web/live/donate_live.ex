@@ -2,6 +2,7 @@ defmodule PauseAiCaWeb.DonateLive do
   use PauseAiCaWeb, :live_view
   alias PauseAiCa.Donations
   alias PauseAiCa.Donations.Pages
+  alias PauseAiCa.Donations.Interac
   alias Phoenix.LiveView.JS
 
   @impl true
@@ -10,12 +11,23 @@ defmodule PauseAiCaWeb.DonateLive do
     Gettext.put_locale(PauseAiCaWeb.Gettext, locale)
 
     page = Pages.published()
+    key = Ecto.UUID.generate()
+
+    submission_token =
+      Phoenix.Token.sign(PauseAiCaWeb.Endpoint, "interac declaration nonce", %{
+        key: key,
+        account_ref: account_id(socket.assigns.current_scope)
+      })
 
     {:ok,
      assign(socket,
        locale: locale,
        page_title: gettext("Donate"),
        donation_page: page,
+       interac_form: to_form(Interac.change(socket.assigns.current_scope), as: "interac"),
+       interac_saved: false,
+       interac_submission_key: key,
+       interac_submission_token: submission_token,
        funding_observation: public_observation(page),
        gift_minor: 0,
        gift_value: "0",
@@ -26,6 +38,63 @@ defmodule PauseAiCaWeb.DonateLive do
        selected_suggestion: nil,
        form: to_form(Donations.change(%{"locale" => locale}), as: "pledge")
      )}
+  end
+
+  @impl true
+  def handle_event("validate_interac", %{"interac" => attrs}, socket) when is_map(attrs) do
+    if socket.assigns.interac_saved do
+      {:noreply, socket}
+    else
+      socket =
+        case submission_key(socket, attrs) do
+          {:ok, key} ->
+            assign(socket,
+              interac_submission_key: key,
+              interac_submission_token: attrs["submission_token"]
+            )
+
+          _ ->
+            socket
+        end
+
+      changeset = Interac.change(socket.assigns.current_scope, attrs)
+
+      {:noreply,
+       assign(socket, :interac_form, to_form(%{changeset | action: :validate}, as: "interac"))}
+    end
+  end
+
+  def handle_event("declare_interac", %{"interac" => attrs}, socket) when is_map(attrs) do
+    attrs = Map.reject(attrs, fn {key, _} -> String.starts_with?(key, "_unused_") end)
+
+    if socket.assigns.interac_saved do
+      {:noreply, socket}
+    else
+      result =
+        with {:ok, key} <- submission_key(socket, attrs),
+             do: Interac.submit(socket.assigns.current_scope, attrs, key)
+
+      case result do
+        {:ok, _} ->
+          {:noreply, assign(socket, interac_saved: true)}
+
+        {:error, %Ecto.Changeset{} = changeset} ->
+          {:noreply,
+           assign(socket, :interac_form, to_form(%{changeset | action: :insert}, as: "interac"))}
+
+        {:error, :rate_limited} ->
+          {:noreply,
+           put_flash(socket, :error, gettext("Too many declarations. Please try again later."))}
+
+        {:error, _} ->
+          {:noreply,
+           put_flash(
+             socket,
+             :error,
+             gettext("This declaration could not be recorded. Reload the page and try again.")
+           )}
+      end
+    end
   end
 
   @impl true
@@ -98,6 +167,26 @@ defmodule PauseAiCaWeb.DonateLive do
      |> assign(:form, to_form(Donations.change(attrs), as: "pledge"))}
   end
 
+  defp submission_key(socket, attrs) do
+    with token when is_binary(token) <- attrs["submission_token"],
+         {:ok, %{key: key, account_ref: account_ref}} <-
+           Phoenix.Token.verify(
+             PauseAiCaWeb.Endpoint,
+             "interac declaration nonce",
+             token,
+             max_age: 86_400
+           ),
+         true <- account_ref == account_id(socket.assigns.current_scope),
+         {:ok, _} <- Ecto.UUID.cast(key) do
+      {:ok, key}
+    else
+      _ -> {:error, :invalid_submission}
+    end
+  end
+
+  defp account_id(%{user: %{id: id}}), do: id
+  defp account_id(_), do: nil
+
   defp suggestion_for(amount) do
     with {:ok, value} <- Decimal.cast(amount) do
       Enum.find(~w(25 100 500 2000), &Decimal.equal?(value, Decimal.new(&1)))
@@ -120,6 +209,10 @@ defmodule PauseAiCaWeb.DonateLive do
         <PauseAiCaWeb.DonationPageContent.content
           page={@donation_page}
           locale={@locale}
+          interac_form={@interac_form}
+          interac_submission_token={@interac_submission_token}
+          interac_saved={@interac_saved}
+          linked_account={not is_nil(@current_scope)}
           gift_minor={@gift_minor}
           gift_value={@gift_value}
           input_error={@gift_error}
@@ -221,7 +314,11 @@ defmodule PauseAiCaWeb.DonateLive do
             </p>
           <% end %>
         </section>
-        <details id="donate-interac" class="mt-8 border-l-4 border-brand bg-brand-wash p-5 sm:p-6">
+        <details
+          id="donate-interac"
+          phx-mounted={JS.ignore_attributes(["open"])}
+          class="mt-8 border-l-4 border-brand bg-brand-wash p-5 sm:p-6"
+        >
           <summary class="cursor-pointer font-heading text-2xl">
             {gettext("Or donate by Interac e-Transfer")}
           </summary>
@@ -234,6 +331,12 @@ defmodule PauseAiCaWeb.DonateLive do
             <span id="donation-email" class="select-all">pauseaicanada@proton.me</span>
           </p>
           <p class="mt-2">{gettext("Recipient")}: <strong>PauseAI Canada</strong></p>
+          <PauseAiCaWeb.InteracDeclarationForm.declaration
+            form={@interac_form}
+            submission_token={@interac_submission_token}
+            saved={@interac_saved}
+            linked_account={not is_nil(@current_scope)}
+          />
         </details>
         <p class="mt-8 text-sm text-stone-600">
           {gettext("PauseAI Canada")} · {gettext("Corporation number")}: 1819452-1 · {gettext(

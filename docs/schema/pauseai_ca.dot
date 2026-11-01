@@ -641,6 +641,36 @@ digraph Schema {
   ];
 
 
+  "public.interac_declarations" [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.interac_declarations</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">account_ref</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">name</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">email</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">amount_minor</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">bigint NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">currency</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">anonymous</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">boolean NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">state</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">submission_key</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">submitted_actor_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">submitted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">received_minor</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">bigint</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">received_on</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">date</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">verification_source_ref</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">bank_reference</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">verification_note</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">verified_actor_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">verified_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">revision</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">integer NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
   "public.learning_game_attempts" [
     label=<
       <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
@@ -1422,6 +1452,7 @@ digraph Schema {
   "public.incubator_memberships" -> "public.users" [label="matched_by_id -> id"];
   "public.incubator_memberships" -> "public.users" [label="user_id -> id"];
   "public.incubator_profiles" -> "public.volunteer_groups" [label="group_id -> id"];
+  "public.interac_declarations" -> "public.users" [label="account_ref -> id"];
   "public.learning_game_attempts" -> "public.users" [label="user_id -> id"];
   "public.learning_signals" -> "public.users" [label="user_id -> id"];
   "public.mail_batches" -> "public.users" [label="anchor_user_id -> id"];

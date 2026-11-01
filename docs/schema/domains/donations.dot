@@ -31,6 +31,13 @@ digraph donations {
     </TABLE>
   >];
 
+  "interac_declarations" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.interac_declarations</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">account_ref</TD><TD ALIGN="LEFT">uuid NULL</TD></TR><TR><TD ALIGN="LEFT">name</TD><TD ALIGN="LEFT">character varying NULL</TD></TR><TR><TD ALIGN="LEFT">email</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">amount_minor</TD><TD ALIGN="LEFT">bigint NOT NULL</TD></TR><TR><TD ALIGN="LEFT">currency</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">anonymous</TD><TD ALIGN="LEFT">boolean NOT NULL</TD></TR><TR><TD ALIGN="LEFT">state</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">submission_key</TD><TD ALIGN="LEFT">character varying NULL</TD></TR><TR><TD ALIGN="LEFT">submitted_actor_id</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">submitted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">received_minor</TD><TD ALIGN="LEFT">bigint NULL</TD></TR><TR><TD ALIGN="LEFT">received_on</TD><TD ALIGN="LEFT">date NULL</TD></TR><TR><TD ALIGN="LEFT">verification_source_ref</TD><TD ALIGN="LEFT">character varying NULL</TD></TR><TR><TD ALIGN="LEFT">bank_reference</TD><TD ALIGN="LEFT">character varying NULL</TD></TR><TR><TD ALIGN="LEFT">verification_note</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">verified_actor_id</TD><TD ALIGN="LEFT">character varying NULL</TD></TR><TR><TD ALIGN="LEFT">verified_at</TD><TD ALIGN="LEFT">timestamp without time zone NULL</TD></TR><TR><TD ALIGN="LEFT">revision</TD><TD ALIGN="LEFT">integer NOT NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
   }
 
   subgraph cluster_external {
@@ -50,4 +57,5 @@ digraph donations {
   "donation_page_revisions" -> "users" [label="editor_id -> id", color="#d97706", style="dashed", penwidth=1.5];
   "donation_page_revisions" -> "donation_pages" [label="page_id -> id", color="#64748b"];
   "donation_pages" -> "users" [label="updated_by -> id", color="#d97706", style="dashed", penwidth=1.5];
+  "interac_declarations" -> "users" [label="account_ref -> id", color="#d97706", style="dashed", penwidth=1.5];
 }

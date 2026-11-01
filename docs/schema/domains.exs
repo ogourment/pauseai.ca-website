@@ -76,7 +76,7 @@
       "volunteer_events"
     ]
   },
-  %{id: "donations", title: "Donations and authored page content", tables: ["donation_pledges", "donation_pages", "donation_page_revisions"]},
+  %{id: "donations", title: "Donations and authored page content", tables: ["donation_pledges", "donation_pages", "donation_page_revisions", "interac_declarations"]},
   %{id: "welcome", title: "Welcome cohorts", tables: ~w(welcome_sessions welcome_participants welcome_events)},
   %{id: "analytics", title: "First-party analytics", tables: ["daily_visits"]},
   %{

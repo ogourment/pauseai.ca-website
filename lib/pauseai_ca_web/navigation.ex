@@ -36,6 +36,14 @@ defmodule PauseAiCaWeb.Navigation do
         40
       ),
       item(
+        "pauseai.interac-donations",
+        gettext_noop("Interac donations"),
+        :admin,
+        :interac_donations,
+        :admin,
+        41
+      ),
+      item(
         "pauseai.versions",
         gettext_noop("Deployment versions"),
         :admin,
@@ -201,6 +209,7 @@ defmodule PauseAiCaWeb.Navigation do
         :blog -> "/manage/blog"
         :donations -> "/manage/donations"
         :donation_pledges -> "/admin/donation-pledges"
+        :interac_donations -> "/admin/interac-donations"
         :versions -> "/admin/versions"
         :acceptance -> "/admin/acceptance"
         :groups -> "/manage/groups"

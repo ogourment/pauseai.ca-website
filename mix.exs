@@ -170,7 +170,7 @@ defmodule PauseAiCa.MixProject do
       _ ->
         {:phoenix_donations,
          git: "https://github.com/ogourment/phoenix_donations-compiled.git",
-         ref: "f4b679b1d5037436086dda990fa81f3f6a3440c1"}
+         ref: "bb95e2791b94e00456661d4d5e56b8dc6a673928"}
     end
   end
 

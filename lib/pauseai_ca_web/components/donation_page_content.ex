@@ -2,6 +2,10 @@ defmodule PauseAiCaWeb.DonationPageContent do
   @moduledoc "Published donation content and an inert CMS preview share one consumer rendering."
   use PauseAiCaWeb, :html
 
+  attr :interac_form, :any, default: nil
+  attr :interac_submission_token, :string, default: nil
+  attr :interac_saved, :boolean, default: false
+  attr :linked_account, :boolean, default: false
   attr :page, :map, required: true
   attr :locale, :string, required: true
   attr :preview_mode, :boolean, default: false
@@ -266,6 +270,7 @@ defmodule PauseAiCaWeb.DonationPageContent do
       </section>
       <details
         id="donate-interac"
+        phx-mounted={Phoenix.LiveView.JS.ignore_attributes(["open"])}
         open={!@campaign_active}
         class="mt-8 border-l-4 border-brand bg-brand-wash p-5 sm:p-6"
       >
@@ -282,6 +287,13 @@ defmodule PauseAiCaWeb.DonationPageContent do
           >pauseaicanada@proton.me</span>
         </p>
         <p class="mt-2">{text(@copy, "recipient_label")}: <strong>PauseAI Canada</strong></p>
+        <PauseAiCaWeb.InteracDeclarationForm.declaration
+          form={@interac_form}
+          submission_token={@interac_submission_token}
+          saved={@interac_saved}
+          linked_account={@linked_account}
+          preview_mode={@preview_mode}
+        />
       </details>
       <p class="mt-8 text-sm text-stone-600">
         {gettext("PauseAI Canada")} · {gettext("Corporation number")}: 1819452-1 · {gettext(
