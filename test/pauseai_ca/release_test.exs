@@ -48,6 +48,39 @@ defmodule PauseAiCa.ReleaseTest do
     assert Enum.all?(rows, &(&1["pipeline_id"] == "31058041620"))
   end
 
+  test "evidence installation preserves legacy plain strings and repairs encoded objects" do
+    repo = PauseAiCa.Repo
+
+    Ecto.Adapters.SQL.query!(
+      repo,
+      "INSERT INTO acceptance_harness_runs (id, title) VALUES ($1, $2)",
+      [
+        "legacy-install-run",
+        "Legacy evidence"
+      ]
+    )
+
+    for {id, surface} <- [
+          {"plain", "LiveView desktop"},
+          {"encoded", Jason.encode!(%{"kind" => "browser"})}
+        ] do
+      Ecto.Adapters.SQL.query!(
+        repo,
+        "INSERT INTO acceptance_harness_steps (id, run_id, title, surface) VALUES ($1, $2, $3, $4)",
+        [id, "legacy-install-run", "Legacy step", surface]
+      )
+    end
+
+    AcceptanceHarness.AdminStore.install!(repo: repo)
+
+    assert [["encoded", %{"kind" => "browser"}], ["plain", "LiveView desktop"]] =
+             Ecto.Adapters.SQL.query!(
+               repo,
+               "SELECT id, surface FROM acceptance_harness_steps WHERE run_id = $1 ORDER BY id",
+               ["legacy-install-run"]
+             ).rows
+  end
+
   test "packaged run and screenshot survive rotating release removal and retry" do
     root =
       Path.join(
