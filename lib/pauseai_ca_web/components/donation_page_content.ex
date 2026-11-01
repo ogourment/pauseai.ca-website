@@ -248,7 +248,7 @@ defmodule PauseAiCaWeb.DonationPageContent do
               }
               class="mt-3 whitespace-pre-line text-sm leading-6 text-stone-700"
             >
-              {text(@copy, "account_requirement")}
+              <.account_requirement text={text(@copy, "account_requirement")} locale={@locale} />
             </p>
             <p :if={@campaign_url && present?(@copy, "proposal_label")} class="mt-2 text-sm">
               <a
@@ -370,6 +370,27 @@ defmodule PauseAiCaWeb.DonationPageContent do
         }
       </script>
     </section>
+    """
+  end
+
+  attr :text, :string, required: true
+  attr :locale, :string, required: true
+
+  def account_requirement(assigns) do
+    phrase =
+      Gettext.with_locale(PauseAiCaWeb.Gettext, assigns.locale, fn ->
+        gettext("A Manifund account is required to donate")
+      end)
+
+    assigns = assign(assigns, phrase: phrase, parts: String.split(assigns.text, phrase, parts: 2))
+
+    ~H"""
+    <%= case @parts do %>
+      <% [before, after_text] -> %>
+        {before}<mark class="rounded-sm bg-yellow-200 px-0.5 text-stone-950">{@phrase}</mark>{after_text}
+      <% _ -> %>
+        {@text}
+    <% end %>
     """
   end
 

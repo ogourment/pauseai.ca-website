@@ -38,6 +38,18 @@ defmodule PauseAiCaWeb.PublishedDonateLiveTest do
       refute has_element?(view, "#donation-buckets")
       assert has_element?(view, "#manifund-donate[data-donation='manifund'][target='_blank']")
       assert has_element?(view, "#donation-brochure[data-donation='brochure']")
+
+      expected_phrase =
+        if path == "/fr/faire-un-don",
+          do: "Un compte Manifund est nécessaire pour faire un don",
+          else: "A Manifund account is required to donate"
+
+      assert has_element?(
+               view,
+               "#manifund-account-requirement mark.bg-yellow-200",
+               expected_phrase
+             )
+
       assert has_element?(view, "#donation-email", "pauseaicanada@proton.me")
     end
 
@@ -297,6 +309,27 @@ defmodule PauseAiCaWeb.PublishedDonateLiveTest do
     Application.put_env(:pauseai_ca, :donation_funding_enabled, true)
     Application.put_env(:pauseai_ca, :manifund_donations_enabled, true)
     Application.put_env(:pauseai_ca, :donation_funding_cache, cache)
+  end
+
+  test "account emphasis preserves authored copy, escapes markup and leaves different wording unchanged" do
+    note =
+      "Custom preface. A Manifund account is required to donate. Authored qualification <em>stays text</em>."
+
+    html = render_component(&DonationPageContent.account_requirement/1, text: note, locale: "en")
+    document = LazyHTML.from_fragment(html)
+
+    assert LazyHTML.query(document, "mark") |> LazyHTML.text() ==
+             "A Manifund account is required to donate"
+
+    assert LazyHTML.query(document, "em") |> Enum.empty?()
+    assert LazyHTML.text(document) |> String.trim() == note
+    changed = "Use the account described in this authored note."
+
+    html =
+      render_component(&DonationPageContent.account_requirement/1, text: changed, locale: "en")
+
+    assert LazyHTML.from_fragment(html) |> LazyHTML.query("mark") |> Enum.empty?()
+    assert html =~ changed
   end
 
   defp admin_scope do

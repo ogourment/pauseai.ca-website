@@ -35,6 +35,7 @@ defmodule PauseAiCaWeb.ManifundDonateLiveTest do
 
       assert has_element?(view, "#manifund-proposal[href='#{@url}']")
       assert has_element?(view, "#manifund-account-requirement", disclosure)
+      assert has_element?(view, "#manifund-account-requirement mark.bg-yellow-200", disclosure)
       assert has_element?(view, "#donation-email", "pauseaicanada@proton.me")
       assert has_element?(view, "#donate-interac strong", "PauseAI Canada")
       refute has_element?(view, "#pledge-form")

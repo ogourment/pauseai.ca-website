@@ -35,7 +35,7 @@ defmodule PauseAiCa.Donations.PageDefaults do
           "funding_unknown" =>
             "Verified donation totals are unavailable. The illustration starts from zero.",
           "projection_note" =>
-            "This illustration shows how a donation could cover planned costs. It does not record a payment or change the funding total.",
+            "This illustration shows how a donation could cover planned costs.",
           "remaining_label" => "Still needed",
           "covered_label" => "Covered",
           "toward_label" => "Towards",
@@ -72,7 +72,7 @@ defmodule PauseAiCa.Donations.PageDefaults do
           "funding_unknown" =>
             "Le total vérifié des dons est indisponible. Cette illustration commence à zéro.",
           "projection_note" =>
-            "Cette illustration montre comment un don pourrait couvrir les coûts prévus. Elle n’enregistre aucun paiement et ne modifie pas le total du financement.",
+            "Cette illustration montre comment un don pourrait couvrir les coûts prévus.",
           "remaining_label" => "Reste à financer",
           "covered_label" => "Couvert",
           "toward_label" => "Pour",

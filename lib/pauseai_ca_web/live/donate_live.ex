@@ -199,9 +199,14 @@ defmodule PauseAiCaWeb.DonateLive do
               <span class="sr-only">{gettext("Opens in a new tab")}</span>
             </a>
             <p id="manifund-account-requirement" class="mt-3 text-sm leading-6 text-stone-700">
-              {gettext(
-                "A Manifund account is required to donate. You can read the full proposal without an account."
-              )}
+              <PauseAiCaWeb.DonationPageContent.account_requirement
+                text={
+                  gettext(
+                    "A Manifund account is required to donate. You can read the full proposal without an account."
+                  )
+                }
+                locale={@locale}
+              />
             </p>
             <p class="mt-2 text-sm leading-6">
               <a id="manifund-proposal" href={campaign.url} class="underline underline-offset-4">{gettext(
