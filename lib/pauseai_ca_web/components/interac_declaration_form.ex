@@ -52,11 +52,7 @@ defmodule PauseAiCaWeb.InteracDeclarationForm do
           <.input
             field={@form[:name]}
             id={"#{@prefix}-name"}
-            label={
-              if @linked_account,
-                do: gettext("Name shown on transfer (optional)"),
-                else: gettext("Name shown on transfer")
-            }
+            label={gettext("Name shown on transfer")}
             autocomplete="name"
             maxlength="160"
             required={!@linked_account}

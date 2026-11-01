@@ -70,6 +70,9 @@ defmodule PauseAiCaWeb.InteracDonationsLiveTest do
     publish()
     {:ok, view, _} = live(conn, "/en/donate")
     assert has_element?(view, "#interac-declaration-email[readonly]")
+    assert has_element?(view, "label[for=interac-declaration-name]", "Name shown on transfer")
+    refute has_element?(view, "#interac-declaration-name[required]")
+    refute has_element?(view, "label[for=interac-declaration-name]", "(optional)")
     assert has_element?(view, "#interac-declaration", "Your account email is read-only here.")
 
     render_submit(view, "declare_interac", %{

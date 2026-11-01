@@ -35,10 +35,12 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
 
   defp load(socket) do
     metrics = Engagement.metrics()
+    {:ok, interac_summary} = PauseAiCa.Donations.Interac.summary(socket.assigns.current_scope)
 
     socket
     |> assign(:page_title, gettext("Admin dashboard"))
     |> assign(:metrics, metrics)
+    |> assign(:interac_summary, interac_summary)
     |> assign(:movement_metrics, PauseAiCa.MovementMetrics.summary())
     |> assign(:game_metrics, Engagement.game_metrics())
     |> assign(:signup_funnel, Engagement.signup_funnel())
@@ -197,6 +199,18 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
               {gettext("All-time recorded totals and current membership and task states.")}
             </p>
             <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <.metric_group
+                id="interac-donation-metrics"
+                title={gettext("Interac donations")}
+                rows={[
+                  {"metric-interac-pending", gettext("Pending declarations"),
+                   @interac_summary.pending},
+                  {"metric-interac-verified", gettext("Bank-verified receipts"),
+                   @interac_summary.verified},
+                  {"metric-interac-received", gettext("Verified amount received"),
+                   PauseAiCaWeb.DonationPageContent.money(@interac_summary.received_minor, @locale)}
+                ]}
+              />
               <.metric_group
                 id="newsletter-metrics"
                 title={gettext("Newsletters")}
@@ -472,7 +486,7 @@ defmodule PauseAiCaWeb.AdminMetricsLive do
 
   attr :id, :string, required: true
   attr :label, :string, required: true
-  attr :value, :integer, required: true
+  attr :value, :any, required: true
 
   defp breakdown_row(assigns) do
     ~H"""

@@ -76,6 +76,46 @@ defmodule PauseAiCaWeb.AdminMetricsLiveTest do
     assert has_element?(view, "a[href='/admin/acceptance']", "Acceptance evidence")
   end
 
+  test "Interac card separates pending declarations from bank-verified money in both editions", %{
+    conn: conn
+  } do
+    alias PauseAiCa.Donations.Interac
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    scope = Scope.for_user(admin)
+
+    attrs = %{
+      "name" => "Synthetic transfer",
+      "email" => "metrics-transfer@example.org",
+      "amount" => "100.00"
+    }
+
+    {:ok, _pending} = Interac.submit(nil, attrs, Ecto.UUID.generate())
+    {:ok, received} = Interac.submit(nil, attrs, Ecto.UUID.generate())
+
+    {:ok, _} =
+      Interac.verify(
+        scope,
+        received.id,
+        %{"received_amount" => "25.50", "received_on" => "2026-11-01"},
+        received.revision
+      )
+
+    assert {:ok, %{pending: 1, verified: 1, received_minor: 2550}} = Interac.summary(scope)
+
+    for {locale, title, amount} <- [
+          {"en", "Interac donations", "C$25.50"},
+          {"fr", "Dons par Interac", "25,50 $ CA"}
+        ] do
+      {:ok, view, _} = live(log_in_user(conn, admin), "/admin/dashboard?locale=#{locale}")
+      assert has_element?(view, "#interac-donation-metrics h3", title)
+      assert has_element?(view, "#metric-interac-pending dd", "1")
+      assert has_element?(view, "#metric-interac-verified dd", "1")
+      assert has_element?(view, "#metric-interac-received dd", amount)
+      refute has_element?(view, "#interac-donation-metrics", "100")
+      refute has_element?(view, "#interac-donation-metrics", attrs["email"])
+    end
+  end
+
   test "the admin root and former metrics path redirect to the dashboard", %{conn: conn} do
     admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
     conn = log_in_user(conn, admin)
