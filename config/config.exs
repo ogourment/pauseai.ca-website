@@ -132,6 +132,8 @@ import_config "#{config_env()}.exs"
 # Organizer sheets and personal drafts must not appear in parameter logs.
 config :phoenix, :filter_parameters, [
   "participation",
+  "interac",
+  "verification",
   "user",
   "password",
   "token",
