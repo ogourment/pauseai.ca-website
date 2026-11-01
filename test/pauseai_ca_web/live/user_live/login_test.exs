@@ -4,6 +4,13 @@ defmodule PauseAiCaWeb.UserLive.LoginTest do
   import PauseAiCa.AccountsFixtures
   alias PauseAiCa.Accounts
 
+  test "a review link prefills email without requesting mail", %{conn: conn} do
+    {:ok, view, _} = live(conn, "/users/log-in?email=reviewer%40example.org")
+    assert has_element?(view, "#login_form_magic_email[value='reviewer@example.org']")
+    assert has_element?(view, "#login_form_password_email[value='reviewer@example.org']")
+    refute_received {:email, _}
+  end
+
   test "combined email entry explains account value and stays recoverable", %{conn: conn} do
     {:ok, view, _} = live(conn, ~p"/users/log-in")
     assert has_element?(view, "#login_form_magic")

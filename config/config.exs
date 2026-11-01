@@ -149,7 +149,12 @@ config :phoenix, :filter_parameters, [
   "state",
   "access_token",
   "refresh_token",
-  "client_secret"
+  "client_secret",
+  "items",
+  "RawHtmlBody",
+  "RawTextBody",
+  "DownloadToken",
+  "AttachmentsDownloadToken"
 ]
 
 # Slack remains disabled until an installation and channel audiences are configured.

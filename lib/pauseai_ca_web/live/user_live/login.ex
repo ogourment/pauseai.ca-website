@@ -139,9 +139,16 @@ defmodule PauseAiCaWeb.UserLive.Login do
     locale = context["locale"] || "en"
     Gettext.put_locale(PauseAiCaWeb.Gettext, locale)
 
+    prefill = params["email"]
+
+    prefill =
+      if is_binary(prefill) and byte_size(prefill) <= 160 and
+           not String.contains?(prefill, ["\r", "\n"]),
+         do: prefill
+
     email =
       Phoenix.Flash.get(socket.assigns.flash, :email) ||
-        get_in(socket.assigns, [:current_scope, Access.key(:user), Access.key(:email)])
+        get_in(socket.assigns, [:current_scope, Access.key(:user), Access.key(:email)]) || prefill
 
     changeset = Accounts.change_user_email(%User{}, %{email: email}, validate_unique: false)
 

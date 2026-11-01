@@ -30,14 +30,14 @@
   },
   %{
     id: "crm",
-    title: "Contact identity",
+    title: "Contact identity and conversations",
     tables:
-      ~w(crm_people crm_addresses crm_sources crm_activities crm_merges crm_contact_links crm_mailing_lists crm_mailing_list_events)
+      ~w(crm_people crm_addresses crm_sources crm_activities crm_merges crm_contact_links crm_mailing_lists crm_mailing_list_events crm_conversations crm_messages)
   },
   %{
     id: "mail_drafts",
     title: "Email drafts",
-    tables: ~w(mail_batches mail_drafts mail_delivery_receipts)
+    tables: ~w(mail_batches mail_drafts mail_delivery_receipts outreach_inbound_receipts outreach_reply_notifications)
   },
   %{
     id: "newsletter",

@@ -4,16 +4,20 @@ defmodule PauseAiCa.Newsletters.Draft do
   import Ecto.Changeset
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "newsletter_drafts" do
-    field :owner_id, :binary_id
-    field :edition, :string, default: "unknown"
-    field :subject, :string, default: ""
-    field :source, :string, default: "", redact: true
-    field :region, :string, default: ""
-    field :mailing_list_id, :binary_id
-    field :recipient_mode, :string, default: "newsletter"
-    field :recipient_keys, {:array, :string}, default: []
-    field :revision, :integer, default: 1
-    field :archived_at, :utc_datetime_usec
+    field(:owner_id, :binary_id)
+    field(:edition, :string, default: "unknown")
+    field(:subject, :string, default: "")
+    field(:source, :string, default: "", redact: true)
+    field(:region, :string, default: "")
+    field(:outreach_mailbox_ref, :string)
+    field(:outreach_email, :string, redact: true)
+    field(:conversation_id, :binary_id)
+    field(:reply_message_id, :binary_id)
+    field(:mailing_list_id, :binary_id)
+    field(:recipient_mode, :string, default: "newsletter")
+    field(:recipient_keys, {:array, :string}, default: [])
+    field(:revision, :integer, default: 1)
+    field(:archived_at, :utc_datetime_usec)
     timestamps(type: :utc_datetime_usec)
   end
 
@@ -26,7 +30,9 @@ defmodule PauseAiCa.Newsletters.Draft do
       :region,
       :recipient_mode,
       :recipient_keys,
-      :mailing_list_id
+      :mailing_list_id,
+      :outreach_email,
+      :outreach_mailbox_ref
     ])
     |> update_change(:recipient_keys, fn keys ->
       keys
@@ -46,7 +52,11 @@ defmodule PauseAiCa.Newsletters.Draft do
         else: [{field, "is invalid"}]
     end)
     |> validate_inclusion(:edition, ["en", "fr", "unknown"])
-    |> validate_inclusion(:recipient_mode, ["contacts", "newsletter", "list"])
+    |> validate_inclusion(:recipient_mode, ["contacts", "newsletter", "list", "outreach"])
+    |> validate_length(:outreach_email, max: 160)
+    |> validate_change(:outreach_email, fn field, email ->
+      if PauseAiCa.Outreach.Mailboxes.valid_email?(email), do: [], else: [{field, "is invalid"}]
+    end)
     |> validate_length(:subject, max: 300)
     |> validate_length(:source, max: 50_000)
     |> validate_inclusion(:region, ["", "Montréal", "ROQuébec", "ROCanada"])

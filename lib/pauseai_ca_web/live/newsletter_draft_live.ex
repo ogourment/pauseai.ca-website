@@ -1,6 +1,7 @@
 defmodule PauseAiCaWeb.NewsletterDraftLive do
   use PauseAiCaWeb, :live_view
   alias PauseAiCa.Newsletters.{Draft, Drafts, Batches, Lists, DeliveryLimits}
+  alias PauseAiCa.Outreach
   import PauseAiCaWeb.NewsletterAudienceLabels
 
   def mount(params, _, socket) do
@@ -32,7 +33,8 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
            quota: nil,
            limits_form: nil,
            limits_status: nil,
-           limits_open: false
+           limits_open: false,
+           outreach_mailboxes: outreach_mailboxes(socket.assigns.current_scope)
          )}
 
       _ ->
@@ -49,6 +51,31 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
         else: socket
 
     {:noreply, socket}
+  end
+
+  def handle_event("add-signature", _, socket) do
+    source = socket.assigns.form[:source].value || ""
+
+    case if(socket.assigns.draft.recipient_mode == "outreach",
+           do: Outreach.signature_hint(socket.assigns.current_scope, source),
+           else: :present
+         ) do
+      {:suggest, name} ->
+        case PhoenixMailWorkflow.Outreach.add_signature(source, name) do
+          {:ok, signed} ->
+            {:noreply,
+             edit(
+               socket,
+               Map.put(socket.assigns.form.params || %{}, "source", signed)
+             )}
+
+          _ ->
+            {:noreply, socket}
+        end
+
+      _ ->
+        {:noreply, socket}
+    end
   end
 
   def handle_event("toggle-delivery-limits", _, socket) do
@@ -414,6 +441,26 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
 
   defp refresh_audience(%{assigns: %{draft: nil}} = socket), do: socket
 
+  defp refresh_audience(%{assigns: %{draft: %{recipient_mode: "outreach"}}} = socket) do
+    scope = socket.assigns.current_scope
+
+    with true <- PauseAiCa.Volunteers.superadmin?(scope),
+         {:ok, batches} <- Batches.list(scope, socket.assigns.draft.id),
+         {:ok, quota} <- Batches.quota(scope) do
+      assign(socket,
+        audience: %{rows: [], page: 1, pages: 1, total: 1, counts: %{included: 1}},
+        batches: batches,
+        quota: quota,
+        outreach_mailboxes: outreach_mailboxes(scope),
+        limits_form:
+          socket.assigns.limits_form ||
+            to_form(DeliveryLimits.changeset(quota.limits, %{}), as: "limits")
+      )
+    else
+      _ -> denied(socket)
+    end
+  end
+
   defp refresh_audience(socket) do
     params = %{
       "page" => to_string(socket.assigns.candidate_page),
@@ -481,8 +528,22 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
   defp receipt_label("excluded", _), do: gettext("Excluded")
   defp receipt_label("failed", _), do: gettext("Not submitted")
   defp receipt_label("unknown", _), do: gettext("Needs delivery review")
+
+  defp outreach_mailboxes(scope) do
+    case Outreach.mailboxes(scope) do
+      {:ok, boxes} -> boxes
+      _ -> []
+    end
+  end
+
   defp selected(socket), do: socket.assigns.form[:recipient_keys].value || []
   defp dirty?(socket), do: socket.assigns.status == gettext("Unsaved changes")
+
+  defp batch_error(:mailbox_unavailable),
+    do:
+      gettext(
+        "This sending address is not activated. Save the draft and finish mailbox setup before sending."
+      )
 
   defp batch_error(:incomplete_link),
     do:
@@ -597,7 +658,33 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
             class="mt-6 space-y-5"
           >
             <div class="management-controls">
+              <section
+                :if={@draft.recipient_mode == "outreach"}
+                id="outreach-addressing"
+                class="crm-panel space-y-3"
+              >
+                <input type="hidden" name="draft[recipient_mode]" value="outreach" />
+                <.input
+                  field={@form[:outreach_mailbox_ref]}
+                  type="select"
+                  label={gettext("From")}
+                  aria-label={gettext("From")}
+                  options={Enum.map(@outreach_mailboxes, &{"#{&1.name} <#{&1.email}>", &1.id})}
+                />
+                <.input field={@form[:outreach_email]} type="email" label={gettext("To")} required />
+                <p>
+                  {gettext(
+                    "The sender address sets the English or French edition. Your administrator identity is recorded separately."
+                  )}
+                </p>
+                <.link
+                  :if={@draft.conversation_id}
+                  navigate={"/manage/mail/conversations/#{@draft.conversation_id}?locale=#{@locale}"}
+                  class="underline"
+                >{gettext("View conversation")}</.link>
+              </section>
               <details
+                :if={@draft.recipient_mode != "outreach"}
                 id="email-recipient-settings"
                 open={@draft.recipient_keys == []}
                 phx-mounted={Phoenix.LiveView.JS.ignore_attributes(["open"])}
@@ -804,7 +891,10 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
                   </nav>
                 </section>
               </details>
-              <label :if={@form[:recipient_mode].value == "contacts"} class="mt-4 flex gap-3">
+              <label
+                :if={@form[:recipient_mode].value in ["contacts", "outreach"]}
+                class="mt-4 flex gap-3"
+              >
                 <input type="hidden" name="draft[outreach_reviewed]" value="false" />
                 <input
                   type="checkbox"
@@ -850,6 +940,26 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
                 end
               }
             />
+            <div
+              :if={@draft.recipient_mode == "outreach"}
+              id="outreach-signature-hint"
+              class="text-sm"
+            >
+              <%= case Outreach.signature_hint(@current_scope, @form[:source].value || "") do %>
+                <% {:suggest, name} -> %>
+                  <p>{gettext("Suggested signature: %{name}", name: name)}</p>
+                  <button type="button" phx-click="add-signature" class="underline min-h-11">{gettext(
+                    "Add signature"
+                  )}</button>
+                <% :missing_name -> %>
+                  <p>
+                    {gettext(
+                      "Add your name at the end of the message if you want a personal signature."
+                    )}
+                  </p>
+                <% _ -> %>
+              <% end %>
+            </div>
             <button type="submit" class="crm-button" phx-disable-with={gettext("Saving…")}>{gettext(
               "Save"
             )}</button>
@@ -921,7 +1031,10 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
             </p>
             <.form for={%{}} as={:review} id="newsletter-prepare-form" phx-submit="prepare-batch">
               <input type="hidden" name="review[eligible]" value="false" />
-              <label :if={@form[:recipient_mode].value == "contacts"} class="flex gap-3 my-3"><input
+              <label
+                :if={@form[:recipient_mode].value in ["contacts", "outreach"]}
+                class="flex gap-3 my-3"
+              ><input
                 type="checkbox"
                 name="review[eligible]"
                 value="true"

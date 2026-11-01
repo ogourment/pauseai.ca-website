@@ -13,6 +13,7 @@ defmodule PauseAiCaWeb.MailNavigation do
         :for={
           {key, label, path} <- [
             {"drafts", gettext("Drafts"), "/manage/mail"},
+            {"conversations", gettext("Inbox"), "/manage/mail/inbox"},
             {"results", gettext("Sent & results"), "/manage/mail/results"},
             {"lists", gettext("Lists"), "/manage/mail/newsletters"}
           ]

@@ -3,10 +3,10 @@ digraph crm {
   node [shape=plain, fontname="Helvetica"];
   edge [fontname="Helvetica", fontsize=10, arrowsize=0.7];
   labelloc="t";
-  label=< <B>Contact identity</B><BR/><FONT POINT-SIZE="12">Local tables show every column. Amber dashed arrows cross a domain boundary.</FONT> >;
+  label=< <B>Contact identity and conversations</B><BR/><FONT POINT-SIZE="12">Local tables show every column. Amber dashed arrows cross a domain boundary.</FONT> >;
 
   subgraph cluster_local {
-    label="Contact identity";
+    label="Contact identity and conversations";
     color="#94a3b8";
     penwidth=1.5;
     style="rounded";
@@ -66,6 +66,20 @@ digraph crm {
     </TABLE>
   >];
 
+  "crm_conversations" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.crm_conversations</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">mailbox_ref</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">subject</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">participants</TD><TD ALIGN="LEFT">_varchar NOT NULL</TD></TR><TR><TD ALIGN="LEFT">actor_id</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
+  "crm_messages" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.crm_messages</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">mailbox_ref</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">conversation_id</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">direction</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">idempotency_key</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">rfc_message_id</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">in_reply_to</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">references</TD><TD ALIGN="LEFT">_text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">provider_id</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">delivery_ref</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">actor_id</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">envelope</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">body_text</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">body_html</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">source</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">attachments</TD><TD ALIGN="LEFT">_jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">occurred_at</TD><TD ALIGN="LEFT">timestamp without time zone NULL</TD></TR><TR><TD ALIGN="LEFT">outcome</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">outcome_details</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
   }
 
   subgraph cluster_external {
@@ -88,6 +102,8 @@ digraph crm {
   "crm_contact_links" -> "crm_people" [label="person_id -> id", color="#64748b"];
   "crm_mailing_list_events" -> "crm_mailing_lists" [label="list_id -> id", color="#64748b"];
   "crm_merges" -> "crm_people" [label="person_id -> id", color="#64748b"];
+  "crm_messages" -> "crm_conversations" [label="conversation_id -> id", color="#64748b"];
+  "crm_messages" -> "crm_conversations" [label="mailbox_ref -> mailbox_ref", color="#64748b"];
   "crm_people" -> "crm_people" [label="canonical_id -> id", color="#64748b"];
   "crm_people" -> "crm_addresses" [label="preferred_address_id -> id", color="#64748b"];
   "crm_sources" -> "crm_addresses" [label="address_id -> id", color="#64748b"];

@@ -7,9 +7,10 @@ defmodule PauseAiCa.Newsletters.Drafts do
   def list(scope, archived? \\ false) do
     if Volunteers.superadmin?(scope) do
       query =
-        from d in Draft,
+        from(d in Draft,
           where: d.owner_id == ^scope.user.id,
           order_by: [desc: d.updated_at, desc: d.id]
+        )
 
       query =
         if archived?,
@@ -26,7 +27,7 @@ defmodule PauseAiCa.Newsletters.Drafts do
     with true <- Volunteers.superadmin?(scope),
          {:ok, uuid} <- Ecto.UUID.cast(id),
          %Draft{} = draft <-
-           Repo.one(from d in Draft, where: d.id == ^uuid and d.owner_id == ^scope.user.id) do
+           Repo.one(from(d in Draft, where: d.id == ^uuid and d.owner_id == ^scope.user.id)) do
       {:ok, draft}
     else
       _ -> {:error, :unauthorized}
@@ -124,6 +125,7 @@ defmodule PauseAiCa.Newsletters.Drafts do
       draft = locked(scope, expected)
       if draft.archived_at, do: Repo.rollback(:archived)
       changeset = draft |> Draft.changeset(attrs)
+      changeset = PauseAiCa.Outreach.validate_changes(scope, draft, changeset)
 
       changeset =
         if Ecto.Changeset.get_field(changeset, :recipient_mode) == "list" do
@@ -159,9 +161,10 @@ defmodule PauseAiCa.Newsletters.Drafts do
   defp locked(scope, expected) do
     draft =
       Repo.one(
-        from d in Draft,
+        from(d in Draft,
           where: d.id == ^expected.id and d.owner_id == ^scope.user.id,
           lock: "FOR UPDATE"
+        )
       )
 
     if is_nil(draft), do: Repo.rollback(:unauthorized)
@@ -172,7 +175,7 @@ defmodule PauseAiCa.Newsletters.Drafts do
   defp authorized(scope, fun) do
     if Volunteers.superadmin?(scope) do
       Repo.transaction(fn ->
-        Repo.one(from u in User, where: u.id == ^scope.user.id, lock: "FOR UPDATE")
+        Repo.one(from(u in User, where: u.id == ^scope.user.id, lock: "FOR UPDATE"))
         if not Volunteers.superadmin?(scope), do: Repo.rollback(:unauthorized)
         fun.()
       end)

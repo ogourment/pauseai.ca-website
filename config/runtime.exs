@@ -354,3 +354,62 @@ config :pauseai_ca,
 if value = System.get_env("PAUSEAI_DONATION_FUNDING_ENABLED") do
   config :pauseai_ca, :donation_funding_enabled, value == "true"
 end
+
+# Authored outreach is explicitly activated independently in each deployment.
+# Root-domain incoming routing is preserved; these are dedicated Brevo recipients.
+outreach_enabled = System.get_env("PAUSEAI_OUTREACH_ENABLED") == "true"
+outreach_verified = System.get_env("PAUSEAI_OUTREACH_SENDERS_VERIFIED") == "true"
+outreach_owner = System.get_env("PAUSEAI_OUTREACH_OWNER_ID")
+
+config :pauseai_ca, :outreach_mailboxes, [
+  %{
+    id: "outreach_en",
+    name: "PauseAI Canada",
+    email: "hello@pauseai.ca",
+    locale: "en",
+    owner_id: outreach_owner,
+    enabled?: outreach_enabled,
+    verified?: outreach_verified,
+    receiving_addresses: [System.get_env("PAUSEAI_OUTREACH_RECEIVE_EN", "hello@reply.pauseai.ca")]
+  },
+  %{
+    id: "outreach_fr",
+    name: "PauseIA Canada",
+    email: "bonjour@pauseia.ca",
+    locale: "fr",
+    owner_id: outreach_owner,
+    enabled?: outreach_enabled,
+    verified?: outreach_verified,
+    receiving_addresses: [
+      System.get_env("PAUSEAI_OUTREACH_RECEIVE_FR", "bonjour@reponse.pauseia.ca")
+    ]
+  }
+]
+
+outreach_token =
+  case System.get_env("PAUSEAI_OUTREACH_WEBHOOK_TOKEN_FILE") do
+    nil -> System.get_env("PAUSEAI_OUTREACH_WEBHOOK_TOKEN")
+    path -> path |> File.read!() |> String.trim()
+  end
+
+config :pauseai_ca, :outreach_webhook_token, outreach_token
+
+config :pauseai_ca,
+       :outreach_inbound_enabled,
+       System.get_env("PAUSEAI_OUTREACH_INBOUND_ENABLED") == "true"
+
+config :pauseai_ca,
+       :outreach_worker_enabled,
+       outreach_enabled and System.get_env("PAUSEAI_OUTREACH_WORKER_ENABLED", "true") == "true"
+
+config :pauseai_ca,
+       :outreach_attachment_dir,
+       System.get_env("PAUSEAI_OUTREACH_ATTACHMENT_DIR") ||
+         Path.join([
+           System.user_home!(),
+           ".local",
+           "share",
+           "pauseai_ca",
+           to_string(mail_environment),
+           "outreach-attachments"
+         ])

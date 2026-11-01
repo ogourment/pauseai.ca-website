@@ -21,14 +21,14 @@ defmodule PauseAiCa.Newsletters.Batches do
     if Volunteers.superadmin?(scope) do
       limits = PauseAiCa.Newsletters.DeliveryLimits.current()
       cutoff = DateTime.add(DateTime.utc_now(), -3600)
-      recent = from d in Delivery, where: d.attempted_at > ^cutoff
+      recent = from(d in Delivery, where: d.attempted_at > ^cutoff)
       global = Repo.aggregate(recent, :count)
 
       personal =
         Repo.aggregate(from(d in recent, where: d.authorizing_admin_id == ^scope.user.id), :count)
 
       oldest =
-        Repo.one(from d in recent, order_by: d.attempted_at, limit: 1, select: d.attempted_at)
+        Repo.one(from(d in recent, order_by: d.attempted_at, limit: 1, select: d.attempted_at))
 
       if Volunteers.superadmin?(scope),
         do:
@@ -51,9 +51,10 @@ defmodule PauseAiCa.Newsletters.Batches do
     with {:ok, _} <- Drafts.get(scope, draft_id) do
       {:ok,
        Repo.all(
-         from b in Batch,
+         from(b in Batch,
            where: b.draft_id == ^draft_id and b.owner_id == ^scope.user.id,
            order_by: [desc: b.inserted_at, desc: b.id]
+         )
        )}
     end
   end
@@ -66,7 +67,7 @@ defmodule PauseAiCa.Newsletters.Batches do
       {:ok,
        %{
          batch: batch,
-         deliveries: Repo.all(from d in Delivery, where: d.batch_id == ^uuid, order_by: d.email)
+         deliveries: Repo.all(from(d in Delivery, where: d.batch_id == ^uuid, order_by: d.email))
        }}
     else
       _ -> {:error, :unauthorized}
@@ -156,7 +157,7 @@ defmodule PauseAiCa.Newsletters.Batches do
           _ -> Repo.rollback(:unauthorized)
         end
 
-      Repo.one!(from d in Draft, where: d.id == ^draft.id, lock: "FOR UPDATE")
+      Repo.one!(from(d in Draft, where: d.id == ^draft.id, lock: "FOR UPDATE"))
       if draft.revision != expected.revision or draft.archived_at, do: Repo.rollback(:stale)
 
       if String.trim(draft.subject) == "" or String.trim(draft.source) == "",
@@ -165,14 +166,15 @@ defmodule PauseAiCa.Newsletters.Batches do
       if not PauseAiCa.Mail.Render.complete_links?(draft.source),
         do: Repo.rollback(:incomplete_link)
 
-      if mode == "contacts" and reviewed? != true, do: Repo.rollback(:review_required)
+      if mode in ["contacts", "outreach"] and reviewed? != true,
+        do: Repo.rollback(:review_required)
 
       list =
         if mode == "list" do
           case PauseAiCa.Newsletters.Lists.get(scope, draft.mailing_list_id) do
             {:ok, %{archived_at: nil} = list} ->
               Repo.one!(
-                from l in PhoenixCRM.MailingList, where: l.id == ^list.id, lock: "FOR SHARE"
+                from(l in PhoenixCRM.MailingList, where: l.id == ^list.id, lock: "FOR SHARE")
               )
 
             _ ->
@@ -180,12 +182,31 @@ defmodule PauseAiCa.Newsletters.Batches do
           end
         end
 
-      candidates = if list, do: list_targets!(scope, list), else: targets!(scope, mode, keys)
-      targets = candidates |> Edition.decorate() |> Edition.select(draft.edition)
+      if draft.outreach_mailbox_ref && mode != "outreach", do: Repo.rollback(:audience_required)
+
+      if mode == "outreach" && is_nil(draft.outreach_mailbox_ref),
+        do: Repo.rollback(:audience_required)
+
+      candidates =
+        cond do
+          draft.outreach_mailbox_ref -> outreach_targets!(draft)
+          list -> list_targets!(scope, list)
+          true -> targets!(scope, mode, keys)
+        end
+
+      targets =
+        if draft.outreach_mailbox_ref,
+          do: candidates,
+          else: candidates |> Edition.decorate() |> Edition.select(draft.edition)
+
       if targets == [], do: Repo.rollback(:audience_required)
       if Enum.any?(targets, &(&1.status != :available)), do: Repo.rollback(:ineligible)
       now = DateTime.utc_now()
-      {sender_name, sender_email} = Application.fetch_env!(:pauseai_ca, :campaign_sender)
+
+      {sender_name, sender_email} =
+        if draft.outreach_mailbox_ref,
+          do: PauseAiCa.Outreach.Archive.sender(scope, draft),
+          else: Application.fetch_env!(:pauseai_ca, :campaign_sender)
 
       # Preserve the deployed fingerprint for manual/newsletter batches.
       identity =
@@ -194,6 +215,14 @@ defmodule PauseAiCa.Newsletters.Batches do
 
       identity = {:language_edition_v1, draft.edition, identity}
       identity = if list, do: {:mailing_list, list.id, list.revision, identity}, else: identity
+
+      identity =
+        if draft.outreach_mailbox_ref,
+          do:
+            {:authored_outreach_v1, draft.outreach_mailbox_ref, draft.outreach_email,
+             draft.conversation_id, draft.reply_message_id, identity},
+          else: identity
+
       preparation_key = :crypto.hash(:sha256, :erlang.term_to_binary(identity))
 
       case Repo.get_by(Batch, preparation_key: preparation_key) do
@@ -207,6 +236,10 @@ defmodule PauseAiCa.Newsletters.Batches do
               owner_id: scope.user.id,
               draft_revision: draft.revision,
               recipient_mode: mode,
+              outreach_mailbox_ref: draft.outreach_mailbox_ref,
+              outreach_email: draft.outreach_email,
+              conversation_id: draft.conversation_id,
+              reply_message_id: draft.reply_message_id,
               mailing_list_id: if(list, do: list.id),
               mailing_list_revision: if(list, do: list.revision),
               recipient_keys: Enum.map(targets, & &1.id),
@@ -223,7 +256,7 @@ defmodule PauseAiCa.Newsletters.Batches do
 
           for target <- targets do
             token_result =
-              if mode == "contacts",
+              if mode in ["contacts", "outreach"],
                 do: Newsletters.outreach_withdrawal_token(scope, target.email),
                 else: Newsletters.issue_withdrawal_token(scope, target.id)
 
@@ -256,8 +289,9 @@ defmodule PauseAiCa.Newsletters.Batches do
       if batch.state not in ["review", "paused"], do: Repo.rollback(:not_reviewable)
 
       if Repo.exists?(
-           from d in Delivery,
+           from(d in Delivery,
              where: d.batch_id == ^batch.id and d.state in ["reserved", "unknown"]
+           )
          ),
          do: Repo.rollback(:reconciliation_required)
 
@@ -290,9 +324,10 @@ defmodule PauseAiCa.Newsletters.Batches do
   def dispatch_pending do
     batches =
       Repo.all(
-        from b in Batch,
+        from(b in Batch,
           where: b.state in ["approved", "sending"],
           order_by: [asc: b.approved_at, asc: b.id]
+        )
       )
 
     for batch <- batches do
@@ -360,7 +395,7 @@ defmodule PauseAiCa.Newsletters.Batches do
   defp reserve_pending(batch) do
     unresolved =
       Repo.all(
-        from d in Delivery, where: d.batch_id == ^batch.id and d.state in ["reserved", "unknown"]
+        from(d in Delivery, where: d.batch_id == ^batch.id and d.state in ["reserved", "unknown"])
       )
 
     cutoff = DateTime.add(DateTime.utc_now(), -300)
@@ -373,14 +408,16 @@ defmodule PauseAiCa.Newsletters.Batches do
 
     cond do
       Enum.any?(unresolved, &(&1.state == "unknown")) or stale_reserved != [] ->
-        for d <- stale_reserved,
-            do:
-              Repo.update!(
-                Ecto.Changeset.change(d,
-                  state: "unknown",
-                  error: "Interrupted submission; provider reconciliation required."
-                )
-              )
+        for d <- stale_reserved do
+          PauseAiCa.Outreach.Archive.outcome(batch, d, "unknown", nil, "Interrupted submission")
+
+          Repo.update!(
+            Ecto.Changeset.change(d,
+              state: "unknown",
+              error: "Interrupted submission; provider reconciliation required."
+            )
+          )
+        end
 
         Repo.update!(Ecto.Changeset.change(batch, state: "paused"))
         :reconciliation_required
@@ -396,19 +433,21 @@ defmodule PauseAiCa.Newsletters.Batches do
   defp reserve_available(batch) do
     pending =
       Repo.one(
-        from d in Delivery,
+        from(d in Delivery,
           where: d.batch_id == ^batch.id and d.state == "pending",
           order_by: d.email,
           limit: 1,
           lock: "FOR UPDATE"
+        )
       )
 
     if is_nil(pending) do
       # Unknown/reserved submissions need reconciliation, never a blind resend.
       unresolved? =
         Repo.exists?(
-          from d in Delivery,
+          from(d in Delivery,
             where: d.batch_id == ^batch.id and d.state in ["reserved", "unknown"]
+          )
         )
 
       Repo.update!(
@@ -418,7 +457,7 @@ defmodule PauseAiCa.Newsletters.Batches do
       if unresolved?, do: :reconciliation_required, else: :completed
     else
       cutoff = DateTime.add(DateTime.utc_now(), -3600)
-      attempts = from d in Delivery, where: d.attempted_at > ^cutoff
+      attempts = from(d in Delivery, where: d.attempted_at > ^cutoff)
       total = Repo.aggregate(attempts, :count)
 
       actor =
@@ -434,14 +473,21 @@ defmodule PauseAiCa.Newsletters.Batches do
       else
         Repo.update!(Ecto.Changeset.change(batch, state: "sending"))
 
-        {:send,
-         Repo.update!(
-           Ecto.Changeset.change(pending,
-             state: "reserved",
-             authorizing_admin_id: batch.approver_id,
-             attempted_at: DateTime.utc_now()
-           )
-         )}
+        delivery =
+          Repo.update!(
+            Ecto.Changeset.change(pending,
+              state: "reserved",
+              authorizing_admin_id: batch.approver_id,
+              attempted_at: DateTime.utc_now()
+            )
+          )
+
+        if batch.outreach_mailbox_ref do
+          message = delivery_message!(batch, delivery)
+          PauseAiCa.Outreach.Archive.reserve(batch, delivery, message)
+        end
+
+        {:send, delivery}
       end
     end
   end
@@ -454,35 +500,12 @@ defmodule PauseAiCa.Newsletters.Batches do
         batch = locked!(scope, delivery.batch_id)
         if batch.state != "sending" or not current?(scope, batch), do: Repo.rollback(:stale)
 
-        case Phoenix.Token.decrypt(
-               PauseAiCaWeb.Endpoint,
-               "newsletter delivery footer",
-               delivery.withdrawal_token,
-               max_age: :infinity
-             ) do
-          {:ok, raw} ->
-            link =
-              PauseAiCaWeb.Site.url(
-                "en",
-                "/newsletters/withdraw?" <>
-                  URI.encode_query(%{
-                    "token" => raw,
-                    "locale" => Edition.locale(batch.edition) || "en"
-                  })
-              )
+        message = delivery_message!(batch, delivery)
 
-            message =
-              message(batch, delivery.email, link)
-              |> Swoosh.Email.header("X-PauseAI-Delivery-Id", delivery.id)
-
-            Mailer.deliver(message,
-              admin_actor_id: batch.approver_id,
-              newsletter_delivery_id: delivery.id
-            )
-
-          _ ->
-            Repo.rollback(:invalid_footer)
-        end
+        Mailer.deliver(message,
+          admin_actor_id: batch.approver_id,
+          newsletter_delivery_id: delivery.id
+        )
       end)
 
     {state, provider, error} =
@@ -504,16 +527,56 @@ defmodule PauseAiCa.Newsletters.Batches do
           {"unknown", nil, "Provider acceptance is uncertain; reconcile before retrying."}
       end
 
-    Repo.update!(
-      Ecto.Changeset.change(delivery,
-        state: state,
-        accepted_at: if(state == "accepted", do: DateTime.utc_now()),
-        provider_id: provider,
-        error: error
-      )
-    )
+    case Repo.transaction(fn ->
+           batch = Repo.get!(Batch, delivery.batch_id)
+           PauseAiCa.Outreach.Archive.outcome(batch, delivery, state, provider, error)
 
-    state
+           Repo.update!(
+             Ecto.Changeset.change(delivery,
+               state: state,
+               accepted_at: if(state == "accepted", do: DateTime.utc_now()),
+               provider_id: provider,
+               error: error
+             )
+           )
+         end) do
+      {:ok, _} -> state
+      {:error, _} -> "unknown"
+    end
+  end
+
+  defp delivery_message!(batch, delivery) do
+    case Phoenix.Token.decrypt(
+           PauseAiCaWeb.Endpoint,
+           "newsletter delivery footer",
+           delivery.withdrawal_token,
+           max_age: :infinity
+         ) do
+      {:ok, raw} ->
+        link =
+          PauseAiCaWeb.Site.url(
+            "en",
+            "/newsletters/withdraw?" <>
+              URI.encode_query(%{
+                "token" => raw,
+                "locale" => Edition.locale(batch.edition) || "en"
+              })
+          )
+
+        message(batch, delivery.email, link)
+        |> Swoosh.Email.header("X-PauseAI-Delivery-Id", delivery.id)
+        |> PauseAiCa.Outreach.Archive.headers(batch, delivery)
+
+      _ ->
+        Repo.rollback(:invalid_footer)
+    end
+  end
+
+  defp outreach_targets!(draft) do
+    case PauseAiCa.Outreach.Archive.targets(draft) do
+      {:ok, rows} -> rows
+      {:error, reason} -> Repo.rollback(reason)
+    end
   end
 
   defp message(batch, email, link) do
@@ -543,9 +606,14 @@ defmodule PauseAiCa.Newsletters.Batches do
     case Drafts.get(scope, batch.draft_id) do
       {:ok, draft} when draft.revision == batch.draft_revision and is_nil(draft.archived_at) ->
         sender_current? =
-          {batch.sender_name, batch.sender_email} ==
-            Application.fetch_env!(:pauseai_ca, :campaign_sender) and
-            batch.delivery_environment == to_string(MailSafety.environment())
+          if batch.outreach_mailbox_ref do
+            PauseAiCa.Outreach.Archive.current?(scope, draft, batch) and
+              batch.delivery_environment == to_string(MailSafety.environment())
+          else
+            {batch.sender_name, batch.sender_email} ==
+              Application.fetch_env!(:pauseai_ca, :campaign_sender) and
+              batch.delivery_environment == to_string(MailSafety.environment())
+          end
 
         mode = if batch.recipient_mode == "list", do: "newsletter", else: batch.recipient_mode
 
@@ -556,7 +624,7 @@ defmodule PauseAiCa.Newsletters.Batches do
                 # Serialize rule edits with the exact approval/send check.
                 list =
                   Repo.one!(
-                    from l in PhoenixCRM.MailingList, where: l.id == ^list.id, lock: "FOR SHARE"
+                    from(l in PhoenixCRM.MailingList, where: l.id == ^list.id, lock: "FOR SHARE")
                   )
 
                 if is_nil(list.archived_at) and list.revision == batch.mailing_list_revision do
@@ -579,9 +647,17 @@ defmodule PauseAiCa.Newsletters.Batches do
             true
           end
 
-        case targets(scope, mode, batch.recipient_keys) do
+        resolved =
+          if batch.outreach_mailbox_ref,
+            do: PauseAiCa.Outreach.Archive.targets(batch),
+            else: targets(scope, mode, batch.recipient_keys)
+
+        case resolved do
           {:ok, raw_rows} ->
-            rows = raw_rows |> Edition.decorate() |> Edition.select(batch.edition)
+            rows =
+              if batch.outreach_mailbox_ref,
+                do: raw_rows,
+                else: raw_rows |> Edition.decorate() |> Edition.select(batch.edition)
 
             list_current? and sender_current? and draft.subject == batch.subject and
               draft.source == batch.source and draft.edition == batch.edition and
@@ -638,15 +714,18 @@ defmodule PauseAiCa.Newsletters.Batches do
         if mode == "contacts" do
           people =
             Repo.all(
-              from p in PhoenixCRM.Person,
+              from(p in PhoenixCRM.Person,
                 where: p.id in ^keys and is_nil(p.canonical_id) and is_nil(p.archived_at)
+              )
             )
 
           owners =
-            Repo.all(from p in PhoenixCRM.Person, where: p.id in ^keys or p.canonical_id in ^keys)
+            Repo.all(
+              from(p in PhoenixCRM.Person, where: p.id in ^keys or p.canonical_id in ^keys)
+            )
 
           owner_ids = Enum.map(owners, & &1.id)
-          addresses = Repo.all(from a in PhoenixCRM.Address, where: a.person_id in ^owner_ids)
+          addresses = Repo.all(from(a in PhoenixCRM.Address, where: a.person_id in ^owner_ids))
 
           Enum.map(people, fn person ->
             ids = for p <- owners, p.id == person.id or p.canonical_id == person.id, do: p.id
@@ -657,7 +736,7 @@ defmodule PauseAiCa.Newsletters.Batches do
             })
           end)
         else
-          Repo.all(from s in Subscription, where: s.id in ^keys)
+          Repo.all(from(s in Subscription, where: s.id in ^keys))
           |> Enum.map(&%{id: &1.id, name: "", email: &1.email, status: :available})
         end
 
@@ -714,9 +793,10 @@ defmodule PauseAiCa.Newsletters.Batches do
     with {:ok, uuid} <- Ecto.UUID.cast(id),
          %Batch{} = batch <-
            Repo.one(
-             from b in Batch,
+             from(b in Batch,
                where: b.id == ^uuid and b.owner_id == ^scope.user.id,
                lock: "FOR UPDATE"
+             )
            ) do
       batch
     else
@@ -727,7 +807,7 @@ defmodule PauseAiCa.Newsletters.Batches do
   defp authorized(scope, fun) do
     if Volunteers.superadmin?(scope) do
       Repo.transaction(fn ->
-        Repo.one!(from u in Accounts.User, where: u.id == ^scope.user.id, lock: "FOR UPDATE")
+        Repo.one!(from(u in Accounts.User, where: u.id == ^scope.user.id, lock: "FOR UPDATE"))
         if not Volunteers.superadmin?(scope), do: Repo.rollback(:unauthorized)
         fun.()
       end)

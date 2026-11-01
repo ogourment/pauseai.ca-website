@@ -46,6 +46,9 @@ defmodule PauseAiCaWeb.Endpoint do
   # Verify Slack against exact bytes before JSON parsing or parameter logging.
   plug PauseAiCaWeb.SlackEventsPlug
 
+  # Authenticate and durably store outreach before parsing/logging provider bodies.
+  plug PauseAiCaWeb.OutreachInboundPlug
+
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
     pass: ["*/*"],

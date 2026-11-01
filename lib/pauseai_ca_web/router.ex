@@ -141,6 +141,10 @@ defmodule PauseAiCaWeb.Router do
 
     get "/volunteer-profile", VolunteerProfileRedirectController, :index
 
+    get "/manage/mail/attachments/:receipt_id/:item_index/:attachment_index",
+        OutreachAttachmentController,
+        :show
+
     live_session :require_authenticated_user,
       on_mount: [{PauseAiCaWeb.UserAuth, :require_authenticated}] do
       live "/groups/:id/join", IncubatorsLive, :join
@@ -165,6 +169,8 @@ defmodule PauseAiCaWeb.Router do
       live "/manage/questions", QuestionDraftsLive, :index
       live "/manage/questions/:id", QuestionDraftsLive, :show
       live "/manage/mail", MailDraftsLive, :index
+      live "/manage/mail/inbox", OutreachInboxLive, :index
+      live "/manage/mail/conversations/:id", OutreachInboxLive, :show
       live "/manage/mail/results", NewsletterResultsLive, :index
       live "/manage/mail/results/:id", NewsletterResultsLive, :show
       live "/manage/mail/new", MailDraftsLive, :new

@@ -333,6 +333,22 @@ digraph Schema {
   ];
 
 
+  "public.crm_conversations" [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.crm_conversations</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">mailbox_ref</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">subject</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">participants</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">_varchar NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">actor_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
   "public.crm_intake_receipts" [
     label=<
       <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
@@ -405,6 +421,36 @@ digraph Schema {
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">resolutions</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">jsonb NOT NULL</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">undone_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
+  "public.crm_messages" [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.crm_messages</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">mailbox_ref</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">conversation_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">direction</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">idempotency_key</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">rfc_message_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">in_reply_to</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">references</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">_text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">provider_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">delivery_ref</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">actor_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">envelope</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">body_text</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">body_html</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">source</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">attachments</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">_jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">occurred_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">outcome</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">outcome_details</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
       </TABLE>
     >
   ];
@@ -714,6 +760,10 @@ digraph Schema {
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">mailing_list_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">mailing_list_revision</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">integer</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">edition</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">outreach_mailbox_ref</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">outreach_email</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">conversation_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">reply_message_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid</FONT></TD></TR>
       </TABLE>
     >
   ];
@@ -788,6 +838,10 @@ digraph Schema {
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">recipient_keys</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">_text NOT NULL</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">mailing_list_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">edition</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">outreach_mailbox_ref</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">outreach_email</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">conversation_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">reply_message_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid</FONT></TD></TR>
       </TABLE>
     >
   ];
@@ -947,6 +1001,47 @@ digraph Schema {
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">revision</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">integer NOT NULL</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp without time zone NOT NULL</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp without time zone NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
+  "public.outreach_inbound_receipts" [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.outreach_inbound_receipts</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">payload</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">payload_digest</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">bytea NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">state</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">quarantined</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">_jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">attempts</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">integer NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">next_attempt_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">processed_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">files_pending</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">boolean NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">error</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
+  "public.outreach_reply_notifications" [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.outreach_reply_notifications</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">message_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">conversation_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">mailbox_ref</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">recipient_actor_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">state</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">attempted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">accepted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">error</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
       </TABLE>
     >
   ];
@@ -1312,6 +1407,8 @@ digraph Schema {
   "public.crm_intake_receipts" -> "public.contact_imports" [label="import_id -> id"];
   "public.crm_mailing_list_events" -> "public.crm_mailing_lists" [label="list_id -> id"];
   "public.crm_merges" -> "public.crm_people" [label="person_id -> id"];
+  "public.crm_messages" -> "public.crm_conversations" [label="conversation_id -> id"];
+  "public.crm_messages" -> "public.crm_conversations" [label="mailbox_ref -> mailbox_ref"];
   "public.crm_people" -> "public.crm_people" [label="canonical_id -> id"];
   "public.crm_people" -> "public.crm_addresses" [label="preferred_address_id -> id"];
   "public.crm_sources" -> "public.crm_addresses" [label="address_id -> id"];
@@ -1332,16 +1429,20 @@ digraph Schema {
   "public.mail_drafts" -> "public.mail_batches" [label="batch_id -> id"];
   "public.mail_drafts" -> "public.users" [label="user_id -> id"];
   "public.newsletter_batches" -> "public.users" [label="approver_id -> id"];
+  "public.newsletter_batches" -> "public.crm_conversations" [label="conversation_id -> id"];
   "public.newsletter_batches" -> "public.newsletter_drafts" [label="draft_id -> id"];
   "public.newsletter_batches" -> "public.crm_mailing_lists" [label="mailing_list_id -> id"];
   "public.newsletter_batches" -> "public.users" [label="owner_id -> id"];
+  "public.newsletter_batches" -> "public.crm_messages" [label="reply_message_id -> id"];
   "public.newsletter_consent_events" -> "public.users" [label="actor_id -> id"];
   "public.newsletter_consent_events" -> "public.newsletter_subscriptions" [label="subscription_id -> id"];
   "public.newsletter_deliveries" -> "public.users" [label="authorizing_admin_id -> id"];
   "public.newsletter_deliveries" -> "public.newsletter_batches" [label="batch_id -> id"];
   "public.newsletter_delivery_limits" -> "public.users" [label="actor_id -> id"];
+  "public.newsletter_drafts" -> "public.crm_conversations" [label="conversation_id -> id"];
   "public.newsletter_drafts" -> "public.crm_mailing_lists" [label="mailing_list_id -> id"];
   "public.newsletter_drafts" -> "public.users" [label="owner_id -> id"];
+  "public.newsletter_drafts" -> "public.crm_messages" [label="reply_message_id -> id"];
   "public.newsletter_language_preferences" -> "public.users" [label="actor_id -> id"];
   "public.newsletter_provider_events" -> "public.newsletter_deliveries" [label="delivery_id -> id"];
   "public.newsletter_result_snapshots" -> "public.newsletter_batches" [label="batch_id -> id"];
@@ -1358,6 +1459,9 @@ digraph Schema {
   "public.organizer_tasks" -> "public.users" [label="backup_id -> id"];
   "public.organizer_tasks" -> "public.volunteer_groups" [label="group_id -> id"];
   "public.organizer_tasks" -> "public.users" [label="requester_id -> id"];
+  "public.outreach_reply_notifications" -> "public.crm_conversations" [label="conversation_id -> id"];
+  "public.outreach_reply_notifications" -> "public.crm_messages" [label="message_id -> id"];
+  "public.outreach_reply_notifications" -> "public.users" [label="recipient_actor_id -> id"];
   "public.participation_requests" -> "public.users" [label="followup_owner_id -> id"];
   "public.participation_requests" -> "public.users" [label="user_id -> id"];
   "public.quiz_question_drafts" -> "public.users" [label="updated_by -> id"];

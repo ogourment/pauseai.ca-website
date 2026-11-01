@@ -98,3 +98,14 @@ config :pauseai_ca, :campaign_rehearsal, true
 config :pauseai_ca, :campaign_min_seconds, 0
 
 config :pauseai_ca, :volunteer_dispatcher, false
+
+# Deterministic synthetic outreach tests never start provider workers.
+config :pauseai_ca, :outreach_worker_enabled, false
+config :pauseai_ca, :outreach_inbound_enabled, false
+
+config :pauseai_ca,
+       :outreach_attachment_dir,
+       Path.join(
+         System.tmp_dir!(),
+         "pauseai-outreach-test#{System.get_env("MIX_TEST_PARTITION")}"
+       )
