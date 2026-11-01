@@ -31,6 +31,12 @@ Superadmins can review donation pledges and site activity. Browser-visit totals
 use Toronto calendar days; signed-in superadmins and explicitly excluded
 browsers do not count. These are browser-visit measurements, not a count of people.
 
+## HTTP security baseline
+
+The website pins Bandit 1.14.1 with its required HPAX 1.1.0 and Thousand Island
+1.6.0 dependencies, retaining Decimal 3.1.2 and plug_crypto 2.2.1. Feature releases
+carry this tested security baseline through the normal CI and staging checks.
+
 ## Stack
 
 - Elixir 1.20.2 / Erlang OTP 29
