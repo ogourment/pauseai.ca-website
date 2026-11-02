@@ -45,6 +45,20 @@ digraph mail_drafts {
     </TABLE>
   >];
 
+  "outreach_mailbox_grants" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.outreach_mailbox_grants</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">mailbox_ref</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">user_id</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">granted_by_id</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">revoked_by_id</TD><TD ALIGN="LEFT">uuid NULL</TD></TR><TR><TD ALIGN="LEFT">revision</TD><TD ALIGN="LEFT">integer NOT NULL</TD></TR><TR><TD ALIGN="LEFT">granted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">revoked_at</TD><TD ALIGN="LEFT">timestamp without time zone NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
+  "outreach_mailbox_grant_events" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.outreach_mailbox_grant_events</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">grant_id</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">actor_id</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">action</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">revision</TD><TD ALIGN="LEFT">integer NOT NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
   }
 
   subgraph cluster_external {
@@ -79,6 +93,11 @@ digraph mail_drafts {
   "mail_batches" -> "users" [label="owner_id -> id", color="#d97706", style="dashed", penwidth=1.5];
   "mail_drafts" -> "mail_batches" [label="batch_id -> id", color="#64748b"];
   "mail_drafts" -> "users" [label="user_id -> id", color="#d97706", style="dashed", penwidth=1.5];
+  "outreach_mailbox_grant_events" -> "users" [label="actor_id -> id", color="#d97706", style="dashed", penwidth=1.5];
+  "outreach_mailbox_grant_events" -> "outreach_mailbox_grants" [label="grant_id -> id", color="#64748b"];
+  "outreach_mailbox_grants" -> "users" [label="granted_by_id -> id", color="#d97706", style="dashed", penwidth=1.5];
+  "outreach_mailbox_grants" -> "users" [label="revoked_by_id -> id", color="#d97706", style="dashed", penwidth=1.5];
+  "outreach_mailbox_grants" -> "users" [label="user_id -> id", color="#d97706", style="dashed", penwidth=1.5];
   "outreach_reply_notifications" -> "crm_conversations" [label="conversation_id -> id", color="#d97706", style="dashed", penwidth=1.5];
   "outreach_reply_notifications" -> "crm_messages" [label="message_id -> id", color="#d97706", style="dashed", penwidth=1.5];
   "outreach_reply_notifications" -> "users" [label="recipient_actor_id -> id", color="#d97706", style="dashed", penwidth=1.5];

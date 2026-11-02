@@ -37,7 +37,7 @@
   %{
     id: "mail_drafts",
     title: "Email drafts",
-    tables: ~w(mail_batches mail_drafts mail_delivery_receipts outreach_inbound_receipts outreach_reply_notifications)
+    tables: ~w(mail_batches mail_drafts mail_delivery_receipts outreach_inbound_receipts outreach_reply_notifications outreach_mailbox_grants outreach_mailbox_grant_events)
   },
   %{
     id: "newsletter",
