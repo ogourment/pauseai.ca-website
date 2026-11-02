@@ -149,7 +149,7 @@ if System.get_env("ATDD") == "true" do
           |> capture(
             id,
             "Inbox → conversation → Reply",
-            "The same shared editor retains Manage → Emails → Inbox roots for the actual manager"
+            "The same shared editor retains the actual Inbox path for the manager"
           )
 
         b =
