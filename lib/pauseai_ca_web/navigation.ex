@@ -73,7 +73,7 @@ defmodule PauseAiCaWeb.Navigation do
       item("pauseai.tasks", gettext_noop("Tasks"), :manage, :tasks, :tasks, 15),
       item("pauseai.welcome", gettext_noop("Welcome calls"), :manage, :welcome, :welcome, 17),
       item("pauseai.accounts", gettext_noop("Accounts"), :manage, :accounts, :organizer, 10),
-      item("pauseai.mail", gettext_noop("Emails"), :manage, :mail, :organizer, 20),
+      item("pauseai.mail", gettext_noop("Emails"), :manage, :mail, :mail, 20),
       item(
         "pauseai.questions",
         gettext_noop("Knowledge content"),
@@ -117,52 +117,10 @@ defmodule PauseAiCaWeb.Navigation do
       context_requirements: []
     }
 
-  def breadcrumb_context(scope, locale) do
-    locale = locale || Gettext.get_locale(PauseAiCaWeb.Gettext)
-    items = assemble(scope, locale)
-    account = Enum.find(items, &(&1.id == "pauseai.my-dashboard"))
-    admin = Enum.find(items, &(&1.id == "pauseai.dashboard"))
-    manager = Enum.find(items, &(&1.id == "pauseai.accounts"))
+  def breadcrumb_context(_scope, _locale), do: %{roots: [], sections: []}
 
-    roots =
-      if account, do: [%{href: account.href, label: gettext("My account")}], else: []
-
-    roots =
-      roots ++
-        cond do
-          admin -> [%{href: admin.href, label: gettext("Admin")}]
-          manager -> [%{href: manager.href, label: gettext("Manage")}]
-          true -> []
-        end
-
-    sections =
-      for item <- items, item.area in [:admin, :manage] do
-        %{href: item.href, path: URI.parse(item.href).path, label: item.label}
-      end
-
-    %{roots: roots, sections: sections}
-  end
-
-  def mail_breadcrumb_context(scope, locale, inbox? \\ false) do
-    locale = locale || Gettext.get_locale(PauseAiCaWeb.Gettext)
-
-    if Volunteers.allowed?(scope) do
-      roots = [
-        %{href: with_locale("/manage/accounts", locale), label: gettext("Manage")},
-        %{href: with_locale("/manage/mail", locale), label: gettext("Emails")}
-      ]
-
-      roots =
-        if inbox?,
-          do:
-            roots ++ [%{href: with_locale("/manage/mail/inbox", locale), label: gettext("Inbox")}],
-          else: roots
-
-      %{roots: roots, sections: []}
-    else
-      %{roots: [], sections: []}
-    end
-  end
+  def mail_breadcrumb_context(_scope, _locale, _inbox? \\ false),
+    do: %{roots: [], sections: []}
 
   def assemble(scope, locale) do
     # Reload once per assembly: a stale session role cannot keep a menu grant.
@@ -178,7 +136,8 @@ defmodule PauseAiCaWeb.Navigation do
       actor: fresh,
       locale: locale,
       admin: Volunteers.superadmin?(fresh),
-      organizer: Volunteers.allowed?(fresh)
+      organizer: Volunteers.allowed?(fresh),
+      mail: PauseAiCa.Mail.capabilities(fresh)
     }
 
     {:ok, items} = PhoenixAppShell.Navigation.assemble([__MODULE__], context, __MODULE__)
@@ -211,6 +170,8 @@ defmodule PauseAiCaWeb.Navigation do
         actor: %Scope{user: %User{confirmed_at: at}}
       }),
       do: not is_nil(at) and Application.get_env(:pauseai_ca, :welcome_calls_enabled, false)
+
+  def authorize(%{required_capability: :mail}, context), do: context.mail.any?
 
   def authorize(%{required_capability: :organizer}, context), do: context.organizer
 

@@ -48,7 +48,7 @@ window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
 
 // connect if there are any LiveViews on the page
 liveSocket.connect()
-installJourneyBreadcrumbs()
+installJourneyBreadcrumbs({startSelector: "[data-journey-start] a[href]"})
 
 // Controllers have no LiveView to mount shared page hooks. Reuse their exact
 // implementations rather than duplicating consent and outbound tracking.

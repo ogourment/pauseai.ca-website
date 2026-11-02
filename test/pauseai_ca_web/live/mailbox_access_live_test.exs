@@ -149,7 +149,7 @@ defmodule PauseAiCaWeb.MailboxAccessLiveTest do
     context = element(editor, "#journey-breadcrumbs") |> render()
     refute context =~ "Mon compte"
     refute context =~ "Administration"
-    assert context =~ "Gestion"
+    refute context =~ "Gestion"
 
     editor
     |> form("#newsletter-draft-form", draft: %{source: "Synthetic delegated content"})

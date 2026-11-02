@@ -82,7 +82,7 @@ if System.get_env("ATDD") == "true" do
           |> assert_path("/")
           |> visit("/#{locale}")
           |> assert_has("#account-menu summary")
-          |> PhoenixTest.Playwright.click("#account-menu summary")
+          |> PhoenixTest.Playwright.click("#manage-menu summary")
 
         b =
           b
@@ -92,7 +92,7 @@ if System.get_env("ATDD") == "true" do
             "Click Emails in the Management section: data-navigation-item=pauseai.mail"
           )
           |> click_link(
-            "#account-management-links [data-navigation-item='pauseai.mail']",
+            "#manage-menu [data-navigation-item='pauseai.mail']",
             tr(locale, "Emails"),
             exact: true
           )

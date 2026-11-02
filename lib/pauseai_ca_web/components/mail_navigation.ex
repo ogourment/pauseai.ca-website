@@ -5,6 +5,9 @@ defmodule PauseAiCaWeb.MailNavigation do
   attr :current_scope, :map, default: nil
 
   def tabs(assigns) do
+    assigns =
+      assign(assigns, :mail_capabilities, PauseAiCa.Mail.capabilities(assigns.current_scope))
+
     ~H"""
     <nav
       aria-label={gettext("Emails")}
@@ -19,7 +22,10 @@ defmodule PauseAiCaWeb.MailNavigation do
             {"lists", gettext("Lists"), "/manage/mail/newsletters"}
           ]
         }
-        :if={key not in ["results", "lists"] or PauseAiCa.Volunteers.superadmin?(@current_scope)}
+        :if={
+          (key != "conversations" or @mail_capabilities.outreach?) and
+            (key not in ["results", "lists"] or PauseAiCa.Volunteers.superadmin?(@current_scope))
+        }
         data-navigation-item={"mail." <> key}
         navigate={path <> "?locale=" <> @locale}
         aria-current={if @active == key, do: "page"}

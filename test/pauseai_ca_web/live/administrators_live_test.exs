@@ -20,7 +20,7 @@ defmodule PauseAiCaWeb.AdministratorsLiveTest do
   test "STAGE-ACCESS-01 dedicated roster, simple whitelist, reload and no role or email side effects",
        %{conn: conn, admin: admin, reviewer: reviewer, manager: manager} do
     {:ok, view, _} = live(conn, "/manage/administrators?locale=en")
-    assert has_element?(view, "#management-tabs a[aria-current=page]", "Administrators")
+    assert has_element?(view, "#section-navigation a[aria-current=page]", "Administrators")
     assert has_element?(view, "#superadmin-list", admin.email)
     assert has_element?(view, "#group-manager-list", manager.email)
     refute has_element?(view, "#announcement-banners")

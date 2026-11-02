@@ -76,14 +76,14 @@ if System.get_env("ATDD") == "true" do
         c.conn
         |> login(manager)
         |> visit("/#{locale}")
-        |> PhoenixTest.Playwright.click("#account-menu summary")
+        |> PhoenixTest.Playwright.click("#manage-menu summary")
         |> capture(
           locale,
           "Manager account menu: preceding screen",
           "Click Local groups in the Management section of the account menu"
         )
         |> click_link(
-          "#account-management-links [data-navigation-item='pauseai.groups']",
+          "#manage-menu [data-navigation-item='pauseai.groups']",
           tr(locale, "Local groups"),
           exact: true
         )

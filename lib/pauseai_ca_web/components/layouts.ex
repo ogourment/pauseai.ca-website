@@ -46,6 +46,7 @@ defmodule PauseAiCaWeb.Layouts do
   slot :management_navigation
   attr :breadcrumb_context, :map, default: %{}
   attr :breadcrumb_scope, :string, default: nil
+  attr :active_tab, :string, default: nil
   slot :inner_block, required: true
 
   def app(assigns) do
@@ -61,7 +62,17 @@ defmodule PauseAiCaWeb.Layouts do
 
     ~H"""
     <header class="sticky top-0 z-40 border-b border-stone-200/80 bg-[#f8f5ed]/95 backdrop-blur">
+      <.signed_in_navigation
+        :if={@current_scope}
+        current_scope={@current_scope}
+        locale={@locale}
+        translated_path={@translated_path}
+        countdown={@campaign_countdown}
+        active_tab={@active_tab}
+      />
       <nav
+        :if={!@current_scope}
+        data-journey-start
         class="mx-auto flex max-w-6xl items-center gap-1 px-2 py-4 sm:gap-2 sm:px-5 lg:gap-5"
         aria-label="Main navigation"
       >
@@ -148,46 +159,7 @@ defmodule PauseAiCaWeb.Layouts do
               navigate={if(@locale == "fr", do: ~p"/fr/signal-d-alarme", else: ~p"/en/warning-shot")}
               class="block px-4 py-3 font-semibold hover:bg-brand-wash lg:hidden"
             >{gettext("Warning shot")}</.link>
-            <.link
-              :if={Application.get_env(:pauseai_ca, :incubators_enabled, false)}
-              id="act-local-groups"
-              href={if(@locale == "fr", do: "/fr/groupes", else: "/en/groups")}
-              class="block px-4 py-3 font-semibold hover:bg-brand-wash"
-            >{gettext("Local groups")}</.link>
-            <.link
-              id="act-contact-mp"
-              navigate={
-                if(@locale == "fr", do: ~p"/fr/contacter-votre-depute", else: ~p"/en/contact-your-mp")
-              }
-              class="block px-4 py-3 font-semibold hover:bg-brand-wash"
-            >{gettext("Email your MP")}</.link>
-            <.link
-              id="act-solo"
-              navigate={
-                if(@locale == "fr",
-                  do: ~p"/fr/participer?intent=account",
-                  else: ~p"/en/participate?intent=account"
-                )
-              }
-              class="block px-4 py-3 font-semibold hover:bg-brand-wash"
-            >{gettext("Record my actions")}</.link>
-            <.link
-              :if={!Application.get_env(:pauseai_ca, :incubators_enabled, false)}
-              id="act-local"
-              navigate={
-                if(@locale == "fr",
-                  do: ~p"/fr/participer?intent=waitlist",
-                  else: ~p"/en/participate?intent=waitlist"
-                )
-              }
-              class="block px-4 py-3 font-semibold hover:bg-brand-wash"
-            >{gettext("Join or help a local group")}</.link>
-            <a
-              href="https://luma.com/calendar/cal-tsYv79s4aTQC16Q"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="block px-4 py-3 font-semibold hover:bg-brand-wash"
-            >{gettext("Events")}</a>
+            <.participation_links locale={@locale} prefix="act-" />
           </div>
         </details>
 
@@ -196,61 +168,22 @@ defmodule PauseAiCaWeb.Layouts do
           href={if(@locale == "fr", do: ~p"/fr/a-propos", else: ~p"/en/about")}
         >{gettext("About")}</.link>
 
-        <%= if @current_scope do %>
-          <details id="account-menu" class="act-menu relative">
-            <summary class="max-w-20 cursor-pointer list-none truncate text-base font-medium text-stone-700 hover:text-stone-950 xl:max-w-32">
-              {@current_scope.user.email}
-              <span aria-hidden="true" class="text-xs">▾</span>
-            </summary>
-            <div class="absolute right-0 z-50 mt-2 max-h-[75vh] w-64 overflow-y-auto rounded-xl border border-stone-200 bg-white p-2 shadow-lg">
-              <PhoenixAppShell.Components.navigation
-                id={
-                  if PauseAiCa.Volunteers.allowed?(@current_scope),
-                    do: "account-management-links",
-                    else: "account-navigation"
-                }
-                items={PauseAiCaWeb.Navigation.menu_items(@current_scope, @locale)}
-                area_labels={PauseAiCaWeb.Navigation.area_labels()}
-                label={gettext("My account")}
-                compact={true}
-              />
-              <.dev_mailbox_link class="block rounded-lg px-3 py-2.5 text-sm font-semibold underline" />
-              <div role="separator" class="my-2 border-t border-stone-200"></div>
-              <a
-                class="block rounded-lg px-3 py-2.5 font-semibold text-stone-900 hover:bg-brand-wash"
-                href={@translated_path || if(@locale == "fr", do: ~p"/en", else: ~p"/fr")}
-                lang={if @locale == "fr", do: "en", else: "fr"}
-                hreflang={if @locale == "fr", do: "en", else: "fr"}
-              >
-                {gettext("Français")}
-              </a>
-              <.link
-                class="block rounded-lg px-3 py-2.5 font-semibold text-stone-700 hover:bg-brand-wash hover:text-stone-950"
-                href={~p"/users/log-out"}
-                method="delete"
-              >
-                {gettext("Log out")}
-              </.link>
-            </div>
-          </details>
-        <% else %>
-          <a
-            class="text-base font-medium text-stone-600 hover:text-stone-950"
-            href={@translated_path || if(@locale == "fr", do: ~p"/en", else: ~p"/fr")}
-            lang={if @locale == "fr", do: "en", else: "fr"}
-            hreflang={if @locale == "fr", do: "en", else: "fr"}
-          >
-            {gettext("Français")}
-          </a>
-          <.link
-            id="account-entry"
-            class="whitespace-nowrap rounded-full bg-stone-900 px-2 py-2 text-sm font-semibold text-white hover:bg-stone-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand sm:px-4 sm:text-base"
-            href={~p"/users/log-in?#{%{from: "header", locale: @locale}}"}
-          >
-            <span class="xl:hidden">{gettext("Account")}</span>
-            <span class="hidden xl:inline">{gettext("Sign in / Sign up")}</span>
-          </.link>
-        <% end %>
+        <a
+          class="text-base font-medium text-stone-600 hover:text-stone-950"
+          href={@translated_path || if(@locale == "fr", do: ~p"/en", else: ~p"/fr")}
+          lang={if @locale == "fr", do: "en", else: "fr"}
+          hreflang={if @locale == "fr", do: "en", else: "fr"}
+        >
+          {gettext("Français")}
+        </a>
+        <.link
+          id="account-entry"
+          class="whitespace-nowrap rounded-full bg-stone-900 px-2 py-2 text-sm font-semibold text-white hover:bg-stone-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand sm:px-4 sm:text-base"
+          href={~p"/users/log-in?#{%{from: "header", locale: @locale}}"}
+        >
+          <span class="xl:hidden">{gettext("Account")}</span>
+          <span class="hidden xl:inline">{gettext("Sign in / Sign up")}</span>
+        </.link>
       </nav>
     </header>
 
@@ -485,6 +418,238 @@ defmodule PauseAiCaWeb.Layouts do
     """
   end
 
+  attr :locale, :string, required: true
+  attr :prefix, :string, required: true
+
+  defp participation_links(assigns) do
+    ~H"""
+    <.link
+      :if={Application.get_env(:pauseai_ca, :incubators_enabled, false)}
+      id={@prefix <> "local-groups"}
+      href={if(@locale == "fr", do: "/fr/groupes", else: "/en/groups")}
+      class="block px-4 py-3 font-semibold hover:bg-brand-wash"
+    >{gettext("Local groups")}</.link>
+    <.link
+      id={@prefix <> "contact-mp"}
+      navigate={
+        if(@locale == "fr", do: ~p"/fr/contacter-votre-depute", else: ~p"/en/contact-your-mp")
+      }
+      class="block px-4 py-3 font-semibold hover:bg-brand-wash"
+    >{gettext("Email your MP")}</.link>
+    <.link
+      id={@prefix <> "solo"}
+      navigate={
+        if(@locale == "fr",
+          do: ~p"/fr/participer?intent=account",
+          else: ~p"/en/participate?intent=account"
+        )
+      }
+      class="block px-4 py-3 font-semibold hover:bg-brand-wash"
+    >{gettext("Record my actions")}</.link>
+    <.link
+      :if={!Application.get_env(:pauseai_ca, :incubators_enabled, false)}
+      id={@prefix <> "local"}
+      navigate={
+        if(@locale == "fr",
+          do: ~p"/fr/participer?intent=waitlist",
+          else: ~p"/en/participate?intent=waitlist"
+        )
+      }
+      class="block px-4 py-3 font-semibold hover:bg-brand-wash"
+    >{gettext("Join or help a local group")}</.link>
+    <a
+      href="https://luma.com/calendar/cal-tsYv79s4aTQC16Q"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="block px-4 py-3 font-semibold hover:bg-brand-wash"
+    >{gettext("Events")}</a>
+    """
+  end
+
+  attr :locale, :string, required: true
+  attr :prefix, :string, required: true
+
+  defp learning_links(assigns) do
+    ~H"""
+    <.link
+      :for={{id, label, href} <- learn_items(@locale)}
+      id={@prefix <> id}
+      href={if id == "rogue-game", do: href}
+      navigate={if id != "rogue-game", do: href}
+      data-rogue-launch={if id == "rogue-game", do: "true"}
+      class="section-public-link"
+    >{label}</.link>
+    """
+  end
+
+  attr :id, :string, required: true
+  attr :label, :string, required: true
+  attr :area, :atom, required: true
+  attr :items, :list, required: true
+  attr :active_id, :string, default: nil
+
+  defp section_menu(assigns) do
+    ~H"""
+    <details :if={Enum.any?(@items, &(&1.area == @area))} id={@id} class="act-menu section-menu">
+      <summary>{@label}<span aria-hidden="true" class="section-chevron">▾</span></summary>
+      <div class="section-menu-panel">
+        <PhoenixAppShell.Components.navigation
+          id={@id <> "-navigation"}
+          items={@items}
+          area={@area}
+          label={@label}
+          area_labels={PauseAiCaWeb.Navigation.area_labels()}
+          active_id={@active_id}
+          compact
+        />
+      </div>
+    </details>
+    """
+  end
+
+  attr :current_scope, :map, required: true
+  attr :locale, :string, required: true
+  attr :translated_path, :string, default: nil
+  attr :countdown, :map, default: nil
+  attr :active_tab, :string, default: nil
+
+  defp signed_in_navigation(assigns) do
+    assigns =
+      assign(assigns,
+        items: PauseAiCaWeb.Navigation.assemble(assigns.current_scope, assigns.locale),
+        active_id: if(assigns.active_tab, do: "pauseai." <> assigns.active_tab)
+      )
+
+    ~H"""
+    <nav
+      id="section-navigation"
+      class="signed-section-navigation"
+      aria-label={gettext("Main navigation")}
+      data-journey-start
+    >
+      <details id="brand-menu" class="act-menu section-menu brand-section-menu">
+        <summary>
+          <span class="relative inline-flex shrink-0">
+            <img
+              src={~p"/images/pauseai-canada-logo.png"}
+              width="30"
+              height="30"
+              alt=""
+              class="section-brand-logo"
+            />
+            <span
+              :if={PauseAiCa.Environment.badged?()}
+              class="section-environment-badge"
+              style={"background: #{env_badge_colour()}"}
+            >{PauseAiCa.Environment.label()}</span>
+          </span>
+          <span class="section-brand-name">{gettext("PauseAI Canada")}</span><span
+            aria-hidden="true"
+            class="section-chevron"
+          >▾</span>
+        </summary>
+        <div class="section-menu-panel brand-menu-panel">
+          <.link href={if @locale == "fr", do: ~p"/fr", else: ~p"/en"} class="section-public-link">{gettext(
+            "Home"
+          )}</.link>
+          <.link
+            id="compact-donate-link"
+            navigate={if @locale == "fr", do: ~p"/fr/faire-un-don", else: ~p"/en/donate"}
+            class="section-public-link font-bold"
+          >{gettext("Donate")}</.link>
+          <p class="section-menu-heading">{gettext("Learn")}</p>
+          <.learning_links locale={@locale} prefix="mobile-learn-" />
+          <.link
+            navigate={if @locale == "fr", do: ~p"/fr/signal-d-alarme", else: ~p"/en/warning-shot"}
+            class="section-public-link"
+          >{gettext("Warning shot")}</.link>
+          <p class="section-menu-heading">{gettext("Get involved")}</p>
+          <.participation_links locale={@locale} prefix="act-" />
+          <.link
+            href={if @locale == "fr", do: ~p"/fr/a-propos", else: ~p"/en/about"}
+            class="section-public-link"
+          >{gettext("About")}</.link>
+        </div>
+      </details>
+      <details id="learn-menu" class="act-menu section-menu section-wide-public">
+        <summary>{gettext("Learn")}<span aria-hidden="true" class="section-chevron">▾</span></summary>
+        <div class="section-menu-panel"><.learning_links locale={@locale} prefix="learn-" /></div>
+      </details>
+      <.link
+        navigate={if @locale == "fr", do: ~p"/fr/signal-d-alarme", else: ~p"/en/warning-shot"}
+        class="section-top-link section-wide-extra"
+      >{gettext("Warning shot")}</.link>
+      <div class="signed-campaign-controls">
+        <.link
+          id="donate-link"
+          navigate={if @locale == "fr", do: ~p"/fr/faire-un-don", else: ~p"/en/donate"}
+          class="inline-flex min-h-9 items-center whitespace-nowrap rounded-full bg-brand px-3 py-1 text-sm font-bold text-stone-950"
+        >{gettext("Donate")}</.link>
+        <PauseAiCaWeb.CampaignCountdown.timer
+          :if={@countdown}
+          id="menu-countdown"
+          state={@countdown}
+          compact
+        />
+      </div>
+      <details id="involvement-menu" class="act-menu section-menu section-wide-public">
+        <summary>
+          {gettext("Get involved")}<span aria-hidden="true" class="section-chevron">▾</span>
+        </summary>
+        <div class="section-menu-panel">
+          <.participation_links locale={@locale} prefix="wide-act-" />
+        </div>
+      </details>
+      <.link
+        href={if @locale == "fr", do: ~p"/fr/a-propos", else: ~p"/en/about"}
+        class="section-top-link section-wide-public"
+      >{gettext("About")}</.link>
+      <div class="section-private-menus">
+        <.section_menu
+          id="manage-menu"
+          label={gettext("Manage")}
+          area={:manage}
+          items={@items}
+          active_id={@active_id}
+        />
+        <.section_menu
+          id="admin-menu"
+          label={pgettext("compact navigation", "Admin")}
+          area={:admin}
+          items={@items}
+          active_id={@active_id}
+        />
+        <details id="account-menu" class="act-menu section-menu account-section-menu">
+          <summary>
+            {gettext("My account")}<span aria-hidden="true" class="section-chevron">▾</span>
+          </summary>
+          <div class="section-menu-panel">
+            <p class="break-all px-3 py-2 text-sm text-stone-500">{@current_scope.user.email}</p>
+            <PhoenixAppShell.Components.navigation
+              id="account-navigation"
+              items={@items}
+              area={:account}
+              label={gettext("My account")}
+              area_labels={PauseAiCaWeb.Navigation.area_labels()}
+              compact
+            />
+            <.dev_mailbox_link class="section-public-link" />
+            <a
+              href={@translated_path || if(@locale == "fr", do: ~p"/en", else: ~p"/fr")}
+              lang={if @locale == "fr", do: "en", else: "fr"}
+              hreflang={if @locale == "fr", do: "en", else: "fr"}
+              class="section-public-link"
+            >{gettext("Français")}</a>
+            <.link href={~p"/users/log-out"} method="delete" class="section-public-link">{gettext(
+              "Log out"
+            )}</.link>
+          </div>
+        </details>
+      </div>
+    </nav>
+    """
+  end
+
   defp learn_items(locale) do
     [
       {"blog", gettext("Blog"), if(locale == "fr", do: ~p"/fr/blogue", else: ~p"/en/blog")},
@@ -520,6 +685,7 @@ defmodule PauseAiCaWeb.Layouts do
       locale={@locale}
       translated_path={@translated_path}
       show_announcements={false}
+      active_tab={@active_tab}
       breadcrumb_context={
         @breadcrumb_context ||
           if(@active_tab == "mail",
@@ -527,44 +693,9 @@ defmodule PauseAiCaWeb.Layouts do
             else: PauseAiCaWeb.Navigation.breadcrumb_context(@current_scope, @locale)
           )
       }
-      breadcrumb_scope={if @active_tab == "mail", do: "mail"}
     >
-      <:management_navigation>
-        <div class="management-chrome">
-          <.management_tabs current_scope={@current_scope} locale={@locale} active={@active_tab} />
-        </div>
-      </:management_navigation>
       <div class="management-content">{render_slot(@inner_block)}</div>
     </.app>
-    """
-  end
-
-  attr :current_scope, :map, required: true
-  attr :locale, :string, default: "en"
-  attr :active, :string, default: "accounts"
-
-  def management_tabs(assigns) do
-    locale = assigns.locale || Gettext.get_locale(PauseAiCaWeb.Gettext)
-    items = PauseAiCaWeb.Navigation.assemble(assigns.current_scope, locale)
-
-    assigns =
-      assign(assigns,
-        items: Enum.reject(items, &(&1.area == :account)),
-        area_labels: PauseAiCaWeb.Navigation.area_labels()
-      )
-
-    ~H"""
-    <div class="mx-auto max-w-6xl px-5 pt-5">
-      <PhoenixAppShell.Components.navigation
-        id="management-tabs"
-        items={@items}
-        active_id={"pauseai." <> @active}
-        collapsed_groups={[:tools]}
-        group_labels={%{tools: gettext("More")}}
-        area_labels={@area_labels}
-        label={gettext("Management")}
-      />
-    </div>
     """
   end
 end

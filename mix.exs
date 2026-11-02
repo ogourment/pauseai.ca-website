@@ -58,7 +58,7 @@ defmodule PauseAiCa.MixProject do
       _ ->
         {:phoenix_app_shell,
          git: "https://github.com/ogourment/phoenix_app_shell-compiled.git",
-         ref: "49a142978a6b62c5261ed2363c3e9d14f91bb02a"}
+         ref: "84fb92f4d801fe6e726355f0cb2e66dbd4110c8e"}
     end
   end
 

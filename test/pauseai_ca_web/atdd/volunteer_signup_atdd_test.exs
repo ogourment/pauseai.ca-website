@@ -845,7 +845,8 @@ if System.get_env("ATDD") == "true" do
 
       b =
         b
-        |> click_link("#management-tabs a", "Accounts")
+        |> click("#manage-menu > summary")
+        |> click_link("#manage-menu a", "Accounts")
         |> fill_in("Search accounts", with: "missing-account-search")
         |> press("#account-search-input", "Enter")
         |> assert_has("body", text: "No accounts found")
@@ -909,7 +910,8 @@ if System.get_env("ATDD") == "true" do
       b =
         open_accounts(c.conn, c.admin, id)
         |> visit("/admin/dashboard")
-        |> click_link("#management-tabs a", "Accounts")
+        |> click("#manage-menu > summary")
+        |> click_link("#manage-menu a", "Accounts")
         |> assert_path("/manage/accounts", query_params: %{locale: "en"})
         |> assert_has("#account-count", text: "2 accounts")
         |> click_link(target.email)
@@ -1126,23 +1128,23 @@ if System.get_env("ATDD") == "true" do
         |> click_button("Keep me logged in on this device")
         |> assert_has("#account-menu")
         |> capture(id, "Sign in as the organizer", "Authenticated starting page")
-        |> account_menu()
+        |> click("#manage-menu > summary")
         |> refute_has("#account-menu", text: "Volunteer signups")
         |> refute_has("#management-menu")
-        |> assert_has("#account-management-links", text: "Accounts")
+        |> assert_has("#manage-menu", text: "Accounts")
 
       browser =
         if user.superadmin,
-          do: assert_has(browser, "#account-management-links", text: "Admin dashboard"),
-          else: refute_has(browser, "#account-management-links", text: "Admin dashboard")
+          do: assert_has(browser, "#admin-menu"),
+          else: refute_has(browser, "#admin-menu")
 
       browser
       |> capture(
         id,
-        "Open account menu",
-        "Personal pages, account management, and session actions form separate groups"
+        "Open Manage menu",
+        "Manage exposes authorized account tools; Admin and My Account remain separate menus"
       )
-      |> click_link("#account-management-links a", "Accounts")
+      |> click_link("#manage-menu a", "Accounts")
       |> assert_has("#managed-accounts")
       |> capture(
         id,

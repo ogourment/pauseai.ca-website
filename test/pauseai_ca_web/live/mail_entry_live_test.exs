@@ -39,10 +39,10 @@ defmodule PauseAiCaWeb.MailEntryLiveTest do
     assert has_element?(view, "article", "Planned recipients: 1")
     assert has_element?(view, "[data-manual-recipients]", "visible-recipient@example.org")
     refute has_element?(view, "article", "1 recipients")
-    [_, after_menu] = String.split(html, ~s(id="management-tabs"), parts: 2)
+    [_, after_menu] = String.split(html, ~s(id="section-navigation"), parts: 2)
     assert String.contains?(after_menu, ~s(id="journey-breadcrumbs"))
     context = PauseAiCaWeb.Navigation.mail_breadcrumb_context(scope, "en")
-    assert Enum.map(context.roots, & &1.label) == ["Manage", "Emails"]
+    assert context == %{roots: [], sections: []}
   end
 
   test "mail landing creates an owned draft and edits survive reload without delivery", %{

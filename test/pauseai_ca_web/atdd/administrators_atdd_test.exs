@@ -117,7 +117,7 @@ if System.get_env("ATDD") == "true" do
     end
 
     @tag browser_context_opts: [viewport: %{width: 390, height: 844}]
-    test "STAGE-ACCESS-02 French tabs remain compact and tools use More", c do
+    test "STAGE-ACCESS-02 French section menus preserve staging controls", c do
       {token, _} = generate_user_magic_link_token(c.admin)
 
       b =
@@ -126,24 +126,27 @@ if System.get_env("ATDD") == "true" do
         |> click_button("Keep me logged in on this device")
         |> assert_path("/")
         |> visit("/manage/administrators?locale=fr")
-        |> assert_has("#management-tabs a[aria-current=page]", text: "Administrateurs")
+        |> click("#admin-menu > summary")
+        |> assert_has("#admin-menu a[aria-current=page]", text: "Administrateurs")
         |> assert_has("#staging-sign-in", text: "Connexions autorisées en préproduction")
         |> capture(
           "STAGE-ACCESS-02",
           1,
           "Open French Administrators on mobile",
-          "Four scrollable tabs, More menu, explicit sign-in-only exception"
+          "Collapsed section menus, authorized Admin links and explicit sign-in-only exception"
         )
 
       b =
         b
-        |> click_link("Comptes")
+        |> click("#manage-menu > summary")
+        |> click_link("#manage-menu a", "Comptes")
         |> assert_path("/manage/accounts", query_params: %{locale: "fr"})
-        |> assert_has("#management-tabs a[aria-current=page]", text: "Comptes")
+        |> click("#manage-menu > summary")
+        |> assert_has("#manage-menu a[aria-current=page]", text: "Comptes")
         |> capture(
           "STAGE-ACCESS-02",
           2,
-          "Choose the Accounts tab",
+          "Manage menu → Accounts",
           "French locale retained and selected tab reflects the current page"
         )
 
