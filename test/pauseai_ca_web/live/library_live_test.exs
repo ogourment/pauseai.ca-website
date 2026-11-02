@@ -173,7 +173,11 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
              )
 
       assert has_element?(view, "#account-menu a[href='/users/log-out']", "Log out")
-      assert has_element?(view, "#account-menu [role='separator']")
+
+      refute has_element?(
+               view,
+               "#account-menu [data-area='manage'], #account-menu [data-area='admin']"
+             )
     end
 
     test "the focused participation menu speaks French", %{conn: conn} do

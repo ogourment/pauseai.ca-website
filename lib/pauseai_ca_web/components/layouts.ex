@@ -61,7 +61,11 @@ defmodule PauseAiCaWeb.Layouts do
       )
 
     ~H"""
-    <header class="sticky top-0 z-40 border-b border-stone-200/80 bg-[#f8f5ed]/95 backdrop-blur">
+    <header
+      id="site-header"
+      phx-hook=".HeaderHeight"
+      class="sticky top-0 z-40 border-b border-stone-200/80 bg-[#f8f5ed]/95 backdrop-blur"
+    >
       <.signed_in_navigation
         :if={@current_scope}
         current_scope={@current_scope}
@@ -185,6 +189,20 @@ defmodule PauseAiCaWeb.Layouts do
           <span class="hidden xl:inline">{gettext("Sign in / Sign up")}</span>
         </.link>
       </nav>
+      <script :type={Phoenix.LiveView.ColocatedHook} name=".HeaderHeight">
+        export default {
+          mounted() {
+            this.measureHeader = () => {
+              document.documentElement.style.setProperty('--header-height', `${Math.ceil(this.el.getBoundingClientRect().height)}px`)
+            }
+            this.headerObserver = new ResizeObserver(this.measureHeader)
+            this.headerObserver.observe(this.el)
+            this.measureHeader()
+          },
+          updated() { this.measureHeader() },
+          destroyed() { this.headerObserver.disconnect() }
+        }
+      </script>
     </header>
 
     <div
