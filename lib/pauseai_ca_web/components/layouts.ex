@@ -546,7 +546,7 @@ defmodule PauseAiCaWeb.Layouts do
       data-journey-start
     >
       <details id="brand-menu" class="act-menu section-menu brand-section-menu">
-        <summary>
+        <summary aria-label={gettext("PauseAI Canada")}>
           <span class="relative inline-flex shrink-0">
             <img
               src={~p"/images/pauseai-canada-logo.png"}
