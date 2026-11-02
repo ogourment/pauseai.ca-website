@@ -79,7 +79,7 @@ if System.get_env("ATDD") == "true" do
           c.conn
           |> login(person)
           |> visit("/#{locale}")
-          |> PhoenixTest.Playwright.click("#involvement-menu summary")
+          |> PauseAiCaWeb.AtddNavigation.open_public()
           |> capture(id, "Applicant opens Get involved", "Click Local groups")
           |> click_link("#act-local-groups", tr(locale, "Local groups"), exact: true)
           |> assert_has("[data-phx-main].phx-connected")
@@ -103,6 +103,7 @@ if System.get_env("ATDD") == "true" do
           |> visit("/manage/accounts?locale=#{locale}")
           |> assert_has("[data-phx-main].phx-connected")
           |> capture(id, "Accounts workspace", "Click Welcome calls in Management")
+          |> PauseAiCaWeb.AtddNavigation.open_section("manage")
           |> click_link(tr(locale, "Welcome calls"))
           |> assert_has("#welcome-list")
           |> click_link(tr(locale, "Add welcome call"))

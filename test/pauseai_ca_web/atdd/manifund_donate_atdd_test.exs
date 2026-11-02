@@ -172,6 +172,7 @@ if System.get_env("ATDD") == "true" do
         |> login(admin)
         |> visit("/admin/dashboard?locale=en")
         |> capture(id, "Superadmin dashboard", "Click Donation pledges")
+        |> PauseAiCaWeb.AtddNavigation.open_section("admin")
         |> click_link("Donation pledges")
         |> assert_has("#donation-pledges", text: "historical@example.org")
         |> assert_has("#donation-pledges", text: "Monthly")

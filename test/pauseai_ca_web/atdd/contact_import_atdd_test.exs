@@ -82,6 +82,7 @@ if System.get_env("ATDD") == "true" do
         |> click_button("Keep me logged in on this device")
         |> assert_path("/")
         |> visit("/admin/dashboard")
+        |> PauseAiCaWeb.AtddNavigation.open_section("admin")
         |> click_link("Contacts")
         |> click_link("Import Contacts")
         |> assert_path("/admin/contact-imports")

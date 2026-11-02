@@ -198,6 +198,7 @@ if System.get_env("ATDD") == "true" do
 
       browser =
         browser
+        |> PauseAiCaWeb.AtddNavigation.open_section("manage")
         |> click_link("Accounts")
         |> assert_path("/manage/accounts")
         |> assert_has("#managed-accounts", text: member.email)
@@ -332,7 +333,7 @@ if System.get_env("ATDD") == "true" do
 
     defp log_out(browser) do
       browser
-      |> evaluate("document.querySelector('#account-menu').open = true")
+      |> PauseAiCaWeb.AtddNavigation.open_section("account")
       |> click_link("Log out")
       |> assert_path("/")
     end

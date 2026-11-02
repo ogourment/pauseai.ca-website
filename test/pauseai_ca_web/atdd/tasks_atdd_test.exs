@@ -69,6 +69,7 @@ if System.get_env("ATDD") == "true" do
         |> visit("/manage/accounts?locale=#{locale}")
         |> assert_has("[data-phx-main].phx-connected")
         |> capture(locale, "Accounts: preceding screen", "Click Tasks in the Management menu")
+        |> PauseAiCaWeb.AtddNavigation.open_section("manage")
         |> click_link(tr(locale, "Tasks"))
         |> assert_has("#task-list",
           text: tr(locale, "No tasks yet. Add the first task for this group.")

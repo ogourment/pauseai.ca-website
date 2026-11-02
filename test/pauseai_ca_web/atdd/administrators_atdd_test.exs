@@ -59,6 +59,7 @@ if System.get_env("ATDD") == "true" do
         |> click_button("Keep me logged in on this device")
         |> assert_path("/")
         |> visit("/manage/accounts?locale=en")
+        |> PauseAiCaWeb.AtddNavigation.open_section("admin")
         |> click_link("Administrators")
         |> assert_has("#superadmin-list", text: c.admin.email)
         |> assert_has("#staging-sign-in-form")

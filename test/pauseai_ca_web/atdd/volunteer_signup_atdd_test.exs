@@ -156,7 +156,8 @@ if System.get_env("ATDD") == "true" do
 
       recipient
       |> refute_has("body", text: "private-sheet")
-      |> refute_has("#account-management-links")
+      |> refute_has("#manage-menu")
+      |> refute_has("#admin-menu")
 
       open_workspace(new_device(c, 390), c.admin, id)
       |> capture(
@@ -838,7 +839,8 @@ if System.get_env("ATDD") == "true" do
       new_device(c)
       |> show_email(email)
       |> sign_in_email()
-      |> refute_has("#account-management-links")
+      |> refute_has("#manage-menu")
+      |> refute_has("#admin-menu")
 
       account = Accounts.get_user_by_email("single@example.org")
       assert account.confirmed_at
@@ -1130,7 +1132,7 @@ if System.get_env("ATDD") == "true" do
         |> capture(id, "Sign in as the organizer", "Authenticated starting page")
         |> click("#manage-menu > summary")
         |> refute_has("#account-menu", text: "Volunteer signups")
-        |> refute_has("#management-menu")
+        |> refute_has("#account-menu a[href^='/manage/']")
         |> assert_has("#manage-menu", text: "Accounts")
 
       browser =

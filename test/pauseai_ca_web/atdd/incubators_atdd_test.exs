@@ -107,7 +107,7 @@ if System.get_env("ATDD") == "true" do
         b
         |> switch_browser_identity(&login(&1, applicant))
         |> visit("/#{locale}")
-        |> PhoenixTest.Playwright.click("#involvement-menu summary")
+        |> PauseAiCaWeb.AtddNavigation.open_public()
         |> capture(
           locale,
           "Applicant involvement menu: preceding screen",

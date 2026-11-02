@@ -126,7 +126,7 @@ if System.get_env("ATDD") == "true" do
 
       device =
         device
-        |> click("header nav > a:first-child")
+        |> PauseAiCaWeb.AtddNavigation.home()
         |> assert_has("[data-question='risk'] [data-answer='4'][aria-pressed='true']")
         |> capture(
           id,
@@ -346,7 +346,7 @@ if System.get_env("ATDD") == "true" do
           "Actual confirmation transition before recording an action"
         )
         |> record_action("en")
-        |> click("header nav > a:first-child")
+        |> PauseAiCaWeb.AtddNavigation.home()
         |> assert_has("#questions")
         |> capture(
           id,
@@ -482,6 +482,7 @@ if System.get_env("ATDD") == "true" do
       assert_sparkline_bounds(browser)
 
       browser
+      |> PauseAiCaWeb.AtddNavigation.open_section("manage")
       |> click_link("Accounts")
       |> assert_path("/manage/accounts")
       |> assert_has("#managed-accounts")
@@ -724,7 +725,7 @@ if System.get_env("ATDD") == "true" do
         context.conn
         |> visit("/en")
         |> click("#consent-decline")
-        |> click("#involvement-menu summary")
+        |> PauseAiCaWeb.AtddNavigation.open_public()
         |> click_link("Warning shot")
         |> assert_has("#mainstream-safety-context")
         |> capture(
@@ -786,7 +787,7 @@ if System.get_env("ATDD") == "true" do
 
       browser =
         browser
-        |> click("header nav > a:first-child")
+        |> PauseAiCaWeb.AtddNavigation.home()
         |> answer_questions("en")
         |> assert_has("#save-progress-invitation")
         |> capture(
@@ -929,14 +930,15 @@ if System.get_env("ATDD") == "true" do
         |> click_button("Keep me logged in on this device")
         |> assert_has("#account-menu")
         |> refute_has("#flash-info")
-        |> click("#account-menu summary")
+        |> PauseAiCaWeb.AtddNavigation.open_section("admin")
         |> capture(
           id,
-          "Open superadmin account menu",
-          "Admin dashboard is available to the superadmin"
+          "Open the Admin menu",
+          "The Dashboard is available to the superadmin"
         )
-        |> click_link("Admin dashboard")
+        |> click_link("#admin-menu a", "Dashboard")
         |> capture(id, "Open admin tools", "Donation pledges is available from the dashboard")
+        |> PauseAiCaWeb.AtddNavigation.open_section("admin")
         |> click_link("Donation pledges")
         |> assert_has("#donation-pledges", text: "followup@example.org")
         |> assert_has("#donation-pledges", text: "125")
@@ -971,6 +973,7 @@ if System.get_env("ATDD") == "true" do
       |> refute_has("#flash-info")
       |> click("#account-menu summary")
       |> refute_has("#account-menu", text: "Admin dashboard")
+      |> refute_has("#admin-menu")
       |> capture(
         id,
         "Open group manager menu",

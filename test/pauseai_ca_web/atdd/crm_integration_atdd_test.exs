@@ -98,6 +98,7 @@ if System.get_env("ATDD") == "true" do
       b =
         sign_in(c.conn, c.admin)
         |> visit("/admin/dashboard?locale=en")
+        |> PauseAiCaWeb.AtddNavigation.open_section("admin")
         |> click_link("Contacts")
         |> assert_has("#crm-directory")
         |> refute_has("#announcement-banners")

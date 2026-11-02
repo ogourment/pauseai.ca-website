@@ -73,6 +73,7 @@ if System.get_env("ATDD") == "true" do
           |> visit("/manage/accounts?locale=#{locale}")
           |> assert_has("[data-phx-main].phx-connected")
           |> capture(id, "Accounts: preceding screen", "Click Donation page in Management")
+          |> PauseAiCaWeb.AtddNavigation.open_section("manage")
           |> click_link(tr(locale, "Donation page"))
           |> assert_has("#donation-page-editor")
           |> assert_has("[data-phx-main].phx-connected")
