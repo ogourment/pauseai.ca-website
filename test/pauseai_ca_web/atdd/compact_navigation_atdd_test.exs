@@ -83,12 +83,15 @@ if System.get_env("ATDD") == "true" do
       test "OUTREACH-NAV-01 permissions and two origins #{locale}", c do
         locale = unquote(locale)
         id = "OUTREACH-NAV-01-#{locale}-#{unquote(width)}"
+        publish_urgent(c.scope)
 
         b =
           c.conn
           |> login(c.ordinary)
           |> visit("/#{locale}")
           |> assert_has("#section-navigation")
+          |> assert_has("#menu-countdown:not([hidden])")
+          |> urgent_offsets()
           |> absent("#manage-menu, #admin-menu, [data-navigation-item='pauseai.mail']")
           |> geometry()
           |> capture(
@@ -286,25 +289,72 @@ if System.get_env("ATDD") == "true" do
 
     for {locale, width, height} <- @responsive do
       @tag screenshot: true
+      @tag nav_width: width
       @tag browser_context_opts: [viewport: %{width: width, height: height}]
       test "OUTREACH-NAV-01 responsive #{locale} #{width}", c do
         locale = unquote(locale)
         id = "OUTREACH-NAV-01-#{locale}-#{unquote(width)}"
 
-        c.conn
-        |> login(c.admin)
-        |> visit("/manage/mail/access?locale=#{locale}")
-        |> assert_has("#mailbox-access")
-        |> keyboard()
+        b =
+          c.conn
+          |> login(c.admin)
+          |> visit("/manage/mail/access?locale=#{locale}")
+          |> assert_has("#mailbox-access")
+          |> keyboard()
+          |> geometry()
+          |> capture(
+            id,
+            "Superadmin opens mailbox access at #{unquote(width)}px",
+            "Compact section menus, keyboard focus and page width fit this viewport"
+          )
+
+        publish_urgent(c.scope)
+
+        b
+        |> visit("/#{locale}")
+        |> assert_has("#menu-countdown:not([hidden])")
         |> geometry()
+        |> urgent_offsets()
         |> capture(
           id,
-          "Superadmin opens mailbox access at #{unquote(width)}px",
-          "Compact section menus, keyboard focus and page width fit this viewport"
+          "Signed-in public home with an actual published final-hour campaign",
+          "LiveView/controller header measurement keeps the urgent controls, sticky banner and flashes clear"
         )
 
         AtddEvidence.mark_scenario_success!(Enum.find(@scenarios, &(&1.id == id)))
       end
+    end
+
+    defp publish_urgent(scope) do
+      alias PauseAiCa.Donations.Pages
+      {:ok, page} = Pages.get_or_create(scope)
+
+      closes =
+        DateTime.utc_now()
+        |> DateTime.add(3600)
+        |> DateTime.truncate(:second)
+        |> DateTime.to_iso8601()
+
+      payload = put_in(page.payload, ["campaign", "closes_at"], closes)
+      {:ok, page} = Pages.save(scope, page, payload)
+      {:ok, _} = Pages.publish(scope, page)
+    end
+
+    defp urgent_offsets(b) do
+      evaluate(
+        b,
+        "(async () => {await document.fonts.ready;window.scrollTo(0,250);await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));const h=document.querySelector('header').getBoundingClientRect();const banner=document.querySelector('#announcement-banners').getBoundingClientRect();const f=document.querySelector('#flash-group');return {height:h.height,headerBottom:h.bottom,bannerTop:banner.top,offset:parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height')),flashTop:f?parseFloat(getComputedStyle(f).top):null}})()",
+        fn x ->
+          assert x["height"] < 150
+          assert x["offset"] >= x["height"] - 1
+          assert x["offset"] <= x["height"] + 2
+          assert x["bannerTop"] >= x["headerBottom"] - 1
+          assert is_number(x["flashTop"])
+          assert x["flashTop"] >= x["headerBottom"]
+        end
+      )
+
+      evaluate(b, "window.scrollTo(0,0)")
     end
 
     defp login(b, user) do
@@ -329,11 +379,16 @@ if System.get_env("ATDD") == "true" do
     defp geometry(b) do
       evaluate(
         b,
-        "({width:innerWidth,scroll:document.documentElement.scrollWidth,header:document.querySelector('header').getBoundingClientRect().height,bars:document.querySelectorAll('.management-chrome').length})",
+        "(async () => {await document.fonts.ready;await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));return {width:innerWidth,scroll:document.documentElement.scrollWidth,header:document.querySelector('header').getBoundingClientRect().height,bars:document.querySelectorAll('.management-chrome').length,children:[...document.querySelector('#section-navigation').children].filter(e=>e.getBoundingClientRect().width).map(e=>{const r=e.getBoundingClientRect(),c=getComputedStyle(e);return {id:e.id,classes:e.className,x:r.x,y:r.y,width:r.width,height:r.height,scrollWidth:e.scrollWidth,basis:c.flexBasis,order:c.order,gap:c.gap}}),offset:parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height'))}})()",
         fn x ->
+          if x["header"] >= 150,
+            do: IO.inspect(x, label: "COMPACT HEADER DIAGNOSTIC", limit: :infinity)
+
           assert x["scroll"] <= x["width"]
           assert x["header"] < 150
           assert x["bars"] == 0
+          assert x["offset"] >= x["header"] - 1
+          assert x["offset"] <= x["header"] + 2
         end
       )
 
@@ -377,11 +432,22 @@ if System.get_env("ATDD") == "true" do
         &assert(&1)
       )
 
-      b
-      |> click("#admin-menu > summary")
-      |> assert_has("#admin-menu[open]")
-      |> click("main h1")
-      |> refute_has("#admin-menu[open]")
+      b = b |> click("#admin-menu > summary") |> assert_has("#admin-menu[open]")
+
+      evaluate(
+        b,
+        "(() => {const r=document.querySelector('header').getBoundingClientRect();const hit=document.elementFromPoint(r.left+1,r.top+1);return !!hit && !hit.closest('a,button,summary,details')})()",
+        &assert(&1)
+      )
+
+      assert {:ok, _} =
+               PlaywrightEx.Frame.click(b.frame_id,
+                 selector: "header",
+                 position: %{x: 1, y: 1},
+                 timeout: 8_000
+               )
+
+      refute_has(b, "#admin-menu[open]")
     end
 
     defp capture(b, id, control, outcome) do
