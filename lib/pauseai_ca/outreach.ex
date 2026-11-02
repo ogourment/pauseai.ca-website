@@ -1,10 +1,19 @@
 defmodule PauseAiCa.Outreach do
   @moduledoc "Consumer-authorized outreach using the existing draft/review/dispatch workflow and shared CRM archive."
   import Ecto.Query
-  alias PauseAiCa.{Repo, Volunteers, Accounts, CRM}
+  alias PauseAiCa.{Repo, Accounts}
   alias PauseAiCa.Newsletters.Draft
-  alias PauseAiCa.Outreach.{Mailboxes, Ingestion, Notifications}
+  alias PauseAiCa.Outreach.{Access, Mailboxes, Ingestion, Notifications}
   alias PhoenixCRM.Conversations
+
+  def access?(scope), do: match?({:ok, [_ | _]}, Mailboxes.all(scope))
+  def mailbox_access(scope), do: Access.management(scope)
+
+  def grant_mailbox(scope, ref, user_id, revision),
+    do: Access.grant(scope, ref, user_id, revision)
+
+  def revoke_mailbox(scope, ref, user_id, revision),
+    do: Access.revoke(scope, ref, user_id, revision)
 
   def mailboxes(scope), do: Mailboxes.all(scope)
   def mailbox_for_draft(scope, draft), do: Mailboxes.sending(scope, draft.outreach_mailbox_ref)
@@ -23,7 +32,10 @@ defmodule PauseAiCa.Outreach do
   def notification_status(scope), do: Notifications.status(scope)
 
   def list(scope, params \\ %{}) do
-    with {:ok, boxes} <- mailboxes(scope) do
+    with {:ok, boxes} <- mailboxes(scope),
+         true <-
+           params["mailbox_ref"] in [nil, ""] or
+             Enum.any?(boxes, &(&1.id == params["mailbox_ref"])) do
       selected = Enum.filter(boxes, &(params["mailbox_ref"] in [nil, "", &1.id]))
       per = positive(params["per"], 25) |> min(100)
       page = positive(params["page"], 1)
@@ -46,6 +58,9 @@ defmodule PauseAiCa.Outreach do
          total: total,
          processing: Ingestion.processing(scope)
        }}
+    else
+      false -> {:error, :mailbox_unavailable}
+      error -> error
     end
   end
 
@@ -92,8 +107,8 @@ defmodule PauseAiCa.Outreach do
     with {:ok, mailbox} <- Mailboxes.fetch(scope, attrs["mailbox_ref"]),
          {:ok, email} <- email(attrs["email"]) do
       Repo.transaction(fn ->
-        fresh!(scope)
-        ensure_identity!(scope, email)
+        fresh!(scope, mailbox.id)
+        ensure_identity!(scope, mailbox.id, email)
         conversation = create_conversation!(scope, mailbox, email, attrs["subject"] || "")
 
         %Draft{
@@ -118,7 +133,7 @@ defmodule PauseAiCa.Outreach do
       case external do
         [email] ->
           Repo.transaction(fn ->
-            fresh!(scope)
+            fresh!(scope, mailbox.id)
             latest = List.last(messages)
             subject = conversation.subject || ""
             subject = if Regex.match?(~r/\ARe:/iu, subject), do: subject, else: "Re: " <> subject
@@ -142,7 +157,7 @@ defmodule PauseAiCa.Outreach do
   end
 
   def signature_hint(scope, source) do
-    if Volunteers.superadmin?(scope) do
+    if access?(scope) do
       user = Repo.get(Accounts.User, scope.user.id)
 
       first_name =
@@ -163,6 +178,7 @@ defmodule PauseAiCa.Outreach do
 
       case Mailboxes.fetch(scope, ref) do
         {:ok, mailbox} when mode == "outreach" ->
+          Access.lock!(scope, mailbox.id)
           changed? = ref != draft.outreach_mailbox_ref or email != draft.outreach_email
 
           cond do
@@ -174,7 +190,7 @@ defmodule PauseAiCa.Outreach do
               )
 
             changed? and changeset.valid? ->
-              ensure_identity!(scope, email)
+              ensure_identity!(scope, mailbox.id, email)
 
               conversation =
                 create_conversation!(
@@ -220,13 +236,15 @@ defmodule PauseAiCa.Outreach do
     end
   end
 
-  defp ensure_identity!(scope, email) do
+  defp ensure_identity!(scope, ref, email) do
     Repo.query!("SELECT pg_advisory_xact_lock(hashtextextended($1,0))", [
       "outreach-contact:" <> email
     ])
 
     unless Repo.get_by(PhoenixCRM.Address, email: email) do
-      case CRM.create(scope, %{"email" => email}) do
+      context = PhoenixCRM.new(Repo, PauseAiCa.Outreach.IdentityPolicy)
+
+      case PhoenixCRM.create(context, %{scope: scope, mailbox_ref: ref}, %{"email" => email}) do
         {:ok, _} -> :ok
         {:error, reason} -> Repo.rollback(reason)
       end
@@ -240,14 +258,7 @@ defmodule PauseAiCa.Outreach do
 
   defp email(_), do: {:error, :invalid_email}
 
-  defp fresh!(%Accounts.Scope{user: %{id: id}} = scope) do
-    Repo.one(from(user in Accounts.User, where: user.id == ^id, lock: "FOR UPDATE")) ||
-      Repo.rollback(:unauthorized)
-
-    if not Volunteers.superadmin?(scope), do: Repo.rollback(:unauthorized)
-  end
-
-  defp fresh!(_), do: Repo.rollback(:unauthorized)
+  defp fresh!(scope, ref), do: Access.lock!(scope, ref)
 
   defp insert!(changeset) do
     case Repo.insert(changeset) do

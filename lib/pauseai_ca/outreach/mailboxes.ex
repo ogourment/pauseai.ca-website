@@ -1,9 +1,20 @@
 defmodule PauseAiCa.Outreach.Mailboxes do
   @moduledoc "Consumer-owned, explicitly enabled and verified outreach sender configuration."
   alias PauseAiCa.{Volunteers, Repo, Accounts}
+  alias PauseAiCa.Outreach.Access
 
   def all(scope) do
-    if Volunteers.superadmin?(scope), do: {:ok, configured()}, else: {:error, :unauthorized}
+    authorization = Access.facts(scope)
+
+    if match?(%{confirmed?: true, full_access?: true}, authorization) or
+         match?(%{confirmed?: true, eligible?: true}, authorization),
+       do:
+         {:ok,
+          Enum.filter(
+            configured(),
+            &PhoenixMailWorkflow.MailboxAccess.allowed?(authorization, &1.id)
+          )},
+       else: {:error, :unauthorized}
   end
 
   def fetch(scope, ref) do
@@ -49,10 +60,14 @@ defmodule PauseAiCa.Outreach.Mailboxes do
     end)
   end
 
-  def authorized_actor(id) do
+  def authorized_actor(id, ref \\ nil) do
     with {:ok, uuid} <- Ecto.UUID.cast(id),
          %Accounts.User{} = user <- Repo.get(Accounts.User, uuid),
-         true <- Volunteers.superadmin?(Accounts.Scope.for_user(user)) do
+         true <-
+           if(is_nil(ref),
+             do: Volunteers.superadmin?(Accounts.Scope.for_user(user)),
+             else: Access.allowed?(Accounts.Scope.for_user(user), ref)
+           ) do
       user
     else
       _ -> nil

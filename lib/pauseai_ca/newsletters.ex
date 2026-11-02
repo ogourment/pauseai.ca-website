@@ -17,7 +17,7 @@ defmodule PauseAiCa.Newsletters do
          {:ok, profile} <- profile_attributes(attrs) do
       Repo.transaction(fn ->
         lock_address(email)
-        current = Repo.one(from s in Subscription, where: s.email == ^email, lock: "FOR UPDATE")
+        current = Repo.one(from(s in Subscription, where: s.email == ^email, lock: "FOR UPDATE"))
 
         if current && current.state == "confirmed" do
           %{subscription: current, confirmation_token: nil, withdrawal_token: nil}
@@ -77,16 +77,18 @@ defmodule PauseAiCa.Newsletters do
           :confirm ->
             now = DateTime.utc_now()
 
-            from s in Subscription,
+            from(s in Subscription,
               where:
                 s.confirmation_hash == ^hash and s.state == "pending" and
                   s.confirmation_expires_at > ^now
+            )
 
           :withdraw ->
-            from s in Subscription,
+            from(s in Subscription,
               join: t in WithdrawalToken,
               on: t.subscription_id == s.id,
               where: t.token_hash == ^hash
+            )
         end
 
       case Repo.one(query) do
@@ -144,7 +146,7 @@ defmodule PauseAiCa.Newsletters do
     # Called only inside the transaction confirming an ownership-verified choice edit.
     lock_address(email)
 
-    case Repo.one(from s in Subscription, where: s.email == ^email, lock: "FOR UPDATE") do
+    case Repo.one(from(s in Subscription, where: s.email == ^email, lock: "FOR UPDATE")) do
       nil ->
         :ok
 
@@ -167,7 +169,7 @@ defmodule PauseAiCa.Newsletters do
     # Exact production-receipt matching precedes this operation. Preserve any
     # later explicit choice; unresolved provider withdrawals still hold this purpose.
     lock_address(email)
-    subscription = Repo.one(from s in Subscription, where: s.email == ^email, lock: "FOR UPDATE")
+    subscription = Repo.one(from(s in Subscription, where: s.email == ^email, lock: "FOR UPDATE"))
 
     newer_choice =
       subscription &&
@@ -205,11 +207,11 @@ defmodule PauseAiCa.Newsletters do
       Repo.transaction(fn ->
         actor =
           Repo.one(
-            from u in PauseAiCa.Accounts.User, where: u.id == ^scope.user.id, lock: "FOR UPDATE"
+            from(u in PauseAiCa.Accounts.User, where: u.id == ^scope.user.id, lock: "FOR UPDATE")
           )
 
         if is_nil(actor) or not Volunteers.superadmin?(scope), do: Repo.rollback(:unauthorized)
-        subscription = Repo.one(from s in Subscription, where: s.id == ^id, lock: "FOR UPDATE")
+        subscription = Repo.one(from(s in Subscription, where: s.id == ^id, lock: "FOR UPDATE"))
         if is_nil(subscription), do: Repo.rollback(:not_found)
         raw = token()
 
@@ -244,7 +246,7 @@ defmodule PauseAiCa.Newsletters do
       Repo.transaction(fn ->
         actor =
           Repo.one(
-            from u in PauseAiCa.Accounts.User, where: u.id == ^scope.user.id, lock: "FOR UPDATE"
+            from(u in PauseAiCa.Accounts.User, where: u.id == ^scope.user.id, lock: "FOR UPDATE")
           )
 
         if is_nil(actor) or not Volunteers.superadmin?(scope), do: Repo.rollback(:unauthorized)
@@ -264,13 +266,41 @@ defmodule PauseAiCa.Newsletters do
     end
   end
 
+  @doc "Mailbox-authorized withdrawal footer; no enrollment or general newsletter authority."
+  def outreach_withdrawal_token(scope, email, mailbox_ref) do
+    with {:ok, _} <- PauseAiCa.Outreach.Mailboxes.sending(scope, mailbox_ref),
+         {:ok, email} <- normalize(email) do
+      Repo.transaction(fn ->
+        PauseAiCa.Outreach.Access.lock!(scope, mailbox_ref)
+        lock_address(email)
+
+        subscription =
+          Repo.get_by(Subscription, email: email) ||
+            persist(nil, %{email: email, state: "outreach_only"})
+
+        raw = token()
+
+        Repo.insert!(%WithdrawalToken{
+          subscription_id: subscription.id,
+          token_hash: digest(raw),
+          inserted_at: DateTime.utc_now()
+        })
+
+        event(subscription, "withdrawal_link_created", scope.user.id, %{})
+        raw
+      end)
+    else
+      _ -> {:error, :unauthorized}
+    end
+  end
+
   @doc "Records source evidence for review, never granting consent or overwriting a local decision. No provider calls."
   def observe_legacy(scope, email, evidence) when is_map(evidence) do
     with true <- Volunteers.superadmin?(scope), {:ok, email} <- normalize(email) do
       Repo.transaction(fn ->
         actor =
           Repo.one(
-            from u in PauseAiCa.Accounts.User, where: u.id == ^scope.user.id, lock: "FOR UPDATE"
+            from(u in PauseAiCa.Accounts.User, where: u.id == ^scope.user.id, lock: "FOR UPDATE")
           )
 
         if is_nil(actor) or not Volunteers.superadmin?(scope), do: Repo.rollback(:unauthorized)
@@ -293,9 +323,10 @@ defmodule PauseAiCa.Newsletters do
     if Volunteers.superadmin?(scope) and match?({:ok, _}, Ecto.UUID.cast(id)) do
       {:ok,
        Repo.all(
-         from e in ConsentEvent,
+         from(e in ConsentEvent,
            where: e.subscription_id == ^id,
            order_by: [asc: e.inserted_at, asc: e.id]
+         )
        )}
     else
       {:error, :unauthorized}
@@ -312,7 +343,7 @@ defmodule PauseAiCa.Newsletters do
 
       not MapSet.member?(withdrawn_aliases([email]), email) and
         not Repo.exists?(
-          from s in Subscription, where: s.email in ^aliases and not is_nil(s.withdrawn_at)
+          from(s in Subscription, where: s.email in ^aliases and not is_nil(s.withdrawn_at))
         )
     else
       _ -> false
@@ -321,7 +352,7 @@ defmodule PauseAiCa.Newsletters do
 
   def audience(scope) do
     if Volunteers.superadmin?(scope) do
-      {:ok, Repo.all(from s in Subscription, order_by: [asc: s.email])}
+      {:ok, Repo.all(from(s in Subscription, order_by: [asc: s.email]))}
     else
       {:error, :unauthorized}
     end
@@ -338,7 +369,7 @@ defmodule PauseAiCa.Newsletters do
       Repo.transaction(fn ->
         actor =
           Repo.one(
-            from u in PauseAiCa.Accounts.User, where: u.id == ^scope.user.id, lock: "FOR UPDATE"
+            from(u in PauseAiCa.Accounts.User, where: u.id == ^scope.user.id, lock: "FOR UPDATE")
           )
 
         if is_nil(actor) or not Volunteers.superadmin?(scope), do: Repo.rollback(:unauthorized)
@@ -386,9 +417,10 @@ defmodule PauseAiCa.Newsletters do
       all_rows? = params[:all_rows] == true
 
       query =
-        from s in Subscription,
+        from(s in Subscription,
           where: s.state != "outreach_only",
           order_by: [asc: s.email, asc: s.id]
+        )
 
       query = if region == "", do: query, else: from(s in query, where: s.region == ^region)
 
@@ -490,22 +522,24 @@ defmodule PauseAiCa.Newsletters do
 
   defp withdrawn_aliases(emails) do
     unresolved_provider =
-      from e in PauseAiCa.Newsletters.ProviderEvent,
+      from(e in PauseAiCa.Newsletters.ProviderEvent,
         where: e.kind == "unsubscribe",
         select: e.email
+      )
 
     direct =
       Repo.all(
-        from s in Subscription,
+        from(s in Subscription,
           where:
             s.email in ^emails and
               (not is_nil(s.withdrawn_at) or s.email in subquery(unresolved_provider)),
           select: s.email
+        )
       )
 
     linked =
       Repo.all(
-        from a in PhoenixCRM.Address,
+        from(a in PhoenixCRM.Address,
           join: p in PhoenixCRM.Person,
           on: p.id == a.person_id,
           join: other_person in PhoenixCRM.Person,
@@ -520,6 +554,7 @@ defmodule PauseAiCa.Newsletters do
               (not is_nil(s.withdrawn_at) or s.email in subquery(unresolved_provider)),
           select: a.email,
           distinct: true
+        )
       )
 
     MapSet.new(direct ++ linked)
@@ -533,7 +568,7 @@ defmodule PauseAiCa.Newsletters do
 
   defp provider_evidence(emails) do
     Repo.all(
-      from e in ConsentEvent,
+      from(e in ConsentEvent,
         join: s in Subscription,
         on: s.id == e.subscription_id,
         where: s.email in ^emails and e.kind == "provider_observed",
@@ -543,6 +578,7 @@ defmodule PauseAiCa.Newsletters do
           desc: e.id
         ],
         select: {s.email, e.evidence}
+      )
     )
     |> Enum.reduce(%{}, fn {email, evidence}, result ->
       Map.put_new(result, email, evidence)
@@ -563,20 +599,22 @@ defmodule PauseAiCa.Newsletters do
   defp linked_addresses(email) do
     canonical =
       Repo.one(
-        from a in PhoenixCRM.Address,
+        from(a in PhoenixCRM.Address,
           join: p in PhoenixCRM.Person,
           on: p.id == a.person_id,
           where: a.email == ^email,
           select: coalesce(p.canonical_id, p.id)
+        )
       )
 
     if canonical do
       Repo.all(
-        from a in PhoenixCRM.Address,
+        from(a in PhoenixCRM.Address,
           join: p in PhoenixCRM.Person,
           on: p.id == a.person_id,
           where: p.id == ^canonical or p.canonical_id == ^canonical,
           select: a.email
+        )
       )
     else
       [email]
@@ -589,11 +627,12 @@ defmodule PauseAiCa.Newsletters do
     Repo.transaction(fn ->
       subscription =
         Repo.one(
-          from s in Subscription,
+          from(s in Subscription,
             join: t in WithdrawalToken,
             on: t.subscription_id == s.id,
             where: t.token_hash == ^hash,
             lock: "FOR UPDATE"
+          )
         )
 
       if is_nil(subscription), do: Repo.rollback(:invalid_token)
@@ -608,7 +647,7 @@ defmodule PauseAiCa.Newsletters do
 
     Repo.transaction(fn ->
       subscription =
-        Repo.one(from s in Subscription, where: field(s, ^field) == ^hash, lock: "FOR UPDATE")
+        Repo.one(from(s in Subscription, where: field(s, ^field) == ^hash, lock: "FOR UPDATE"))
 
       if is_nil(subscription), do: Repo.rollback(:invalid_token)
       fun.(subscription)

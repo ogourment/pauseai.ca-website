@@ -11,8 +11,10 @@ defmodule PauseAiCa.Outreach.Archive do
   end
 
   def current?(scope, draft, batch) do
-    with {:ok, mailbox} <- Outreach.mailbox_for_draft(scope, draft) do
-      mailbox.id == batch.outreach_mailbox_ref and mailbox.email == batch.sender_email and
+    with {:ok, mailbox} <- Outreach.mailbox_for_draft(scope, draft),
+         {:ok, fingerprint} <- PauseAiCa.Outreach.Access.fingerprint(scope, mailbox.id) do
+      fingerprint == batch.outreach_access_fingerprint and
+        mailbox.id == batch.outreach_mailbox_ref and mailbox.email == batch.sender_email and
         mailbox.name == batch.sender_name and mailbox.locale == batch.edition and
         draft.outreach_email == batch.outreach_email and
         draft.conversation_id == batch.conversation_id and

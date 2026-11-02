@@ -4,6 +4,7 @@ defmodule PauseAiCa.Newsletters.Batches do
   alias PauseAiCa.{Repo, Volunteers, Accounts, Newsletters, CRM, Mailer, MailSafety}
   alias PauseAiCa.Newsletters.{Batch, Delivery, Draft, Drafts, Subscription}
   alias PauseAiCa.Newsletters.Edition
+  alias PauseAiCa.Outreach.{Access, Mailboxes}
   @dispatch_chunk 100
 
   @doc "Fresh, read-only recipient resolution for contact actions; never creates accounts or consent."
@@ -18,7 +19,7 @@ defmodule PauseAiCa.Newsletters.Batches do
   end
 
   def quota(scope) do
-    if Volunteers.superadmin?(scope) do
+    if email_access?(scope) do
       limits = PauseAiCa.Newsletters.DeliveryLimits.current()
       cutoff = DateTime.add(DateTime.utc_now(), -3600)
       recent = from(d in Delivery, where: d.attempted_at > ^cutoff)
@@ -30,7 +31,7 @@ defmodule PauseAiCa.Newsletters.Batches do
       oldest =
         Repo.one(from(d in recent, order_by: d.attempted_at, limit: 1, select: d.attempted_at))
 
-      if Volunteers.superadmin?(scope),
+      if email_access?(scope),
         do:
           {:ok,
            %{
@@ -60,10 +61,9 @@ defmodule PauseAiCa.Newsletters.Batches do
   end
 
   def get(scope, id) do
-    with true <- Volunteers.superadmin?(scope),
-         {:ok, uuid} <- Ecto.UUID.cast(id),
+    with {:ok, uuid} <- Ecto.UUID.cast(id),
          %Batch{} = batch <- Repo.get_by(Batch, id: uuid, owner_id: scope.user.id),
-         true <- Volunteers.superadmin?(scope) do
+         true <- batch_access?(scope, batch) do
       {:ok,
        %{
          batch: batch,
@@ -160,6 +160,9 @@ defmodule PauseAiCa.Newsletters.Batches do
       Repo.one!(from(d in Draft, where: d.id == ^draft.id, lock: "FOR UPDATE"))
       if draft.revision != expected.revision or draft.archived_at, do: Repo.rollback(:stale)
 
+      access_fingerprint =
+        if draft.outreach_mailbox_ref, do: Access.lock!(scope, draft.outreach_mailbox_ref)
+
       if String.trim(draft.subject) == "" or String.trim(draft.source) == "",
         do: Repo.rollback(:content_required)
 
@@ -219,8 +222,8 @@ defmodule PauseAiCa.Newsletters.Batches do
       identity =
         if draft.outreach_mailbox_ref,
           do:
-            {:authored_outreach_v1, draft.outreach_mailbox_ref, draft.outreach_email,
-             draft.conversation_id, draft.reply_message_id, identity},
+            {:authored_outreach_v2, access_fingerprint, draft.outreach_mailbox_ref,
+             draft.outreach_email, draft.conversation_id, draft.reply_message_id, identity},
           else: identity
 
       preparation_key = :crypto.hash(:sha256, :erlang.term_to_binary(identity))
@@ -237,6 +240,7 @@ defmodule PauseAiCa.Newsletters.Batches do
               draft_revision: draft.revision,
               recipient_mode: mode,
               outreach_mailbox_ref: draft.outreach_mailbox_ref,
+              outreach_access_fingerprint: access_fingerprint,
               outreach_email: draft.outreach_email,
               conversation_id: draft.conversation_id,
               reply_message_id: draft.reply_message_id,
@@ -256,9 +260,20 @@ defmodule PauseAiCa.Newsletters.Batches do
 
           for target <- targets do
             token_result =
-              if mode in ["contacts", "outreach"],
-                do: Newsletters.outreach_withdrawal_token(scope, target.email),
-                else: Newsletters.issue_withdrawal_token(scope, target.id)
+              cond do
+                mode == "outreach" ->
+                  Newsletters.outreach_withdrawal_token(
+                    scope,
+                    target.email,
+                    draft.outreach_mailbox_ref
+                  )
+
+                mode == "contacts" ->
+                  Newsletters.outreach_withdrawal_token(scope, target.email)
+
+                true ->
+                  Newsletters.issue_withdrawal_token(scope, target.id)
+              end
 
             raw =
               case token_result do
@@ -334,7 +349,7 @@ defmodule PauseAiCa.Newsletters.Batches do
       actor = Repo.get(Accounts.User, batch.approver_id)
       scope = if actor, do: Accounts.Scope.for_user(actor)
 
-      if actor && Volunteers.superadmin?(scope) do
+      if actor && batch_access?(scope, batch) do
         dispatch(scope, batch.id)
       else
         Repo.update_all(
@@ -798,6 +813,10 @@ defmodule PauseAiCa.Newsletters.Batches do
                lock: "FOR UPDATE"
              )
            ) do
+      if batch.outreach_mailbox_ref,
+        do: Access.lock!(scope, batch.outreach_mailbox_ref),
+        else: if(not Volunteers.superadmin?(scope), do: Repo.rollback(:unauthorized))
+
       batch
     else
       _ -> Repo.rollback(:unauthorized)
@@ -805,14 +824,23 @@ defmodule PauseAiCa.Newsletters.Batches do
   end
 
   defp authorized(scope, fun) do
-    if Volunteers.superadmin?(scope) do
+    if email_access?(scope) do
       Repo.transaction(fn ->
         Repo.one!(from(u in Accounts.User, where: u.id == ^scope.user.id, lock: "FOR UPDATE"))
-        if not Volunteers.superadmin?(scope), do: Repo.rollback(:unauthorized)
+        if not email_access?(scope), do: Repo.rollback(:unauthorized)
         fun.()
       end)
     else
       {:error, :unauthorized}
     end
+  end
+
+  defp email_access?(scope),
+    do: Volunteers.superadmin?(scope) or PauseAiCa.Outreach.access?(scope)
+
+  defp batch_access?(scope, batch) do
+    Volunteers.superadmin?(scope) or
+      (batch.recipient_mode == "outreach" and is_binary(batch.outreach_mailbox_ref) and
+         match?({:ok, _}, Mailboxes.fetch(scope, batch.outreach_mailbox_ref)))
   end
 end

@@ -1,6 +1,6 @@
 defmodule PauseAiCa.OutreachAttachments do
   @moduledoc "Private persistent blobs; provider capabilities never become browser URLs."
-  alias PauseAiCa.{Repo, Volunteers}
+  alias PauseAiCa.Repo
   alias PhoenixMailWorkflow.Inbound.Brevo
   import Ecto.Query
   @max_bytes 10_485_760
@@ -50,14 +50,14 @@ defmodule PauseAiCa.OutreachAttachments do
   end
 
   def download(scope, receipt_id, item_index, attachment_index) do
-    with true <- Volunteers.superadmin?(scope),
-         true <- valid_locator?(receipt_id, item_index, attachment_index),
+    with true <- valid_locator?(receipt_id, item_index, attachment_index),
          %PhoenixCRM.Message{} = message <-
            Repo.one(
-             from m in PhoenixCRM.Message,
+             from(m in PhoenixCRM.Message,
                where:
                  fragment("?->>'receipt_id' = ?", m.source, ^receipt_id) and
                    fragment("?->>'item_index' = ?", m.source, ^to_string(item_index))
+             )
            ),
          {:ok, _} <- PauseAiCa.Outreach.Mailboxes.fetch(scope, message.mailbox_ref),
          descriptor when is_map(descriptor) <-

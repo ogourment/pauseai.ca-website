@@ -1,7 +1,7 @@
 defmodule PauseAiCa.Outreach.Notifications do
   @moduledoc "Durable, idempotent reply notification outbox. Unknown submissions require reconciliation."
   import Ecto.Query
-  alias PauseAiCa.{Repo, Volunteers, Accounts}
+  alias PauseAiCa.{Repo, Accounts}
   alias PauseAiCa.Outreach.{Notification, Mailboxes}
   alias PhoenixCRM.Conversations
 
@@ -14,7 +14,10 @@ defmodule PauseAiCa.Outreach.Notifications do
         else: []
 
     recipient = PhoenixMailWorkflow.Outreach.notification_recipient(candidates, mailbox.owner_id)
-    user = Mailboxes.authorized_actor(recipient) || Mailboxes.authorized_actor(mailbox.owner_id)
+
+    user =
+      Mailboxes.authorized_actor(recipient, mailbox.id) ||
+        Mailboxes.authorized_actor(mailbox.owner_id, mailbox.id)
 
     Repo.insert!(
       %Notification{
@@ -40,9 +43,18 @@ defmodule PauseAiCa.Outreach.Notifications do
   end
 
   def status(scope) do
-    if Volunteers.superadmin?(scope) do
+    if PauseAiCa.Outreach.access?(scope) do
+      {:ok, boxes} = Mailboxes.all(scope)
+      refs = Enum.map(boxes, & &1.id)
+
       {:ok,
-       Repo.all(from(n in Notification, order_by: [desc: n.updated_at, desc: n.id], limit: 100))}
+       Repo.all(
+         from(n in Notification,
+           where: n.mailbox_ref in ^refs,
+           order_by: [desc: n.updated_at, desc: n.id],
+           limit: 100
+         )
+       )}
     else
       {:error, :unauthorized}
     end
@@ -65,7 +77,10 @@ defmodule PauseAiCa.Outreach.Notifications do
       row = Repo.one(from(n in Notification, where: n.id == ^id, lock: "FOR UPDATE"))
       if is_nil(row) or row.state != "pending", do: Repo.rollback(:not_pending)
       mailbox = Enum.find(Mailboxes.configured(), &(&1.id == row.mailbox_ref))
-      user = Mailboxes.authorized_actor(row.recipient_actor_id)
+
+      user =
+        Mailboxes.authorized_actor(row.recipient_actor_id, row.mailbox_ref) ||
+          (mailbox && Mailboxes.authorized_actor(mailbox.owner_id, row.mailbox_ref))
 
       cond do
         is_nil(mailbox) or not mailbox.enabled? or not mailbox.verified? ->
@@ -79,7 +94,11 @@ defmodule PauseAiCa.Outreach.Notifications do
         true ->
           reserved =
             Repo.update!(
-              Ecto.Changeset.change(row, state: "reserved", attempted_at: DateTime.utc_now())
+              Ecto.Changeset.change(row,
+                state: "reserved",
+                recipient_actor_id: user.id,
+                attempted_at: DateTime.utc_now()
+              )
             )
 
           {:send, reserved, user, mailbox}
@@ -93,7 +112,7 @@ defmodule PauseAiCa.Outreach.Notifications do
         Repo.transaction(fn ->
           user = Repo.one!(from(u in Accounts.User, where: u.id == ^user.id, lock: "FOR UPDATE"))
           scope = Accounts.Scope.for_user(user)
-          if not Volunteers.superadmin?(scope), do: Repo.rollback(:unauthorized)
+          PauseAiCa.Outreach.Access.lock!(scope, mailbox.id)
 
           case Mailboxes.sending(scope, mailbox.id) do
             {:ok, current} ->

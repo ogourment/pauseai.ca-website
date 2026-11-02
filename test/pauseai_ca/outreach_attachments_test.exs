@@ -62,6 +62,26 @@ defmodule PauseAiCa.OutreachAttachmentsTest do
     assert {:error, :not_found} = OutreachAttachments.download(scope, receipt.id, 0, 0)
   end
 
+  test "a delegated manager downloads only its mailbox and immediately loses access on revoke" do
+    Req.Test.stub(__MODULE__, fn conn -> Plug.Conn.resp(conn, 200, "private-file") end)
+    {:ok, receipt} = Outreach.receive(payload())
+    assert :ok = OutreachAttachments.ensure(receipt)
+    assert {:ok, _} = Outreach.process_receipt(receipt.id)
+    admin = user_fixture() |> change(superadmin: true) |> Repo.update!()
+    manager = user_fixture() |> change(superadmin: false) |> Repo.update!()
+    group = Repo.insert!(%PauseAiCa.Volunteers.Group{name: "Synthetic attachment managers"})
+    Repo.insert!(%PauseAiCa.Volunteers.Manager{group_id: group.id, user_id: manager.id})
+    scope = PauseAiCa.Accounts.Scope.for_user(manager)
+    admin_scope = PauseAiCa.Accounts.Scope.for_user(admin)
+    assert {:error, :not_found} = OutreachAttachments.download(scope, receipt.id, 0, 0)
+    assert {:ok, _} = Outreach.grant_mailbox(admin_scope, "outreach_en", manager.id, 0)
+    assert {:ok, file} = OutreachAttachments.download(scope, receipt.id, 0, 0)
+    assert File.read!(file.path) == "private-file"
+    assert Bitwise.band(File.stat!(file.path).mode, 0o777) == 0o600
+    assert {:ok, _} = Outreach.revoke_mailbox(admin_scope, "outreach_en", manager.id, 1)
+    assert {:error, :not_found} = OutreachAttachments.download(scope, receipt.id, 0, 0)
+  end
+
   test "oversized provider content never becomes a downloadable blob" do
     Req.Test.stub(__MODULE__, fn conn ->
       Plug.Conn.resp(conn, 200, String.duplicate("x", 10_485_761))

@@ -12,10 +12,16 @@ defmodule PauseAiCa.Outreach.Ingestion do
     do: ReceiptStore.record_failure(Repo, Receipt, id, reason)
 
   def retry_receipt(scope, id) do
-    with true <- PauseAiCa.Volunteers.superadmin?(scope), {:ok, uuid} <- Ecto.UUID.cast(id) do
+    with {:ok, uuid} <- Ecto.UUID.cast(id) do
       Repo.transaction(fn ->
         receipt = ReceiptStore.lock!(Repo, Receipt, uuid)
-        if not PauseAiCa.Volunteers.superadmin?(scope), do: Repo.rollback(:unauthorized)
+        if not receipt_allowed?(scope, receipt), do: Repo.rollback(:unauthorized)
+
+        unless PauseAiCa.Volunteers.superadmin?(scope) do
+          {refs, true} = receipt_scope(receipt)
+          Enum.each(Enum.sort(refs), &PauseAiCa.Outreach.Access.lock!(scope, &1))
+        end
+
         ReceiptStore.retry_locked!(Repo, receipt)
       end)
     else
@@ -24,24 +30,46 @@ defmodule PauseAiCa.Outreach.Ingestion do
   end
 
   def processing(scope) do
-    if PauseAiCa.Volunteers.superadmin?(scope) do
+    if PauseAiCa.Volunteers.superadmin?(scope) or PauseAiCa.Outreach.access?(scope) do
       Repo.all(
         from(r in Receipt,
           where: r.state in ["pending", "failed", "quarantined"] or r.files_pending,
           order_by: [desc: r.inserted_at],
-          limit: 50,
-          select: %{
-            id: r.id,
-            state: r.state,
-            error: r.error,
-            attempts: r.attempts,
-            files_pending: r.files_pending,
-            next_attempt_at: r.next_attempt_at
-          }
+          limit: 50
         )
+      )
+      |> Enum.filter(&receipt_allowed?(scope, &1))
+      |> Enum.map(
+        &Map.take(&1, [:id, :state, :error, :attempts, :files_pending, :next_attempt_at])
       )
     else
       []
+    end
+  end
+
+  defp receipt_allowed?(scope, receipt) do
+    if PauseAiCa.Volunteers.superadmin?(scope) do
+      true
+    else
+      {refs, complete?} = receipt_scope(receipt)
+      PauseAiCa.Outreach.Access.covers?(scope, refs, complete?)
+    end
+  end
+
+  defp receipt_scope(receipt) do
+    rules =
+      Enum.map(
+        Mailboxes.configured(),
+        &%{id: &1.id, receiving_addresses: &1.receiving_addresses, root_addresses: [&1.email]}
+      )
+
+    case PhoenixMailWorkflow.Inbound.Brevo.normalize(receipt.payload, rules) do
+      {:ok, result} ->
+        refs = result.messages |> Enum.map(& &1.mailbox_id) |> Enum.uniq()
+        {refs, result.messages != [] and result.quarantined == []}
+
+      _ ->
+        {[], false}
     end
   end
 

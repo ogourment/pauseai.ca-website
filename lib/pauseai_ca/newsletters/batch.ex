@@ -7,6 +7,7 @@ defmodule PauseAiCa.Newsletters.Batch do
     field(:approver_id, :binary_id)
     field(:draft_revision, :integer)
     field(:outreach_mailbox_ref, :string)
+    field(:outreach_access_fingerprint, :string)
     field(:outreach_email, :string, redact: true)
     field(:conversation_id, :binary_id)
     field(:reply_message_id, :binary_id)
