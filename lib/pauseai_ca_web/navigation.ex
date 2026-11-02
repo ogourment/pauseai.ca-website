@@ -143,6 +143,27 @@ defmodule PauseAiCaWeb.Navigation do
     %{roots: roots, sections: sections}
   end
 
+  def mail_breadcrumb_context(scope, locale, inbox? \\ false) do
+    locale = locale || Gettext.get_locale(PauseAiCaWeb.Gettext)
+
+    if Volunteers.allowed?(scope) do
+      roots = [
+        %{href: with_locale("/manage/accounts", locale), label: gettext("Manage")},
+        %{href: with_locale("/manage/mail", locale), label: gettext("Emails")}
+      ]
+
+      roots =
+        if inbox?,
+          do:
+            roots ++ [%{href: with_locale("/manage/mail/inbox", locale), label: gettext("Inbox")}],
+          else: roots
+
+      %{roots: roots, sections: []}
+    else
+      %{roots: [], sections: []}
+    end
+  end
+
   def assemble(scope, locale) do
     # Reload once per assembly: a stale session role cannot keep a menu grant.
     user =

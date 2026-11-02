@@ -10,7 +10,13 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
 
     case Drafts.get(socket.assigns.current_scope, params["id"]) do
       {:ok, draft} ->
-        {:ok, lists} = Lists.list(socket.assigns.current_scope)
+        lists =
+          if draft.recipient_mode == "outreach" do
+            []
+          else
+            {:ok, lists} = Lists.list(socket.assigns.current_scope)
+            lists
+          end
 
         {:ok,
          assign(socket,
@@ -179,7 +185,7 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
   end
 
   def handle_event("save", %{"draft" => attrs}, socket) do
-    if PauseAiCa.Volunteers.superadmin?(socket.assigns.current_scope),
+    if authorized_editor?(socket),
       do: save(socket, attrs),
       else: {:noreply, denied(socket)}
   end
@@ -353,7 +359,7 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
   end
 
   defp edit(socket, attrs) do
-    if PauseAiCa.Volunteers.superadmin?(socket.assigns.current_scope) do
+    if authorized_editor?(socket) do
       mode_changed? =
         Enum.any?([:recipient_mode, :edition], fn field ->
           key = to_string(field)
@@ -444,7 +450,7 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
   defp refresh_audience(%{assigns: %{draft: %{recipient_mode: "outreach"}}} = socket) do
     scope = socket.assigns.current_scope
 
-    with true <- PauseAiCa.Volunteers.superadmin?(scope),
+    with {:ok, _} <- Drafts.get(scope, socket.assigns.draft.id),
          {:ok, batches} <- Batches.list(scope, socket.assigns.draft.id),
          {:ok, quota} <- Batches.quota(scope) do
       assign(socket,
@@ -453,8 +459,12 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
         quota: quota,
         outreach_mailboxes: outreach_mailboxes(scope),
         limits_form:
-          socket.assigns.limits_form ||
-            to_form(DeliveryLimits.changeset(quota.limits, %{}), as: "limits")
+          if(PauseAiCa.Volunteers.superadmin?(scope),
+            do:
+              socket.assigns.limits_form ||
+                to_form(DeliveryLimits.changeset(quota.limits, %{}), as: "limits"),
+            else: nil
+          )
       )
     else
       _ -> denied(socket)
@@ -551,6 +561,12 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
         "The last Markdown link is incomplete. Finish its URL and closing parenthesis before preparing a batch."
       )
 
+  defp batch_error(:unauthorized),
+    do:
+      gettext(
+        "Access changed. Review your mailbox access and prepare this draft again before sending."
+      )
+
   defp batch_error(:review_required),
     do: gettext("Confirm that you reviewed outreach eligibility for this batch.")
 
@@ -601,11 +617,16 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
     end
   end
 
+  defp authorized_editor?(%{assigns: %{draft: %Draft{id: id}, current_scope: scope}}),
+    do: match?({:ok, _}, Drafts.get(scope, id))
+
+  defp authorized_editor?(_), do: false
+
   defp denied(socket),
     do:
       socket
       |> assign(draft: nil)
-      |> put_flash(:error, gettext("Superadmin access required."))
+      |> put_flash(:error, gettext("You no longer have access to this draft."))
       |> redirect(to: ~p"/dashboard")
 
   def render(assigns) do
@@ -615,6 +636,10 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
       current_scope={@current_scope}
       locale={@locale}
       active_tab="mail"
+      breadcrumb_context={
+        if @draft && @draft.recipient_mode == "outreach",
+          do: PauseAiCaWeb.Navigation.mail_breadcrumb_context(@current_scope, @locale, true)
+      }
     >
       <section
         :if={@draft}
@@ -626,7 +651,11 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
       >
         <fieldset disabled={!@connected} class="contents">
           <div class="management-controls">
-            <PauseAiCaWeb.MailNavigation.tabs locale={@locale} active="drafts" />
+            <PauseAiCaWeb.MailNavigation.tabs
+              current_scope={@current_scope}
+              locale={@locale}
+              active="drafts"
+            />
             <h1 class="mt-5 text-3xl font-bold">{gettext("Email draft")}</h1>
             <div :if={@step == :compose and is_nil(@draft.archived_at)} class="send-action-bar mt-4">
               <button
@@ -674,7 +703,7 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
                 <.input field={@form[:outreach_email]} type="email" label={gettext("To")} required />
                 <p>
                   {gettext(
-                    "The sender address sets the English or French edition. Your administrator identity is recorded separately."
+                    "The sender address sets the English or French edition. Your signed-in account is recorded separately."
                   )}
                 </p>
                 <.link

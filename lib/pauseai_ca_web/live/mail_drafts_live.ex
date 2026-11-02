@@ -336,7 +336,11 @@ defmodule PauseAiCaWeb.MailDraftsLive do
             navigate={~p"/manage/accounts/#{@batch.anchor_user_id}?locale=#{@locale}"}
             class="mb-4 inline-block underline"
           >{gettext("Account and Brevo history")}</.link>
-          <PauseAiCaWeb.MailNavigation.tabs locale={@locale} active="drafts" />
+          <PauseAiCaWeb.MailNavigation.tabs
+            current_scope={@current_scope}
+            locale={@locale}
+            active="drafts"
+          />
           <h1 class="text-3xl font-bold mb-6">{gettext("Drafts")}</h1>
           <p :if={@batch}>
             {gettext(
@@ -359,11 +363,19 @@ defmodule PauseAiCaWeb.MailDraftsLive do
           id="mail-batches"
           class="mt-6"
         >
-          <section :if={Volunteers.superadmin?(@current_scope)} id="email-drafts" class="mb-8">
-            <button id="mail-new-draft" type="button" phx-click="new-email-draft" class="crm-button">{gettext(
-              "Compose"
-            )}</button>
-            <p class="my-3 text-stone-600">
+          <section
+            :if={Volunteers.superadmin?(@current_scope) or @general_drafts != []}
+            id="email-drafts"
+            class="mb-8"
+          >
+            <button
+              :if={Volunteers.superadmin?(@current_scope)}
+              id="mail-new-draft"
+              type="button"
+              phx-click="new-email-draft"
+              class="crm-button"
+            >{gettext("Compose")}</button>
+            <p :if={Volunteers.superadmin?(@current_scope)} class="my-3 text-stone-600">
               {gettext("Write the content first. Choose the audience when you are ready.")}
             </p>
             <.link
@@ -410,9 +422,13 @@ defmodule PauseAiCaWeb.MailDraftsLive do
           <p class="my-3">
             {gettext("Write the content first. Choose the audience when you are ready.")}
           </p>
-          <button id="mail-new-draft" type="button" phx-click="new-email-draft" class="crm-button">{gettext(
-            "Start draft"
-          )}</button>
+          <button
+            :if={Volunteers.superadmin?(@current_scope)}
+            id="mail-new-draft"
+            type="button"
+            phx-click="new-email-draft"
+            class="crm-button"
+          >{gettext("Start draft")}</button>
           <.link
             navigate={~p"/manage/mail/new?account_drafts=true&locale=#{@locale}"}
             class="ml-5 underline"

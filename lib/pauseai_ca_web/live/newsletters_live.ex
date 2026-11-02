@@ -220,7 +220,11 @@ defmodule PauseAiCaWeb.NewslettersLive do
     >
       <section id="newsletters" class="crm-surface mx-auto max-w-6xl px-5 py-8">
         <div class="management-controls">
-          <PauseAiCaWeb.MailNavigation.tabs locale={@locale} active="lists" />
+          <PauseAiCaWeb.MailNavigation.tabs
+            current_scope={@current_scope}
+            locale={@locale}
+            active="lists"
+          />
           <h1 class="text-3xl font-bold">{gettext("Newsletter lists")}</h1>
           <p class="mt-3">
             {gettext(

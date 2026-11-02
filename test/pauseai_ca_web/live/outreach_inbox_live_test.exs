@@ -135,7 +135,7 @@ defmodule PauseAiCaWeb.OutreachInboxLiveTest do
     {:ok, revoked, _} = live(conn, "/manage/mail/conversations/#{conversation.id}?locale=en")
     other |> Ecto.Changeset.change(superadmin: false) |> Repo.update!()
     revoked |> element("#outreach-reply") |> render_click()
-    assert_redirect(revoked, "/dashboard")
+    assert has_element?(revoked, "#outreach-no-access")
     assert Repo.aggregate(PauseAiCa.Newsletters.Batch, :count) == 0
   end
 
@@ -198,12 +198,14 @@ defmodule PauseAiCaWeb.OutreachInboxLiveTest do
     refute_receive {:email, _}
     admin |> Ecto.Changeset.change(superadmin: false) |> Repo.update!()
     view |> element("#outreach-receipt-#{receipt.id} button", "Retry") |> render_click()
-    assert_redirect(view, "/dashboard")
+    assert has_element?(view, "#outreach-no-access")
   end
 
   test "ordinary confirmed users cannot read outreach inbox", %{conn: conn} do
     conn = log_in_user(conn, user_fixture())
-    assert {:error, {:redirect, %{to: "/dashboard"}}} = live(conn, "/manage/mail/inbox?locale=en")
+    {:ok, view, _} = live(conn, "/manage/mail/inbox?locale=en")
+    assert has_element?(view, "#outreach-no-access")
+    refute has_element?(view, "#outreach-create-draft")
   end
 
   defp flush_setup_mail do

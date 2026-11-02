@@ -45,6 +45,7 @@ defmodule PauseAiCaWeb.Layouts do
 
   slot :management_navigation
   attr :breadcrumb_context, :map, default: %{}
+  attr :breadcrumb_scope, :string, default: nil
   slot :inner_block, required: true
 
   def app(assigns) do
@@ -331,7 +332,7 @@ defmodule PauseAiCaWeb.Layouts do
     <div class="mx-auto max-w-6xl px-5 pt-3">
       <PhoenixAppShell.Components.breadcrumbs
         label={gettext("Breadcrumbs")}
-        scope={if @current_scope && @current_scope.user, do: @current_scope.user.id, else: "guest"}
+        scope={(if @current_scope && @current_scope.user, do: @current_scope.user.id, else: "guest") <> if(@breadcrumb_scope, do: ":" <> @breadcrumb_scope, else: "")}
         current_label={gettext("Current page")}
         context_json={Jason.encode!(@breadcrumb_context)}
       />
@@ -509,6 +510,8 @@ defmodule PauseAiCaWeb.Layouts do
   attr :active_tab, :string, default: "accounts"
   slot :inner_block, required: true
 
+  attr :breadcrumb_context, :map, default: nil
+
   def management(assigns) do
     ~H"""
     <.app
@@ -517,7 +520,14 @@ defmodule PauseAiCaWeb.Layouts do
       locale={@locale}
       translated_path={@translated_path}
       show_announcements={false}
-      breadcrumb_context={PauseAiCaWeb.Navigation.breadcrumb_context(@current_scope, @locale)}
+      breadcrumb_context={
+        @breadcrumb_context ||
+          if(@active_tab == "mail",
+            do: PauseAiCaWeb.Navigation.mail_breadcrumb_context(@current_scope, @locale),
+            else: PauseAiCaWeb.Navigation.breadcrumb_context(@current_scope, @locale)
+          )
+      }
+      breadcrumb_scope={if @active_tab == "mail", do: "mail"}
     >
       <:management_navigation>
         <div class="management-chrome">

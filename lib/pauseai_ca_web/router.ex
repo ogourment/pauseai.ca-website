@@ -135,6 +135,15 @@ defmodule PauseAiCaWeb.Router do
     end
   end
 
+  scope "/manage/mail", PauseAiCaWeb do
+    pipe_through [:browser, :require_authenticated_user, :require_superadmin_user]
+
+    live_session :mailbox_access,
+      on_mount: [{PauseAiCaWeb.UserAuth, :require_authenticated}] do
+      live "/access", MailboxAccessLive, :index
+    end
+  end
+
   scope "/", PauseAiCaWeb do
     pipe_through [:browser, :require_authenticated_user]
 

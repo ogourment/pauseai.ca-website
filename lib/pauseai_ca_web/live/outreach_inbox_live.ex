@@ -24,6 +24,7 @@ defmodule PauseAiCaWeb.OutreachInboxLive do
        more?: false,
        truncated?: false,
        error: nil,
+       no_access: false,
        connected: connected?(socket),
        compose_form:
          to_form(%{"mailbox_ref" => "", "email" => "", "subject" => ""}, as: "outreach")
@@ -38,6 +39,7 @@ defmodule PauseAiCaWeb.OutreachInboxLive do
         {:ok, result} ->
           {:noreply,
            assign(socket,
+             no_access: false,
              conversation: result.conversation,
              mailbox: result.mailbox,
              messages: result.messages,
@@ -54,9 +56,13 @@ defmodule PauseAiCaWeb.OutreachInboxLive do
       filters = Map.merge(%{"q" => "", "mailbox_ref" => "", "page" => "1"}, filters)
 
       case Outreach.list(scope, filters) do
+        {:ok, %{mailboxes: []}} ->
+          {:noreply, denied(socket)}
+
         {:ok, result} ->
           {:noreply,
            assign(socket,
+             no_access: false,
              conversations: result.conversations,
              page_title: gettext("Inbox"),
              mailboxes: result.mailboxes,
@@ -85,7 +91,7 @@ defmodule PauseAiCaWeb.OutreachInboxLive do
   end
 
   def handle_event("filter", %{"filters" => filters}, socket) do
-    if PauseAiCa.Volunteers.superadmin?(socket.assigns.current_scope) do
+    if Outreach.access?(socket.assigns.current_scope) do
       {:noreply,
        push_patch(socket, to: inbox_path(socket.assigns.locale, Map.put(filters, "page", "1")))}
     else
@@ -112,6 +118,9 @@ defmodule PauseAiCaWeb.OutreachInboxLive do
          )}
     end
   end
+
+  def handle_event("reply", _, %{assigns: %{conversation: nil}} = socket),
+    do: {:noreply, denied(socket)}
 
   def handle_event("reply", _, socket) do
     case Outreach.reply_draft(socket.assigns.current_scope, socket.assigns.conversation.id) do
@@ -166,15 +175,19 @@ defmodule PauseAiCaWeb.OutreachInboxLive do
   end
 
   defp attention(socket, result) do
-    case Outreach.notification_status(socket.assigns.current_scope) do
-      {:ok, rows} ->
-        assign(socket,
-          processing: Map.get(result, :processing, []),
-          notification_attention: Enum.reject(rows, &(&1.state == "accepted"))
-        )
+    if PauseAiCa.Volunteers.superadmin?(socket.assigns.current_scope) do
+      case Outreach.notification_status(socket.assigns.current_scope) do
+        {:ok, rows} ->
+          assign(socket,
+            processing: Map.get(result, :processing, []),
+            notification_attention: Enum.reject(rows, &(&1.state == "accepted"))
+          )
 
-      _ ->
-        denied(socket)
+        _ ->
+          denied(socket)
+      end
+    else
+      assign(socket, processing: [], notification_attention: [])
     end
   end
 
@@ -213,9 +226,18 @@ defmodule PauseAiCaWeb.OutreachInboxLive do
 
   defp denied(socket),
     do:
-      socket
-      |> put_flash(:error, gettext("Superadmin access required."))
-      |> redirect(to: "/dashboard")
+      assign(socket,
+        no_access: true,
+        page_title: gettext("Inbox"),
+        conversation: nil,
+        conversations: [],
+        messages: [],
+        mailbox: nil,
+        mailboxes: [],
+        processing: [],
+        notification_attention: [],
+        error: nil
+      )
 
   defp conversation_subject(conversation) do
     if conversation.subject in [nil, ""],
@@ -303,7 +325,7 @@ defmodule PauseAiCaWeb.OutreachInboxLive do
       labels: %{
         incoming: gettext("Received"),
         outgoing: gettext("Sent"),
-        submitted_by: gettext("Submitting administrator"),
+        submitted_by: gettext("Submitted by"),
         from: gettext("From"),
         to: gettext("To"),
         attachments: gettext("Attachments")
@@ -345,6 +367,13 @@ defmodule PauseAiCaWeb.OutreachInboxLive do
       current_scope={@current_scope}
       locale={@locale}
       active_tab="mail"
+      breadcrumb_context={
+        PauseAiCaWeb.Navigation.mail_breadcrumb_context(
+          @current_scope,
+          @locale,
+          !is_nil(@conversation)
+        )
+      }
     >
       <section
         id="outreach-workspace"
@@ -353,172 +382,197 @@ defmodule PauseAiCaWeb.OutreachInboxLive do
         }
         class="crm-surface mx-auto max-w-6xl px-5 py-8"
       >
-        <div class="management-controls space-y-4">
-          <PauseAiCaWeb.MailNavigation.tabs locale={@locale} active="conversations" />
-          <h1 class="text-3xl font-bold">
-            {if @conversation, do: conversation_subject(@conversation), else: gettext("Inbox")}
-          </h1>
-          <p :if={@error} role="alert" class="crm-error">{@error}</p>
-          <%= if @conversation do %>
-            <p class="break-all">{@mailbox.name} &lt;{@mailbox.email}&gt;</p>
-            <div class="flex flex-wrap gap-4 items-center">
-              <button
-                id="outreach-reply"
-                phx-click="reply"
-                disabled={!@connected}
-                class="crm-button min-h-11"
-                phx-disable-with={gettext("Opening…")}
-              >{gettext("Reply")}</button>
-              <.link
-                navigate={inbox_path(@locale, %{})}
-                class="underline min-h-11 inline-flex items-center"
-              >{gettext("Inbox")}</.link>
-            </div>
-          <% else %>
-            <.form
-              for={to_form(@filters, as: "filters")}
-              id="outreach-filters"
-              phx-submit="filter"
-              class="crm-panel grid gap-3 sm:grid-cols-3 items-end"
-            >
-              <.input
-                name="filters[mailbox_ref]"
-                value={@filters["mailbox_ref"]}
-                type="select"
-                label={gettext("Mailbox")}
-                options={[{gettext("All mailboxes"), ""}] ++ Enum.map(@mailboxes, &{&1.email, &1.id})}
-              />
-              <.input name="filters[q]" value={@filters["q"]} label={gettext("Search conversations")} />
-              <button type="submit" disabled={!@connected} class="crm-button min-h-11">{gettext(
-                "Search"
-              )}</button>
-            </.form>
-            <details
-              :if={@processing != [] or @notification_attention != []}
-              id="outreach-processing-attention"
-              class="crm-panel text-sm"
-            >
-              <summary class="cursor-pointer min-h-11 font-semibold">
-                {gettext("Incoming mail status")} · {length(@processing) +
-                  length(@notification_attention)}
-              </summary>
-              <button
-                type="button"
-                phx-click="refresh-processing"
-                disabled={!@connected}
-                class="underline min-h-11"
-              >{gettext("Refresh status")}</button>
-              <p :if={@recovery_status} role="status">{@recovery_status}</p>
-              <section :if={@processing != []} class="mt-3 space-y-3">
-                <h2 class="font-semibold">{gettext("Incoming messages awaiting processing")}</h2>
-                <p>
-                  {gettext(
-                    "Incoming payloads remain saved while processing or attachment retrieval is pending. After correcting the mailbox or attachment problem, choose Retry."
-                  )}
-                </p>
-                <ul class="space-y-3">
-                  <li
-                    :for={row <- @processing}
-                    id={"outreach-receipt-#{row.id}"}
-                    class="border-t pt-3"
-                  >
-                    <p>
-                      {processing_state(row.state)} · {gettext("%{count} attempts",
-                        count: row.attempts
-                      )}
-                    </p>
-                    <p :if={row.next_attempt_at}>
-                      {gettext("Next attempt")}:
-                      <time datetime={DateTime.to_iso8601(row.next_attempt_at)}>{DateTime.to_iso8601(
-                        row.next_attempt_at
-                      )} (UTC)</time>
-                    </p>
-                    <p :if={row.error}>
-                      {gettext(
-                        "Check the mailbox configuration and attachment retrieval before retrying."
-                      )}
-                    </p>
-                    <button
-                      type="button"
-                      phx-click="retry-receipt"
-                      phx-value-id={row.id}
-                      disabled={!@connected}
-                      class="underline min-h-11"
-                      phx-disable-with={gettext("Queuing…")}
-                    >{gettext("Retry")}</button>
-                  </li>
-                </ul>
-              </section>
-              <section :if={@notification_attention != []} class="mt-4 space-y-3">
-                <h2 class="font-semibold">{gettext("Reply notifications")}</h2>
-                <ul class="space-y-3">
-                  <li
-                    :for={row <- @notification_attention}
-                    id={"outreach-notification-#{row.id}"}
-                    class="border-t pt-3"
-                  >
-                    <p>{notification_state(row.state)}</p>
-                    <p>{notification_instruction(row.state)}</p>
-                    <.link
-                      navigate={"/manage/mail/conversations/#{row.conversation_id}?locale=#{@locale}"}
-                      class="underline min-h-11 inline-flex items-center"
-                    >{gettext("View conversation")}</.link>
-                  </li>
-                </ul>
-              </section>
-            </details>
-            <details id="outreach-compose" class="crm-panel">
-              <summary class="cursor-pointer min-h-11 font-semibold">
-                {gettext("Compose outreach email")}
-              </summary>
+        <section :if={@no_access} id="outreach-no-access" class="crm-panel" role="status">
+          <h1 class="text-3xl font-bold">{gettext("Mailbox access required")}</h1>
+          <p>
+            {gettext(
+              "An administrator must grant you access to a mailbox before you can read or send its messages."
+            )}
+          </p>
+          <.link href={inbox_path(@locale, %{})} class="underline min-h-11 inline-flex items-center">{gettext(
+            "Refresh mailbox access"
+          )}</.link>
+        </section>
+
+        <%= if !@no_access do %>
+          <div class="management-controls space-y-4">
+            <PauseAiCaWeb.MailNavigation.tabs
+              current_scope={@current_scope}
+              locale={@locale}
+              active="conversations"
+            />
+            <h1 class="text-3xl font-bold">
+              {if @conversation, do: conversation_subject(@conversation), else: gettext("Inbox")}
+            </h1>
+            <p :if={@error} role="alert" class="crm-error">{@error}</p>
+            <%= if @conversation do %>
+              <p class="break-all">{@mailbox.name} &lt;{@mailbox.email}&gt;</p>
+              <div class="flex flex-wrap gap-4 items-center">
+                <button
+                  id="outreach-reply"
+                  phx-click="reply"
+                  disabled={!@connected}
+                  class="crm-button min-h-11"
+                  phx-disable-with={gettext("Opening…")}
+                >{gettext("Reply")}</button>
+                <.link
+                  navigate={inbox_path(@locale, %{})}
+                  class="underline min-h-11 inline-flex items-center"
+                >{gettext("Inbox")}</.link>
+              </div>
+            <% else %>
               <.form
-                for={@compose_form}
-                id="outreach-create-draft"
-                phx-submit="create-draft"
-                class="mt-3 space-y-3"
+                for={to_form(@filters, as: "filters")}
+                id="outreach-filters"
+                phx-submit="filter"
+                class="crm-panel grid gap-3 sm:grid-cols-3 items-end"
               >
                 <.input
-                  field={@compose_form[:mailbox_ref]}
+                  id="outreach-filter-mailbox"
+                  name="filters[mailbox_ref]"
+                  value={@filters["mailbox_ref"]}
                   type="select"
-                  label={gettext("From")}
-                  aria-label={gettext("From")}
-                  options={Enum.map(@mailboxes, &{"#{&1.name} <#{&1.email}>", &1.id})}
+                  label={gettext("Mailbox")}
+                  options={
+                    [{gettext("All mailboxes"), ""}] ++ Enum.map(@mailboxes, &{&1.email, &1.id})
+                  }
                 />
-                <.input field={@compose_form[:email]} type="email" required label={gettext("To")} />
-                <.input field={@compose_form[:subject]} label={gettext("Subject")} />
-                <button
-                  type="submit"
-                  disabled={!@connected or @mailboxes == []}
-                  class="crm-button min-h-11"
-                >{gettext("Open draft")}</button>
+                <.input
+                  name="filters[q]"
+                  value={@filters["q"]}
+                  label={gettext("Search conversations")}
+                />
+                <button type="submit" disabled={!@connected} class="crm-button min-h-11">{gettext(
+                  "Search"
+                )}</button>
               </.form>
-            </details>
+              <details
+                :if={@processing != [] or @notification_attention != []}
+                id="outreach-processing-attention"
+                class="crm-panel text-sm"
+              >
+                <summary class="cursor-pointer min-h-11 font-semibold">
+                  {gettext("Incoming mail status")} · {length(@processing) +
+                    length(@notification_attention)}
+                </summary>
+                <button
+                  type="button"
+                  phx-click="refresh-processing"
+                  disabled={!@connected}
+                  class="underline min-h-11"
+                >{gettext("Refresh status")}</button>
+                <p :if={@recovery_status} role="status">{@recovery_status}</p>
+                <section :if={@processing != []} class="mt-3 space-y-3">
+                  <h2 class="font-semibold">{gettext("Incoming messages awaiting processing")}</h2>
+                  <p>
+                    {gettext(
+                      "Incoming payloads remain saved while processing or attachment retrieval is pending. After correcting the mailbox or attachment problem, choose Retry."
+                    )}
+                  </p>
+                  <ul class="space-y-3">
+                    <li
+                      :for={row <- @processing}
+                      id={"outreach-receipt-#{row.id}"}
+                      class="border-t pt-3"
+                    >
+                      <p>
+                        {processing_state(row.state)} · {gettext("%{count} attempts",
+                          count: row.attempts
+                        )}
+                      </p>
+                      <p :if={row.next_attempt_at}>
+                        {gettext("Next attempt")}:
+                        <time datetime={DateTime.to_iso8601(row.next_attempt_at)}>{DateTime.to_iso8601(
+                          row.next_attempt_at
+                        )} (UTC)</time>
+                      </p>
+                      <p :if={row.error}>
+                        {gettext(
+                          "Check the mailbox configuration and attachment retrieval before retrying."
+                        )}
+                      </p>
+                      <button
+                        type="button"
+                        phx-click="retry-receipt"
+                        phx-value-id={row.id}
+                        disabled={!@connected}
+                        class="underline min-h-11"
+                        phx-disable-with={gettext("Queuing…")}
+                      >{gettext("Retry")}</button>
+                    </li>
+                  </ul>
+                </section>
+                <section :if={@notification_attention != []} class="mt-4 space-y-3">
+                  <h2 class="font-semibold">{gettext("Reply notifications")}</h2>
+                  <ul class="space-y-3">
+                    <li
+                      :for={row <- @notification_attention}
+                      id={"outreach-notification-#{row.id}"}
+                      class="border-t pt-3"
+                    >
+                      <p>{notification_state(row.state)}</p>
+                      <p>{notification_instruction(row.state)}</p>
+                      <.link
+                        navigate={"/manage/mail/conversations/#{row.conversation_id}?locale=#{@locale}"}
+                        class="underline min-h-11 inline-flex items-center"
+                      >{gettext("View conversation")}</.link>
+                    </li>
+                  </ul>
+                </section>
+              </details>
+              <details id="outreach-compose" class="crm-panel">
+                <summary class="cursor-pointer min-h-11 font-semibold">
+                  {gettext("Compose outreach email")}
+                </summary>
+                <.form
+                  for={@compose_form}
+                  id="outreach-create-draft"
+                  phx-submit="create-draft"
+                  class="mt-3 space-y-3"
+                >
+                  <.input
+                    field={@compose_form[:mailbox_ref]}
+                    type="select"
+                    label={gettext("From")}
+                    aria-label={gettext("From")}
+                    options={Enum.map(@mailboxes, &{"#{&1.name} <#{&1.email}>", &1.id})}
+                  />
+                  <.input field={@compose_form[:email]} type="email" required label={gettext("To")} />
+                  <.input field={@compose_form[:subject]} label={gettext("Subject")} />
+                  <button
+                    type="submit"
+                    disabled={!@connected or @mailboxes == []}
+                    class="crm-button min-h-11"
+                  >{gettext("Open draft")}</button>
+                </.form>
+              </details>
+            <% end %>
+          </div>
+          <%= if @conversation do %>
+            <section id="outreach-messages" class="mt-6 space-y-5">
+              {Phoenix.HTML.raw(conversation_html(assigns))}
+            </section>
+            <p :if={@truncated?} class="mt-4">
+              {gettext("Showing the latest 200 messages in this conversation.")}
+            </p>
+          <% else %>
+            <section id="outreach-conversations" class="mt-6">
+              {Phoenix.HTML.raw(inbox_html(assigns))}
+            </section>
+            <nav aria-label={gettext("Pagination")} class="mt-5 flex gap-5 items-center">
+              <.link
+                :if={@page > 1}
+                patch={inbox_path(@locale, Map.put(@filters, "page", @page - 1))}
+                class="underline min-h-11 inline-flex items-center"
+              >{gettext("Previous")}</.link>
+              <span>{gettext("Page %{page}", page: @page)}</span>
+              <.link
+                :if={@more?}
+                patch={inbox_path(@locale, Map.put(@filters, "page", @page + 1))}
+                class="underline min-h-11 inline-flex items-center"
+              >{gettext("Next")}</.link>
+            </nav>
           <% end %>
-        </div>
-        <%= if @conversation do %>
-          <section id="outreach-messages" class="mt-6 space-y-5">
-            {Phoenix.HTML.raw(conversation_html(assigns))}
-          </section>
-          <p :if={@truncated?} class="mt-4">
-            {gettext("Showing the latest 200 messages in this conversation.")}
-          </p>
-        <% else %>
-          <section id="outreach-conversations" class="mt-6">
-            {Phoenix.HTML.raw(inbox_html(assigns))}
-          </section>
-          <nav aria-label={gettext("Pagination")} class="mt-5 flex gap-5 items-center">
-            <.link
-              :if={@page > 1}
-              patch={inbox_path(@locale, Map.put(@filters, "page", @page - 1))}
-              class="underline min-h-11 inline-flex items-center"
-            >{gettext("Previous")}</.link>
-            <span>{gettext("Page %{page}", page: @page)}</span>
-            <.link
-              :if={@more?}
-              patch={inbox_path(@locale, Map.put(@filters, "page", @page + 1))}
-              class="underline min-h-11 inline-flex items-center"
-            >{gettext("Next")}</.link>
-          </nav>
         <% end %>
       </section>
     </Layouts.management>

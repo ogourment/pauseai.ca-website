@@ -346,8 +346,7 @@ if System.get_env("ATDD") == "true" do
 
         b
         |> click_button(tr(locale, "Reply"))
-        |> assert_path("/dashboard")
-        |> connected()
+        |> assert_has("#outreach-no-access")
         |> refute_has("#newsletter-draft-form")
         |> capture(
           id,

@@ -204,7 +204,11 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
         data-breadcrumb-label={if @result, do: @result.batch.subject, else: gettext("Sent & results")}
       >
         <div class="management-controls">
-          <PauseAiCaWeb.MailNavigation.tabs locale={@locale} active="results" />
+          <PauseAiCaWeb.MailNavigation.tabs
+            current_scope={@current_scope}
+            locale={@locale}
+            active="results"
+          />
           <h1 class="text-3xl font-bold">{gettext("Sent & results")}</h1>
           <p class="mt-3">
             {gettext(
