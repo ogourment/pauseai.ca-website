@@ -8,6 +8,26 @@ defmodule PauseAiCa.Mail do
   alias PhoenixCRM.{Person, Address}
   alias PauseAiCa.Mail.{Batch, Draft, Render}
 
+  @doc "Fresh email-tool capabilities; mailbox delegation does not replace existing scoped account mail."
+  def capabilities(scope) do
+    authorization = PauseAiCa.Outreach.Access.facts(scope)
+    confirmed? = Map.get(authorization, :confirmed?, false)
+
+    legacy? =
+      confirmed? and
+        (Map.get(authorization, :full_access?, false) or Map.get(authorization, :eligible?, false))
+
+    outreach? =
+      confirmed? and
+        Enum.any?(PauseAiCa.Outreach.Mailboxes.configured(), fn mailbox ->
+          PhoenixMailWorkflow.MailboxAccess.allowed?(authorization, mailbox.id)
+        end)
+
+    %{legacy?: legacy?, outreach?: outreach?, any?: legacy? or outreach?}
+  end
+
+  def access?(scope), do: capabilities(scope).any?
+
   def recipient(scope, id, context \\ %{}) do
     with {:ok, %{user: %{confirmed_at: at} = user}} when not is_nil(at) <-
            authorized_account(scope, id, context),
