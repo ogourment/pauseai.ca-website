@@ -106,7 +106,7 @@ defmodule PauseAiCaWeb.Layouts do
         </a>
         <details id="learn-menu" class="act-menu relative hidden md:block">
           <summary class="cursor-pointer list-none text-base font-medium text-stone-700 hover:text-stone-950">
-            {gettext("Learn")} <span aria-hidden="true" class="text-xs">▾</span>
+            {gettext("Learn")}
           </summary>
           <div class="absolute left-0 z-50 mt-2 w-64 overflow-hidden rounded-xl border border-stone-200 bg-white shadow-lg">
             <.link
@@ -143,7 +143,6 @@ defmodule PauseAiCaWeb.Layouts do
           <summary class="cursor-pointer list-none text-base font-medium text-stone-700 hover:text-stone-950">
             <span class="sr-only sm:not-sr-only">{gettext("Get involved")}</span>
             <.icon name="hero-bars-3" class="size-6 sm:hidden" />
-            <span aria-hidden="true" class="hidden text-xs sm:inline">▾</span>
           </summary>
           <div class="fixed left-3 right-3 top-16 z-50 max-h-[75vh] overflow-y-auto rounded-xl border border-stone-200 bg-white shadow-lg md:absolute md:left-auto md:right-0 md:top-auto md:mt-2 md:w-64">
             <div class="border-b border-stone-100 md:hidden">
@@ -509,7 +508,7 @@ defmodule PauseAiCaWeb.Layouts do
   defp section_menu(assigns) do
     ~H"""
     <details :if={Enum.any?(@items, &(&1.area == @area))} id={@id} class="act-menu section-menu">
-      <summary>{@label}<span aria-hidden="true" class="section-chevron">▾</span></summary>
+      <summary>{@label}</summary>
       <div class="section-menu-panel">
         <PhoenixAppShell.Components.navigation
           id={@id <> "-navigation"}
@@ -561,10 +560,7 @@ defmodule PauseAiCaWeb.Layouts do
               style={"background: #{env_badge_colour()}"}
             >{PauseAiCa.Environment.label()}</span>
           </span>
-          <span class="section-brand-name">{gettext("PauseAI Canada")}</span><span
-            aria-hidden="true"
-            class="section-chevron"
-          >▾</span>
+          <span class="section-brand-name">{gettext("PauseAI Canada")}</span>
         </summary>
         <div class="section-menu-panel brand-menu-panel">
           <.link href={if @locale == "fr", do: ~p"/fr", else: ~p"/en"} class="section-public-link">{gettext(
@@ -590,7 +586,7 @@ defmodule PauseAiCaWeb.Layouts do
         </div>
       </details>
       <details id="learn-menu" class="act-menu section-menu section-wide-public">
-        <summary>{gettext("Learn")}<span aria-hidden="true" class="section-chevron">▾</span></summary>
+        <summary>{gettext("Learn")}</summary>
         <div class="section-menu-panel"><.learning_links locale={@locale} prefix="learn-" /></div>
       </details>
       <.link
@@ -612,7 +608,7 @@ defmodule PauseAiCaWeb.Layouts do
       </div>
       <details id="involvement-menu" class="act-menu section-menu section-wide-public">
         <summary>
-          {gettext("Get involved")}<span aria-hidden="true" class="section-chevron">▾</span>
+          {gettext("Get involved")}
         </summary>
         <div class="section-menu-panel">
           <.participation_links locale={@locale} prefix="wide-act-" />
@@ -639,7 +635,7 @@ defmodule PauseAiCaWeb.Layouts do
         />
         <details id="account-menu" class="act-menu section-menu account-section-menu">
           <summary>
-            {gettext("My account")}<span aria-hidden="true" class="section-chevron">▾</span>
+            {gettext("My account")}
           </summary>
           <div class="section-menu-panel">
             <p class="break-all px-3 py-2 text-sm text-stone-500">{@current_scope.user.email}</p>
