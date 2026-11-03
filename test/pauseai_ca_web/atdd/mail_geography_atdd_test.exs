@@ -170,7 +170,7 @@ if System.get_env("ATDD") == "true" do
           "Clear provinces; Saved geography filter → Custom GTA review",
           "The city/FSA rules created through the existing Lists API match manual contacts without newsletter membership; explicit selections remain unchanged."
         )
-        |> click_button(tr(locale, "Save"), exact: true)
+        |> click_button("#newsletter-draft-form button", tr(locale, "Save"), exact: true)
         |> assert_has("#newsletter-save-status", text: tr(locale, "Saved"), exact: true)
         |> visit(path)
         |> assert_has("[data-phx-main].phx-connected")
@@ -197,7 +197,7 @@ if System.get_env("ATDD") == "true" do
 
       PhoenixTest.Playwright.evaluate(
         b,
-        "async () => { const a=document.querySelector('#newsletter-recipients-csv'); const response=await fetch(a.href); return {status:response.status, text:await response.text()}; }",
+        "(async () => { const a=document.querySelector('#newsletter-recipients-csv'); const response=await fetch(a.href); return {status:response.status, text:await response.text()}; })()",
         fn result ->
           assert result["status"] == 200
 
