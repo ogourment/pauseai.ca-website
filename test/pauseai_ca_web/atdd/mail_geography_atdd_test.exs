@@ -209,7 +209,15 @@ if System.get_env("ATDD") == "true" do
       assert {:ok, saved} = Newsletters.Drafts.get(scope, draft.id)
       assert MapSet.new(saved.recipient_keys) == MapSet.new([toronto.person.id, gta.person.id])
       assert Repo.get!(ContactMigration.Contact, legacy.id).source_data == sources_before
-      assert Repo.aggregate(Newsletters.Subscription, :count) == 0
+      ledgers = Repo.all(Newsletters.Subscription)
+      assert length(ledgers) == 2
+
+      assert Enum.all?(
+               ledgers,
+               &(&1.state == "outreach_only" and is_nil(&1.confirmed_at) and
+                   is_nil(&1.consent_version))
+             )
+
       assert Enum.all?(Repo.all(Newsletters.Delivery), &is_nil(&1.attempted_at))
       refute_received {:email, _}
 
@@ -221,9 +229,13 @@ if System.get_env("ATDD") == "true" do
     end
 
     defp assert_cleared_region(browser) do
-      PhoenixTest.Playwright.evaluate(browser, "document.querySelector('#draft_region').value", fn value ->
-        assert value == ""
-      end)
+      PhoenixTest.Playwright.evaluate(
+        browser,
+        "document.querySelector('#draft_region').value",
+        fn value ->
+          assert value == ""
+        end
+      )
     end
 
     defp open_final_review(browser, path, draft_id) do
