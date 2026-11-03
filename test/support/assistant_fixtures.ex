@@ -37,8 +37,24 @@ defmodule PauseAiCa.AssistantFixtures do
     end
   end
 
+  defmodule Operations do
+    def status(_), do: %{audit_anchor: true, alerts: true}
+    def confirm(_, _), do: :ok
+  end
+
   def configuration(observer \\ nil) do
     [
+      operations_adapter: {Operations, []},
+      pricing: %{
+        "currency" => "USD",
+        "policy_id" => "synthetic-fixture",
+        "models" =>
+          Map.new(
+            ~w(haiku-fixture sonnet-fixture opus-fixture),
+            &{&1, %{"input_micros" => 1, "output_micros" => 1}}
+          ),
+        "jev_input_micros" => 1
+      },
       audit_keys: %{
         encryption: :crypto.strong_rand_bytes(32),
         signing: :crypto.strong_rand_bytes(32),

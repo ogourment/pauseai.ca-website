@@ -18,7 +18,7 @@ defmodule PauseAiCa.Assistant do
           daily_token_limit: 100_000,
           max_daily_token_limit: 1_000_000,
           max_turn_tokens: 32_768,
-          max_output_tokens: 1024
+          max_output_tokens: 4096
         ],
         Application.get_env(:pauseai_ca, :agent_assistant, [])
       )
@@ -56,12 +56,88 @@ defmodule PauseAiCa.Assistant do
     config = configuration()
     options = config[:alert_delivery] || []
 
-    if config[:alert_delivery_verified] == true and options[:route_verified] == true and
+    if operational_status(config).alerts == true and
          valid_keys?(config[:audit_keys] || %{}) do
-      {:ok, store(), config[:audit_keys], options}
+      {:ok, store(), config[:audit_keys], Keyword.put(options, :route_verified, true)}
     else
       :disabled
     end
+  end
+
+  defp operational_status(config) do
+    case config[:operations_adapter] do
+      {module, options} when is_atom(module) and is_list(options) -> module.status(options)
+      _ -> PauseAiCa.Assistant.Operations.status(config)
+    end
+  end
+
+  @doc false
+  def anchor_entry(entry, config) do
+    case config[:operations_adapter] do
+      {module, options} when is_atom(module) and is_list(options) ->
+        module.confirm(entry, options)
+
+      _ ->
+        case PhoenixAgentAssistant.AnchorClient.confirm(
+               Repo,
+               entry.id,
+               anchor_digest(entry),
+               &lookup_anchor_digest(&1, config),
+               config[:anchor] || []
+             ) do
+          {:ok, _} ->
+            :ok
+
+          _ ->
+            PauseAiCa.Assistant.Operations.invalidate()
+            {:error, :audit_anchor_unavailable}
+        end
+    end
+  end
+
+  defp lookup_anchor_digest(id, config) do
+    with %PhoenixAgentAssistant.Store.AuditEntry{} = entry <-
+           Repo.get(PhoenixAgentAssistant.Store.AuditEntry, id),
+         {:ok, event} <-
+           PhoenixAgentAssistant.Audit.open(
+             entry.envelope,
+             entry.stream_id,
+             entry.previous,
+             entry.sequence,
+             config[:audit_keys]
+           ),
+         true <- event["namespace"] == store().namespace do
+      {:ok, anchor_digest(entry)}
+    else
+      _ -> {:error, :invalid_audit}
+    end
+  end
+
+  defp anchor_digest(entry),
+    do:
+      PhoenixAgentAssistant.Canonical.digest(%{
+        "entry" => entry.id,
+        "stream" => entry.stream_id,
+        "sequence" => entry.sequence,
+        "envelope" => entry.envelope["digest"]
+      })
+
+  defp anchor_actor(actor, config) do
+    namespace = store().namespace
+
+    entry =
+      Repo.one(
+        from(e in PhoenixAgentAssistant.Store.AuditEntry,
+          join: s in PhoenixAgentAssistant.Store.Stream,
+          on: e.stream_id == s.id,
+          where:
+            s.namespace == ^namespace and s.actor_id == ^actor and s.reference == "assistant" and
+              e.sequence == s.sequence,
+          limit: 1
+        )
+      )
+
+    if entry, do: anchor_entry(entry, config), else: {:error, :audit_anchor_unavailable}
   end
 
   def eligible?(scope), do: Volunteers.superadmin?(scope)
@@ -70,6 +146,7 @@ defmodule PauseAiCa.Assistant do
   def readiness do
     config = configuration()
     keys = config[:audit_keys] || %{}
+    operations = operational_status(config)
 
     checks = [
       {:audit_keys, valid_keys?(keys)},
@@ -88,9 +165,9 @@ defmodule PauseAiCa.Assistant do
          is_integer(config[:max_daily_token_limit]) and
          config[:max_daily_token_limit] in 0..1_000_000_000 and
          is_integer(config[:max_turn_tokens]) and config[:max_turn_tokens] > 0},
-      {:operator_alerts, config[:alert_delivery_verified] == true},
-      {:audit_anchor, config[:audit_anchor_verified] == true},
-      {:price_policy, config[:price_policy_verified] == true},
+      {:operator_alerts, operations.alerts == true},
+      {:audit_anchor, operations.audit_anchor == true},
+      {:price_policy, match?({:ok, _}, PhoenixAgentAssistant.Pricing.bound(config))},
       {:feature_catalogue, catalogue_ready?(config)}
     ]
 
@@ -183,9 +260,10 @@ defmodule PauseAiCa.Assistant do
   def admin_usage(scope) do
     if eligible?(scope) do
       Repo.all(
-        from u in PauseAiCa.Accounts.User,
+        from(u in PauseAiCa.Accounts.User,
           where: u.superadmin == true and not is_nil(u.confirmed_at),
           order_by: u.email
+        )
       )
       |> Enum.map(fn user ->
         %{
@@ -298,10 +376,12 @@ defmodule PauseAiCa.Assistant do
         "max_turn_cost_micros" => config[:max_turn_cost_micros]
       })
 
-    Store.record(store(), actor(scope), Ecto.UUID.generate(), event, config[:audit_keys],
-      stream: config[:conversation_ref] || "assistant"
-    )
-    |> persisted()
+    with {:ok, %{entry: entry}} <-
+           Store.record(store(), actor(scope), Ecto.UUID.generate(), event, config[:audit_keys],
+             stream: config[:conversation_ref] || "assistant"
+           ),
+         :ok <- anchor_entry(entry, config),
+         do: :ok
   end
 
   @impl true
@@ -316,19 +396,24 @@ defmodule PauseAiCa.Assistant do
   @impl true
   def reserve(scope, reservation, config) do
     with :ok <- authorize(scope, :reserve, config) do
-      Store.reserve(store(), actor(scope), reservation, config[:audit_keys],
-        max_cost_micros: config[:max_turn_cost_micros],
-        daily_limit_micros: config[:daily_limit_micros],
-        max_tokens: reservation.max_tokens,
-        daily_token_limit: config[:daily_token_limit],
-        max_daily_token_limit: config[:max_daily_token_limit]
-      )
+      result =
+        Store.reserve(store(), actor(scope), reservation, config[:audit_keys],
+          max_cost_micros: config[:max_turn_cost_micros],
+          daily_limit_micros: config[:daily_limit_micros],
+          max_tokens: reservation.max_tokens,
+          daily_token_limit: config[:daily_token_limit],
+          max_daily_token_limit: config[:max_daily_token_limit]
+        )
+
+      with {:ok, ticket} <- result, :ok <- anchor_actor(actor(scope), config), do: {:ok, ticket}
     end
   end
 
   @impl true
   def finish(scope, ticket, outcome, config) do
-    Store.finish(store(), actor(scope), ticket.id, outcome, config[:audit_keys]) |> persisted()
+    with {:ok, _} <- Store.finish(store(), actor(scope), ticket.id, outcome, config[:audit_keys]),
+         :ok <- anchor_actor(actor(scope), config),
+         do: :ok
   end
 
   defp catalogue_ready?(config) do

@@ -12,6 +12,7 @@ defmodule PauseAiCa.Application do
         [
           PauseAiCaWeb.Telemetry,
           PauseAiCa.Repo,
+          PauseAiCa.Assistant.Operations,
           {PhoenixAgentAssistant.AlertWorker,
            name: PauseAiCa.Assistant.AlertWorker,
            configuration: &PauseAiCa.Assistant.alert_worker_configuration/0},
