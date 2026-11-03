@@ -17,7 +17,7 @@ defmodule PauseAiCa.Assistant do
         [
           daily_token_limit: 100_000,
           max_daily_token_limit: 1_000_000,
-          max_turn_tokens: 32_768,
+          max_turn_tokens: 65_536,
           max_output_tokens: 4096
         ],
         Application.get_env(:pauseai_ca, :agent_assistant, [])
@@ -347,12 +347,19 @@ defmodule PauseAiCa.Assistant do
           "locale" => locale,
           "build" => identity.release_id,
           "features" => json(catalogue),
-          "history" => json(Enum.take(previous, -10))
+          "history" => []
         },
         "attachments" => []
       }
 
-      Runner.run(scope, request_id, request, __MODULE__, config)
+      messages =
+        Enum.map(previous, fn message -> %{"role" => message.role, "text" => message.text} end)
+
+      with {:ok, request} <- PhoenixAgentAssistant.Context.with_history(request, messages) do
+        Runner.run(scope, request_id, request, __MODULE__, config)
+      else
+        _ -> {:error, :unavailable}
+      end
     else
       _ -> {:error, :unavailable}
     end

@@ -79,6 +79,52 @@ defmodule PauseAiCaWeb.AssistantLiveTest do
     refute_receive {:assistant_generated, _, _}
   end
 
+  test "old proof booleans cannot activate a missing operational connection", c do
+    config =
+      Application.get_env(:pauseai_ca, :agent_assistant)
+      |> Keyword.delete(:operations_adapter)
+      |> Keyword.put(:audit_anchor_verified, true)
+      |> Keyword.put(:alert_delivery_verified, true)
+      |> Keyword.put(:price_policy_verified, true)
+
+    Application.put_env(:pauseai_ca, :agent_assistant, config)
+    assert :audit_anchor in Assistant.readiness()
+    assert :operator_alerts in Assistant.readiness()
+    assert {:error, :not_ready} = Assistant.set_enabled(c.scope, true)
+    refute Store.enabled?(Assistant.store())
+  end
+
+  test "readiness refresh enables the control without reloading the page", c do
+    config =
+      Application.get_env(:pauseai_ca, :agent_assistant)
+      |> Keyword.put(
+        :operations_adapter,
+        {PauseAiCa.AssistantFixtures.Operations, [ready: false]}
+      )
+
+    Application.put_env(:pauseai_ca, :agent_assistant, config)
+    {:ok, view, _} = live(log_in_user(c.conn, c.admin), "/admin/assistant?locale=en")
+    assert has_element?(view, "#assistant-enable[disabled]")
+
+    config =
+      Keyword.put(
+        config,
+        :operations_adapter,
+        {PauseAiCa.AssistantFixtures.Operations, [ready: true]}
+      )
+
+    Application.put_env(:pauseai_ca, :agent_assistant, config)
+
+    Phoenix.PubSub.broadcast(
+      PauseAiCa.PubSub,
+      "agent_assistant:settings",
+      :assistant_settings_changed
+    )
+
+    assert has_element?(view, "#assistant-enable:not([disabled])")
+    refute_receive {:assistant_generated, _, _}
+  end
+
   test "per-admin token limit is editable without granting access or resetting usage", c do
     {:ok, view, _} = live(log_in_user(c.conn, c.admin), "/admin/assistant?locale=en")
 
@@ -195,6 +241,24 @@ defmodule PauseAiCaWeb.AssistantLiveTest do
 
     assert has_element?(view, "#assistant-token-limit-form")
     assert {:ok, %{limit: 100_000}} = Assistant.token_usage(c.scope)
+  end
+
+  test "the floating async request keeps the website language", c do
+    assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+    token = Accounts.generate_user_session_token(c.admin)
+
+    {:ok, view, _} =
+      live_isolated(c.conn, PauseAiCaWeb.AssistantLive,
+        session: %{"user_token" => token, "site_locale" => "fr"}
+      )
+
+    render_submit(view, "assistant-submit", %{
+      "assistant" => %{"text" => "Comment trouver les contacts?"}
+    })
+
+    render_async(view)
+    assert_receive {:assistant_generated, request, _}
+    assert request["context"]["locale"] == "fr"
   end
 
   test "mode changes retain the just-typed draft before its debounce event", c do

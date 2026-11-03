@@ -38,7 +38,12 @@ defmodule PauseAiCa.AssistantFixtures do
   end
 
   defmodule Operations do
-    def status(_), do: %{audit_anchor: true, alerts: true}
+    def status(options),
+      do: %{
+        audit_anchor: Keyword.get(options, :ready, true),
+        alerts: Keyword.get(options, :ready, true)
+      }
+
     def confirm(_, _), do: :ok
   end
 
@@ -80,9 +85,6 @@ defmodule PauseAiCa.AssistantFixtures do
       daily_token_limit: 100_000,
       max_turn_tokens: 32_768,
       max_output_tokens: 1024,
-      alert_delivery_verified: true,
-      audit_anchor_verified: true,
-      price_policy_verified: true,
       features: [
         %{
           id: "contacts",

@@ -5434,8 +5434,8 @@ msgstr ""
 msgid "This draft changed in another tab. Your text is retained here. Copy it before reloading the saved version."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:106
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:137
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:112
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:143
 #: lib/pauseai_ca_web/navigation.ex:252
 #, elixir-autogen, elixir-format
 msgid "Admin"
@@ -7909,7 +7909,7 @@ msgstr ""
 msgid "This reference is invalid, expired or already used. Ask the applicant for a new one."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:120
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:126
 #: lib/pauseai_ca_web/live/incubators_live.ex:246
 #: lib/pauseai_ca_web/live/mailbox_access_live.ex:221
 #: lib/pauseai_ca_web/live/slack_community_live.ex:343
@@ -10466,14 +10466,14 @@ msgid "This saved geography filter is unavailable. Choose another filter or clea
 msgstr ""
 
 #: lib/pauseai_ca_web/live/assistant_live.ex:237
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:7
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:75
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:10
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:81
 #: lib/pauseai_ca_web/navigation.ex:20
 #, elixir-autogen, elixir-format
 msgid "Assistant"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:181
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:187
 #, elixir-autogen, elixir-format
 msgid "Claude connection"
 msgstr ""
@@ -10483,12 +10483,12 @@ msgstr ""
 msgid "Close assistant"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:89
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:95
 #, elixir-autogen, elixir-format
 msgid "Disable assistant"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:88
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:94
 #, elixir-autogen, elixir-format
 msgid "Enable assistant"
 msgstr ""
@@ -10503,12 +10503,12 @@ msgstr ""
 msgid "Fast"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:180
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:186
 #, elixir-autogen, elixir-format
 msgid "Fast, Normal and High models"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:77
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:83
 #, elixir-autogen, elixir-format
 msgid "Help organizers use the website, review information and prepare their next action."
 msgstr ""
@@ -10523,12 +10523,12 @@ msgstr ""
 msgid "How can I help?"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:186
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:192
 #, elixir-autogen, elixir-format
 msgid "Independent audit verification"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:183
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:189
 #, elixir-autogen, elixir-format
 msgid "Jev safety review"
 msgstr ""
@@ -10543,7 +10543,7 @@ msgstr ""
 msgid "Mode"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:182
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:188
 #, elixir-autogen, elixir-format
 msgid "Moderation checks"
 msgstr ""
@@ -10553,27 +10553,27 @@ msgstr ""
 msgid "Normal"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:81
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:87
 #, elixir-autogen, elixir-format
 msgid "Off"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:81
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:87
 #, elixir-autogen, elixir-format
 msgid "On"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:179
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:185
 #, elixir-autogen, elixir-format
 msgid "Protected audit storage"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:163
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:169
 #, elixir-autogen, elixir-format
 msgid "Setup required"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:49
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:55
 #, elixir-autogen, elixir-format
 msgid "The assistant could not be changed. Check its readiness and your access."
 msgstr ""
@@ -10584,7 +10584,7 @@ msgstr ""
 msgid "The assistant is unavailable. Your message has been retained."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:165
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:171
 #, elixir-autogen, elixir-format
 msgid "The assistant stays off until its protected storage, safety checks, usage limits and operator alerts are ready."
 msgstr ""
@@ -10594,17 +10594,17 @@ msgstr ""
 msgid "This mode is unavailable. Your message has been retained."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:184
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:190
 #, elixir-autogen, elixir-format
 msgid "Usage limits"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:187
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:193
 #, elixir-autogen, elixir-format
 msgid "Verified cost limits"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:185
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:191
 #, elixir-autogen, elixir-format
 msgid "Verified operator alerts"
 msgstr ""
@@ -10619,27 +10619,27 @@ msgstr ""
 msgid "%{remaining} / %{limit} tokens remaining today"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:97
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:103
 #, elixir-autogen, elixir-format
 msgid "Daily Claude input and output tokens. Uncertain requests keep their reservation. Quotas reset at 00:00 UTC; safety-review charges have a separate cost ceiling."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:108
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:114
 #, elixir-autogen, elixir-format
 msgid "Daily limit"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:148
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:154
 #, elixir-autogen, elixir-format
 msgid "Daily token limit"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:101
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:107
 #, elixir-autogen, elixir-format
 msgid "Default per admin: %{limit} tokens/day"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:106
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:112
 #, elixir-autogen, elixir-format
 msgid "Input"
 msgstr ""
@@ -10654,43 +10654,43 @@ msgstr ""
 msgid "New conversation"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:106
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:112
 #, elixir-autogen, elixir-format
 msgid "Output"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:108
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:114
 #, elixir-autogen, elixir-format
 msgid "Remaining"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:107
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:113
 #, elixir-autogen, elixir-format
 msgid "Reserved"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:150
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:156
 #, elixir-autogen, elixir-format
 msgid "Save limit"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:153
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:159
 #, elixir-autogen, elixir-format
 msgid "Set zero to stop new requests for that admin. Existing conversations are retained."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:32
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:37
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:38
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:43
 #, elixir-autogen, elixir-format
 msgid "The token limit could not be changed."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:95
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:101
 #, elixir-autogen, elixir-format
 msgid "Token usage and limits"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:178
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:184
 #, elixir-autogen, elixir-format
 msgid "Verified website feature catalogue"
 msgstr ""

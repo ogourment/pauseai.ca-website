@@ -24,7 +24,10 @@
       {live_render(@conn, PauseAiCaWeb.AssistantLive,
         id: "persistent-assistant",
         sticky: true,
-        session: %{"user_token" => Plug.Conn.get_session(@conn, :user_token)}
+        session: %{
+          "user_token" => Plug.Conn.get_session(@conn, :user_token),
+          "site_locale" => @conn.assigns[:locale] || "en"
+        }
       )}
     <% end %>
   </body>

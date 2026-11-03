@@ -25,7 +25,7 @@ defmodule PauseAiCa.Assistant.Operations do
 
     :persistent_term.put(
       {__MODULE__, :status},
-      Map.merge(state, %{audit_anchor: false, alerts: false})
+      Map.put(state, :audit_anchor, false)
     )
 
     :ok
@@ -53,6 +53,17 @@ defmodule PauseAiCa.Assistant.Operations do
       )
 
     :persistent_term.put({__MODULE__, :status}, updated)
+
+    if Map.take(updated, [:audit_anchor, :alerts, :fingerprint]) !=
+         Map.take(state, [:audit_anchor, :alerts, :fingerprint]) and
+         Process.whereis(PauseAiCa.PubSub) do
+      Phoenix.PubSub.broadcast(
+        PauseAiCa.PubSub,
+        "agent_assistant:settings",
+        :assistant_settings_changed
+      )
+    end
+
     {:noreply, updated}
   end
 
@@ -81,20 +92,29 @@ defmodule PauseAiCa.Assistant.Operations do
            Store.record(store, "system", "readiness/" <> digest, event, keys,
              stream: "operations"
            ),
-         :ok <- Assistant.anchor_entry(entry, config),
          {:ok, %{entry: alert_entry}} <-
            Store.queue_alert(
              store,
              "system",
              "readiness-alert/" <> digest,
              :assistant_readiness,
-             keys, correlation_id: digest, stream: "operations"),
-         :ok <- Assistant.anchor_entry(alert_entry, config),
+             keys,
+             correlation_id: digest,
+             stream: "operations"
+           ),
          %Alert{} = alert <-
-           Repo.get_by(Alert, namespace: store.namespace, audit_ref: alert_entry.id),
-         {:ok, accepted} <- ensure_intake(alert, config),
-         {:ok, _proof} <- AlertReceipt.fetch(accepted, config[:alert_delivery]) do
-      %{audit_anchor: true, alerts: true}
+           Repo.get_by(Alert, namespace: store.namespace, audit_ref: alert_entry.id) do
+      audit_ready =
+        Assistant.anchor_entry(entry, config) == :ok and
+          Assistant.anchor_entry(alert_entry, config) == :ok
+
+      delivered =
+        with {:ok, accepted} <- ensure_intake(alert, config),
+             {:ok, _proof} <- AlertReceipt.fetch(accepted, config[:alert_delivery]),
+             do: true,
+             else: (_ -> false)
+
+      %{audit_anchor: audit_ready, alerts: delivered}
     else
       _ -> %{audit_anchor: false, alerts: false}
     end
@@ -136,7 +156,7 @@ defmodule PauseAiCa.Assistant.Operations do
 
     audit = config[:audit_keys] || %{}
 
-    Canonical.digest(%{
+    payload = %{
       "provider" => provider,
       "models" => config[:models] || %{},
       "reviews" =>
@@ -156,7 +176,9 @@ defmodule PauseAiCa.Assistant.Operations do
         "signing_ref" => hash(audit[:signing])
       },
       "pricing" => config[:pricing] || %{}
-    })
+    }
+
+    payload |> Jason.encode!() |> Jason.decode!() |> Canonical.digest()
   end
 
   defp option_identity(options) do

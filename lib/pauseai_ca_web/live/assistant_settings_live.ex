@@ -4,11 +4,17 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
 
   def mount(_params, _session, socket) do
     if Assistant.eligible?(socket.assigns.current_scope) do
+      if connected?(socket),
+        do: Phoenix.PubSub.subscribe(PauseAiCa.PubSub, "agent_assistant:settings")
+
       {:ok, reload(assign(socket, page_title: gettext("Assistant"), error: nil))}
     else
       {:ok, redirect(socket, to: "/")}
     end
   end
+
+  def handle_info(:assistant_settings_changed, socket), do: {:noreply, reload(socket)}
+  def handle_info(_, socket), do: {:noreply, socket}
 
   def handle_event("enable", _, socket), do: change(socket, true)
   def handle_event("disable", _, socket), do: change(socket, false)
