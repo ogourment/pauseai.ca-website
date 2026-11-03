@@ -12,6 +12,28 @@ defmodule PauseAiCa.CRMGeographyTest do
 
   defp person(scope, email, city), do: CRM.create(scope, %{email: email, name: email, city: city})
 
+  test "Montréal spellings share one city filter while a dual-city record stays distinct", c do
+    records =
+      for {city, index} <-
+            Enum.with_index(["Montreal", "Montréal", "Montréale", "Montreal / London"]) do
+        {:ok, record} = person(c.scope, "montreal-variant-#{index}@example.org", city)
+        record
+      end
+
+    assert Enum.uniq(
+             Geography.filters(%{"cities" => ["Montréal", "Montréale", "Montreal"]})["cities"]
+           ) == ["Montréal"]
+
+    assert {:ok, %{records: matches, total: 3}} =
+             CRM.directory_page(c.scope, %{"cities" => ["Montréal"]})
+
+    assert MapSet.new(Enum.map(matches, & &1.person.id)) ==
+             MapSet.new(Enum.map(Enum.take(records, 3), & &1.person.id))
+
+    assert Enum.map(Repo.all(PhoenixCRM.Person), & &1.city) |> Enum.sort() ==
+             Enum.sort(["Montreal", "Montréal", "Montréale", "Montreal / London"])
+  end
+
   test "repeated geography snapshots preserve precedence and canonical distinctions without changing sources or retaining a stale projection",
        c do
     newest = %{

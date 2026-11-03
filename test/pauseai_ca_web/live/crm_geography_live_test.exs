@@ -27,7 +27,7 @@ defmodule PauseAiCaWeb.CRMGeographyLiveTest do
     assert has_element?(view, "#crm-provinces option[selected]", "Ontario")
     assert has_element?(view, "#crm-cities option[selected]", "Toronto")
     refute has_element?(view, "#crm-contact-#{outside.person.id}")
-    assert has_element?(view, "[data-geography-version='canada-crm-v2']", "Ontario")
+    assert has_element?(view, "[data-geography-version='canada-crm-v3']", "Ontario")
     assert has_element?(view, "label[for='crm-fsas']", "first three postal-code characters")
     view |> element("#crm-pagination a", "Next") |> render_click()
     path = assert_patch(view)

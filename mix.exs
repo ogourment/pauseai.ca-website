@@ -206,7 +206,7 @@ defmodule PauseAiCa.MixProject do
       _ ->
         {:phoenix_crm,
          git: "https://github.com/ogourment/phoenix_crm-compiled.git",
-         ref: "d5039ca69e2434f7d4019acaaa90546491bb4e86"}
+         ref: "ff68fcfb4b80ad2ccf0b9382625750e06dc210b4"}
     end
   end
 

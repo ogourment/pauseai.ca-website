@@ -8,6 +8,7 @@ defmodule PauseAiCa.CRM.Geography do
   @catalogue_file Path.expand("../../../priv/geography/canada.json", __DIR__)
   @external_resource @catalogue_file
   @catalogue @catalogue_file |> File.read!() |> Jason.decode!()
+  @prepared_catalogue Shared.prepare_catalogue(@catalogue)
   @dimensions ~w(provinces cities areas fsas)
 
   def catalogue, do: @catalogue
@@ -21,8 +22,8 @@ defmodule PauseAiCa.CRM.Geography do
       values =
         case field do
           "fsas" -> Enum.map(values, &PauseAiCa.PostalArea.normalize/1)
-          "cities" -> Enum.map(values, &Shared.city(&1, @catalogue))
-          "provinces" -> Enum.map(values, &(Shared.subdivision(&1, @catalogue) || &1))
+          "cities" -> Enum.map(values, &Shared.city(&1, @prepared_catalogue))
+          "provinces" -> Enum.map(values, &(Shared.subdivision(&1, @prepared_catalogue) || &1))
           _ -> values
         end
 
@@ -105,7 +106,7 @@ defmodule PauseAiCa.CRM.Geography do
   end
 
   defp project(city, sources) do
-    projection = Shared.project(%{"city" => city}, sources, @catalogue)
+    projection = Shared.project(%{"city" => city}, sources, @prepared_catalogue)
 
     regions =
       sources |> Enum.map(& &1["recorded_region"]) |> Enum.reject(&is_nil/1) |> Enum.uniq()
@@ -129,7 +130,7 @@ defmodule PauseAiCa.CRM.Geography do
       "city" => city,
       "subdivision" =>
         fact_value(data, ~w(province province_code state subdivision)) ||
-          Shared.subdivision(region, @catalogue),
+          Shared.subdivision(region, @prepared_catalogue),
       "postal_area" => fact_value(data, ~w(fsa FSA postal_area postal_code postalCode)),
       "country" => fact_value(data, ~w(country Country)),
       "recorded_region" => region
