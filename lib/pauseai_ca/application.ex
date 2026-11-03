@@ -12,6 +12,9 @@ defmodule PauseAiCa.Application do
         [
           PauseAiCaWeb.Telemetry,
           PauseAiCa.Repo,
+          {PhoenixAgentAssistant.AlertWorker,
+           name: PauseAiCa.Assistant.AlertWorker,
+           configuration: &PauseAiCa.Assistant.alert_worker_configuration/0},
           PauseAiCa.Chat.SlackInboxWorker,
           PauseAiCa.Volunteers.Dispatcher,
           PauseAiCa.Newsletters.Dispatcher,

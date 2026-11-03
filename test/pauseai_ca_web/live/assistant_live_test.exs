@@ -1,0 +1,218 @@
+defmodule PauseAiCaWeb.AssistantLiveTest do
+  use PauseAiCaWeb.ConnCase, async: false
+  import Phoenix.LiveViewTest
+  import PauseAiCa.AccountsFixtures
+  alias PauseAiCa.{Accounts, Assistant, Repo}
+  alias PhoenixAgentAssistant.Store
+
+  setup do
+    previous = Application.get_env(:pauseai_ca, :agent_assistant)
+    previous_build = System.get_env("PAUSEAI_CA_RELEASE_ID")
+    System.put_env("PAUSEAI_CA_RELEASE_ID", "assistant-synthetic-fixture")
+
+    Application.put_env(
+      :pauseai_ca,
+      :agent_assistant,
+      PauseAiCa.AssistantFixtures.configuration(self())
+    )
+
+    admin =
+      user_fixture(%{email: "assistant-admin@example.org"})
+      |> Ecto.Changeset.change(superadmin: true)
+      |> Repo.update!()
+
+    other_admin =
+      user_fixture(%{email: "assistant-other-admin@example.org"})
+      |> Ecto.Changeset.change(superadmin: true)
+      |> Repo.update!()
+
+    member = user_fixture(%{email: "assistant-member@example.org"})
+    scope = Accounts.Scope.for_user(admin)
+
+    on_exit(fn ->
+      if previous,
+        do: Application.put_env(:pauseai_ca, :agent_assistant, previous),
+        else: Application.delete_env(:pauseai_ca, :agent_assistant)
+
+      if previous_build,
+        do: System.put_env("PAUSEAI_CA_RELEASE_ID", previous_build),
+        else: System.delete_env("PAUSEAI_CA_RELEASE_ID")
+    end)
+
+    %{admin: admin, scope: scope, member: member, other_admin: other_admin}
+  end
+
+  test "OFF has no assistant launcher; an administrator explicitly enables it", c do
+    conn = log_in_user(c.conn, c.admin)
+    {:ok, view, html} = live(conn, "/admin/assistant?locale=en")
+    assert html =~ "Token usage and limits"
+    refute html =~ "id=\"site-assistant-launcher\""
+    assert has_element?(view, "#assistant-enable:not([disabled])")
+    view |> element("#assistant-enable") |> render_click()
+    assert Store.enabled?(Assistant.store())
+    assert has_element?(view, "#assistant-disable")
+    refute_receive {:assistant_generated, _, _}
+  end
+
+  test "members and unconfirmed accounts cannot enable or use the assistant", c do
+    conn = log_in_user(c.conn, c.member)
+    assert conn |> get("/admin/assistant?locale=en") |> response(403) == "superadmin required"
+    refute Assistant.visible?(Accounts.Scope.for_user(c.member))
+    assert {:error, :not_ready} = Assistant.set_enabled(Accounts.Scope.for_user(c.member), true)
+    assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+    refute Assistant.visible?(Accounts.Scope.for_user(c.member))
+
+    unconfirmed =
+      unconfirmed_user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+
+    refute Assistant.eligible?(Accounts.Scope.for_user(unconfirmed))
+    refute_receive {:assistant_generated, _, _}
+  end
+
+  test "missing readiness blocks activation even through a forged event", c do
+    config = Application.get_env(:pauseai_ca, :agent_assistant) |> Keyword.delete(:safety)
+    Application.put_env(:pauseai_ca, :agent_assistant, config)
+    {:ok, view, _} = live(log_in_user(c.conn, c.admin), "/admin/assistant?locale=en")
+    assert has_element?(view, "#assistant-enable[disabled]")
+    render_click(view, "enable")
+    refute Store.enabled?(Assistant.store())
+    refute_receive {:assistant_generated, _, _}
+  end
+
+  test "per-admin token limit is editable without granting access or resetting usage", c do
+    {:ok, view, _} = live(log_in_user(c.conn, c.admin), "/admin/assistant?locale=en")
+
+    view
+    |> form("#assistant-token-limit-form",
+      assistant_settings: %{actor_id: c.other_admin.id, limit: "25000"}
+    )
+    |> render_submit()
+
+    assert {:ok, %{limit: 25_000}} = Assistant.token_usage(Accounts.Scope.for_user(c.other_admin))
+    assert {:ok, %{limit: 100_000}} = Assistant.token_usage(c.scope)
+    assert {:error, :forbidden} = Assistant.set_token_limit(c.scope, c.member.id, 100_000)
+
+    assert {:error, :forbidden} =
+             Assistant.set_token_limit(Accounts.Scope.for_user(c.member), c.admin.id, 0)
+  end
+
+  test "lowering the infrastructure ceiling clamps saved quotas and admin summaries", c do
+    assert {:ok, _} = Assistant.set_token_limit(c.scope, c.other_admin.id, 25_000)
+    config = Application.get_env(:pauseai_ca, :agent_assistant)
+
+    Application.put_env(
+      :pauseai_ca,
+      :agent_assistant,
+      Keyword.put(config, :max_daily_token_limit, 20_000)
+    )
+
+    assert Assistant.readiness() == []
+    assert {:ok, %{limit: 20_000}} = Assistant.token_usage(Accounts.Scope.for_user(c.other_admin))
+
+    assert %{usage: {:ok, %{limit: 20_000}}} =
+             Enum.find(Assistant.admin_usage(c.scope), &(&1.id == c.other_admin.id))
+
+    assert {:error, :forbidden} = Assistant.set_token_limit(c.scope, c.other_admin.id, 20_001)
+    assert {:ok, _} = Assistant.set_token_limit(c.scope, c.other_admin.id, 0)
+    assert {:ok, %{limit: 0}} = Assistant.token_usage(Accounts.Scope.for_user(c.other_admin))
+  end
+
+  test "confirmed admin mode and released conversation persist; blocked requests stay private",
+       c do
+    assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+    assert {:ok, reference} = Assistant.conversation(c.scope)
+    assert {:ok, _} = Assistant.set_mode(c.scope, "high")
+
+    assert {:ok, reply} =
+             Assistant.run(c.scope, Ecto.UUID.generate(), "Find contacts by city", reference)
+
+    assert reply.model == "opus-fixture"
+    keys = Assistant.configuration()[:audit_keys]
+
+    audited =
+      Repo.all(PhoenixAgentAssistant.Store.AuditEntry)
+      |> Enum.map(fn row ->
+        {:ok, event} =
+          PhoenixAgentAssistant.Audit.open(
+            row.envelope,
+            row.stream_id,
+            row.previous,
+            row.sequence,
+            keys
+          )
+
+        event
+      end)
+
+    assert Enum.any?(audited, fn event ->
+             event["kind"] == "request" and
+               event["runtime_policy"]["bindings"]["claude"]["project_ref"] == "synthetic-account" and
+               event["runtime_policy"]["max_daily_token_limit"] == 1_000_000
+           end)
+
+    assert_receive {:assistant_generated, request, %{mode: "high"}}
+    assert request["context"]["app_version"] == to_string(Application.spec(:pauseai_ca, :vsn))
+    assert request["context"]["features"] |> hd() |> Map.fetch!("status") == "available"
+    assert {:ok, [%{role: "user"}, %{role: "assistant"}]} = Assistant.history(c.scope, reference)
+
+    assert {:ok, "high"} =
+             Assistant.mode(Accounts.Scope.for_user(Repo.get!(Accounts.User, c.admin.id)))
+
+    assert {:ok, %{reported_input: 70, reported_output: 10, charged_tokens: 80}} =
+             Assistant.token_usage(c.scope)
+
+    assert {:error, :unavailable} =
+             Assistant.run(c.scope, Ecto.UUID.generate(), "synthetic blocked request", reference)
+
+    assert {:ok, [_, _]} = Assistant.history(c.scope, reference)
+    assert {:ok, [alert]} = Store.pending_alerts(Assistant.store())
+    assert alert.reason_code == "safety_blocked"
+    assert {:ok, []} = Assistant.history(Accounts.Scope.for_user(c.other_admin), reference)
+  end
+
+  test "zero quota and role revocation prevent further model requests", c do
+    assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+    assert {:ok, reference} = Assistant.conversation(c.scope)
+    assert {:ok, _} = Assistant.set_token_limit(c.scope, c.admin.id, 0)
+
+    assert {:error, :unavailable} =
+             Assistant.run(c.scope, Ecto.UUID.generate(), "Find contacts", reference)
+
+    refute_receive {:assistant_generated, _, _}
+    c.admin |> Ecto.Changeset.change(superadmin: false) |> Repo.update!()
+    refute Assistant.visible?(c.scope)
+
+    assert {:error, :unavailable} =
+             Assistant.run(c.scope, Ecto.UUID.generate(), "Find contacts", reference)
+  end
+
+  test "a malformed quota form stays connected and makes no quota change", c do
+    {:ok, view, _} = live(log_in_user(c.conn, c.admin), "/admin/assistant?locale=en")
+
+    render_submit(view, "token-limit", %{
+      "assistant_settings" => %{"actor_id" => c.admin.id, "limit" => %{}}
+    })
+
+    assert has_element?(view, "#assistant-token-limit-form")
+    assert {:ok, %{limit: 100_000}} = Assistant.token_usage(c.scope)
+  end
+
+  test "mode changes retain the just-typed draft before its debounce event", c do
+    assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+    token = Accounts.generate_user_session_token(c.admin)
+
+    {:ok, view, _} =
+      live_isolated(c.conn, PauseAiCaWeb.AssistantLive, session: %{"user_token" => token})
+
+    render_change(view, "assistant-mode", %{
+      "mode" => "high",
+      "assistant" => %{"text" => "Draft typed immediately"}
+    })
+
+    assert render(view) =~ "Draft typed immediately"
+    assert {:ok, "high"} = Assistant.mode(c.scope)
+    render_click(view, "assistant-new")
+    assert {:ok, "high"} = Assistant.mode(c.scope)
+    assert has_element?(view, "select option[value='high'][selected]")
+  end
+end

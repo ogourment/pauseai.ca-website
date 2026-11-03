@@ -31,13 +31,14 @@ import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import {hooks as colocatedHooks} from "phoenix-colocated/pauseai_ca"
 import {PhoenixMarkdownEditor} from "phoenix_markdown_editor/assets/js/phoenix_markdown_editor.js"
+import {PhoenixAgentAssistant} from "phoenix_agent_assistant/assets/js/phoenix_agent_assistant.js"
 import topbar from "../vendor/topbar"
 
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: {_csrf_token: csrfToken},
-  hooks: {...colocatedHooks, PhoenixMarkdownEditor, FormDraft},
+  hooks: {...colocatedHooks, PhoenixMarkdownEditor, PhoenixAgentAssistant, FormDraft},
   disconnectedTimeout: 1500,
 })
 

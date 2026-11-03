@@ -27,7 +27,7 @@ defmodule PauseAiCa.MixProject do
 
   def cli do
     [
-      preferred_envs: [precommit: :test, "ci.test": :test, "test.atdd": :test]
+      preferred_envs: [format: :test, precommit: :test, "ci.test": :test, "test.atdd": :test]
     ]
   end
 
@@ -62,9 +62,22 @@ defmodule PauseAiCa.MixProject do
     end
   end
 
+  defp agent_assistant_dependency do
+    case System.get_env("PHOENIX_AGENT_ASSISTANT_PATH") do
+      path when is_binary(path) and path != "" ->
+        {:phoenix_agent_assistant, path: Path.expand(path)}
+
+      _ ->
+        {:phoenix_agent_assistant,
+         git: "https://github.com/ogourment/phoenix_agent_assistant-compiled.git",
+         ref: "24cbde6625fdf26c586e74446abbc0754e6bb722"}
+    end
+  end
+
   defp deps do
     [
       app_shell_dependency(),
+      agent_assistant_dependency(),
       {:argon2_elixir, "~> 4.0"},
       {:phoenix, "~> 1.8.9"},
       {:phoenix_ecto, "~> 4.5"},

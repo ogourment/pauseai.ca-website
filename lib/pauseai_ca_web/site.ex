@@ -20,6 +20,7 @@ defmodule PauseAiCaWeb.Site do
   end
 
   def on_mount(:default, params, session, socket) do
+    params = if is_map(params), do: params, else: %{}
     locale = valid_locale(params["locale"]) || session["site_locale"] || "en"
     Gettext.put_locale(PauseAiCaWeb.Gettext, locale)
     {:cont, Phoenix.Component.assign(socket, :locale, locale)}

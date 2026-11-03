@@ -1,5 +1,15 @@
 [
-  %{id: "blog", title: "Blog articles and CMS history", tables: ~w(blog_articles blog_article_revisions)},
+  %{
+    id: "agent_assistant",
+    title: "Assistant settings, quotas and protected audit",
+    tables:
+      ~w(agent_assistant_alerts agent_assistant_audit_entries agent_assistant_preferences agent_assistant_requests agent_assistant_settings agent_assistant_streams)
+  },
+  %{
+    id: "blog",
+    title: "Blog articles and CMS history",
+    tables: ~w(blog_articles blog_article_revisions)
+  },
   %{
     id: "slack_conversations",
     title: "Slack conversations and private account links",
@@ -37,7 +47,8 @@
   %{
     id: "mail_drafts",
     title: "Email drafts",
-    tables: ~w(mail_batches mail_drafts mail_delivery_receipts outreach_inbound_receipts outreach_reply_notifications outreach_mailbox_grants outreach_mailbox_grant_events)
+    tables:
+      ~w(mail_batches mail_drafts mail_delivery_receipts outreach_inbound_receipts outreach_reply_notifications outreach_mailbox_grants outreach_mailbox_grant_events)
   },
   %{
     id: "newsletter",
@@ -76,8 +87,21 @@
       "volunteer_events"
     ]
   },
-  %{id: "donations", title: "Donations and authored page content", tables: ["donation_pledges", "donation_pages", "donation_page_revisions", "interac_declarations"]},
-  %{id: "welcome", title: "Welcome cohorts", tables: ~w(welcome_sessions welcome_participants welcome_events)},
+  %{
+    id: "donations",
+    title: "Donations and authored page content",
+    tables: [
+      "donation_pledges",
+      "donation_pages",
+      "donation_page_revisions",
+      "interac_declarations"
+    ]
+  },
+  %{
+    id: "welcome",
+    title: "Welcome cohorts",
+    tables: ~w(welcome_sessions welcome_participants welcome_events)
+  },
   %{id: "analytics", title: "First-party analytics", tables: ["daily_visits"]},
   %{
     id: "acceptance_evidence",

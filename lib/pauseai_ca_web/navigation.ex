@@ -17,6 +17,7 @@ defmodule PauseAiCaWeb.Navigation do
         :admin,
         65
       ),
+      item("pauseai.assistant", gettext_noop("Assistant"), :admin, :assistant, :admin, 64),
       item("pauseai.contacts", gettext_noop("Contacts"), :admin, :contacts, :admin, 10),
       item(
         "pauseai.administrators",
@@ -184,6 +185,7 @@ defmodule PauseAiCaWeb.Navigation do
   def resolve_route(key, %{locale: locale}) do
     route =
       case key do
+        :assistant -> "/admin/assistant"
         :contacts -> "/admin/contacts"
         :local_interest -> "/admin/local-interest"
         :administrators -> "/manage/administrators"

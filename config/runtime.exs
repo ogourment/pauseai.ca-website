@@ -413,3 +413,13 @@ config :pauseai_ca,
            to_string(mail_environment),
            "outreach-attachments"
          ])
+
+# Private -infra owns provider bindings, secret-file references, exact models and
+# hard budgets. Missing or invalid files leave the assistant unconfigured/OFF.
+# This does not assert live alert delivery, audit anchoring or release evidence.
+if path = System.get_env("PAUSEAI_ASSISTANT_CONFIG_FILE") do
+  case PhoenixAgentAssistant.RuntimeConfiguration.load(path) do
+    {:ok, configuration} -> config :pauseai_ca, :agent_assistant, configuration
+    {:error, _} -> config :pauseai_ca, :agent_assistant, []
+  end
+end

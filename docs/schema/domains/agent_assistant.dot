@@ -1,0 +1,72 @@
+digraph agent_assistant {
+  graph [rankdir=TB, bgcolor="white", pad=0.35, nodesep=0.6, ranksep=0.9, fontname="Helvetica"];
+  node [shape=plain, fontname="Helvetica"];
+  edge [fontname="Helvetica", fontsize=10, arrowsize=0.7];
+  labelloc="t";
+  label=< <B>Assistant settings, quotas and protected audit</B><BR/><FONT POINT-SIZE="12">Local tables show every column. Amber dashed arrows cross a domain boundary.</FONT> >;
+
+  subgraph cluster_local {
+    label="Assistant settings, quotas and protected audit";
+    color="#94a3b8";
+    penwidth=1.5;
+    style="rounded";
+  "agent_assistant_alerts" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.agent_assistant_alerts</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">namespace</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">actor_id</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">audit_ref</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">reason_code</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">severity</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">correlation_id</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">state</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">receipt</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
+  "agent_assistant_audit_entries" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.agent_assistant_audit_entries</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">stream_id</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">sequence</TD><TD ALIGN="LEFT">bigint NOT NULL</TD></TR><TR><TD ALIGN="LEFT">previous</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">event_key</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">event_digest</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">envelope</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
+  "agent_assistant_preferences" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.agent_assistant_preferences</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">namespace</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">actor_id</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">mode</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">conversation_ref</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">daily_token_limit</TD><TD ALIGN="LEFT">bigint NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
+  "agent_assistant_requests" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.agent_assistant_requests</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">namespace</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">actor_id</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">request_key</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">input_digest</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">mode</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">model</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">max_output_tokens</TD><TD ALIGN="LEFT">integer NOT NULL</TD></TR><TR><TD ALIGN="LEFT">max_cost_micros</TD><TD ALIGN="LEFT">bigint NOT NULL</TD></TR><TR><TD ALIGN="LEFT">reserved_tokens</TD><TD ALIGN="LEFT">bigint NOT NULL</TD></TR><TR><TD ALIGN="LEFT">charged_tokens</TD><TD ALIGN="LEFT">bigint NOT NULL</TD></TR><TR><TD ALIGN="LEFT">budget_day</TD><TD ALIGN="LEFT">date NOT NULL</TD></TR><TR><TD ALIGN="LEFT">state</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">outcome</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">audit_ref</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
+  "agent_assistant_settings" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.agent_assistant_settings</B></TD></TR>
+      <TR><TD ALIGN="LEFT">namespace PK</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">enabled</TD><TD ALIGN="LEFT">boolean NOT NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
+  "agent_assistant_streams" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.agent_assistant_streams</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">namespace</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">actor_id</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">reference</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">sequence</TD><TD ALIGN="LEFT">bigint NOT NULL</TD></TR><TR><TD ALIGN="LEFT">digest</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
+  }
+
+  subgraph cluster_external {
+    label="External-domain references — other relationships are intentionally omitted";
+    color="#cbd5e1";
+    penwidth=1;
+    style="rounded";
+
+  }
+
+  "agent_assistant_alerts" -> "agent_assistant_audit_entries" [label="audit_ref -> id", color="#64748b"];
+  "agent_assistant_alerts" -> "agent_assistant_settings" [label="namespace -> namespace", color="#64748b"];
+  "agent_assistant_audit_entries" -> "agent_assistant_streams" [label="stream_id -> id", color="#64748b"];
+  "agent_assistant_preferences" -> "agent_assistant_settings" [label="namespace -> namespace", color="#64748b"];
+  "agent_assistant_requests" -> "agent_assistant_audit_entries" [label="audit_ref -> id", color="#64748b"];
+  "agent_assistant_requests" -> "agent_assistant_settings" [label="namespace -> namespace", color="#64748b"];
+  "agent_assistant_streams" -> "agent_assistant_settings" [label="namespace -> namespace", color="#64748b"];
+}

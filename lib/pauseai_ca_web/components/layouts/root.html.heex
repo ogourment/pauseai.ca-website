@@ -20,5 +20,12 @@
   </head>
   <body>
     {@inner_content}
+    <%= if PauseAiCa.Assistant.eligible?(@conn.assigns[:current_scope]) do %>
+      {live_render(@conn, PauseAiCaWeb.AssistantLive,
+        id: "persistent-assistant",
+        sticky: true,
+        session: %{"user_token" => Plug.Conn.get_session(@conn, :user_token)}
+      )}
+    <% end %>
   </body>
 </html>
