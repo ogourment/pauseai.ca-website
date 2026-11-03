@@ -25,7 +25,8 @@ defmodule PauseAiCa.CRM do
   # Directory reads are paged by canonical person, never by address or source row.
   # Batch hydration avoids loading profile activity for every search result.
   def directory_page(scope, params) do
-    if Volunteers.superadmin?(scope) do
+    with true <- Volunteers.superadmin?(scope),
+         {:ok, saved_filter} <- directory_saved_filter(scope, params["saved_filter_id"]) do
       query_text = String.slice(directory_string(params["q"]), 0, 500)
       region = String.slice(directory_string(params["region"]), 0, 200)
       geography_filters = DirectoryGeography.filters(params)
@@ -87,7 +88,8 @@ defmodule PauseAiCa.CRM do
       filtered =
         Enum.filter(
           candidates,
-          &DirectoryGeography.matches?(geographies[&1.id], geography_filters, region)
+          &(DirectoryGeography.matches?(geographies[&1.id], geography_filters, region) and
+              directory_saved_matches?(geographies[&1.id], saved_filter))
         )
 
       total = length(filtered)
@@ -166,8 +168,54 @@ defmodule PauseAiCa.CRM do
         {:error, :unauthorized}
       end
     else
-      {:error, :unauthorized}
+      false -> {:error, :unauthorized}
+      error -> error
     end
+  end
+
+  defp directory_saved_filter(_scope, id) when id in [nil, ""], do: {:ok, nil}
+
+  defp directory_saved_filter(scope, id) do
+    case PhoenixCRM.MailingLists.get(context(), scope, id) do
+      {:ok, %{archived_at: nil, criteria: criteria}} ->
+        if PhoenixCRM.ListRules.valid?(criteria) and
+             Enum.all?(criteria["rules"], &(&1["field"] in ~w(city region fsa))) do
+          rules =
+            Enum.map(criteria["rules"], fn rule ->
+              if rule["field"] == "city",
+                do:
+                  Map.update!(
+                    rule,
+                    "values",
+                    &Enum.map(&1, fn value ->
+                      PhoenixCRM.Geography.city(value, DirectoryGeography.catalogue())
+                    end)
+                  ),
+                else: rule
+            end)
+
+          {:ok, Map.put(criteria, "rules", rules)}
+        else
+          {:error, :saved_geography_unavailable}
+        end
+
+      _ ->
+        {:error, :saved_geography_unavailable}
+    end
+  end
+
+  defp directory_saved_matches?(_geography, nil), do: true
+
+  defp directory_saved_matches?(geography, criteria) do
+    regions = if geography.regions == [], do: [nil], else: geography.regions
+
+    Enum.any?(regions, fn region ->
+      PhoenixCRM.ListRules.matches?(criteria, %{
+        "city" => geography.city,
+        "fsa" => geography.postal_area,
+        "region" => region
+      })
+    end)
   end
 
   defp directory_string(value) when is_binary(value), do: value

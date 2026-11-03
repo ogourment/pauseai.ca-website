@@ -12,6 +12,80 @@ defmodule PauseAiCa.CRMGeographyTest do
 
   defp person(scope, email, city), do: CRM.create(scope, %{email: email, name: email, city: city})
 
+  test "repeated geography snapshots preserve precedence and canonical distinctions without changing sources or retaining a stale projection",
+       c do
+    newest = %{
+      "city" => "Toronto",
+      "province" => "ON",
+      "fsa" => "M5V",
+      "country" => "Canada",
+      "region" => "ROCanada"
+    }
+
+    older = %{
+      "city" => "Vancouver",
+      "province" => "BC",
+      "fsa" => "V6B",
+      "country" => "Canada",
+      "region" => "ROQuébec"
+    }
+
+    at = ~U[2026-11-03 12:00:00.000000Z]
+
+    people =
+      for {email, city} <- [
+            {"duplicate-one@example.org", nil},
+            {"duplicate-two@example.org", nil},
+            {"canonical@example.org", "Vancouver"}
+          ] do
+        {:ok, record} = person(c.scope, email, city)
+
+        for {data, index} <- Enum.with_index([newest, older, newest]) do
+          Repo.insert!(%PhoenixCRM.Source{
+            address_id: hd(record.addresses).id,
+            source: "synthetic-repeat",
+            external_key: "#{email}-#{index}",
+            original: Map.put(data, "private_note", "Unique preserved observation #{index}"),
+            observed_at: DateTime.add(at, -index)
+          })
+        end
+
+        record.person
+      end
+
+    sources_before = Repo.all(from(s in PhoenixCRM.Source, order_by: s.id))
+
+    facts =
+      for data <- [newest, older, newest],
+          do: %{
+            "city" => data["city"],
+            "subdivision" => data["province"],
+            "postal_area" => data["fsa"],
+            "country" => data["country"],
+            "recorded_region" => data["region"]
+          }
+
+    projected = Geography.project_people(people)
+
+    for person <- people do
+      expected =
+        PhoenixCRM.Geography.project(%{"city" => person.city}, facts, Geography.catalogue())
+
+      assert projected[person.id] == Map.put(expected, :regions, ["ROCanada", "ROQuébec"])
+    end
+
+    [first, second, canonical] = people
+    assert projected[first.id] == projected[second.id]
+    assert projected[first.id].city == "Toronto"
+    assert projected[canonical.id].city == "Vancouver"
+
+    # A new invocation observes new canonical input; the memo never outlives a call.
+    refreshed = Geography.project_people([%{first | city: "Vancouver"}])
+    assert refreshed[first.id].city == "Vancouver"
+    assert Repo.all(from(s in PhoenixCRM.Source, order_by: s.id)) == sources_before
+    assert Geography.project_people([]) == %{}
+  end
+
   test "standalone contacts match city province and explicit area while an edit replaces old city",
        c do
     {:ok, record} = person(c.scope, "standalone@example.org", "Toronto")

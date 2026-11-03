@@ -200,7 +200,7 @@ if System.get_env("ATDD") == "true" do
         |> fill_in(tr(locale, "Message · Markdown"),
           with: "## Montréal\n\nSynthetic press release review."
         )
-        |> select(tr(locale, "Audience geography"), option: "Montréal", exact: false)
+        |> select(tr(locale, "Recorded region"), option: "Montréal", exact: false)
         |> click_button(tr(locale, "Save"))
         |> assert_has("#newsletter-save-status", text: tr(locale, "Saved"), exact: true)
         |> capture(

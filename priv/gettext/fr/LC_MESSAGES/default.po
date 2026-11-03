@@ -5805,11 +5805,6 @@ msgstr "Brouillon archivé"
 msgid "Archived drafts"
 msgstr "Brouillons archivés"
 
-#: lib/pauseai_ca_web/live/newsletter_draft_live.ex:771
-#, elixir-autogen, elixir-format
-msgid "Audience geography"
-msgstr "Géographie du public"
-
 #: lib/pauseai_ca_web/live/newsletters_live.ex:364
 #, elixir-autogen, elixir-format
 msgid "Newsletter audience"
@@ -5996,11 +5991,6 @@ msgstr "Exclu"
 #, elixir-autogen, elixir-format
 msgid "Excluded: withdrawal, blocked address or missing preferred email."
 msgstr "Exclu : désabonnement, adresse bloquée ou adresse préférée manquante."
-
-#: lib/pauseai_ca_web/live/newsletter_draft_live.ex:813
-#, elixir-autogen, elixir-format
-msgid "Find contacts"
-msgstr "Trouver des contacts"
 
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:1165
 #, elixir-autogen, elixir-format
@@ -8563,11 +8553,6 @@ msgstr "Saskatchewan"
 msgid "Some location details are unresolved"
 msgstr "Certains détails de localisation restent à préciser"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:822
-#, elixir-autogen, elixir-format
-msgid "Toronto / GTA municipalities"
-msgstr "Municipalités de Toronto / GTA"
-
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:816
 #, elixir-autogen, elixir-format
 msgid "Toronto / GTA uses the listed municipalities; Vancouver means the city. Unknown places are not assigned to a city or province."
@@ -10851,3 +10836,60 @@ msgstr "Navigation principale"
 msgctxt "compact navigation"
 msgid "Admin"
 msgstr "Admin"
+
+
+#: lib/pauseai_ca_web/live/newsletter_draft_live.ex:866
+#, elixir-autogen, elixir-format
+msgid "Search contact text"
+msgstr "Rechercher dans les contacts"
+
+#: lib/pauseai_ca_web/components/geography_filter_components.ex:83
+#, elixir-autogen, elixir-format
+msgid "Named area municipalities"
+msgstr "Municipalités des zones nommées"
+
+#: lib/pauseai_ca_web/live/newsletter_draft_live.ex:878
+#, elixir-autogen, elixir-format
+msgid "Saved geography filter"
+msgstr "Filtre géographique enregistré"
+
+#: lib/pauseai_ca_web/live/newsletter_draft_live.ex:880
+#, elixir-autogen, elixir-format
+msgid "No saved filter"
+msgstr "Aucun filtre enregistré"
+
+#: lib/pauseai_ca_web/live/newsletter_draft_live.ex:885
+#, elixir-autogen, elixir-format
+msgid "Saved rules narrow these contact results using recorded geography. They do not require newsletter subscription or add recipients automatically."
+msgstr "Les règles enregistrées filtrent ces contacts selon leur localisation consignée. Elles ne nécessitent pas d’abonnement à l’infolettre et n’ajoutent aucun destinataire automatiquement."
+
+#: lib/pauseai_ca_web/live/newsletter_draft_live.ex:891
+#, elixir-autogen, elixir-format
+msgid "Manage saved geography rules"
+msgstr "Gérer les règles géographiques"
+
+#: lib/pauseai_ca_web/live/newsletter_draft_live.ex:900
+#, elixir-autogen, elixir-format
+msgid "Specific and saved geographic filters replace the recorded region. Text search is separate and also searches source observations."
+msgstr "Les filtres géographiques précis et enregistrés remplacent la région consignée. La recherche textuelle est distincte et porte aussi sur les observations des sources."
+
+#: lib/pauseai_ca_web/live/newsletter_draft_live.ex:905
+#, elixir-autogen, elixir-format
+msgid "%{count} contacts match these filters."
+msgstr "Ces filtres correspondent à %{count} contacts."
+
+#: lib/pauseai_ca_web/live/newsletter_draft_live.ex:908
+#, elixir-autogen, elixir-format
+msgid "Changing filters keeps recipients you already selected, including recipients outside these results. Clear selection to start again. Filters are temporary; saved drafts retain the selected recipients."
+msgstr "Les destinataires déjà sélectionnés sont conservés lorsque vous changez les filtres, même s’ils ne figurent plus dans les résultats. Effacez la sélection pour recommencer. Les filtres sont temporaires; les brouillons enregistrés conservent les destinataires sélectionnés."
+
+#: lib/pauseai_ca_web/live/newsletter_draft_live.ex:556
+#, elixir-autogen, elixir-format
+msgid "This saved geography filter is unavailable. Choose another filter or clear it."
+msgstr "Ce filtre géographique enregistré n’est plus disponible. Choisissez-en un autre ou retirez-le."
+
+
+#: lib/pauseai_ca_web/live/newsletter_draft_live.ex:1205
+#, elixir-autogen, elixir-format
+msgid "Download recipient emails (CSV)"
+msgstr "Télécharger les adresses des destinataires (CSV)"

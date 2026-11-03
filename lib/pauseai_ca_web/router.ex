@@ -138,6 +138,8 @@ defmodule PauseAiCaWeb.Router do
   scope "/manage/mail", PauseAiCaWeb do
     pipe_through [:browser, :require_authenticated_user, :require_superadmin_user]
 
+    get "/batches/:id/recipients.csv", NewsletterRecipientExportController, :show
+
     live_session :mailbox_access,
       on_mount: [{PauseAiCaWeb.UserAuth, :require_authenticated}] do
       live "/access", MailboxAccessLive, :index

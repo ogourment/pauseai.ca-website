@@ -746,82 +746,13 @@ defmodule PauseAiCaWeb.AdminContactsLive do
               label={gettext("Rows per page")}
               options={Enum.map([10, 25, 50, 100], &{to_string(&1), &1})}
             />
-            <input type="hidden" name="provinces[]" value="" />
-            <.input
-              type="select"
-              multiple
-              id="crm-provinces"
-              class="block w-full min-w-0 rounded-lg border border-base-300 bg-base-100 px-3 py-2 text-base-content"
-              name="provinces[]"
-              value={@directory_page.geography_filters["provinces"]}
-              label={gettext("Provinces and territories")}
-              options={
-                Enum.map(
-                  PauseAiCa.CRM.Geography.catalogue()["subdivisions"],
-                  &{province_label(&1["id"]), &1["id"]}
-                )
-              }
+            <PauseAiCaWeb.GeographyFilterComponents.geography_filters
+              id="crm"
+              class="sm:col-span-3"
+              filters={@directory_page.geography_filters}
+              cities={@directory_page.cities}
             />
-            <input type="hidden" name="cities[]" value="" />
-            <.input
-              type="select"
-              multiple
-              id="crm-cities"
-              class="block w-full min-w-0 rounded-lg border border-base-300 bg-base-100 px-3 py-2 text-base-content"
-              name="cities[]"
-              value={@directory_page.geography_filters["cities"]}
-              label={gettext("Cities")}
-              options={
-                Enum.uniq(
-                  @directory_page.cities ++
-                    Enum.map(PauseAiCa.CRM.Geography.catalogue()["cities"], & &1["name"]) ++
-                    @directory_page.geography_filters["cities"]
-                )
-                |> Enum.sort()
-                |> Enum.map(&{&1, &1})
-              }
-            />
-            <input type="hidden" name="areas[]" value="" />
-            <.input
-              type="select"
-              multiple
-              id="crm-areas"
-              class="block w-full min-w-0 rounded-lg border border-base-300 bg-base-100 px-3 py-2 text-base-content"
-              name="areas[]"
-              value={@directory_page.geography_filters["areas"]}
-              label={gettext("Named areas")}
-              options={
-                Enum.map(PauseAiCa.CRM.Geography.catalogue()["areas"], &{&1["name"], &1["id"]})
-              }
-            />
-            <.input
-              id="crm-fsas"
-              name="fsas"
-              value={Enum.join(@directory_page.geography_filters["fsas"], ", ")}
-              label={gettext("FSA (first three postal-code characters)")}
-              placeholder="H2X"
-            />
-            <.input
-              type="checkbox"
-              id="crm-unknown-geography"
-              name="unknown"
-              value="true"
-              checked={@directory_page.geography_filters["unknown"] == "true"}
-              label={gettext("Include contacts without a city, province or FSA")}
-            />
-            <p class="sm:col-span-3 text-sm" id="crm-geography-help">
-              {gettext(
-                "Geographic selections match any selected province, city, named area or FSA (OR). Separate FSAs with commas, for example H2X, H2Y."
-              )}
-              {gettext(
-                "Toronto / GTA uses the listed municipalities; Vancouver means the city. Unknown places are not assigned to a city or province."
-              )}
-            </p>
           </.form>
-          <details id="crm-area-definition" class="my-3 text-sm">
-            <summary>{gettext("Toronto / GTA municipalities")}</summary>
-            <p>{Enum.join(hd(PauseAiCa.CRM.Geography.catalogue()["areas"])["cities"], ", ")}</p>
-          </details>
           <p>
             {gettext(
               "Historical contacts are private. Importing or reconciling them does not create an account or consent."

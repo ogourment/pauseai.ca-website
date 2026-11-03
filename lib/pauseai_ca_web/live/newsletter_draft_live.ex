@@ -32,6 +32,8 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
            mailing_lists: lists,
            candidate_page: 1,
            candidate_q: "",
+           candidate_saved_filter: "",
+           candidate_geography: PauseAiCa.CRM.Geography.filters(%{}),
            reviewed: false,
            delivery_state: :idle,
            batch_review: nil,
@@ -313,6 +315,7 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
 
   defp save(socket, attrs) do
     socket = edit(socket, attrs)
+    attrs = Map.put(attrs, "region", socket.assigns.form[:region].value)
 
     case Drafts.save(socket.assigns.current_scope, socket.assigns.draft, attrs) do
       {:ok, draft} ->
@@ -371,8 +374,36 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
       socket =
         if mode_changed?, do: assign(socket, candidate_page: 1, candidate_q: ""), else: socket
 
+      geography =
+        if Map.has_key?(attrs, "geography"),
+          do: PauseAiCa.CRM.Geography.filters(attrs["geography"]),
+          else: socket.assigns.candidate_geography
+
+      saved_filter = attrs["saved_filter_id"] || socket.assigns.candidate_saved_filter
+
+      attrs =
+        if (attrs["recipient_mode"] || socket.assigns.form[:recipient_mode].value) == "contacts" and
+             (PhoenixCRM.Geography.selected?(geography) or saved_filter != ""),
+           do: Map.put(attrs, "region", ""),
+           else: attrs
+
+      query = attrs["candidate_q"] || socket.assigns.candidate_q
+
+      filters_changed? =
+        query != socket.assigns.candidate_q or geography != socket.assigns.candidate_geography or
+          saved_filter != socket.assigns.candidate_saved_filter or
+          (Map.has_key?(attrs, "region") and attrs["region"] != socket.assigns.form[:region].value)
+
       changeset = Draft.changeset(socket.assigns.draft, attrs)
-      socket = assign(socket, candidate_q: attrs["candidate_q"] || socket.assigns.candidate_q)
+
+      socket =
+        assign(socket,
+          candidate_q: query,
+          candidate_geography: geography,
+          candidate_saved_filter: saved_filter
+        )
+
+      socket = if filters_changed?, do: assign(socket, candidate_page: 1), else: socket
 
       socket =
         assign(socket,
@@ -491,6 +522,14 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
 
     mode = socket.assigns.form[:recipient_mode].value || "newsletter"
 
+    params =
+      if mode == "contacts",
+        do:
+          params
+          |> Map.merge(socket.assigns.candidate_geography)
+          |> Map.put("saved_filter_id", socket.assigns.candidate_saved_filter),
+        else: params
+
     case Batches.audience(socket.assigns.current_scope, mode, params) do
       {:ok, page} ->
         {:ok, batches} = Batches.list(socket.assigns.current_scope, socket.assigns.draft.id)
@@ -498,11 +537,25 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
 
         assign(socket,
           audience: page,
+          mailing_lists:
+            case Lists.list(socket.assigns.current_scope) do
+              {:ok, lists} -> lists
+              _ -> []
+            end,
           batches: batches,
           quota: quota,
           limits_form:
             socket.assigns.limits_form ||
               to_form(DeliveryLimits.changeset(quota.limits, %{}), as: "limits")
+        )
+
+      {:error, :saved_geography_unavailable} ->
+        assign(socket,
+          audience: %{rows: [], page: 1, pages: 1, total: 0, counts: %{included: 0}},
+          error:
+            gettext(
+              "This saved geography filter is unavailable. Choose another filter or clear it."
+            )
         )
 
       {:error, :audience_required} ->
@@ -768,7 +821,7 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
                   :if={@form[:recipient_mode].value != "list"}
                   field={@form[:region]}
                   type="select"
-                  label={gettext("Audience geography")}
+                  label={gettext("Recorded region")}
                   options={[
                     {gettext("All regions"), ""},
                     {"Montréal", "Montréal"},
@@ -808,10 +861,56 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
                   </p>
                   <.input
                     :if={@form[:recipient_mode].value != "list"}
+                    id="newsletter-candidate-q"
                     name="draft[candidate_q]"
                     value={@candidate_q}
-                    label={gettext("Find contacts")}
+                    label={gettext("Search contact text")}
                   />
+                  <section
+                    :if={@form[:recipient_mode].value == "contacts"}
+                    id="newsletter-geography"
+                    class="space-y-3"
+                  >
+                    <.input
+                      id="mail-saved-geography"
+                      type="select"
+                      name="draft[saved_filter_id]"
+                      value={@candidate_saved_filter}
+                      label={gettext("Saved geography filter")}
+                      options={
+                        [{gettext("No saved filter"), ""}] ++
+                          Enum.map(@mailing_lists, &{&1.name, &1.id})
+                      }
+                    />
+                    <p class="text-sm">
+                      {gettext(
+                        "Saved rules narrow these contact results using recorded geography. They do not require newsletter subscription or add recipients automatically."
+                      )}
+                      <.link
+                        navigate={~p"/manage/mail/newsletters?locale=#{@locale}"}
+                        class="underline"
+                      >{gettext("Manage saved geography rules")}</.link>
+                    </p>
+                    <PauseAiCaWeb.GeographyFilterComponents.geography_filters
+                      id="mail-geography"
+                      name="draft[geography]"
+                      filters={@candidate_geography}
+                      cities={Map.get(@audience, :cities, [])}
+                    />
+                    <p class="text-sm">
+                      {gettext(
+                        "Specific and saved geographic filters replace the recorded region. Text search is separate and also searches source observations."
+                      )}
+                    </p>
+                    <p id="newsletter-filter-count" role="status">
+                      {gettext("%{count} contacts match these filters.", count: @audience.total)}
+                    </p>
+                    <p id="newsletter-selection-help" class="text-sm">
+                      {gettext(
+                        "Changing filters keeps recipients you already selected, including recipients outside these results. Clear selection to start again. Filters are temporary; saved drafts retain the selected recipients."
+                      )}
+                    </p>
+                  </section>
                   <div
                     :if={@form[:recipient_mode].value != "list"}
                     class="flex flex-wrap gap-4 items-center"
@@ -1098,6 +1197,13 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
                   "Back to editing"
                 )}</button>
                 <strong>{gettext("%{count} recipients", count: length(@batch_review.deliveries))}</strong>
+                <.link
+                  :if={PauseAiCa.Volunteers.superadmin?(@current_scope)}
+                  id="newsletter-recipients-csv"
+                  href={~p"/manage/mail/batches/#{@batch_review.batch.id}/recipients.csv"}
+                  class="underline"
+                  download
+                >{gettext("Download recipient emails (CSV)")}</.link>
               </div>
               <h3 class="font-semibold">{gettext("Message and recipients to send")}</h3>
               <p>

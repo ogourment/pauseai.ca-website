@@ -83,15 +83,34 @@ defmodule PauseAiCa.CRM.Geography do
       |> Enum.sort_by(fn {_, _, at} -> at end, {:desc, DateTime})
       |> Enum.group_by(&elem(&1, 0), &elem(&1, 1))
 
-    Map.new(people, fn person ->
-      sources = Map.get(grouped, person.id, [])
-      projection = Shared.project(%{"city" => person.city}, sources, @catalogue)
+    # Repeated immutable snapshots often contain identical geography facts.
+    # Preserve newest-first precedence while projecting each distinct input once
+    # per call. Nothing is cached across requests or changes to canonical fields.
+    {projections, _cache} =
+      Enum.map_reduce(people, %{}, fn person, cache ->
+        sources = grouped |> Map.get(person.id, []) |> Enum.uniq()
+        key = {person.city, sources}
 
-      regions =
-        sources |> Enum.map(& &1["recorded_region"]) |> Enum.reject(&is_nil/1) |> Enum.uniq()
+        case Map.fetch(cache, key) do
+          {:ok, projection} ->
+            {{person.id, projection}, cache}
 
-      {person.id, Map.put(projection, :regions, regions)}
-    end)
+          :error ->
+            projection = project(person.city, sources)
+            {{person.id, projection}, Map.put(cache, key, projection)}
+        end
+      end)
+
+    Map.new(projections)
+  end
+
+  defp project(city, sources) do
+    projection = Shared.project(%{"city" => city}, sources, @catalogue)
+
+    regions =
+      sources |> Enum.map(& &1["recorded_region"]) |> Enum.reject(&is_nil/1) |> Enum.uniq()
+
+    Map.put(projection, :regions, regions)
   end
 
   def subdivision_name(nil), do: nil

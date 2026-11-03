@@ -5394,11 +5394,6 @@ msgstr "Archived draft"
 msgid "Archived drafts"
 msgstr "Archived drafts"
 
-#: lib/pauseai_ca_web/live/newsletter_draft_live.ex:771
-#, elixir-autogen, elixir-format
-msgid "Audience geography"
-msgstr "Audience geography"
-
 #: lib/pauseai_ca_web/live/newsletters_live.ex:364
 #, elixir-autogen, elixir-format
 msgid "Newsletter audience"
@@ -5570,11 +5565,6 @@ msgstr "Excluded"
 #, elixir-autogen, elixir-format
 msgid "Excluded: withdrawal, blocked address or missing preferred email."
 msgstr "Excluded: withdrawal, blocked address or missing preferred email."
-
-#: lib/pauseai_ca_web/live/newsletter_draft_live.ex:813
-#, elixir-autogen, elixir-format
-msgid "Find contacts"
-msgstr "Find contacts"
 
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:1165
 #, elixir-autogen, elixir-format
@@ -8117,11 +8107,6 @@ msgstr "Saskatchewan"
 msgid "Some location details are unresolved"
 msgstr "Some location details are unresolved"
 
-#: lib/pauseai_ca_web/live/admin_contacts_live.ex:822
-#, elixir-autogen, elixir-format
-msgid "Toronto / GTA municipalities"
-msgstr "Toronto / GTA municipalities"
-
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:816
 #, elixir-autogen, elixir-format
 msgid "Toronto / GTA uses the listed municipalities; Vancouver means the city. Unknown places are not assigned to a city or province."
@@ -10405,3 +10390,60 @@ msgstr "Main navigation"
 msgctxt "compact navigation"
 msgid "Admin"
 msgstr "Admin"
+
+
+#: lib/pauseai_ca_web/live/newsletter_draft_live.ex:866
+#, elixir-autogen, elixir-format
+msgid "Search contact text"
+msgstr "Search contact text"
+
+#: lib/pauseai_ca_web/components/geography_filter_components.ex:83
+#, elixir-autogen, elixir-format
+msgid "Named area municipalities"
+msgstr "Named area municipalities"
+
+#: lib/pauseai_ca_web/live/newsletter_draft_live.ex:878
+#, elixir-autogen, elixir-format
+msgid "Saved geography filter"
+msgstr "Saved geography filter"
+
+#: lib/pauseai_ca_web/live/newsletter_draft_live.ex:880
+#, elixir-autogen, elixir-format
+msgid "No saved filter"
+msgstr "No saved filter"
+
+#: lib/pauseai_ca_web/live/newsletter_draft_live.ex:885
+#, elixir-autogen, elixir-format
+msgid "Saved rules narrow these contact results using recorded geography. They do not require newsletter subscription or add recipients automatically."
+msgstr "Saved rules narrow these contact results using recorded geography. They do not require newsletter subscription or add recipients automatically."
+
+#: lib/pauseai_ca_web/live/newsletter_draft_live.ex:891
+#, elixir-autogen, elixir-format
+msgid "Manage saved geography rules"
+msgstr "Manage saved geography rules"
+
+#: lib/pauseai_ca_web/live/newsletter_draft_live.ex:900
+#, elixir-autogen, elixir-format
+msgid "Specific and saved geographic filters replace the recorded region. Text search is separate and also searches source observations."
+msgstr "Specific and saved geographic filters replace the recorded region. Text search is separate and also searches source observations."
+
+#: lib/pauseai_ca_web/live/newsletter_draft_live.ex:905
+#, elixir-autogen, elixir-format
+msgid "%{count} contacts match these filters."
+msgstr "%{count} contacts match these filters."
+
+#: lib/pauseai_ca_web/live/newsletter_draft_live.ex:908
+#, elixir-autogen, elixir-format
+msgid "Changing filters keeps recipients you already selected, including recipients outside these results. Clear selection to start again. Filters are temporary; saved drafts retain the selected recipients."
+msgstr "Changing filters keeps recipients you already selected, including recipients outside these results. Clear selection to start again. Filters are temporary; saved drafts retain the selected recipients."
+
+#: lib/pauseai_ca_web/live/newsletter_draft_live.ex:556
+#, elixir-autogen, elixir-format
+msgid "This saved geography filter is unavailable. Choose another filter or clear it."
+msgstr "This saved geography filter is unavailable. Choose another filter or clear it."
+
+
+#: lib/pauseai_ca_web/live/newsletter_draft_live.ex:1205
+#, elixir-autogen, elixir-format
+msgid "Download recipient emails (CSV)"
+msgstr "Download recipient emails (CSV)"
