@@ -76,8 +76,10 @@ if System.get_env("ATDD") == "true" do
             exact: true
           )
           |> assert_has("#assistant-status", text: tr(locale, "Off"), exact: true)
+          |> visible_table_fields("#assistant-token-limits", 6)
           |> click_link("#assistant-activity-link", tr(locale, "Activity & security"))
           |> assert_has("[data-phx-main].phx-connected #assistant-audit")
+          |> visible_table_fields("#assistant-audit-table", 5)
           |> assert_has("#journey-breadcrumbs a[href='/admin/dashboard?locale=#{locale}']",
             text: "Admin",
             exact: true
@@ -133,6 +135,27 @@ if System.get_env("ATDD") == "true" do
         AtddEvidence.mark_scenario_success!(Enum.find(@scenarios, &(&1.id == id)))
         browser
       end
+    end
+
+    defp visible_table_fields(browser, selector, count) do
+      evaluate(
+        browser,
+        """
+        (() => {
+          const cells = [...document.querySelectorAll('#{selector} tbody tr:first-child td')];
+          return cells.length === #{count} && cells.every(cell => {
+            const box = cell.getBoundingClientRect();
+            const label = cell.dataset.label;
+            return label && box.width > 0 && box.left >= 0 && box.right <= innerWidth &&
+              cell.scrollWidth <= cell.clientWidth + 1 &&
+              (innerWidth > 700 || (getComputedStyle(cell, '::before').display === 'block' && !['none', '""'].includes(getComputedStyle(cell, '::before').content)));
+          });
+        })()
+        """,
+        &assert(&1)
+      )
+
+      browser
     end
 
     defp tr(locale, text),

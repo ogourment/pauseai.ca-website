@@ -113,25 +113,51 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
             )}
           </p>
           <p>{gettext("Default per admin: %{limit} tokens/day", limit: @default_limit)}</p>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm">
-              <thead>
-                <tr>
-                  <th>{gettext("Admin")}</th><th>{gettext("Input")}</th><th>{gettext("Output")}</th><th>
+          <div class="paa-data-table">
+            <table role="table">
+              <thead role="rowgroup">
+                <tr role="row">
+                  <th role="columnheader" scope="col">{gettext("Admin")}</th><th
+                    role="columnheader"
+                    scope="col"
+                  >
+                    {gettext("Input")}
+                  </th><th role="columnheader" scope="col">{gettext("Output")}</th><th
+                    role="columnheader"
+                    scope="col"
+                  >
                     {gettext("Reserved")}
-                  </th><th>{gettext("Remaining")}</th><th>{gettext("Daily limit")}</th>
+                  </th><th role="columnheader" scope="col">{gettext("Remaining")}</th><th
+                    role="columnheader"
+                    scope="col"
+                  >
+                    {gettext("Daily limit")}
+                  </th>
                 </tr>
               </thead>
-              <tbody>
-                <tr :for={admin <- @admins}>
-                  <td class="p-2">{admin.email}</td>
+              <tbody role="rowgroup">
+                <tr :for={admin <- @admins} role="row">
+                  <td role="cell" data-label={gettext("Admin")}>{admin.email}</td>
                   <%= case admin.usage do %>
                     <% {:ok, usage} -> %>
-                      <td>{usage.reported_input}</td><td>{usage.reported_output}</td><td>
+                      <td role="cell" data-label={gettext("Input")}>{usage.reported_input}</td><td
+                        role="cell"
+                        data-label={gettext("Output")}
+                      >
+                        {usage.reported_output}
+                      </td><td role="cell" data-label={gettext("Reserved")}>
                         {usage.held_tokens}
-                      </td><td>{usage.remaining_tokens}</td><td>{usage.limit}</td>
+                      </td><td role="cell" data-label={gettext("Remaining")}>
+                        {usage.remaining_tokens}
+                      </td><td role="cell" data-label={gettext("Daily limit")}>{usage.limit}</td>
                     <% _ -> %>
-                      <td colspan="5">{gettext("Unavailable")}</td>
+                      <td role="cell" data-label={gettext("Input")}>{gettext("Unavailable")}</td>
+                      <td role="cell" data-label={gettext("Output")}>{gettext("Unavailable")}</td>
+                      <td role="cell" data-label={gettext("Reserved")}>{gettext("Unavailable")}</td>
+                      <td role="cell" data-label={gettext("Remaining")}>{gettext("Unavailable")}</td>
+                      <td role="cell" data-label={gettext("Daily limit")}>
+                        {gettext("Unavailable")}
+                      </td>
                   <% end %>
                 </tr>
               </tbody>
