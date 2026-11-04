@@ -11,9 +11,9 @@ defmodule PauseAiCa.Assistant.FeatureCatalogueTest do
     on_exit(fn -> File.rm_rf!(directory) end)
 
     identity = %{
-      version: "0.5.64",
+      version: "0.6.0",
       pipeline_id: "123456",
-      release_id: "pauseai-ca-0.5.64-123456",
+      release_id: "pauseai-ca-0.6.0-123456",
       source_sha: String.duplicate("a", 40)
     }
 
@@ -70,7 +70,7 @@ defmodule PauseAiCa.Assistant.FeatureCatalogueTest do
     for identity <- [
           Map.put(context.identity, :source_sha, String.duplicate("b", 40)),
           Map.put(context.identity, :pipeline_id, "654321"),
-          Map.put(context.identity, :version, "0.5.65"),
+          Map.put(context.identity, :version, "0.6.1"),
           Map.put(context.identity, :release_id, "other-release"),
           Map.delete(context.identity, :source_sha)
         ] do
