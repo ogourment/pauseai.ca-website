@@ -93,6 +93,7 @@ jobs:
         if: ${{ inputs.run-acceptance }}
         env:
           ATDD: "true"
+          CI_PIPELINE_ID: ${{ github.run_id }}
         run: mix test.atdd
       - name: Upload acceptance evidence
         if: ${{ always() && inputs.run-acceptance }}
@@ -125,6 +126,18 @@ jobs:
         run: |
           set -euo pipefail
           test -s tmp/atdd/evidence.json
+          mix run --no-start -e '
+            identity = %{
+              version: File.read!("_build/VERSION") |> String.trim(),
+              pipeline_id: System.fetch_env!("GITHUB_RUN_ID"),
+              release_id: File.read!("_build/RELEASE_ID") |> String.trim(),
+              source_sha: System.fetch_env!("GITHUB_SHA")
+            }
+            case PauseAiCa.Assistant.FeatureCatalogue.load(identity, evidence_path: "tmp/atdd/evidence.json") do
+              {:ok, _} -> :ok
+              _ -> Mix.raise("Acceptance evidence is not bound to this release source, version and pipeline")
+            end
+          '
           version="$(cat _build/VERSION)"
           app="$(mix run --no-start -e 'IO.write(Mix.Project.config()[:app])')"
           destination="_build/prod/rel/$app/lib/$app-$version/priv/acceptance_evidence"

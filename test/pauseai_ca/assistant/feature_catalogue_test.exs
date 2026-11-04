@@ -64,6 +64,74 @@ defmodule PauseAiCa.Assistant.FeatureCatalogueTest do
     assert Enum.all?(loaded.features, &Catalog.safe_path?(&1.entry_path))
   end
 
+  test "GitHub evidence producer requires the CI pipeline mapping before release packaging",
+       context do
+    env_keys = ~w(GITHUB_RUN_ID CI_PIPELINE_ID PAUSEAI_CA_GIT_SHA GITHUB_SHA CI_COMMIT_SHA)
+    previous_env = Map.new(env_keys, &{&1, System.get_env(&1)})
+    previous_config = Application.fetch_env(:acceptance_harness, :harness)
+    agent = Process.whereis(AcceptanceHarness.Evidence.Agent)
+    previous_state = if agent, do: Agent.get(agent, & &1)
+    directory = Path.dirname(context.path)
+
+    on_exit(fn ->
+      for {key, value} <- previous_env do
+        if value, do: System.put_env(key, value), else: System.delete_env(key)
+      end
+
+      case previous_config do
+        {:ok, config} -> Application.put_env(:acceptance_harness, :harness, config)
+        :error -> Application.delete_env(:acceptance_harness, :harness)
+      end
+
+      if agent do
+        Agent.update(agent, fn _ -> previous_state end)
+      else
+        if current = Process.whereis(AcceptanceHarness.Evidence.Agent), do: Agent.stop(current)
+      end
+    end)
+
+    Application.put_env(:acceptance_harness, :harness,
+      otp_app: :pauseai_ca,
+      app_name: "Synthetic release evidence",
+      evidence_dir: directory,
+      screenshot_dir: Path.join(directory, "screenshots"),
+      commit_sha_env: ["PAUSEAI_CA_GIT_SHA", "GITHUB_SHA"]
+    )
+
+    System.put_env("GITHUB_RUN_ID", context.identity.pipeline_id)
+    System.put_env("GITHUB_SHA", context.identity.source_sha)
+    System.delete_env("PAUSEAI_CA_GIT_SHA")
+    System.delete_env("CI_PIPELINE_ID")
+    scenario = %{id: "GEO-PAI-01-en", title: "Synthetic producer contract", roles: []}
+
+    produce = fn ->
+      AcceptanceHarness.Evidence.reset!("Synthetic release evidence", [scenario])
+      AcceptanceHarness.Evidence.mark_scenario_success!(scenario)
+      AcceptanceHarness.Evidence.finalize!()
+      context.path |> File.read!() |> Jason.decode!()
+    end
+
+    # Reproduce the actual staged schema: GitHub's native variable alone does
+    # not populate the pinned producer's CI_PIPELINE_ID field.
+    assert get_in(produce.(), ["app", "pipeline_id"]) == nil
+
+    assert {:error, :unverified} =
+             FeatureCatalogue.load(context.identity, evidence_path: context.path)
+
+    System.put_env("CI_PIPELINE_ID", System.fetch_env!("GITHUB_RUN_ID"))
+    assert get_in(produce.(), ["app", "pipeline_id"]) == context.identity.pipeline_id
+    assert {:ok, loaded} = FeatureCatalogue.load(context.identity, evidence_path: context.path)
+    assert loaded.feature_evidence.results == %{"GEO-PAI-01-en" => "success"}
+
+    for identity <- [
+          %{context.identity | pipeline_id: "654321", release_id: "pauseai-ca-0.6.0-654321"},
+          %{context.identity | source_sha: String.duplicate("b", 40)},
+          %{context.identity | version: "0.6.1", release_id: "pauseai-ca-0.6.1-123456"}
+        ] do
+      assert {:error, :unverified} = FeatureCatalogue.load(identity, evidence_path: context.path)
+    end
+  end
+
   test "rejects stale source, pipeline, version and release identities", context do
     write(context)
 
