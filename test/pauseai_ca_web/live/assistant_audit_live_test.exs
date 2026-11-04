@@ -1,0 +1,209 @@
+defmodule PauseAiCaWeb.AssistantAuditLiveTest do
+  use PauseAiCaWeb.ConnCase, async: false
+  import Phoenix.LiveViewTest
+  import PauseAiCa.AccountsFixtures
+  import Ecto.Query
+  alias PauseAiCa.{Accounts, Assistant, Repo}
+  alias PauseAiCa.Assistant.Audit
+  alias PhoenixAgentAssistant.Store
+  alias PhoenixAgentAssistant.Store.{AuditEntry, Stream}
+
+  setup do
+    old = Application.fetch_env(:pauseai_ca, :agent_assistant)
+    config = PauseAiCa.AssistantFixtures.configuration(self())
+    Application.put_env(:pauseai_ca, :agent_assistant, config)
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    other = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    member = user_fixture()
+
+    on_exit(fn ->
+      case old do
+        {:ok, value} -> Application.put_env(:pauseai_ca, :agent_assistant, value)
+        :error -> Application.delete_env(:pauseai_ca, :agent_assistant)
+      end
+    end)
+
+    %{
+      admin: admin,
+      other: other,
+      member: member,
+      scope: Accounts.Scope.for_user(admin),
+      config: config
+    }
+  end
+
+  test "direct nonadmin access is denied and role revocation clears the active viewer", c do
+    assert build_conn()
+           |> log_in_user(c.member)
+           |> get("/admin/assistant/activity?locale=en")
+           |> response(403) == "superadmin required"
+
+    assert {:error, :forbidden} = Audit.page(Accounts.Scope.for_user(c.member), %{})
+    {:ok, view, _} = live(log_in_user(c.conn, c.admin), "/admin/assistant/activity?locale=en")
+    Repo.update!(Ecto.Changeset.change(c.admin, superadmin: false))
+    render_click(view, "first")
+    assert_redirect(view, "/")
+    refute_receive {:assistant_generated, _, _}
+  end
+
+  test "metadata hides all private content and other namespaces; access is durably recorded while OFF",
+       c do
+    row =
+      record(c, c.other.id, %{
+        "kind" => "request",
+        "text" => "PRIVATE-PROMPT",
+        "context" => %{"secret" => "PRIVATE-CONTEXT"},
+        "attachments" => ["PRIVATE-IMAGE"]
+      })
+
+    foreign = Store.new(Repo, "foreign-synthetic-namespace")
+
+    {:ok, %{entry: foreign_row}} =
+      Store.record(
+        foreign,
+        c.other.id,
+        Ecto.UUID.generate(),
+        %{"kind" => "request"},
+        c.config[:audit_keys]
+      )
+
+    assert {:ok, page} = Audit.page(c.scope, %{})
+    assert Enum.any?(page.rows, &(&1.id == row.id))
+    assert Enum.any?(page.rows, &(&1.kind == "audit_viewed" and &1.actor_id == c.admin.id))
+    refute Enum.any?(page.rows, &(&1.id == foreign_row.id))
+
+    assert Repo.exists?(
+             from(s in Stream,
+               where:
+                 s.namespace == ^Assistant.store().namespace and s.actor_id == ^c.admin.id and
+                   s.reference == "audit-access"
+             )
+           )
+
+    refute Store.enabled?(Assistant.store())
+    {:ok, view, html} = live(log_in_user(c.conn, c.admin), "/admin/assistant/activity?locale=en")
+    assert has_element?(view, "#assistant-audit-table")
+    refute html =~ "PRIVATE"
+    refute has_element?(view, "a[download]")
+    refute_receive {:assistant_generated, _, _}
+  end
+
+  test "keyset filters persist and older pages are bounded without repeated audit rows", c do
+    rows =
+      for _ <- 1..31, do: record(c, c.other.id, %{"kind" => "mode_changed", "mode" => "fast"})
+
+    {:ok, view, _} =
+      live(
+        log_in_user(c.conn, c.admin),
+        "/admin/assistant/activity?locale=en&actor=#{c.other.id}&kind=mode_changed"
+      )
+
+    first = render(view)
+    first_ids = Enum.filter(rows, &String.contains?(first, &1.id)) |> Enum.map(& &1.id)
+    assert length(first_ids) == 25
+    view |> element("#assistant-audit-next") |> render_click()
+    second = render(view)
+    second_ids = Enum.filter(rows, &String.contains?(second, &1.id)) |> Enum.map(& &1.id)
+    assert length(second_ids) == 6
+    assert MapSet.disjoint?(MapSet.new(first_ids), MapSet.new(second_ids))
+    assert has_element?(view, "#audit-kind option[value='mode_changed'][selected]")
+    assert has_element?(view, "#audit-actor option[value='#{c.other.id}'][selected]")
+    refute has_element?(view, "#assistant-audit-next")
+  end
+
+  test "tampering fails closed and failed access logging discloses no records", c do
+    row = record(c, c.other.id, %{"kind" => "request", "text" => "PRIVATE"})
+
+    Repo.update!(
+      Ecto.Changeset.change(row,
+        envelope: Map.put(row.envelope, "ciphertext", Base.encode64("tampered"))
+      )
+    )
+
+    assert {:error, :audit_unavailable} = Audit.page(c.scope, %{})
+    {:ok, view, html} = live(log_in_user(c.conn, c.admin), "/admin/assistant/activity?locale=en")
+    assert has_element?(view, "[role=alert]")
+    refute has_element?(view, "#assistant-audit-table")
+    refute html =~ "PRIVATE"
+
+    Repo.get!(AuditEntry, row.id)
+    |> Ecto.Changeset.change(envelope: row.envelope)
+    |> Repo.update!()
+
+    assert Repo.aggregate(PhoenixAgentAssistant.Store.Alert, :count) == 1
+
+    Repo.get!(AuditEntry, row.id)
+    |> Ecto.Changeset.change(envelope: row.envelope)
+    |> Repo.update!()
+
+    {:ok, %{entry: access}} =
+      Store.record(
+        Assistant.store(),
+        c.admin.id,
+        Ecto.UUID.generate(),
+        %{"kind" => "audit_viewed"},
+        c.config[:audit_keys],
+        stream: "audit-access"
+      )
+
+    Repo.update!(
+      Ecto.Changeset.change(access, envelope: Map.put(access.envelope, "ciphertext", "invalid"))
+    )
+
+    count = Repo.aggregate(AuditEntry, :count)
+    assert {:error, :audit_unavailable} = Audit.page(c.scope, %{})
+    assert Repo.aggregate(AuditEntry, :count) == count + 1
+    assert Repo.aggregate(PhoenixAgentAssistant.Store.Alert, :count) == 2
+    assert {:error, :audit_unavailable} = Audit.page(c.scope, %{})
+    assert Repo.aggregate(AuditEntry, :count) == count + 1
+    assert Repo.aggregate(PhoenixAgentAssistant.Store.Alert, :count) == 2
+    refute_receive {:assistant_generated, _, _}
+  end
+
+  test "historical actors remain labelled after demotion and other namespaces are excluded", c do
+    record(c, c.other.id, %{"kind" => "mode_changed"})
+    Repo.update!(Ecto.Changeset.change(c.other, superadmin: false, confirmed_at: nil))
+    foreign = Store.new(Repo, "other-namespace")
+
+    {:ok, _} =
+      Store.record(
+        foreign,
+        c.member.id,
+        Ecto.UUID.generate(),
+        %{"kind" => "request"},
+        c.config[:audit_keys]
+      )
+
+    assert {:ok, %{choices: choices, labels: labels}} = Audit.accounts(c.scope, [c.other.id])
+    assert labels[c.other.id] == c.other.email
+    assert Enum.any?(choices, &(&1.id == c.other.id))
+    refute Enum.any?(choices, &(&1.id == c.member.id))
+    {:ok, view, html} = live(log_in_user(c.conn, c.admin), "/admin/assistant/activity?locale=en")
+    assert has_element?(view, "#audit-actor option[value='#{c.other.id}']")
+    assert html =~ c.other.email
+  end
+
+  test "missing audit configuration blocks disclosure without inventing an integrity incident",
+       c do
+    record(c, c.other.id, %{"kind" => "request", "text" => "PRIVATE"})
+    Application.put_env(:pauseai_ca, :agent_assistant, Keyword.delete(c.config, :audit_keys))
+    assert {:error, :audit_unavailable} = Audit.page(c.scope, %{})
+    assert Repo.aggregate(PhoenixAgentAssistant.Store.Alert, :count) == 0
+  end
+
+  test "coaching mail entry is read-only until the human chooses Compose", c do
+    count = Repo.aggregate(PauseAiCa.Newsletters.Draft, :count)
+    {:ok, view, _} = live(log_in_user(c.conn, c.admin), "/manage/mail?locale=en")
+    assert Repo.aggregate(PauseAiCa.Newsletters.Draft, :count) == count
+    assert has_element?(view, "#mail-new-draft", "Compose")
+    view |> element("#mail-new-draft") |> render_click()
+    assert Repo.aggregate(PauseAiCa.Newsletters.Draft, :count) == count + 1
+  end
+
+  defp record(c, actor, event) do
+    {:ok, %{entry: entry}} =
+      Store.record(Assistant.store(), actor, Ecto.UUID.generate(), event, c.config[:audit_keys])
+
+    entry
+  end
+end

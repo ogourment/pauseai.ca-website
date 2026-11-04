@@ -84,6 +84,11 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
               "Help organizers use the website, review information and prepare their next action."
             )}
           </p>
+          <.link
+            id="assistant-activity-link"
+            navigate={~p"/admin/assistant/activity?#{[locale: @locale]}"}
+            class="underline"
+          >{gettext("Activity & security")}</.link>
           <p id="assistant-status">{if @enabled, do: gettext("On"), else: gettext("Off")}</p>
           <button
             :if={!@enabled}

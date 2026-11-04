@@ -20,7 +20,7 @@ defmodule PauseAiCa.Assistant.FeatureCatalogue do
     {"crm-geography", "Contact geography", "Filter contacts by recorded geography.",
      "/admin/contacts", ["GEO-PAI-01"], nil, "0.5.37"},
     {"newsletter-compose", "Newsletter composition", "Compose and review a language edition.",
-     "/manage/mail/new", ["PA-NEWS-01", "MAIL-GEO-01"], nil, "0.5.62"},
+     "/manage/mail", ["PA-NEWS-01", "MAIL-GEO-01"], nil, "0.5.62"},
     {"newsletter-lists", "Dynamic mailing lists", "Prepare a whole-list recipient snapshot.",
      "/manage/mail/newsletters", ["LIST-NEWS-01"], nil, "0.5.13"},
     {"newsletter-results", "Newsletter results", "Compare cached send results and saved content.",
@@ -32,7 +32,7 @@ defmodule PauseAiCa.Assistant.FeatureCatalogue do
     {"blog-editor", "Blog editing", "Edit Markdown posts and review reader sections.",
      "/manage/blog", ["BLOG-01"], nil, "0.5.51"},
     {"newsletter-rich-paste", "Rich newsletter paste", "Save editable rich clipboard content.",
-     "/manage/mail/new", ["PA-NEWS-PASTE-01"], nil, "0.5.14"}
+     "/manage/mail", ["PA-NEWS-PASTE-01"], nil, "0.5.14"}
   ]
 
   def load(identity, opts \\ []) do

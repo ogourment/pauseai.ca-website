@@ -156,5 +156,24 @@ defmodule PauseAiCa.Assistant.FeatureCatalogueTest do
     assert {:error, :unverified} = FeatureCatalogue.load(context.identity, evidence_path: link)
   end
 
+  test "newsletter coaching starts at the workspace without advertising executable controls",
+       context do
+    write(context)
+    assert {:ok, loaded} = FeatureCatalogue.load(context.identity, evidence_path: context.path)
+
+    for id <- ["newsletter-compose", "newsletter-rich-paste"] do
+      feature = Enum.find(loaded.features, &(&1.id == id))
+      assert feature.entry_path == "/manage/mail"
+      assert feature.controls == []
+    end
+
+    assert Enum.find(loaded.features, &(&1.id == "newsletter-compose")).scenarios == [
+             "PA-NEWS-01-en",
+             "PA-NEWS-01-fr",
+             "MAIL-GEO-01-en",
+             "MAIL-GEO-01-fr"
+           ]
+  end
+
   defp write(context), do: File.write!(context.path, Jason.encode!(context.report))
 end

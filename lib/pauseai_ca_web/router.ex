@@ -122,6 +122,7 @@ defmodule PauseAiCaWeb.Router do
       on_mount: [{PauseAiCaWeb.UserAuth, :require_authenticated}] do
       live "/", AdminMetricsLive, :redirect
       live "/assistant", AssistantSettingsLive, :index
+      live "/assistant/activity", AssistantAuditLive, :index
       live "/dashboard", AdminMetricsLive, :index
       live "/metrics", AdminMetricsLive, :redirect
       live "/accounts", AdminAccountsLive, :index
