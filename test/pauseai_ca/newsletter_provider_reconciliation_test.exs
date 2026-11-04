@@ -161,7 +161,8 @@ defmodule PauseAiCa.NewsletterProviderReconciliationTest do
 
   test "bounded pages persist a resumable cursor, overlap recent history and periodically sweep older late events",
        c do
-    now = DateTime.utc_now()
+    # Resumption crosses UTC midnight; overlap follows the completed cursor date.
+    now = ~U[2026-11-03 23:50:00.000000Z]
     c.delivery |> change(attempted_at: DateTime.add(now, -30 * 86_400)) |> Repo.update!()
     parent = self()
 
@@ -203,7 +204,10 @@ defmodule PauseAiCa.NewsletterProviderReconciliationTest do
              )
 
     assert_receive {:recent, recent}
-    assert recent[:startDate] == Date.to_iso8601(Date.add(DateTime.to_date(now), -3))
+    assert DateTime.to_date(completed.cursor_at) == Date.add(DateTime.to_date(now), 1)
+
+    assert recent[:startDate] ==
+             Date.to_iso8601(Date.add(DateTime.to_date(completed.cursor_at), -3))
 
     assert {:ok, _} =
              ProviderSync.run(

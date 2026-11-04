@@ -169,7 +169,8 @@ defmodule PauseAiCa.MixProject do
         "gettext.extract --check-up-to-date",
         "i18n.check",
         "compile --warnings-as-errors",
-        "deps.unlock --unused",
+        # Use a fresh dependency graph and leave the lockfile unchanged.
+        "cmd mix deps.unlock --check-unused",
         "test"
       ]
     ]
