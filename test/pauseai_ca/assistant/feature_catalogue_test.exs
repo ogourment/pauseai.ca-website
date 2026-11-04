@@ -123,6 +123,40 @@ defmodule PauseAiCa.Assistant.FeatureCatalogueTest do
     assert {:ok, loaded} = FeatureCatalogue.load(context.identity, evidence_path: context.path)
     assert loaded.feature_evidence.results == %{"GEO-PAI-01-en" => "success"}
 
+    AcceptanceHarness.Evidence.record_step(
+      "synthetic.png",
+      "Large captured state",
+      "Synthetic only",
+      %{
+        "scenario_id" => scenario.id,
+        "scenario" => scenario.title,
+        "captured_body" => String.duplicate("SYNTHETIC_PRIVATE_CAPTURE_BODY", 660_000)
+      }
+    )
+
+    AcceptanceHarness.Evidence.finalize!()
+    full_bytes = File.read!(context.path)
+    assert byte_size(full_bytes) > 18 * 1024 * 1024
+
+    assert {:error, :unverified} =
+             FeatureCatalogue.load(context.identity, evidence_path: context.path)
+
+    projection_path = context.path <> ".projection"
+
+    assert :ok =
+             FeatureCatalogue.package_projection(context.path, projection_path, context.identity)
+
+    assert File.read!(context.path) == full_bytes
+    projected_bytes = File.read!(projection_path)
+    assert byte_size(projected_bytes) < 1024
+    refute projected_bytes =~ "SYNTHETIC_PRIVATE_CAPTURE_BODY"
+    refute projected_bytes =~ "screenshots"
+
+    assert {:ok, projected} =
+             FeatureCatalogue.load(context.identity, evidence_path: projection_path)
+
+    assert projected == loaded
+
     for identity <- [
           %{context.identity | pipeline_id: "654321", release_id: "pauseai-ca-0.6.0-654321"},
           %{context.identity | source_sha: String.duplicate("b", 40)},
@@ -130,6 +164,51 @@ defmodule PauseAiCa.Assistant.FeatureCatalogueTest do
         ] do
       assert {:error, :unverified} = FeatureCatalogue.load(identity, evidence_path: context.path)
     end
+  end
+
+  test "projection validates all identities and scenarios while emitting only bounded metadata",
+       context do
+    scenarios =
+      for index <- 1..100,
+          do: %{
+            "id" => "SYNTHETIC-#{index}",
+            "status" => if(rem(index, 2) == 0, do: "success", else: "ignored")
+          }
+
+    report = %{context.report | "scenarios" => scenarios}
+    assert {:ok, projection} = FeatureCatalogue.project(report, context.identity)
+    assert Map.keys(projection) |> Enum.sort() == ~w(app scenarios schema_version)
+    assert projection["app"] == context.report["app"]
+
+    assert Map.new(projection["scenarios"], &{&1["id"], &1["status"]}) ==
+             Map.new(scenarios, &{&1["id"], &1["status"]})
+
+    for invalid <- [
+          put_in(report, ["app", "pipeline_id"], nil),
+          put_in(report, ["app", "commit"], String.duplicate("b", 40)),
+          put_in(report, ["app", "version"], "0.6.1"),
+          %{report | "scenarios" => scenarios ++ [hd(scenarios)]},
+          %{report | "scenarios" => [%{"id" => "bad", "status" => "invented"}]},
+          %{
+            report
+            | "scenarios" => [%{"id" => String.duplicate("x", 161), "status" => "success"}]
+          }
+        ] do
+      assert {:error, :unverified} = FeatureCatalogue.project(invalid, context.identity)
+    end
+
+    # The trusted build reader has its own finite cap; runtime remains2MiB.
+    oversize = context.path <> ".oversize"
+    {:ok, file} = :file.open(String.to_charlist(oversize), [:write, :binary])
+    {:ok, _} = :file.position(file, 64 * 1024 * 1024)
+    :ok = :file.write(file, "x")
+    :ok = :file.close(file)
+    destination = context.path <> ".projection"
+
+    assert {:error, :unverified} =
+             FeatureCatalogue.package_projection(oversize, destination, context.identity)
+
+    refute File.exists?(destination)
   end
 
   test "rejects stale source, pipeline, version and release identities", context do

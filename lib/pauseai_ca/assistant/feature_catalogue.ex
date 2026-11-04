@@ -53,6 +53,40 @@ defmodule PauseAiCa.Assistant.FeatureCatalogue do
     _ -> {:error, :unverified}
   end
 
+  @doc false
+  def project(report, identity) do
+    with true <- valid_identity?(identity) and bound?(report, identity),
+         {:ok, results} <- results(report) do
+      {:ok,
+       %{
+         "schema_version" => "acceptance_harness.evidence.v1",
+         "app" => Map.take(report["app"], ~w(version commit pipeline_id)),
+         "scenarios" =>
+           results
+           |> Enum.sort()
+           |> Enum.map(fn {id, status} -> %{"id" => id, "status" => status} end)
+       }}
+    else
+      _ -> {:error, :unverified}
+    end
+  end
+
+  @doc "Build-time projection from a trusted CI report; no report bodies enter runtime coaching."
+  def package_projection(source, destination, identity) do
+    with {:ok, bytes} <- read_bounded(source, 64 * 1024 * 1024),
+         {:ok, report} <- Jason.decode(bytes),
+         {:ok, projection} <- project(report, identity),
+         {:ok, encoded} <- Jason.encode(projection),
+         true <- byte_size(encoded) <= @max_bytes,
+         :ok <- File.write(destination, encoded) do
+      :ok
+    else
+      _ -> {:error, :unverified}
+    end
+  rescue
+    _ -> {:error, :unverified}
+  end
+
   defp valid_identity?(%{
          version: version,
          pipeline_id: pipeline,
@@ -108,14 +142,16 @@ defmodule PauseAiCa.Assistant.FeatureCatalogue do
   end
 
   defp default_path,
-    do: Application.app_dir(:pauseai_ca, "priv/acceptance_evidence/evidence.json")
+    do: Application.app_dir(:pauseai_ca, "priv/acceptance_evidence/assistant-features.json")
 
-  defp read_bounded(path) when is_binary(path) do
-    with {:ok, %{type: :regular, size: size}} when size <= @max_bytes <- File.lstat(path),
+  defp read_bounded(path, maximum \\ @max_bytes)
+
+  defp read_bounded(path, maximum) when is_binary(path) do
+    with {:ok, %{type: :regular, size: size}} when size <= maximum <- File.lstat(path),
          {:ok, file} <- File.open(path, [:read, :binary]) do
       try do
-        case IO.binread(file, @max_bytes + 1) do
-          bytes when is_binary(bytes) and byte_size(bytes) <= @max_bytes -> {:ok, bytes}
+        case IO.binread(file, maximum + 1) do
+          bytes when is_binary(bytes) and byte_size(bytes) <= maximum -> {:ok, bytes}
           _ -> {:error, :unverified}
         end
       after
@@ -126,5 +162,5 @@ defmodule PauseAiCa.Assistant.FeatureCatalogue do
     end
   end
 
-  defp read_bounded(_), do: {:error, :unverified}
+  defp read_bounded(_, _), do: {:error, :unverified}
 end
