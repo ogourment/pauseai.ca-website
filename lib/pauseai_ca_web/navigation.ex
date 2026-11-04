@@ -120,6 +120,22 @@ defmodule PauseAiCaWeb.Navigation do
 
   def breadcrumb_context(_scope, _locale), do: %{roots: [], sections: []}
 
+  def assistant_breadcrumb_context(scope, locale) do
+    roots =
+      if Volunteers.superadmin?(scope) do
+        label =
+          Gettext.with_locale(PauseAiCaWeb.Gettext, locale, fn ->
+            pgettext("compact navigation", "Admin")
+          end)
+
+        [%{href: "/admin/dashboard?locale=#{locale}", label: label}]
+      else
+        []
+      end
+
+    %{roots: roots, sections: []}
+  end
+
   def mail_breadcrumb_context(_scope, _locale, _inbox? \\ false),
     do: %{roots: [], sections: []}
 

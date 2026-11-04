@@ -118,7 +118,9 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
       current_scope={@current_scope}
       locale={@locale}
       active_tab="assistant"
-      breadcrumb_context={PauseAiCaWeb.Navigation.breadcrumb_context(@current_scope, @locale)}
+      breadcrumb_context={
+        PauseAiCaWeb.Navigation.assistant_breadcrumb_context(@current_scope, @locale)
+      }
     >
       <div
         id="assistant-audit"

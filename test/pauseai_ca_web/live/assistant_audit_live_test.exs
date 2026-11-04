@@ -238,6 +238,31 @@ defmodule PauseAiCaWeb.AssistantAuditLiveTest do
              )
   end
 
+  test "assistant pages supply the authorized Admin menu root in both editions", c do
+    for locale <- ["en", "fr"], path <- ["/admin/assistant", "/admin/assistant/activity"] do
+      {:ok, _view, html} = live(log_in_user(build_conn(), c.admin), path <> "?locale=" <> locale)
+
+      [context] =
+        html
+        |> LazyHTML.from_document()
+        |> LazyHTML.query("#journey-breadcrumbs")
+        |> LazyHTML.attribute("data-journey-context")
+
+      assert Jason.decode!(context) == %{
+               "roots" => [%{"href" => "/admin/dashboard?locale=#{locale}", "label" => "Admin"}],
+               "sections" => []
+             }
+    end
+
+    assert PauseAiCaWeb.Navigation.assistant_breadcrumb_context(
+             Accounts.Scope.for_user(c.member),
+             "en"
+           ).roots == []
+
+    Repo.update!(Ecto.Changeset.change(c.admin, superadmin: false))
+    assert PauseAiCaWeb.Navigation.assistant_breadcrumb_context(c.scope, "fr").roots == []
+  end
+
   test "missing audit configuration blocks disclosure without inventing an integrity incident",
        c do
     record(c, c.other.id, %{"kind" => "request", "text" => "PRIVATE"})

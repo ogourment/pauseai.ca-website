@@ -75,6 +75,9 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
       current_scope={@current_scope}
       locale={@locale}
       active_tab="assistant"
+      breadcrumb_context={
+        PauseAiCaWeb.Navigation.assistant_breadcrumb_context(@current_scope, @locale)
+      }
     >
       <div class="crm-surface space-y-6" id="assistant-settings">
         <section class="management-controls space-y-3">

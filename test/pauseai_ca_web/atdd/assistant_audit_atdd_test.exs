@@ -71,9 +71,17 @@ if System.get_env("ATDD") == "true" do
           |> assert_path("/")
           |> visit("/admin/assistant?locale=#{locale}")
           |> assert_has("[data-phx-main].phx-connected #assistant-activity-link")
+          |> assert_has("#journey-breadcrumbs a[href='/admin/dashboard?locale=#{locale}']",
+            text: "Admin",
+            exact: true
+          )
           |> assert_has("#assistant-status", text: tr(locale, "Off"), exact: true)
           |> click_link("#assistant-activity-link", tr(locale, "Activity & security"))
           |> assert_has("[data-phx-main].phx-connected #assistant-audit")
+          |> assert_has("#journey-breadcrumbs a[href='/admin/dashboard?locale=#{locale}']",
+            text: "Admin",
+            exact: true
+          )
           |> refute_has("#assistant-audit", text: "PRIVATE-AUDIT-SENTINEL")
           |> capture(
             id,
