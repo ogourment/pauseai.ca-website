@@ -34,7 +34,7 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
     if Assistant.eligible?(scope) do
       case Audit.page(scope, params) do
         {:ok, page} ->
-          case Audit.accounts(scope, Enum.map(page.rows, & &1.actor_id)) do
+          case Audit.accounts(scope, Enum.map(page.rows, & &1.actor_id), params["actor"]) do
             {:ok, %{choices: accounts, labels: labels}} ->
               rows =
                 Enum.map(page.rows, fn row ->

@@ -183,6 +183,61 @@ defmodule PauseAiCaWeb.AssistantAuditLiveTest do
     assert html =~ c.other.email
   end
 
+  test "selected recorded actor beyond 100 choices remains visible without exposing unrecorded accounts",
+       c do
+    for index <- 1..101 do
+      actor = "00000000-0000-0000-0000-" <> String.pad_leading(Integer.to_string(index), 12, "0")
+      record(c, actor, %{"kind" => "mode_changed"})
+    end
+
+    record(c, c.other.id, %{"kind" => "mode_changed"})
+    assert {:ok, %{choices: initial}} = Audit.accounts(c.scope)
+    assert length(initial) == 100
+    refute Enum.any?(initial, &(&1.id == c.other.id))
+    assert {:ok, %{choices: choices, labels: labels}} = Audit.accounts(c.scope, [], c.other.id)
+    assert length(choices) == 100
+    assert List.last(choices).id == c.other.id
+    assert labels[c.other.id] == c.other.email
+
+    for locale <- ["en", "fr"] do
+      {:ok, view, html} =
+        live(
+          log_in_user(build_conn(), c.admin),
+          "/admin/assistant/activity?locale=#{locale}&actor=#{c.other.id}"
+        )
+
+      assert has_element?(
+               view,
+               "#audit-actor option[value='#{c.other.id}'][selected]",
+               c.other.email
+             )
+
+      assert Enum.count(LazyHTML.query(LazyHTML.from_document(html), "#audit-actor option")) ==
+               101
+    end
+
+    assert {:error, :invalid_actor_filter} = Audit.accounts(c.scope, [], c.member.id)
+    foreign = Store.new(Repo, "foreign-actor-choice")
+
+    {:ok, _} =
+      Store.record(
+        foreign,
+        c.member.id,
+        Ecto.UUID.generate(),
+        %{"kind" => "request"},
+        c.config[:audit_keys]
+      )
+
+    assert {:error, :invalid_actor_filter} = Audit.accounts(c.scope, [], c.member.id)
+    assert {:error, :invalid_actor_filter} = Audit.accounts(c.scope, [], "not-an-actor")
+
+    assert {:error, {:redirect, %{to: "/"}}} =
+             live(
+               log_in_user(build_conn(), c.admin),
+               "/admin/assistant/activity?actor=#{c.member.id}"
+             )
+  end
+
   test "missing audit configuration blocks disclosure without inventing an integrity incident",
        c do
     record(c, c.other.id, %{"kind" => "request", "text" => "PRIVATE"})

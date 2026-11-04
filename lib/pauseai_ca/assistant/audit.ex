@@ -53,7 +53,7 @@ defmodule PauseAiCa.Assistant.Audit do
 
   def page(_, _), do: {:error, :audit_unavailable}
 
-  def accounts(scope, displayed_ids \\ []) do
+  def accounts(scope, displayed_ids \\ [], selected_actor \\ nil) do
     if Assistant.eligible?(scope) do
       query =
         from(s in PhoenixAgentAssistant.Store.Stream,
@@ -65,13 +65,29 @@ defmodule PauseAiCa.Assistant.Audit do
           select: %{id: s.actor_id, email: u.email}
         )
 
-      choices = Repo.all(from(s in query, limit: 100))
-      displayed = Repo.all(from(s in query, where: s.actor_id in ^Enum.take(displayed_ids, 25)))
-      labels = Map.new(choices ++ displayed, &{&1.id, &1.email})
+      selected = safe_actor(selected_actor)
 
-      if Assistant.eligible?(scope),
-        do: {:ok, %{choices: choices, labels: labels}},
-        else: {:error, :forbidden}
+      recorded =
+        if selected not in [nil, "invalid"],
+          do: Repo.one(from(s in query, where: s.actor_id == ^selected, limit: 1))
+
+      if selected == "invalid" or (selected != nil and recorded == nil) do
+        {:error, :invalid_actor_filter}
+      else
+        choices = Repo.all(from(s in query, limit: 100))
+
+        choices =
+          if recorded && not Enum.any?(choices, &(&1.id == selected)),
+            do: Enum.take(choices, 99) ++ [recorded],
+            else: choices
+
+        displayed = Repo.all(from(s in query, where: s.actor_id in ^Enum.take(displayed_ids, 25)))
+        labels = Map.new(choices ++ displayed, &{&1.id, &1.email})
+
+        if Assistant.eligible?(scope),
+          do: {:ok, %{choices: choices, labels: labels}},
+          else: {:error, :forbidden}
+      end
     else
       {:error, :forbidden}
     end
