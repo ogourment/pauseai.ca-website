@@ -37,6 +37,10 @@ The website pins Bandit 1.14.1 with its required HPAX 1.1.0 and Thousand Island
 1.6.0 dependencies, retaining Decimal 3.1.2 and plug_crypto 2.2.1. Feature releases
 carry this tested security baseline through the normal CI and staging checks.
 
+The production-line security backport also locks JOSE 1.11.13 and Phoenix HTML
+4.4.0, rejecting noncanonical ECDSA signatures and unsafe HTML attribute names.
+These dependency updates use the same CI, staging and rollback requirements.
+
 ## Stack
 
 - Elixir 1.20.2 / Erlang OTP 29
