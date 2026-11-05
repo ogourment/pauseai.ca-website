@@ -10,10 +10,12 @@ defmodule PauseAiCa.Assistant.FeatureCatalogueTest do
     File.mkdir_p!(directory)
     on_exit(fn -> File.rm_rf!(directory) end)
 
+    version = Application.spec(:pauseai_ca, :vsn) |> to_string()
+
     identity = %{
-      version: "0.6.0",
+      version: version,
       pipeline_id: "123456",
-      release_id: "pauseai-ca-0.6.0-123456",
+      release_id: "pauseai-ca-#{version}-123456",
       source_sha: String.duplicate("a", 40)
     }
 
@@ -186,7 +188,7 @@ defmodule PauseAiCa.Assistant.FeatureCatalogueTest do
     for invalid <- [
           put_in(report, ["app", "pipeline_id"], nil),
           put_in(report, ["app", "commit"], String.duplicate("b", 40)),
-          put_in(report, ["app", "version"], "0.6.1"),
+          put_in(report, ["app", "version"], context.identity.version <> "+mismatch"),
           %{report | "scenarios" => scenarios ++ [hd(scenarios)]},
           %{report | "scenarios" => [%{"id" => "bad", "status" => "invented"}]},
           %{
@@ -217,7 +219,7 @@ defmodule PauseAiCa.Assistant.FeatureCatalogueTest do
     for identity <- [
           Map.put(context.identity, :source_sha, String.duplicate("b", 40)),
           Map.put(context.identity, :pipeline_id, "654321"),
-          Map.put(context.identity, :version, "0.6.1"),
+          Map.put(context.identity, :version, context.identity.version <> "+mismatch"),
           Map.put(context.identity, :release_id, "other-release"),
           Map.delete(context.identity, :source_sha)
         ] do
