@@ -13,6 +13,7 @@ defmodule PauseAiCaWeb.NewslettersLive do
        assign(socket,
          locale: locale,
          page_title: gettext("Newsletter lists"),
+         withdrawal_form: to_form(%{}, as: "withdrawal"),
          audience: nil,
          mailing_lists: [],
          selected_list: nil,
@@ -51,6 +52,38 @@ defmodule PauseAiCaWeb.NewslettersLive do
 
       _ ->
         {:noreply, denied(socket)}
+    end
+  end
+
+  def handle_event("record-withdrawal", %{"withdrawal" => attrs}, socket) do
+    case Newsletters.record_withdrawal(
+           socket.assigns.current_scope,
+           attrs["email"],
+           attrs["reason"]
+         ) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> put_flash(
+           :info,
+           gettext(
+             "Unsubscribe request recorded. This address is excluded from newsletter and manual outreach sends."
+           )
+         )
+         |> push_patch(
+           to:
+             ~p"/manage/mail/newsletters?locale=#{socket.assigns.locale}&q=#{String.trim(attrs["email"])}"
+         )}
+
+      _ ->
+        {:noreply,
+         put_flash(
+           socket,
+           :error,
+           gettext(
+             "Could not record the request. Check the email address, request details and your access."
+           )
+         )}
     end
   end
 
@@ -232,6 +265,38 @@ defmodule PauseAiCaWeb.NewslettersLive do
             )}
           </p>
         </div>
+        <details class="my-6">
+          <summary class="cursor-pointer underline">{gettext("Record unsubscribe request")}</summary>
+          <p class="mt-3">
+            {gettext(
+              "Record each requested address separately, including addresses without an existing subscription. This stops newsletter and manual outreach eligibility locally. Account emails remain available. No email is sent."
+            )}
+          </p>
+          <.form
+            for={@withdrawal_form}
+            id="newsletter-withdrawal"
+            phx-submit="record-withdrawal"
+            class="mt-3"
+          >
+            <.input field={@withdrawal_form[:email]} type="email" label={gettext("Email")} required />
+            <.input
+              field={@withdrawal_form[:reason]}
+              type="textarea"
+              label={gettext("Request details")}
+              required
+              maxlength="2000"
+            />
+            <button
+              class="btn btn-primary"
+              type="submit"
+              data-confirm={
+                gettext(
+                  "Record this address as withdrawn? Pending sends will check this withdrawal before dispatch."
+                )
+              }
+            >{gettext("Record unsubscribe request")}</button>
+          </.form>
+        </details>
         <p
           :if={@provider_state == :loading}
           id="newsletter-provider-status"

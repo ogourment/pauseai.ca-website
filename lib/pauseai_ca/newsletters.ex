@@ -141,6 +141,47 @@ defmodule PauseAiCa.Newsletters do
     end)
   end
 
+  @doc "Records an administrator-received unsubscribe request locally, without sending mail."
+  def record_withdrawal(scope, email, reason) do
+    with true <- Volunteers.superadmin?(scope),
+         {:ok, email} <- normalize(email),
+         true <- is_binary(reason) and String.trim(reason) != "" and byte_size(reason) <= 2000 do
+      Repo.transaction(fn ->
+        actor =
+          Repo.one(
+            from(u in PauseAiCa.Accounts.User, where: u.id == ^scope.user.id, lock: "FOR UPDATE")
+          )
+
+        if is_nil(actor) or not Volunteers.superadmin?(scope), do: Repo.rollback(:unauthorized)
+        lock_address(email)
+        current = Repo.one(from(s in Subscription, where: s.email == ^email, lock: "FOR UPDATE"))
+
+        if current && current.state == "withdrawn" do
+          current
+        else
+          saved =
+            persist(current, %{
+              email: email,
+              state: "withdrawn",
+              withdrawn_at: DateTime.utc_now(),
+              confirmation_hash: nil,
+              confirmation_expires_at: nil
+            })
+
+          event(saved, "withdrawn", actor.id, %{
+            "source" => "administrator_request",
+            "reason" => String.trim(reason)
+          })
+
+          saved
+        end
+      end)
+    else
+      false -> {:error, :invalid_request}
+      error -> error
+    end
+  end
+
   @doc false
   def withdraw_participation(email, request_id) do
     # Called only inside the transaction confirming an ownership-verified choice edit.

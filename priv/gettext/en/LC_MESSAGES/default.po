@@ -1076,7 +1076,7 @@ msgstr "Make superadmin"
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:700
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:1018
 #: lib/pauseai_ca_web/live/newsletter_results_live.ex:328
-#: lib/pauseai_ca_web/live/newsletters_live.ex:490
+#: lib/pauseai_ca_web/live/newsletters_live.ex:555
 #: lib/pauseai_ca_web/live/outreach_inbox_live.ex:573
 #: lib/pauseai_ca_web/live/volunteer_profile_live.ex:138
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:742
@@ -1100,7 +1100,7 @@ msgstr "Page %{page} of %{page_count}"
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:692
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:1007
 #: lib/pauseai_ca_web/live/newsletter_results_live.ex:323
-#: lib/pauseai_ca_web/live/newsletters_live.ex:483
+#: lib/pauseai_ca_web/live/newsletters_live.ex:548
 #: lib/pauseai_ca_web/live/outreach_inbox_live.ex:567
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:1065
 #, elixir-autogen, elixir-format
@@ -1133,7 +1133,7 @@ msgstr "Superadmin"
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:227
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:258
 #: lib/pauseai_ca_web/live/newsletter_results_live.ex:114
-#: lib/pauseai_ca_web/live/newsletters_live.ex:207
+#: lib/pauseai_ca_web/live/newsletters_live.ex:240
 #, elixir-autogen, elixir-format
 msgid "Superadmin access required."
 msgstr "Superadmin access required."
@@ -1473,6 +1473,7 @@ msgstr "Database counts do not depend on GA consent. GA sees only consenting bro
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:696
 #: lib/pauseai_ca_web/live/donate_live.ex:536
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:667
+#: lib/pauseai_ca_web/live/newsletters_live.ex:281
 #: lib/pauseai_ca_web/live/participation_form.ex:520
 #: lib/pauseai_ca_web/live/user_live/login.ex:34
 #: lib/pauseai_ca_web/live/user_live/login.ex:110
@@ -1844,7 +1845,7 @@ msgid "Choose one of the contact methods."
 msgstr "Choose one of the contact methods."
 
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:716
-#: lib/pauseai_ca_web/live/newsletters_live.ex:455
+#: lib/pauseai_ca_web/live/newsletters_live.ex:520
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:623
 #, elixir-autogen, elixir-format
 msgid "Confirmed"
@@ -2847,7 +2848,7 @@ msgstr "Page %{page}"
 #: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:91
 #: lib/pauseai_ca_web/live/admin_interac_donations_live.ex:319
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:1000
-#: lib/pauseai_ca_web/live/newsletters_live.ex:482
+#: lib/pauseai_ca_web/live/newsletters_live.ex:547
 #: lib/pauseai_ca_web/live/outreach_inbox_live.ex:562
 #, elixir-autogen, elixir-format
 msgid "Pagination"
@@ -2882,7 +2883,7 @@ msgstr "Pledged amount"
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:596
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:1091
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:1150
-#: lib/pauseai_ca_web/live/newsletters_live.ex:359
+#: lib/pauseai_ca_web/live/newsletters_live.ex:424
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:586
 #: lib/pauseai_ca_web/live/tasks_live.ex:557
 #: lib/pauseai_ca_web/live/welcome_management_live.ex:440
@@ -3614,7 +3615,7 @@ msgstr "Comparison is read-only. Confirm your choices to reconcile."
 
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:377
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:388
-#: lib/pauseai_ca_web/live/newsletters_live.ex:270
+#: lib/pauseai_ca_web/live/newsletters_live.ex:335
 #, elixir-autogen, elixir-format
 msgid "Compose"
 msgstr "Compose"
@@ -4190,7 +4191,7 @@ msgid "From source sheet"
 msgstr "From source sheet"
 
 #: lib/pauseai_ca_web/components/contact_source_components.ex:23
-#: lib/pauseai_ca_web/live/newsletters_live.ex:393
+#: lib/pauseai_ca_web/live/newsletters_live.ex:458
 #, elixir-autogen, elixir-format
 msgid "Geography"
 msgstr "Geography"
@@ -4239,7 +4240,7 @@ msgstr "Welcomed date"
 
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:739
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:826
-#: lib/pauseai_ca_web/live/newsletters_live.ex:395
+#: lib/pauseai_ca_web/live/newsletters_live.ex:460
 #, elixir-autogen, elixir-format
 msgid "All regions"
 msgstr "All regions"
@@ -5208,12 +5209,12 @@ msgstr "Source language"
 msgid "Awaiting confirmation"
 msgstr "Awaiting confirmation"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:184
+#: lib/pauseai_ca_web/live/newsletters_live.ex:217
 #, elixir-autogen, elixir-format
 msgid "Brevo could not be refreshed. Local consent and saved work are unchanged. Try again."
 msgstr "Brevo could not be refreshed. Local consent and saved work are unchanged. Try again."
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:244
+#: lib/pauseai_ca_web/live/newsletters_live.ex:309
 #, elixir-autogen, elixir-format
 msgid "Brevo status refreshed."
 msgstr "Brevo status refreshed."
@@ -5228,28 +5229,28 @@ msgstr "Confirm signup"
 msgid "Confirm that you want to receive PauseAI Canada newsletter updates."
 msgstr "Confirm that you want to receive PauseAI Canada newsletter updates."
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:530
+#: lib/pauseai_ca_web/live/newsletters_live.ex:595
 #, elixir-autogen, elixir-format
 msgid "Confirmation delivery attempted"
 msgstr "Confirmation delivery attempted"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:531
+#: lib/pauseai_ca_web/live/newsletters_live.ex:596
 #, elixir-autogen, elixir-format
 msgid "Confirmation delivery outcome"
 msgstr "Confirmation delivery outcome"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:532
+#: lib/pauseai_ca_web/live/newsletters_live.ex:597
 #, elixir-autogen, elixir-format
 msgid "Consent activity"
 msgstr "Consent activity"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:471
-#: lib/pauseai_ca_web/live/newsletters_live.ex:493
+#: lib/pauseai_ca_web/live/newsletters_live.ex:536
+#: lib/pauseai_ca_web/live/newsletters_live.ex:558
 #, elixir-autogen, elixir-format
 msgid "Consent history"
 msgstr "Consent history"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:527
+#: lib/pauseai_ca_web/live/newsletters_live.ex:592
 #, elixir-autogen, elixir-format
 msgid "Consent withdrawn"
 msgstr "Consent withdrawn"
@@ -5260,27 +5261,27 @@ msgstr "Consent withdrawn"
 msgid "Eligible"
 msgstr "Eligible"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:525
+#: lib/pauseai_ca_web/live/newsletters_live.ex:590
 #, elixir-autogen, elixir-format
 msgid "Explicit signup requested"
 msgstr "Explicit signup requested"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:408
+#: lib/pauseai_ca_web/live/newsletters_live.ex:473
 #, elixir-autogen, elixir-format
 msgid "Find"
 msgstr "Find"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:387
+#: lib/pauseai_ca_web/live/newsletters_live.ex:452
 #, elixir-autogen, elixir-format
 msgid "Find email or city"
 msgstr "Find email or city"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:436
+#: lib/pauseai_ca_web/live/newsletters_live.ex:501
 #, elixir-autogen, elixir-format
 msgid "Geography unknown"
 msgstr "Geography unknown"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:528
+#: lib/pauseai_ca_web/live/newsletters_live.ex:593
 #, elixir-autogen, elixir-format
 msgid "Legacy evidence recorded"
 msgstr "Legacy evidence recorded"
@@ -5290,46 +5291,46 @@ msgstr "Legacy evidence recorded"
 msgid "Legacy evidence to review"
 msgstr "Legacy evidence to review"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:418
+#: lib/pauseai_ca_web/live/newsletters_live.ex:483
 #, elixir-autogen, elixir-format
 msgid "No newsletter signups match these filters."
 msgstr "No newsletter signups match these filters."
 
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:1008
-#: lib/pauseai_ca_web/live/newsletters_live.ex:486
+#: lib/pauseai_ca_web/live/newsletters_live.ex:551
 #, elixir-autogen, elixir-format
 msgid "Page %{page} of %{pages}"
 msgstr "Page %{page} of %{pages}"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:405
+#: lib/pauseai_ca_web/live/newsletters_live.ex:470
 #, elixir-autogen, elixir-format
 msgid "Per page"
 msgstr "Per page"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:442
-#: lib/pauseai_ca_web/live/newsletters_live.ex:502
+#: lib/pauseai_ca_web/live/newsletters_live.ex:507
+#: lib/pauseai_ca_web/live/newsletters_live.ex:567
 #: lib/pauseai_ca_web/newsletter_audience_labels.ex:12
 #, elixir-autogen, elixir-format
 msgid "Provider blocked"
 msgstr "Provider blocked"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:443
-#: lib/pauseai_ca_web/live/newsletters_live.ex:506
+#: lib/pauseai_ca_web/live/newsletters_live.ex:508
+#: lib/pauseai_ca_web/live/newsletters_live.ex:571
 #, elixir-autogen, elixir-format
 msgid "Provider not blocked"
 msgstr "Provider not blocked"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:529
+#: lib/pauseai_ca_web/live/newsletters_live.ex:594
 #, elixir-autogen, elixir-format
 msgid "Provider status observed"
 msgstr "Provider status observed"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:478
+#: lib/pauseai_ca_web/live/newsletters_live.ex:543
 #, elixir-autogen, elixir-format
 msgid "Refresh Brevo status"
 msgstr "Refresh Brevo status"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:241
+#: lib/pauseai_ca_web/live/newsletters_live.ex:306
 #, elixir-autogen, elixir-format
 msgid "Refreshing Brevo status…"
 msgstr "Refreshing Brevo status…"
@@ -5339,12 +5340,12 @@ msgstr "Refreshing Brevo status…"
 msgid "Return to learning"
 msgstr "Return to learning"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:526
+#: lib/pauseai_ca_web/live/newsletters_live.ex:591
 #, elixir-autogen, elixir-format
 msgid "Signup confirmed"
 msgstr "Signup confirmed"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:450
+#: lib/pauseai_ca_web/live/newsletters_live.ex:515
 #, elixir-autogen, elixir-format
 msgid "Signup requested"
 msgstr "Signup requested"
@@ -5365,7 +5366,7 @@ msgid "Unsubscribe"
 msgstr "Unsubscribe"
 
 #: lib/pauseai_ca_web/live/incubators_live.ex:242
-#: lib/pauseai_ca_web/live/newsletters_live.ex:460
+#: lib/pauseai_ca_web/live/newsletters_live.ex:525
 #: lib/pauseai_ca_web/live/welcome_calls_live.ex:101
 #: lib/pauseai_ca_web/live/welcome_management_live.ex:284
 #: lib/pauseai_ca_web/newsletter_audience_labels.ex:10
@@ -5385,7 +5386,7 @@ msgstr "Active drafts"
 
 #: lib/pauseai_ca_web/live/blog_editor_live.ex:382
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:1307
-#: lib/pauseai_ca_web/live/newsletters_live.ex:280
+#: lib/pauseai_ca_web/live/newsletters_live.ex:345
 #, elixir-autogen, elixir-format
 msgid "Archive"
 msgstr "Archive"
@@ -5400,7 +5401,7 @@ msgstr "Archived draft"
 msgid "Archived drafts"
 msgstr "Archived drafts"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:364
+#: lib/pauseai_ca_web/live/newsletters_live.ex:429
 #, elixir-autogen, elixir-format
 msgid "Newsletter audience"
 msgstr "Newsletter audience"
@@ -5410,7 +5411,7 @@ msgstr "Newsletter audience"
 msgid "Newsletter preview"
 msgstr "Newsletter preview"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:445
+#: lib/pauseai_ca_web/live/newsletters_live.ex:510
 #, elixir-autogen, elixir-format
 msgid "Not observed yet"
 msgstr "Not observed yet"
@@ -5788,18 +5789,18 @@ msgstr "Use each row's geography or city"
 msgid "Write the content first. Choose the audience when you are ready."
 msgstr "Write the content first. Choose the audience when you are ready."
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:230
+#: lib/pauseai_ca_web/live/newsletters_live.ex:263
 #, elixir-autogen, elixir-format
 msgid "Manage confirmed subscribers, withdrawals and subscription history here. Compose emails from Drafts."
 msgstr "Manage confirmed subscribers, withdrawals and subscription history here. Compose emails from Drafts."
 
 #: lib/pauseai_ca_web/live/newsletters_live.ex:15
-#: lib/pauseai_ca_web/live/newsletters_live.ex:228
+#: lib/pauseai_ca_web/live/newsletters_live.ex:261
 #, elixir-autogen, elixir-format
 msgid "Newsletter lists"
 msgstr "Newsletter lists"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:429
+#: lib/pauseai_ca_web/live/newsletters_live.ex:494
 #, elixir-autogen, elixir-format
 msgid "Postal area"
 msgstr "Postal area"
@@ -5811,7 +5812,7 @@ msgstr "Postal area"
 msgid "FSA"
 msgstr "FSA"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:381
+#: lib/pauseai_ca_web/live/newsletters_live.ex:446
 #, elixir-autogen, elixir-format
 msgid "All subscribers"
 msgstr "All subscribers"
@@ -5822,46 +5823,46 @@ msgid "Choose a list"
 msgstr "Choose a list"
 
 #: lib/pauseai_ca_web/components/geography_filter_components.ex:37
-#: lib/pauseai_ca_web/live/newsletters_live.ex:265
-#: lib/pauseai_ca_web/live/newsletters_live.ex:342
+#: lib/pauseai_ca_web/live/newsletters_live.ex:330
+#: lib/pauseai_ca_web/live/newsletters_live.ex:407
 #, elixir-autogen, elixir-format
 msgid "Cities"
 msgstr "Cities"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:248
+#: lib/pauseai_ca_web/live/newsletters_live.ex:313
 #, elixir-autogen, elixir-format
 msgid "Dynamic mailing lists"
 msgstr "Dynamic mailing lists"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:277
+#: lib/pauseai_ca_web/live/newsletters_live.ex:342
 #, elixir-autogen, elixir-format
 msgid "Edit rules"
 msgstr "Edit rules"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:121
+#: lib/pauseai_ca_web/live/newsletters_live.ex:154
 #, elixir-autogen, elixir-format
 msgid "Enter a list name and at least one valid city, region or three-character FSA. Your entries have been kept."
 msgstr "Enter a list name and at least one valid city, region or three-character FSA. Your entries have been kept."
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:268
-#: lib/pauseai_ca_web/live/newsletters_live.ex:350
+#: lib/pauseai_ca_web/live/newsletters_live.ex:333
+#: lib/pauseai_ca_web/live/newsletters_live.ex:415
 #, elixir-autogen, elixir-format
 msgid "FSAs"
 msgstr "FSAs"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:331
+#: lib/pauseai_ca_web/live/newsletters_live.ex:396
 #, elixir-autogen, elixir-format
 msgid "List name"
 msgstr "List name"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:103
+#: lib/pauseai_ca_web/live/newsletters_live.ex:136
 #, elixir-autogen, elixir-format
 msgid "List saved."
 msgstr "List saved."
 
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:848
-#: lib/pauseai_ca_web/live/newsletters_live.ex:307
-#: lib/pauseai_ca_web/live/newsletters_live.ex:379
+#: lib/pauseai_ca_web/live/newsletters_live.ex:372
+#: lib/pauseai_ca_web/live/newsletters_live.ex:444
 #, elixir-autogen, elixir-format
 msgid "Mailing list"
 msgstr "Mailing list"
@@ -5872,24 +5873,24 @@ msgid "Mailing list · all eligible members"
 msgstr "Mailing list · all eligible members"
 
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:969
-#: lib/pauseai_ca_web/live/newsletters_live.ex:432
+#: lib/pauseai_ca_web/live/newsletters_live.ex:497
 #, elixir-autogen, elixir-format
 msgid "Matches: %{fields}"
 msgstr "Matches: %{fields}"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:286
+#: lib/pauseai_ca_web/live/newsletters_live.ex:351
 #, elixir-autogen, elixir-format
 msgid "New list"
 msgstr "New list"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:276
+#: lib/pauseai_ca_web/live/newsletters_live.ex:341
 #, elixir-autogen, elixir-format
 msgid "Preview members"
 msgstr "Preview members"
 
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:738
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:824
-#: lib/pauseai_ca_web/live/newsletters_live.ex:267
+#: lib/pauseai_ca_web/live/newsletters_live.ex:332
 #, elixir-autogen, elixir-format
 msgid "Recorded region"
 msgstr "Recorded region"
@@ -5899,27 +5900,27 @@ msgstr "Recorded region"
 msgid "Region"
 msgstr "Region"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:250
+#: lib/pauseai_ca_web/live/newsletters_live.ex:315
 #, elixir-autogen, elixir-format
 msgid "Rules update membership automatically. Matching a list does not grant newsletter consent."
 msgstr "Rules update membership automatically. Matching a list does not grant newsletter consent."
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:360
+#: lib/pauseai_ca_web/live/newsletters_live.ex:425
 #, elixir-autogen, elixir-format
 msgid "Save list"
 msgstr "Save list"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:352
+#: lib/pauseai_ca_web/live/newsletters_live.ex:417
 #, elixir-autogen, elixir-format
 msgid "Separate cities and three-character postal prefixes with commas. Empty fields add no rule; unknown geography never matches a rule."
 msgstr "Separate cities and three-character postal prefixes with commas. Empty fields add no rule; unknown geography never matches a rule."
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:113
+#: lib/pauseai_ca_web/live/newsletters_live.ex:146
 #, elixir-autogen, elixir-format
 msgid "This list changed. Reopen it before editing."
 msgstr "This list changed. Reopen it before editing."
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:293
+#: lib/pauseai_ca_web/live/newsletters_live.ex:358
 #, elixir-autogen, elixir-format
 msgid "Use Montréal rules"
 msgstr "Use Montréal rules"
@@ -5934,17 +5935,17 @@ msgstr "Choose a list with eligible subscribers."
 msgid "Whole list selected. Membership and consent are rechecked before sending."
 msgstr "Whole list selected. Membership and consent are rechecked before sending."
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:333
+#: lib/pauseai_ca_web/live/newsletters_live.ex:398
 #, elixir-autogen, elixir-format
 msgid "Members match any city, recorded region or FSA rule (OR)."
 msgstr "Members match any city, recorded region or FSA rule (OR)."
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:336
+#: lib/pauseai_ca_web/live/newsletters_live.ex:401
 #, elixir-autogen, elixir-format
 msgid "This older list uses AND. Saving these rules changes it to OR and requires reviewing any prepared batch again."
 msgstr "This older list uses AND. Saving these rules changes it to OR and requires reviewing any prepared batch again."
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:296
+#: lib/pauseai_ca_web/live/newsletters_live.ex:361
 #, elixir-autogen, elixir-format
 msgid "Use Toronto / GTA rules"
 msgstr "Use Toronto / GTA rules"
@@ -6691,7 +6692,7 @@ msgstr "contact"
 msgid "Accepted means the provider accepted the submission; it does not establish delivery or reading."
 msgstr "Accepted means the provider accepted the submission; it does not establish delivery or reading."
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:321
+#: lib/pauseai_ca_web/live/newsletters_live.ex:386
 #, elixir-autogen, elixir-format
 msgid "Area rules"
 msgstr "Area rules"
@@ -6716,7 +6717,7 @@ msgstr "Complaints"
 msgid "Lists"
 msgstr "Lists"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:314
+#: lib/pauseai_ca_web/live/newsletters_live.ex:379
 #, elixir-autogen, elixir-format
 msgid "Members"
 msgstr "Members"
@@ -6726,7 +6727,7 @@ msgstr "Members"
 msgid "No sends on this page."
 msgstr "No sends on this page."
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:210
+#: lib/pauseai_ca_web/live/newsletters_live.ex:243
 #, elixir-autogen, elixir-format
 msgid "Not configured"
 msgstr "Not configured"
@@ -6788,7 +6789,7 @@ msgstr "Proxy opens"
 msgid "Recipient sending receipts"
 msgstr "Recipient sending receipts"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:347
+#: lib/pauseai_ca_web/live/newsletters_live.ex:412
 #, elixir-autogen, elixir-format
 msgid "Recorded regions"
 msgstr "Recorded regions"
@@ -6811,12 +6812,12 @@ msgstr "Sending status"
 msgid "Sent & results"
 msgstr "Sent & results"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:288
+#: lib/pauseai_ca_web/live/newsletters_live.ex:353
 #, elixir-autogen, elixir-format
 msgid "Starting templates"
 msgstr "Starting templates"
 
-#: lib/pauseai_ca_web/live/newsletters_live.ex:289
+#: lib/pauseai_ca_web/live/newsletters_live.ex:354
 #, elixir-autogen, elixir-format
 msgid "These editable templates use city names, not postal coverage. Save your own area rules below."
 msgstr "These editable templates use city names, not postal coverage. Save your own area rules below."
@@ -10913,3 +10914,34 @@ msgstr "Each displayed record is checked for authenticity. This page does not ve
 #, elixir-autogen, elixir-format
 msgid "Up to 100 recorded accounts appear in the filter, including former administrators. — means token usage is unknown."
 msgstr "Up to 100 recorded accounts appear in the filter, including former administrators. — means token usage is unknown."
+
+#: lib/pauseai_ca_web/live/newsletters_live.ex:83
+#, elixir-autogen, elixir-format
+msgid "Could not record the request. Check the email address, request details and your access."
+msgstr "Could not record the request. Check the email address, request details and your access."
+
+#: lib/pauseai_ca_web/live/newsletters_live.ex:271
+#, elixir-autogen, elixir-format
+msgid "Record each requested address separately, including addresses without an existing subscription. This stops newsletter and manual outreach eligibility locally. Account emails remain available. No email is sent."
+msgstr "Record each requested address separately, including addresses without an existing subscription. This stops newsletter and manual outreach eligibility locally. Account emails remain available. No email is sent."
+
+#: lib/pauseai_ca_web/live/newsletters_live.ex:293
+#, elixir-autogen, elixir-format
+msgid "Record this address as withdrawn? Pending sends will check this withdrawal before dispatch."
+msgstr "Record this address as withdrawn? Pending sends will check this withdrawal before dispatch."
+
+#: lib/pauseai_ca_web/live/newsletters_live.ex:269
+#: lib/pauseai_ca_web/live/newsletters_live.ex:297
+#, elixir-autogen, elixir-format
+msgid "Record unsubscribe request"
+msgstr "Record unsubscribe request"
+
+#: lib/pauseai_ca_web/live/newsletters_live.ex:285
+#, elixir-autogen, elixir-format
+msgid "Request details"
+msgstr "Request details"
+
+#: lib/pauseai_ca_web/live/newsletters_live.ex:69
+#, elixir-autogen, elixir-format
+msgid "Unsubscribe request recorded. This address is excluded from newsletter and manual outreach sends."
+msgstr "Unsubscribe request recorded. This address is excluded from newsletter and manual outreach sends."

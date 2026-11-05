@@ -4,6 +4,36 @@ defmodule PauseAiCa.NewslettersTest do
   alias PauseAiCa.Newsletters.{Subscription, ConsentEvent}
   import PauseAiCa.AccountsFixtures
 
+  test "admin withdrawal covers absent subscriptions, invalidates confirmation and is idempotent" do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    scope = Accounts.Scope.for_user(admin)
+    {:ok, pending} = Newsletters.request_signup("requested@example.org", %{consent: true})
+
+    assert {:ok, saved} =
+             Newsletters.record_withdrawal(
+               scope,
+               " REQUESTED@example.org ",
+               "Email request received today"
+             )
+
+    assert saved.state == "withdrawn"
+    assert {:error, :invalid_token} = Newsletters.confirm(pending.confirmation_token)
+    refute Newsletters.outreach_eligible?(saved.email)
+    assert {:ok, _} = Newsletters.record_withdrawal(scope, "second@example.org", "Same request")
+    refute Newsletters.outreach_eligible?("second@example.org")
+    count = Repo.aggregate(ConsentEvent, :count)
+    assert {:ok, ^saved} = Newsletters.record_withdrawal(scope, saved.email, "Repeated request")
+    assert Repo.aggregate(ConsentEvent, :count) == count
+    event = Repo.get_by!(ConsentEvent, subscription_id: saved.id, kind: "withdrawn")
+    assert event.actor_id == admin.id
+    assert event.evidence["source"] == "administrator_request"
+    assert {:error, _} = Newsletters.record_withdrawal(scope, "invalid", "Request")
+    assert {:error, _} = Newsletters.record_withdrawal(scope, saved.email, " ")
+    admin |> Ecto.Changeset.change(superadmin: false) |> Repo.update!()
+    assert {:error, _} = Newsletters.record_withdrawal(scope, "third@example.org", "Request")
+    refute Repo.get_by(Subscription, email: "third@example.org")
+  end
+
   test "explicit signup survives provider unavailability; confirmation is single use; no account or mail effects" do
     accounts = Repo.aggregate(Accounts.User, :count)
     assert {:error, :consent_required} = Newsletters.request_signup("newsletter@example.org", %{})

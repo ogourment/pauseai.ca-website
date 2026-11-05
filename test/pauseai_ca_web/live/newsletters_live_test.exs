@@ -4,6 +4,21 @@ defmodule PauseAiCaWeb.NewslettersLiveTest do
   import PauseAiCa.AccountsFixtures
   alias PauseAiCa.{Newsletters, Repo, Accounts}
 
+  test "admin records an external unsubscribe request through the UI", %{conn: conn} do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    {:ok, view, _} = live(log_in_user(conn, admin), "/manage/mail/newsletters?locale=en")
+
+    view
+    |> form("#newsletter-withdrawal",
+      withdrawal: %{email: "external@example.org", reason: "Received by email today"}
+    )
+    |> render_submit()
+
+    assert_patch(view, "/manage/mail/newsletters?locale=en&q=external%40example.org")
+    assert render(view) =~ "Unsubscribe request recorded"
+    refute Newsletters.outreach_eligible?("external@example.org")
+  end
+
   test "superadmin sees consent exclusions and shareable geography; revocation closes access", %{
     conn: conn
   } do

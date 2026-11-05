@@ -21,6 +21,24 @@ defmodule PauseAiCa.NewslettersBatchesTest do
     %{actor: actor, scope: scope, draft: draft}
   end
 
+  test "administrator-recorded unsubscribe stops an already approved manual send", c do
+    [contact] = contacts(1)
+    {:ok, batch} = Batches.prepare(c.scope, c.draft, "contacts", [contact.id], true)
+    {:ok, _} = Batches.approve(c.scope, batch.id)
+    [delivery] = Repo.all(from d in Delivery, where: d.batch_id == ^batch.id)
+
+    assert {:ok, _} =
+             Newsletters.record_withdrawal(
+               c.scope,
+               delivery.email,
+               "Recipient requested unsubscribe by email"
+             )
+
+    assert {:ok, :stale} = Batches.dispatch(c.scope, batch.id)
+    refute_receive {:email, _}
+    refute Newsletters.outreach_eligible?(delivery.email)
+  end
+
   test "fourteen manually reviewed contacts prepare once, require approval and deliver once without accounts or newsletter consent",
        c do
     contacts = contacts(14)
