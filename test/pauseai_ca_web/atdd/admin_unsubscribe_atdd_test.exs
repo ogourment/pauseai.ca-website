@@ -127,6 +127,80 @@ if System.get_env("ATDD") == "true" do
       end
     end
 
+    for {locale, width} <- [{"en", 1280}, {"fr", 390}] do
+      @tag accept_dialogs: false
+      @tag browser_context_opts: [viewport: %{width: width, height: 900}]
+      test "quiet bottom unsubscribe action requires confirmation #{locale}", c do
+        locale = unquote(locale)
+        Ecto.Adapters.SQL.Sandbox.mode(Repo, {:shared, self()})
+        admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+        {token, _} = generate_user_magic_link_token(admin)
+
+        browser =
+          c.conn
+          |> visit("/users/log-in/#{token}?locale=en")
+          |> click_button("Keep me logged in on this device")
+          |> assert_path("/")
+          |> visit("/manage/mail/preferences?locale=#{locale}")
+          |> assert_has("[data-phx-main].phx-connected #email-preferences")
+          |> fill_in(tr(locale, "Email"), with: "confirmation-#{locale}@example.org")
+          |> fill_in(tr(locale, "Request details"), with: "Synthetic request")
+          |> capture(locale, "quiet-link")
+
+        {:ok, appearance} =
+          PlaywrightEx.Frame.evaluate(browser.frame_id,
+            expression:
+              "(() => {const e=document.querySelector('#newsletter-withdrawal button'), s=getComputedStyle(e), r=e.getBoundingClientRect(), t=document.querySelector('#withdrawal_reason').getBoundingClientRect(); return {background:s.backgroundColor,underlined:s.textDecorationLine.includes('underline'),below:r.y>=t.bottom,font:parseFloat(s.fontSize),width:r.width}})()",
+            timeout: 8_000
+          )
+
+        assert appearance["background"] == "rgba(0, 0, 0, 0)"
+        assert appearance["underlined"] and appearance["below"]
+        assert appearance["font"] <= 14 and appearance["width"] < 200
+
+        message =
+          tr(
+            locale,
+            "Unsubscribe the selected addresses? Pending sends will check withdrawal before dispatch."
+          )
+
+        owner = self()
+
+        browser =
+          with_dialog(
+            browser,
+            fn %{message: actual} ->
+              send(owner, {:confirmation, actual})
+              :dismiss
+            end,
+            fn b ->
+              click_button(b, "#newsletter-withdrawal button", tr(locale, "Unsubscribe"))
+            end
+          )
+
+        assert_receive {:confirmation, ^message}
+        refute Repo.get_by(Newsletters.Subscription, email: "confirmation-#{locale}@example.org")
+
+        browser =
+          with_dialog(
+            browser,
+            fn %{message: actual} ->
+              send(owner, {:confirmation, actual})
+              :accept
+            end,
+            fn b ->
+              b
+              |> click_button("#newsletter-withdrawal button", tr(locale, "Unsubscribe"))
+              |> assert_has("#withdrawal-result", text: "confirmation-#{locale}@example.org")
+            end
+          )
+
+        assert_receive {:confirmation, ^message}
+        refute Newsletters.outreach_eligible?("confirmation-#{locale}@example.org")
+        capture(browser, locale, "quiet-link-result")
+      end
+    end
+
     defp capture(browser, locale, name) do
       if System.get_env("SLATE_CAPTURE") do
         {:ok, url} =

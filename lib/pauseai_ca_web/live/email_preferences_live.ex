@@ -182,7 +182,7 @@ defmodule PauseAiCaWeb.EmailPreferencesLive do
           />
           <button
             type="submit"
-            class="crm-button"
+            class="mail-withdrawal-link"
             data-confirm={
               gettext(
                 "Unsubscribe the selected addresses? Pending sends will check withdrawal before dispatch."

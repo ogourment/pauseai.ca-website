@@ -425,3 +425,8 @@ h3 {
 .section-menu:has(.app-shell-link[aria-current=page])>summary{background:#e7e5e4;color:#1c1917}
 
 @media(max-width:359px){.section-brand-name{display:none}}
+
+/* Occasional withdrawal action: quiet text, with an accessible hit target. */
+.mail-withdrawal-link{display:inline-flex;align-items:center;min-height:44px;padding:0;border:0;border-radius:0;background:transparent;color:inherit;font:inherit;font-size:.875rem;font-weight:400;text-decoration:underline;cursor:pointer}
+.mail-withdrawal-link:hover{background:transparent;text-decoration-thickness:2px}
+.mail-withdrawal-link:focus-visible{outline:3px solid var(--color-primary);outline-offset:3px}
