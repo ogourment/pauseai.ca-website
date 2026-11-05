@@ -189,6 +189,7 @@ defmodule PauseAiCaWeb.Router do
       live "/manage/mail/results", NewsletterResultsLive, :index
       live "/manage/mail/results/:id", NewsletterResultsLive, :show
       live "/manage/mail/new", MailDraftsLive, :new
+      live "/manage/mail/preferences", EmailPreferencesLive, :index
       live "/manage/mail/newsletters", NewslettersLive, :index
       live "/manage/mail/drafts/:id", NewsletterDraftLive, :show
       # Preserve previously saved draft bookmarks.

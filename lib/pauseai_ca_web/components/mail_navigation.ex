@@ -38,6 +38,10 @@ defmodule PauseAiCaWeb.MailNavigation do
         aria-current={if @active == "access", do: "page"}
         class={if @active == "access", do: "font-bold underline", else: "underline"}
       >{gettext("Mailbox access")}</.link>
+      <details :if={PauseAiCa.Volunteers.superadmin?(@current_scope)} id="mail-more">
+        <summary>{gettext("More")}</summary>
+        <.link navigate={~p"/manage/mail/preferences?locale=#{@locale}"}>{gettext("Email preferences")}</.link>
+      </details>
     </nav>
     """
   end

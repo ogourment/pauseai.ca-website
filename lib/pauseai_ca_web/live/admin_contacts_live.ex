@@ -951,7 +951,14 @@ defmodule PauseAiCaWeb.AdminContactsLive do
             </article>
           </section>
           <section id="crm-addresses" class="mt-8">
-            <h2 class="text-xl font-bold">{gettext("Addresses")}</h2><ul>
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <h2 class="text-xl font-bold">{gettext("Addresses")}</h2>
+              <.link
+                id="crm-email-preferences"
+                href={~p"/manage/mail/preferences?locale=#{@locale}&contact_id=#{@record.person.id}"}
+                class="underline"
+              >{gettext("Email preferences")}</.link>
+            </div><ul>
               <li :for={address <- @record.addresses}>
                 {address.email}<span :if={address.id == @record.person.preferred_address_id}> · {gettext(
                   "Preferred"
