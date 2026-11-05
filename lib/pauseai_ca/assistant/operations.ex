@@ -1,6 +1,7 @@
 defmodule PauseAiCa.Assistant.Operations do
   @moduledoc "Maintains actual operator delivery and independent audit evidence; it never calls a model."
   use GenServer
+  import Ecto.Query
   alias PauseAiCa.{Assistant, Repo}
   alias PhoenixAgentAssistant.{AlertReceipt, AlertSink, Canonical, Store}
   alias PhoenixAgentAssistant.Store.Alert
@@ -16,8 +17,22 @@ defmodule PauseAiCa.Assistant.Operations do
 
     %{
       audit_anchor: fresh and state[:audit_anchor] == true,
-      alerts: fresh and state[:alerts] == true
+      alerts: fresh and state[:alerts] == true and alerts_resolved?()
     }
+  end
+
+  defp alerts_resolved? do
+    namespace = Assistant.store().namespace
+
+    not Repo.exists?(
+      from(a in Alert,
+        where: a.namespace == ^namespace and a.state in ["submitting", "unknown", "failed"]
+      )
+    )
+  rescue
+    _ -> false
+  catch
+    _, _ -> false
   end
 
   def invalidate do
@@ -88,7 +103,8 @@ defmodule PauseAiCa.Assistant.Operations do
     keys = config[:audit_keys]
     event = %{"kind" => "operations_readiness", "configuration_ref" => digest}
 
-    with {:ok, %{entry: entry}} <-
+    with true <- alerts_resolved?(),
+         {:ok, %{entry: entry}} <-
            Store.record(store, "system", "readiness/" <> digest, event, keys,
              stream: "operations"
            ),
@@ -111,6 +127,7 @@ defmodule PauseAiCa.Assistant.Operations do
       delivered =
         with {:ok, accepted} <- ensure_intake(alert, config),
              {:ok, _proof} <- AlertReceipt.fetch(accepted, config[:alert_delivery]),
+             true <- alerts_resolved?(),
              do: true,
              else: (_ -> false)
 

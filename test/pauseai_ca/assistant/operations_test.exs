@@ -2,14 +2,18 @@ defmodule PauseAiCa.Assistant.OperationsTest do
   use PauseAiCa.DataCase, async: false
   alias PauseAiCa.{Assistant, AssistantFixtures}
   alias PauseAiCa.Assistant.Operations
-  alias PhoenixAgentAssistant.{Anchor, Audit, Canonical}
+  alias PhoenixAgentAssistant.{Anchor, Audit, Canonical, Store}
   alias PhoenixAgentAssistant.Store.{Alert, AuditEntry}
 
   @base "/api/assistant/audit-anchors"
 
   setup do
-    worker = Process.whereis(Operations)
-    if worker, do: :sys.suspend(worker)
+    workers =
+      [Operations, PauseAiCa.Assistant.AlertWorker]
+      |> Enum.map(&Process.whereis/1)
+      |> Enum.reject(&is_nil/1)
+
+    Enum.each(workers, &:sys.suspend/1)
     previous = Application.fetch_env(:pauseai_ca, :agent_assistant)
     status_key = {Operations, :status}
     previous_status = :persistent_term.get(status_key, :missing)
@@ -24,7 +28,7 @@ defmodule PauseAiCa.Assistant.OperationsTest do
         do: :persistent_term.erase(status_key),
         else: :persistent_term.put(status_key, previous_status)
 
-      if worker && Process.alive?(worker), do: :sys.resume(worker)
+      for worker <- workers, Process.alive?(worker), do: :sys.resume(worker)
     end)
 
     {public, private} = :crypto.generate_key(:eddsa, :ed25519)
@@ -72,7 +76,7 @@ defmodule PauseAiCa.Assistant.OperationsTest do
     refute Keyword.has_key?(config, :operations_adapter)
     Application.put_env(:pauseai_ca, :agent_assistant, config)
     Req.Test.stub(__MODULE__, fn conn -> route(conn, remote, signing) end)
-    %{config: config, remote: remote}
+    %{config: config, remote: remote, signing: signing}
   end
 
   test "both checks become ready only with encrypted local anchors and exact Telegram receipt",
@@ -170,6 +174,81 @@ defmodule PauseAiCa.Assistant.OperationsTest do
            ) == 1
 
     refute_received {:assistant_generated, _, _}
+  end
+
+  for state <- ~w(submitting unknown failed) do
+    test "#{state} alert blocks cached and refreshed readiness until reconciled", c do
+      cache_ready(c.config)
+      alert = alert_in_state(Assistant.store(), unquote(state), c.config)
+      remote_before = Agent.get(c.remote, & &1)
+
+      assert Operations.status(c.config) == %{audit_anchor: true, alerts: false}
+      assert Operations.refresh(c.config) == %{audit_anchor: false, alerts: false}
+      # A new successful configuration proof must not hide an older incident.
+      changed =
+        Keyword.put(
+          c.config,
+          :models,
+          Map.put(c.config[:models], "unused", %{model: "changed-fixture"})
+        )
+
+      assert Operations.refresh(changed) == %{audit_anchor: false, alerts: false}
+      assert Agent.get(c.remote, & &1) == remote_before
+      assert Repo.get!(Alert, alert.id).state == unquote(state)
+      refute_received {:assistant_generated, _, _}
+    end
+  end
+
+  test "unresolved other-namespace alerts do not block this namespace", c do
+    other = Store.new(Repo, "unrelated-assistant-fixture")
+    for state <- ~w(submitting unknown failed), do: alert_in_state(other, state, c.config)
+    cache_ready(c.config)
+    assert Operations.status(c.config) == %{audit_anchor: true, alerts: true}
+    assert Operations.refresh(c.config) == %{audit_anchor: true, alerts: true}
+  end
+
+  test "pending alerts retain readiness and bounded worker bootstrap eligibility", c do
+    cache_ready(c.config)
+    pending = alert_in_state(Assistant.store(), "pending", c.config)
+    assert Operations.status(c.config).alerts
+    assert Operations.refresh(c.config).alerts
+    assert {:ok, store, _, options} = Assistant.alert_worker_configuration()
+    assert store.namespace == Assistant.store().namespace
+    assert options[:route_verified]
+    assert {:ok, retryable} = Store.retryable_alerts(store, 5)
+    assert Enum.any?(retryable, &(&1.id == pending.id))
+  end
+
+  test "repository query failure overrides a fresh successful cached proof", c do
+    cache_ready(c.config)
+    remote_before = Agent.get(c.remote, & &1)
+    previous = Repo.put_dynamic_repo(:assistant_unavailable_fixture_repo)
+
+    try do
+      assert Operations.status(c.config) == %{audit_anchor: true, alerts: false}
+      assert Operations.refresh(c.config) == %{audit_anchor: false, alerts: false}
+    after
+      Repo.put_dynamic_repo(previous)
+    end
+
+    assert Operations.status(c.config).alerts
+    assert Agent.get(c.remote, & &1) == remote_before
+  end
+
+  test "an unresolved alert appearing during a successful receipt check prevents green refresh",
+       c do
+    cache_ready(c.config)
+
+    Req.Test.stub(__MODULE__, fn conn ->
+      if conn.method == "GET" and conn.request_path == "/api/alerts/12345/receipt" do
+        alert_in_state(Assistant.store(), "failed", c.config)
+      end
+
+      route(conn, c.remote, c.signing)
+    end)
+
+    assert Operations.refresh(c.config) == %{audit_anchor: true, alerts: false}
+    refute Operations.status(c.config).alerts
   end
 
   test "accepted intake with the wrong Telegram recipient never makes alerts ready", c do
@@ -317,6 +396,51 @@ defmodule PauseAiCa.Assistant.OperationsTest do
       end)
 
     json(conn, %{"receipt" => receipt}, 201)
+  end
+
+  defp cache_ready(config) do
+    assert Operations.refresh(config) == %{audit_anchor: true, alerts: true}
+
+    :persistent_term.put({Operations, :status}, %{
+      fingerprint: Operations.fingerprint(config),
+      checked_at: System.monotonic_time(:millisecond),
+      audit_anchor: true,
+      alerts: true
+    })
+
+    assert Operations.status(config).alerts
+  end
+
+  defp alert_in_state(store, state, config) do
+    assert {:ok, %{entry: entry}} =
+             Store.queue_alert(
+               store,
+               "system",
+               "readiness-regression/" <> Ecto.UUID.generate(),
+               :assistant_readiness,
+               config[:audit_keys],
+               correlation_id: Ecto.UUID.generate()
+             )
+
+    alert = Repo.get_by!(Alert, namespace: store.namespace, audit_ref: entry.id)
+
+    if state != "pending",
+      do: assert({:ok, _} = Store.claim_alert(store, alert.id, config[:audit_keys]))
+
+    if state in ["unknown", "failed"],
+      do:
+        assert(
+          {:ok, _} =
+            Store.finish_alert(
+              store,
+              alert.id,
+              state,
+              %{"reason" => "synthetic-regression"},
+              config[:audit_keys]
+            )
+        )
+
+    Repo.get!(Alert, alert.id)
   end
 
   defp assert_bearer(conn, token),
