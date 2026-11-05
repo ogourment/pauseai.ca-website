@@ -28,6 +28,9 @@ config :pauseai_ca, PauseAiCa.Repo,
   hostname: "localhost",
   database: "pauseai_ca_test#{System.get_env("MIX_TEST_PARTITION")}",
   pool: Ecto.Adapters.SQL.Sandbox,
+  # Browser workers and progress rendering share one sandbox connection. Give
+  # that serialized fixture a bounded queue without changing production pools.
+  queue_target: 500,
   pool_size: sandbox_pool_size
 
 # We don't run a server during test. If one is required,

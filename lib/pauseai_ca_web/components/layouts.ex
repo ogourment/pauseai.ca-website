@@ -66,6 +66,7 @@ defmodule PauseAiCaWeb.Layouts do
       phx-hook=".HeaderHeight"
       class="sticky top-0 z-40 border-b border-stone-200/80 bg-[#f8f5ed]/95 backdrop-blur"
     >
+      <PauseAiCaWeb.NovemberMarchesBanner.banner :if={@show_announcements} />
       <.signed_in_navigation
         :if={@current_scope}
         current_scope={@current_scope}
