@@ -78,6 +78,47 @@ defmodule PauseAiCaWeb.UserLive.LoginTest do
     assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "do not match"
   end
 
+  test "reauthentication explains the current identity and offers an explicit localized DELETE switch",
+       %{conn: conn} do
+    user = user_fixture()
+    hint = "other-review@example.org"
+
+    {:ok, view, html} =
+      live(log_in_user(conn, user), ~p"/users/log-in?#{%{email: hint, locale: "fr"}}")
+
+    assert has_element?(view, "#reauth-current-account", user.email)
+
+    assert has_element?(
+             view,
+             "#switch-account[data-method='delete'][data-csrf]",
+             "Utiliser un autre compte"
+           )
+
+    [href] =
+      html
+      |> LazyHTML.from_document()
+      |> LazyHTML.query("#switch-account")
+      |> LazyHTML.attribute("href")
+
+    assert URI.parse(href).path == "/users/log-out"
+
+    assert URI.decode_query(URI.parse(href).query) == %{
+             "switch_account" => "true",
+             "email" => hint,
+             "locale" => "fr"
+           }
+
+    assert has_element?(view, "#login_form_magic_email[readonly][value='#{user.email}']")
+    assert has_element?(view, "#login_form_password_email[readonly][value='#{user.email}']")
+    refute Accounts.get_user_by_email(hint)
+  end
+
+  test "a signed-out login never renders the account-switch control", %{conn: conn} do
+    {:ok, view, _} = live(conn, ~p"/users/log-in")
+    refute has_element?(view, "#switch-account")
+    refute has_element?(view, "#login_form_magic_email[readonly]")
+  end
+
   test "privileged reauthentication uses the current account, not a forged readonly address", %{
     conn: conn
   } do
@@ -85,6 +126,8 @@ defmodule PauseAiCaWeb.UserLive.LoginTest do
     {:ok, view, _} = live(log_in_user(conn, user), ~p"/users/log-in")
     assert has_element?(view, "#login_form_magic_email[readonly][value='#{user.email}']")
     assert render(view) =~ "Confirm it is you"
+    view |> form("#login_form_magic", user: %{email: "forged@example.org"}) |> render_change()
+    assert has_element?(view, "#login_form_magic_email[readonly][value='#{user.email}']")
     view |> form("#login_form_magic", user: %{email: "forged@example.org"}) |> render_submit()
     assert_receive {:email, delivered}
     assert delivered.to == [{"", user.email}]

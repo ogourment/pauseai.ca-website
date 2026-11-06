@@ -5,7 +5,7 @@ defmodule PauseAiCaWeb.UserAuth do
   import Phoenix.Controller
 
   alias PauseAiCa.Accounts
-  alias PauseAiCa.Accounts.Scope
+  alias PauseAiCa.Accounts.{Scope, User}
 
   # Make the remember me cookie valid for 14 days. This should match
   # the session validity setting in UserToken.
@@ -45,7 +45,8 @@ defmodule PauseAiCaWeb.UserAuth do
 
   It clears all session data for safety. See renew_session.
   """
-  def log_out_user(conn) do
+  def log_out_user(conn, options \\ []) do
+    conn = if options[:switch_account] == true, do: clear_flash(conn), else: conn
     user_token = get_session(conn, :user_token)
     user_token && Accounts.delete_user_session_token(user_token)
 
@@ -56,7 +57,32 @@ defmodule PauseAiCaWeb.UserAuth do
     conn
     |> renew_session(nil)
     |> delete_resp_cookie(@remember_me_cookie, @remember_me_options)
-    |> redirect(to: ~p"/")
+    |> redirect(to: logout_path(options))
+  end
+
+  @doc false
+  def login_hint(value) when is_binary(value) and byte_size(value) <= 160 do
+    if String.valid?(value) and not String.contains?(value, ["\r", "\n", "\0"]) do
+      value = String.trim(value)
+      changeset = Accounts.change_user_email(%User{}, %{email: value}, validate_unique: false)
+      if changeset.valid?, do: Ecto.Changeset.get_field(changeset, :email)
+    end
+  end
+
+  def login_hint(_), do: nil
+
+  defp logout_path(options) do
+    if options[:switch_account] == true do
+      locale = if options[:locale] == "fr", do: "fr", else: "en"
+      params = %{locale: locale}
+
+      params =
+        if hint = login_hint(options[:email]), do: Map.put(params, :email, hint), else: params
+
+      ~p"/users/log-in?#{params}"
+    else
+      ~p"/"
+    end
   end
 
   @doc """

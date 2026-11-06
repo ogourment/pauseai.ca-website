@@ -1,6 +1,7 @@
 defmodule PauseAiCaWeb.UserLive.Login do
   use PauseAiCaWeb, :live_view
   alias PauseAiCa.Accounts
+  alias PauseAiCaWeb.UserAuth
   alias PauseAiCa.Accounts.{Onboarding, User}
 
   @impl true
@@ -17,6 +18,16 @@ defmodule PauseAiCaWeb.UserLive.Login do
             )}
           <% end %>
         </:subtitle>
+        <div :if={@current_scope} id="reauth-current-account" class="mb-5 text-sm leading-6">
+          <p>{gettext("You are signed in as %{email}.", email: @current_scope.user.email)}</p>
+          <p>{gettext("Sign out to choose another email address.")}</p>
+          <.link
+            id="switch-account"
+            href={@switch_account_path}
+            method="delete"
+            class="mt-2 inline-block font-semibold underline decoration-brand decoration-2 underline-offset-4"
+          >{gettext("Use a different account")}</.link>
+        </div>
         <.form
           for={@form}
           id={@form_id}
@@ -139,16 +150,14 @@ defmodule PauseAiCaWeb.UserLive.Login do
     locale = context["locale"] || "en"
     Gettext.put_locale(PauseAiCaWeb.Gettext, locale)
 
-    prefill = params["email"]
-
-    prefill =
-      if is_binary(prefill) and byte_size(prefill) <= 160 and
-           not String.contains?(prefill, ["\r", "\n"]),
-         do: prefill
+    prefill = UserAuth.login_hint(params["email"])
 
     email =
-      Phoenix.Flash.get(socket.assigns.flash, :email) ||
-        get_in(socket.assigns, [:current_scope, Access.key(:user), Access.key(:email)]) || prefill
+      get_in(socket.assigns, [:current_scope, Access.key(:user), Access.key(:email)]) ||
+        Phoenix.Flash.get(socket.assigns.flash, :email) || prefill
+
+    switch_params = %{switch_account: "true", locale: locale}
+    switch_params = if prefill, do: Map.put(switch_params, :email, prefill), else: switch_params
 
     changeset = Accounts.change_user_email(%User{}, %{email: email}, validate_unique: false)
 
@@ -160,6 +169,7 @@ defmodule PauseAiCaWeb.UserLive.Login do
        locale: locale,
        form_id: "login_form_magic",
        submit_event: "submit_magic",
+       switch_account_path: ~p"/users/log-out?#{switch_params}",
        auth_title: gettext("Sign in / Sign up"),
        pending?: false,
        delivery_error?: false
@@ -171,6 +181,11 @@ defmodule PauseAiCaWeb.UserLive.Login do
     do: {:noreply, assign(socket, :trigger_submit, true)}
 
   def handle_event("validate", %{"user" => params}, socket) do
+    params =
+      if socket.assigns.current_scope,
+        do: Map.put(params, "email", socket.assigns.current_scope.user.email),
+        else: params
+
     changeset = Accounts.change_user_email(%User{}, params, validate_unique: false)
     {:noreply, assign(socket, form: to_form(Map.put(changeset, :action, :validate), as: "user"))}
   end

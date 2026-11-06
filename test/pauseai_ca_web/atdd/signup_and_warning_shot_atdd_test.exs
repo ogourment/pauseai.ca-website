@@ -197,6 +197,40 @@ if System.get_env("ATDD") == "true" do
 
       assert Repo.aggregate(User, :count) == 1
       assert Accounts.get_user!(user.id).saved_resources == ["pause", "pauseai-learn"]
+
+      # Explicit account change must traverse the real CSRF-protected logout.
+      hint = "proton-review@example.org"
+
+      assert Repo.aggregate(
+               from(t in UserToken, where: t.user_id == ^user.id and t.context == "session"),
+               :count
+             ) == 1
+
+      device
+      |> visit("/users/log-in?" <> URI.encode_query(%{email: hint, locale: "fr"}))
+      |> assert_has("[data-phx-main].phx-connected")
+      |> assert_has("#reauth-current-account", text: user.email)
+      |> assert_has("#login_form_magic_email[readonly][value='#{user.email}']")
+      |> click_link("#switch-account", "Utiliser un autre compte")
+      |> assert_path("/users/log-in", query_params: %{email: hint, locale: "fr"})
+      |> assert_has("#login_form_magic_email:not([readonly])[value='#{hint}']")
+      |> refute_has("#switch-account")
+      |> fill_in("Courriel", with: "edited-review@example.org")
+      |> assert_has("#login_form_magic_email[value='edited-review@example.org']")
+      |> capture(
+        id,
+        "Use a different account",
+        "Actual logout clears the old identity; the French email hint is editable without sending mail"
+      )
+
+      assert Repo.aggregate(
+               from(t in UserToken, where: t.user_id == ^user.id and t.context == "session"),
+               :count
+             ) == 0
+
+      assert Repo.aggregate(User, :count) == 1
+      refute Accounts.get_user_by_email(hint)
+      refute_receive {:email, _}
       finish(id)
     end
 

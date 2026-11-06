@@ -69,6 +69,7 @@ defmodule PauseAiCaWeb.UserSessionController do
   # email + password login
   defp create(conn, %{"user" => user_params}, info) do
     %{"email" => email, "password" => password} = user_params
+    email = if conn.assigns.current_scope, do: conn.assigns.current_scope.user.email, else: email
 
     if user = Accounts.get_user_by_email_and_password(email, password) do
       conn
@@ -126,6 +127,14 @@ defmodule PauseAiCaWeb.UserSessionController do
     conn
     |> put_session(:user_return_to, ~p"/users/settings")
     |> create(params, "Your password is updated. · Votre mot de passe a été mis à jour.")
+  end
+
+  def delete(conn, %{"switch_account" => "true"} = params) do
+    UserAuth.log_out_user(conn,
+      switch_account: true,
+      locale: params["locale"],
+      email: params["email"]
+    )
   end
 
   def delete(conn, _params) do

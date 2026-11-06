@@ -466,7 +466,7 @@ msgid "Send the letter"
 msgstr "Envoyer la lettre"
 
 #: lib/pauseai_ca_web/live/participation_form.ex:591
-#: lib/pauseai_ca_web/live/user_live/login.ex:45
+#: lib/pauseai_ca_web/live/user_live/login.ex:56
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:1099
 #, elixir-autogen, elixir-format
 msgid "Sending…"
@@ -494,8 +494,8 @@ msgstr "Faut-il ralentir l'IA?"
 msgid "Show my suggested path"
 msgstr "Voir mon parcours suggéré"
 
-#: lib/pauseai_ca_web/live/user_live/login.ex:89
-#: lib/pauseai_ca_web/live/user_live/login.ex:125
+#: lib/pauseai_ca_web/live/user_live/login.ex:100
+#: lib/pauseai_ca_web/live/user_live/login.ex:136
 #, elixir-autogen, elixir-format
 msgid "Sign in"
 msgstr "Se connecter"
@@ -1499,19 +1499,19 @@ msgstr "Au"
 msgid "Awaiting email confirmation"
 msgstr "En attente de confirmation du courriel"
 
-#: lib/pauseai_ca_web/live/user_live/login.ex:57
+#: lib/pauseai_ca_web/live/user_live/login.ex:68
 #, elixir-autogen, elixir-format
 msgid "Check your email for the next step. You can keep browsing while you wait, or request another link below."
 msgstr ""
 "Consultez votre courriel pour la prochaine étape. Vous pouvez continuer à "
 "naviguer en attendant ou demander un autre lien ci-dessous."
 
-#: lib/pauseai_ca_web/live/user_live/login.ex:13
+#: lib/pauseai_ca_web/live/user_live/login.ex:14
 #, elixir-autogen, elixir-format
 msgid "Confirm it is you before changing your account."
 msgstr "Confirmez votre identité avant de modifier votre compte."
 
-#: lib/pauseai_ca_web/live/user_live/login.ex:86
+#: lib/pauseai_ca_web/live/user_live/login.ex:97
 #, elixir-autogen, elixir-format
 msgid "Continue browsing"
 msgstr "Continuer à naviguer"
@@ -1555,8 +1555,8 @@ msgstr ""
 #: lib/pauseai_ca_web/live/email_preferences_live.ex:173
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:667
 #: lib/pauseai_ca_web/live/participation_form.ex:520
-#: lib/pauseai_ca_web/live/user_live/login.ex:34
-#: lib/pauseai_ca_web/live/user_live/login.ex:110
+#: lib/pauseai_ca_web/live/user_live/login.ex:45
+#: lib/pauseai_ca_web/live/user_live/login.ex:121
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:927
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:960
 #, elixir-autogen, elixir-format
@@ -1564,7 +1564,7 @@ msgid "Email"
 msgstr "Courriel"
 
 #: lib/pauseai_ca_web/live/participation_form.ex:594
-#: lib/pauseai_ca_web/live/user_live/login.ex:48
+#: lib/pauseai_ca_web/live/user_live/login.ex:59
 #, elixir-autogen, elixir-format
 msgid "Email me a secure link"
 msgstr "Recevoir un lien de connexion"
@@ -1599,7 +1599,7 @@ msgstr "Questions de la page d’accueil"
 msgid "Incident evidence"
 msgstr "Éléments sur les incidents"
 
-#: lib/pauseai_ca_web/live/user_live/login.ex:15
+#: lib/pauseai_ca_web/live/user_live/login.ex:16
 #, elixir-autogen, elixir-format
 msgid "Keep your answers, saved resources and progress when you return. We email you a secure link; no password is required."
 msgstr ""
@@ -1607,12 +1607,12 @@ msgstr ""
 "retour. Nous vous envoyons un lien sécurisé; aucun mot de passe n’est "
 "nécessaire."
 
-#: lib/pauseai_ca_web/live/user_live/login.ex:117
+#: lib/pauseai_ca_web/live/user_live/login.ex:128
 #, elixir-autogen, elixir-format
 msgid "Password"
 msgstr "Mot de passe"
 
-#: lib/pauseai_ca_web/live/user_live/login.ex:95
+#: lib/pauseai_ca_web/live/user_live/login.ex:106
 #, elixir-autogen, elixir-format
 msgid "Prefer a password?"
 msgstr "Vous préférez un mot de passe?"
@@ -1633,7 +1633,7 @@ msgid "Resource bookmark"
 msgstr "Ressource enregistrée"
 
 #: lib/pauseai_ca_web/components/layouts.ex:189
-#: lib/pauseai_ca_web/live/user_live/login.ex:163
+#: lib/pauseai_ca_web/live/user_live/login.ex:173
 #, elixir-autogen, elixir-format
 msgid "Sign in / Sign up"
 msgstr "Connexion / Inscription"
@@ -1656,7 +1656,7 @@ msgstr ""
 msgid "Unknown / historical"
 msgstr "Inconnue / historique"
 
-#: lib/pauseai_ca_web/live/user_live/login.ex:68
+#: lib/pauseai_ca_web/live/user_live/login.ex:79
 #, elixir-autogen, elixir-format
 msgid "We could not send your link. Your progress is still available. Please try again."
 msgstr ""
@@ -3757,12 +3757,12 @@ msgstr ""
 
 #: lib/pauseai_ca_web/controllers/page_html/about.html.heex:110
 #: lib/pauseai_ca_web/live/participation_form.ex:586
-#: lib/pauseai_ca_web/live/user_live/login.ex:78
+#: lib/pauseai_ca_web/live/user_live/login.ex:89
 #, elixir-autogen, elixir-format
 msgid "Read our privacy policy."
 msgstr "Consultez notre politique de confidentialité."
 
-#: lib/pauseai_ca_web/live/user_live/login.ex:71
+#: lib/pauseai_ca_web/live/user_live/login.ex:82
 #, elixir-autogen, elixir-format
 msgid "Use the email address you want for your account. We will send a link to confirm it and sign you in."
 msgstr ""
@@ -11423,3 +11423,18 @@ msgstr "Marches du 14 novembre"
 #, elixir-autogen, elixir-format
 msgid "November 14 marches:"
 msgstr "Marches du 14 novembre :"
+
+#: lib/pauseai_ca_web/live/user_live/login.ex:22
+#, elixir-autogen, elixir-format
+msgid "You are signed in as %{email}."
+msgstr "Vous êtes connecté·e avec l’adresse %{email}."
+
+#: lib/pauseai_ca_web/live/user_live/login.ex:23
+#, elixir-autogen, elixir-format
+msgid "Sign out to choose another email address."
+msgstr "Déconnectez-vous pour choisir une autre adresse courriel."
+
+#: lib/pauseai_ca_web/live/user_live/login.ex:29
+#, elixir-autogen, elixir-format
+msgid "Use a different account"
+msgstr "Utiliser un autre compte"

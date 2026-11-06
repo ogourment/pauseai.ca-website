@@ -1,6 +1,7 @@
 defmodule PauseAiCaWeb.UserSessionControllerTest do
   use PauseAiCaWeb.ConnCase, async: true
 
+  import Phoenix.LiveViewTest
   import PauseAiCa.AccountsFixtures
   alias PauseAiCa.Accounts
 
@@ -26,6 +27,24 @@ defmodule PauseAiCaWeb.UserSessionControllerTest do
       assert response =~ user.email
       assert response =~ ~p"/users/settings"
       assert response =~ ~p"/users/log-out"
+    end
+
+    test "reauthentication ignores a forged readonly email even with valid other-account credentials",
+         %{conn: conn, user: user} do
+      user = set_password(user)
+      other = user_fixture() |> set_password()
+
+      conn =
+        conn
+        |> log_in_user(user)
+        |> post(~p"/users/log-in", %{
+          "user" => %{"email" => other.email, "password" => valid_user_password()}
+        })
+
+      token = get_session(conn, :user_token)
+      assert {authenticated, _} = Accounts.get_user_by_session_token(token)
+      assert authenticated.id == user.id
+      refute authenticated.id == other.id
     end
 
     test "logs the user in with remember me", %{conn: conn, user: user} do
@@ -139,6 +158,87 @@ defmodule PauseAiCaWeb.UserSessionControllerTest do
       assert redirected_to(conn) == ~p"/"
       refute get_session(conn, :user_token)
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "You're signed out."
+    end
+
+    test "explicit switch revokes the current session and returns only to editable hinted login",
+         %{conn: conn, user: user} do
+      hint = "other-review@example.org"
+
+      conn =
+        conn
+        |> log_in_user(user)
+        |> put_session(:user_return_to, "https://untrusted.example/redirect")
+        |> put_session("phoenix_flash", %{
+          "email" => user.email,
+          "error" => "Earlier password error"
+        })
+
+      token = get_session(conn, :user_token)
+
+      conn =
+        delete(conn, ~p"/users/log-out", %{
+          switch_account: "true",
+          email: hint,
+          locale: "fr",
+          return_to: "https://untrusted.example/redirect"
+        })
+
+      target = redirected_to(conn)
+      assert URI.parse(target).path == "/users/log-in"
+      assert URI.decode_query(URI.parse(target).query) == %{"email" => hint, "locale" => "fr"}
+      refute get_session(conn, :user_token)
+      refute get_session(conn, :user_return_to)
+      refute Phoenix.Flash.get(conn.assigns.flash, :email)
+      refute Phoenix.Flash.get(conn.assigns.flash, :info)
+      refute Phoenix.Flash.get(conn.assigns.flash, :error)
+      refute Accounts.get_user_by_session_token(token)
+      assert %{max_age: 0} = conn.resp_cookies["_pause_ai_ca_web_user_remember_me"]
+      {:ok, view, _} = conn |> recycle() |> live(target)
+      assert has_element?(view, "#login_form_magic_email[value='#{hint}']:not([readonly])")
+      refute has_element?(view, "#switch-account")
+      refute Accounts.get_user_by_email(hint)
+    end
+
+    test "malformed or oversized switch hints cannot affect the fixed login destination", %{
+      conn: conn,
+      user: user
+    } do
+      for hint <- [
+            "not-an-email",
+            "valid@example.org\r\nBcc:extra@example.org",
+            String.duplicate("a", 161),
+            %{"nested" => "value"}
+          ] do
+        result =
+          conn
+          |> recycle()
+          |> log_in_user(user)
+          |> delete(~p"/users/log-out", %{
+            "switch_account" => "true",
+            "email" => hint,
+            "locale" => "https://untrusted.example",
+            "return_to" => "https://untrusted.example"
+          })
+
+        assert redirected_to(result) == "/users/log-in?locale=en"
+        refute get_session(result, :user_token)
+      end
+    end
+
+    test "account switch requires CSRF and cannot revoke a session without it", %{
+      conn: conn,
+      user: user
+    } do
+      conn = log_in_user(conn, user)
+      token = get_session(conn, :user_token)
+
+      assert_raise Plug.CSRFProtection.InvalidCSRFTokenError, fn ->
+        conn
+        |> put_private(:plug_skip_csrf_protection, false)
+        |> delete(~p"/users/log-out", %{switch_account: "true"})
+      end
+
+      assert Accounts.get_user_by_session_token(token)
     end
 
     test "succeeds even if the user is not logged in", %{conn: conn} do
