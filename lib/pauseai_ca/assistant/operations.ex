@@ -376,6 +376,14 @@ defmodule PauseAiCa.Assistant.Operations do
       "pricing" => config[:pricing] || %{}
     }
 
+    # Omitted and explicit strict_v1 share the existing identity. A new policy
+    # must invalidate readiness; old proof cannot authorize different cutoffs.
+    payload =
+      case Keyword.get(config, :safety_policy, :strict_v1) do
+        :strict_v1 -> payload
+        policy -> Map.put(payload, "safety_policy", to_string(policy))
+      end
+
     payload |> Jason.encode!() |> Jason.decode!() |> Canonical.digest()
   end
 

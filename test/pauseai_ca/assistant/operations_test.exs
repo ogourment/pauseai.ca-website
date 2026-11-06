@@ -81,6 +81,29 @@ defmodule PauseAiCa.Assistant.OperationsTest do
     %{config: config, remote: remote, signing: signing}
   end
 
+  test "readiness evidence changes with safety policy while equivalent strict config preserves it",
+       c do
+    strict = Operations.fingerprint(c.config)
+    assert strict == Operations.fingerprint(Keyword.put(c.config, :safety_policy, :strict_v1))
+
+    refute strict ==
+             Operations.fingerprint(Keyword.put(c.config, :safety_policy, :text_coaching_v1))
+
+    :persistent_term.put({Operations, :status}, %{
+      fingerprint: strict,
+      checked_at: System.monotonic_time(:millisecond),
+      audit_anchor: true,
+      alerts: true
+    })
+
+    assert Operations.status(c.config) == %{audit_anchor: true, alerts: true}
+
+    assert Operations.status(Keyword.put(c.config, :safety_policy, :text_coaching_v1)) == %{
+             audit_anchor: false,
+             alerts: false
+           }
+  end
+
   test "operator recovery retains the old eight events and requires new delivery and anchors",
        c do
     {scope, old, evidence, original} = recovery_fixture(c)
