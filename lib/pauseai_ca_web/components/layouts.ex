@@ -61,12 +61,12 @@ defmodule PauseAiCaWeb.Layouts do
       )
 
     ~H"""
+    <PauseAiCaWeb.NovemberMarchesBanner.banner :if={@show_announcements} />
     <header
       id="site-header"
       phx-hook=".HeaderHeight"
       class="sticky top-0 z-40 border-b border-stone-200/80 bg-[#f8f5ed]/95 backdrop-blur"
     >
-      <PauseAiCaWeb.NovemberMarchesBanner.banner :if={@show_announcements} />
       <.signed_in_navigation
         :if={@current_scope}
         current_scope={@current_scope}
@@ -140,12 +140,12 @@ defmodule PauseAiCaWeb.Layouts do
           compact
         />
         <%!-- The menu is CSS-only, so it still works before JavaScript loads. --%>
-        <details id="involvement-menu" class="act-menu relative">
+        <details id="involvement-menu" class="act-menu static md:relative">
           <summary class="cursor-pointer list-none text-base font-medium text-stone-700 hover:text-stone-950">
             <span class="sr-only sm:not-sr-only">{gettext("Get involved")}</span>
             <.icon name="hero-bars-3" class="size-6 sm:hidden" />
           </summary>
-          <div class="fixed left-3 right-3 top-16 z-50 max-h-[75vh] overflow-y-auto rounded-xl border border-stone-200 bg-white shadow-lg md:absolute md:left-auto md:right-0 md:top-auto md:mt-2 md:w-64">
+          <div class="absolute left-3 right-3 top-full z-50 max-h-[75vh] overflow-y-auto rounded-xl border border-stone-200 bg-white shadow-lg md:left-auto md:right-0 md:top-auto md:mt-2 md:w-64">
             <div class="border-b border-stone-100 md:hidden">
               <p class="px-4 pt-3 text-xs font-semibold uppercase text-stone-500">
                 {gettext("Learn")}
@@ -193,14 +193,28 @@ defmodule PauseAiCaWeb.Layouts do
         export default {
           mounted() {
             this.measureHeader = () => {
-              document.documentElement.style.setProperty('--header-height', `${Math.ceil(this.el.getBoundingClientRect().height)}px`)
+              const bounds = this.el.getBoundingClientRect()
+              document.documentElement.style.setProperty('--header-height', `${Math.ceil(bounds.height)}px`)
+              document.documentElement.style.setProperty('--header-bottom', `${Math.ceil(bounds.bottom)}px`)
             }
+            this.onHeaderScroll = () => {
+              if (this.headerFrame) return
+              this.headerFrame = requestAnimationFrame(() => {
+                this.headerFrame = null
+                this.measureHeader()
+              })
+            }
+            window.addEventListener('scroll', this.onHeaderScroll, {passive: true})
             this.headerObserver = new ResizeObserver(this.measureHeader)
             this.headerObserver.observe(this.el)
             this.measureHeader()
           },
           updated() { this.measureHeader() },
-          destroyed() { this.headerObserver.disconnect() }
+          destroyed() {
+            this.headerObserver.disconnect()
+            window.removeEventListener('scroll', this.onHeaderScroll)
+            if (this.headerFrame) cancelAnimationFrame(this.headerFrame)
+          }
         }
       </script>
     </header>
@@ -361,7 +375,7 @@ defmodule PauseAiCaWeb.Layouts do
     <div
       id={@id}
       aria-live="polite"
-      class="pointer-events-none fixed left-1/2 top-[calc(var(--header-height)+0.75rem)] z-50 flex w-[calc(100%-2rem)] max-w-96 -translate-x-1/2 flex-col gap-2"
+      class="pointer-events-none fixed left-1/2 top-[calc(var(--header-bottom,var(--header-height))+0.75rem)] z-50 flex w-[calc(100%-2rem)] max-w-96 -translate-x-1/2 flex-col gap-2"
     >
       <.flash kind={:info} flash={@flash} />
       <.flash kind={:error} flash={@flash} />

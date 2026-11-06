@@ -5,7 +5,14 @@ if System.get_env("ATDD") == "true" do
     alias PauseAiCaWeb.AtddEvidence
     @moduletag :atdd
 
-    for {locale, width} <- [{"en", 1280}, {"fr", 390}, {"en", 390}, {"fr", 1280}] do
+    for {locale, width} <- [
+          {"en", 1280},
+          {"fr", 390},
+          {"en", 390},
+          {"fr", 1280},
+          {"en", 320},
+          {"fr", 320}
+        ] do
       @tag browser_context_opts: [viewport: %{width: width, height: 900}]
       test "Nov14 public banner links, header geometry and contrast #{locale} #{width}", c do
         locale = unquote(locale)
@@ -23,6 +30,15 @@ if System.get_env("ATDD") == "true" do
         end
 
         capture(browser, locale, width, "guest")
+
+        unless before? or expired? do
+          learning_path = if locale == "fr", do: "/fr/comprendre", else: "/en/learn"
+
+          browser
+          |> visit(learning_path)
+          |> assert_has("[data-phx-main].phx-connected")
+          |> verify_largest_font()
+        end
 
         user =
           user_fixture() |> Ecto.Changeset.change(superadmin: true) |> PauseAiCa.Repo.update!()
@@ -58,14 +74,59 @@ if System.get_env("ATDD") == "true" do
       {:ok, geometry} =
         PlaywrightEx.Frame.evaluate(browser.frame_id,
           expression:
-            "(async()=>{await document.fonts.ready; await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))); const b=document.querySelector('#november-marches-banner').getBoundingClientRect(), h=document.querySelector('#site-header').getBoundingClientRect(); return {top:b.top,headerTop:h.top,height:b.height,overflow:document.documentElement.scrollWidth>innerWidth,offset:parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height')),headerHeight:h.height}})()",
+            "(async()=>{await document.fonts.ready;window.scrollTo({top:0,behavior:'instant'}); await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))); const banner=document.querySelector('#november-marches-banner'),b=banner.getBoundingClientRect(), h=document.querySelector('#site-header').getBoundingClientRect();const text=[...document.querySelectorAll('body *')].filter(e=>!banner.contains(e)&&e.getClientRects().length&&getComputedStyle(e).visibility==='visible'&&[...e.childNodes].some(n=>n.nodeType===3&&n.textContent.trim()));return {top:b.top,bottom:b.bottom,headerTop:h.top,height:b.height,headline:parseFloat(getComputedStyle(banner.querySelector('time')).fontSize),otherText:Math.max(...text.map(e=>parseFloat(getComputedStyle(e).fontSize))),overflow:document.documentElement.scrollWidth>innerWidth,offset:parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height')),headerHeight:h.height}})()",
           timeout: 8000
         )
 
-      assert geometry["top"] == geometry["headerTop"]
+      assert geometry["top"] == 0
+      assert abs(geometry["bottom"] - geometry["headerTop"]) <= 1
+      assert geometry["headline"] > geometry["otherText"]
       assert geometry["height"] > 0
       refute geometry["overflow"]
       assert abs(geometry["offset"] - geometry["headerHeight"]) <= 1
+
+      {:ok, scrolled} =
+        PlaywrightEx.Frame.evaluate(browser.frame_id,
+          expression:
+            "(async()=>{window.scrollTo({top:document.querySelector('#november-marches-banner').offsetHeight+100,behavior:'instant'});await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));return {maxScroll:document.documentElement.scrollHeight-innerHeight,scrollY:scrollY,bannerBottom:document.querySelector('#november-marches-banner').getBoundingClientRect().bottom,headerTop:document.querySelector('#site-header').getBoundingClientRect().top}})()",
+          timeout: 8000
+        )
+
+      IO.puts(
+        "March headline #{geometry["headline"]}px; other page text up to #{geometry["otherText"]}px"
+      )
+
+      assert scrolled["bannerBottom"] <= 0
+      assert scrolled["headerTop"] == 0
+
+      {:ok, _} =
+        PlaywrightEx.Frame.evaluate(browser.frame_id,
+          expression: "window.scrollTo({top:0,behavior:'instant'})",
+          timeout: 8000
+        )
+
+      {:ok, public_menu?} =
+        PlaywrightEx.Frame.evaluate(browser.frame_id,
+          expression:
+            "Boolean(document.querySelector('#involvement-menu > summary')?.getClientRects().length)",
+          timeout: 8000
+        )
+
+      if public_menu? do
+        press(browser, "#involvement-menu > summary", "Enter")
+
+        {:ok, menu} =
+          PlaywrightEx.Frame.evaluate(browser.frame_id,
+            expression:
+              "(()=>{const p=document.querySelector('#involvement-menu > div').getBoundingClientRect(),t=document.querySelector('#involvement-menu > summary').getBoundingClientRect();return {top:p.top,triggerBottom:t.bottom,left:p.left,right:p.right,width:innerWidth}})()",
+            timeout: 8000
+          )
+
+        assert menu["top"] >= menu["triggerBottom"] - 1
+        assert menu["left"] >= 0
+        assert menu["right"] <= menu["width"]
+        press(browser, "#involvement-menu > summary", "Enter")
+      end
 
       {:ok, sizes} =
         PlaywrightEx.Frame.evaluate(browser.frame_id,
@@ -85,7 +146,7 @@ if System.get_env("ATDD") == "true" do
 
         {:ok, _} =
           PlaywrightEx.Frame.hover(browser.frame_id,
-            selector: "#november-marches-banner span",
+            selector: "#november-marches-banner time",
             timeout: 8000
           )
 
@@ -122,15 +183,33 @@ if System.get_env("ATDD") == "true" do
       {:ok, _} =
         PlaywrightEx.Frame.evaluate(browser.frame_id,
           expression:
-            "document.documentElement.dataset.theme='light';document.activeElement.blur();window.scrollTo(0,0)",
+            "document.documentElement.dataset.theme='light';document.activeElement.blur();window.scrollTo({top:0,behavior:'instant'})",
           timeout: 8000
         )
 
       {:ok, _} =
         PlaywrightEx.Frame.hover(browser.frame_id,
-          selector: "#november-marches-banner span",
+          selector: "#november-marches-banner time",
           timeout: 8000
         )
+
+      browser
+    end
+
+    defp verify_largest_font(browser) do
+      {:ok, sizes} =
+        PlaywrightEx.Frame.evaluate(browser.frame_id,
+          expression:
+            "(async()=>{await document.fonts.ready;const b=document.querySelector('#november-marches-banner');const text=[...document.querySelectorAll('body *')].filter(e=>!b.contains(e)&&e.getClientRects().length&&getComputedStyle(e).visibility==='visible'&&[...e.childNodes].some(n=>n.nodeType===3&&n.textContent.trim()));return {headline:parseFloat(getComputedStyle(b.querySelector('time')).fontSize),other:Math.max(...text.map(e=>parseFloat(getComputedStyle(e).fontSize))),width:b.clientWidth,scroll:b.scrollWidth}})()",
+          timeout: 8000
+        )
+
+      assert sizes["headline"] > sizes["other"]
+      assert sizes["scroll"] <= sizes["width"]
+
+      IO.puts(
+        "Learning-page march headline #{sizes["headline"]}px; other text up to #{sizes["other"]}px"
+      )
 
       browser
     end
