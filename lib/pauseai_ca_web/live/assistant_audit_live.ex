@@ -43,7 +43,7 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
                     actor_label: Map.get(labels, row.actor_id) || gettext("Unlisted account"),
                     time_label: Calendar.strftime(row.inserted_at, "%Y-%m-%d %H:%M:%S UTC"),
                     activity_label: activity(row.kind),
-                    outcome_label: outcome(row.outcome),
+                    outcome_label: event_outcome(row),
                     request_href: request_path(row.request_ref, socket.assigns.locale),
                     details: review_details(row)
                   })
@@ -306,6 +306,7 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
   defp activity("request"), do: gettext("Request recorded")
   defp activity("request_reserved"), do: gettext("Budget reserved")
   defp activity("provider_output"), do: gettext("Response recorded")
+  defp activity("provider_failure"), do: outcome("failed")
   defp activity("response_released"), do: gettext("Response released")
   defp activity("safety_review"), do: gettext("Safety review")
   defp activity("request_held"), do: gettext("Request held")
@@ -329,4 +330,7 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
   defp outcome("pending"), do: gettext("Pending")
   defp outcome("submitting"), do: gettext("Submitting")
   defp outcome(_), do: gettext("Recorded")
+
+  defp event_outcome(%{kind: "provider_failure", outcome: details}), do: details
+  defp event_outcome(row), do: outcome(row.outcome)
 end

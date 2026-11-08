@@ -92,6 +92,39 @@ defmodule PauseAiCaWeb.AssistantAuditLiveTest do
     refute has_element?(view, "button", "Approve")
   end
 
+  test "provider failure details are visible through the protected English and French timeline",
+       c do
+    reference = Ecto.UUID.generate()
+
+    record(c, c.other.id, %{
+      "kind" => "provider_failure",
+      "request_id" => reference,
+      "category" => "http_error",
+      "http_status" => 400,
+      "provider_code" => "unsupported_parameter",
+      "parameter" => "tool_choice",
+      "message" => "PRIVATE-PROVIDER-ERROR",
+      "api_key" => "PRIVATE-PROVIDER-KEY"
+    })
+
+    for locale <- ["en", "fr"] do
+      {:ok, view, html} =
+        live(
+          log_in_user(build_conn(), c.admin),
+          "/admin/assistant/activity/requests/#{reference}?locale=#{locale}"
+        )
+
+      assert has_element?(
+               view,
+               "#assistant-audit-table",
+               "http_error · 400 · unsupported_parameter · tool_choice"
+             )
+
+      refute html =~ "PRIVATE-PROVIDER"
+      refute_receive {:assistant_generated, _, _}
+    end
+  end
+
   test "request pagination keeps exact reference and fresh revocation denies further events", c do
     reference = Ecto.UUID.generate()
     for _ <- 1..27, do: record(c, c.other.id, %{"kind" => "request", "request_id" => reference})
