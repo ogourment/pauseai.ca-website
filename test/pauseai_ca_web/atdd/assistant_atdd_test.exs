@@ -22,6 +22,14 @@ if System.get_env("ATDD") == "true" do
         language: "French",
         device: "Phone",
         source_file: __ENV__.file
+      },
+      %{
+        id: "CRM-ASSIST-UX-01",
+        title: "Safe Markdown navigation and retained draft during transient readiness",
+        roles: ["Superadmin"],
+        language: "English",
+        device: "Desktop",
+        source_file: __ENV__.file
       }
     ]
 
@@ -260,7 +268,7 @@ if System.get_env("ATDD") == "true" do
         # Exercise the authenticated form's server boundary even if a client removes UI protection.
         |> evaluate("document.querySelector('#site-assistant-form').requestSubmit()")
         |> assert_has("#site-assistant .paa-error",
-          text: tr(locale, "The assistant is unavailable. Your message has been retained.")
+          text: tr(locale, "Your daily token allowance is exhausted. Your draft is retained.")
         )
         |> assert_has("#site-assistant-text", value: "Synthetic quota-denied request")
         |> capture(
@@ -314,6 +322,119 @@ if System.get_env("ATDD") == "true" do
       browser
     end
 
+    @tag screenshot: true
+    @tag browser_context_opts: [viewport: %{width: 1280, height: 900}]
+    test "CRM-ASSIST-UX-01 rendered response navigates safely and unavailable readiness retains the draft",
+         c do
+      id = "CRM-ASSIST-UX-01"
+
+      response =
+        "## Recorded geography\n\n[Open Contacts](/admin/contacts?locale=en)\n\n<img src=\"https://images.example.invalid/private.png\" onerror=\"alert(1)\">"
+
+      config = AssistantFixtures.configuration(self(), response_text: response)
+      Application.put_env(:pauseai_ca, :agent_assistant, config)
+
+      browser =
+        c.conn
+        |> login(c.admin)
+        |> visit("/admin/assistant?locale=en")
+        |> connected()
+        |> click_button("#assistant-enable", "Enable assistant")
+        |> assert_has("#assistant-status", text: "On", exact: true)
+        |> visit("/admin/contacts?locale=en")
+        |> connected()
+        |> assert_has(".phx-connected #site-assistant-launcher")
+        |> click_button("#site-assistant-launcher", "Assistant")
+        |> assert_has("#site-assistant-dialog[open]")
+        |> fill_in("#site-assistant-text", "Message", with: "Show the recorded contact filters")
+        |> click_button("#site-assistant-form button[type=submit]", "Send")
+        |> assert_has("#site-assistant-messages h2", text: "Recorded geography", exact: true)
+        |> assert_has("#site-assistant-messages a[href='/admin/contacts?locale=en']",
+          text: "Open Contacts"
+        )
+        |> assert_has("#site-assistant-messages", text: "<img src=")
+        |> refute_has("#site-assistant-messages img")
+        |> capture(
+          id,
+          "Rendered safe Markdown response",
+          "Floating assistant on Contacts",
+          "Type the synthetic question; Send",
+          "The fixture response renders its heading and native Contacts link; raw image HTML remains literal text and creates no image element."
+        )
+
+      assert_receive {:assistant_generated, %{"text" => "Show the recorded contact filters"}, _},
+                     5_000
+
+      assert {:ok, reference} = Assistant.conversation(c.scope)
+      assert {:ok, history} = Assistant.history(c.scope, reference)
+      assert Enum.any?(history, &(&1.text == response))
+
+      browser =
+        browser
+        |> click_link(
+          "#site-assistant-messages a[href='/admin/contacts?locale=en']",
+          "Open Contacts"
+        )
+        |> assert_path("/admin/contacts")
+        |> connected()
+        |> assert_has(".phx-connected #site-assistant-launcher")
+        |> capture(
+          id,
+          "Native Contacts destination",
+          "Rendered assistant response",
+          "Open Contacts",
+          "The response link performs real authorized navigation to Contacts, without asking a model to execute a tool."
+        )
+        |> click_button("#site-assistant-launcher", "Assistant")
+        |> assert_has("#site-assistant-dialog[open]")
+        |> assert_has("#site-assistant-messages h2", text: "Recorded geography", exact: true)
+        |> fill_in("#site-assistant-text", "Message", with: "Retain this unfinished question")
+        |> assert_has("#site-assistant-text", value: "Retain this unfinished question")
+        |> capture(
+          id,
+          "Reopened history with unfinished draft",
+          "Contacts reached through the assistant response",
+          "Reopen Assistant; type a new question",
+          "The stored Markdown response is restored after navigation, and the new unsent question remains editable."
+        )
+
+      Application.put_env(
+        :pauseai_ca,
+        :agent_assistant,
+        Keyword.put(config, :operations_adapter, {AssistantFixtures.Operations, [ready: false]})
+      )
+
+      Phoenix.PubSub.broadcast(
+        PauseAiCa.PubSub,
+        "agent_assistant:settings",
+        :assistant_settings_changed
+      )
+
+      browser =
+        browser
+        |> assert_has("#site-assistant .paa-error",
+          text: "The assistant is temporarily unavailable. Your draft is retained."
+        )
+        |> assert_has("#site-assistant-launcher")
+        |> assert_has("#site-assistant-dialog[open]")
+        |> assert_has("#site-assistant-text", value: "Retain this unfinished question")
+        |> assert_has("#site-assistant-form button[type=submit][disabled]")
+        |> capture(
+          id,
+          "Readiness interruption preserves history and draft",
+          "Reopened persisted response on Contacts",
+          "Type an unfinished question; synthetic operations readiness becomes unavailable",
+          "The enabled launcher, dialog, prior response and draft remain present. Send is disabled, and no further provider call occurs."
+        )
+
+      assert {:ok, retained} = Assistant.history(c.scope, reference)
+      assert retained == history
+      refute_receive {:assistant_generated, _, _}
+      refute_received {:email, _}
+      success(id)
+      browser
+    end
+
     defp set_limit(browser, email, limit, locale) do
       browser
       |> select("#assistant-token-limit-form select", tr(locale, "Admin"),
@@ -326,7 +447,11 @@ if System.get_env("ATDD") == "true" do
         with: limit
       )
       |> click_button("#assistant-token-limit-form button", tr(locale, "Save limit"))
-      |> assert_has("#assistant-token-limits tbody tr td:last-child", text: limit, exact: true)
+      |> assert_has(
+        "#assistant-token-limits tbody tr td[data-label='#{tr(locale, "Daily limit")}']",
+        text: limit,
+        exact: true
+      )
     end
 
     defp login(browser, actor) do

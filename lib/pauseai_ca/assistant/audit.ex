@@ -13,6 +13,7 @@ defmodule PauseAiCa.Assistant.Audit do
         "projection" => "metadata",
         "kind_filter" => safe_kind(params["kind"]),
         "actor_filter" => safe_actor(params["actor"]),
+        "request_filter" => safe_actor(params["request_ref"]),
         "continuation" => is_binary(params["cursor"]) and params["cursor"] != ""
       }
 
@@ -112,10 +113,13 @@ defmodule PauseAiCa.Assistant.Audit do
     kind = safe_kind(params["kind"])
     actor = safe_actor(params["actor"])
     cursor = params["cursor"]
+    request_ref = safe_actor(params["request_ref"])
 
-    if kind != "invalid" and actor != "invalid" and
+    if kind != "invalid" and actor != "invalid" and request_ref != "invalid" and
          (is_nil(cursor) or (is_binary(cursor) and byte_size(cursor) <= 2048)),
-       do: {:ok, [kind: kind, actor: actor, cursor: cursor, viewer: viewer]},
+       do:
+         {:ok,
+          [kind: kind, actor: actor, cursor: cursor, viewer: viewer, request_ref: request_ref]},
        else: :error
   end
 

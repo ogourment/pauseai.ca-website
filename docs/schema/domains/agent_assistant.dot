@@ -52,6 +52,13 @@ digraph agent_assistant {
     </TABLE>
   >];
 
+  "agent_assistant_spend_entries" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.agent_assistant_spend_entries</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">namespace</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">actor_id</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">request_id</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">purpose</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">revision</TD><TD ALIGN="LEFT">bigint NOT NULL</TD></TR><TR><TD ALIGN="LEFT">previous</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">digest</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">event_key</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">payload</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">audit_ref</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
   "agent_assistant_streams" [label=<
     <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
       <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.agent_assistant_streams</B></TD></TR>
@@ -75,5 +82,7 @@ digraph agent_assistant {
   "agent_assistant_preferences" -> "agent_assistant_settings" [label="namespace -> namespace", color="#64748b"];
   "agent_assistant_requests" -> "agent_assistant_audit_entries" [label="audit_ref -> id", color="#64748b"];
   "agent_assistant_requests" -> "agent_assistant_settings" [label="namespace -> namespace", color="#64748b"];
+  "agent_assistant_spend_entries" -> "agent_assistant_audit_entries" [label="audit_ref -> id", color="#64748b"];
+  "agent_assistant_spend_entries" -> "agent_assistant_requests" [label="request_id -> id", color="#64748b"];
   "agent_assistant_streams" -> "agent_assistant_settings" [label="namespace -> namespace", color="#64748b"];
 }

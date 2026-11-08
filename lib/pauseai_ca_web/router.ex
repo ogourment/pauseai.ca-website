@@ -123,6 +123,7 @@ defmodule PauseAiCaWeb.Router do
       live "/", AdminMetricsLive, :redirect
       live "/assistant", AssistantSettingsLive, :index
       live "/assistant/activity", AssistantAuditLive, :index
+      live "/assistant/activity/requests/:request_ref", AssistantAuditLive, :request
       live "/dashboard", AdminMetricsLive, :index
       live "/metrics", AdminMetricsLive, :redirect
       live "/accounts", AdminAccountsLive, :index

@@ -109,10 +109,15 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
           <h2 class="text-lg font-bold">{gettext("Token usage and limits")}</h2>
           <p>
             {gettext(
-              "Daily Claude input and output tokens. Uncertain requests keep their reservation. Quotas reset at 00:00 UTC; safety-review charges have a separate cost ceiling."
+              "Daily generation input and output tokens. Uncertain requests keep their reservation. Quotas reset at 00:00 UTC."
             )}
           </p>
           <p>{gettext("Default per admin: %{limit} tokens/day", limit: @default_limit)}</p>
+          <p class="text-sm" id="assistant-cost-explanation">
+            {gettext(
+              "USD service value may use configured estimates and does not determine cash paid after credits. Unknown holds are conservative limits, not charges."
+            )}
+          </p>
           <div class="paa-data-table">
             <table role="table">
               <thead role="rowgroup">
@@ -132,12 +137,16 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
                     scope="col"
                   >
                     {gettext("Daily limit")}
-                  </th>
+                  </th><th role="columnheader" scope="col">{gettext("USD service value")}</th>
                 </tr>
               </thead>
               <tbody role="rowgroup">
                 <tr :for={admin <- @admins} role="row">
-                  <td role="cell" data-label={gettext("Admin")}>{admin.email}</td>
+                  <td role="cell" data-label={gettext("Admin")}>
+                    {admin.email || gettext("Unavailable account")}
+                    <span :if={!admin.current_admin} class="block text-xs">{gettext("Former admin")}</span>
+                    <span :if={is_nil(admin.email)} class="block text-xs break-all">{admin.id}</span>
+                  </td>
                   <%= case admin.usage do %>
                     <% {:ok, usage} -> %>
                       <td role="cell" data-label={gettext("Input")}>{usage.reported_input}</td><td
@@ -159,6 +168,48 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
                         {gettext("Unavailable")}
                       </td>
                   <% end %>
+                  <td
+                    role="cell"
+                    data-label={gettext("USD service value")}
+                    id={"assistant-cost-" <> admin.id}
+                  >
+                    <%= case admin.spend do %>
+                      <% {:ok, %{accounting: :ledger} = spend} -> %>
+                        <span :if={settled_known?(spend)} class="block">{gettext(
+                          "Settled value: USD %{amount}",
+                          amount: usd(spend.settled_service_micros, @locale)
+                        )}</span>
+                        <span :if={!settled_known?(spend)} class="block">{gettext(
+                          "No settled value yet"
+                        )}</span>
+                        <span class="block text-sm">{gettext("Unknown hold: USD %{amount}",
+                          amount:
+                            usd(
+                              spend.unresolved_stage_hold_micros + spend.legacy_unobserved_hold_micros,
+                              @locale
+                            )
+                        )}</span>
+                        <details class="text-xs mt-1">
+                          <summary class="cursor-pointer underline">
+                            {gettext("Cost evidence")}
+                          </summary>
+                          <p>{evidence_amount(:estimate, spend, @locale)}</p>
+                          <p>{evidence_amount(:reported, spend, @locale)}</p>
+                          <p>
+                            {gettext(
+                              "Estimates and provider reports may cover the same stages; do not add them."
+                            )}
+                          </p>
+                        </details>
+                      <% {:ok, %{accounting: :reservations_only} = spend} -> %>
+                        <span>{gettext("Reserved limit: USD %{amount}",
+                          amount: usd(spend.reserved_cost_micros, @locale)
+                        )}</span>
+                        <span class="block text-xs">{gettext("Settled service value unavailable")}</span>
+                      <% _ -> %>
+                        <span>{gettext("Unavailable")}</span>
+                    <% end %>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -175,7 +226,7 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
               type="select"
               value=""
               label={gettext("Admin")}
-              options={Enum.map(@admins, &{&1.email, &1.id})}
+              options={@admins |> Enum.filter(& &1.current_admin) |> Enum.map(&{&1.email, &1.id})}
             />
             <.input
               id="assistant-token-limit"
@@ -215,10 +266,52 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
     """
   end
 
+  defp settled_known?(spend),
+    do:
+      spend.request_count == 0 or
+        Map.get(spend.state_counts, "reported", 0) + Map.get(spend.state_counts, "not_invoked", 0) >
+          0
+
+  defp usd(micros, locale) do
+    amount =
+      Integer.to_string(div(micros, 1_000_000)) <>
+        "." <> String.pad_leading(Integer.to_string(rem(micros, 1_000_000)), 6, "0")
+
+    if locale == "fr", do: String.replace(amount, ".", ","), else: amount
+  end
+
+  defp evidence_amount(:estimate, %{configured_estimate_stage_count: 0}, _),
+    do: gettext("Configured estimate unavailable")
+
+  defp evidence_amount(:estimate, spend, locale),
+    do:
+      ngettext(
+        "Configured estimate: USD %{amount} (%{count} stage)",
+        "Configured estimate: USD %{amount} (%{count} stages)",
+        spend.configured_estimate_stage_count,
+        amount: usd(spend.configured_estimate_micros, locale),
+        count: spend.configured_estimate_stage_count
+      )
+
+  defp evidence_amount(:reported, %{provider_reported_stage_count: 0}, _),
+    do: gettext("Provider report unavailable")
+
+  defp evidence_amount(:reported, spend, locale),
+    do:
+      ngettext(
+        "Provider report: USD %{amount} (%{count} stage)",
+        "Provider report: USD %{amount} (%{count} stages)",
+        spend.provider_reported_stage_count,
+        amount: usd(spend.provider_reported_service_micros, locale),
+        count: spend.provider_reported_stage_count
+      )
+
+  defp readiness_label(:spend_ledger), do: gettext("Per-admin spending ledger")
+  defp readiness_label(:credit_allocation), do: gettext("Designated assistant credit allocation")
   defp readiness_label(:feature_catalogue), do: gettext("Verified website feature catalogue")
   defp readiness_label(:audit_keys), do: gettext("Protected audit storage")
   defp readiness_label(:models), do: gettext("Fast, Normal and High models")
-  defp readiness_label(:provider), do: gettext("Claude connection")
+  defp readiness_label(:provider), do: gettext("Generation provider connection")
   defp readiness_label(:moderation), do: gettext("Moderation checks")
   defp readiness_label(:jev), do: gettext("Jev safety review")
   defp readiness_label(:budget), do: gettext("Usage limits")

@@ -76,7 +76,7 @@ if System.get_env("ATDD") == "true" do
             exact: true
           )
           |> assert_has("#assistant-status", text: tr(locale, "Off"), exact: true)
-          |> visible_table_fields("#assistant-token-limits", 6)
+          |> visible_table_fields("#assistant-token-limits", 7)
           |> click_link("#assistant-activity-link", tr(locale, "Activity & security"))
           |> assert_has("[data-phx-main].phx-connected #assistant-audit")
           |> visible_table_fields("#assistant-audit-table", 5)

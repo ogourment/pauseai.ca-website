@@ -279,4 +279,94 @@ defmodule PauseAiCaWeb.AssistantLiveTest do
     assert {:ok, "high"} = Assistant.mode(c.scope)
     assert has_element?(view, "select option[value='high'][selected]")
   end
+
+  test "transient readiness keeps the enabled launcher and draft but blocks a forged send", c do
+    assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+    token = Accounts.generate_user_session_token(c.admin)
+
+    {:ok, view, _} =
+      live_isolated(c.conn, PauseAiCaWeb.AssistantLive, session: %{"user_token" => token})
+
+    render_click(view, "assistant-toggle")
+    render_change(view, "assistant-draft", %{"assistant" => %{"text" => "Keep this draft"}})
+    original = Assistant.configuration()
+
+    Application.put_env(
+      :pauseai_ca,
+      :agent_assistant,
+      Keyword.put(
+        original,
+        :operations_adapter,
+        {PauseAiCa.AssistantFixtures.Operations, [ready: false]}
+      )
+    )
+
+    send(view.pid, :refresh_access)
+    assert render(view) =~ "Keep this draft"
+    assert has_element?(view, "#site-assistant[data-open='true']")
+    assert has_element?(view, "#site-assistant-launcher")
+    assert has_element?(view, "#site-assistant button[type=submit][disabled]")
+    assert render(view) =~ "temporarily unavailable"
+    assert Assistant.launcher_visible?(c.scope)
+    refute Assistant.visible?(c.scope)
+    refute Assistant.launcher_visible?(Accounts.Scope.for_user(c.member))
+    render_submit(view, "assistant-submit", %{"assistant" => %{"text" => "Keep this draft"}})
+    refute_receive {:assistant_generated, _, _}
+    assert Repo.aggregate(PhoenixAgentAssistant.Store.Request, :count) == 0
+    Application.put_env(:pauseai_ca, :agent_assistant, original)
+    send(view.pid, :refresh_access)
+    assert has_element?(view, "#site-assistant button[type=submit]:not([disabled])")
+    assert render(view) =~ "Keep this draft"
+    assert {:ok, _} = Assistant.set_enabled(c.scope, false)
+    send(view.pid, :refresh_access)
+    refute has_element?(view, "#site-assistant-launcher")
+  end
+
+  test "positive money remaining below the turn reservation disables Send without hiding tokens",
+       c do
+    config = Assistant.configuration() |> Keyword.put(:daily_limit_micros, 1500)
+    Application.put_env(:pauseai_ca, :agent_assistant, config)
+    assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+
+    assert {:ok, _} =
+             Store.reserve(
+               Assistant.store(),
+               c.admin.id,
+               %{
+                 request_id: Ecto.UUID.generate(),
+                 digest: String.duplicate("a", 64),
+                 mode: "fast",
+                 model: "haiku-fixture",
+                 max_output_tokens: 10
+               },
+               config[:audit_keys],
+               max_cost_micros: 1000,
+               daily_limit_micros: 1500,
+               max_tokens: 100,
+               daily_token_limit: 100_000,
+               max_daily_token_limit: 1_000_000
+             )
+
+    assert {:ok, usage} = Assistant.token_usage(c.scope)
+    assert usage.remaining_tokens > 0
+    assert usage.remaining_cost_micros == 500
+    assert usage.max_turn_cost_micros == 1000
+    token = Accounts.generate_user_session_token(c.admin)
+
+    {:ok, view, _} =
+      live_isolated(c.conn, PauseAiCaWeb.AssistantLive,
+        session: %{"user_token" => token, "site_locale" => "fr"}
+      )
+
+    assert has_element?(view, "#site-assistant-launcher")
+    assert has_element?(view, "#site-assistant button[type=submit][disabled]")
+    assert render(view) =~ "0,0005"
+    assert render(view) =~ "00:00 UTC"
+
+    render_submit(view, "assistant-submit", %{"assistant" => %{"text" => "Retained budget draft"}})
+
+    assert render(view) =~ "Retained budget draft"
+    assert Repo.aggregate(PhoenixAgentAssistant.Store.Request, :count) == 1
+    refute_receive {:assistant_generated, _, _}
+  end
 end

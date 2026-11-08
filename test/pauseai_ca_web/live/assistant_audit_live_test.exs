@@ -46,6 +46,86 @@ defmodule PauseAiCaWeb.AssistantAuditLiveTest do
     refute_receive {:assistant_generated, _, _}
   end
 
+  test "protected request route shows typed hold explanation without message or review internals",
+       c do
+    reference = Ecto.UUID.generate()
+
+    record(c, c.other.id, %{
+      "kind" => "safety_review",
+      "request_id" => reference,
+      "direction" => "output",
+      "decision" => %{
+        "action" => "review",
+        "policy" => "text_coaching_v1",
+        "jev" => %{
+          "probabilities" => %{"low" => 0.87, "block" => 0.01},
+          "model" => "PRIVATE-MODEL"
+        },
+        "moderation" => %{"flagged" => false, "categories" => %{"PRIVATE" => false}}
+      },
+      "text" => "PRIVATE-ANSWER",
+      "error" => "PRIVATE-ERROR"
+    })
+
+    record(c, c.other.id, %{
+      "kind" => "request_held",
+      "request_id" => reference,
+      "reason" => "output_safety_review_required"
+    })
+
+    unrelated =
+      record(c, c.other.id, %{"kind" => "request", "request_id" => Ecto.UUID.generate()})
+
+    path =
+      "/admin/assistant/activity/requests/#{reference}?locale=en&event_id=untrusted-not-a-filter"
+
+    assert log_in_user(build_conn(), c.member) |> get(path) |> response(403) ==
+             "superadmin required"
+
+    {:ok, view, html} = live(log_in_user(c.conn, c.admin), path)
+    assert has_element?(view, "#assistant-request-timeline", "Request activity")
+    assert html =~ "0.87" and html =~ "0.01"
+    assert html =~ "Answer withheld: output review needs attention."
+    assert html =~ "independent yes-probabilities"
+    refute html =~ "PRIVATE"
+    refute has_element?(view, "#assistant-audit-table-#{unrelated.id}")
+    refute has_element?(view, "button", "Approve")
+  end
+
+  test "request pagination keeps exact reference and fresh revocation denies further events", c do
+    reference = Ecto.UUID.generate()
+    for _ <- 1..27, do: record(c, c.other.id, %{"kind" => "request", "request_id" => reference})
+
+    {:ok, view, _} =
+      live(
+        log_in_user(c.conn, c.admin),
+        "/admin/assistant/activity/requests/#{reference}?locale=en"
+      )
+
+    assert has_element?(view, "#assistant-audit-next")
+    render_click(view, "next")
+    patch = assert_patch(view)
+    assert patch =~ "/requests/#{reference}?"
+    assert patch =~ "cursor="
+    assert has_element?(view, "#assistant-request-timeline")
+    Repo.update!(Ecto.Changeset.change(c.admin, superadmin: false))
+    render_click(view, "first")
+    assert_redirect(view, "/")
+  end
+
+  test "request filter rejects malformed references and authenticated-row tampering", c do
+    assert {:error, :audit_unavailable} = Audit.page(c.scope, %{"request_ref" => "not-a-uuid"})
+    reference = Ecto.UUID.generate()
+    row = record(c, c.other.id, %{"kind" => "request", "request_id" => reference})
+
+    Repo.update!(
+      Ecto.Changeset.change(row, envelope: Map.put(row.envelope, "ciphertext", "tampered"))
+    )
+
+    assert {:error, :audit_unavailable} = Audit.page(c.scope, %{"request_ref" => reference})
+    refute_receive {:assistant_generated, _, _}
+  end
+
   test "metadata hides all private content and other namespaces; access is durably recorded while OFF",
        c do
     row =

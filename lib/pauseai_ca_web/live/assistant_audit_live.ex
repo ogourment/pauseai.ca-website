@@ -16,6 +16,7 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
         rows: [],
         accounts: [],
         error: nil,
+        request_ref: nil,
         next_cursor: nil,
         has_more: false,
         scan_limited: false,
@@ -42,13 +43,16 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
                     actor_label: Map.get(labels, row.actor_id) || gettext("Unlisted account"),
                     time_label: Calendar.strftime(row.inserted_at, "%Y-%m-%d %H:%M:%S UTC"),
                     activity_label: activity(row.kind),
-                    outcome_label: outcome(row.outcome)
+                    outcome_label: outcome(row.outcome),
+                    request_href: request_path(row.request_ref, socket.assigns.locale),
+                    details: review_details(row)
                   })
                 end)
 
               {:noreply,
                assign(socket,
                  rows: rows,
+                 request_ref: params["request_ref"],
                  accounts: accounts,
                  next_cursor: page.next_cursor,
                  has_more: page.has_more,
@@ -100,7 +104,11 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
 
       {:noreply,
        push_patch(socket,
-         to: ~p"/admin/assistant/activity?#{Map.put(query, "locale", socket.assigns.locale)}"
+         to:
+           activity_path(
+             socket.assigns.request_ref,
+             Map.put(query, "locale", socket.assigns.locale)
+           )
        )}
     else
       {:noreply, deny(socket)}
@@ -131,6 +139,23 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
           <.link navigate={~p"/admin/assistant?#{[locale: @locale]}"}>{gettext("Back to assistant")}</.link>
           <h1 class="text-2xl font-bold">{gettext("Activity & security")}</h1>
           <p>{gettext("Protected activity metadata. Message content is not displayed.")}</p>
+          <div :if={@request_ref} id="assistant-request-timeline">
+            <h2 class="text-lg font-semibold">{gettext("Request activity")}</h2>
+            <p class="break-all">{gettext("Request reference")}: {@request_ref}</p>
+            <p>
+              {gettext(
+                "Low-risk and malicious scores are independent yes-probabilities, not a combined confidence score."
+              )}
+            </p>
+            <p>
+              {gettext(
+                "A withheld answer is not available for approval here. Review the recorded reason; this page cannot bypass safety checks."
+              )}
+            </p>
+            <.link navigate={~p"/admin/assistant/activity?#{[locale: @locale]}"}>{gettext(
+              "All activity"
+            )}</.link>
+          </div>
           <form id="assistant-audit-filters" phx-change="filter" class="flex flex-wrap gap-3">
             <.input
               type="select"
@@ -166,7 +191,8 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
               actor: gettext("Account"),
               activity: gettext("Activity"),
               outcome: gettext("Outcome"),
-              tokens: gettext("Tokens")
+              tokens: gettext("Tokens"),
+              details: gettext("Review details")
             }
           }
         />
@@ -211,6 +237,72 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
     """
   end
 
+  defp activity_path(nil, query), do: ~p"/admin/assistant/activity?#{query}"
+
+  defp activity_path(reference, query),
+    do: ~p"/admin/assistant/activity/requests/#{reference}?#{query}"
+
+  defp request_path(nil, _locale), do: nil
+  defp request_path(reference, locale), do: activity_path(reference, %{locale: locale})
+
+  defp review_details(row) do
+    base = if row.request_ref, do: [{gettext("Request reference"), row.request_ref}], else: []
+
+    base =
+      if row.hold_reason,
+        do: base ++ [{gettext("Why it was held"), hold_reason(row.hold_reason)}],
+        else: base
+
+    if row.review do
+      review = row.review
+
+      base ++
+        Enum.reject(
+          [
+            {gettext("Review direction"), direction(review.direction)},
+            {gettext("Review action"), action(review.action)},
+            {gettext("Review policy"), policy(review.policy)},
+            {gettext("Low-risk yes probability"), probability(review.low)},
+            {gettext("Malicious yes probability"), probability(review.malicious)},
+            {gettext("Moderation flagged"), flagged(review.moderation_flagged)}
+          ],
+          fn {_, value} -> is_nil(value) end
+        )
+    else
+      base
+    end
+  end
+
+  defp direction("input"), do: gettext("Input")
+  defp direction("output"), do: gettext("Output")
+  defp direction(_), do: nil
+  defp action("allow"), do: gettext("Allowed")
+  defp action("review"), do: gettext("Held for review")
+  defp action("block"), do: gettext("Blocked")
+  defp action(_), do: nil
+  defp policy("strict_v1"), do: gettext("Strict policy")
+  defp policy("text_coaching_v1"), do: gettext("Text coaching policy")
+  defp policy(_), do: nil
+  defp probability(nil), do: nil
+  defp probability(value), do: :erlang.float_to_binary(value / 1, decimals: 2)
+  defp flagged(true), do: gettext("Yes")
+  defp flagged(false), do: gettext("No")
+  defp flagged(_), do: nil
+
+  defp hold_reason("output_safety_review_required"),
+    do: gettext("Answer withheld: output review needs attention.")
+
+  defp hold_reason("output_safety_blocked"),
+    do: gettext("Answer withheld: output safety checks blocked it.")
+
+  defp hold_reason("output_safety_unavailable"),
+    do: gettext("Answer withheld: output safety checks were unavailable.")
+
+  defp hold_reason("safety_review_required"), do: gettext("Input review needs attention.")
+  defp hold_reason("safety_blocked"), do: gettext("Input safety checks blocked the request.")
+  defp hold_reason("safety_unavailable"), do: gettext("Input safety checks were unavailable.")
+  defp hold_reason(_), do: gettext("The request could not continue safely.")
+
   defp activity("request"), do: gettext("Request recorded")
   defp activity("request_reserved"), do: gettext("Budget reserved")
   defp activity("provider_output"), do: gettext("Response recorded")
@@ -224,6 +316,7 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
   defp activity("mode_changed"), do: gettext("Mode changed")
   defp activity("token_limit_changed"), do: gettext("Token limit changed")
   defp activity("conversation_started"), do: gettext("Conversation started")
+  defp activity("spend_observation"), do: gettext("Provider usage recorded")
   defp activity("audit_viewed"), do: gettext("Audit accessed")
   defp activity(_), do: gettext("Recorded activity")
   defp outcome("released"), do: gettext("Released")

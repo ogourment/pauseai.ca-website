@@ -10,7 +10,8 @@ defmodule PauseAiCa.AssistantFixtures do
 
       {:ok,
        %{
-         "text" => "Use the contact filters to choose a city.",
+         "text" =>
+           Keyword.get(options, :response_text, "Use the contact filters to choose a city."),
          "model" => mode.model,
          "usage" => %{"input_tokens" => 70, "output_tokens" => 10}
        }}
@@ -47,7 +48,7 @@ defmodule PauseAiCa.AssistantFixtures do
     def confirm(_, _), do: :ok
   end
 
-  def configuration(observer \\ nil) do
+  def configuration(observer \\ nil, options \\ []) do
     [
       operations_adapter: {Operations, []},
       pricing: %{
@@ -70,7 +71,10 @@ defmodule PauseAiCa.AssistantFixtures do
         "openai" => %{"project_ref" => "synthetic-account"},
         "jev" => %{"project_ref" => "synthetic-account"}
       },
-      provider: {Provider, [api_key: "synthetic-fixture", observer: observer]},
+      provider:
+        {Provider,
+         [api_key: "synthetic-fixture", observer: observer] ++
+           Keyword.take(options, [:response_text])},
       safety: [
         moderation: {Moderation, [api_key: "synthetic-fixture"]},
         jev: {Jev, [api_key: "synthetic-fixture"]}

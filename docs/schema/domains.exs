@@ -3,7 +3,7 @@
     id: "agent_assistant",
     title: "Assistant settings, quotas and protected audit",
     tables:
-      ~w(agent_assistant_anchor_checkpoints agent_assistant_alerts agent_assistant_audit_entries agent_assistant_preferences agent_assistant_requests agent_assistant_settings agent_assistant_streams)
+      ~w(agent_assistant_anchor_checkpoints agent_assistant_alerts agent_assistant_audit_entries agent_assistant_preferences agent_assistant_requests agent_assistant_settings agent_assistant_spend_entries agent_assistant_streams)
   },
   %{
     id: "blog",
