@@ -4,7 +4,7 @@ defmodule PauseAiCa.MixProject do
   def project do
     [
       app: :pauseai_ca,
-      version: "0.6.12",
+      version: "0.6.13",
       elixir: "~> 1.17",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -70,7 +70,7 @@ defmodule PauseAiCa.MixProject do
       _ ->
         {:phoenix_agent_assistant,
          git: "https://github.com/ogourment/phoenix_agent_assistant-compiled.git",
-         ref: "4965842b9027e681dd9448cd489e192223421e1c"}
+         ref: "05babba95e34e6c88f1ba94f67de3a530d8c2756"}
     end
   end
 
@@ -162,15 +162,16 @@ defmodule PauseAiCa.MixProject do
         "test"
       ],
       precommit: [
-        "ecto.create --quiet",
-        "ecto.migrate --quiet",
-        "acceptance.schema_diagram",
+        # Extraction recompiles modules. Complete it before database tasks start the app.
         "format --check-formatted",
         "gettext.extract --check-up-to-date",
         "i18n.check",
         "compile --warnings-as-errors",
         # Use a fresh dependency graph and leave the lockfile unchanged.
         "cmd mix deps.unlock --check-unused",
+        "ecto.create --quiet",
+        "ecto.migrate --quiet",
+        "acceptance.schema_diagram",
         "test"
       ]
     ]
