@@ -472,14 +472,15 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
               </div>
             </details>
             <.input
-              field={@form[:moderator_contact]}
-              label={gettext("Public manager contact")}
-              maxlength="200"
-            />
-            <.input
               field={@form[:whatsapp_enabled]}
               type="checkbox"
               label={gettext("Offer a manager-approved WhatsApp group")}
+            />
+            <.input
+              :if={@form[:whatsapp_enabled].value in [true, "true"]}
+              field={@form[:moderator_contact]}
+              label={gettext("Private WhatsApp verification contact")}
+              maxlength="200"
             />
             <.input
               field={@form[:whatsapp_invite_url]}

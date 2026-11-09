@@ -57,6 +57,8 @@ defmodule PauseAiCa.IncubatorsTest do
     assert Incubators.upcoming_event?(public, ~U[2099-02-10 18:29:59Z])
     refute Incubators.upcoming_event?(public, ~U[2099-02-10 18:30:00Z])
     refute Map.has_key?(public, :whatsapp_invite_url)
+    refute Map.has_key?(public, :moderator_contact)
+    refute Enum.any?(Incubators.public_groups(), &Map.has_key?(&1, :moderator_contact))
   end
 
   test "event configuration rejects partial metadata, invalid zones and unsafe links", c do

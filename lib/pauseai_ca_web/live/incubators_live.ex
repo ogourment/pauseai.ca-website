@@ -391,9 +391,6 @@ defmodule PauseAiCaWeb.IncubatorsLive do
         </div>
         <div :if={@group} class="space-y-5">
           <p class="whitespace-pre-line">{summary(@group, @locale)}</p>
-          <p :if={@group.moderator_contact not in [nil, ""]}>
-            {gettext("Group manager")}: <span class="break-words">{@group.moderator_contact}</span>
-          </p>
           <div :if={@membership} class="rounded-xl bg-base-200 p-4 space-y-2" id="my-membership">
             <p>{gettext("Your request")}: <strong>{status(@membership.status)}</strong></p>
             <p :if={@membership.external_removal_pending}>

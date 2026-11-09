@@ -44,6 +44,16 @@ defmodule PauseAiCaWeb.IncubatorsLiveTest do
     end
   end
 
+  test "group pages keep organizer contact details private", c do
+    for locale <- ["en", "fr"] do
+      {:ok, view, html} =
+        live(log_in_user(build_conn(), c.member), "/groups/#{c.group.id}/join?locale=#{locale}")
+
+      refute html =~ "manager@example.org"
+      refute render(view) =~ "manager@example.org"
+    end
+  end
+
   test "published incubators offer waitlist and help with localized upcoming event", c do
     assert {:ok, profile} =
              Incubators.configure(

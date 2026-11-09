@@ -8,9 +8,14 @@ defmodule PauseAiCa.Incubators do
   alias PauseAiCa.Volunteers.{Group, Manager}
   alias PauseAiCa.Incubators.{Profile, Membership, Event}
 
-  @public ~w(group_id name_en name_fr summary_en summary_fr fsas stage events_url next_event_title_en next_event_title_fr next_event_starts_at next_event_timezone next_event_url moderator_contact whatsapp_enabled)a
+  @public ~w(group_id name_en name_fr summary_en summary_fr fsas stage events_url next_event_title_en next_event_title_fr next_event_starts_at next_event_timezone next_event_url whatsapp_enabled)a
   @profile_fields Enum.reject(@public, &(&1 == :group_id)) ++
-                    [:published, :whatsapp_invite_url, :whatsapp_approval_confirmed]
+                    [
+                      :published,
+                      :moderator_contact,
+                      :whatsapp_invite_url,
+                      :whatsapp_approval_confirmed
+                    ]
 
   def public_groups(fsa \\ nil) do
     Repo.all(from p in Profile, where: p.published, order_by: p.name_en)

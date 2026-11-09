@@ -1050,7 +1050,7 @@ msgstr "Nous l’avons enregistrée comme étant en attente de confirmation."
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:1098
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:1107
 #: lib/pauseai_ca_web/live/donate_live.ex:536
-#: lib/pauseai_ca_web/live/incubators_live.ex:451
+#: lib/pauseai_ca_web/live/incubators_live.ex:448
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:404
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:667
 #: lib/pauseai_ca_web/live/participation_form.ex:487
@@ -1552,7 +1552,7 @@ msgstr ""
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:710
 #: lib/pauseai_ca_web/live/donate_live.ex:539
 #: lib/pauseai_ca_web/live/email_preferences_live.ex:173
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:528
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:529
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:667
 #: lib/pauseai_ca_web/live/participation_form.ex:522
 #: lib/pauseai_ca_web/live/user_live/login.ex:45
@@ -3865,7 +3865,7 @@ msgstr "Compte et historique Brevo"
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:1061
 #: lib/pauseai_ca_web/live/assistant_audit_live.ex:164
 #: lib/pauseai_ca_web/live/assistant_audit_live.ex:192
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:691
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:692
 #: lib/pauseai_ca_web/live/tasks_live.ex:75
 #: lib/pauseai_ca_web/live/tasks_live.ex:414
 #, elixir-autogen, elixir-format
@@ -4851,7 +4851,7 @@ msgstr ""
 "puis déclaré à tort avoir obéi. Le dialogue du jeu est inventé."
 
 #: lib/pauseai_ca_web/controllers/rogue_game_html.ex:57
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:682
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:683
 #, elixir-autogen, elixir-format
 msgid "Coordinator"
 msgstr "Coordination"
@@ -6621,7 +6621,7 @@ msgid "Withdraw my local request"
 msgstr "Retirer ma demande locale"
 
 #: lib/pauseai_ca_web/controllers/participation_html/action.html.heex:31
-#: lib/pauseai_ca_web/live/incubators_live.ex:437
+#: lib/pauseai_ca_web/live/incubators_live.ex:434
 #, elixir-autogen, elixir-format
 msgid "Withdraw request"
 msgstr "Retirer la demande"
@@ -7968,7 +7968,7 @@ msgstr "Compte enregistré %{id}"
 msgid "A manager must confirm removal from the external group before a new request."
 msgstr "Un responsable doit confirmer le retrait du groupe externe avant une nouvelle demande."
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:506
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:507
 #, elixir-autogen
 msgid "A superadmin publishes this group in the public directory."
 msgstr "Un superadministrateur publie ce groupe dans le répertoire public."
@@ -7984,7 +7984,7 @@ msgstr "Admission confirmée"
 msgid "An invitation is not available yet. Contact the group manager."
 msgstr "L’invitation n’est pas encore disponible. Contactez le responsable du groupe."
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:617
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:618
 #, elixir-autogen
 msgid "Approve request"
 msgstr "Approuver la demande"
@@ -8004,22 +8004,22 @@ msgstr "Vérifiez les champs obligatoires, les secteurs postaux et les liens sé
 msgid "Configuration updated"
 msgstr "Configuration modifiée"
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:631
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:632
 #, elixir-autogen
 msgid "Confirm admission"
 msgstr "Confirmer l’admission"
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:662
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:663
 #, elixir-autogen
 msgid "Confirm external removal"
 msgstr "Confirmer le retrait externe"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:406
+#: lib/pauseai_ca_web/live/incubators_live.ex:403
 #, elixir-autogen
 msgid "Create private matching reference"
 msgstr "Créer une référence privée"
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:624
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:625
 #, elixir-autogen
 msgid "Decline request"
 msgstr "Refuser la demande"
@@ -8031,7 +8031,7 @@ msgstr "Refuser la demande"
 msgid "Declined"
 msgstr "Refusée"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:448
+#: lib/pauseai_ca_web/live/incubators_live.ex:445
 #, elixir-autogen
 msgid "Edit your request"
 msgstr "Modifier votre demande"
@@ -8051,7 +8051,7 @@ msgstr "Nom en anglais"
 msgid "External removal confirmed"
 msgstr "Retrait externe confirmé"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:400
+#: lib/pauseai_ca_web/live/incubators_live.ex:397
 #, elixir-autogen
 msgid "External removal is awaiting manager confirmation."
 msgstr "Le retrait externe attend la confirmation d’un responsable."
@@ -8092,17 +8092,12 @@ msgstr "La configuration du groupe a été enregistrée."
 msgid "Group events"
 msgstr "Événements du groupe"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:395
-#, elixir-autogen
-msgid "Group manager"
-msgstr "Responsable du groupe"
-
 #: lib/pauseai_ca_web/live/incubator_management_live.ex:185
 #, elixir-autogen
 msgid "Group membership updated."
 msgstr "La participation au groupe a été mise à jour."
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:678
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:679
 #, elixir-autogen
 msgid "Group role"
 msgstr "Rôle dans le groupe"
@@ -8123,23 +8118,23 @@ msgstr "Groupe modifié"
 msgid "Home"
 msgstr "Accueil"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:475
+#: lib/pauseai_ca_web/live/incubators_live.ex:472
 #, elixir-autogen
 msgid "I agree to follow these conduct rules."
 msgstr "Je m’engage à respecter ces règles de conduite."
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:492
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:493
 #, elixir-autogen
 msgid "I confirmed that managers approve new members in WhatsApp."
 msgstr "J’ai confirmé que les responsables approuvent les nouveaux membres dans WhatsApp."
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:608
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:609
 #, elixir-autogen
 msgid "I verified this member's admission in the external group."
 msgstr "J’ai vérifié l’admission de cette personne dans le groupe externe."
 
 #: lib/pauseai_ca_web/live/incubator_management_live.ex:333
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:565
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:566
 #, elixir-autogen
 msgid "Identifier matched"
 msgstr "Identifiant vérifié"
@@ -8162,19 +8157,19 @@ msgstr "Demande de participation enregistrée"
 msgid "Local groups"
 msgstr "Groupes locaux"
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:537
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:683
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:538
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:684
 #, elixir-autogen
 msgid "Manager"
 msgstr "Responsable"
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:589
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:590
 #, elixir-autogen
 msgid "Match identifier"
 msgstr "Vérifier l’identifiant"
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:537
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:681
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:538
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:682
 #, elixir-autogen
 msgid "Member"
 msgstr "Membre"
@@ -8189,22 +8184,22 @@ msgstr "Participation retirée"
 msgid "Membership suspended"
 msgstr "Participation suspendue"
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:692
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:693
 #, elixir-autogen
 msgid "No activity yet."
 msgstr "Aucune activité pour le moment."
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:549
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:550
 #, elixir-autogen
 msgid "No requests yet."
 msgstr "Aucune demande pour le moment."
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:482
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:477
 #, elixir-autogen
 msgid "Offer a manager-approved WhatsApp group"
 msgstr "Proposer un groupe WhatsApp avec admission approuvée par les responsables"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:426
+#: lib/pauseai_ca_web/live/incubators_live.ex:423
 #, elixir-autogen
 msgid "Open WhatsApp invitation"
 msgstr "Ouvrir l’invitation WhatsApp"
@@ -8225,12 +8220,12 @@ msgstr "Veuillez attendre une minute avant de demander une nouvelle référence.
 msgid "Postal areas"
 msgstr "Secteurs postaux"
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:487
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:488
 #, elixir-autogen
 msgid "Private WhatsApp invitation link"
 msgstr "Lien d’invitation WhatsApp privé"
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:600
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:601
 #, elixir-autogen
 msgid "Private moderation reason"
 msgstr "Motif de modération privé"
@@ -8250,27 +8245,22 @@ msgstr "Répertoire public"
 msgid "Public events link"
 msgstr "Lien public vers les événements"
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:476
-#, elixir-autogen
-msgid "Public manager contact"
-msgstr "Coordonnées publiques du responsable"
-
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:503
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:504
 #, elixir-autogen
 msgid "Publish in the public directory"
 msgstr "Publier dans le répertoire public"
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:583
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:584
 #, elixir-autogen
 msgid "Reference received privately from this applicant"
 msgstr "Référence reçue en privé de cette personne"
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:645
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:646
 #, elixir-autogen
 msgid "Remove membership"
 msgstr "Retirer la participation"
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:653
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:654
 #, elixir-autogen
 msgid "Remove this person from the external group, then confirm completion here."
 msgstr "Retirez cette personne du groupe externe, puis confirmez le retrait ici."
@@ -8291,7 +8281,7 @@ msgid "Request declined"
 msgstr "Demande refusée"
 
 #: lib/pauseai_ca_web/live/incubators_live.ex:330
-#: lib/pauseai_ca_web/live/incubators_live.ex:449
+#: lib/pauseai_ca_web/live/incubators_live.ex:446
 #, elixir-autogen
 msgid "Request to join"
 msgstr "Demander à rejoindre"
@@ -8301,32 +8291,32 @@ msgstr "Demander à rejoindre"
 msgid "Request withdrawn"
 msgstr "Demande retirée"
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:546
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:547
 #, elixir-autogen
 msgid "Requests and members"
 msgstr "Demandes et membres"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:467
+#: lib/pauseai_ca_web/live/incubators_live.ex:464
 #, elixir-autogen
 msgid "Respect others, protect personal information and follow the group manager's conduct guidance."
 msgstr "Respectez les autres, protégez les renseignements personnels et suivez les consignes de conduite du responsable du groupe."
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:508
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:509
 #, elixir-autogen
 msgid "Save configuration"
 msgstr "Enregistrer la configuration"
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:686
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:687
 #, elixir-autogen
 msgid "Save group role"
 msgstr "Enregistrer le rôle"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:481
+#: lib/pauseai_ca_web/live/incubators_live.ex:478
 #, elixir-autogen
 msgid "Save request"
 msgstr "Enregistrer la demande"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:408
+#: lib/pauseai_ca_web/live/incubators_live.ex:405
 #, elixir-autogen
 msgid "Send this reference privately to the group manager using your WhatsApp account. It expires after 15 minutes and can be used once."
 msgstr "Envoyez cette référence en privé au responsable du groupe depuis votre compte WhatsApp. Elle expire après 15 minutes et ne sert qu’une fois."
@@ -8336,12 +8326,12 @@ msgstr "Envoyez cette référence en privé au responsable du groupe depuis votr
 msgid "Separate multiple areas with commas. These areas describe the group; they do not grant membership."
 msgstr "Séparez les secteurs par des virgules. Ces secteurs décrivent le groupe ; ils n’accordent pas l’adhésion."
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:419
+#: lib/pauseai_ca_web/live/incubators_live.ex:416
 #, elixir-autogen
 msgid "Show my invitation"
 msgstr "Afficher mon invitation"
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:638
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:639
 #, elixir-autogen
 msgid "Suspend membership"
 msgstr "Suspendre la participation"
@@ -8351,7 +8341,7 @@ msgstr "Suspendre la participation"
 msgid "Suspended"
 msgstr "Suspendue"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:428
+#: lib/pauseai_ca_web/live/incubators_live.ex:425
 #, elixir-autogen
 msgid "The group manager must approve admission in WhatsApp. Website approval does not add you automatically."
 msgstr "Le responsable du groupe doit approuver votre admission dans WhatsApp. L’approbation sur le site ne vous ajoute pas automatiquement."
@@ -8395,22 +8385,22 @@ msgstr "Cette référence est invalide, expirée ou déjà utilisée. Demandez-e
 msgid "Unavailable"
 msgstr "Indisponible"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:460
+#: lib/pauseai_ca_web/live/incubators_live.ex:457
 #, elixir-autogen
 msgid "Use the phone number or identifier the manager can recognize in WhatsApp. Only group managers can review it."
 msgstr "Utilisez le numéro de téléphone ou l’identifiant que le responsable peut reconnaître dans WhatsApp. Seuls les responsables du groupe peuvent le consulter."
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:495
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:496
 #, elixir-autogen
 msgid "Website approval and WhatsApp admission are separate. Confirm admission manually after checking the external group."
 msgstr "L’approbation sur le site et l’admission dans WhatsApp sont distinctes. Confirmez l’admission manuellement après vérification dans le groupe externe."
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:564
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:565
 #, elixir-autogen
 msgid "WhatsApp identifier"
 msgstr "Identifiant WhatsApp"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:435
+#: lib/pauseai_ca_web/live/incubators_live.ex:432
 #, elixir-autogen
 msgid "Withdraw your request and group access?"
 msgstr "Retirer votre demande et votre accès au groupe ?"
@@ -8420,12 +8410,12 @@ msgstr "Retirer votre demande et votre accès au groupe ?"
 msgid "You do not manage any groups."
 msgstr "Vous ne gérez aucun groupe."
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:455
+#: lib/pauseai_ca_web/live/incubators_live.ex:452
 #, elixir-autogen
 msgid "Your WhatsApp identifier"
 msgstr "Votre identifiant WhatsApp"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:398
+#: lib/pauseai_ca_web/live/incubators_live.ex:395
 #, elixir-autogen
 msgid "Your request"
 msgstr "Votre demande"
@@ -8450,12 +8440,12 @@ msgstr "Recharger et abandonner les modifications non enregistrées de votre dem
 msgid "Reload request"
 msgstr "Recharger la demande"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:479
+#: lib/pauseai_ca_web/live/incubators_live.ex:476
 #, elixir-autogen
 msgid "Please agree to the conduct rules before saving your request."
 msgstr "Veuillez accepter les règles de conduite avant d’enregistrer votre demande."
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:462
+#: lib/pauseai_ca_web/live/incubators_live.ex:459
 #, elixir-autogen
 msgid "When joining with a phone number, other WhatsApp group members can see that number. Use an active username where supported."
 msgstr "Si vous rejoignez le groupe avec un numéro de téléphone, les autres membres WhatsApp peuvent le voir. Utilisez un nom d’utilisateur actif lorsque cette option est proposée."
@@ -12132,12 +12122,12 @@ msgstr "Minimum atteint"
 msgid "%{amount} / %{minimum} pledged"
 msgstr "%{amount} / %{minimum} en promesses de don"
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:518
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:519
 #, elixir-autogen, elixir-format
 msgid "Add existing account"
 msgstr "Ajouter un compte existant"
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:539
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:540
 #, elixir-autogen, elixir-format
 msgid "Add member"
 msgstr "Ajouter un membre"
@@ -12152,7 +12142,7 @@ msgstr "Choisissez un compte existant dont l’adresse courriel est confirmée."
 msgid "Complete the existing WhatsApp identity matching process before approval."
 msgstr "Terminez la vérification de l’identité WhatsApp avant l’approbation."
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:562
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:563
 #, elixir-autogen, elixir-format
 msgid "Conduct acknowledgement has not been recorded for this account."
 msgstr "L’acceptation des règles de conduite n’a pas été enregistrée pour ce compte."
@@ -12162,8 +12152,8 @@ msgstr "L’acceptation des règles de conduite n’a pas été enregistrée pou
 msgid "Member added by organizer"
 msgstr "Membre ajouté par un responsable"
 
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:533
-#: lib/pauseai_ca_web/live/incubator_management_live.ex:536
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:534
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:537
 #, elixir-autogen, elixir-format
 msgid "Role"
 msgstr "Rôle"
@@ -12333,3 +12323,8 @@ msgstr "Demandes pour rejoindre un groupe local et offres d’aide. Choisissez u
 #, elixir-autogen, elixir-format
 msgid "The independent security receiver verifies the integrity of the assistant’s activity log."
 msgstr "Le service de sécurité indépendant vérifie l’intégrité du journal d’activité de l’assistant."
+
+#: lib/pauseai_ca_web/live/incubator_management_live.ex:482
+#, elixir-autogen, elixir-format
+msgid "Private WhatsApp verification contact"
+msgstr "Coordonnées privées pour la vérification WhatsApp"
