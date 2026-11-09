@@ -177,6 +177,96 @@ defmodule PauseAiCa.Incubators do
     end
   end
 
+  @doc "Superadmin enrollment of an existing confirmed account, without recording a conduct acknowledgement."
+  def add_existing_member(%Scope{user: %{id: actor_id}} = scope, group_id, email, role)
+      when is_binary(email) and role in ~w(member manager) do
+    with true <- Volunteers.superadmin?(scope), true <- uuid?(group_id) do
+      transaction(fn ->
+        lock_group!(scope, group_id)
+        actor = Repo.one(from u in User, where: u.id == ^actor_id, lock: "FOR SHARE")
+        unless actor && actor.superadmin && actor.confirmed_at, do: Repo.rollback(:forbidden)
+        Repo.one(from p in Profile, where: p.group_id == ^group_id, lock: "FOR UPDATE")
+        address = String.downcase(String.trim(email))
+
+        user =
+          Repo.one(
+            from u in User,
+              where: u.email == ^address and not is_nil(u.confirmed_at),
+              lock: "FOR SHARE"
+          )
+
+        unless user, do: Repo.rollback(:confirmed_account_required)
+        current = Repo.get_by(Membership, group_id: group_id, user_id: user.id)
+
+        if current &&
+             (current.status in ~w(withdrawn rejected suspended removed) ||
+                current.external_removal_pending),
+           do: Repo.rollback(:reactivation_not_allowed)
+
+        manager_registered =
+          Repo.exists?(
+            from m in Manager, where: m.group_id == ^group_id and m.user_id == ^user.id
+          )
+
+        registry_matches =
+          if role == "manager", do: manager_registered, else: not manager_registered
+
+        if current && current.status in ~w(approved admitted) do
+          if current.role == role and registry_matches do
+            {:ok, applicant_view(current)}
+          else
+            case delegate(scope, group_id, current.id, role, current.revision) do
+              {:ok, updated} -> {:ok, updated}
+              {:error, reason} -> Repo.rollback(reason)
+            end
+          end
+        else
+          membership =
+            current ||
+              Repo.insert!(%Membership{
+                group_id: group_id,
+                user_id: user.id,
+                display_name:
+                  if(is_binary(user.name) and String.trim(user.name) != "",
+                    do: String.trim(user.name),
+                    else: user.email
+                  ),
+                conduct_at: nil
+              })
+
+          approved =
+            case decide(scope, group_id, membership.id, :approve, %{}, membership.revision) do
+              {:ok, approved} -> approved
+              {:error, reason} -> Repo.rollback(reason)
+            end
+
+          added =
+            if role == "manager" or manager_registered do
+              case delegate(scope, group_id, approved.id, role, approved.revision) do
+                {:ok, delegated} -> delegated
+                {:error, reason} -> Repo.rollback(reason)
+              end
+            else
+              approved
+            end
+
+          event(scope, group_id, membership.id, "member_added", %{
+            source: "admin_enrollment",
+            role: role,
+            revision: added.revision,
+            conduct_acknowledged: not is_nil(membership.conduct_at)
+          })
+
+          {:ok, added}
+        end
+      end)
+    else
+      _ -> {:error, :forbidden}
+    end
+  end
+
+  def add_existing_member(_, _, _, _), do: {:error, :forbidden}
+
   def issue_reference(scope, group_id, revision) do
     with :ok <- confirmed(scope), true <- uuid?(group_id) do
       transaction(fn ->

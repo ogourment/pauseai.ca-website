@@ -19,6 +19,8 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
         roster: [],
         events: [],
         error: nil,
+        add_member_error: nil,
+        add_member_form: to_form(%{"email" => "", "role" => "member"}, as: "member"),
         form: to_form(%{}, as: "profile"),
         superadmin: false,
         superadmin_nonmember: false
@@ -92,6 +94,37 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
       {:error, reason} ->
         {:noreply,
          assign(socket, form: to_form(attrs, as: "profile"), error: UI.error_text(reason))}
+    end
+  end
+
+  defp action("add-existing-member", %{"member" => attrs, "_group_ref" => ref}, socket) do
+    result =
+      if ref == socket.assigns.group_id and Volunteers.superadmin?(socket.assigns.current_scope),
+        do:
+          Incubators.add_existing_member(
+            socket.assigns.current_scope,
+            ref,
+            attrs["email"],
+            attrs["role"]
+          ),
+        else: {:error, :forbidden}
+
+    case result do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> reload(false)
+         |> assign(
+           add_member_error: nil,
+           add_member_form: to_form(%{"email" => "", "role" => "member"}, as: "member")
+         )}
+
+      {:error, reason} ->
+        {:noreply,
+         assign(socket,
+           add_member_error: add_member_error(reason),
+           add_member_form: to_form(attrs, as: "member")
+         )}
     end
   end
 
@@ -260,6 +293,17 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
   defp management_path(id, locale),
     do: "/manage/groups?" <> URI.encode_query(%{group: id, locale: locale})
 
+  defp add_member_error(:confirmed_account_required),
+    do: gettext("Choose an existing confirmed account.")
+
+  defp add_member_error(:reactivation_not_allowed),
+    do: gettext("This membership cannot be reactivated through account enrollment.")
+
+  defp add_member_error(:matching_required),
+    do: gettext("Complete the existing WhatsApp identity matching process before approval.")
+
+  defp add_member_error(reason), do: UI.error_text(reason)
+  defp event_label("member_added"), do: gettext("Member added by organizer")
   defp event_label("configure"), do: gettext("Configuration updated")
   defp event_label("request"), do: gettext("Join request saved")
   defp event_label("reference_issued"), do: gettext("Private reference created")
@@ -403,6 +447,40 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
             </p>
             <button type="submit" class="btn btn-primary">{gettext("Save configuration")}</button>
           </.form>
+          <.form
+            :if={@superadmin and @group_id}
+            for={@add_member_form}
+            id="incubator-add-member"
+            phx-submit="add-existing-member"
+            class="rounded-xl border border-base-300 p-4 space-y-3"
+          >
+            <h2 class="text-xl font-semibold">{gettext("Add existing account")}</h2>
+            <fieldset
+              disabled={!connected?(@socket)}
+              class="grid gap-3 md:grid-cols-[minmax(0,1fr)_12rem_auto] md:items-end"
+            >
+              <input type="hidden" name="_group_ref" value={@group_id} />
+              <.input
+                id="enrollment-email"
+                field={@add_member_form[:email]}
+                type="email"
+                label={gettext("Email")}
+                required
+              />
+              <.input
+                id="enrollment-role"
+                aria-label={gettext("Role")}
+                field={@add_member_form[:role]}
+                type="select"
+                label={gettext("Role")}
+                options={[{gettext("Member"), "member"}, {gettext("Manager"), "manager"}]}
+              />
+              <button type="submit" class="btn btn-primary">{gettext("Add member")}</button>
+            </fieldset>
+            <p :if={@add_member_error} id="add-existing-member-error" role="alert">
+              {@add_member_error}
+            </p>
+          </.form>
           <section class="space-y-4" id="incubator-roster">
             <h2 class="text-xl font-semibold">{gettext("Requests and members")}</h2><p :if={
               @roster == []
@@ -419,6 +497,8 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
               <div>
                 <h3 class="text-lg font-semibold">{member.display_name}</h3><p>
                   {UI.status(member.status)}
+                </p><p :if={is_nil(member.conduct_at)} class="text-sm">
+                  {gettext("Conduct acknowledgement has not been recorded for this account.")}
                 </p><p :if={member.identifier} class="break-words">
                   {gettext("WhatsApp identifier")}: {member.identifier}
                 </p><p :if={member.matched_at}>{gettext("Identifier matched")}</p>

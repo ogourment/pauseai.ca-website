@@ -44,6 +44,69 @@ defmodule PauseAiCaWeb.IncubatorsLiveTest do
     end
   end
 
+  test "superadmin adds a confirmed existing account with guarded group reference and no invented conduct",
+       c do
+    {:ok, _} =
+      Incubators.configure(c.admin, c.group.id, %{whatsapp_enabled: false}, c.profile.revision)
+
+    {:ok, view, _} =
+      live(
+        log_in_user(build_conn(), c.admin.user),
+        "/manage/groups?group=#{c.group.id}&locale=en"
+      )
+
+    assert has_element?(view, "#incubator-add-member")
+    params = %{email: c.member.email, role: "manager"}
+    view |> form("#incubator-add-member", member: params) |> render_submit()
+
+    membership =
+      Repo.get_by!(PauseAiCa.Incubators.Membership, group_id: c.group.id, user_id: c.member.id)
+
+    assert membership.conduct_at == nil
+    assert membership.status == "approved"
+
+    assert has_element?(
+             view,
+             "#membership-#{membership.id}",
+             "Conduct acknowledgement has not been recorded"
+           )
+
+    count = Repo.aggregate(PauseAiCa.Incubators.Event, :count)
+    view |> form("#incubator-add-member", member: params) |> render_submit()
+    assert Repo.aggregate(PauseAiCa.Incubators.Event, :count) == count
+    assert Enum.any?(Volunteers.groups(Scope.for_user(c.member)), &(&1.id == c.group.id))
+    newcomer = user_fixture()
+
+    render_submit(view, "add-existing-member", %{
+      "_group_ref" => Ecto.UUID.generate(),
+      "member" => %{"email" => newcomer.email, "role" => "member"}
+    })
+
+    refute Repo.get_by(PauseAiCa.Incubators.Membership,
+             group_id: c.group.id,
+             user_id: newcomer.id
+           )
+
+    Repo.update!(Ecto.Changeset.change(c.admin.user, superadmin: false))
+
+    render_submit(view, "add-existing-member", %{
+      "_group_ref" => c.group.id,
+      "member" => %{"email" => newcomer.email, "role" => "member"}
+    })
+
+    refute Repo.get_by(PauseAiCa.Incubators.Membership,
+             group_id: c.group.id,
+             user_id: newcomer.id
+           )
+  end
+
+  test "ordinary group managers do not see the existing-account enrollment form", c do
+    {:ok, view, _} =
+      live(log_in_user(build_conn(), c.manager), "/manage/groups?group=#{c.group.id}&locale=en")
+
+    refute has_element?(view, "#incubator-add-member")
+  end
+
   test "superadmins manage all groups without membership or per-group grants", c do
     {:ok, other} = Volunteers.create_group(c.admin, %{name: "Other group"})
     memberships = Repo.aggregate(PauseAiCa.Incubators.Membership, :count)
