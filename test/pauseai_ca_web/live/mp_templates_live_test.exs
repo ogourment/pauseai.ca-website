@@ -16,12 +16,18 @@ defmodule PauseAiCaWeb.MPTemplatesLiveTest do
     conn = log_in_user(c.conn, c.editor)
     {:ok, view, _} = live(conn, "/manage/mp-templates?locale=en")
 
+    assert has_element?(
+             view,
+             "[data-navigation-item='pauseai.mp-templates'][aria-current='page']"
+           )
+
     result =
       view
       |> form("#mp-template-create", campaign: %{slug: "synthetic-public-campaign"})
       |> render_submit()
 
     {:ok, view, _} = follow_redirect(result, conn)
+    assert has_element?(view, "[data-breadcrumb-label='synthetic-public-campaign']")
     assert {:ok, [template]} = MPTemplates.list(c.scope)
     view |> form("#mp-template-form", campaign: mp_template_payload()) |> render_submit()
     assert has_element?(view, "#mp-template-status", "Draft saved")

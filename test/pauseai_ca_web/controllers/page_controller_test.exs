@@ -66,12 +66,14 @@ defmodule PauseAiCaWeb.PageControllerTest do
 
     home = html_response(get(conn, ~p"/fr"), 200)
     assert home =~ ~s(href="/fr/a-propos")
-    assert home =~ "Événements à Montréal"
-    assert home =~ ~s(href="https://luma.com/pauseaimtl")
+    assert home =~ "Groupes locaux"
+    assert home =~ ~s(href="/fr/groupes")
     assert home =~ ~s(href="/fr/confidentialite")
     assert home =~ "Source"
 
-    assert html_response(get(conn, ~p"/en"), 200) =~ "Montréal events"
+    english_home = html_response(get(conn, ~p"/en"), 200)
+    assert english_home =~ "Local groups"
+    assert english_home =~ ~s(href="/en/groups")
   end
 
   test "a signed-in reader gets an authenticated bookmark action", %{conn: conn} do

@@ -318,12 +318,10 @@ defmodule PauseAiCaWeb.Layouts do
           class="inline-flex min-h-8 items-center whitespace-nowrap hover:text-stone-900 sm:mr-auto"
           href={if(@locale == "fr", do: ~p"/fr/a-propos", else: ~p"/en/about")}
         >{gettext("PauseAI Canada")} – {gettext("About")}</.link>
-        <a
+        <.link
           class="inline-flex min-h-8 items-center whitespace-nowrap hover:text-stone-900"
-          href="https://luma.com/pauseaimtl"
-          target="_blank"
-          rel="noopener noreferrer"
-        >{gettext("Montréal events")}</a>
+          href={if(@locale == "fr", do: ~p"/fr/groupes", else: ~p"/en/groups")}
+        >{gettext("Local groups")}</.link>
         <.link
           class="inline-flex min-h-8 items-center whitespace-nowrap hover:text-stone-900"
           href={if(@locale == "fr", do: ~p"/fr/confidentialite", else: ~p"/en/privacy")}

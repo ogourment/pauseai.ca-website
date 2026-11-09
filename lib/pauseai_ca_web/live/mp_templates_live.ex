@@ -196,9 +196,15 @@ defmodule PauseAiCaWeb.MPTemplatesLive do
       flash={@flash}
       current_scope={@current_scope}
       locale={@locale}
-      active_tab="mp_templates"
+      active_tab="mp-templates"
     >
-      <section id="mp-templates-management" class="crm-surface space-y-6">
+      <section
+        id="mp-templates-management"
+        data-breadcrumb-label={
+          if @template, do: @template.slug, else: gettext("MP campaign templates")
+        }
+        class="crm-surface space-y-6"
+      >
         <h1 class="font-heading text-2xl">{gettext("MP campaign templates")}</h1>
         <p>
           {gettext(
