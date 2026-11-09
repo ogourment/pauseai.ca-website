@@ -126,6 +126,28 @@ defmodule PauseAiCa.Assistant.OperationsTest do
            }
   end
 
+  test "recovery notifies open views after the published readiness cache was invalidated", c do
+    assert Operations.refresh(c.config) == %{audit_anchor: true, alerts: true}
+
+    state = %{
+      fingerprint: Operations.fingerprint(c.config),
+      checked_at: System.monotonic_time(:millisecond),
+      audit_anchor: true,
+      alerts: true
+    }
+
+    :persistent_term.put({Operations, :status}, state)
+    Operations.invalidate()
+    refute Operations.status(c.config).audit_anchor
+    Phoenix.PubSub.subscribe(PauseAiCa.PubSub, "agent_assistant:settings")
+
+    assert {:noreply, %{audit_anchor: true, alerts: true}} =
+             Operations.handle_info(:refresh, state)
+
+    assert_receive :assistant_settings_changed
+    assert Operations.status(c.config).audit_anchor
+  end
+
   test "pilot ceilings and published instruction revisions require fresh readiness", c do
     baseline = Operations.fingerprint(c.config)
 

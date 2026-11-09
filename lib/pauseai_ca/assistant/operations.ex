@@ -64,6 +64,7 @@ defmodule PauseAiCa.Assistant.Operations do
   end
 
   def handle_info(:refresh, state) do
+    published = :persistent_term.get({__MODULE__, :status}, state)
     configured = Application.get_env(:pauseai_ca, :agent_assistant, [])
     config = if configured[:anchor], do: Assistant.configuration(), else: configured
     current = refresh(config)
@@ -81,7 +82,7 @@ defmodule PauseAiCa.Assistant.Operations do
     :persistent_term.put({__MODULE__, :status}, updated)
 
     if Map.take(updated, [:audit_anchor, :alerts, :fingerprint]) !=
-         Map.take(state, [:audit_anchor, :alerts, :fingerprint]) and
+         Map.take(published, [:audit_anchor, :alerts, :fingerprint]) and
          Process.whereis(PauseAiCa.PubSub) do
       Phoenix.PubSub.broadcast(
         PauseAiCa.PubSub,
