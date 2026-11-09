@@ -270,6 +270,102 @@ defmodule PauseAiCa.ParticipationTest do
     refute Accounts.get_user_by_email("choices@example.org")
   end
 
+  test "confirming interest in another group preserves the first group at the same home location" do
+    local = attrs(%{"newsletter" => "false", "local_kind" => "waitlist"})
+    first_context = Map.put(context(), "incubator_group_id", Ecto.UUID.generate())
+    second_context = Map.put(context(), "incubator_group_id", Ecto.UUID.generate())
+
+    assert {:ok, :pending} = Participation.request(local, first_context, urls())
+    assert_receive {:email, first_mail}
+    assert {:ok, first} = Participation.confirm(token(first_mail, "confirm"))
+    age_request(first)
+
+    assert {:ok, :pending} = Participation.request(local, second_context, urls())
+    assert_receive {:email, second_mail}
+    assert {:ok, second} = Participation.confirm(token(second_mail, "confirm"))
+    assert Repo.reload!(first).state == "confirmed"
+    assert Repo.reload!(second).state == "confirmed"
+    age_request(second)
+
+    assert {:ok, :pending} =
+             Participation.request(
+               Map.merge(local, %{"local_kind" => "help", "city" => "Montréal", "fsa" => "H2X"}),
+               second_context,
+               urls()
+             )
+
+    assert_receive {:email, updated_mail}
+    assert {:ok, updated} = Participation.confirm(token(updated_mail, "confirm"))
+    assert updated.local_kind == "help"
+    assert Repo.reload!(first).state == "confirmed"
+    assert Repo.reload!(second).state == "superseded_local"
+    refute Repo.exists?(Newsletters.Subscription)
+  end
+
+  test "pending confirmations stay group-scoped and changed groups respect the email cooldown" do
+    local = attrs(%{"newsletter" => "false", "local_kind" => "waitlist"})
+    first_context = Map.put(context(), "incubator_group_id", Ecto.UUID.generate())
+    second_context = Map.put(context(), "incubator_group_id", Ecto.UUID.generate())
+
+    assert {:ok, :pending} = Participation.request(local, first_context, urls())
+    assert_receive {:email, first_mail}
+    assert {:ok, first} = Participation.capability(token(first_mail, "confirm"), :confirm)
+    age_request(first)
+
+    assert {:ok, :pending} = Participation.request(local, second_context, urls())
+    assert_receive {:email, second_mail}
+    assert Repo.reload!(first).state == "pending"
+    assert {:ok, :pending} = Participation.request(local, second_context, urls())
+
+    assert {:error, :changed_choices_cooldown} =
+             Participation.request(local, first_context, urls())
+
+    refute_receive {:email, _}
+
+    assert {:ok, _} = Participation.confirm(token(first_mail, "confirm"))
+    assert {:ok, _} = Participation.confirm(token(second_mail, "confirm"))
+    assert Repo.aggregate(from(r in Request, where: r.state == "confirmed"), :count) == 2
+    refute Repo.exists?(Accounts.User)
+  end
+
+  test "confirmation email names the chosen group instead of the person's home city" do
+    group = Repo.insert!(%PauseAiCa.Volunteers.Group{name: "Synthetic target"})
+
+    Repo.insert!(%PauseAiCa.Incubators.Profile{
+      group_id: group.id,
+      name_en: "Target incubator",
+      name_fr: "Incubateur cible",
+      published: true
+    })
+
+    request = %Request{
+      email: "person@example.org",
+      city: "Toronto",
+      fsa: "M5V",
+      local_kind: "waitlist",
+      context: %{"incubator_group_id" => group.id}
+    }
+
+    for {locale, name} <- [{"en", "Target incubator"}, {"fr", "Incubateur cible"}] do
+      mail =
+        Participation.Notifier.build(
+          %{request | locale: locale},
+          "https://example.org/confirm",
+          "https://example.org/withdraw",
+          request.email
+        )
+
+      assert mail.text_body =~ name
+      refute mail.text_body =~ "Toronto"
+    end
+  end
+
+  defp age_request(request) do
+    request
+    |> Ecto.Changeset.change(inserted_at: DateTime.add(DateTime.utc_now(), -61))
+    |> Repo.update!()
+  end
+
   test "local requests are confirmed-only, paginated and freshly restricted when ownership changes" do
     admin =
       PauseAiCa.AccountsFixtures.user_fixture()

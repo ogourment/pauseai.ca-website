@@ -4,6 +4,8 @@ defmodule PauseAiCa.Participation.Notifier do
   alias PauseAiCaWeb.Emails.Layout
 
   def build(request, url, withdrawal_url, recipient) do
+    {target_en, target_fr} = local_target(request)
+
     choices =
       [
         {request.newsletter, {"PauseAI Canada newsletter", "Infolettre de PauseAI Canada"}},
@@ -12,12 +14,10 @@ defmodule PauseAiCa.Participation.Notifier do
           "Votre compte pour conserver et noter vos actions"}},
         {not is_nil(request.local_kind),
          if(request.local_kind == "help",
-           do:
-             {"Offer of help: #{request.city || request.fsa}",
-              "Proposition d’aide : #{request.city || request.fsa}"},
+           do: {"Offer of help: #{target_en}", "Proposition d’aide : #{target_fr}"},
            else:
-             {"Local waitlist#{if request.local_kind, do: ": #{request.city || request.fsa}"}",
-              "Liste d’attente locale#{if request.local_kind, do: " : #{request.city || request.fsa}"}"}
+             {"Local waitlist#{if request.local_kind, do: ": #{target_en}"}",
+              "Liste d’attente locale#{if request.local_kind, do: " : #{target_fr}"}"}
          )}
       ]
       |> Enum.map(fn
@@ -70,5 +70,14 @@ defmodule PauseAiCa.Participation.Notifier do
     )
     |> html_body(html)
     |> text_body(text)
+  end
+
+  defp local_target(request) do
+    group_id = Map.get(request.context || %{}, "incubator_group_id")
+
+    case PauseAiCa.Incubators.public_group(group_id) do
+      {:ok, group} -> {group.name_en, group.name_fr}
+      _ -> {request.city || request.fsa, request.city || request.fsa}
+    end
   end
 end

@@ -59,6 +59,7 @@ defmodule PauseAiCa.Participation do
             do: Repo.rollback(:invalid_choices)
 
           now = DateTime.utc_now()
+          group_key = local_group_key(context)
 
           recent =
             Repo.one(
@@ -75,9 +76,10 @@ defmodule PauseAiCa.Participation do
             fields =
               ~w(name phone fsa city help_text newsletter account local_kind locale)a
 
-            if Map.take(recent, fields) == Map.take(values, fields),
-              do: Repo.rollback(:cooldown),
-              else: Repo.rollback(:changed_choices_cooldown)
+            if Map.take(recent, fields) == Map.take(values, fields) and
+                 local_group_key(recent.context) == group_key,
+               do: Repo.rollback(:cooldown),
+               else: Repo.rollback(:changed_choices_cooldown)
           end
 
           Repo.query!("SELECT pg_advisory_xact_lock(hashtextextended($1, 0))", [
@@ -89,7 +91,12 @@ defmodule PauseAiCa.Participation do
           if Repo.aggregate(from(r in Request, where: r.inserted_at > ^hour), :count) >= 100,
             do: Repo.rollback(:confirmation_unavailable)
 
-          Repo.update_all(from(r in Request, where: r.email == ^email and r.state == "pending"),
+          Repo.update_all(
+            from(r in Request,
+              where:
+                r.email == ^email and r.state == "pending" and
+                  fragment("coalesce(?->>'incubator_group_id', '')", r.context) == ^group_key
+            ),
             set: [state: "superseded", confirmation_hash: nil]
           )
 
@@ -360,13 +367,17 @@ defmodule PauseAiCa.Participation do
     end
 
     if request.local_kind do
+      group_key = local_group_key(request.context)
+
       Repo.update_all(
         from(r in Request,
           where:
             r.email == ^request.email and r.id != ^request.id and r.state == "confirmed" and
               not is_nil(r.local_kind) and
-              fragment("lower(coalesce(nullif(btrim(?), ''), ?))", r.city, r.fsa) ==
-                ^String.downcase(request.city || request.fsa || "")
+              fragment("coalesce(?->>'incubator_group_id', '')", r.context) == ^group_key and
+              (^group_key != "" or
+                 fragment("lower(coalesce(nullif(btrim(?), ''), ?))", r.city, r.fsa) ==
+                   ^String.downcase(request.city || request.fsa || ""))
         ),
         set: [state: "superseded_local"]
       )
@@ -471,6 +482,9 @@ defmodule PauseAiCa.Participation do
       _ -> {:error, :unauthorized}
     end
   end
+
+  defp local_group_key(%{"incubator_group_id" => id}) when is_binary(id), do: id
+  defp local_group_key(_), do: ""
 
   defp token, do: :crypto.strong_rand_bytes(32) |> Base.url_encode64(padding: false)
 
