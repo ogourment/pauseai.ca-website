@@ -99,6 +99,7 @@ defmodule PauseAiCa.Assistant.OperationsTest do
     assert {:noreply, %{audit_anchor: false, alerts: false}} =
              Operations.handle_info(:refresh, %{})
 
+    assert Assistant.alert_worker_configuration() == :disabled
     refute_received :unexpected_readiness_query
   end
 

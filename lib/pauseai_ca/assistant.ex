@@ -63,7 +63,8 @@ defmodule PauseAiCa.Assistant do
   end
 
   def alert_worker_configuration do
-    config = configuration()
+    configured = Application.get_env(:pauseai_ca, :agent_assistant, [])
+    config = if configured[:alert_delivery], do: configuration(), else: configured
     options = config[:alert_delivery] || []
 
     if operational_status(config).alerts == true and
