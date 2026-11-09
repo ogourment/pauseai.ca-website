@@ -2,7 +2,7 @@ defmodule PauseAiCaWeb.AdminContactsLive do
   use PauseAiCaWeb, :live_view
   alias PauseAiCa.{CRM, Volunteers}
   @impl true
-  def mount(params, _, socket) do
+  def mount(params, session, socket) do
     locale = PauseAiCaWeb.Site.locale(params, socket)
     Gettext.put_locale(PauseAiCaWeb.Gettext, locale)
 
@@ -11,6 +11,7 @@ defmodule PauseAiCaWeb.AdminContactsLive do
        assign(socket,
          locale: locale,
          page_title: gettext("Contacts"),
+         guided_login: PauseAiCa.Assistant.GuidedMode.session_fingerprint(session["user_token"]),
          records: [],
          selected_ids: [],
          invitation_ids: [],
@@ -57,7 +58,8 @@ defmodule PauseAiCaWeb.AdminContactsLive do
   end
 
   @impl true
-  def handle_params(params, _, socket) do
+  def handle_params(params, uri, socket) do
+    socket = assign(socket, guided_params: params, guided_uri: uri)
     scope = socket.assigns.current_scope
 
     socket =
@@ -114,6 +116,18 @@ defmodule PauseAiCaWeb.AdminContactsLive do
   end
 
   @impl true
+  def handle_event("assistant-guided-observe", %{"token" => token}, socket) do
+    PauseAiCa.Assistant.GuidedMode.observe(
+      socket.assigns.current_scope,
+      token,
+      socket.assigns.guided_uri,
+      socket.assigns.guided_params,
+      socket.assigns.guided_login
+    )
+
+    {:noreply, socket}
+  end
+
   def handle_event("search", params, socket) do
     values = %{
       locale: socket.assigns.locale,

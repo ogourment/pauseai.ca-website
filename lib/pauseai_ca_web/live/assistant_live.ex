@@ -3,6 +3,7 @@ defmodule PauseAiCaWeb.AssistantLive do
   use PauseAiCaWeb, :live_view
   alias PauseAiCa.{Accounts, Assistant}
   alias PauseAiCa.Accounts.Scope
+  alias PauseAiCa.Assistant.GuidedMode, as: Guide
 
   def mount(_, session, socket) do
     {user, _} =
@@ -20,6 +21,7 @@ defmodule PauseAiCaWeb.AssistantLive do
     if connected?(socket) do
       Process.send_after(self(), :refresh_access, 15_000)
       Phoenix.PubSub.subscribe(PauseAiCa.PubSub, "agent_assistant:settings")
+      if user, do: Phoenix.PubSub.subscribe(PauseAiCa.PubSub, Guide.topic(user.id))
     end
 
     {conversation, messages} = load_conversation(scope)
@@ -28,6 +30,16 @@ defmodule PauseAiCaWeb.AssistantLive do
     {:ok,
      assign(socket,
        current_scope: scope,
+       guide_session: %{
+         id: Ecto.UUID.generate(),
+         login: Guide.session_fingerprint(session["user_token"])
+       },
+       guide_mode: false,
+       guide_state: nil,
+       guide_count: nil,
+       guide_error: nil,
+       guide_available: guide_available?(scope, socket.assigns.locale),
+       pending_guided: false,
        eligible: Assistant.launcher_visible?(scope),
        open: false,
        mode: mode,
@@ -47,7 +59,80 @@ defmodule PauseAiCaWeb.AssistantLive do
       do: action(event, params, socket),
       else:
         {:noreply,
-         assign(socket, eligible: false, open: false, messages: [], draft: "", pending: false)}
+         assign(socket,
+           eligible: false,
+           open: false,
+           messages: [],
+           draft: "",
+           pending: false,
+           guide_state: nil
+         )}
+  end
+
+  defp action(
+         "assistant-guided-mode",
+         %{"enabled" => value},
+         %{assigns: %{pending: false}} = socket
+       )
+       when value in ["true", "false"] do
+    enabled =
+      value == "true" and guide_available?(socket.assigns.current_scope, socket.assigns.locale)
+
+    {:noreply, assign(socket, guide_mode: enabled, guide_error: nil)}
+  end
+
+  defp action("assistant-guide-next", _, %{assigns: %{guide_state: state}} = socket)
+       when is_map(state) do
+    case Guide.next(
+           socket.assigns.current_scope,
+           state,
+           socket.assigns.locale,
+           socket.assigns.guide_session
+         ) do
+      {:ok, pending, command} ->
+        {:noreply,
+         socket
+         |> assign(guide_state: pending, guide_error: nil)
+         |> push_event("paa:guided-command", command)}
+
+      _ ->
+        {:noreply, guide_failed(socket)}
+    end
+  end
+
+  defp action("assistant-guide-back", _, %{assigns: %{guide_state: state}} = socket)
+       when is_map(state) do
+    case Guide.back(
+           socket.assigns.current_scope,
+           state,
+           socket.assigns.locale,
+           socket.assigns.guide_session
+         ) do
+      {:ok, previous} ->
+        {:noreply,
+         socket
+         |> assign(guide_state: previous, guide_count: nil, guide_error: nil)
+         |> push_event("paa:guided-clear", %{})}
+
+      _ ->
+        {:noreply, guide_failed(socket)}
+    end
+  end
+
+  defp action("assistant-guide-exit", _, socket) do
+    Guide.exit(socket.assigns.current_scope, socket.assigns.locale)
+
+    {:noreply,
+     socket |> assign(guide_state: nil, guide_error: nil) |> push_event("paa:guided-clear", %{})}
+  end
+
+  defp action("assistant-guide-failed", %{"token" => token, "category" => category}, socket) do
+    if socket.assigns.guide_state && socket.assigns.guide_state.token == token do
+      Guide.failed(socket.assigns.current_scope, socket.assigns.locale, category)
+      {:noreply, guide_failed(socket)}
+    else
+      {:noreply, socket}
+    end
   end
 
   defp action("assistant-toggle", _, socket),
@@ -97,6 +182,7 @@ defmodule PauseAiCaWeb.AssistantLive do
     request_id = Ecto.UUID.generate()
     conversation = socket.assigns.conversation
     locale = socket.assigns.locale
+    guided = socket.assigns.guide_mode
 
     usage = load_usage(scope)
 
@@ -108,12 +194,13 @@ defmodule PauseAiCaWeb.AssistantLive do
             pending: true,
             draft: text,
             pending_text: text,
+            pending_guided: guided,
             error: nil,
             usage: usage,
             availability_error: nil
           )
           |> start_async(:assistant_reply, fn ->
-            Assistant.run(scope, request_id, text, conversation, locale)
+            Assistant.run(scope, request_id, text, conversation, locale, guided_mode: guided)
           end)
 
         {:noreply, socket}
@@ -141,11 +228,13 @@ defmodule PauseAiCaWeb.AssistantLive do
 
   def handle_async(:assistant_reply, {:ok, {:ok, reply}}, socket) do
     if Assistant.launcher_visible?(socket.assigns.current_scope) do
+      {socket, response_text} = reviewed_guide(socket, reply.text)
+
       messages =
         socket.assigns.messages ++
           [
             %{role: "user", text: socket.assigns.pending_text},
-            %{role: "assistant", text: reply.text}
+            %{role: "assistant", text: response_text}
           ]
 
       usage = load_usage(socket.assigns.current_scope)
@@ -159,7 +248,9 @@ defmodule PauseAiCaWeb.AssistantLive do
          pending_text: "",
          usage: usage,
          draft:
-           if(socket.assigns.draft == socket.assigns.pending_text,
+           if(
+             is_nil(socket.assigns.guide_error) and
+               socket.assigns.draft == socket.assigns.pending_text,
              do: "",
              else: socket.assigns.draft
            ),
@@ -182,6 +273,28 @@ defmodule PauseAiCaWeb.AssistantLive do
          availability_error(socket.assigns.current_scope, usage, socket.assigns.mode),
        error: gettext("The assistant is unavailable. Your message has been retained.")
      )}
+  end
+
+  def handle_info({:guided_page_observed, observation}, socket) do
+    state = socket.assigns.guide_state
+
+    if state && state.token == observation["token"] do
+      case Guide.acknowledge(
+             socket.assigns.current_scope,
+             state,
+             observation,
+             socket.assigns.locale,
+             socket.assigns.guide_session
+           ) do
+        {:ok, advanced, count} ->
+          {:noreply, assign(socket, guide_state: advanced, guide_count: count)}
+
+        _ ->
+          {:noreply, guide_failed(socket)}
+      end
+    else
+      {:noreply, socket}
+    end
   end
 
   def handle_info(:refresh_access, socket) do
@@ -226,13 +339,70 @@ defmodule PauseAiCaWeb.AssistantLive do
 
       assign(socket,
         eligible: true,
+        guide_available: guide_available?(scope, socket.assigns.locale),
         conversation: reference,
         messages: messages,
         usage: usage,
         availability_error: availability_error(scope, usage, socket.assigns.mode)
       )
     else
-      assign(socket, eligible: false, open: false, messages: [], draft: "", conversation: nil)
+      assign(socket,
+        eligible: false,
+        open: false,
+        messages: [],
+        draft: "",
+        conversation: nil,
+        guide_state: nil
+      )
+    end
+  end
+
+  defp guide_available?(scope, locale), do: match?({:ok, _, _}, Guide.manifest(scope, locale))
+
+  defp reviewed_guide(%{assigns: %{pending_guided: true}} = socket, text) do
+    case Guide.start(
+           socket.assigns.current_scope,
+           text,
+           socket.assigns.locale,
+           socket.assigns.guide_session
+         ) do
+      {:ok, state} ->
+        {assign(socket, guide_state: state, guide_error: nil, guide_count: nil, open: false),
+         gettext("Your guide is ready. Use Next to continue.")}
+
+      _ ->
+        {assign(socket,
+           guide_error: gettext("The guide could not be verified. Your message is retained.")
+         ), gettext("The guide could not be verified. Your message is retained.")}
+    end
+  end
+
+  defp reviewed_guide(socket, text), do: {socket, text}
+
+  defp guide_failed(socket) do
+    socket
+    |> assign(
+      guide_state: PhoenixAgentAssistant.GuidedMode.fail(socket.assigns.guide_state),
+      guide_error:
+        gettext("This page or your access changed. The guide stopped. Use Back or Exit.")
+    )
+    |> push_event("paa:guided-clear", %{})
+  end
+
+  defp guide_title(nil, _), do: ""
+
+  defp guide_title(state, count) do
+    case state.index do
+      0 ->
+        gettext("Step 1 of 2 · Open Contacts through the Admin menu.")
+
+      1 ->
+        gettext("Step 2 of 2 · Choose %{area} in Named areas.",
+          area: Guide.area_label(state.plan)
+        )
+
+      _ ->
+        gettext("Complete · %{count} contacts match this area.", count: count || 0)
     end
   end
 
@@ -359,7 +529,9 @@ defmodule PauseAiCaWeb.AssistantLive do
       draft={@draft}
       messages={@messages}
       pending={@pending}
-      error={@availability_error || @error}
+      error={@availability_error || @guide_error || @error}
+      guided_available={@guide_available}
+      guided_mode={@guide_mode}
       allow_new={true}
       usage_summary={usage_summary(@usage)}
       quota_exhausted={not is_nil(@availability_error)}
@@ -369,6 +541,7 @@ defmodule PauseAiCaWeb.AssistantLive do
           "normal" => gettext("Normal"),
           "high" => gettext("High"),
           assistant: gettext("Assistant"),
+          guided_mode: gettext("Guided mode"),
           new_conversation: gettext("New conversation"),
           move: gettext("Move assistant with arrow keys"),
           send: gettext("Send"),
@@ -380,6 +553,21 @@ defmodule PauseAiCaWeb.AssistantLive do
           message: gettext("Message"),
           working: gettext("Working…"),
           placeholder: gettext("How can I help?")
+        }
+      }
+    />
+    <PhoenixAgentAssistant.GuidedModeComponents.wizard
+      id="site-assistant-guide"
+      return_focus_id="site-assistant-launcher"
+      state={@guide_state}
+      title={guide_title(@guide_state, @guide_count)}
+      error={@guide_error}
+      labels={
+        %{
+          heading: gettext("Guided mode"),
+          next: gettext("Next"),
+          back: gettext("Back"),
+          exit: gettext("Exit")
         }
       }
     />

@@ -529,9 +529,10 @@ defmodule PauseAiCa.Assistant do
     _ -> {:error, :forbidden}
   end
 
-  def run(scope, request_id, text, conversation, locale \\ "en")
+  def run(scope, request_id, text, conversation, locale \\ "en"),
+    do: run(scope, request_id, text, conversation, locale, [])
 
-  def run(scope, request_id, text, conversation, locale)
+  def run(scope, request_id, text, conversation, locale, options)
       when is_binary(text) and locale in ["en", "fr"] do
     with true <- visible?(scope),
          {:ok, mode} <- mode(scope),
@@ -568,7 +569,10 @@ defmodule PauseAiCa.Assistant do
       messages =
         Enum.map(previous, fn message -> %{"role" => message.role, "text" => message.text} end)
 
-      with {:ok, request} <- PhoenixAgentAssistant.Context.with_history(request, messages) do
+      guided = Keyword.get(options, :guided_mode, false)
+
+      with {:ok, request} <- guided_request(scope, request, locale, guided),
+           {:ok, request} <- PhoenixAgentAssistant.Context.with_history(request, messages) do
         Runner.run(scope, request_id, request, __MODULE__, config)
       else
         _ -> {:error, :unavailable}
@@ -578,7 +582,16 @@ defmodule PauseAiCa.Assistant do
     end
   end
 
-  def run(_, _, _, _, _), do: {:error, :unavailable}
+  def run(_, _, _, _, _, _), do: {:error, :unavailable}
+
+  defp guided_request(_scope, request, _locale, false), do: {:ok, request}
+
+  defp guided_request(scope, request, locale, true) do
+    with {:ok, knowledge} <- PauseAiCa.Assistant.GuidedMode.context(scope, locale),
+         do: {:ok, put_in(request, ["context", "guided_mode"], knowledge)}
+  end
+
+  defp guided_request(_, _, _, _), do: {:error, :unavailable}
 
   @impl true
   def authorize(scope, _phase, admitted) do

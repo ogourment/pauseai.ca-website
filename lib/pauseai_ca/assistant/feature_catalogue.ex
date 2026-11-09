@@ -17,6 +17,9 @@ defmodule PauseAiCa.Assistant.FeatureCatalogue do
   @max_bytes 2 * 1024 * 1024
   @statuses ~w(success failure running ignored not_run)
   @specs [
+    {"crm-guided", "Guided contact geography",
+     "Preview a configured area through reviewed UI steps.", "/admin/contacts",
+     ["CRM-ASSIST-GUIDE-01"], nil, "0.6.14"},
     {"crm-geography", "Contact geography", "Filter contacts by recorded geography.",
      "/admin/contacts", ["GEO-PAI-01"], nil, "0.5.37"},
     {"newsletter-compose", "Newsletter composition", "Compose and review a language edition.",
@@ -133,7 +136,7 @@ defmodule PauseAiCa.Assistant.FeatureCatalogue do
         summary: summary,
         introduced_in: version,
         entry_path: path,
-        controls: [],
+        controls: if(id == "crm-guided", do: ["menu.contacts", "crm.geography.areas"], else: []),
         scenarios: for(prefix <- scenarios, locale <- ["en", "fr"], do: "#{prefix}-#{locale}"),
         enabled: is_nil(flag) or Application.get_env(:pauseai_ca, flag, false) == true,
         ready: true
