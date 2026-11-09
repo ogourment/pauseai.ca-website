@@ -179,6 +179,8 @@ defmodule PauseAiCaWeb.Router do
       live "/groups/:id/join", IncubatorsLive, :join
       live "/manage/blog", BlogEditorLive, :index
       live "/manage/blog/:id", BlogEditorLive, :show
+      live "/manage/mp-templates", MPTemplatesLive, :index
+      live "/manage/mp-templates/:id", MPTemplatesLive, :edit
       live "/manage/donations", DonationPageLive, :index
       live "/manage/groups", IncubatorManagementLive, :index
       live "/community/slack", SlackCommunityLive, :index
@@ -238,6 +240,8 @@ defmodule PauseAiCaWeb.Router do
       live "/en/blog/:slug", BlogLive, :show_en
       live "/fr/blogue", BlogLive, :index_fr
       live "/fr/blogue/:slug", BlogLive, :show_fr
+      live "/en/mp-templates/:slug", MPTemplateLive, :en
+      live "/fr/modeles-de-lettre/:slug", MPTemplateLive, :fr
       live "/en/groups", IncubatorsLive, :en
       live "/fr/groupes", IncubatorsLive, :fr
       live "/en/donate", DonateLive, :en

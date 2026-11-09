@@ -75,8 +75,11 @@ defmodule PauseAiCa.Campaigns.Letter do
   def unresolved_placeholders?(%__MODULE__{} = draft) do
     content = Enum.join([draft.subject, draft.body], "\n")
 
-    String.contains?(content, ["[your name]", "[votre nom]"]) or
-      Regex.match?(~r/\{[a-z_]+\}/i, content)
+    Regex.match?(~r/\{[a-z_]+\}|\{\{[^{}\n]*\}\}/iu, content) or
+      Regex.match?(
+        ~r/\[(?:(?:your|votre)\s+)?(?:name|nom|mp\s+name|nom\s+du\s+d[eé]put[eé]|neighbou?rhood|(?:street\s+)?address|adresse|postal\s+code|code\s+postal|circonscription)(?:\s*[\/,][^\]\n]*)?\](?!\()/iu,
+        content
+      )
   end
 
   @doc "The French self-description for `gender`."

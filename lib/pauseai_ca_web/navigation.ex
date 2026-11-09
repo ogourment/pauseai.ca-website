@@ -61,6 +61,14 @@ defmodule PauseAiCaWeb.Navigation do
         60
       ),
       item("pauseai.blog", gettext_noop("Blog"), :manage, :blog, :admin, 34),
+      item(
+        "pauseai.mp-templates",
+        gettext_noop("MP letter templates"),
+        :manage,
+        :mp_templates,
+        :admin,
+        36
+      ),
       item("pauseai.donations", gettext_noop("Donation page"), :manage, :donations, :admin, 35),
       item("pauseai.groups", gettext_noop("Local groups"), :manage, :groups, :groups, 14),
       item(
@@ -207,6 +215,7 @@ defmodule PauseAiCaWeb.Navigation do
         :administrators -> "/manage/administrators"
         :dashboard -> "/admin/dashboard"
         :blog -> "/manage/blog"
+        :mp_templates -> "/manage/mp-templates"
         :donations -> "/manage/donations"
         :donation_pledges -> "/admin/donation-pledges"
         :interac_donations -> "/admin/interac-donations"

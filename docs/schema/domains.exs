@@ -61,7 +61,11 @@
     title: "Signup choices and local interest",
     tables: ["participation_requests"]
   },
-  %{id: "outreach", title: "Outreach", tables: ["pending_letters"]},
+  %{
+    id: "outreach",
+    title: "Outreach",
+    tables: ~w(pending_letters campaign_send_intents mp_templates mp_template_revisions)
+  },
   %{
     id: "contact_migration",
     title: "Contact migration",

@@ -8,10 +8,10 @@ defmodule PauseAiCa.Campaigns.Delivery do
     * The letter is sent **from** a PauseAI Canada address with the supporter's
       address as `reply-to`. We never forge a `From:` header, so the MP's office
       can see who is writing and reply to them directly.
-    * We keep nothing. The supporter's name, email and postal code are used to
-      build the message and are then discarded. Counting how many letters were
-      sent is a separate, deliberate decision that needs the privacy review in
-      the guide first.
+    * Delivery uses the reviewed letter in memory. Durable send intents retain
+      keyed identity and outcome metadata, without the letter body. Anonymous
+      confirmation payloads retain the existing bounded expiry. Account action
+      tracking belongs to the authenticated sender.
 
   The DIY path in `PauseAiCa.Campaigns.Letter.mailto/1` remains available and
   requires no personal data to reach us at all.
@@ -43,15 +43,34 @@ defmodule PauseAiCa.Campaigns.Delivery do
   """
   @spec deliver(Letter.t(), map()) :: {:ok, term()} | {:error, atom()}
   def deliver(%Letter{} = letter, supporter) do
+    case submit(letter, supporter, []) do
+      {:ok, result} -> {:ok, result}
+      {:error, reason} when reason in [:invalid_email, :no_recipient] -> {:error, reason}
+      {:error, _} -> {:error, :delivery_failed}
+    end
+  end
+
+  @doc "Submit through the existing Mailer, preserving rejection versus uncertain outcomes for durable intents."
+  def submit(%Letter{} = letter, supporter, opts) do
     with {:ok, reply_to} <- validate_email(supporter[:email]),
          {:ok, recipients} <- validate_recipients(letter.to) do
-      letter
-      |> build(supporter[:name], reply_to, recipients)
-      |> Mailer.deliver()
-      |> case do
-        {:ok, result} -> {:ok, result}
-        {:error, _reason} -> {:error, :delivery_failed}
-      end
+      email =
+        build(letter, supporter[:name], reply_to, recipients)
+        |> put_private(:client_options,
+          retry: false,
+          redirect: false,
+          receive_timeout: 30_000,
+          connect_options: [timeout: 3_000]
+        )
+
+      # Brevo documents a bounded idempotency TTL. Durable uncertain holds remain
+      # non-retryable after that window, even when this additional guard is used.
+      email =
+        if opts[:intent_id],
+          do: header(email, "IdempotencyKey", opts[:intent_id]),
+          else: email
+
+      Mailer.deliver(email, admin_actor_id: opts[:actor_id])
     end
   end
 

@@ -68,7 +68,10 @@ defmodule PauseAiCaWeb.DashboardLive do
     {:noreply,
      socket
      |> assign(:pending, Engagement.list_pending_actions(scope))
-     |> assign(:action_count, socket.assigns.action_count + 1)
+     |> assign(
+       :action_count,
+       Enum.count(Engagement.list_actions(scope), &(not Action.pending?(&1)))
+     )
      |> stream_insert(:actions, action)
      |> refresh_recommendation()
      |> put_flash(:info, gettext("Action recorded."))}

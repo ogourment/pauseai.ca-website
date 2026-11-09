@@ -280,6 +280,36 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
       refute Action.pending?(action)
     end
 
+    test "duplicate reviewed submit and restored page create one accepted intent and action", %{
+      conn: conn
+    } do
+      user = user_fixture()
+      scope = Scope.for_user(user)
+      conn = log_in_user(conn, user)
+      {:ok, view, _} = live(conn, ~p"/en/warning-shot")
+
+      view
+      |> form("#mp-lookup-form", sender: %{name: "Camille Roy", postal_code: "H2X 1Y4"})
+      |> render_submit()
+
+      params = %{email: user.email, consent: "true"}
+      view |> form("#send-form", send: params) |> render_submit()
+      view |> form("#send-form", send: params) |> render_submit()
+      assert [action] = Engagement.list_actions(scope)
+      {:ok, restored, _} = live(conn, ~p"/en/warning-shot")
+
+      restored
+      |> form("#mp-lookup-form", sender: %{name: "Camille Roy", postal_code: "H2X 1Y4"})
+      |> render_submit()
+
+      restored |> form("#send-form", send: params) |> render_submit()
+      assert [^action] = Engagement.list_actions(scope)
+      assert PauseAiCa.Repo.aggregate(PauseAiCa.Campaigns.SendIntent, :count) == 1
+      {:ok, dashboard, _} = live(conn, ~p"/en/dashboard")
+      assert render(dashboard) =~ "actions recorded"
+      assert [^action] = Engagement.list_actions(scope)
+    end
+
     test "opening your own mail app records an action we cannot vouch for", %{conn: conn} do
       user = user_fixture()
       scope = Scope.for_user(user)
@@ -291,6 +321,7 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
       |> render_submit()
 
       view |> element("#send-mode-diy") |> render_click()
+      view |> element("#open-mail-app") |> render_click()
       view |> element("#open-mail-app") |> render_click()
 
       assert [action] = Engagement.list_actions(scope)
@@ -387,6 +418,15 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
         view
         |> form("#mp-lookup-form", sender: %{name: "Camille Roy", postal_code: "H2X 1Y4"})
         |> render_submit()
+
+        view
+        |> form("#letter-form",
+          letter: %{
+            subject: "Reviewed request #{attempt}",
+            body: "Please support effective oversight. Camille Roy."
+          }
+        )
+        |> render_change()
 
         view
         |> form("#send-form", send: %{email: "flood@example.org", consent: "true"})

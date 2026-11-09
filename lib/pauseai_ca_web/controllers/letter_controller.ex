@@ -12,6 +12,13 @@ defmodule PauseAiCaWeb.LetterController do
   alias PauseAiCa.Campaigns.Confirmations
 
   def confirm(conn, %{"token" => token}) do
+    context = Confirmations.context(token)
+
+    locale =
+      if context && context.locale in ["en", "fr"], do: context.locale, else: locale_from(conn)
+
+    Gettext.put_locale(PauseAiCaWeb.Gettext, locale)
+
     case Confirmations.release(token) do
       {:ok, %{locale: locale}} ->
         Audit.event(:letter_released, %{locale: locale})
@@ -21,12 +28,37 @@ defmodule PauseAiCaWeb.LetterController do
         |> put_flash(:dev_mailbox, true)
         |> redirect(to: campaign_path(locale))
 
+      {:error, :delivery_unknown} ->
+        Audit.event(:letter_release_failed, %{reason: :delivery_unknown})
+        reference = if context, do: context.intent_reference
+
+        message =
+          if reference do
+            gettext(
+              "Delivery is awaiting verification. Keep this draft and contact us with reference %{reference} before sending again.",
+              reference: reference
+            )
+          else
+            gettext(
+              "Delivery is awaiting verification. Keep this draft and contact us before sending it again."
+            )
+          end
+
+        conn |> put_flash(:error, message) |> redirect(to: campaign_path(locale))
+
+      {:error, :delivery_failed} ->
+        Audit.event(:letter_release_failed, %{reason: :delivery_failed})
+
+        conn
+        |> put_flash(:error, gettext("Sending failed. Try again, or use your email app."))
+        |> redirect(to: campaign_path(locale))
+
       {:error, reason} ->
         Audit.event(:letter_release_failed, %{reason: reason})
 
         conn
-        |> put_flash(:error, failed_message(locale_from(conn)))
-        |> redirect(to: campaign_path(locale_from(conn)))
+        |> put_flash(:error, failed_message(locale))
+        |> redirect(to: campaign_path(locale))
     end
   end
 

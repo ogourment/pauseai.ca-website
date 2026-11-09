@@ -45,6 +45,17 @@ tasks_enabled =
 
 config :pauseai_ca, :tasks_enabled, tasks_enabled
 
+# The supporter walkthrough performs no generation. Production rollout remains
+# explicit while local and staging acceptance can exercise the same UI.
+mp_guide_enabled =
+  case System.get_env("PAUSEAI_MP_GUIDE_ENABLED") do
+    nil -> mail_environment in [:dev, :test, :staging]
+    "true" -> true
+    _ -> false
+  end
+
+config :pauseai_ca, :mp_guide_enabled, mp_guide_enabled
+
 # New pipeline features require an explicit rollout per environment. Keep the
 # existing synthetic incubator test configuration without enabling a deployment.
 for {feature, variable} <- [

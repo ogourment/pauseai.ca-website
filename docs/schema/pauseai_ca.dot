@@ -320,6 +320,29 @@ digraph Schema {
   ];
 
 
+  "public.campaign_send_intents" [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.campaign_send_intents</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">fingerprint</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">bytea NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">actor_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">action_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">kind</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">state</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">provider_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">error_code</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">template_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">template_revision</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">integer</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">attempted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">accepted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
   "public.chat_slack_inbox" [
     label=<
       <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
@@ -944,6 +967,41 @@ digraph Schema {
   ];
 
 
+  "public.mp_template_revisions" [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.mp_template_revisions</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">template_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">revision</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">integer NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">editor_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">action</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">payload</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">author_permission</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">boolean NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
+  "public.mp_templates" [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.mp_templates</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">slug</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">payload</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">revision</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">integer NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">published_revision</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">integer</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">published_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">updated_by</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
   "public.newsletter_batches" [
     label=<
       <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
@@ -1338,6 +1396,7 @@ digraph Schema {
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">locale</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">expires_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">send_intent_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid</FONT></TD></TR>
       </TABLE>
     >
   ];
@@ -1647,6 +1706,8 @@ digraph Schema {
   "public.blog_article_revisions" -> "public.blog_articles" [label="article_id -> id"];
   "public.blog_article_revisions" -> "public.users" [label="editor_id -> id"];
   "public.blog_articles" -> "public.users" [label="updated_by -> id"];
+  "public.campaign_send_intents" -> "public.actions" [label="action_id -> id"];
+  "public.campaign_send_intents" -> "public.users" [label="actor_id -> id"];
   "public.chat_slack_links" -> "public.users" [label="user_id -> id"];
   "public.chat_slack_oauth_states" -> "public.users" [label="user_id -> id"];
   "public.chat_slack_outbox" -> "public.chat_slack_links" [label="link_id -> id"];
@@ -1685,6 +1746,7 @@ digraph Schema {
   "public.mail_batches" -> "public.users" [label="owner_id -> id"];
   "public.mail_drafts" -> "public.mail_batches" [label="batch_id -> id"];
   "public.mail_drafts" -> "public.users" [label="user_id -> id"];
+  "public.mp_template_revisions" -> "public.mp_templates" [label="template_id -> id"];
   "public.newsletter_batches" -> "public.users" [label="approver_id -> id"];
   "public.newsletter_batches" -> "public.crm_conversations" [label="conversation_id -> id"];
   "public.newsletter_batches" -> "public.newsletter_drafts" [label="draft_id -> id"];
@@ -1726,6 +1788,7 @@ digraph Schema {
   "public.outreach_reply_notifications" -> "public.users" [label="recipient_actor_id -> id"];
   "public.participation_requests" -> "public.users" [label="followup_owner_id -> id"];
   "public.participation_requests" -> "public.users" [label="user_id -> id"];
+  "public.pending_letters" -> "public.campaign_send_intents" [label="send_intent_id -> id"];
   "public.quiz_question_drafts" -> "public.users" [label="updated_by -> id"];
   "public.quiz_question_revisions" -> "public.users" [label="editor_id -> id"];
   "public.quiz_question_revisions" -> "public.quiz_question_drafts" [label="question_id -> id"];

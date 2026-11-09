@@ -94,9 +94,24 @@ defmodule PauseAiCa.Engagement do
   def confirm_action(%Scope{} = scope, %Action{} = action) do
     true = action.user_id == scope.user.id
 
-    with {:ok, action} <- action |> Action.confirm_changeset() |> Repo.update() do
-      broadcast_action(scope, {:updated, action})
-      {:ok, action}
+    result =
+      Repo.transaction(fn ->
+        current =
+          Repo.one!(
+            from(a in Action,
+              where: a.id == ^action.id and a.user_id == ^scope.user.id,
+              lock: "FOR UPDATE"
+            )
+          )
+
+        if current.confirmed_at,
+          do: current,
+          else: Repo.update!(Action.confirm_changeset(current))
+      end)
+
+    with {:ok, current} <- result do
+      broadcast_action(scope, {:updated, current})
+      {:ok, current}
     end
   end
 

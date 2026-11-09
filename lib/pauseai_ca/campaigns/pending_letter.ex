@@ -6,8 +6,9 @@ defmodule PauseAiCa.Campaigns.PendingLetter do
   their letters never come through here. Everyone else gets one email, and the
   letter goes to the member of parliament when they click the link in it.
 
-  This is a queue, not a store. Rows are deleted the moment the letter is sent,
-  and expired rows are swept, so an unconfirmed letter leaves nothing behind.
+  The confirmation token expires after 24 hours. Successful delivery deletes the
+  pending payload. `Confirmations.sweep/0` removes expired payloads when invoked.
+  Durable send intents retain identity and outcome metadata without letter bodies.
   """
 
   use Ecto.Schema
@@ -28,6 +29,7 @@ defmodule PauseAiCa.Campaigns.PendingLetter do
     field :body, :string
     field :locale, :string, default: "en"
     field :expires_at, :utc_datetime
+    field :send_intent_id, :binary_id
 
     timestamps(type: :utc_datetime, updated_at: false)
   end
@@ -48,13 +50,27 @@ defmodule PauseAiCa.Campaigns.PendingLetter do
 
     changeset =
       %__MODULE__{}
-      |> cast(attrs, [:sender_name, :sender_email, :recipients, :subject, :body, :locale])
+      |> cast(attrs, [
+        :sender_name,
+        :sender_email,
+        :recipients,
+        :subject,
+        :body,
+        :locale,
+        :send_intent_id
+      ])
       |> validate_required([:sender_email, :recipients, :subject, :body])
       |> validate_length(:body, max: 8_000)
       |> put_change(:token, hashed)
       |> put_change(:expires_at, expires_at)
 
     {Base.url_encode64(token, padding: false), changeset}
+  end
+
+  @doc "Rotate an expired or definitely rejected notification token without replacing the reviewed letter."
+  def renew_token(%__MODULE__{} = pending) do
+    {token, fresh} = build(Map.from_struct(pending))
+    {token, change(pending, Map.take(fresh.changes, [:token, :expires_at]))}
   end
 
   @doc "Hashes a plaintext token for lookup."

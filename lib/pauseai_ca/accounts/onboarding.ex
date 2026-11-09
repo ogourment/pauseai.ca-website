@@ -178,12 +178,40 @@ defmodule PauseAiCa.Accounts.Onboarding do
     allowed =
       ~w(/en/dashboard /fr/tableau-de-bord /en/learn /fr/comprendre /en/actions#action-editor /fr/actions#action-editor /en/contact-your-mp /fr/contacter-votre-depute)
 
-    if value in allowed,
-      do: value,
-      else:
-        if(bookmark,
-          do: if(locale == "fr", do: "/fr/comprendre", else: "/en/learn"),
-          else: if(locale == "fr", do: "/fr/tableau-de-bord", else: "/en/dashboard")
-        )
+    cond do
+      value in allowed -> value
+      destination = safe_mp_return(value) -> destination
+      bookmark -> if(locale == "fr", do: "/fr/comprendre", else: "/en/learn")
+      true -> if(locale == "fr", do: "/fr/tableau-de-bord", else: "/en/dashboard")
+    end
   end
+
+  # Resume only registered walkthrough/template selectors. Personal letter fields
+  # never travel through a sign-in return URL or its encrypted continuation.
+  defp safe_mp_return(value) when is_binary(value) and byte_size(value) <= 512 do
+    with %URI{scheme: nil, authority: nil, fragment: nil, path: path, query: query} <-
+           URI.parse(value),
+         true <- path in ~w(/en/contact-your-mp /fr/contacter-votre-depute),
+         true <- is_binary(query),
+         pairs <- URI.query_decoder(query) |> Enum.to_list(),
+         true <- length(pairs) == length(Enum.uniq_by(pairs, &elem(&1, 0))),
+         true <- Enum.all?(pairs, &safe_mp_selector?/1) do
+      path <> "?" <> URI.encode_query(Enum.sort(pairs))
+    else
+      _ -> nil
+    end
+  rescue
+    _ -> nil
+  end
+
+  defp safe_mp_return(_), do: nil
+  defp safe_mp_selector?({"guide", "1"}), do: true
+
+  defp safe_mp_selector?({"template", slug}),
+    do: Regex.match?(~r/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/, slug) and byte_size(slug) <= 100
+
+  defp safe_mp_selector?({"revision", revision}),
+    do: Regex.match?(~r/\A[1-9][0-9]{0,8}\z/, revision)
+
+  defp safe_mp_selector?(_), do: false
 end

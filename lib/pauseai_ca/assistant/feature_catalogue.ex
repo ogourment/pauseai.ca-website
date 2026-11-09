@@ -17,6 +17,12 @@ defmodule PauseAiCa.Assistant.FeatureCatalogue do
   @max_bytes 2 * 1024 * 1024
   @statuses ~w(success failure running ignored not_run)
   @specs [
+    {"mp-guided", "Guided letter to your MP",
+     "Find your MP, review your own letter and record your action through the website.",
+     "/en/contact-your-mp?guide=1", ["CRM-ASSIST-GUIDE-02"], :mp_guide_enabled, "0.6.16"},
+    {"mp-templates", "Shared MP letter templates",
+     "Publish a reviewed bilingual template so each person can adapt and send their own letter.",
+     "/manage/mp-templates", ["CRM-ASSIST-GUIDE-03-CMS", "CRM-ASSIST-GUIDE-03"], nil, "0.6.16"},
     {"crm-guided", "Guided contact geography",
      "Preview a configured area through reviewed UI steps.", "/admin/contacts",
      ["CRM-ASSIST-GUIDE-01"], nil, "0.6.14"},

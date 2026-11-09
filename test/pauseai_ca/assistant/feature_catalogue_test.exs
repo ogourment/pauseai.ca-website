@@ -305,6 +305,40 @@ defmodule PauseAiCa.Assistant.FeatureCatalogueTest do
     assert {:error, :unverified} = FeatureCatalogue.load(context.identity, evidence_path: link)
   end
 
+  test "MP coaching uses bilingual recorded journeys and the guide rollout flag", context do
+    previous = Application.fetch_env(:pauseai_ca, :mp_guide_enabled)
+
+    on_exit(fn ->
+      case previous do
+        {:ok, value} -> Application.put_env(:pauseai_ca, :mp_guide_enabled, value)
+        :error -> Application.delete_env(:pauseai_ca, :mp_guide_enabled)
+      end
+    end)
+
+    Application.put_env(:pauseai_ca, :mp_guide_enabled, false)
+    write(context)
+    assert {:ok, loaded} = FeatureCatalogue.load(context.identity, evidence_path: context.path)
+    guide = Enum.find(loaded.features, &(&1.id == "mp-guided"))
+    templates = Enum.find(loaded.features, &(&1.id == "mp-templates"))
+
+    refute guide.enabled
+    assert guide.entry_path == "/en/contact-your-mp?guide=1"
+    assert guide.scenarios == ["CRM-ASSIST-GUIDE-02-en", "CRM-ASSIST-GUIDE-02-fr"]
+    assert templates.entry_path == "/manage/mp-templates"
+    assert templates.controls == []
+
+    assert templates.scenarios == [
+             "CRM-ASSIST-GUIDE-03-CMS-en",
+             "CRM-ASSIST-GUIDE-03-CMS-fr",
+             "CRM-ASSIST-GUIDE-03-en",
+             "CRM-ASSIST-GUIDE-03-fr"
+           ]
+
+    Application.put_env(:pauseai_ca, :mp_guide_enabled, true)
+    assert {:ok, enabled} = FeatureCatalogue.load(context.identity, evidence_path: context.path)
+    assert Enum.find(enabled.features, &(&1.id == "mp-guided")).enabled
+  end
+
   test "newsletter coaching starts at the workspace without advertising executable controls",
        context do
     write(context)

@@ -108,6 +108,8 @@ if System.get_env("ATDD") == "true" do
         c.conn
         |> visit("/users/log-in/#{token}?locale=#{locale}")
         |> click_button(tr(locale, "Keep me logged in on this device"))
+        |> assert_path("/")
+        |> assert_has("#account-menu")
         |> visit("/admin/assistant?locale=#{locale}")
         |> assert_has("[data-phx-main].phx-connected")
         |> assert_has(".phx-connected #site-assistant-launcher")

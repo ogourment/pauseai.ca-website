@@ -16,8 +16,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
   alias PauseAiCa.Campaigns.Letter
   alias PauseAiCa.Campaigns.ConfirmationNotifier
   alias PauseAiCa.Campaigns.Confirmations
-  alias PauseAiCa.Campaigns.RateLimit
-  alias PauseAiCa.Engagement
+  alias PauseAiCa.Campaigns.SendIntents
   alias PauseAiCa.Campaigns.Update
   alias PauseAiCa.Campaigns.WarningShot
 
@@ -30,7 +29,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
   @default_min_seconds_before_send 4
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(params, session, socket) do
     locale = if socket.assigns.live_action in [:fr, :contact_fr], do: "fr", else: "en"
     contact_page = socket.assigns.live_action in [:contact_en, :contact_fr]
     Gettext.put_locale(PauseAiCaWeb.Gettext, locale)
@@ -49,6 +48,13 @@ defmodule PauseAiCaWeb.WarningShotLive do
      socket
      |> assign(:locale, locale)
      |> assign(:contact_page, contact_page)
+     |> assign(:mp_guide_session, PauseAiCa.Assistant.MPGuide.session(session))
+     |> assign(:mp_guide_uri, nil)
+     |> assign(:mp_guide_resume, params["guide"] == "1")
+     |> assign(:mp_template, nil)
+     |> assign(:mp_template_error, false)
+     |> assign(:mp_template_selection, nil)
+     |> assign(:mp_completed_action_id, nil)
      |> assign(:page_title, if(contact_page, do: gettext("Email your MP"), else: copy.title))
      |> assign(:campaign, campaign)
      |> assign(:copy, copy)
@@ -66,6 +72,65 @@ defmodule PauseAiCaWeb.WarningShotLive do
   end
 
   @impl true
+  def handle_params(params, uri, socket) do
+    socket = assign(socket, :mp_guide_uri, uri)
+    selection = {params["template"], params["revision"]}
+
+    socket =
+      if selection == socket.assigns.mp_template_selection do
+        socket
+      else
+        load_mp_template(socket, selection)
+      end
+
+    {:noreply, socket}
+  end
+
+  defp load_mp_template(%{assigns: %{letter: %Letter{}}} = socket, _selection),
+    do: assign(socket, :mp_template_error, true)
+
+  defp load_mp_template(socket, {nil, nil} = selection),
+    do:
+      assign(socket, mp_template: nil, mp_template_error: false, mp_template_selection: selection)
+
+  defp load_mp_template(socket, {slug, revision} = selection) do
+    # A live navigation cannot silently replace a letter the person has edited.
+    if socket.assigns.letter do
+      assign(socket, :mp_template_error, true)
+    else
+      with {:ok, current} <-
+             PauseAiCa.MPTemplates.published(slug, socket.assigns.locale, revision),
+           {:ok, english} <- PauseAiCa.MPTemplates.published(slug, "en", current.revision),
+           {:ok, french} <- PauseAiCa.MPTemplates.published(slug, "fr", current.revision) do
+        assign(socket,
+          mp_template: Map.put(current, :editions, %{"en" => english, "fr" => french}),
+          mp_template_error: false,
+          mp_template_selection: selection,
+          mp_completed_action_id: nil,
+          sender: Map.put(socket.assigns.sender, "draft_language", socket.assigns.locale)
+        )
+      else
+        _ ->
+          assign(socket,
+            mp_template: nil,
+            mp_template_error: true,
+            mp_template_selection: selection
+          )
+      end
+    end
+  end
+
+  @impl true
+  def handle_event("mp-guide-observe", %{"token" => token}, socket) when is_binary(token) do
+    send_update(PauseAiCaWeb.MPGuideComponent,
+      id: "mp-guide-controller",
+      observation_token: token,
+      context: PauseAiCa.Assistant.MPGuide.context(socket.assigns)
+    )
+
+    {:noreply, socket}
+  end
+
   def handle_event("update-sender", %{"sender" => params}, socket) do
     {:noreply, socket |> put_sender(params) |> recompose()}
   end
@@ -99,7 +164,11 @@ defmodule PauseAiCaWeb.WarningShotLive do
     %Letter{} = draft = socket.assigns.letter
     letter = %Letter{draft | subject: params["subject"] || "", body: params["body"] || ""}
 
-    {:noreply, socket |> assign(:letter, letter) |> assign(:letter_form, to_letter_form(letter))}
+    {:noreply,
+     socket
+     |> assign(:letter, letter)
+     |> assign(:letter_form, to_letter_form(letter))
+     |> assign(:mp_completed_action_id, nil)}
   end
 
   def handle_event("opened-mail-app", _params, socket) do
@@ -108,7 +177,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
       signed_in: not is_nil(socket.assigns[:current_scope])
     })
 
-    {:noreply, socket |> record_action(confirmed: false) |> assign(:send_state, :handed_over)}
+    {:noreply, record_action(socket, confirmed: false)}
   end
 
   def handle_event("choose-send-mode", %{"mode" => mode}, socket) when mode in ~w(assisted diy) do
@@ -156,15 +225,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
 
   defp deliver(socket, params) do
     supporter = %{name: socket.assigns.sender["name"], email: params["email"]}
-
-    case RateLimit.check(String.downcase(String.trim(params["email"]))) do
-      :ok ->
-        dispatch(socket, supporter, params)
-
-      {:error, reason} ->
-        Audit.event(:letter_rejected, %{reason: reason, email: params["email"]})
-        {:noreply, assign(socket, :send_state, {:error, reason})}
-    end
+    dispatch(socket, supporter, params)
   end
 
   # A signed-in supporter with a confirmed address has already proved it is
@@ -173,19 +234,44 @@ defmodule PauseAiCaWeb.WarningShotLive do
   # letter to Parliament.
   defp dispatch(socket, supporter, params) do
     if verified_sender?(socket, params["email"]) do
-      case Delivery.deliver(socket.assigns.letter, supporter) do
-        {:ok, _result} ->
+      case SendIntents.deliver(
+             socket.assigns.current_scope,
+             socket.assigns.letter,
+             supporter,
+             send_intent_options(socket)
+           ) do
+        {:ok, intent} ->
           Audit.event(:letter_sent, %{
-            email: supporter.email,
             locale: socket.assigns.locale,
             verified: true,
-            rehearsal: Delivery.rehearsal?()
+            rehearsal: Delivery.rehearsal?(),
+            intent_id: intent.id
           })
 
-          {:noreply, socket |> record_action(confirmed: true) |> assign(:send_state, :sent)}
+          {:noreply,
+           socket
+           |> assign(:mp_completed_action_id, intent.action_id)
+           |> assign(:send_state, :sent)}
 
         {:error, reason} ->
-          Audit.event(:letter_failed, %{email: supporter.email, reason: reason})
+          Audit.event(:letter_failed, %{reason: reason})
+
+          reason =
+            if reason == :delivery_unknown do
+              case SendIntents.prepare(
+                     socket.assigns.current_scope,
+                     socket.assigns.letter,
+                     supporter,
+                     "assisted",
+                     send_intent_options(socket)
+                   ) do
+                {:ok, intent} -> {:delivery_unknown, intent.id}
+                _ -> reason
+              end
+            else
+              reason
+            end
+
           {:noreply, assign(socket, :send_state, {:error, reason})}
       end
     else
@@ -195,11 +281,20 @@ defmodule PauseAiCaWeb.WarningShotLive do
 
   defp hold_for_confirmation(socket, supporter) do
     with {:ok, token, pending} <-
-           Confirmations.hold(socket.assigns.letter, supporter, socket.assigns.locale),
-         {:ok, _sent} <- ConfirmationNotifier.deliver(pending, confirm_url(socket, token)) do
+           Confirmations.hold(
+             socket.assigns.letter,
+             supporter,
+             socket.assigns.locale,
+             send_intent_options(socket)
+           ),
+         :ok <- notify_confirmation(socket, pending, token) do
       Audit.event(:letter_held, %{email: supporter.email, locale: socket.assigns.locale})
       {:noreply, assign(socket, :send_state, :awaiting_confirmation)}
     else
+      {:error, :delivery_unknown} ->
+        Audit.event(:letter_failed, %{email: supporter.email, reason: :delivery_unknown})
+        {:noreply, assign(socket, :send_state, {:error, :delivery_unknown})}
+
       _error ->
         Audit.event(:letter_failed, %{email: supporter.email, reason: :hold_failed})
         {:noreply, assign(socket, :send_state, {:error, :delivery_failed})}
@@ -209,40 +304,41 @@ defmodule PauseAiCaWeb.WarningShotLive do
   defp confirm_url(socket, token),
     do: PauseAiCaWeb.Site.url(socket.assigns.locale, ~p"/letters/confirm/#{token}")
 
-  defp verified_sender?(socket, email) do
-    case socket.assigns[:current_scope] do
-      %{user: %{email: account_email, confirmed_at: %DateTime{}}} ->
-        String.downcase(String.trim(email || "")) == String.downcase(account_email)
+  defp notify_confirmation(socket, pending, token) do
+    Confirmations.notify(pending, token, fn current, current_token ->
+      ConfirmationNotifier.deliver(current, confirm_url(socket, current_token))
+    end)
+  end
 
-      _otherwise ->
-        false
+  defp verified_sender?(socket, email),
+    do: SendIntents.verified_sender?(socket.assigns[:current_scope], email)
+
+  defp send_intent_options(socket) do
+    case socket.assigns[:mp_template] do
+      %{id: id, revision: revision} -> [template: %{id: id, revision: revision}]
+      _ -> []
     end
   end
 
-  # A signed-in supporter's action log is the point of having accounts. Anyone
-  # else simply sends the letter; we do not create a record to attach it to.
-  #
-  # `confirmed: false` records a letter we handed to someone's own mail client.
-  # We do not know whether they pressed send, so the dashboard asks them later
-  # rather than quietly claiming credit for it.
-  defp record_action(socket, opts) do
-    confirmed_at =
-      if Keyword.get(opts, :confirmed, false) do
-        DateTime.utc_now() |> DateTime.truncate(:second)
-      end
-
+  # External-client opening records one pending action for the current account.
+  # Provider acceptance and explicit dashboard confirmation remain distinct.
+  defp record_action(socket, _opts) do
     case socket.assigns[:current_scope] do
-      %{user: %{}} = scope ->
-        Engagement.create_action(scope, %{
-          "action_type" => "contacted_representative",
-          "happened_on" => Date.utc_today(),
-          "confirmed_at" => confirmed_at
-        })
+      %{user: user} = scope ->
+        supporter = %{name: socket.assigns.sender["name"], email: user.email}
 
-        socket
+        case SendIntents.handoff(
+               scope,
+               socket.assigns.letter,
+               supporter,
+               send_intent_options(socket)
+             ) do
+          {:ok, _intent} -> assign(socket, :send_state, :handed_over)
+          {:error, reason} -> assign(socket, :send_state, {:error, reason})
+        end
 
-      _anonymous ->
-        socket
+      _ ->
+        assign(socket, :send_state, :handed_over)
     end
   end
 
@@ -334,6 +430,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
 
     socket
     |> assign(:sender, sender)
+    |> assign(:mp_completed_action_id, nil)
     |> assign(:sender_form, to_form(sender, as: :sender))
   end
 
@@ -343,6 +440,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
     |> assign(:letter, nil)
     |> assign(:letter_form, nil)
     |> assign(:lookup_error, reason)
+    |> assign(:mp_completed_action_id, nil)
   end
 
   defp recompose(%{assigns: %{representatives: []}} = socket), do: socket
@@ -371,11 +469,56 @@ defmodule PauseAiCaWeb.WarningShotLive do
           gender: to_gender(sender["gender"])
         }
       )
+      |> apply_mp_template(socket.assigns.mp_template, sender, socket.assigns.representatives)
 
     socket
     |> assign(:letter, letter)
     |> assign(:letter_form, to_letter_form(letter))
     |> assign(:lookup_error, nil)
+    |> assign(:mp_completed_action_id, nil)
+  end
+
+  defp apply_mp_template(letter, nil, _, _), do: letter
+
+  defp apply_mp_template(%Letter{} = letter, template, sender, representatives) do
+    values = %{
+      "sender_name" => sender["name"],
+      "postal_code" => sender["postal_code"],
+      "mp_name" => Enum.map_join(representatives, ", ", & &1.name),
+      "district" => representatives |> Enum.map(& &1.district) |> Enum.uniq() |> Enum.join(", ")
+    }
+
+    locales =
+      if sender["draft_language"] == "bilingual",
+        do: ["en", "fr"],
+        else: [sender["draft_language"]]
+
+    editions = Enum.map(locales, &Map.fetch!(template.editions, &1))
+    subject = Enum.map_join(editions, " / ", & &1.subject)
+    body = Enum.map_join(editions, "\n\n-----\n\n", & &1.body)
+    allowed = Map.keys(values)
+
+    %Letter{
+      letter
+      | subject: PhoenixMailWorkflow.Template.interpolate(subject, allowed, values),
+        body: PhoenixMailWorkflow.Template.interpolate(body, allowed, values)
+    }
+  end
+
+  defp mp_return_path(assigns, guided \\ false) do
+    params = if guided or assigns.mp_guide_resume, do: %{guide: "1"}, else: %{}
+
+    params =
+      if assigns.mp_template,
+        do:
+          Map.merge(params, %{
+            template: assigns.mp_template.slug,
+            revision: assigns.mp_template.revision
+          }),
+        else: params
+
+    contact_path(assigns.locale) <>
+      if(map_size(params) == 0, do: "", else: "?" <> URI.encode_query(params))
   end
 
   defp blank?(value), do: not is_binary(value) or String.trim(value) == ""
@@ -600,8 +743,51 @@ defmodule PauseAiCaWeb.WarningShotLive do
           <p class="mt-4 max-w-2xl text-lg text-stone-700">
             {gettext("Find your MP, edit your letter and choose how to send it.")}
           </p>
+          <aside
+            :if={@mp_template}
+            id="mp-selected-template"
+            class="mt-5 rounded-xl border border-brand bg-brand-wash p-5"
+          >
+            <h2 class="font-heading text-xl">{@mp_template.title}</h2>
+            <p class="mt-2 whitespace-pre-wrap">{@mp_template.purpose}</p>
+            <p class="mt-2 text-sm">
+              {gettext("Template by %{author}", author: @mp_template.author)}
+            </p>
+            <.link
+              href={@mp_template.share_path}
+              id="mp-template-share-link"
+              class="mt-3 inline-block underline"
+            >
+              {gettext("Share this template with friends and family")}
+            </.link>
+          </aside>
+          <p
+            :if={@mp_template_error}
+            id="mp-template-error"
+            role="alert"
+            class="mt-4 rounded-xl border border-red-300 p-4"
+          >
+            {gettext("This template could not be opened. Your current letter has been kept.")}
+            <.link href={contact_path(@locale)} class="underline">{gettext(
+              "Open the standard MP letter"
+            )}</.link>
+          </p>
+          <.live_component
+            module={PauseAiCaWeb.MPGuideComponent}
+            id="mp-guide-controller"
+            current_scope={@current_scope}
+            locale={@locale}
+            guide_session={@mp_guide_session}
+            uri={@mp_guide_uri}
+            resume={@mp_guide_resume}
+            context={PauseAiCa.Assistant.MPGuide.context(assigns)}
+            sign_in_path={
+              ~p"/users/log-in?#{%{locale: @locale, return_to: mp_return_path(assigns, true)}}"
+            }
+          />
           <div class="mt-6 rounded-2xl border border-stone-200 bg-brand-wash p-5">
             <.live_component
+              :if={!@mp_template_error}
               module={PauseAiCaWeb.ParticipationForm}
               id="mp-participation"
               locale={@locale}
@@ -610,7 +796,11 @@ defmodule PauseAiCaWeb.WarningShotLive do
               registration={false}
               show_ctas={false}
               context={
-                %{"locale" => @locale, "source" => "contact_mp", "return_to" => contact_path(@locale)}
+                %{
+                  "locale" => @locale,
+                  "source" => "contact_mp",
+                  "return_to" => mp_return_path(assigns)
+                }
               }
             />
           </div>
@@ -881,7 +1071,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
                   <div class="mt-4 flex flex-wrap gap-3">
                     <a
                       id="share-bluesky"
-                      href={share_url(:bluesky, @locale)}
+                      href={share_url(:bluesky, @locale, @mp_template)}
                       rel="noreferrer"
                       class="rounded-full border-2 border-brand px-5 py-2.5 font-heading font-bold text-stone-950 transition hover:bg-brand-wash"
                     >
@@ -889,7 +1079,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
                     </a>
                     <a
                       id="share-email"
-                      href={share_url(:email, @locale)}
+                      href={share_url(:email, @locale, @mp_template)}
                       class="rounded-full border-2 border-stone-300 px-5 py-2.5 font-heading font-bold text-stone-800 transition hover:border-brand"
                     >
                       {share_email_label(@locale)}
@@ -1122,6 +1312,22 @@ defmodule PauseAiCaWeb.WarningShotLive do
   defp send_error_message({:error, :unresolved_placeholders}, _locale),
     do: gettext("Replace the remaining placeholders before sending.")
 
+  defp send_error_message({:error, {:delivery_unknown, reference}}, _locale),
+    do:
+      gettext(
+        "Delivery is awaiting verification. Keep this draft and contact us with reference %{reference} before sending again.",
+        reference: reference
+      )
+
+  defp send_error_message({:error, :delivery_unknown}, _locale),
+    do:
+      gettext(
+        "Delivery is awaiting verification. Keep this draft and contact us before sending it again."
+      )
+
+  defp send_error_message({:error, :sender_unverified}, _locale),
+    do: gettext("Your account or sender address has changed. Sign in again before sending.")
+
   defp send_error_message(_state, _locale),
     do: gettext("Sending failed. Try again, or use your email app.")
 
@@ -1175,17 +1381,23 @@ defmodule PauseAiCaWeb.WarningShotLive do
   defp share_link("fr"), do: PauseAiCaWeb.Site.url("fr", "/fr/contacter-votre-depute")
   defp share_link(_locale), do: PauseAiCaWeb.Site.url("en", "/en/contact-your-mp")
 
-  defp share_url(:bluesky, locale) do
-    "https://bsky.app/intent/compose?text=" <>
-      URI.encode_www_form(share_text(locale) <> " " <> share_link(locale))
+  defp share_content(locale, nil), do: {share_text(locale), share_link(locale)}
+
+  defp share_content(locale, template),
+    do: {template.title, PauseAiCaWeb.Site.url(locale, template.share_path)}
+
+  defp share_url(:bluesky, locale, template) do
+    {text, link} = share_content(locale, template)
+    "https://bsky.app/intent/compose?text=" <> URI.encode_www_form(text <> " " <> link)
   end
 
-  defp share_url(:email, locale) do
+  defp share_url(:email, locale, template) do
+    {text, link} = share_content(locale, template)
     subject = gettext("Worth a minute of your time")
 
     "mailto:?subject=" <>
       URI.encode_www_form(subject) <>
-      "&body=" <> URI.encode_www_form(share_text(locale) <> "\n\n" <> share_link(locale))
+      "&body=" <> URI.encode_www_form(text <> "\n\n" <> link)
   end
 
   defp open_mail_label(_locale), do: gettext("Open in my email app")
