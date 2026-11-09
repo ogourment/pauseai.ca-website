@@ -1,5 +1,6 @@
 defmodule PauseAiCa.Incubators do
   @moduledoc "Configured public groups and account-linked admission with fresh scoped authority."
+  use Gettext, backend: PauseAiCaWeb.Gettext
   import Ecto.Query
   import Ecto.Changeset
   alias PauseAiCa.{Repo, Volunteers}
@@ -7,7 +8,7 @@ defmodule PauseAiCa.Incubators do
   alias PauseAiCa.Volunteers.{Group, Manager}
   alias PauseAiCa.Incubators.{Profile, Membership, Event}
 
-  @public ~w(group_id name_en name_fr summary_en summary_fr fsas events_url moderator_contact whatsapp_enabled)a
+  @public ~w(group_id name_en name_fr summary_en summary_fr fsas stage events_url next_event_title_en next_event_title_fr next_event_starts_at next_event_timezone next_event_url moderator_contact whatsapp_enabled)a
   @profile_fields Enum.reject(@public, &(&1 == :group_id)) ++
                     [:published, :whatsapp_invite_url, :whatsapp_approval_confirmed]
 
@@ -26,6 +27,11 @@ defmodule PauseAiCa.Incubators do
     else
       {:error, :not_found}
     end
+  end
+
+  def upcoming_event?(profile, now \\ DateTime.utc_now()) do
+    match?(%DateTime{}, profile.next_event_starts_at) &&
+      DateTime.compare(profile.next_event_starts_at, now) == :gt
   end
 
   def managed_groups(scope), do: Volunteers.groups(scope)
@@ -59,10 +65,12 @@ defmodule PauseAiCa.Incubators do
             do: Map.update!(attrs, "fsas", &parse_fsas/1),
             else: attrs
 
+        {attrs, time_error} = event_time_attrs(attrs)
+
         changeset =
           current
           |> cast(attrs, @profile_fields)
-          |> validate_required([:name_en, :name_fr])
+          |> validate_required([:name_en, :name_fr, :stage])
           |> validate_length(:name_en, max: 100)
           |> validate_length(:name_fr, max: 100)
           |> validate_length(:summary_en, max: 2000)
@@ -76,8 +84,33 @@ defmodule PauseAiCa.Incubators do
                do: [],
                else: [fsas: "use the first three postal-code characters, for example H2X"]
           end)
+          |> validate_inclusion(:stage, ["active", "incubator"])
+          |> validate_length(:next_event_title_en, max: 200)
+          |> validate_length(:next_event_title_fr, max: 200)
+          |> validate_url(:next_event_url)
+          |> validate_next_event()
           |> validate_url(:events_url)
           |> validate_url(:whatsapp_invite_url)
+
+        changeset =
+          if Map.has_key?(attrs, "stage") && blank?(attrs["stage"]),
+            do:
+              add_error(
+                changeset,
+                :stage,
+                dgettext_noop("errors", "choose an active group or incubator")
+              ),
+            else: changeset
+
+        changeset =
+          if time_error,
+            do:
+              add_error(
+                changeset,
+                :next_event_starts_at,
+                dgettext_noop("errors", "use a valid local date, time and time zone")
+              ),
+            else: changeset
 
         changeset =
           if get_field(changeset, :whatsapp_enabled) &&
@@ -598,6 +631,43 @@ defmodule PauseAiCa.Incubators do
     do: value |> Enum.map(&String.upcase(String.trim(&1))) |> Enum.uniq()
 
   defp parse_fsas(_), do: []
+
+  defp event_time_attrs(%{"next_event_local_start" => value} = attrs) do
+    if blank?(value) do
+      {Map.put(attrs, "next_event_starts_at", nil), false}
+    else
+      case PauseAiCa.Welcome.local_time(value, attrs["next_event_timezone"]) do
+        {:ok, starts_at} -> {Map.put(attrs, "next_event_starts_at", starts_at), false}
+        _ -> {attrs, true}
+      end
+    end
+  end
+
+  defp event_time_attrs(attrs), do: {attrs, false}
+
+  defp validate_next_event(cs) do
+    fields = [
+      :next_event_title_en,
+      :next_event_title_fr,
+      :next_event_starts_at,
+      :next_event_timezone,
+      :next_event_url
+    ]
+
+    if Enum.any?(fields, &(get_field(cs, &1) not in [nil, ""])) do
+      cs = validate_required(cs, fields)
+      zone = get_field(cs, :next_event_timezone)
+
+      if is_binary(zone) && byte_size(zone) <= 100 &&
+           Repo.query!("SELECT EXISTS(SELECT 1 FROM pg_timezone_names WHERE name=$1)", [zone]).rows ==
+             [[true]],
+         do: cs,
+         else:
+           add_error(cs, :next_event_timezone, dgettext_noop("errors", "use a valid time zone"))
+    else
+      cs
+    end
+  end
 
   defp validate_url(cs, field),
     do:

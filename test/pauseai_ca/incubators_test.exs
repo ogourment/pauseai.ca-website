@@ -37,6 +37,45 @@ defmodule PauseAiCa.IncubatorsTest do
     }
   end
 
+  test "legacy active stage and configurable incubator event use local time without private fields",
+       c do
+    assert {:ok, %{stage: "active"}} = Incubators.public_group(c.group.id)
+
+    attrs = %{
+      stage: "incubator",
+      next_event_title_en: "Synthetic gathering",
+      next_event_title_fr: "Rencontre fictive",
+      next_event_local_start: "2099-02-10T13:30",
+      next_event_timezone: "America/Toronto",
+      next_event_url: "https://example.org/synthetic-event"
+    }
+
+    assert {:ok, profile} = Incubators.configure(c.manager, c.group.id, attrs, c.profile.revision)
+    assert profile.next_event_starts_at == ~U[2099-02-10 18:30:00Z]
+    assert {:ok, public} = Incubators.public_group(c.group.id)
+    assert public.stage == "incubator"
+    assert Incubators.upcoming_event?(public, ~U[2099-02-10 18:29:59Z])
+    refute Incubators.upcoming_event?(public, ~U[2099-02-10 18:30:00Z])
+    refute Map.has_key?(public, :whatsapp_invite_url)
+  end
+
+  test "event configuration rejects partial metadata, invalid zones and unsafe links", c do
+    for attrs <- [
+          %{stage: "unknown"},
+          %{stage: ""},
+          %{next_event_local_start: "2026-03-08T02:30", next_event_timezone: "America/Toronto"},
+          %{next_event_title_en: "Incomplete"},
+          %{next_event_local_start: "2099-02-10T13:30", next_event_timezone: "Not/AZone"},
+          %{next_event_url: "javascript:alert(1)"}
+        ] do
+      assert {:error, %Ecto.Changeset{}} =
+               Incubators.configure(c.admin, c.group.id, attrs, c.profile.revision)
+    end
+
+    assert {:ok, %{revision: revision}} = Incubators.configuration(c.admin, c.group.id)
+    assert revision == c.profile.revision
+  end
+
   defp apply_request(c, identifier \\ "@synthetic_member") do
     {:ok, m} =
       Incubators.request(c.member, c.group.id, %{

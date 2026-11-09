@@ -125,6 +125,66 @@ defmodule PauseAiCaWeb.AssistantLiveTest do
     refute_receive {:assistant_generated, _, _}
   end
 
+  test "periodic cached refresh recovers a missed notification while preserving configured On",
+       c do
+    assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+    config = Application.get_env(:pauseai_ca, :agent_assistant)
+
+    unavailable =
+      Keyword.put(
+        config,
+        :operations_adapter,
+        {PauseAiCa.AssistantFixtures.Operations, [ready: false]}
+      )
+
+    Application.put_env(:pauseai_ca, :agent_assistant, unavailable)
+    {:ok, view, _} = live(log_in_user(c.conn, c.admin), "/admin/assistant?locale=en")
+    assert has_element?(view, "#assistant-status", "On")
+    assert has_element?(view, "#assistant-readiness h2", "Assistant temporarily unavailable")
+
+    Application.put_env(:pauseai_ca, :agent_assistant, config)
+    send(view.pid, :refresh_readiness)
+    refute has_element?(view, "#assistant-readiness")
+    assert has_element?(view, "#assistant-status", "On")
+    refute_receive {:assistant_generated, _, _}
+  end
+
+  test "periodic cached refresh reflects expired evidence and displays UTC diagnostics", c do
+    key = {PauseAiCa.Assistant.Operations, :status}
+    previous = :persistent_term.get(key, :missing)
+
+    on_exit(fn ->
+      if previous == :missing,
+        do: :persistent_term.erase(key),
+        else: :persistent_term.put(key, previous)
+    end)
+
+    config = Application.get_env(:pauseai_ca, :agent_assistant)
+    {:ok, view, _} = live(log_in_user(c.conn, c.admin), "/admin/assistant?locale=en")
+    config = Keyword.delete(config, :operations_adapter)
+    Application.put_env(:pauseai_ca, :agent_assistant, config)
+
+    :persistent_term.put(key, %{
+      fingerprint: PauseAiCa.Assistant.Operations.fingerprint(Assistant.configuration()),
+      checked_at: System.monotonic_time(:millisecond) - 65_001,
+      checked_at_utc: ~U[2026-11-09 22:00:00Z],
+      last_success_at_utc: ~U[2026-11-09 21:59:30Z],
+      audit_anchor: true,
+      alerts: true
+    })
+
+    send(view.pid, :refresh_readiness)
+    assert has_element?(view, "#assistant-enable[disabled]")
+    assert has_element?(view, "#assistant-operational-check", "Current verification required")
+
+    assert has_element?(
+             view,
+             "#assistant-operational-check time[datetime='2026-11-09T22:00:00Z']"
+           )
+
+    refute_receive {:assistant_generated, _, _}
+  end
+
   test "per-admin token limit is editable without granting access or resetting usage", c do
     {:ok, view, _} = live(log_in_user(c.conn, c.admin), "/admin/assistant?locale=en")
 

@@ -15,6 +15,7 @@ defmodule PauseAiCaWeb.ManagementLayoutTest do
     paths = [
       "/admin/dashboard",
       "/admin/contact-imports",
+      "/admin/local-interest",
       "/admin/contacts",
       "/admin/donation-pledges",
       "/manage/accounts",
@@ -31,9 +32,20 @@ defmodule PauseAiCaWeb.ManagementLayoutTest do
       {:ok, view, _} = live(conn, path <> "?locale=" <> locale)
       assert has_element?(view, "header nav")
       assert has_element?(view, "main")
+      assert has_element?(view, "main .management-content")
       refute has_element?(view, "#announcement-banners"), path
       refute has_element?(view, "#campaign-prompt"), path
     end
+  end
+
+  test "shared management gutters preserve explicitly sized page containers" do
+    css = File.read!("assets/css/app.css")
+
+    assert css =~
+             ~r/\.management-content\{[^}]*max-width:72rem[^}]*padding:1\.5rem 1\.25rem 2\.5rem/
+
+    assert css =~ ".management-content:has(>.mx-auto){max-width:none;padding:0}"
+    refute css =~ ".management-content>.crm-surface{max-width:72rem"
   end
 
   test "public pages keep their campaign announcements", %{conn: conn} do

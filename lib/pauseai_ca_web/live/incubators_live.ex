@@ -315,6 +315,7 @@ defmodule PauseAiCaWeb.IncubatorsLive do
             id={"group-#{group.group_id}"}
           >
             <h2 class="text-xl font-semibold">{title(group, @locale)}</h2>
+            <p :if={group.stage == "incubator"} class="text-sm">{gettext("Incubator")}</p>
             <p class="whitespace-pre-line">{summary(group, @locale)}</p>
             <p :if={group.fsas != []} class="text-sm">
               {gettext("Postal areas")}: {Enum.join(group.fsas, ", ")}<br />{gettext(
@@ -323,6 +324,7 @@ defmodule PauseAiCaWeb.IncubatorsLive do
             </p>
             <div class="flex flex-wrap gap-4 items-center">
               <.link
+                :if={group.stage == "active"}
                 href={"/groups/#{group.group_id}/join?#{URI.encode_query(%{locale: @locale})}"}
                 class="btn btn-primary"
               >{gettext("Request to join")}</.link>
@@ -333,6 +335,15 @@ defmodule PauseAiCaWeb.IncubatorsLive do
                 phx-target="#participation"
                 class="btn btn-outline"
               >{gettext("Join the waitlist")}</button>
+              <button
+                :if={group.stage == "incubator"}
+                type="button"
+                phx-click="choose-group"
+                phx-value-group-id={group.group_id}
+                phx-value-kind="help"
+                phx-target="#participation"
+                class="btn btn-outline"
+              >{gettext("I can help")}</button>
               <.link
                 :if={group.events_url not in [nil, ""]}
                 href={group.events_url}
@@ -340,6 +351,26 @@ defmodule PauseAiCaWeb.IncubatorsLive do
                 target="_blank"
                 rel="noopener noreferrer"
               >{gettext("Group events")}</.link>
+            </div>
+            <div
+              :if={Incubators.upcoming_event?(group)}
+              id={"group-next-event-#{group.group_id}"}
+              class="space-y-1"
+            >
+              <.link
+                href={group.next_event_url}
+                class="font-semibold underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {if @locale == "fr", do: group.next_event_title_fr, else: group.next_event_title_en}
+              </.link>
+              <p>
+                <time datetime={DateTime.to_iso8601(group.next_event_starts_at)}>{PauseAiCa.Welcome.display_time(
+                  group.next_event_starts_at,
+                  group.next_event_timezone
+                )}</time>
+              </p>
             </div>
           </article>
           <div id="group-participation" class="rounded-xl border border-base-300 p-5">

@@ -67,21 +67,23 @@ defmodule PauseAiCaWeb.ParticipationForm do
 
   def handle_event(
         "choose-group",
-        %{"group-id" => group_id},
+        %{"group-id" => group_id} = event_params,
         %{assigns: %{group_focused: true}} = socket
       ) do
     case PauseAiCa.Incubators.public_group(group_id) do
       {:ok, group} ->
+        kind = if event_params["kind"] == "help", do: "help", else: "waitlist"
+
         params =
           socket.assigns.params
           |> Map.put("local", "true")
-          |> Map.put("local_kind", "waitlist")
+          |> Map.put("local_kind", kind)
 
         name = if socket.assigns.locale == "fr", do: group.name_fr, else: group.name_en
 
         {:noreply,
          assign(socket,
-           intent: "waitlist",
+           intent: kind,
            params: params,
            selected_group: name,
            selected_group_id: group.group_id,
@@ -396,7 +398,7 @@ defmodule PauseAiCaWeb.ParticipationForm do
           phx-click="choose"
           phx-value-intent="newsletter"
           phx-target={@myself}
-          aria-pressed={@intent == "newsletter"}
+          aria-pressed={to_string(@intent == "newsletter")}
           aria-label={gettext("Get updates")}
           class="rounded-xl border border-stone-300 bg-white p-4 text-left hover:border-brand"
         >
@@ -408,7 +410,7 @@ defmodule PauseAiCaWeb.ParticipationForm do
           phx-click="choose"
           phx-value-intent="action"
           phx-target={@myself}
-          aria-pressed={@intent != "newsletter"}
+          aria-pressed={to_string(@intent != "newsletter")}
           aria-label={gettext("Take action")}
           class="rounded-xl border border-stone-300 bg-white p-4 text-left hover:border-brand"
         >
@@ -461,7 +463,7 @@ defmodule PauseAiCaWeb.ParticipationForm do
             phx-click="choose"
             phx-value-intent={kind}
             phx-target={@myself}
-            aria-pressed={@intent == kind || (kind == "account" && @intent == "action")}
+            aria-pressed={to_string(@intent == kind || (kind == "account" && @intent == "action"))}
             class={"rounded-lg border px-3 py-2 text-sm font-semibold " <> if(@intent == kind || (kind == "account" && @intent == "action"), do: "border-brand bg-brand-wash", else: "border-stone-300 bg-white")}
           >{label}</button>
         </div>
@@ -550,7 +552,9 @@ defmodule PauseAiCaWeb.ParticipationForm do
               id="participation-selected-group"
               class="mb-3 text-sm font-semibold"
             >
-              {gettext("Waitlist for %{group}", group: @selected_group)}
+              {if @params["local_kind"] == "help",
+                do: gettext("Offer to help %{group}", group: @selected_group),
+                else: gettext("Waitlist for %{group}", group: @selected_group)}
             </p>
             <.input
               field={@form[:city]}

@@ -44,6 +44,54 @@ defmodule PauseAiCaWeb.IncubatorsLiveTest do
     end
   end
 
+  test "published incubators offer waitlist and help with localized upcoming event", c do
+    assert {:ok, profile} =
+             Incubators.configure(
+               c.admin,
+               c.group.id,
+               %{
+                 stage: "incubator",
+                 next_event_title_en: "Synthetic upcoming event",
+                 next_event_title_fr: "Prochaine rencontre fictive",
+                 next_event_starts_at: ~U[2099-02-10 18:30:00Z],
+                 next_event_timezone: "America/Toronto",
+                 next_event_url: "https://example.org/synthetic-event"
+               },
+               c.profile.revision
+             )
+
+    {:ok, view, _} = live(build_conn(), "/en/groups")
+    card = "#group-#{c.group.id}"
+    assert has_element?(view, card <> " button", "Join the waitlist")
+    assert has_element?(view, card <> " button[phx-value-kind=help]", "I can help")
+    refute has_element?(view, card <> " a[href*=join]")
+
+    assert has_element?(
+             view,
+             card <> " time[datetime='2099-02-10T18:30:00Z']",
+             "2099-02-10 13:30"
+           )
+
+    {:ok, french, _} = live(build_conn(), "/fr/groupes")
+
+    assert has_element?(
+             french,
+             "#group-next-event-#{c.group.id} a",
+             "Prochaine rencontre fictive"
+           )
+
+    assert {:ok, _} =
+             Incubators.configure(
+               c.admin,
+               c.group.id,
+               %{next_event_starts_at: ~U[2000-01-01 18:30:00Z]},
+               profile.revision
+             )
+
+    {:ok, past, _} = live(build_conn(), "/en/groups")
+    refute has_element?(past, "#group-next-event-#{c.group.id}")
+  end
+
   test "superadmin adds a confirmed existing account with guarded group reference and no invented conduct",
        c do
     {:ok, _} =

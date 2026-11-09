@@ -245,6 +245,18 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
       socket.assigns.groups == [] and Volunteers.superadmin?(socket.assigns.current_scope)
   end
 
+  defp event_local_value(%{
+         next_event_starts_at: %DateTime{} = starts_at,
+         next_event_timezone: zone
+       }) do
+    starts_at
+    |> PauseAiCa.Welcome.display_time(zone)
+    |> String.slice(0, 16)
+    |> String.replace(" ", "T")
+  end
+
+  defp event_local_value(_), do: ""
+
   defp reload_group(socket, reset_form) do
     scope = socket.assigns.current_scope
     id = socket.assigns.group_id
@@ -256,10 +268,12 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
       attrs =
         if profile do
           Map.from_struct(profile)
+          |> Map.put(:next_event_local_start, event_local_value(profile))
           |> Map.update!(:fsas, &Enum.join(&1, ", "))
           |> Map.new(fn {key, value} -> {to_string(key), value} end)
         else
           %{
+            "stage" => "active",
             "name_en" => "",
             "name_fr" => "",
             "fsas" => "",
@@ -419,7 +433,44 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
                 "Separate multiple areas with commas. These areas describe the group; they do not grant membership."
               )}
             </p>
+            <.input
+              field={@form[:stage]}
+              type="select"
+              label={gettext("Group stage")}
+              options={[{gettext("Active group"), "active"}, {gettext("Incubator"), "incubator"}]}
+            />
             <.input field={@form[:events_url]} type="url" label={gettext("Public events link")} />
+            <details class="rounded-lg border border-base-300 p-4">
+              <summary class="cursor-pointer font-semibold">{gettext("Next group event")}</summary>
+              <div class="space-y-4 pt-4">
+                <.input
+                  field={@form[:next_event_title_en]}
+                  label={gettext("English event title")}
+                  maxlength="200"
+                />
+                <.input
+                  field={@form[:next_event_title_fr]}
+                  label={gettext("French event title")}
+                  maxlength="200"
+                />
+                <.input
+                  field={@form[:next_event_local_start]}
+                  type="datetime-local"
+                  label={gettext("Event date and local time")}
+                />
+                <.input
+                  field={@form[:next_event_timezone]}
+                  label={gettext("Event time zone")}
+                  placeholder="America/Toronto"
+                />
+                <.input field={@form[:next_event_url]} type="url" label={gettext("Event link")} />
+                <p class="text-sm">
+                  {gettext(
+                    "Complete every event field, or clear them all. Past events are hidden automatically."
+                  )}
+                </p>
+              </div>
+            </details>
             <.input
               field={@form[:moderator_contact]}
               label={gettext("Public manager contact")}

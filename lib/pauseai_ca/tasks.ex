@@ -5,6 +5,7 @@ defmodule PauseAiCa.Tasks do
   alias PauseAiCa.Accounts.{Scope, User}
   alias PauseAiCa.Tasks.{Dependency, Event, Task}
   alias PauseAiCa.Volunteers.{Group, Manager}
+  alias PauseAiCa.Incubators.Membership
 
   @task_fields ~w(id title description requester_id accountable_id assignee_id backup_id due_date status revision source prerequisite_ids)a
   @editable ~w(title description accountable_id assignee_id backup_id due_date status prerequisite_ids reason)
@@ -208,9 +209,14 @@ defmodule PauseAiCa.Tasks do
   defp eligible_members(group_id) do
     Repo.all(
       from u in User,
-        join: m in Manager,
-        on: m.user_id == u.id,
-        where: m.group_id == ^group_id and not is_nil(u.confirmed_at),
+        left_join: m in Manager,
+        on: m.user_id == u.id and m.group_id == ^group_id,
+        left_join: membership in Membership,
+        on:
+          membership.user_id == u.id and membership.group_id == ^group_id and
+            membership.status in ["approved", "admitted"] and
+            not membership.external_removal_pending,
+        where: not is_nil(u.confirmed_at) and (not is_nil(m.id) or not is_nil(membership.id)),
         order_by: [asc: u.email],
         distinct: true
     )

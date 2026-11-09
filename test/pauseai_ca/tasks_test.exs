@@ -300,6 +300,94 @@ defmodule PauseAiCa.TasksTest do
     assert Repo.aggregate(Event, :count) == 1
   end
 
+  test "confirmed approved and admitted members are assignable without gaining task authority",
+       c do
+    for status <- ["approved", "admitted"] do
+      user = user_fixture()
+
+      membership =
+        Repo.insert!(%PauseAiCa.Incubators.Membership{
+          group_id: c.group.id,
+          user_id: user.id,
+          display_name: "Synthetic task member",
+          status: status,
+          role: "member"
+        })
+
+      assert {:ok, people} = Tasks.members(c.scope, c.group.id)
+      assert Enum.any?(people, &(&1.id == user.id))
+
+      assert {:ok, task} =
+               Tasks.create(
+                 c.scope,
+                 c.group.id,
+                 %{title: "Newsletter every two weeks", assignee_id: user.id},
+                 "assign-#{status}"
+               )
+
+      assert task.assignee_id == user.id
+      assert {:error, :unauthorized} = Tasks.list(Scope.for_user(user), c.group.id)
+
+      assert {:error, :unauthorized} =
+               Tasks.create(
+                 Scope.for_user(user),
+                 c.group.id,
+                 %{title: "Forbidden"},
+                 "member-cannot-create-#{status}"
+               )
+
+      refute Repo.get_by(PauseAiCa.Volunteers.Manager, group_id: c.group.id, user_id: user.id)
+
+      membership |> change(status: "removed") |> Repo.update!()
+      assert {:ok, remaining} = Tasks.members(c.scope, c.group.id)
+      refute Enum.any?(remaining, &(&1.id == user.id))
+
+      assert {:error, {:validation, _}} =
+               Tasks.create(
+                 c.scope,
+                 c.group.id,
+                 %{title: "Stale assignment", assignee_id: user.id},
+                 "revoked-#{status}"
+               )
+    end
+  end
+
+  test "suspended pending foreign and unconfirmed members remain ineligible", c do
+    ids =
+      for {status, group_id, confirmed?} <- [
+            {"suspended", c.group.id, true},
+            {"pending", c.group.id, true},
+            {"approved", c.foreign.id, true},
+            {"approved", c.group.id, false}
+          ] do
+        user = user_fixture()
+        unless confirmed?, do: user |> change(confirmed_at: nil) |> Repo.update!()
+
+        Repo.insert!(%PauseAiCa.Incubators.Membership{
+          group_id: group_id,
+          user_id: user.id,
+          display_name: "Synthetic excluded member",
+          status: status,
+          role: "member"
+        })
+
+        user.id
+      end
+
+    assert {:ok, eligible} = Tasks.members(c.scope, c.group.id)
+    assert Enum.all?(ids, fn id -> not Enum.any?(eligible, &(&1.id == id)) end)
+
+    for id <- ids do
+      assert {:error, {:validation, _}} =
+               Tasks.create(
+                 c.scope,
+                 c.group.id,
+                 %{title: "Ineligible assignment", assignee_id: id},
+                 "excluded-#{id}"
+               )
+    end
+  end
+
   test "cycles, self dependencies and cross-group prerequisites leave no partial changes", c do
     {:ok, a} = Tasks.create(c.scope, c.group.id, %{title: "A"}, "a")
     {:ok, b} = Tasks.create(c.scope, c.group.id, %{title: "B", prerequisite_ids: [a.id]}, "b")

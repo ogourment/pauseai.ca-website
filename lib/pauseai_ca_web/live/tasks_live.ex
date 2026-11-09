@@ -286,7 +286,7 @@ defmodule PauseAiCaWeb.TasksLive do
     options = Enum.map(members, &{&1.name || &1.email, &1.id})
 
     if current not in [nil, ""] and not Enum.any?(members, &(&1.id == current)),
-      do: [{gettext("Former group manager"), current} | options],
+      do: [{gettext("Previously assigned account"), current} | options],
       else: options
   end
 
@@ -356,7 +356,7 @@ defmodule PauseAiCaWeb.TasksLive do
     do: gettext("Choose a different person from the assignee.")
 
   defp validation_message(:ineligible),
-    do: gettext("Choose a current confirmed manager of this group.")
+    do: gettext("Choose a current confirmed member or manager of this group.")
 
   defp validation_message(:required), do: gettext("This field is required.")
   defp validation_message(:cycle), do: gettext("These prerequisites would create a cycle.")
@@ -480,7 +480,7 @@ defmodule PauseAiCaWeb.TasksLive do
                   type="select"
                   label={gettext("Accountable owner")}
                   options={assignment_options(@members, @form[:accountable_id].value)}
-                  prompt={gettext("Choose a manager")}
+                  prompt={gettext("Choose a member or manager")}
                 />
                 <.input
                   field={@form[:assignee_id]}

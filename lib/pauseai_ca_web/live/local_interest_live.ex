@@ -48,19 +48,20 @@ defmodule PauseAiCaWeb.LocalInterestLive do
     >
       <h1 class="font-heading text-3xl">{gettext("Local participation")}</h1>
       <p class="mt-3 text-stone-600">
-        {gettext(
-          "Confirmed waitlist requests and offers of help. Follow-up is private; these requests do not create group membership."
-        )}
+        {gettext("Requests to join a local group and offers of help. Choose a request to follow up.")}
       </p>
       <p :if={@requests == []} class="mt-6">{gettext("No confirmed local requests yet.")}</p>
       <ul id="local-request-queue" class="mt-6 divide-y divide-stone-200">
-        <li :for={request <- @requests} class="py-5">
+        <li :for={request <- @requests} id={"local-request-#{request.id}"} class="py-5">
           <h2 class="font-heading text-2xl">{request.name || request.email}</h2>
           <p>{request.email} · {request.city} {request.fsa}</p>
           <p class="mt-2 font-semibold">
             {if request.local_kind == "help",
               do: gettext("I can help"),
-              else: gettext("Join the waitlist")}
+              else: gettext("Requested to join a local group")}
+          </p>
+          <p :if={request.followup_owner} class="mt-2 text-sm">
+            {gettext("Follow-up by %{organizer}", organizer: organizer_name(request.followup_owner))}
           </p>
           <p :if={request.followup_owner_id == @current_scope.user.id} class="mt-2 text-sm">
             {gettext("Your follow-up")}
@@ -71,7 +72,7 @@ defmodule PauseAiCaWeb.LocalInterestLive do
             phx-click="claim"
             phx-value-id={request.id}
             class="mt-2 rounded border border-stone-300 px-3 py-1"
-          >{gettext("Take ownership")}</button>
+          >{gettext("I’ll follow up")}</button>
           <p :if={request.help_text} class="mt-2 whitespace-pre-wrap">{request.help_text}</p>
           <p class="mt-2 text-sm text-stone-600">
             {String.upcase(request.locale)} · {Calendar.strftime(request.confirmed_at, "%Y-%m-%d")}
@@ -97,5 +98,12 @@ defmodule PauseAiCaWeb.LocalInterestLive do
       </nav>
     </Layouts.management>
     """
+  end
+
+  defp organizer_name(user) do
+    case user.name do
+      name when is_binary(name) -> if String.trim(name) == "", do: user.email, else: name
+      _ -> user.email
+    end
   end
 end

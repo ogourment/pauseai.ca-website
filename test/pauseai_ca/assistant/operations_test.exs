@@ -148,6 +148,77 @@ defmodule PauseAiCa.Assistant.OperationsTest do
     assert Operations.status(c.config).audit_anchor
   end
 
+  test "invalidation publishes once, retains the last success and does not extend freshness", c do
+    now = System.monotonic_time(:millisecond)
+    successful_at = ~U[2026-11-09 21:00:00Z]
+
+    :persistent_term.put({Operations, :status}, %{
+      fingerprint: Operations.fingerprint(c.config),
+      checked_at: now - 65_001,
+      audit_anchor: true,
+      alerts: true,
+      last_success_at_utc: successful_at
+    })
+
+    Phoenix.PubSub.subscribe(PauseAiCa.PubSub, "agent_assistant:settings")
+
+    assert ExUnit.CaptureLog.capture_log(fn -> Operations.invalidate() end) =~
+             "Assistant independent audit verification unavailable"
+
+    assert_receive :assistant_settings_changed
+    Operations.invalidate()
+    refute_received :assistant_settings_changed
+    assert Operations.status(c.config) == %{audit_anchor: false, alerts: false}
+    diagnostic = Operations.diagnostics(c.config)
+    assert diagnostic.last_success_at_utc == successful_at
+    assert %DateTime{time_zone: "Etc/UTC"} = diagnostic.checked_at_utc
+    assert diagnostic.failure_phase == :audit_confirmation
+    assert diagnostic.failure_reason == :cause_not_supplied
+    refute diagnostic.current
+  end
+
+  test "failed anchor refresh records sanitized diagnostics and recovery clears the failure", c do
+    previous_level = Logger.level()
+    Logger.configure(level: :info)
+    on_exit(fn -> Logger.configure(level: previous_level) end)
+    assert {:noreply, ready} = Operations.handle_info(:refresh, %{})
+    assert ready.audit_anchor
+    successful_at = ready.last_success_at_utc
+
+    Req.Test.stub(__MODULE__, fn conn ->
+      if String.starts_with?(conn.request_path, @base),
+        do: Plug.Conn.send_resp(conn, 503, "private diagnostic https://secret.example/token"),
+        else: route(conn, c.remote, c.signing)
+    end)
+
+    log =
+      ExUnit.CaptureLog.capture_log(fn ->
+        assert {:noreply, failed} = Operations.handle_info(:refresh, ready)
+        refute failed.audit_anchor
+      end)
+
+    assert log =~ "Assistant independent audit verification unavailable"
+    refute log =~ "secret.example"
+    diagnostic = Operations.diagnostics(c.config)
+    assert diagnostic.failure_phase == :readiness_audit
+    assert diagnostic.failure_reason == :cause_not_supplied
+    assert is_integer(diagnostic.elapsed_ms)
+    assert diagnostic.last_success_at_utc == successful_at
+    refute inspect(diagnostic) =~ "secret.example"
+
+    Req.Test.stub(__MODULE__, fn conn -> route(conn, c.remote, c.signing) end)
+
+    log =
+      ExUnit.CaptureLog.capture_log(fn ->
+        assert {:noreply, recovered} = Operations.handle_info(:refresh, ready)
+        assert recovered.audit_anchor
+      end)
+
+    assert log =~ "Assistant independent audit verification recovered"
+    assert Operations.diagnostics(c.config).failure_phase == nil
+    assert Operations.status(c.config).audit_anchor
+  end
+
   test "pilot ceilings and published instruction revisions require fresh readiness", c do
     baseline = Operations.fingerprint(c.config)
 

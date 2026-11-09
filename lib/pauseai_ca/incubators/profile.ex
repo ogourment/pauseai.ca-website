@@ -9,7 +9,13 @@ defmodule PauseAiCa.Incubators.Profile do
     field :summary_fr, :string, default: ""
     field :fsas, {:array, :string}, default: []
     field :published, :boolean, default: false
+    field :stage, :string, default: "active"
     field :events_url, :string
+    field :next_event_title_en, :string
+    field :next_event_title_fr, :string
+    field :next_event_starts_at, :utc_datetime
+    field :next_event_timezone, :string
+    field :next_event_url, :string
     field :moderator_contact, :string
     field :whatsapp_enabled, :boolean, default: false
     field :whatsapp_invite_url, :string, redact: true

@@ -1,6 +1,7 @@
 defmodule PauseAiCa.Assistant.Operations do
   @moduledoc "Maintains actual operator delivery and independent audit evidence; it never calls a model."
   use GenServer
+  require Logger
   import Ecto.Query
   alias PauseAiCa.{Assistant, Repo}
 
@@ -21,15 +22,33 @@ defmodule PauseAiCa.Assistant.Operations do
   def status(config) do
     state = :persistent_term.get({__MODULE__, :status}, %{})
 
-    fresh =
-      state[:fingerprint] == fingerprint(config) and
-        System.monotonic_time(:millisecond) - (state[:checked_at] || 0) < 65_000
+    fresh = fresh?(state, config)
 
     %{
       audit_anchor: fresh and state[:audit_anchor] == true,
       alerts: fresh and state[:alerts] == true and alerts_resolved?()
     }
   end
+
+  @doc "Cached operational metadata only. This performs no verification, provider or model request."
+  def diagnostics(config) do
+    state = :persistent_term.get({__MODULE__, :status}, %{})
+
+    state
+    |> Map.take([
+      :checked_at_utc,
+      :last_success_at_utc,
+      :failure_phase,
+      :failure_reason,
+      :elapsed_ms
+    ])
+    |> Map.put(:current, fresh?(state, config))
+  end
+
+  defp fresh?(state, config),
+    do:
+      state[:fingerprint] == fingerprint(config) and
+        System.monotonic_time(:millisecond) - (state[:checked_at] || 0) < 65_000
 
   defp alerts_resolved? do
     namespace = Assistant.store().namespace
@@ -48,10 +67,21 @@ defmodule PauseAiCa.Assistant.Operations do
   def invalidate do
     state = :persistent_term.get({__MODULE__, :status}, %{})
 
-    :persistent_term.put(
-      {__MODULE__, :status},
-      Map.put(state, :audit_anchor, false)
-    )
+    updated =
+      Map.merge(state, %{
+        audit_anchor: false,
+        checked_at_utc: DateTime.utc_now(),
+        failure_phase: :audit_confirmation,
+        failure_reason: :cause_not_supplied,
+        elapsed_ms: nil
+      })
+
+    :persistent_term.put({__MODULE__, :status}, updated)
+
+    if state[:audit_anchor] == true do
+      log_transition(state, updated)
+      broadcast()
+    end
 
     :ok
   end
@@ -67,46 +97,59 @@ defmodule PauseAiCa.Assistant.Operations do
     published = :persistent_term.get({__MODULE__, :status}, state)
     configured = Application.get_env(:pauseai_ca, :agent_assistant, [])
     config = if configured[:anchor], do: Assistant.configuration(), else: configured
-    current = refresh(config)
+    started = System.monotonic_time(:millisecond)
+    {current, diagnostic} = refresh_diagnostic(config)
+    checked_at_utc = DateTime.utc_now()
+    latest = :persistent_term.get({__MODULE__, :status}, published)
     Process.send_after(self(), :refresh, 30_000)
 
     updated =
       Map.merge(
         state,
-        Map.merge(current, %{
-          fingerprint: fingerprint(config),
-          checked_at: System.monotonic_time(:millisecond)
-        })
+        Map.merge(
+          current,
+          Map.merge(diagnostic, %{
+            fingerprint: fingerprint(config),
+            checked_at: System.monotonic_time(:millisecond),
+            checked_at_utc: checked_at_utc,
+            last_success_at_utc:
+              if(current.audit_anchor and current.alerts,
+                do: checked_at_utc,
+                else: Map.get(latest, :last_success_at_utc)
+              ),
+            elapsed_ms:
+              Map.get(diagnostic, :elapsed_ms, System.monotonic_time(:millisecond) - started)
+          })
+        )
       )
 
     :persistent_term.put({__MODULE__, :status}, updated)
+    log_transition(latest, updated)
 
     if Map.take(updated, [:audit_anchor, :alerts, :fingerprint]) !=
          Map.take(published, [:audit_anchor, :alerts, :fingerprint]) and
          Process.whereis(PauseAiCa.PubSub) do
-      Phoenix.PubSub.broadcast(
-        PauseAiCa.PubSub,
-        "agent_assistant:settings",
-        :assistant_settings_changed
-      )
+      broadcast()
     end
 
     {:noreply, updated}
   end
 
   @doc false
-  def refresh(config) do
+  def refresh(config), do: elem(refresh_diagnostic(config), 0)
+
+  defp refresh_diagnostic(config) do
     case {config[:anchor], config[:alert_delivery], config[:audit_keys]} do
       {anchor, alerts, keys} when is_list(anchor) and is_list(alerts) and is_map(keys) ->
         refresh_configured(config)
 
       _ ->
-        %{audit_anchor: false, alerts: false}
+        failed(:configuration, :not_configured)
     end
   rescue
-    _ -> %{audit_anchor: false, alerts: false}
+    _ -> failed(:refresh, :cause_not_supplied)
   catch
-    _, _ -> %{audit_anchor: false, alerts: false}
+    _, _ -> failed(:refresh, :cause_not_supplied)
   end
 
   defp refresh_configured(config) do
@@ -114,9 +157,10 @@ defmodule PauseAiCa.Assistant.Operations do
 
     with true <- alerts_resolved?(),
          {:ok, {entry, alert_entry, alert}} <- recorded_probe(config, digest) do
-      audit_ready =
-        Assistant.anchor_entry(entry, config) == :ok and
-          Assistant.anchor_entry(alert_entry, config) == :ok
+      audit =
+        with :ok <- verify_anchor(entry, config, :readiness_audit),
+             :ok <- verify_anchor(alert_entry, config, :readiness_alert),
+             do: :ok
 
       delivered =
         with {:ok, accepted} <- ensure_intake(alert, config),
@@ -125,9 +169,66 @@ defmodule PauseAiCa.Assistant.Operations do
              do: true,
              else: (_ -> false)
 
-      %{audit_anchor: audit_ready, alerts: delivered}
+      diagnostic =
+        case audit do
+          {:error, details} -> details
+          :ok when delivered -> %{failure_phase: nil, failure_reason: nil}
+          :ok -> %{failure_phase: :operator_alerts, failure_reason: :cause_not_supplied}
+        end
+
+      {%{audit_anchor: audit == :ok, alerts: delivered}, diagnostic}
     else
-      _ -> %{audit_anchor: false, alerts: false}
+      false -> failed(:operator_alerts, :unresolved_alerts)
+      _ -> failed(:local_probe, :cause_not_supplied)
+    end
+  end
+
+  defp verify_anchor(entry, config, phase) do
+    started = System.monotonic_time(:millisecond)
+
+    case Assistant.anchor_entry(entry, config) do
+      :ok ->
+        :ok
+
+      _ ->
+        {:error,
+         %{
+           failure_phase: phase,
+           failure_reason: :cause_not_supplied,
+           elapsed_ms: System.monotonic_time(:millisecond) - started
+         }}
+    end
+  end
+
+  defp failed(phase, reason),
+    do: {%{audit_anchor: false, alerts: false}, %{failure_phase: phase, failure_reason: reason}}
+
+  defp broadcast do
+    if Process.whereis(PauseAiCa.PubSub),
+      do:
+        Phoenix.PubSub.broadcast(
+          PauseAiCa.PubSub,
+          "agent_assistant:settings",
+          :assistant_settings_changed
+        )
+  end
+
+  defp log_transition(previous, current) do
+    cond do
+      previous[:audit_anchor] == true and current[:audit_anchor] == false ->
+        Logger.warning("Assistant independent audit verification unavailable",
+          phase: current[:failure_phase],
+          reason: current[:failure_reason],
+          elapsed_ms: current[:elapsed_ms]
+        )
+
+      previous[:audit_anchor] == false and current[:audit_anchor] == true ->
+        Logger.info("Assistant independent audit verification recovered",
+          elapsed_ms: current[:elapsed_ms]
+        )
+
+      true ->
+        :ok
     end
   end
 

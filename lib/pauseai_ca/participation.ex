@@ -451,7 +451,8 @@ defmodule PauseAiCa.Participation do
           from r in query,
             order_by: [desc: r.confirmed_at, desc: r.id],
             limit: 25,
-            offset: ^((page - 1) * 25)
+            offset: ^((page - 1) * 25),
+            preload: [:followup_owner]
         )
 
       {:ok, %{entries: entries, page: page, pages: pages, total: total}}

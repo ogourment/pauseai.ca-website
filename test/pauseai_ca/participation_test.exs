@@ -298,6 +298,12 @@ defmodule PauseAiCa.ParticipationTest do
     assert length(last) == 1
     assert {:ok, claimed} = Participation.claim(scope, hd(first).id)
     assert claimed.followup_owner_id == admin.id
+    assert {:ok, %{entries: reloaded}} = Participation.local_requests(scope)
+    owned = Enum.find(reloaded, &(&1.id == claimed.id))
+    assert Ecto.assoc_loaded?(owned.followup_owner)
+    assert owned.followup_owner.id == admin.id
+    assert owned.followup_owner.email == admin.email
+    assert Enum.all?(reloaded, &Ecto.assoc_loaded?(&1.followup_owner))
     admin |> Ecto.Changeset.change(superadmin: false) |> Repo.update!()
     assert {:error, :unauthorized} = Participation.local_requests(scope)
     assert {:error, :unauthorized} = Participation.claim(scope, hd(last).id)

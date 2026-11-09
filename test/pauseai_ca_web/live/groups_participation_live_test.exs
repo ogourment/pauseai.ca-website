@@ -101,6 +101,13 @@ defmodule PauseAiCaWeb.GroupsParticipationLiveTest do
     |> render_change(%{"participation" => %{"local_kind" => "waitlist"}})
 
     assert has_element?(view, "input[name='participation[local_kind]'][value='help']")
+
+    assert has_element?(
+             view,
+             "#participation-motivations button[aria-pressed=false]",
+             "Join the waitlist"
+           )
+
     assert has_element?(view, "textarea[name='participation[help_text]']")
 
     view
@@ -132,6 +139,111 @@ defmodule PauseAiCaWeb.GroupsParticipationLiveTest do
     assert Repo.aggregate(Volunteers.Manager, :count) == 0
     assert Accounts.get_user_by_email("newgroup@example.org") == nil
     assert Repo.aggregate(Newsletters.Subscription, :count) == 0
+  end
+
+  test "a published incubator's help action selects help and retains its group context", %{
+    conn: conn
+  } do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    scope = Accounts.Scope.for_user(admin)
+    {:ok, group} = Volunteers.create_group(scope, %{name: "Synthetic incubator"})
+
+    {:ok, _} =
+      Incubators.configure(scope, group.id, %{
+        "name_en" => "Synthetic incubator",
+        "name_fr" => "Incubateur synthétique",
+        "stage" => "incubator",
+        "published" => true
+      })
+
+    {:ok, view, _} = live(conn, "/en/groups")
+
+    view
+    |> form("#participation-form",
+      participation: %{
+        name: "Morgan",
+        email: "grouphelp@example.org",
+        location: "H2X",
+        city: "Montréal",
+        account: "false",
+        newsletter: "false"
+      }
+    )
+    |> render_change()
+
+    view |> element("#group-#{group.id} button", "I can help") |> render_click()
+
+    assert has_element?(
+             view,
+             "#participation-motivations button[aria-pressed=true]",
+             "Help start an incubator"
+           )
+
+    assert has_element?(view, "input[name='participation[local_kind]'][value='help']")
+    assert has_element?(view, "input[name='participation[name]'][value='Morgan']")
+    assert has_element?(view, "input[name='participation[email]'][value='grouphelp@example.org']")
+
+    assert has_element?(
+             view,
+             "#participation-motivations button[aria-pressed=false]",
+             "Join the waitlist"
+           )
+
+    assert has_element?(
+             view,
+             "#participation-selected-group",
+             "Offer to help Synthetic incubator"
+           )
+
+    assert has_element?(view, "textarea[name='participation[help_text]']")
+
+    view
+    |> form("#participation-form", participation: %{help_text: "Find a meeting venue."})
+    |> render_submit()
+
+    request = Repo.one!(Participation.Request)
+    assert request.local_kind == "help"
+    assert request.help_text == "Find a meeting venue."
+    assert request.context["incubator_group_id"] == group.id
+    refute request.account
+    refute request.newsletter
+    assert Repo.aggregate(Incubators.Membership, :count) == 0
+    assert Repo.aggregate(Volunteers.Manager, :count) == 0
+    refute Accounts.get_user_by_email("grouphelp@example.org")
+  end
+
+  test "unsupported group action kinds default to the existing waitlist choice", %{conn: conn} do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    scope = Accounts.Scope.for_user(admin)
+    {:ok, group} = Volunteers.create_group(scope, %{name: "Synthetic group"})
+
+    {:ok, _} =
+      Incubators.configure(scope, group.id, %{
+        "name_en" => "Synthetic group",
+        "name_fr" => "Groupe synthétique",
+        "published" => true
+      })
+
+    {:ok, view, _} = live(conn, "/en/groups")
+
+    view
+    |> element("#group-#{group.id} button", "Join the waitlist")
+    |> render_click(%{"kind" => "manager"})
+
+    assert has_element?(view, "input[name='participation[local_kind]'][value='waitlist']")
+    assert has_element?(view, "#participation-selected-group", "Waitlist for Synthetic group")
+
+    assert has_element?(
+             view,
+             "#participation-motivations button[aria-pressed=false]",
+             "Help start an incubator"
+           )
+
+    assert has_element?(
+             view,
+             "#participation-motivations button[aria-pressed=true]",
+             "Join the waitlist"
+           )
   end
 
   test "an existing account keeps its profile fields and email through local-mode changes", %{

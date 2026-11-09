@@ -4,8 +4,10 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
 
   def mount(_params, _session, socket) do
     if Assistant.eligible?(socket.assigns.current_scope) do
-      if connected?(socket),
-        do: Phoenix.PubSub.subscribe(PauseAiCa.PubSub, "agent_assistant:settings")
+      if connected?(socket) do
+        Phoenix.PubSub.subscribe(PauseAiCa.PubSub, "agent_assistant:settings")
+        Process.send_after(self(), :refresh_readiness, 15_000)
+      end
 
       {:ok, reload(assign(socket, page_title: gettext("Assistant"), error: nil))}
     else
@@ -14,6 +16,15 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
   end
 
   def handle_info(:assistant_settings_changed, socket), do: {:noreply, reload(socket)}
+
+  def handle_info(:refresh_readiness, socket) do
+    Process.send_after(self(), :refresh_readiness, 15_000)
+
+    if Assistant.eligible?(socket.assigns.current_scope),
+      do: {:noreply, refresh_readiness(socket)},
+      else: {:noreply, redirect(socket, to: "/")}
+  end
+
   def handle_info(_, socket), do: {:noreply, socket}
 
   def handle_event("enable", _, socket), do: change(socket, true)
@@ -65,15 +76,30 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
         _ -> nil
       end
 
-    assign(socket,
-      enabled: PhoenixAgentAssistant.Store.enabled?(Assistant.store()),
-      missing: Assistant.readiness(),
+    socket
+    |> refresh_readiness()
+    |> assign(
       admins: Assistant.admin_usage(socket.assigns.current_scope),
       default_limit: Assistant.configuration()[:daily_token_limit],
       quota_ceiling: Assistant.configuration()[:max_daily_token_limit],
       instructions_access:
         PauseAiCa.Assistant.Instructions.permitted?(socket.assigns.current_scope),
       pilot: pilot
+    )
+  end
+
+  defp refresh_readiness(socket) do
+    config = Assistant.configuration()
+
+    diagnostics =
+      if config[:operations_adapter],
+        do: nil,
+        else: PauseAiCa.Assistant.Operations.diagnostics(config)
+
+    assign(socket,
+      enabled: PhoenixAgentAssistant.Store.enabled?(Assistant.store()),
+      missing: Assistant.readiness(),
+      diagnostics: diagnostics
     )
   end
 
@@ -276,20 +302,62 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
           class="rounded-xl border border-stone-200 p-5 space-y-3"
           id="assistant-readiness"
         >
-          <h2 class="text-lg font-bold">{gettext("Setup required")}</h2>
+          <h2 class="text-lg font-bold">
+            {if @enabled,
+              do: gettext("Assistant temporarily unavailable"),
+              else: gettext("Setup required")}
+          </h2>
           <p>
+            {gettext("Checks run automatically. New requests can resume when all checks pass.")}
+          </p>
+          <p :if={:audit_anchor in @missing}>
             {gettext(
-              "The assistant stays off until its protected storage, safety checks, usage limits and operator alerts are ready."
+              "The independent security receiver verifies the integrity of the assistant’s activity log."
             )}
           </p>
           <ul class="list-disc pl-5">
             <li :for={item <- @missing}>{readiness_label(item)}</li>
           </ul>
         </section>
+        <section :if={@diagnostics} id="assistant-operational-check" class="text-sm space-y-2">
+          <p :if={@diagnostics[:checked_at_utc]}>
+            {gettext("Last operational check")}
+            <time datetime={DateTime.to_iso8601(@diagnostics.checked_at_utc)}>
+              {Calendar.strftime(@diagnostics.checked_at_utc, "%Y-%m-%d %H:%M:%S UTC")}
+            </time>
+          </p>
+          <p :if={@diagnostics[:last_success_at_utc]}>
+            {gettext("Last successful readiness check")}
+            <time datetime={DateTime.to_iso8601(@diagnostics.last_success_at_utc)}>
+              {Calendar.strftime(@diagnostics.last_success_at_utc, "%Y-%m-%d %H:%M:%S UTC")}
+            </time>
+          </p>
+          <p :if={!@diagnostics.current}>{gettext("Current verification required")}</p>
+          <p :if={@diagnostics[:failure_phase]}>
+            {failure_phase(@diagnostics.failure_phase)} · {failure_reason(@diagnostics.failure_reason)}
+          </p>
+          <p :if={is_integer(@diagnostics[:elapsed_ms])}>
+            {gettext("Verification duration %{milliseconds} ms",
+              milliseconds: @diagnostics.elapsed_ms
+            )}
+          </p>
+        </section>
       </div>
     </Layouts.management>
     """
   end
+
+  defp failure_phase(:audit_confirmation), do: gettext("Independent audit verification")
+  defp failure_phase(:readiness_audit), do: gettext("Independent audit verification")
+  defp failure_phase(:readiness_alert), do: gettext("Operator alert audit verification")
+  defp failure_phase(:operator_alerts), do: gettext("Verified operator alerts")
+  defp failure_phase(:configuration), do: gettext("Configuration")
+  defp failure_phase(:local_probe), do: gettext("Local readiness record")
+  defp failure_phase(_), do: gettext("Readiness refresh")
+
+  defp failure_reason(:not_configured), do: gettext("Configuration required")
+  defp failure_reason(:unresolved_alerts), do: gettext("Unresolved operator alerts")
+  defp failure_reason(_), do: gettext("Cause not supplied")
 
   defp settled_known?(spend),
     do:
