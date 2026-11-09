@@ -38,7 +38,6 @@ defmodule PauseAiCaWeb.CampaignCountdown do
       data-closes-at={DateTime.to_iso8601(@state.closes_at)}
       data-urgent-at={DateTime.to_iso8601(@state.urgent_at)}
       data-compact={to_string(@compact)}
-      hidden={@compact && !@state.urgent?}
       class={if @compact, do: "inline-flex items-center gap-1 text-[10px] leading-3", else: "block"}
     >
       <span data-countdown-active class={if @compact, do: "contents", else: "block"}>
@@ -47,7 +46,6 @@ defmodule PauseAiCaWeb.CampaignCountdown do
         </span>
         <span
           data-countdown-digits
-          hidden={@compact && !@state.urgent?}
           aria-hidden="true"
           class={if @compact, do: "inline-flex gap-1 tabular-nums", else: "flex gap-1.5"}
         >
@@ -61,10 +59,12 @@ defmodule PauseAiCaWeb.CampaignCountdown do
               ]
             }
             data-countdown-part={unit}
+            data-countdown-secondary={to_string(@compact && unit == List.last(@menu_units))}
             hidden={@compact && unit not in @menu_units}
             class={
               if @compact,
-                do: "inline-flex items-baseline gap-0.5",
+                do:
+                  "inline-flex min-w-7 flex-col items-center rounded bg-stone-950 px-1 py-0.5 text-center text-white",
                 else:
                   "flex min-w-0 flex-1 flex-col rounded-md bg-stone-950 px-1.5 py-2 text-center text-white"
             }
@@ -73,13 +73,13 @@ defmodule PauseAiCaWeb.CampaignCountdown do
               data-countdown-unit={unit}
               class={
                 if @compact,
-                  do: "font-bold",
+                  do: "text-sm font-bold leading-4",
                   else: "font-heading text-2xl font-bold tabular-nums sm:text-3xl"
               }
             >
               {Map.fetch!(@state.parts, unit) |> Integer.to_string() |> String.pad_leading(2, "0")}
             </span>
-            <span :if={@compact} aria-hidden="true">{short_unit(unit)}</span>
+            <span :if={@compact} aria-hidden="true" class="text-[9px] leading-3">{short_unit(unit)}</span>
             <span class={if @compact, do: "sr-only", else: "mt-1 text-[10px]"}>{label}</span>
           </span>
         </span>
@@ -103,13 +103,16 @@ defmodule PauseAiCaWeb.CampaignCountdown do
               this.el.querySelector('[data-countdown-active]').hidden = ended
               this.el.querySelector('[data-countdown-ended]').hidden = !ended
               const compact = this.el.dataset.compact === 'true'
-              if (compact) this.el.hidden = ended || now < Date.parse(this.el.dataset.urgentAt)
+              if (compact) this.el.hidden = ended
               const promotion = document.querySelector('[data-campaign-promotion]')
               if (promotion?.dataset.campaignClosesAt === this.el.dataset.closesAt) promotion.hidden = ended
               const selected = !compact ? ['days', 'hours', 'minutes', 'seconds'] : remaining >= 86400 ? ['days', 'hours'] : ['hours', 'minutes']
-              this.el.querySelectorAll('[data-countdown-part]').forEach(node => { node.hidden = compact && !selected.includes(node.dataset.countdownPart) })
+              this.el.querySelectorAll('[data-countdown-part]').forEach(node => {
+                node.hidden = compact && !selected.includes(node.dataset.countdownPart)
+                node.dataset.countdownSecondary = String(compact && node.dataset.countdownPart === selected[1])
+              })
               const digits = this.el.querySelector('[data-countdown-digits]')
-              digits.hidden = ended || (this.el.dataset.compact === 'true' && now < Date.parse(this.el.dataset.urgentAt))
+              digits.hidden = ended
               const parts = {days: Math.floor(remaining / 86400), hours: Math.floor(remaining / 3600) % 24, minutes: Math.floor(remaining / 60) % 60, seconds: remaining % 60}
               this.el.setAttribute('aria-label', ended ? this.el.dataset.labelEnded : selected.map(unit => `${parts[unit]} ${this.el.dataset['label' + unit[0].toUpperCase() + unit.slice(1)]}`).join(' '))
               for (const [unit, value] of Object.entries(parts)) {

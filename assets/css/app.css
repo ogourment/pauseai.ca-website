@@ -417,11 +417,11 @@ h3 {
 .section-menu-heading{padding:.75rem .75rem .2rem;font-size:.75rem;font-weight:700;text-transform:uppercase;color:#78716c}
 .section-wide-public,.section-wide-extra{display:none}
 .signed-campaign-controls{display:none;align-items:center;gap:.65rem}
-.signed-campaign-controls:has([role=timer]:not([hidden])){display:flex;flex-basis:100%;justify-content:center}
+.signed-campaign-controls:has([role=timer]:not([hidden])){display:flex}
 @media(min-width:640px){.signed-section-navigation{padding-inline:1.25rem}.section-brand-name{max-width:none;font-size:.95rem}.section-brand-logo{width:1.8rem;height:1.8rem}.section-private-menus{gap:1rem}.signed-campaign-controls{display:flex}.signed-campaign-controls:has([role=timer]:not([hidden])){flex-basis:auto}}
 @media(min-width:1280px){.signed-section-navigation{gap:1rem;flex-wrap:nowrap}.section-wide-public{display:flex}.section-top-link{font-size:.875rem;font-weight:500;white-space:nowrap}.section-private-menus{gap:1rem}.section-menu>summary{white-space:nowrap}.section-menu-panel{max-height:75vh}.section-brand-name{white-space:nowrap}}
 @media(min-width:1500px){.section-wide-extra{display:flex}}
-@media(max-width:639px){.signed-section-navigation{column-gap:.4rem}.section-private-menus{gap:.4rem}.section-brand-name{max-width:3.25rem}.signed-campaign-controls{order:2}.section-menu-panel{position:fixed;left:.75rem!important;right:.75rem!important;top:4rem;width:auto;max-height:75vh}}
+@media(max-width:639px){.signed-section-navigation{column-gap:.4rem}.section-private-menus{gap:.4rem}.section-brand-name{max-width:3.25rem}.section-menu-panel{position:fixed;left:.75rem!important;right:.75rem!important;top:4rem;width:auto;max-height:75vh}}
 .section-menu:has(.app-shell-link[aria-current=page])>summary{background:#e7e5e4;color:#1c1917}
 
 @media(max-width:359px){.section-brand-name{display:none}}
@@ -430,3 +430,6 @@ h3 {
 .mail-withdrawal-link{display:inline-flex;align-items:center;min-height:44px;padding:0;border:0;border-radius:0;background:transparent;color:inherit;font:inherit;font-size:.875rem;font-weight:400;text-decoration:underline;cursor:pointer}
 .mail-withdrawal-link:hover{background:transparent;text-decoration-thickness:2px}
 .mail-withdrawal-link:focus-visible{outline:3px solid var(--color-primary);outline-offset:3px}
+
+/* Phone navigation keeps only the leading countdown unit. */
+@media(max-width:639px){[data-compact=true] [data-countdown-secondary=true]{display:none}}

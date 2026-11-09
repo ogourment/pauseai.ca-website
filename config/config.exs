@@ -15,6 +15,8 @@ config :pauseai_ca, :donation_funding_enabled, true
 
 config :pauseai_ca, :manifund_campaign,
   project_id: "a7c581e9-fb40-e046-5996-1920a622fef7",
+  # Manifund minimum verified on 2026-11-09, separate from CAD planning budgets.
+  minimum_usd_minor: 990_000,
   # Match Manifund time-left-display.tsx fixed closing offset, not an inferred browser timezone.
   closes_at: "2026-11-27T23:59:59-07:00",
   urgent_window_days: 7,

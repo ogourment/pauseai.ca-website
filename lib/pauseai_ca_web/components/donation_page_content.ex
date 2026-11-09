@@ -56,6 +56,10 @@ defmodule PauseAiCaWeb.DonationPageContent do
     assigns =
       assign(assigns,
         copy: copy,
+        minimum_progress:
+          if(assigns.campaign_active,
+            do: PauseAiCa.Donations.Campaign.minimum_progress(assigns.observation)
+          ),
         countdown:
           if(assigns.campaign_active, do: PauseAiCa.Donations.Campaign.countdown(assigns.page)),
         projection: projection,
@@ -103,19 +107,28 @@ defmodule PauseAiCaWeb.DonationPageContent do
         </div>
       </div>
       <section
+        id={"#{@prefix}-allocation"}
         class="mt-7 rounded-xl border border-stone-200 bg-white p-4 sm:p-6"
         aria-labelledby={
           if @show_projection && present?(@copy, heading(@projection)),
             do: "#{@prefix}-allocation-heading"
         }
       >
-        <h2
-          :if={@show_projection && present?(@copy, heading(@projection))}
-          id={"#{@prefix}-allocation-heading"}
-          class="font-heading text-2xl"
-        >
-          {text(@copy, heading(@projection))}
-        </h2>
+        <div id={"#{@prefix}-allocation-header"} class="flex items-start justify-between gap-3">
+          <h2
+            :if={@show_projection && present?(@copy, heading(@projection))}
+            id={"#{@prefix}-allocation-heading"}
+            class="min-w-0 flex-1 font-heading text-2xl"
+          >
+            {text(@copy, heading(@projection))}
+          </h2>
+          <.minimum_progress
+            :if={@minimum_progress}
+            progress={@minimum_progress}
+            locale={@locale}
+            prefix={@prefix}
+          />
+        </div>
         <p
           :if={@show_projection && present?(@copy, note(@projection))}
           class="mt-2 whitespace-pre-line text-stone-700"
@@ -148,6 +161,15 @@ defmodule PauseAiCaWeb.DonationPageContent do
             amount: money(@observation.amount_minor, @locale),
             rate: @observation.fx_rate,
             date: Date.to_iso8601(@observation.fx_date)
+          )}
+        </p>
+        <p
+          :if={@minimum_progress}
+          id={"#{@prefix}-minimum-note"}
+          class="mt-2 text-xs leading-5 text-stone-600"
+        >
+          {gettext(
+            "Funds become available after the minimum is reached, Manifund approves the project and the grant agreement is signed."
           )}
         </p>
         <div class={if @show_projection, do: "donation-budget-layout mt-5", else: "mt-2"}>
@@ -646,6 +668,57 @@ defmodule PauseAiCaWeb.DonationPageContent do
     }
   end
 
+  attr :progress, :map, required: true
+  attr :locale, :string, required: true
+  attr :prefix, :string, required: true
+
+  def minimum_progress(assigns) do
+    tenths = assigns.progress.percent_tenths
+    separator = if assigns.locale == "fr", do: ",", else: "."
+
+    percent =
+      Integer.to_string(div(tenths, 10)) <> separator <> Integer.to_string(rem(tenths, 10))
+
+    assigns =
+      assign(assigns, :percent_label, gettext("%{percent}% of the minimum", percent: percent))
+
+    ~H"""
+    <aside
+      id={"#{@prefix}-minimum-progress"}
+      class="relative w-48 max-w-[48%] shrink-0 text-right"
+      aria-labelledby={"#{@prefix}-minimum-heading"}
+    >
+      <span id={"#{@prefix}-minimum-heading"} class="sr-only">
+        {gettext("Minimum funding target")}
+      </span>
+      <p id={"#{@prefix}-minimum-percent"} class="font-heading text-lg leading-tight text-stone-950">
+        {@percent_label}
+      </p>
+      <p id={"#{@prefix}-minimum-amount"} class="mt-1 text-xs leading-4 text-stone-700">
+        {gettext("%{amount} / %{minimum} pledged",
+          amount: money(@progress.pledged_minor, @locale, "USD"),
+          minimum: money(@progress.minimum_minor, @locale, "USD")
+        )}
+      </p>
+      <div
+        role="progressbar"
+        aria-labelledby={"#{@prefix}-minimum-heading"}
+        aria-describedby={"#{@prefix}-minimum-amount #{@prefix}-minimum-note"}
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow={@progress.bar_percent}
+        aria-valuetext={@percent_label}
+        class="mt-1.5 h-2 overflow-hidden rounded-full border border-stone-500 bg-white"
+      >
+        <div class="h-full bg-[#254c3b]" style={"width: #{@progress.bar_percent}%"} />
+      </div>
+      <p :if={@progress.reached?} role="status" class="mt-1 text-xs font-semibold text-stone-950">
+        {gettext("Minimum reached")}
+      </p>
+    </aside>
+    """
+  end
+
   defp heading(%{mode: :remaining}), do: "remaining_heading"
   defp heading(_), do: "allocation_heading"
   defp note(%{mode: :remaining}), do: "remaining_note"
@@ -672,7 +745,7 @@ defmodule PauseAiCaWeb.DonationPageContent do
 
   def gift_amount_minor(_), do: :error
 
-  def money(minor, locale) do
+  def money(minor, locale, currency \\ "CAD") when currency in ["CAD", "USD"] do
     whole =
       minor
       |> div(100)
@@ -690,7 +763,12 @@ defmodule PauseAiCaWeb.DonationPageContent do
               String.pad_leading(Integer.to_string(cents), 2, "0")
         )
 
-    if locale == "fr", do: number <> " $ CA", else: "C$" <> number
+    prefixes = %{"CAD" => "C$", "USD" => "US$"}
+    suffixes = %{"CAD" => "CA", "USD" => "US"}
+
+    if locale == "fr",
+      do: number <> " $ " <> Map.fetch!(suffixes, currency),
+      else: Map.fetch!(prefixes, currency) <> number
   end
 
   defp safe_url(value) when is_binary(value) do
