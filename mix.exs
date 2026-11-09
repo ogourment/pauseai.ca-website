@@ -70,7 +70,7 @@ defmodule PauseAiCa.MixProject do
       _ ->
         {:phoenix_agent_assistant,
          git: "https://github.com/ogourment/phoenix_agent_assistant-compiled.git",
-         ref: "eaa28d0ece2053f86481a4395c549d97e89b77cf"}
+         ref: "64cc9f7c8dc1f5b80f6147197bd20ab390d6f976"}
     end
   end
 
