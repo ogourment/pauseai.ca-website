@@ -164,6 +164,7 @@ if System.get_env("ATDD") == "true" do
       )
       |> click_button("#incubator-add-member button", tr(locale, "Add member"))
       |> assert_has("#incubator-roster", text: user.name)
+      |> assert_has("#enrollment-email", value: "")
     end
 
     defp assert_membership(browser, locale, record, role) do

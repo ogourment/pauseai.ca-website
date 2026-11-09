@@ -97,6 +97,15 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
     end
   end
 
+  defp action("change-existing-member", %{"member" => attrs, "_group_ref" => ref}, socket) do
+    if ref == socket.assigns.group_id and Volunteers.superadmin?(socket.assigns.current_scope) do
+      {:noreply,
+       assign(socket, add_member_form: to_form(attrs, as: "member"), add_member_error: nil)}
+    else
+      {:noreply, denied(socket)}
+    end
+  end
+
   defp action("add-existing-member", %{"member" => attrs, "_group_ref" => ref}, socket) do
     result =
       if ref == socket.assigns.group_id and Volunteers.superadmin?(socket.assigns.current_scope),
@@ -451,6 +460,7 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
             :if={@superadmin and @group_id}
             for={@add_member_form}
             id="incubator-add-member"
+            phx-change="change-existing-member"
             phx-submit="add-existing-member"
             class="rounded-xl border border-base-300 p-4 space-y-3"
           >
