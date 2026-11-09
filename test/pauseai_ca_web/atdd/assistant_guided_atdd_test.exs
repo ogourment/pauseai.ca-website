@@ -155,12 +155,13 @@ if System.get_env("ATDD") == "true" do
         |> assert_has("#crm-contact-#{gta.person.id}")
         |> refute_has("#crm-contact-#{unknown.person.id}")
         |> refute_has("li", text: "Synthetic Burnaby")
+        |> evaluate("document.activeElement.id", &assert(&1 == "crm-areas"))
         |> capture(
           id,
           "Configured area verified",
           "Guide step 2 on Contacts",
           "Next",
-          "Actual URL, selected configured area and fresh server count agree; BC timezone-only and unknown rows are excluded."
+          "Actual URL, selected area, focus and fresh server count agree. The screenshot helper removes native caret focus; the registered target ring remains. BC timezone-only and unknown rows are excluded."
         )
 
       evaluate(
@@ -168,8 +169,6 @@ if System.get_env("ATDD") == "true" do
         "document.querySelector('#crm-areas').value",
         &assert(&1 == "toronto_gta")
       )
-
-      evaluate(browser, "document.activeElement.id", &assert(&1 == "crm-areas"))
 
       browser =
         browser
@@ -181,6 +180,7 @@ if System.get_env("ATDD") == "true" do
         )
         |> click_button("#site-assistant-guide-exit", tr(locale, "Exit"))
         |> refute_has("#site-assistant-guide")
+        |> evaluate("document.activeElement.id", &assert(&1 == "site-assistant-launcher"))
         |> capture(
           id,
           "Guide exited with data intact",
@@ -189,7 +189,6 @@ if System.get_env("ATDD") == "true" do
           "Highlights stop, the conversation remains available, and no contact, consent, draft or delivery changed."
         )
 
-      evaluate(browser, "document.activeElement.id", &assert(&1 == "site-assistant-launcher"))
       assert_received {:guided_provider_called, _}
       refute_received {:guided_provider_called, _}
       assert Repo.aggregate(PhoenixCRM.Person, :count) == count_before
