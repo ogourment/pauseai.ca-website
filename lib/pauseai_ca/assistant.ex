@@ -8,9 +8,6 @@ defmodule PauseAiCa.Assistant do
 
   def store, do: Store.new(Repo, "pauseai-canada")
 
-  @external_resource Path.expand("../../priv/assistant/coaching.md", __DIR__)
-  @coaching File.read!(@external_resource)
-
   def configuration do
     config =
       Keyword.merge(
@@ -24,13 +21,26 @@ defmodule PauseAiCa.Assistant do
       )
 
     config = with_feature_evidence(config)
+    instructions = instruction_snapshot()
+    config = Keyword.put(config, :instruction_binding, Map.drop(instructions, [:source]))
 
     case config[:provider] do
       {module, options} when is_list(options) ->
-        Keyword.put(config, :provider, {module, Keyword.put(options, :instructions, @coaching)})
+        Keyword.put(
+          config,
+          :provider,
+          {module, Keyword.put(options, :instructions, instructions.source)}
+        )
 
       _ ->
         config
+    end
+  end
+
+  defp instruction_snapshot do
+    case PauseAiCa.Assistant.Instructions.effective() do
+      {:ok, instructions} -> instructions
+      _ -> %{source: "", revision: :unavailable, digest: nil}
     end
   end
 
@@ -176,16 +186,32 @@ defmodule PauseAiCa.Assistant do
       {:operator_alerts, operations.alerts == true},
       {:audit_anchor, operations.audit_anchor == true},
       {:price_policy, match?({:ok, _}, PhoenixAgentAssistant.Pricing.bound(config))},
-      {:feature_catalogue, catalogue_ready?(config)}
+      {:feature_catalogue, catalogue_ready?(config)},
+      {:instructions, config[:instruction_binding][:revision] != :unavailable}
     ]
 
     checks =
-      if Keyword.has_key?(config, :assistant_allocation),
+      if budget_guarded?(config),
         do:
           checks ++
             [
               {:spend_ledger, spend_ledger_ready?()},
-              {:credit_allocation, credit_allocation_ready?(config)}
+              {:stage_tracking, config[:stage_tracking] == :required}
+            ],
+        else: checks
+
+    checks =
+      if Keyword.has_key?(config, :assistant_allocation),
+        do: checks ++ [{:credit_allocation, credit_allocation_ready?(config)}],
+        else: checks
+
+    checks =
+      if Keyword.has_key?(config, :pilot_budget),
+        do:
+          checks ++
+            [
+              {:pilot_budget,
+               match?({:ok, _}, PhoenixAgentAssistant.FundedBudget.pilot_configuration(config))}
             ],
         else: checks
 
@@ -298,8 +324,11 @@ defmodule PauseAiCa.Assistant do
       else: {:error, :forbidden}
   end
 
+  defp budget_guarded?(config),
+    do: Keyword.has_key?(config, :assistant_allocation) or Keyword.has_key?(config, :pilot_budget)
+
   defp mode_budget_allowed(scope, mode, config) do
-    if Keyword.has_key?(config, :assistant_allocation) do
+    if budget_guarded?(config) do
       case PhoenixAgentAssistant.FundedBudget.availability(store(), actor(scope), config) do
         {:ok, %{modes: modes}} ->
           if get_in(modes, [mode, :allowed]) == true, do: :ok, else: {:error, :mode_unavailable}
@@ -317,46 +346,68 @@ defmodule PauseAiCa.Assistant do
       config = configuration()
       day = Date.utc_today()
 
-      if Keyword.has_key?(config, :assistant_allocation) do
+      if budget_guarded?(config) do
         with {:ok, state} <-
-               PhoenixAgentAssistant.FundedBudget.availability(store(), actor(scope), config) do
-          money = state.actor_money
-
+               PhoenixAgentAssistant.FundedBudget.availability(store(), actor(scope), config),
+             {:ok, usage} <- budget_usage(scope, config, day, state) do
           {:ok,
-           Map.merge(state.actor_tokens, %{
-             reserved_cost_micros: money.retained_admission_micros,
-             accounted_cost_micros: money.conservative_accounted_micros,
-             pending_cost_micros:
-               money.unresolved_stage_hold_micros + money.legacy_unobserved_hold_micros,
-             remaining_cost_micros:
-               max(config[:daily_limit_micros] - money.conservative_accounted_micros, 0),
-             cost_limit_micros: config[:daily_limit_micros],
-             allocation_active: state.shared.active,
-             allocation_remaining_micros: state.shared.remaining_micros,
-             mode_availability: state.modes,
-             max_turn_cost_micros: config[:max_turn_cost_micros],
-             budget_reset_on: Date.add(day, 1)
-           })}
+           usage
+           |> Map.put(:mode_availability, state.modes)
+           |> Map.put(:pilot, pilot_usage(state))}
         end
       else
-        with {:ok, tokens} <-
-               Store.token_usage(
-                 store(),
-                 actor(scope),
-                 day,
-                 config[:daily_token_limit],
-                 config[:max_daily_token_limit]
-               ),
-             {:ok, costs} <-
-               Store.cost_usage(store(), actor(scope), day, config[:daily_limit_micros]) do
-          {:ok,
-           Map.merge(tokens, costs)
-           |> Map.put(:max_turn_cost_micros, config[:max_turn_cost_micros])
-           |> Map.put(:budget_reset_on, Date.add(day, 1))}
-        end
+        legacy_token_usage(scope, config, day)
       end
     else
       {:error, :forbidden}
+    end
+  end
+
+  defp pilot_usage(%{pilot: pilot}) do
+    pilot
+    |> Map.take([:active, :accounted_micros, :remaining_micros])
+    |> Map.merge(Map.take(pilot.snapshot, [:limit_micros, :starts_at, :expires_at]))
+  end
+
+  defp pilot_usage(_), do: nil
+
+  defp budget_usage(scope, config, day, %{legacy?: true}),
+    do: legacy_token_usage(scope, config, day)
+
+  defp budget_usage(_scope, config, day, state) do
+    money = state.actor_money
+
+    {:ok,
+     Map.merge(state.actor_tokens, %{
+       reserved_cost_micros: money.retained_admission_micros,
+       accounted_cost_micros: money.conservative_accounted_micros,
+       pending_cost_micros:
+         money.unresolved_stage_hold_micros + money.legacy_unobserved_hold_micros,
+       remaining_cost_micros:
+         max(config[:daily_limit_micros] - money.conservative_accounted_micros, 0),
+       cost_limit_micros: config[:daily_limit_micros],
+       allocation_active: state.shared.active,
+       allocation_remaining_micros: state.shared.remaining_micros,
+       max_turn_cost_micros: config[:max_turn_cost_micros],
+       budget_reset_on: Date.add(day, 1)
+     })}
+  end
+
+  defp legacy_token_usage(scope, config, day) do
+    with {:ok, tokens} <-
+           Store.token_usage(
+             store(),
+             actor(scope),
+             day,
+             config[:daily_token_limit],
+             config[:max_daily_token_limit]
+           ),
+         {:ok, costs} <-
+           Store.cost_usage(store(), actor(scope), day, config[:daily_limit_micros]) do
+      {:ok,
+       Map.merge(tokens, costs)
+       |> Map.put(:max_turn_cost_micros, config[:max_turn_cost_micros])
+       |> Map.put(:budget_reset_on, Date.add(day, 1))}
     end
   end
 
@@ -553,6 +604,9 @@ defmodule PauseAiCa.Assistant do
       max_output_tokens: 4096
     ]
     |> Keyword.merge(config)
+    |> Keyword.put_new_lazy(:instruction_binding, fn ->
+      Map.drop(instruction_snapshot(), [:source])
+    end)
     |> Keyword.drop([:preference, :correlation_id, :conversation_ref, :spend_reservation_prepare])
     |> Map.new()
     |> Map.put(:provider, provider_snapshot(config))
@@ -561,9 +615,10 @@ defmodule PauseAiCa.Assistant do
   defp provider_snapshot(config) do
     case config[:provider] do
       {module, options} when is_atom(module) and is_list(options) ->
-        # configuration/0 supplies the same static coaching instructions when a
-        # trusted caller starts from the raw application configuration.
-        {module, options |> Keyword.put_new(:instructions, @coaching) |> Map.new()}
+        {module,
+         options
+         |> Keyword.put_new_lazy(:instructions, fn -> instruction_snapshot().source end)
+         |> Map.new()}
 
       _ ->
         :invalid
@@ -603,6 +658,7 @@ defmodule PauseAiCa.Assistant do
       event
       |> Map.put("request_id", config[:correlation_id])
       |> Map.put("runtime_policy", %{
+        "instructions" => json(config[:instruction_binding]),
         "bindings" => config[:bindings] || %{},
         "max_daily_token_limit" => config[:max_daily_token_limit],
         "max_turn_tokens" => config[:max_turn_tokens],
@@ -632,7 +688,7 @@ defmodule PauseAiCa.Assistant do
       if config[:stage_tracking] == :required do
         with {:ok, state} <-
                PhoenixAgentAssistant.FundedBudget.availability(store(), actor(scope), config),
-             true <- state.legacy? or get_in(state, [:modes, reservation.mode, :allowed]) == true,
+             true <- get_in(state, [:modes, reservation.mode, :allowed]) == true,
              :ok <- anchor_funding_state(state, config),
              {:ok, slots} <- PauseAiCa.Assistant.SpendTracking.slots(reservation, config),
              {:ok, prepare} <-

@@ -64,7 +64,8 @@ defmodule PauseAiCa.Assistant.Operations do
   end
 
   def handle_info(:refresh, state) do
-    config = Assistant.configuration()
+    configured = Application.get_env(:pauseai_ca, :agent_assistant, [])
+    config = if configured[:anchor], do: Assistant.configuration(), else: configured
     current = refresh(config)
     Process.send_after(self(), :refresh, 30_000)
 
@@ -383,6 +384,13 @@ defmodule PauseAiCa.Assistant.Operations do
         :strict_v1 -> payload
         policy -> Map.put(payload, "safety_policy", to_string(policy))
       end
+
+    payload =
+      Enum.reduce([:pilot_budget, :instruction_binding], payload, fn key, current ->
+        if Keyword.has_key?(config, key),
+          do: Map.put(current, Atom.to_string(key), config[key]),
+          else: current
+      end)
 
     payload |> Jason.encode!() |> Jason.decode!() |> Canonical.digest()
   end

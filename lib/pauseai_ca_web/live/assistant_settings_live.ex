@@ -58,15 +58,24 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
     end
   end
 
-  defp reload(socket),
-    do:
-      assign(socket,
-        enabled: PhoenixAgentAssistant.Store.enabled?(Assistant.store()),
-        missing: Assistant.readiness(),
-        admins: Assistant.admin_usage(socket.assigns.current_scope),
-        default_limit: Assistant.configuration()[:daily_token_limit],
-        quota_ceiling: Assistant.configuration()[:max_daily_token_limit]
-      )
+  defp reload(socket) do
+    pilot =
+      case Assistant.token_usage(socket.assigns.current_scope) do
+        {:ok, usage} -> Map.get(usage, :pilot)
+        _ -> nil
+      end
+
+    assign(socket,
+      enabled: PhoenixAgentAssistant.Store.enabled?(Assistant.store()),
+      missing: Assistant.readiness(),
+      admins: Assistant.admin_usage(socket.assigns.current_scope),
+      default_limit: Assistant.configuration()[:daily_token_limit],
+      quota_ceiling: Assistant.configuration()[:max_daily_token_limit],
+      instructions_access:
+        PauseAiCa.Assistant.Instructions.permitted?(socket.assigns.current_scope),
+      pilot: pilot
+    )
+  end
 
   def render(assigns) do
     ~H"""
@@ -92,7 +101,23 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
             navigate={~p"/admin/assistant/activity?#{[locale: @locale]}"}
             class="underline"
           >{gettext("Activity & security")}</.link>
+          <.link
+            :if={@instructions_access}
+            id="assistant-instructions-link"
+            href={~p"/admin/assistant/instructions?#{[locale: @locale]}"}
+            class="underline"
+          >{gettext("Instructions")}</.link>
           <p id="assistant-status">{if @enabled, do: gettext("On"), else: gettext("Off")}</p>
+          <p :if={@pilot} id="assistant-pilot-budget" role="status">
+            {gettext("All-provider pilot · USD %{remaining} / %{limit} remaining through %{date} UTC",
+              remaining: usd(@pilot.remaining_micros, @locale),
+              limit: usd(@pilot.limit_micros, @locale),
+              date: Calendar.strftime(@pilot.expires_at, "%Y-%m-%d %H:%M")
+            )}
+            {gettext(
+              "Generation, safety reviews and unresolved usage count toward this shared ceiling."
+            )}
+          </p>
           <button
             :if={!@enabled}
             id="assistant-enable"
@@ -318,4 +343,10 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
   defp readiness_label(:operator_alerts), do: gettext("Verified operator alerts")
   defp readiness_label(:audit_anchor), do: gettext("Independent audit verification")
   defp readiness_label(:price_policy), do: gettext("Verified cost limits")
+  defp readiness_label(:instructions), do: gettext("Published application instructions")
+
+  defp readiness_label(:stage_tracking),
+    do: gettext("Required generation and safety spend tracking")
+
+  defp readiness_label(:pilot_budget), do: gettext("Valid all-provider pilot ceiling")
 end

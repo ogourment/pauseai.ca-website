@@ -3,6 +3,7 @@ if System.get_env("ATDD") == "true" do
     use AcceptanceHarness.Playwright.Case, async: false
     import PauseAiCa.AccountsFixtures
     alias PauseAiCa.{Accounts, Assistant, AssistantFixtures, Repo}
+    alias PauseAiCa.Assistant.Instructions
     alias PauseAiCaWeb.AtddEvidence
     alias PhoenixAgentAssistant.Store
     @moduletag :atdd
@@ -30,12 +31,28 @@ if System.get_env("ATDD") == "true" do
         language: "English",
         device: "Desktop",
         source_file: __ENV__.file
+      },
+      %{
+        id: "AI-INSTR-01-en",
+        title: "Restricted instructions, saved draft and explicit publication",
+        roles: ["Allowlisted superadmin", "Other superadmin", "Group manager"],
+        language: "English",
+        device: "Desktop",
+        source_file: __ENV__.file
+      },
+      %{
+        id: "AI-INSTR-01-fr",
+        title: "Restricted instructions, saved draft and explicit publication",
+        roles: ["Allowlisted superadmin", "Other superadmin", "Group manager"],
+        language: "French",
+        device: "Phone",
+        source_file: __ENV__.file
       }
     ]
 
     setup_all do
       AtddEvidence.reset!(
-        "Application assistant · activation, conversation and token limits",
+        "Application assistant · settings, private instructions and conversations",
         @scenarios,
         %{
           browser: "Chromium",
@@ -51,14 +68,24 @@ if System.get_env("ATDD") == "true" do
     setup do
       Ecto.Adapters.SQL.Sandbox.mode(Repo, {:shared, self()})
       previous = Application.fetch_env(:pauseai_ca, :agent_assistant)
+      previous_editors = Application.fetch_env(:pauseai_ca, :assistant_instruction_editors)
       previous_build = System.get_env("PAUSEAI_CA_RELEASE_ID")
       System.put_env("PAUSEAI_CA_RELEASE_ID", "assistant-synthetic-fixture")
       Application.put_env(:pauseai_ca, :agent_assistant, AssistantFixtures.configuration(self()))
+      Application.put_env(:pauseai_ca, :assistant_instruction_editors, [])
 
       on_exit(fn ->
         case previous do
           {:ok, config} -> Application.put_env(:pauseai_ca, :agent_assistant, config)
           :error -> Application.delete_env(:pauseai_ca, :agent_assistant)
+        end
+
+        case previous_editors do
+          {:ok, editors} ->
+            Application.put_env(:pauseai_ca, :assistant_instruction_editors, editors)
+
+          :error ->
+            Application.delete_env(:pauseai_ca, :assistant_instruction_editors)
         end
 
         if previous_build,
@@ -432,6 +459,211 @@ if System.get_env("ATDD") == "true" do
       refute_receive {:assistant_generated, _, _}
       refute_received {:email, _}
       success(id)
+      browser
+    end
+
+    for {locale, width, height} <- [{"en", 1280, 900}, {"fr", 390, 844}] do
+      @tag screenshot: true
+      @tag browser_context_opts: [viewport: %{width: width, height: height}]
+      test "AI-INSTR-01-#{locale} private coaching draft, publish and ordinary role denial", c do
+        locale = unquote(locale)
+        id = "AI-INSTR-01-#{locale}"
+        path = "/admin/assistant/instructions?locale=#{locale}"
+        private_editor = "synthetic-private-allowlist@example.org"
+
+        initial =
+          "# SYNTHETIC INITIAL COACHING\n\nHelp synthetic organizers review local contacts."
+
+        updated =
+          "# SYNTHETIC REVISED COACHING\n\nExplain the next local review action in #{locale}."
+
+        ordinary = user_fixture(%{email: "instructions-group-manager@example.org"})
+        group = Repo.insert!(%PauseAiCa.Volunteers.Group{name: "Synthetic instructions review"})
+        Repo.insert!(%PauseAiCa.Volunteers.Manager{user_id: ordinary.id, group_id: group.id})
+        assert PauseAiCa.Volunteers.allowed?(Accounts.Scope.for_user(ordinary))
+        refute PauseAiCa.Volunteers.superadmin?(Accounts.Scope.for_user(ordinary))
+
+        flush_mail()
+
+        Application.put_env(:pauseai_ca, :assistant_instruction_editors, [
+          c.admin.email,
+          private_editor
+        ])
+
+        assert {:ok, draft} = Instructions.save(c.scope, 0, initial)
+        assert {:ok, published} = Instructions.publish(c.scope, draft.revision)
+        binding = Assistant.configuration()[:instruction_binding]
+        assert {:ok, %{source: ^initial}} = Instructions.effective()
+        refute Store.enabled?(Assistant.store())
+
+        browser =
+          c.conn
+          |> login(c.admin)
+          |> visit("/#{locale}")
+          |> assert_has("#admin-menu")
+          |> PauseAiCaWeb.AtddNavigation.open_section("admin")
+          |> capture(
+            id,
+            "Administrator navigation",
+            "Synthetic account on the localized homepage",
+            "Open Admin",
+            "The normal website navigation exposes Assistant to the current synthetic superadmin."
+          )
+          |> click_link("#admin-menu a", tr(locale, "Assistant"), exact: true)
+          |> connected()
+          |> assert_has("#assistant-instructions-link",
+            text: tr(locale, "Instructions"),
+            exact: true
+          )
+          |> refute_has("body", text: private_editor)
+          |> capture(
+            id,
+            "Restricted editor entry",
+            "Localized homepage with Admin open",
+            "Assistant",
+            "Only the allowlisted synthetic superadmin sees the Instructions entry. The editor list is absent from the page."
+          )
+          |> click_link("#assistant-instructions-link", tr(locale, "Instructions"))
+          |> connected()
+          |> assert_has("#assistant-instruction-source-source", value: initial)
+          |> capture(
+            id,
+            "Current synthetic instructions",
+            "Assistant settings",
+            "Instructions",
+            "The editor shows the actual effective synthetic coaching. All fixture text is isolated from live instructions."
+          )
+          |> fill_in(
+            "#assistant-instruction-source-source",
+            tr(locale, "Application instructions · Markdown"),
+            with: updated
+          )
+          |> assert_has("#assistant-instruction-status",
+            text: tr(locale, "Unsaved changes"),
+            exact: true
+          )
+          |> click_button("#assistant-instruction-save", tr(locale, "Save draft"))
+          |> assert_has("#assistant-instruction-status",
+            text: tr(locale, "Draft saved"),
+            exact: true
+          )
+
+        assert {:ok, %{source: ^initial}} = Instructions.effective()
+        assert Assistant.configuration()[:instruction_binding] == binding
+        assert {:ok, saved} = Instructions.get(c.scope)
+        assert saved.source == updated
+        assert saved.revision == published.revision + 1
+
+        browser =
+          browser
+          |> visit(path)
+          |> connected()
+          |> assert_has("#assistant-instruction-source-source", value: updated)
+          |> capture(
+            id,
+            "Saved draft survives reload",
+            "Instructions editor after Save draft",
+            "Save draft; reload the Instructions URL",
+            "The revised draft persists. The provider still uses the previously published fixture source and binding."
+          )
+          |> click_button(
+            "#assistant-instruction-publish",
+            tr(locale, "Publish saved instructions")
+          )
+          |> assert_has("#assistant-instruction-status",
+            text: tr(locale, "Instructions published"),
+            exact: true
+          )
+          |> PhoenixTest.Playwright.click("#assistant-instruction-history > summary")
+          |> assert_has("#assistant-instruction-history article p", text: c.admin.id)
+          |> capture(
+            id,
+            "Published instructions and attributed history",
+            "Reloaded saved draft",
+            "Publish saved instructions; open Revision history",
+            "Explicit publication changes the effective source and revision/hash binding. The private revision history attributes Save and Publish to the signed-in fixture account."
+          )
+
+        assert {:ok, effective} = Instructions.effective()
+        assert effective.source == updated
+        assert effective.revision == saved.revision + 1
+        refute Assistant.configuration()[:instruction_binding] == binding
+        assert {_provider, options} = Assistant.configuration()[:provider]
+        assert options[:instructions] == updated
+        assert {:ok, history} = Instructions.history(c.scope)
+        assert Enum.map(history, & &1.action) == ["publish", "save", "publish", "save"]
+        assert Enum.all?(history, &(&1.editor_id == c.admin.id))
+
+        browser =
+          browser
+          |> switch_browser_identity(&login(&1, c.other))
+          |> visit("/admin/assistant?locale=#{locale}")
+          |> connected()
+          |> refute_has("#assistant-instructions-link")
+          |> refute_has("body", text: private_editor)
+          |> refute_has("body", text: "SYNTHETIC REVISED COACHING")
+          |> capture(
+            id,
+            "Other superadmin settings",
+            "Allowlisted superadmin's published fixture instructions",
+            "Sign in as the other synthetic superadmin; open Assistant",
+            "Assistant settings retain ordinary administration controls while the restricted Instructions link, editor list and coaching are absent."
+          )
+          |> denied_instruction_request(path)
+          |> visit(path)
+          |> assert_has("body", text: "Not found", exact: true)
+          |> capture(
+            id,
+            "Other superadmin denied",
+            "Other synthetic superadmin on Assistant settings without Instructions",
+            "Open the restricted Instructions URL directly",
+            "The real request returns 404 with no-store. The page exposes no instructions or editor list."
+          )
+
+        browser =
+          browser
+          |> switch_browser_identity(&login(&1, ordinary))
+          |> visit("/#{locale}")
+          |> assert_has("#account-menu")
+          |> refute_has("#assistant-instructions-link")
+          |> refute_has("body", text: private_editor)
+          |> denied_instruction_request(path)
+          |> visit(path)
+          |> assert_has("body", text: "Not found", exact: true)
+          |> capture(
+            id,
+            "Group manager denied",
+            "Synthetic group manager on the localized homepage",
+            "Open the restricted Instructions URL directly",
+            "An ordinary organizer's group-management rights grant no access to the private instructions editor."
+          )
+
+        refute Store.enabled?(Assistant.store())
+        refute_receive {:assistant_generated, _, _}
+        refute_received {:email, _}
+        success(id)
+        browser
+      end
+    end
+
+    defp denied_instruction_request(browser, path) do
+      evaluate(
+        browser,
+        """
+        (async () => {
+          const response = await fetch(#{Jason.encode!(path)});
+          return {status: response.status, cache: response.headers.get('cache-control'), text: await response.text()};
+        })()
+        """,
+        fn response ->
+          assert response == %{
+                   "status" => 404,
+                   "cache" => "private, no-store",
+                   "text" => "Not found"
+                 }
+        end
+      )
+
       browser
     end
 

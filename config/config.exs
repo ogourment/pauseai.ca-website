@@ -134,6 +134,8 @@ config :phoenix, :filter_parameters, [
   "withdrawal",
   "assistant",
   "assistant_settings",
+  "instructions",
+  "source",
   "participation",
   "interac",
   "verification",

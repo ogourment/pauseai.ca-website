@@ -113,6 +113,19 @@ defmodule PauseAiCaWeb.Router do
     acceptance_harness_versions("/versions")
   end
 
+  pipeline :assistant_instruction_access do
+    plug PauseAiCaWeb.AssistantInstructionAccess
+  end
+
+  scope "/admin", PauseAiCaWeb do
+    pipe_through [:browser, :require_authenticated_user, :assistant_instruction_access]
+
+    live_session :assistant_instruction_editor,
+      on_mount: [{PauseAiCaWeb.UserAuth, :require_authenticated}] do
+      live "/assistant/instructions", AssistantInstructionsLive, :index
+    end
+  end
+
   scope "/admin", PauseAiCaWeb do
     pipe_through [:browser, :require_authenticated_user, :require_superadmin_user]
 

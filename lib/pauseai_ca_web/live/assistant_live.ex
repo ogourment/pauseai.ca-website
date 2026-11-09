@@ -302,8 +302,20 @@ defmodule PauseAiCaWeb.AssistantLive do
     ) <>
       " · " <>
       money_summary(usage, locale) <>
+      pilot_summary(usage, locale) <>
       " · " <> gettext("Budget resets on %{date} at 00:00 UTC", date: date)
   end
+
+  defp pilot_summary(%{pilot: pilot}, locale) when is_map(pilot) do
+    " · " <>
+      gettext("All-provider pilot · USD %{remaining} / %{limit} remaining through %{date} UTC",
+        remaining: usd(pilot.remaining_micros, locale),
+        limit: usd(pilot.limit_micros, locale),
+        date: Calendar.strftime(pilot.expires_at, "%Y-%m-%d %H:%M")
+      )
+  end
+
+  defp pilot_summary(_, _), do: ""
 
   defp money_summary(%{pending_cost_micros: pending} = usage, locale) do
     gettext("USD %{remaining} remaining today; USD %{pending} held for pending usage",

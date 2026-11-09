@@ -246,6 +246,42 @@ digraph Schema {
   ];
 
 
+  "public.assistant_instruction_revisions" [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.assistant_instruction_revisions</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">bigint NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">revision</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">integer NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">editor_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">action</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">source</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">published_source</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">published_revision</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">integer</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
+  "public.assistant_instructions" [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.assistant_instructions</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">integer NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">source</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">published_source</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">revision</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">integer NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">published_revision</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">integer</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">updated_by</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">published_by</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">published_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
   "public.blog_article_revisions" [
     label=<
       <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
@@ -1606,6 +1642,8 @@ digraph Schema {
   "public.agent_assistant_spend_entries" -> "public.agent_assistant_audit_entries" [label="audit_ref -> id"];
   "public.agent_assistant_spend_entries" -> "public.agent_assistant_requests" [label="request_id -> id"];
   "public.agent_assistant_streams" -> "public.agent_assistant_settings" [label="namespace -> namespace"];
+  "public.assistant_instructions" -> "public.users" [label="published_by -> id"];
+  "public.assistant_instructions" -> "public.users" [label="updated_by -> id"];
   "public.blog_article_revisions" -> "public.blog_articles" [label="article_id -> id"];
   "public.blog_article_revisions" -> "public.users" [label="editor_id -> id"];
   "public.blog_articles" -> "public.users" [label="updated_by -> id"];

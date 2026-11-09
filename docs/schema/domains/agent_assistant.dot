@@ -10,6 +10,20 @@ digraph agent_assistant {
     color="#94a3b8";
     penwidth=1.5;
     style="rounded";
+  "assistant_instructions" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.assistant_instructions</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">integer NOT NULL</TD></TR><TR><TD ALIGN="LEFT">source</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">published_source</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">revision</TD><TD ALIGN="LEFT">integer NOT NULL</TD></TR><TR><TD ALIGN="LEFT">published_revision</TD><TD ALIGN="LEFT">integer NULL</TD></TR><TR><TD ALIGN="LEFT">updated_by</TD><TD ALIGN="LEFT">uuid NULL</TD></TR><TR><TD ALIGN="LEFT">published_by</TD><TD ALIGN="LEFT">uuid NULL</TD></TR><TR><TD ALIGN="LEFT">published_at</TD><TD ALIGN="LEFT">timestamp without time zone NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
+  "assistant_instruction_revisions" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.assistant_instruction_revisions</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">bigint NOT NULL</TD></TR><TR><TD ALIGN="LEFT">revision</TD><TD ALIGN="LEFT">integer NOT NULL</TD></TR><TR><TD ALIGN="LEFT">editor_id</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">action</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">source</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">published_source</TD><TD ALIGN="LEFT">text NULL</TD></TR><TR><TD ALIGN="LEFT">published_revision</TD><TD ALIGN="LEFT">integer NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
   "agent_assistant_anchor_checkpoints" [label=<
     <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
       <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.agent_assistant_anchor_checkpoints</B></TD></TR>
@@ -73,6 +87,12 @@ digraph agent_assistant {
     color="#cbd5e1";
     penwidth=1;
     style="rounded";
+  "users" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#d97706">
+      <TR><TD BGCOLOR="#fef3c7"><B>external: users</B></TD></TR>
+      <TR><TD><FONT POINT-SIZE="10">other fields and relationships omitted</FONT></TD></TR>
+    </TABLE>
+  >];
 
   }
 
@@ -85,4 +105,6 @@ digraph agent_assistant {
   "agent_assistant_spend_entries" -> "agent_assistant_audit_entries" [label="audit_ref -> id", color="#64748b"];
   "agent_assistant_spend_entries" -> "agent_assistant_requests" [label="request_id -> id", color="#64748b"];
   "agent_assistant_streams" -> "agent_assistant_settings" [label="namespace -> namespace", color="#64748b"];
+  "assistant_instructions" -> "users" [label="published_by -> id", color="#d97706", style="dashed", penwidth=1.5];
+  "assistant_instructions" -> "users" [label="updated_by -> id", color="#d97706", style="dashed", penwidth=1.5];
 }

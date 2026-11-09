@@ -1,6 +1,6 @@
 defmodule PauseAiCa.Assistant.OperationsTest do
   use PauseAiCa.DataCase, async: false
-  alias PauseAiCa.{Assistant, AssistantFixtures}
+  alias PauseAiCa.{Assistant, AssistantFixtures, Repo}
   alias PauseAiCa.Assistant.Operations
   alias PhoenixAgentAssistant.{Anchor, Audit, Canonical, ReadinessReconciliation, Store}
   alias PhoenixAgentAssistant.Store.{Alert, AuditEntry}
@@ -78,7 +78,28 @@ defmodule PauseAiCa.Assistant.OperationsTest do
     refute Keyword.has_key?(config, :operations_adapter)
     Application.put_env(:pauseai_ca, :agent_assistant, config)
     Req.Test.stub(__MODULE__, fn conn -> route(conn, remote, signing) end)
-    %{config: config, remote: remote, signing: signing}
+    %{config: Assistant.configuration(), remote: remote, signing: signing}
+  end
+
+  test "unconfigured readiness polling does not query coaching instructions" do
+    Application.put_env(:pauseai_ca, :agent_assistant, [])
+    owner = self()
+    handler = {__MODULE__, make_ref()}
+
+    :ok =
+      :telemetry.attach(
+        handler,
+        Repo.config()[:telemetry_prefix] ++ [:query],
+        fn _, _, _, _ -> send(owner, :unexpected_readiness_query) end,
+        nil
+      )
+
+    on_exit(fn -> :telemetry.detach(handler) end)
+
+    assert {:noreply, %{audit_anchor: false, alerts: false}} =
+             Operations.handle_info(:refresh, %{})
+
+    refute_received :unexpected_readiness_query
   end
 
   test "readiness evidence changes with safety policy while equivalent strict config preserves it",
@@ -102,6 +123,41 @@ defmodule PauseAiCa.Assistant.OperationsTest do
              audit_anchor: false,
              alerts: false
            }
+  end
+
+  test "pilot ceilings and published instruction revisions require fresh readiness", c do
+    baseline = Operations.fingerprint(c.config)
+
+    pilot = %{
+      currency: "USD",
+      limit_micros: 5_000_000,
+      starts_at: ~U[2026-11-08 00:00:00Z],
+      expires_at: ~U[2026-11-23 00:00:00Z]
+    }
+
+    configured = Keyword.put(c.config, :pilot_budget, pilot)
+    refute Operations.fingerprint(configured) == baseline
+
+    changed = Keyword.put(configured, :pilot_budget, %{pilot | limit_micros: 6_000_000})
+    refute Operations.fingerprint(configured) == Operations.fingerprint(changed)
+
+    binding = %{revision: 1, digest: String.duplicate("a", 64)}
+    published = Keyword.put(configured, :instruction_binding, binding)
+    refute Operations.fingerprint(published) == Operations.fingerprint(configured)
+
+    revised = Keyword.put(published, :instruction_binding, %{binding | revision: 2})
+    refute Operations.fingerprint(revised) == Operations.fingerprint(published)
+
+    :persistent_term.put({Operations, :status}, %{
+      fingerprint: Operations.fingerprint(configured),
+      checked_at: System.monotonic_time(:millisecond),
+      audit_anchor: true,
+      alerts: true
+    })
+
+    assert Operations.status(configured) == %{audit_anchor: true, alerts: true}
+    assert Operations.status(changed) == %{audit_anchor: false, alerts: false}
+    assert Operations.status(published) == %{audit_anchor: false, alerts: false}
   end
 
   test "operator recovery retains the old eight events and requires new delivery and anchors",
