@@ -24,6 +24,35 @@ defmodule PauseAiCa.Donations.Campaign do
     end
   end
 
+  @doc "Progress from observed USD pledges toward this campaign’s configured USD minimum."
+  def minimum_progress(%{
+        project_id: project_id,
+        measure: :pending_offers,
+        source_currency: "USD",
+        pending_offer_minor: pledged
+      })
+      when is_integer(pledged) and pledged >= 0 do
+    config = Application.get_env(:pauseai_ca, :manifund_campaign, [])
+
+    with {:ok, %{project_id: ^project_id}} <- current(),
+         minimum when is_integer(minimum) and minimum > 0 <- value(config, :minimum_usd_minor) do
+      # Round down so a pledge just below the minimum never displays 100%.
+      percent_tenths = div(pledged * 1000, minimum)
+
+      %{
+        pledged_minor: pledged,
+        minimum_minor: minimum,
+        percent_tenths: percent_tenths,
+        bar_percent: min(percent_tenths, 1000) / 10,
+        reached?: pledged >= minimum
+      }
+    else
+      _ -> nil
+    end
+  end
+
+  def minimum_progress(_), do: nil
+
   @doc "Fallback settings for pre-existing CMS snapshots; no public read persists defaults."
   def defaults do
     config = Application.get_env(:pauseai_ca, :manifund_campaign, [])

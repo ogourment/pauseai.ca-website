@@ -254,8 +254,35 @@ defmodule PauseAiCaWeb.PublishedDonateLiveTest do
     {:ok, _} = Pages.publish(scope, draft)
     {:ok, mismatched, _} = live(conn, "/en/donate")
     refute has_element?(mismatched, "#donation-funding-source")
+    refute has_element?(mismatched, "#donation-minimum-progress")
     refute has_element?(mismatched, "#donation-gift-form")
     assert has_element?(mismatched, "#manifund-donate")
+  end
+
+  test "the campaign percentage uses its USD minimum and stays independent of the CAD simulator",
+       %{conn: conn} do
+    enable_funding(14_113)
+    publish(payload())
+
+    for {path, percent, minimum} <- [
+          {"/en/donate", "1.0% of the minimum", "US$9,900"},
+          {"/fr/faire-un-don", "1,0 % du minimum", "9 900 $ US"}
+        ] do
+      {:ok, view, _} = live(conn, path)
+      assert has_element?(view, "#donation-allocation-header #donation-minimum-percent", percent)
+      refute has_element?(view, "#menu-countdown")
+      assert has_element?(view, "#donation-minimum-amount", minimum)
+
+      assert has_element?(
+               view,
+               "#donation-minimum-progress [role=progressbar][aria-valuenow='1.0']"
+             )
+
+      view |> form("#donation-gift-form", gift: %{amount: "9900"}) |> render_change()
+      assert has_element?(view, "#donation-minimum-percent", percent)
+      {:ok, reloaded, _} = live(conn, path)
+      assert has_element?(reloaded, "#donation-minimum-percent", percent)
+    end
   end
 
   defp enable_funding(amount) do
@@ -277,6 +304,8 @@ defmodule PauseAiCaWeb.PublishedDonateLiveTest do
     value = %{
       project_id: campaign.project_id,
       amount_minor: amount,
+      source_currency: "USD",
+      pending_offer_minor: 10_000,
       currency: "CAD",
       measure: :pending_offers,
       received_minor: nil,

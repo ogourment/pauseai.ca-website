@@ -42,6 +42,7 @@ defmodule PauseAiCaWeb.Layouts do
     doc: "whether to show the site-wide warning-shot banner and prompt"
 
   attr :show_announcements, :boolean, default: true
+  attr :show_menu_countdown, :boolean, default: true
 
   slot :management_navigation
   attr :breadcrumb_context, :map, default: %{}
@@ -55,9 +56,14 @@ defmodule PauseAiCaWeb.Layouts do
       |> assign(:locale, assigns.locale || Gettext.get_locale(PauseAiCaWeb.Gettext))
       |> assign(
         :campaign_countdown,
-        if(assigns.show_announcements,
-          do: PauseAiCa.Donations.Campaign.countdown(PauseAiCa.Donations.Pages.published())
-        )
+        PauseAiCa.Donations.Campaign.countdown(PauseAiCa.Donations.Pages.published())
+      )
+
+    assigns =
+      assign(
+        assigns,
+        :menu_countdown,
+        if(assigns.show_menu_countdown, do: assigns.campaign_countdown)
       )
 
     ~H"""
@@ -72,7 +78,7 @@ defmodule PauseAiCaWeb.Layouts do
         current_scope={@current_scope}
         locale={@locale}
         translated_path={@translated_path}
-        countdown={@campaign_countdown}
+        countdown={@menu_countdown}
         active_tab={@active_tab}
       />
       <nav
@@ -134,9 +140,9 @@ defmodule PauseAiCaWeb.Layouts do
           <span class="leading-4">{gettext("Donate")}</span>
         </.link>
         <PauseAiCaWeb.CampaignCountdown.timer
-          :if={@campaign_countdown}
+          :if={@menu_countdown}
           id="menu-countdown"
-          state={@campaign_countdown}
+          state={@menu_countdown}
           compact
         />
         <%!-- The menu is CSS-only, so it still works before JavaScript loads. --%>

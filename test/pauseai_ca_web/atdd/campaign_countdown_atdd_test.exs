@@ -50,7 +50,7 @@ if System.get_env("ATDD") == "true" do
             page.payload,
             ["campaign", "closes_at"],
             DateTime.utc_now()
-            |> DateTime.add(2 * 86_400)
+            |> DateTime.add(18 * 86_400)
             |> DateTime.truncate(:second)
             |> DateTime.to_iso8601()
           )
@@ -70,11 +70,15 @@ if System.get_env("ATDD") == "true" do
           |> capture(
             scenario,
             "Campaign replaces the recap",
-            "Open the public home page; synthetic deadline is within the final seven days"
+            "Open the public home page; synthetic deadline is eighteen days away"
           )
           |> PhoenixTest.Playwright.evaluate(
             "[...document.querySelectorAll('#menu-countdown [data-countdown-part]:not([hidden])')].map(e=>e.dataset.countdownPart)",
             &assert(&1 == ["days", "hours"])
+          )
+          |> PhoenixTest.Playwright.evaluate(
+            "[...document.querySelectorAll('#menu-countdown [data-countdown-part]')].filter(e=>getComputedStyle(e).display!=='none').map(e=>e.dataset.countdownPart)",
+            &assert(&1 == if(unquote(width) < 640, do: ["days"], else: ["days", "hours"]))
           )
           |> PhoenixTest.Playwright.evaluate(
             "document.querySelector('#menu-countdown [data-countdown-unit=hours]').textContent.trim()",
@@ -87,13 +91,24 @@ if System.get_env("ATDD") == "true" do
           |> refute_has("#menu-countdown [data-countdown-unit=hours]",
             text: Process.get(:menu_hours_before)
           )
+          |> PhoenixTest.Playwright.evaluate(
+            "(() => { const base=performance.now.bind(performance); Object.defineProperty(performance,'now',{value:()=>base()+17.5*86400000,configurable:true});return true })()",
+            &assert(&1)
+          )
+          |> assert_has("#menu-countdown [data-countdown-part=hours]:not([hidden])")
+          |> refute_has("#menu-countdown [data-countdown-part=days]:not([hidden])")
+          |> PhoenixTest.Playwright.evaluate(
+            "[...document.querySelectorAll('#menu-countdown [data-countdown-part]')].filter(e=>getComputedStyle(e).display!=='none').map(e=>e.dataset.countdownPart)",
+            &assert(&1 == if(unquote(width) < 640, do: ["hours"], else: ["hours", "minutes"]))
+          )
           |> click("#donate-link")
           |> assert_path(if(locale == "fr", do: "/fr/faire-un-don", else: "/en/donate"))
           |> assert_has("#donation-countdown [data-countdown-unit=seconds]")
+          |> refute_has("#menu-countdown")
           |> capture(
             scenario,
             "Larger donation-page timer",
-            "Click Donate in the main menu; compact timer is a separate menu item before Get involved"
+            "Click Donate in the main menu; the donation page keeps its full counter and omits the compact menu counter"
           )
 
         browser =
@@ -102,17 +117,11 @@ if System.get_env("ATDD") == "true" do
             "(() => { const p=document.querySelector('#donation-countdown-panel').getBoundingClientRect();const c=document.querySelector('#donation-campaign-copy').getBoundingClientRect();return p.height<210 && (innerWidth<768 || p.left>=c.right) })()",
             &assert(&1)
           )
-          |> PhoenixTest.Playwright.evaluate(
-            "(() => { const base=performance.now.bind(performance); Object.defineProperty(performance,'now',{value:()=>base()+1.5*86400000,configurable:true});return true })()",
-            &assert(&1)
-          )
-          |> assert_has("#menu-countdown [data-countdown-part=minutes]:not([hidden])")
-          |> refute_has("#menu-countdown [data-countdown-part=days]:not([hidden])")
 
         browser
         |> PhoenixTest.Playwright.evaluate(
           """
-          (() => { const base = performance.now.bind(performance); Object.defineProperty(performance, 'now', {value: () => base() + 3 * 86400000, configurable: true}); return true })()
+          (() => { const base = performance.now.bind(performance); Object.defineProperty(performance, 'now', {value: () => base() + 19 * 86400000, configurable: true}); return true })()
           """,
           &assert(&1)
         )

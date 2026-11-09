@@ -12129,3 +12129,28 @@ msgstr "Votre compte ou votre adresse d’envoi a changé. Reconnectez-vous avan
 #, elixir-autogen, elixir-format
 msgid "Your sent letter is recorded in your account. This confirms the website outcome, not that your MP has read it."
 msgstr "Votre lettre envoyée est inscrite dans votre compte. Cela confirme l’envoi par le site, sans confirmer sa lecture par votre député·e."
+
+#: lib/pauseai_ca_web/components/donation_page_content.ex:683
+#, elixir-autogen, elixir-format
+msgid "%{percent}% of the minimum"
+msgstr "%{percent} % du minimum"
+
+#: lib/pauseai_ca_web/components/donation_page_content.ex:171
+#, elixir-autogen, elixir-format
+msgid "Funds become available after the minimum is reached, Manifund approves the project and the grant agreement is signed."
+msgstr "Les fonds deviennent disponibles une fois le minimum atteint, le projet approuvé par Manifund et la convention de subvention signée."
+
+#: lib/pauseai_ca_web/components/donation_page_content.ex:692
+#, elixir-autogen, elixir-format
+msgid "Minimum funding target"
+msgstr "Objectif minimum de financement"
+
+#: lib/pauseai_ca_web/components/donation_page_content.ex:716
+#, elixir-autogen, elixir-format
+msgid "Minimum reached"
+msgstr "Minimum atteint"
+
+#: lib/pauseai_ca_web/components/donation_page_content.ex:698
+#, elixir-autogen, elixir-format
+msgid "%{amount} / %{minimum} pledged"
+msgstr "%{amount} / %{minimum} en promesses de don"
