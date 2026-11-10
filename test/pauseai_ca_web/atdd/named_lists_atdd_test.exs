@@ -112,6 +112,8 @@ if System.get_env("ATDD") == "true" do
         |> click("#mailing-list-#{list.id} button[phx-click=list-compose]")
         |> fill_in(tr(locale, "Subject"), with: "Dynamic local newsletter #{locale}")
         |> fill_in(tr(locale, "Message · Markdown"), with: "Local synthetic newsletter")
+        |> click_button("#email-choose-recipients", tr(locale, "Choose recipients"), exact: true)
+        |> assert_has("#email-recipient-settings[open]")
         |> select(tr(locale, "Audience source"),
           option: tr(locale, "Mailing list · all eligible members"),
           exact: false
@@ -129,6 +131,10 @@ if System.get_env("ATDD") == "true" do
       b =
         b
         |> visit(path)
+        |> assert_has("[data-phx-main].phx-connected")
+        |> assert_has("#email-audience-summary", text: "27")
+        |> assert_has("#email-recipient-settings:not([open])")
+        |> click_button("#email-choose-recipients", tr(locale, "Choose recipients"), exact: true)
         |> assert_has("#whole-list-audience", text: "27")
         |> refute_has("button[phx-click=select-visible]")
         |> capture(

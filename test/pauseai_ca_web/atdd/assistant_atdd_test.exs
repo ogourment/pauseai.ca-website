@@ -248,6 +248,8 @@ if System.get_env("ATDD") == "true" do
 
       assert {:ok, %{limit: 25_000}} = Assistant.token_usage(c.other_scope)
       assert {:ok, %{limit: 100_000}} = Assistant.token_usage(c.scope)
+      assert {:ok, retained_reference} = Assistant.conversation(c.other_scope)
+      assert {:ok, retained_history} = Assistant.history(c.other_scope, retained_reference)
 
       browser =
         browser
@@ -274,37 +276,40 @@ if System.get_env("ATDD") == "true" do
         |> switch_browser_identity(&login(&1, c.other))
         |> visit("/admin/contacts?locale=fr")
         |> connected()
-        |> assert_has(".phx-connected #site-assistant-launcher")
-        |> click_button("#site-assistant-launcher", tr(locale, "Assistant"))
-        |> assert_has("#site-assistant-dialog[open]")
-        |> assert_has("#site-assistant-usage",
-          text:
-            tr(locale, "%{remaining} / %{limit} tokens remaining today", remaining: 0, limit: 0)
-        )
-        |> assert_has("#site-assistant-form button[type=submit][disabled]")
-        |> fill_in("#site-assistant-text", tr(locale, "Message"),
-          with: "Synthetic quota-denied request"
-        )
+        |> refute_has("#site-assistant-launcher")
+        |> refute_has("#site-assistant-dialog[open]")
         |> capture(
           id,
-          "No allowance prevents normal submission",
-          "Other administrator signs in",
-          "Open Assistant; type a request",
-          "The real quota summary shows zero and Send is disabled. The unfinished request remains editable."
+          "Zero allocation hides the assistant launcher",
+          "Other administrator signs in with zero allocation",
+          "Open the French Contacts page",
+          "The zero-allocation account has no assistant popup. Existing conversations remain stored and no provider request is admitted."
         )
-        # Exercise the authenticated form's server boundary even if a client removes UI protection.
-        |> evaluate("document.querySelector('#site-assistant-form').requestSubmit()")
-        |> assert_has("#site-assistant .paa-error",
-          text: tr(locale, "Your daily token allowance is exhausted. Your draft is retained.")
-        )
-        |> assert_has("#site-assistant-text", value: "Synthetic quota-denied request")
-        |> capture(
-          id,
-          "Forged UI submission still fails closed",
-          "Zero-allowance floating assistant",
-          "Submit the native form despite disabled Send",
-          "Server quota enforcement rejects the request before fixture generation; the draft is retained."
-        )
+
+      requests_before = Repo.aggregate(PhoenixAgentAssistant.Store.Request, :count)
+      audit_before = Repo.aggregate(PhoenixAgentAssistant.Store.AuditEntry, :count)
+      refute Assistant.launcher_visible?(c.other_scope)
+
+      assert {:error, :unavailable} =
+               Assistant.run(
+                 c.other_scope,
+                 Ecto.UUID.generate(),
+                 "Synthetic quota-denied request",
+                 retained_reference,
+                 locale
+               )
+
+      assert Repo.aggregate(PhoenixAgentAssistant.Store.Request, :count) == requests_before
+      assert Repo.aggregate(PhoenixAgentAssistant.Store.AuditEntry, :count) == audit_before
+      assert requests_before == 0
+
+      assert {:ok, ^retained_history} =
+               PhoenixAgentAssistant.History.read(
+                 Assistant.store(),
+                 c.other.id,
+                 retained_reference,
+                 Assistant.configuration()[:audit_keys]
+               )
 
       refute_receive {:assistant_generated, _, _}
 
