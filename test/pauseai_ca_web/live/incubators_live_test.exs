@@ -44,6 +44,45 @@ defmodule PauseAiCaWeb.IncubatorsLiveTest do
     end
   end
 
+  @tag :empty_groups
+  test "opening the event editor preserves an unconfigured group's complete draft", c do
+    {:ok, group} = Volunteers.create_group(c.admin, %{name: "Unconfigured group"})
+    path = "/manage/groups?group=#{group.id}&locale=en"
+    assert {:ok, nil} = Incubators.configuration(c.admin, group.id)
+    {:ok, view, _} = live(log_in_user(build_conn(), c.admin.user), path)
+
+    attrs = %{
+      name_en: "New local group",
+      name_fr: "Nouveau groupe local",
+      summary_en: "Unsaved English description",
+      summary_fr: "Description française non enregistrée",
+      stage: "incubator",
+      events_url: "https://example.org/new-group-events"
+    }
+
+    view |> form("#incubator-config", profile: attrs) |> render_change()
+    view |> element("#incubator-next-event summary") |> render_click()
+    assert_patch(view, path <> "&section=next-event")
+    assert has_element?(view, "#incubator-next-event[open]")
+    assert has_element?(view, "input[name='profile[name_en]'][value='New local group']")
+    assert has_element?(view, "input[name='profile[name_fr]'][value='Nouveau groupe local']")
+    assert has_element?(view, "textarea[name='profile[summary_en]']", attrs.summary_en)
+    assert has_element?(view, "textarea[name='profile[summary_fr]']", attrs.summary_fr)
+    assert has_element?(view, "select[name='profile[stage]'] option[value='incubator'][selected]")
+
+    assert has_element?(
+             view,
+             "input[name='profile[events_url]'][value='https://example.org/new-group-events']"
+           )
+
+    assert {:ok, nil} = Incubators.configuration(c.admin, group.id)
+
+    view |> form("#incubator-config", profile: attrs) |> render_submit()
+
+    assert {:ok, %{name_en: "New local group", stage: "incubator"}} =
+             Incubators.configuration(c.admin, group.id)
+  end
+
   test "event disclosure keeps its URL state and draft through validation and same-group refresh",
        c do
     path = "/manage/groups?group=#{c.group.id}&locale=en"

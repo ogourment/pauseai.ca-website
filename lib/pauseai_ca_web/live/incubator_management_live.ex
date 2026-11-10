@@ -40,7 +40,7 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
     groups = Incubators.managed_groups(socket.assigns.current_scope)
     group_id = params["group"] || (List.first(groups) && List.first(groups).id)
 
-    same_group? = group_id == socket.assigns.group_id && not is_nil(socket.assigns.profile)
+    same_group? = not is_nil(group_id) && group_id == socket.assigns.group_id
 
     {:noreply,
      reload(
