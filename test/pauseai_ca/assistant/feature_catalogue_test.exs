@@ -362,14 +362,14 @@ defmodule PauseAiCa.Assistant.FeatureCatalogueTest do
     write(context)
     assert {:ok, loaded} = FeatureCatalogue.load(context.identity, evidence_path: context.path)
 
-    for {id, prefix, version} <- [
-          {"group-enrollment", "GROUP-ADMIN-01", "0.6.19"},
-          {"group-public-events", "PUBLIC-GROUPS-EVENTS-01", "0.7.0"},
-          {"local-followup", "LOCAL-FOLLOWUP-01", "0.7.0"},
-          {"task-member-assignment", "TASK-MEMBER-01", "0.7.0"}
+    for {id, prefixes, version} <- [
+          {"group-enrollment", ["GROUP-ADMIN-01"], "0.6.19"},
+          {"group-public-events", ["PUBLIC-GROUPS-EVENTS-01", "GROUP-EVENT-EDITOR-01"], "0.7.0"},
+          {"local-followup", ["LOCAL-FOLLOWUP-01"], "0.7.0"},
+          {"task-member-assignment", ["TASK-MEMBER-01"], "0.7.0"}
         ] do
       feature = Enum.find(loaded.features, &(&1.id == id))
-      assert feature.scenarios == ["#{prefix}-en", "#{prefix}-fr"]
+      assert feature.scenarios == Enum.flat_map(prefixes, &["#{&1}-en", "#{&1}-fr"])
       assert feature.introduced_in == version
       assert feature.controls == []
     end

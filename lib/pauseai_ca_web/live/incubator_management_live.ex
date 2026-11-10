@@ -15,6 +15,7 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
         groups: [],
         group_id: nil,
         requested_group: false,
+        next_event_open: false,
         profile: nil,
         roster: [],
         events: [],
@@ -39,9 +40,17 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
     groups = Incubators.managed_groups(socket.assigns.current_scope)
     group_id = params["group"] || (List.first(groups) && List.first(groups).id)
 
+    same_group? = group_id == socket.assigns.group_id && not is_nil(socket.assigns.profile)
+
     {:noreply,
      reload(
-       assign(socket, groups: groups, group_id: group_id, requested_group: params["group"] != nil)
+       assign(socket,
+         groups: groups,
+         group_id: group_id,
+         requested_group: params["group"] != nil,
+         next_event_open: params["section"] == "next-event"
+       ),
+       not same_group?
      )}
   end
 
@@ -54,6 +63,17 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
 
   defp action("group", %{"group" => group}, socket),
     do: {:noreply, push_patch(socket, to: management_path(group, socket.assigns.locale))}
+
+  defp action("toggle-next-event", _, socket) do
+    with {:ok, _} <-
+           Incubators.configuration(socket.assigns.current_scope, socket.assigns.group_id) do
+      path = management_path(socket.assigns.group_id, socket.assigns.locale)
+      path = if socket.assigns.next_event_open, do: path, else: path <> "&section=next-event"
+      {:noreply, push_patch(socket, to: path, replace: true)}
+    else
+      _ -> {:noreply, denied(socket)}
+    end
+  end
 
   defp action("configure_validate", %{"profile" => attrs, "_group_ref" => ref}, socket) do
     with true <- ref == socket.assigns.group_id,
@@ -440,8 +460,14 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
               options={[{gettext("Active group"), "active"}, {gettext("Incubator"), "incubator"}]}
             />
             <.input field={@form[:events_url]} type="url" label={gettext("Public events link")} />
-            <details class="rounded-lg border border-base-300 p-4">
-              <summary class="cursor-pointer font-semibold">{gettext("Next group event")}</summary>
+            <details
+              id="incubator-next-event"
+              open={@next_event_open}
+              class="rounded-lg border border-base-300 p-4"
+            >
+              <summary phx-click="toggle-next-event" class="cursor-pointer font-semibold">
+                {gettext("Next group event")}
+              </summary>
               <div class="space-y-4 pt-4">
                 <.input
                   field={@form[:next_event_title_en]}

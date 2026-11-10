@@ -51,6 +51,45 @@ defmodule PauseAiCaWeb.NewsletterDraftLiveTest do
     assert Repo.get!(Newsletters.Draft, draft.id).subject == "Montréal recap"
   end
 
+  test "a whole-list draft shows its eligible audience and keeps message entry reachable", %{
+    conn: conn
+  } do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    scope = Accounts.Scope.for_user(admin)
+    {:ok, list} = Newsletters.Lists.save(scope, nil, %{"name" => "Ottawa", "city" => "Ottawa"})
+
+    for number <- 1..2 do
+      Repo.insert!(%Newsletters.Subscription{
+        email: "ottawa-#{number}@example.org",
+        city: "Ottawa",
+        state: "confirmed",
+        confirmed_at: DateTime.utc_now(),
+        consent_version: "synthetic-list-consent"
+      })
+    end
+
+    {:ok, draft} = Newsletters.Drafts.create_for_list(scope, list.id)
+    path = "/manage/mail/drafts/#{draft.id}?locale=en"
+    conn = log_in_user(conn, admin)
+    {:ok, view, _} = live(conn, path)
+
+    assert has_element?(view, "#email-audience-summary", "Ottawa · 2 eligible · Bilingual")
+    assert has_element?(view, "#email-recipient-settings:not([open])")
+    assert has_element?(view, "#email-choose-recipients[phx-click]", "Choose recipients")
+    assert has_element?(view, "#email-write-message[href='#email-message']", "Write message")
+    assert has_element?(view, "#email-message input[name='draft[subject]']")
+    refute has_element?(view, "#newsletter-selected-count")
+
+    view |> form("#newsletter-draft-form", draft: %{edition: "en"}) |> render_change()
+    assert has_element?(view, "#email-audience-summary", "Ottawa · 0 eligible · English")
+    {:ok, reloaded, _} = live(conn, path)
+    assert has_element?(reloaded, "#email-audience-summary", "Ottawa · 2 eligible · Bilingual")
+    assert Repo.get!(Newsletters.Draft, draft.id).recipient_keys == []
+    assert Repo.get!(Newsletters.Draft, draft.id).revision == 1
+    assert Repo.aggregate(Newsletters.Batch, :count) == 0
+    assert Repo.aggregate(Newsletters.Delivery, :count) == 0
+  end
+
   test "manual fourteen-contact selection survives save/reload and requires review then approval before sending",
        %{conn: conn} do
     Ecto.Adapters.SQL.Sandbox.mode(Repo, {:shared, self()})

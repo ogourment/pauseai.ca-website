@@ -44,6 +44,71 @@ defmodule PauseAiCaWeb.IncubatorsLiveTest do
     end
   end
 
+  test "event disclosure keeps its URL state and draft through validation and same-group refresh",
+       c do
+    path = "/manage/groups?group=#{c.group.id}&locale=en"
+    {:ok, view, _} = live(log_in_user(build_conn(), c.manager), path)
+    refute has_element?(view, "#incubator-next-event[open]")
+
+    view |> element("#incubator-next-event summary") |> render_click()
+    assert_patch(view, path <> "&section=next-event")
+    assert has_element?(view, "#incubator-next-event[open]")
+
+    view
+    |> form("#incubator-config", profile: %{next_event_title_en: "Unsaved event title"})
+    |> render_change()
+
+    assert has_element?(view, "#incubator-next-event[open]")
+
+    assert has_element?(
+             view,
+             "input[name='profile[next_event_title_en]'][value='Unsaved event title']"
+           )
+
+    view |> element("#incubator-next-event summary") |> render_click()
+    assert_patch(view, path)
+    refute has_element?(view, "#incubator-next-event[open]")
+    view |> element("#incubator-next-event summary") |> render_click()
+    assert_patch(view, path <> "&section=next-event")
+    send(view.pid, :refresh_access)
+    assert has_element?(view, "#incubator-next-event[open]")
+
+    assert has_element?(
+             view,
+             "input[name='profile[next_event_title_en]'][value='Unsaved event title']"
+           )
+
+    assert {:ok, %{next_event_title_en: nil}} = Incubators.configuration(c.admin, c.group.id)
+
+    {:ok, reloaded, _} = live(log_in_user(build_conn(), c.manager), path <> "&section=next-event")
+    assert has_element?(reloaded, "#incubator-next-event[open]")
+  end
+
+  test "changing managed group clears the previous event draft and disclosure", c do
+    {:ok, other} = Volunteers.create_group(c.admin, %{name: "Other event group"})
+
+    {:ok, _} =
+      Incubators.configure(c.admin, other.id, %{
+        name_en: "Other event group",
+        name_fr: "Autre groupe"
+      })
+
+    {:ok, view, _} =
+      live(
+        log_in_user(build_conn(), c.admin.user),
+        "/manage/groups?group=#{c.group.id}&locale=en&section=next-event"
+      )
+
+    view
+    |> form("#incubator-config", profile: %{next_event_title_en: "Previous group draft"})
+    |> render_change()
+
+    render_patch(view, "/manage/groups?group=#{other.id}&locale=en")
+    refute has_element?(view, "#incubator-next-event[open]")
+    refute has_element?(view, "input[value='Previous group draft']")
+    assert has_element?(view, "input[name='profile[name_en]'][value='Other event group']")
+  end
+
   test "group pages keep organizer contact details private", c do
     for locale <- ["en", "fr"] do
       {:ok, view, html} =

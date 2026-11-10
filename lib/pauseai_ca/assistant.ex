@@ -157,9 +157,25 @@ defmodule PauseAiCa.Assistant do
   end
 
   def eligible?(scope), do: Volunteers.superadmin?(scope)
-  # The launcher remains available to authorized enabled users while operational
-  # readiness recovers. Effectful calls continue to use the stricter visible?/1.
-  def launcher_visible?(scope), do: eligible?(scope) and Store.enabled?(store())
+  # Allocated users retain history access while readiness or daily headroom recovers.
+  def launcher_visible?(scope),
+    do: eligible?(scope) and Store.enabled?(store()) and positive_token_allocation?(scope)
+
+  defp positive_token_allocation?(scope) do
+    config = Application.get_env(:pauseai_ca, :agent_assistant, [])
+
+    case Store.token_usage(
+           store(),
+           actor(scope),
+           Date.utc_today(),
+           Keyword.get(config, :daily_token_limit, 100_000),
+           Keyword.get(config, :max_daily_token_limit, 1_000_000)
+         ) do
+      {:ok, %{limit: limit}} when is_integer(limit) and limit > 0 -> true
+      _ -> false
+    end
+  end
+
   def visible?(scope), do: launcher_visible?(scope) and readiness() == []
 
   def readiness do

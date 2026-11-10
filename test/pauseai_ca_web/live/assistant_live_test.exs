@@ -69,6 +69,93 @@ defmodule PauseAiCaWeb.AssistantLiveTest do
     refute_receive {:assistant_generated, _, _}
   end
 
+  test "zero default and explicit zero allocations hide the launcher while a positive override shows it",
+       c do
+    assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+    config = Application.get_env(:pauseai_ca, :agent_assistant)
+    Application.put_env(:pauseai_ca, :agent_assistant, Keyword.put(config, :daily_token_limit, 0))
+    other_scope = Accounts.Scope.for_user(c.other_admin)
+    refute Assistant.launcher_visible?(c.scope)
+    refute Assistant.launcher_visible?(other_scope)
+
+    token = Accounts.generate_user_session_token(c.admin)
+
+    {:ok, view, _} =
+      live_isolated(c.conn, PauseAiCaWeb.AssistantLive, session: %{"user_token" => token})
+
+    refute has_element?(view, "#site-assistant-launcher")
+
+    assert {:ok, _} = Assistant.set_token_limit(c.scope, c.admin.id, 100_000)
+    send(view.pid, :refresh_access)
+    assert Assistant.launcher_visible?(c.scope)
+    assert has_element?(view, "#site-assistant-launcher")
+    refute Assistant.launcher_visible?(other_scope)
+
+    assert {:ok, _} = Assistant.set_token_limit(c.scope, c.admin.id, 0)
+    send(view.pid, :refresh_access)
+    refute Assistant.launcher_visible?(c.scope)
+    refute has_element?(view, "#site-assistant-launcher")
+    render_click(view, "assistant-toggle")
+    refute has_element?(view, "#site-assistant-launcher")
+    refute_receive {:assistant_generated, _, _}
+    assert Repo.aggregate(PhoenixAgentAssistant.Store.Request, :count) == 0
+  end
+
+  test "an exhausted positive allocation keeps the launcher without admitting model calls", c do
+    assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+    assert {:ok, _} = Assistant.set_token_limit(c.scope, c.admin.id, 100)
+    config = Assistant.configuration()
+
+    assert {:ok, _} =
+             Store.reserve(
+               Assistant.store(),
+               c.admin.id,
+               %{
+                 request_id: Ecto.UUID.generate(),
+                 digest: String.duplicate("a", 64),
+                 mode: "fast",
+                 model: "haiku-fixture",
+                 max_output_tokens: 10
+               },
+               config[:audit_keys],
+               max_cost_micros: 1000,
+               daily_limit_micros: config[:daily_limit_micros],
+               max_tokens: 100,
+               daily_token_limit: config[:daily_token_limit],
+               max_daily_token_limit: config[:max_daily_token_limit]
+             )
+
+    assert {:ok, %{limit: 100, remaining_tokens: 0}} = Assistant.token_usage(c.scope)
+    assert Assistant.launcher_visible?(c.scope)
+    token = Accounts.generate_user_session_token(c.admin)
+
+    {:ok, view, _} =
+      live_isolated(c.conn, PauseAiCaWeb.AssistantLive, session: %{"user_token" => token})
+
+    assert has_element?(view, "#site-assistant-launcher")
+    assert has_element?(view, "#site-assistant button[type=submit][disabled]")
+    refute_receive {:assistant_generated, _, _}
+  end
+
+  test "a stale funded scope loses its launcher when the administrator role is revoked", c do
+    assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+    assert {:ok, _} = Assistant.set_token_limit(c.scope, c.admin.id, 100_000)
+    token = Accounts.generate_user_session_token(c.admin)
+
+    {:ok, view, _} =
+      live_isolated(c.conn, PauseAiCaWeb.AssistantLive, session: %{"user_token" => token})
+
+    assert has_element?(view, "#site-assistant-launcher")
+
+    c.admin |> Ecto.Changeset.change(superadmin: false) |> Repo.update!()
+    send(view.pid, :refresh_access)
+    refute Assistant.launcher_visible?(c.scope)
+    refute has_element?(view, "#site-assistant-launcher")
+    render_submit(view, "assistant-submit", %{"assistant" => %{"text" => "Find contacts"}})
+    refute_receive {:assistant_generated, _, _}
+    assert Repo.aggregate(PhoenixAgentAssistant.Store.Request, :count) == 0
+  end
+
   test "missing readiness blocks activation even through a forged event", c do
     config = Application.get_env(:pauseai_ca, :agent_assistant) |> Keyword.delete(:safety)
     Application.put_env(:pauseai_ca, :agent_assistant, config)

@@ -643,6 +643,17 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
   defp batch_error(:not_approved), do: gettext("Approve the reviewed batch before sending.")
   defp batch_error(_), do: gettext("This operation is unavailable. Your saved draft is retained.")
 
+  defp selected_list_name(lists, id) do
+    case Enum.find(lists, &(&1.id == id)) do
+      nil -> gettext("Choose a list")
+      list -> list.name
+    end
+  end
+
+  defp edition_name("en"), do: gettext("English")
+  defp edition_name("fr"), do: gettext("French")
+  defp edition_name(_), do: gettext("Bilingual · language unknown only")
+
   defp archive(socket, archive?) do
     if socket.assigns.status == gettext("Unsaved changes") do
       {:noreply, assign(socket, error: gettext("Save your changes before archiving this draft."))}
@@ -726,6 +737,37 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
                 "Saving a draft does not approve or send it. Eligibility is checked from current consent when a batch is prepared."
               )}
             </p>
+            <p
+              :if={@draft.recipient_mode != "outreach" and @form[:recipient_mode].value == "list"}
+              id="email-audience-summary"
+              role="status"
+              class="mt-3 font-semibold"
+            >
+              {gettext("%{list} · %{count} eligible · %{edition}",
+                list: selected_list_name(@mailing_lists, @form[:mailing_list_id].value),
+                count: if(@audience, do: @audience.counts[:included] || 0, else: 0),
+                edition: edition_name(@form[:edition].value)
+              )}
+            </p>
+            <nav
+              :if={@step == :compose and is_nil(@draft.archived_at)}
+              class="mt-3 flex flex-wrap gap-4"
+              aria-label={gettext("Email draft")}
+            >
+              <button
+                :if={@draft.recipient_mode != "outreach"}
+                type="button"
+                id="email-choose-recipients"
+                class="underline min-h-11"
+                phx-click={
+                  JS.set_attribute({"open", ""}, to: "#email-recipient-settings")
+                  |> JS.focus(to: "#draft_recipient_mode")
+                }
+              >{gettext("Choose recipients")}</button>
+              <a id="email-write-message" href="#email-message" class="underline min-h-11">
+                {gettext("Write message")}
+              </a>
+            </nav>
             <p :if={@status} id="newsletter-save-status" role="status" class="mt-3">{@status}</p>
             <p :if={@error} id="newsletter-draft-error" role="alert" class="mt-3 crm-error">
               {@error}
@@ -768,7 +810,7 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
               <details
                 :if={@draft.recipient_mode != "outreach"}
                 id="email-recipient-settings"
-                open={@draft.recipient_keys == []}
+                open={@draft.recipient_mode != "list" and @draft.recipient_keys == []}
                 phx-mounted={Phoenix.LiveView.JS.ignore_attributes(["open"])}
               >
                 <summary class="cursor-pointer font-semibold">
@@ -1035,39 +1077,41 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
                 )}</span>
               </label>
             </div>
-            <.input field={@form[:subject]} label={gettext("Subject")} />
-            <p
-              :if={!PauseAiCa.Mail.Render.complete_links?(@form[:source].value || "")}
-              role="alert"
-              class="crm-error"
-            >
-              {gettext(
-                "The last Markdown link is incomplete. Finish its URL and closing parenthesis before preparing a batch."
-              )}
-            </p>
-            <.live_component
-              module={PhoenixMarkdownEditor.Component}
-              id="newsletter-content"
-              source={@form[:source].value || ""}
-              name="draft[source]"
-              label={gettext("Message · Markdown")}
-              preview_label={gettext("Preview ↗")}
-              preview_title={gettext("Newsletter preview")}
-              popup_blocked_message={gettext("Allow the preview window, then try again.")}
-              preview_open_message={gettext("Preview opened")}
-              preview_updated_message={gettext("Preview updated")}
-              disconnected_message={gettext("Connection interrupted; text retained in this page.")}
-              preview_error_message={gettext("Preview unavailable. Your text is retained.")}
-              render_preview={
-                fn source ->
-                  PauseAiCa.Newsletters.Message.preview(
-                    @form[:subject].value || "",
-                    source,
-                    PauseAiCa.Newsletters.Edition.locale(@form[:edition].value)
-                  )
-                end
-              }
-            />
+            <section id="email-message" class="space-y-5 scroll-mt-4" tabindex="-1">
+              <.input field={@form[:subject]} label={gettext("Subject")} />
+              <p
+                :if={!PauseAiCa.Mail.Render.complete_links?(@form[:source].value || "")}
+                role="alert"
+                class="crm-error"
+              >
+                {gettext(
+                  "The last Markdown link is incomplete. Finish its URL and closing parenthesis before preparing a batch."
+                )}
+              </p>
+              <.live_component
+                module={PhoenixMarkdownEditor.Component}
+                id="newsletter-content"
+                source={@form[:source].value || ""}
+                name="draft[source]"
+                label={gettext("Message · Markdown")}
+                preview_label={gettext("Preview ↗")}
+                preview_title={gettext("Newsletter preview")}
+                popup_blocked_message={gettext("Allow the preview window, then try again.")}
+                preview_open_message={gettext("Preview opened")}
+                preview_updated_message={gettext("Preview updated")}
+                disconnected_message={gettext("Connection interrupted; text retained in this page.")}
+                preview_error_message={gettext("Preview unavailable. Your text is retained.")}
+                render_preview={
+                  fn source ->
+                    PauseAiCa.Newsletters.Message.preview(
+                      @form[:subject].value || "",
+                      source,
+                      PauseAiCa.Newsletters.Edition.locale(@form[:edition].value)
+                    )
+                  end
+                }
+              />
+            </section>
             <div
               :if={@draft.recipient_mode == "outreach"}
               id="outreach-signature-hint"
