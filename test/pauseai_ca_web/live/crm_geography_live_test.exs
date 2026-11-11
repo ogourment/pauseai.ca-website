@@ -49,7 +49,8 @@ defmodule PauseAiCaWeb.CRMGeographyLiveTest do
     })
     |> render_change()
 
-    assert has_element?(view, "#crm-selection-actions", "0 selected across pages")
+    assert has_element?(view, "#crm-selection-actions", "1 selected across pages")
+    assert has_element?(view, "#crm-selection-actions", "1 selected outside the current filters")
     assert has_element?(view, "#crm-contact-#{outside.person.id}")
   end
 end

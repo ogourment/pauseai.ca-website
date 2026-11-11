@@ -477,20 +477,19 @@ defmodule PauseAiCa.Newsletters do
 
       subscriptions = Repo.all(query)
 
-      {subscriptions, dynamic_list} =
+      {subscriptions, list_reasons} =
         case params["list_id"] do
           id when is_binary(id) and id != "" ->
             case PauseAiCa.Newsletters.Lists.get(scope, id) do
               {:ok, %{archived_at: nil} = list} ->
-                {Enum.filter(subscriptions, &PauseAiCa.Newsletters.Lists.matches?(list, &1)),
-                 list}
+                PauseAiCa.Newsletters.Lists.matching_subscriptions(scope, list, subscriptions)
 
               _ ->
-                {[], nil}
+                {[], %{}}
             end
 
           _ ->
-            {subscriptions, nil}
+            {subscriptions, %{}}
         end
 
       emails = Enum.map(subscriptions, & &1.email)
@@ -519,11 +518,7 @@ defmodule PauseAiCa.Newsletters do
 
           %{
             subscription: subscription,
-            matched_fields:
-              if(dynamic_list,
-                do: PauseAiCa.Newsletters.Lists.reasons(dynamic_list, subscription),
-                else: []
-              ),
+            matched_fields: Map.get(list_reasons, subscription.id, []),
             status: status,
             provider: observations[subscription.email]
           }

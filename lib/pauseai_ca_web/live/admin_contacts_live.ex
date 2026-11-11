@@ -1,6 +1,7 @@
 defmodule PauseAiCaWeb.AdminContactsLive do
   use PauseAiCaWeb, :live_view
   alias PauseAiCa.{CRM, Volunteers}
+  alias PhoenixAppShell.Selection
   @impl true
   def mount(params, session, socket) do
     locale = PauseAiCaWeb.Site.locale(params, socket)
@@ -13,7 +14,14 @@ defmodule PauseAiCaWeb.AdminContactsLive do
          page_title: gettext("Contacts"),
          guided_login: PauseAiCa.Assistant.GuidedMode.session_fingerprint(session["user_token"]),
          records: [],
-         selected_ids: [],
+         grid_enabled: PauseAiCaWeb.DataGridComponents.enabled?(),
+         grid_revision: 0,
+         grid_matched_ids: [],
+         grid_total: 0,
+         grid_query: %{},
+         grid_geography_open: false,
+         selection: Selection.new(),
+         collection_lists: nil,
          invitation_ids: [],
          invitation_targets: [],
          invitation_languages: [],
@@ -83,26 +91,25 @@ defmodule PauseAiCaWeb.AdminContactsLive do
       :directory ->
         with {:ok, page} <- CRM.directory_page(scope, params),
              {:ok, origins} <- CRM.directory_origins(scope, page.records) do
-          previous = socket.assigns.directory_page
+          page = Map.put(page, :saved_filter_id, params["saved_filter_id"])
 
-          socket =
-            if previous.region != page.region or
-                 previous.geography_filters != page.geography_filters do
-              assign(socket,
-                selected_ids: [],
-                invitation_ids: [],
-                invitation_drafts: [],
-                invitation_excluded: []
+          selection =
+            Selection.scope(
+              socket.assigns.selection,
+              Map.take(
+                params,
+                ~w(q region provinces cities areas fsas unknown archived saved_filter_id)
               )
-            else
-              socket
-            end
+            )
 
           {:noreply,
            assign(socket,
              record: nil,
              records: page.records,
+             grid_revision: socket.assigns.grid_revision + 1,
              directory_page: page,
+             directory_params: params,
+             selection: selection,
              directory_origins: origins,
              search: page.q
            )}
@@ -125,7 +132,71 @@ defmodule PauseAiCaWeb.AdminContactsLive do
       socket.assigns.guided_login
     )
 
-    {:noreply, socket}
+    # The observer acknowledgement precedes the next wizard action. Keep its
+    # existing geography controls visible when the guided journey reaches them.
+    {:noreply, assign(socket, grid_geography_open: true)}
+  end
+
+  def handle_event(
+        "data_grid:query",
+        %{"id" => "crm-grid", "request_id" => request_id} = payload,
+        socket
+      )
+      when is_binary(request_id) and byte_size(request_id) <= 200 do
+    case PauseAiCa.CRM.Grid.contacts(
+           socket.assigns.current_scope,
+           socket.assigns.directory_params,
+           payload
+         ) do
+      {:ok, page} ->
+        {:noreply,
+         socket
+         |> assign(
+           grid_matched_ids: page.matched_ids,
+           grid_total: page.total,
+           grid_query: payload
+         )
+         |> push_event("data_grid:rows", PauseAiCa.CRM.Grid.reply(page, "crm-grid", request_id))}
+
+      {:error, :unauthorized} ->
+        {:noreply, denied(socket)}
+
+      _ ->
+        {:noreply,
+         push_event(socket, "data_grid:rows", %{
+           id: "crm-grid",
+           request_id: request_id,
+           error: true
+         })}
+    end
+  end
+
+  def handle_event("grid-open-selected", _, socket) do
+    case Selection.ids(socket.assigns.selection) do
+      [id] -> handle_event("data_grid:open_row", %{"id" => "crm-grid", "row_id" => id}, socket)
+      _ -> {:noreply, socket}
+    end
+  end
+
+  def handle_event("data_grid:selection", %{"id" => "crm-grid", "ids" => ids}, socket) do
+    with {:ok, canonical} <-
+           PauseAiCa.ContactLists.canonical_ids(socket.assigns.current_scope, ids),
+         {:ok, selection} <- Selection.select_all(Selection.new(), canonical) do
+      {:noreply, assign(socket, selection: selection, invitation_ids: [])}
+    else
+      _ -> {:noreply, denied(socket)}
+    end
+  end
+
+  def handle_event("data_grid:open_row", %{"id" => "crm-grid", "row_id" => id}, socket) do
+    case CRM.get(socket.assigns.current_scope, id) do
+      {:ok, _} ->
+        {:noreply,
+         push_navigate(socket, to: ~p"/admin/contacts/#{id}?locale=#{socket.assigns.locale}")}
+
+      _ ->
+        {:noreply, denied(socket)}
+    end
   end
 
   def handle_event("search", params, socket) do
@@ -145,34 +216,162 @@ defmodule PauseAiCaWeb.AdminContactsLive do
 
     values = if socket.assigns.archived, do: Map.put(values, :archived, "true"), else: values
 
+    values =
+      if id = socket.assigns.directory_params["saved_filter_id"],
+        do: Map.put(values, :saved_filter_id, id),
+        else: values
+
     {:noreply, push_patch(socket, to: ~p"/admin/contacts?#{values}")}
   end
 
   def handle_event("select-contact", %{"id" => id}, socket) do
-    if Enum.any?(socket.assigns.records, &(&1.person.id == id)) do
-      ids = socket.assigns.selected_ids
-      ids = if id in ids, do: List.delete(ids, id), else: Enum.uniq(ids ++ [id])
-      {:noreply, assign(socket, selected_ids: ids, invitation_ids: [])}
+    if Volunteers.superadmin?(socket.assigns.current_scope) do
+      selection =
+        Selection.toggle(
+          socket.assigns.selection,
+          id,
+          Enum.map(socket.assigns.records, & &1.person.id)
+        )
+
+      {:noreply, assign(socket, selection: selection, invitation_ids: [])}
     else
-      {:noreply, socket}
+      {:noreply, denied(socket)}
     end
   end
 
   def handle_event("select-page", _, socket) do
-    ids = for record <- socket.assigns.records, record.addresses != [], do: record.person.id
+    if Volunteers.superadmin?(socket.assigns.current_scope) do
+      selection =
+        Selection.toggle_page(
+          socket.assigns.selection,
+          Enum.map(socket.assigns.records, & &1.person.id)
+        )
 
-    {:noreply,
-     assign(socket,
-       selected_ids: Enum.uniq(socket.assigns.selected_ids ++ ids),
-       invitation_ids: []
-     )}
+      {:noreply, assign(socket, selection: selection, invitation_ids: [])}
+    else
+      {:noreply, denied(socket)}
+    end
+  end
+
+  def handle_event("select-all-matched", _, socket) do
+    result =
+      if socket.assigns.grid_enabled do
+        case PauseAiCa.CRM.Grid.contacts(
+               socket.assigns.current_scope,
+               socket.assigns.directory_params,
+               socket.assigns.grid_query
+             ) do
+          {:ok, page} -> {:ok, page.matched_ids}
+          error -> error
+        end
+      else
+        CRM.directory_ids(socket.assigns.current_scope, socket.assigns.directory_params)
+      end
+
+    with {:ok, ids} <- result,
+         {:ok, selection} <- Selection.select_all(socket.assigns.selection, ids) do
+      {:noreply, assign(socket, selection: selection, invitation_ids: [], error: nil)}
+    else
+      {:error, :too_many_matches} ->
+        {:noreply,
+         assign(socket,
+           error:
+             gettext("More than 5,000 records match. Narrow the filters before selecting all.")
+         )}
+
+      _ ->
+        {:noreply, denied(socket)}
+    end
   end
 
   def handle_event("clear-selection", _, socket),
-    do: {:noreply, assign(socket, selected_ids: [], invitation_ids: [])}
+    do:
+      {:noreply,
+       assign(socket,
+         selection: Selection.clear(socket.assigns.selection),
+         invitation_ids: [],
+         collection_lists: nil
+       )}
+
+  def handle_event("collection-email", _, socket) do
+    case PauseAiCa.ContactLists.prepare_email(
+           socket.assigns.current_scope,
+           Selection.ids(socket.assigns.selection)
+         ) do
+      {:ok, draft} ->
+        {:noreply,
+         push_navigate(socket,
+           to: ~p"/manage/mail/drafts/#{draft.id}?locale=#{socket.assigns.locale}"
+         )}
+
+      _ ->
+        {:noreply,
+         assign(socket,
+           error:
+             gettext(
+               "The selected records could not be prepared for email. Review the selection and current permissions."
+             )
+         )}
+    end
+  end
+
+  def handle_event("collection-add-to-list", _, socket) do
+    case PauseAiCa.ContactLists.list(socket.assigns.current_scope) do
+      {:ok, lists} -> {:noreply, assign(socket, collection_lists: lists)}
+      _ -> {:noreply, denied(socket)}
+    end
+  end
+
+  def handle_event("collection-remove-from-list", _, socket) do
+    scope = socket.assigns.current_scope
+
+    with id when is_binary(id) <- socket.assigns.directory_params["saved_filter_id"],
+         {:ok, list} <- PauseAiCa.ContactLists.get(scope, id),
+         {:ok, _} <-
+           PauseAiCa.ContactLists.remove_members(
+             scope,
+             id,
+             Selection.ids(socket.assigns.selection),
+             list.revision
+           ) do
+      handle_params(socket.assigns.directory_params, socket.assigns.guided_uri, socket)
+    else
+      _ ->
+        {:noreply,
+         assign(socket,
+           error:
+             gettext(
+               "The selected contacts could not be removed from this list. Reload and review current permissions."
+             )
+         )}
+    end
+  end
+
+  def handle_event("collection-list-save", %{"collection" => %{"list_id" => id}}, socket) do
+    with list when not is_nil(list) <-
+           Enum.find(socket.assigns.collection_lists || [], &(&1.id == id)),
+         {:ok, _} <-
+           PauseAiCa.ContactLists.add_members(
+             socket.assigns.current_scope,
+             id,
+             Selection.ids(socket.assigns.selection),
+             list.revision
+           ) do
+      {:noreply, assign(socket, collection_lists: nil, error: nil)}
+    else
+      _ ->
+        {:noreply,
+         assign(socket,
+           error:
+             gettext(
+               "The list could not be updated. Reload its current revision and review the selection."
+             )
+         )}
+    end
+  end
 
   def handle_event("invite-account", params, socket) do
-    ids = if params["id"], do: [params["id"]], else: socket.assigns.selected_ids
+    ids = if params["id"], do: [params["id"]], else: Selection.ids(socket.assigns.selection)
 
     case PauseAiCa.Newsletters.Batches.contact_recipients(socket.assigns.current_scope, ids) do
       {:ok, rows} ->
@@ -462,6 +661,11 @@ defmodule PauseAiCaWeb.AdminContactsLive do
     values =
       if Map.get(directory, :archived), do: Map.put(values, :archived, "true"), else: values
 
+    values =
+      if id = Map.get(directory, :saved_filter_id),
+        do: Map.put(values, :saved_filter_id, id),
+        else: values
+
     ~p"/admin/contacts?#{values}"
   end
 
@@ -744,120 +948,273 @@ defmodule PauseAiCaWeb.AdminContactsLive do
               label={gettext("Find a contact")}
               phx-debounce="250"
             />
-            <.input
-              type="select"
-              id="crm-region"
-              name="region"
-              value={@directory_page.region}
-              label={gettext("Recorded region")}
-              options={[{gettext("All regions"), ""} | Enum.map(@directory_page.regions, &{&1, &1})]}
-            />
-            <.input
-              type="select"
-              id="crm-per"
-              name="per"
-              value={@directory_page.per}
-              label={gettext("Rows per page")}
-              options={Enum.map([10, 25, 50, 100], &{to_string(&1), &1})}
-            />
-            <PauseAiCaWeb.GeographyFilterComponents.geography_filters
-              id="crm"
-              class="sm:col-span-3"
-              filters={@directory_page.geography_filters}
-              cities={@directory_page.cities}
-            />
+            <%= if @grid_enabled do %>
+              <details id="crm-geography-options" open={@grid_geography_open} class="sm:col-span-3">
+                <summary>{gettext("Geography and saved areas")}</summary>
+                <div class="mt-3 grid gap-3 sm:grid-cols-2">
+                  <.input
+                    type="select"
+                    id="crm-region"
+                    name="region"
+                    value={@directory_page.region}
+                    label={gettext("Recorded region")}
+                    options={[
+                      {gettext("All regions"), ""} | Enum.map(@directory_page.regions, &{&1, &1})
+                    ]}
+                  />
+                  <.input
+                    type="select"
+                    id="crm-per"
+                    name="per"
+                    value={@directory_page.per}
+                    label={gettext("Rows per page")}
+                    options={Enum.map([10, 25, 50, 100], &{to_string(&1), &1})}
+                  />
+                  <PauseAiCaWeb.GeographyFilterComponents.geography_filters
+                    id="crm"
+                    class="sm:col-span-3"
+                    filters={@directory_page.geography_filters}
+                    cities={@directory_page.cities}
+                  />
+                </div>
+              </details>
+            <% else %>
+              <.input
+                type="select"
+                id="crm-region"
+                name="region"
+                value={@directory_page.region}
+                label={gettext("Recorded region")}
+                options={[{gettext("All regions"), ""} | Enum.map(@directory_page.regions, &{&1, &1})]}
+              />
+              <.input
+                type="select"
+                id="crm-per"
+                name="per"
+                value={@directory_page.per}
+                label={gettext("Rows per page")}
+                options={Enum.map([10, 25, 50, 100], &{to_string(&1), &1})}
+              />
+              <PauseAiCaWeb.GeographyFilterComponents.geography_filters
+                id="crm"
+                class="sm:col-span-3"
+                filters={@directory_page.geography_filters}
+                cities={@directory_page.cities}
+              />
+            <% end %>
           </.form>
           <p>
             {gettext(
               "Historical contacts are private. Importing or reconciling them does not create an account or consent."
             )}
           </p>
-          <div class="my-4 flex flex-wrap items-center gap-4" id="crm-selection-actions">
-            <button type="button" phx-click="select-page" class="underline">{gettext(
-              "Select this page"
+          <%= if @grid_enabled do %>
+            <p id="crm-grid-count" role="status">
+              {gettext("%{count} matching contacts", count: @grid_total)}
+            </p>
+            <button type="button" phx-click="select-all-matched" class="underline">{gettext(
+              "Select all matched"
             )}</button>
-            <button
-              type="button"
-              phx-click="clear-selection"
-              disabled={@selected_ids == []}
-              class="underline"
-            >{gettext("Clear selection")}</button>
-            <span role="status">{gettext("%{count} selected across pages",
-              count: length(@selected_ids)
-            )}</span>
-            <button
-              type="button"
-              id="crm-invite-selected"
-              phx-click="invite-account"
-              disabled={@selected_ids == []}
-              class="crm-button"
-            >{gettext("Invite selected to create an account")}</button>
-          </div>
-          <ul>
-            <li :for={record <- @records} id={"crm-contact-#{record.person.id}"} class="py-3 border-b">
-              <input
-                type="checkbox"
-                id={"crm-select-#{record.person.id}"}
-                checked={record.person.id in @selected_ids}
-                disabled={record.addresses == []}
-                phx-click="select-contact"
-                phx-value-id={record.person.id}
-                aria-label={gettext("Select %{name}", name: record.person.name || gettext("contact"))}
-                class="mr-2"
-              />
-              <.link
-                navigate={~p"/admin/contacts/#{record.person.id}?locale=#{@locale}"}
-                class="font-bold underline"
-              >{record.person.name || gettext("Contact")}</.link>
-              <button
-                :if={record.addresses != []}
-                type="button"
-                phx-click="invite-account"
-                phx-value-id={record.person.id}
-                class="ml-3 underline"
-              >{gettext("Invite to create an account")}</button><div :for={
-                address <- record.addresses
-              }>
-                <.link navigate={
-                  ~p"/admin/contacts/#{record.person.id}?locale=#{@locale}&q=#{@search}"
-                }>{address.email}</.link>
-              </div>
-              <p
-                id={"crm-geography-" <> record.person.id}
-                class="mt-2 text-sm"
-                data-geography-version={record.geography.version}
-              >
-                <strong>{gettext("Current location")}:</strong>
-                {geography_label(record.geography)}
-                <span :if={record.geography.conflicting?}> · {gettext("Conflicting source locations")}</span>
-                <span :if={record.geography.unresolved?}> · {gettext(
-                  "Some location details are unresolved"
-                )}</span>
+            <div id="crm-selection-actions" class="my-4 flex flex-wrap items-center gap-3">
+              <p role="status">
+                {gettext("%{count} selected across pages", count: Selection.count(@selection))} · {gettext(
+                  "%{count} selected outside the current filters",
+                  count: Selection.off_filter_count(@selection, @grid_matched_ids)
+                )}
               </p>
-              <div :for={origin <- Map.get(@directory_origins, record.person.id, [])} class="mt-2">
-                <p
-                  :if={length(Map.get(@directory_origins, record.person.id, [])) > 1}
-                  class="text-sm font-medium text-stone-700"
-                >
-                  {origin.email}
-                </p>
-                <PauseAiCaWeb.ContactSourceComponents.source_matches
-                  data={origin.source_data}
-                  query={@search}
-                />
-                <PauseAiCaWeb.ContactSourceComponents.source_summary
-                  id={"directory-source-summary-#{origin.id}"}
-                  data={origin.source_data}
-                />
-                <PauseAiCaWeb.ContactSourceComponents.source_details
-                  id={"directory-source-details-#{origin.id}"}
-                  data={origin.source_data}
-                  query={@search}
-                />
+              <button
+                :if={Selection.count(@selection) > 0}
+                type="button"
+                phx-click="clear-selection"
+                class="underline"
+              >{gettext("Clear selection")}</button>
+
+              <div :if={Selection.count(@selection) > 0} class="flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  phx-click="grid-open-selected"
+                  disabled={Selection.count(@selection) != 1}
+                  class="crm-button"
+                >{gettext("Open details")}</button>
+                <button
+                  type="button"
+                  id="crm-invite-selected"
+                  phx-click="invite-account"
+                  disabled={Selection.count(@selection) == 0}
+                  class="crm-button"
+                >{gettext("Invite selected to create an account")}</button>
+                <button
+                  type="button"
+                  id="crm-email-selected"
+                  phx-click="collection-email"
+                  disabled={Selection.count(@selection) == 0}
+                  class="crm-button"
+                >{gettext("Email")}</button>
+                <button
+                  type="button"
+                  id="crm-list-selected"
+                  phx-click="collection-add-to-list"
+                  disabled={Selection.count(@selection) == 0}
+                  class="crm-button"
+                >{gettext("Add to list")}</button>
+                <button
+                  :if={@directory_params["saved_filter_id"]}
+                  type="button"
+                  id="crm-remove-from-list"
+                  phx-click="collection-remove-from-list"
+                  disabled={Selection.count(@selection) == 0}
+                  class="crm-button"
+                >{gettext("Remove from list")}</button>
               </div>
-            </li>
-          </ul>
+              <button
+                type="button"
+                phx-click={JS.dispatch("data-grid:copy-range", to: "#crm-grid")}
+                class="crm-button"
+              >{gettext("Copy selected cells")}</button>
+            </div>
+            <p class="text-sm">
+              {gettext("FSA = the first three characters of a Canadian postal code, for example H2X.")}
+            </p>
+            <p class="text-sm">{gettext("Double-click a row to open its details.")}</p>
+            <PhoenixDataGrid.data_grid
+              id="crm-grid"
+              columns={PauseAiCaWeb.DataGridComponents.contact_columns()}
+              labels={PauseAiCaWeb.DataGridComponents.labels()}
+              selection={Selection.ids(@selection)}
+              revision={to_string(@grid_revision)}
+              options={
+                %{
+                  remote: true,
+                  page_size: @directory_page.per,
+                  storage_key: PauseAiCaWeb.DataGridComponents.storage_key(@current_scope, "contacts")
+                }
+              }
+            />
+          <% else %>
+            <PhoenixAppShell.Collection.collection
+              id="crm-collection"
+              rows={@records}
+              row_id={& &1.person.id}
+              row_dom_id={&("crm-contact-" <> &1.person.id)}
+              row_checkbox_id={&("crm-select-" <> &1.person.id)}
+              selection={@selection}
+              labels={collection_labels(@selection, @directory_page.matched_ids)}
+              toggle_event="select-contact"
+              page_event="select-page"
+              all_event="select-all-matched"
+              clear_event="clear-selection"
+              selection_dom_id="crm-selection-actions"
+              toolbar_class="my-4 flex flex-wrap items-center gap-4"
+              scroll_class="overflow-x-auto"
+              table_class="w-full text-left"
+              checkbox_class="mr-2"
+              button_class="underline"
+            >
+              <:bulk_action :let={selection}>
+                <button
+                  type="button"
+                  id="crm-invite-selected"
+                  phx-click="invite-account"
+                  disabled={selection.count == 0}
+                  class="crm-button"
+                >{gettext("Invite selected to create an account")}</button>
+                <button
+                  type="button"
+                  id="crm-email-selected"
+                  phx-click="collection-email"
+                  disabled={selection.count == 0}
+                  class="crm-button"
+                >{gettext("Email")}</button>
+                <button
+                  type="button"
+                  id="crm-list-selected"
+                  phx-click="collection-add-to-list"
+                  disabled={selection.count == 0}
+                  class="crm-button"
+                >{gettext("Add to list")}</button>
+                <button
+                  :if={@directory_params["saved_filter_id"]}
+                  type="button"
+                  id="crm-remove-from-list"
+                  phx-click="collection-remove-from-list"
+                  disabled={selection.count == 0}
+                  class="crm-button"
+                >{gettext("Remove from list")}</button>
+              </:bulk_action>
+              <:column :let={record} label={gettext("Name")} class="p-3 align-top border-b">
+                <.link
+                  navigate={~p"/admin/contacts/#{record.person.id}?locale=#{@locale}"}
+                  class="font-bold underline"
+                >{record.person.name || gettext("Contact")}</.link>
+              </:column>
+              <:column :let={record} label={gettext("Email")} class="p-3 align-top border-b">
+                <p :for={address <- record.addresses}>{address.email}</p>
+              </:column>
+              <:column
+                :let={record}
+                label={gettext("Current location")}
+                class="p-3 align-top border-b"
+              >
+                <p
+                  id={"crm-geography-" <> record.person.id}
+                  data-geography-version={record.geography.version}
+                >
+                  {geography_label(record.geography)}
+                  <span :if={record.geography.conflicting?}> · {gettext(
+                    "Conflicting source locations"
+                  )}</span>
+                  <span :if={record.geography.unresolved?}> · {gettext(
+                    "Some location details are unresolved"
+                  )}</span>
+                </p>
+              </:column>
+              <:column :let={record} label={gettext("Source records")} class="p-3 align-top border-b">
+                <div :for={origin <- Map.get(@directory_origins, record.person.id, [])} class="mt-2">
+                  <p
+                    :if={length(Map.get(@directory_origins, record.person.id, [])) > 1}
+                    class="text-sm font-medium text-stone-700"
+                  >
+                    {origin.email}
+                  </p>
+                  <PauseAiCaWeb.ContactSourceComponents.source_matches
+                    data={origin.source_data}
+                    query={@search}
+                  />
+                  <PauseAiCaWeb.ContactSourceComponents.source_summary
+                    id={"directory-source-summary-#{origin.id}"}
+                    data={origin.source_data}
+                  />
+                  <PauseAiCaWeb.ContactSourceComponents.source_details
+                    id={"directory-source-details-#{origin.id}"}
+                    data={origin.source_data}
+                    query={@search}
+                  />
+                </div>
+              </:column>
+              <:empty>{gettext("No contacts found.")}</:empty>
+            </PhoenixAppShell.Collection.collection>
+          <% end %>
+          <.form
+            :if={@collection_lists != nil}
+            for={to_form(%{}, as: "collection")}
+            id="crm-add-to-list"
+            phx-submit="collection-list-save"
+            class="management-controls"
+          >
+            <.input
+              name="collection[list_id]"
+              value=""
+              type="select"
+              label={gettext("List")}
+              prompt={gettext("Choose a list")}
+              options={Enum.map(@collection_lists, &{&1.name, &1.id})}
+            />
+            <button class="crm-button" disabled={Selection.count(@selection) == 0}>{gettext(
+              "Add selected to list"
+            )}</button>
+          </.form>
           <nav
+            :if={!@grid_enabled}
             id="crm-pagination"
             aria-label={gettext("Contact pages")}
             class="mt-4 flex flex-wrap items-center gap-4"
@@ -1134,5 +1491,21 @@ defmodule PauseAiCaWeb.AdminContactsLive do
       </main>
     </Layouts.management>
     """
+  end
+
+  defp collection_labels(selection, matched_ids) do
+    %{
+      selection: gettext("%{count} selected across pages", count: Selection.count(selection)),
+      off_filter:
+        gettext("%{count} selected outside the current filters",
+          count: Selection.off_filter_count(selection, matched_ids)
+        ),
+      select_all: gettext("Select all matched"),
+      select_page: gettext("Select this page"),
+      clear: gettext("Clear selection"),
+      select_row: fn record ->
+        gettext("Select %{name}", name: record.person.name || gettext("contact"))
+      end
+    }
   end
 end

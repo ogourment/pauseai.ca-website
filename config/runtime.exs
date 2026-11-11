@@ -59,6 +59,7 @@ config :pauseai_ca, :mp_guide_enabled, mp_guide_enabled
 # New pipeline features require an explicit rollout per environment. Keep the
 # existing synthetic incubator test configuration without enabling a deployment.
 for {feature, variable} <- [
+      data_grid_enabled: "PAUSEAI_DATA_GRID_ENABLED",
       incubators_enabled: "PAUSEAI_INCUBATORS_ENABLED",
       welcome_calls_enabled: "PAUSEAI_WELCOME_CALLS_ENABLED",
       manifund_donations_enabled: "PAUSEAI_MANIFUND_DONATIONS_ENABLED"

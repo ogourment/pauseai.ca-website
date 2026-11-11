@@ -24,6 +24,125 @@ defmodule PauseAiCa.NewsletterResultsTest do
     %{scope: scope, batch: batch, delivery: delivery}
   end
 
+  test "workspace and edition lenses bind lists, forged contexts, details and navigation", c do
+    c.delivery
+    |> change(attempted_at: DateTime.utc_now(), authorizing_admin_id: c.scope.user.id)
+    |> Repo.update!()
+
+    batches =
+      for {mode, edition} <- [{"contacts", "en"}, {"outreach", "fr"}, {"list", "en"}] do
+        attrs =
+          c.batch
+          |> Map.from_struct()
+          |> Map.drop([:__meta__, :id])
+          |> Map.merge(%{
+            recipient_mode: mode,
+            edition: edition,
+            preparation_key: :crypto.strong_rand_bytes(32)
+          })
+
+        batch = Repo.insert!(struct(Batch, attrs))
+
+        attrs =
+          c.delivery
+          |> Map.from_struct()
+          |> Map.drop([:__meta__, :id])
+          |> Map.merge(%{
+            batch_id: batch.id,
+            attempted_at: DateTime.utc_now(),
+            authorizing_admin_id: c.scope.user.id
+          })
+
+        Repo.insert!(struct(Delivery, attrs))
+        batch
+      end
+
+    [contacts, outreach, list] = batches
+    ids = [c.batch.id | Enum.map(batches, & &1.id)]
+    filters = %{"workspace" => "emails", "edition" => "en"}
+    assert {:ok, [selected]} = Results.list(c.scope, 1, filters)
+    assert selected.id == contacts.id
+    assert {:ok, [selected]} = Results.list_context(c.scope, ids, filters)
+    assert selected.id == contacts.id
+
+    assert Results.navigation(c.scope, contacts.id, ids, filters) ==
+             %{ids: [contacts.id], previous: nil, next: nil}
+
+    assert {:ok, _} = Results.get(c.scope, contacts.id, filters)
+
+    for excluded <- [c.batch, outreach, list],
+        do: assert({:error, :unauthorized} == Results.get(c.scope, excluded.id, filters))
+
+    assert {:ok, newsletters} = Results.list(c.scope, 1, %{"workspace" => "newsletters"})
+    assert MapSet.new(Enum.map(newsletters, & &1.id)) == MapSet.new([c.batch.id, list.id])
+    assert {:ok, all} = Results.list(c.scope)
+    assert length(all) == 4
+    c.scope.user |> change(superadmin: false) |> Repo.update!()
+    assert {:error, :unauthorized} = Results.list(c.scope, 1, filters)
+    assert {:error, :unauthorized} = Results.list_context(c.scope, ids, filters)
+    assert {:error, :unauthorized} = Results.get(c.scope, contacts.id, filters)
+    assert Results.navigation(c.scope, contacts.id, ids, filters).ids == []
+  end
+
+  test "workspace filtering happens before pagination", c do
+    email_ids =
+      for number <- 1..26 do
+        attrs =
+          c.batch
+          |> Map.from_struct()
+          |> Map.drop([:__meta__, :id])
+          |> Map.merge(%{
+            recipient_mode: "contacts",
+            edition: "en",
+            preparation_key: :crypto.strong_rand_bytes(32),
+            inserted_at: DateTime.add(c.batch.inserted_at, -number)
+          })
+
+        batch = Repo.insert!(struct(Batch, attrs))
+
+        attrs =
+          c.delivery
+          |> Map.from_struct()
+          |> Map.drop([:__meta__, :id])
+          |> Map.merge(%{
+            batch_id: batch.id,
+            attempted_at: DateTime.utc_now(),
+            authorizing_admin_id: c.scope.user.id
+          })
+
+        Repo.insert!(struct(Delivery, attrs))
+        batch.id
+      end
+
+    c.delivery
+    |> change(attempted_at: DateTime.utc_now(), authorizing_admin_id: c.scope.user.id)
+    |> Repo.update!()
+
+    filters = %{"workspace" => "emails", "edition" => "en"}
+    assert {:ok, first} = Results.list(c.scope, 1, filters)
+    assert {:ok, second} = Results.list(c.scope, 2, filters)
+    assert length(first) == 25
+    assert length(second) == 1
+    assert Enum.map(first ++ second, & &1.id) == email_ids
+  end
+
+  test "malformed display lenses fail closed", c do
+    for filters <- [
+          %{"workspace" => "all"},
+          %{"edition" => "de"},
+          %{"workspace" => ["emails"]},
+          %{"edition" => nil},
+          %{"unexpected" => "emails"},
+          nil
+        ] do
+      assert {:error, :invalid_filter} = Results.normalize_filters(filters)
+      assert {:error, :invalid_filter} = Results.list(c.scope, 1, filters)
+      assert {:error, :invalid_filter} = Results.list_context(c.scope, [c.batch.id], filters)
+      assert {:error, :unauthorized} = Results.get(c.scope, c.batch.id, filters)
+      assert Results.navigation(c.scope, c.batch.id, [c.batch.id], filters).ids == []
+    end
+  end
+
   test "reports attempted sends only, attributes exact local withdrawal and enforces fresh authority",
        c do
     assert {:ok, []} = Results.list(c.scope)

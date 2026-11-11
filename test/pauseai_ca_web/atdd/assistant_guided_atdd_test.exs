@@ -128,7 +128,7 @@ if System.get_env("ATDD") == "true" do
         )
         |> click_button("#site-assistant-form button[type=submit]", tr(locale, "Send"))
         |> assert_has("#site-assistant-guide-step",
-          text: tr(locale, "Step 1 of 2 · Open Contacts through the Admin menu.")
+          text: tr(locale, "Step 1 of 2 · Open Contacts through the Manage menu.")
         )
         |> capture(
           id,
@@ -147,7 +147,7 @@ if System.get_env("ATDD") == "true" do
           "Actual Contacts menu navigation",
           "Guide step 1",
           "Next",
-          "The actual registered Admin Contacts menu link opened the expected locale URL and server directory."
+          "The actual registered Manage Contacts menu link opened the expected locale URL and server directory."
         )
         |> click_button("#site-assistant-guide-next", tr(locale, "Next"))
         |> assert_has("#site-assistant-guide-step",

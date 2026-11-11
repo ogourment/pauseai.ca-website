@@ -603,8 +603,17 @@ defmodule PauseAiCa.Assistant do
   defp guided_request(_scope, request, _locale, false), do: {:ok, request}
 
   defp guided_request(scope, request, locale, true) do
-    with {:ok, knowledge} <- PauseAiCa.Assistant.GuidedMode.context(scope, locale),
-         do: {:ok, put_in(request, ["context", "guided_mode"], knowledge)}
+    with {:ok, knowledge} <- PauseAiCa.Assistant.GuidedMode.context(scope, locale) do
+      request =
+        request
+        |> put_in(["context", "guided_mode"], knowledge)
+        |> put_in(
+          ["context", "canadian_references"],
+          PauseAiCa.Assistant.CanadianReferences.context()
+        )
+
+      {:ok, request}
+    end
   end
 
   defp guided_request(_, _, _, _), do: {:error, :unavailable}

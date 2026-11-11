@@ -4,7 +4,7 @@ defmodule PauseAiCa.Newsletters.Results do
   alias PauseAiCa.{Repo, Volunteers}
   alias PauseAiCa.Newsletters.{Batch, Delivery, ResultSnapshot}
 
-  def list(scope, page \\ 1) do
+  def list(scope, page \\ 1, filters \\ %{}) do
     if Volunteers.superadmin?(scope) do
       attempted = from d in Delivery, where: not is_nil(d.attempted_at), select: d.batch_id
 
@@ -13,10 +13,39 @@ defmodule PauseAiCa.Newsletters.Results do
           where: b.id in subquery(attempted),
           order_by: [desc: b.inserted_at, desc: b.id]
 
-      {:ok, Repo.all(from b in query, limit: 25, offset: ^((page - 1) * 25))}
+      with {:ok, filters} <- normalize_filters(filters) do
+        query = filter_query(query, filters)
+        {:ok, Repo.all(from b in query, limit: 25, offset: ^((page - 1) * 25))}
+      end
     else
       {:error, :unauthorized}
     end
+  end
+
+  @doc "Closed display filters. Missing values preserve the legacy all-results view."
+  def normalize_filters(filters) when is_map(filters) do
+    workspace = Map.get(filters, "workspace", "")
+    edition = Map.get(filters, "edition", "")
+
+    if Map.keys(filters) -- ["workspace", "edition"] == [] and
+         workspace in ["", "emails", "newsletters"] and edition in ["", "en", "fr", "unknown"],
+       do: {:ok, %{"workspace" => workspace, "edition" => edition}},
+       else: {:error, :invalid_filter}
+  end
+
+  def normalize_filters(_), do: {:error, :invalid_filter}
+
+  defp filter_query(query, filters) do
+    query =
+      case filters["workspace"] do
+        "emails" -> from(b in query, where: b.recipient_mode in ["contacts", "outreach"])
+        "newsletters" -> from(b in query, where: b.recipient_mode in ["newsletter", "list"])
+        _ -> query
+      end
+
+    if filters["edition"] == "",
+      do: query,
+      else: from(b in query, where: b.edition == ^filters["edition"])
   end
 
   # Local receipts and persisted provider aggregates only: browsing never calls Brevo.
@@ -49,8 +78,9 @@ defmodule PauseAiCa.Newsletters.Results do
 
   # Retain the originating list order across detail patches, even when a newer send arrives.
   # IDs from URLs are bounded, UUID-checked and intersected with authorized attempted sends.
-  def navigation(scope, id, ids) do
-    if Volunteers.superadmin?(scope) do
+  def navigation(scope, id, ids, filters \\ %{}) do
+    with true <- Volunteers.superadmin?(scope),
+         {:ok, filters} <- normalize_filters(filters) do
       ids =
         Enum.take(ids, 25) |> Enum.filter(&match?({:ok, _}, Ecto.UUID.cast(&1))) |> Enum.uniq()
 
@@ -58,7 +88,10 @@ defmodule PauseAiCa.Newsletters.Results do
 
       allowed =
         Repo.all(
-          from b in Batch, where: b.id in ^ids and b.id in subquery(attempted), select: b.id
+          filter_query(
+            from(b in Batch, where: b.id in ^ids and b.id in subquery(attempted), select: b.id),
+            filters
+          )
         )
         |> MapSet.new()
 
@@ -71,15 +104,20 @@ defmodule PauseAiCa.Newsletters.Results do
         next: if(index, do: Enum.at(ids, index + 1))
       }
     else
-      %{ids: [], previous: nil, next: nil}
+      _ -> %{ids: [], previous: nil, next: nil}
     end
   end
 
-  def list_context(scope, ids) do
+  def list_context(scope, ids, filters \\ %{}) do
     if Volunteers.superadmin?(scope) do
-      navigation = navigation(scope, nil, ids)
-      batches = Repo.all(from b in Batch, where: b.id in ^navigation.ids) |> Map.new(&{&1.id, &1})
-      {:ok, Enum.map(navigation.ids, &Map.fetch!(batches, &1))}
+      with {:ok, filters} <- normalize_filters(filters) do
+        navigation = navigation(scope, nil, ids, filters)
+
+        batches =
+          Repo.all(from b in Batch, where: b.id in ^navigation.ids) |> Map.new(&{&1.id, &1})
+
+        {:ok, Enum.map(navigation.ids, &Map.fetch!(batches, &1))}
+      end
     else
       {:error, :unauthorized}
     end
@@ -140,10 +178,11 @@ defmodule PauseAiCa.Newsletters.Results do
     end
   end
 
-  def get(scope, id) do
+  def get(scope, id, filters \\ %{}) do
     with true <- Volunteers.superadmin?(scope),
+         {:ok, filters} <- normalize_filters(filters),
          {:ok, id} <- Ecto.UUID.cast(id),
-         %Batch{} = batch <- Repo.get(Batch, id),
+         %Batch{} = batch <- Repo.one(filter_query(from(b in Batch, where: b.id == ^id), filters)),
          deliveries when deliveries != [] <-
            Repo.all(from d in Delivery, where: d.batch_id == ^id, order_by: d.email),
          true <- Enum.any?(deliveries, &(not is_nil(&1.attempted_at))),

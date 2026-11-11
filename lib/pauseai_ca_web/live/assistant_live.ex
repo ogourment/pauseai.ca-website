@@ -289,6 +289,13 @@ defmodule PauseAiCaWeb.AssistantLive do
         {:ok, advanced, count} ->
           {:noreply, assign(socket, guide_state: advanced, guide_count: count)}
 
+        {:waiting, waiting} ->
+          {:noreply, assign(socket, guide_state: waiting)}
+
+        {:waiting, waiting, command} ->
+          {:noreply,
+           socket |> assign(guide_state: waiting) |> push_event("paa:guided-command", command)}
+
         _ ->
           {:noreply, guide_failed(socket)}
       end
@@ -391,10 +398,34 @@ defmodule PauseAiCaWeb.AssistantLive do
 
   defp guide_title(nil, _), do: ""
 
+  defp guide_title(%{plan: %{"journey" => "crm.vancouver_workflow"}} = state, _count) do
+    case state.index do
+      0 ->
+        gettext("Step 1 of 5 · Open Contacts.")
+
+      1 ->
+        gettext("Step 2 of 5 · Choose Vancouver in Cities and preview the matches.")
+
+      2 ->
+        gettext("Step 3 of 5 · Open Lists.")
+
+      3 ->
+        gettext(
+          "Step 4 of 5 · Name a dynamic list, set city to Vancouver, then choose Save list."
+        )
+
+      4 ->
+        gettext("Step 5 of 5 · Review the saved list, then choose Compose newsletter.")
+
+      _ ->
+        gettext("Complete · Your newsletter draft is open for review. Nothing was sent.")
+    end
+  end
+
   defp guide_title(state, count) do
     case state.index do
       0 ->
-        gettext("Step 1 of 2 · Open Contacts through the Admin menu.")
+        gettext("Step 1 of 2 · Open Contacts through the Manage menu.")
 
       1 ->
         gettext("Step 2 of 2 · Choose %{area} in Named areas.",
@@ -556,9 +587,39 @@ defmodule PauseAiCaWeb.AssistantLive do
         }
       }
     />
+    <details
+      :if={@guide_state && @guide_state.plan["journey"] == "crm.vancouver_workflow"}
+      id="vancouver-guide-reference"
+      class="mx-auto max-w-4xl rounded-lg border border-base-300 bg-base-100 p-4"
+    >
+      <summary class="cursor-pointer font-semibold">
+        {gettext("Vancouver postal-area reference · 31 candidates")}
+      </summary>
+      <p class="mt-3">
+        {Enum.join(PauseAiCa.Assistant.CanadianReferences.vancouver()["candidate_fsas"], ", ")}
+      </p>
+      <p class="mt-3">
+        {gettext(
+          "These postal-locality candidates do not establish city boundaries. V6T includes UBC; V6S and V6N need boundary review. This guide selects recorded city Vancouver, without adding these FSAs to the audience."
+        )}
+      </p>
+      <p class="mt-3">
+        <a
+          class="underline"
+          href="https://download.geonames.org/export/zip/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >{gettext("GeoNames public source · pinned 9 November 2026")}</a>
+      </p>
+    </details>
     <PhoenixAgentAssistant.GuidedModeComponents.wizard
       id="site-assistant-guide"
+      reserve_scroll={@guide_state && @guide_state.plan["journey"] == "crm.vancouver_workflow"}
       return_focus_id="site-assistant-launcher"
+      observer_target_id={
+        if @guide_state && @guide_state.plan["journey"] == "crm.vancouver_workflow" &&
+             @guide_state.index >= 2, do: "assistant-guided-workspace", else: "crm-directory"
+      }
       state={@guide_state}
       title={guide_title(@guide_state, @guide_count)}
       error={@guide_error}

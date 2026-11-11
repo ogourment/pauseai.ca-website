@@ -4,6 +4,34 @@ defmodule PauseAiCa.NewslettersDraftsTest do
   alias PauseAiCa.{Newsletters, Accounts}
   alias PauseAiCa.Newsletters.Drafts
 
+  test "closed workspace filters separate private email and newsletter drafts without changing legacy listing" do
+    author = user_fixture() |> change(superadmin: true) |> Repo.update!()
+    other = user_fixture() |> change(superadmin: true) |> Repo.update!()
+    scope = Accounts.Scope.for_user(author)
+    {:ok, email} = Drafts.create(scope, "emails")
+    {:ok, newsletter} = Drafts.create(scope, "newsletters")
+    {:ok, legacy} = Drafts.create(scope)
+    {:ok, _foreign} = Drafts.create(Accounts.Scope.for_user(other), "emails")
+    assert email.recipient_mode == "contacts"
+    assert newsletter.recipient_mode == "newsletter"
+    assert legacy.recipient_mode == "newsletter"
+    assert {:ok, [selected]} = Drafts.list(scope, false, "emails")
+    assert selected.id == email.id
+    assert {:ok, selected} = Drafts.list(scope, false, "newsletters")
+    assert MapSet.new(Enum.map(selected, & &1.id)) == MapSet.new([newsletter.id, legacy.id])
+    assert {:ok, all} = Drafts.list(scope)
+    assert length(all) == 3
+    {:ok, _} = Drafts.archive(scope, email, true)
+    assert {:ok, []} = Drafts.list(scope, false, "emails")
+    assert {:ok, [archived]} = Drafts.list(scope, true, "emails")
+    assert archived.id == email.id
+    assert {:error, :invalid_workspace} = Drafts.list(scope, false, "unexpected")
+    assert {:error, :invalid_workspace} = Drafts.create(scope, "unexpected")
+    author |> change(superadmin: false) |> Repo.update!()
+    assert {:error, :unauthorized} = Drafts.list(scope, false, "newsletters")
+    assert {:error, :unauthorized} = Drafts.create(scope, "emails")
+  end
+
   test "content and geography persist, stale edits retain current content, archive is reversible with no consent or account effect" do
     author = user_fixture() |> change(superadmin: true) |> Repo.update!()
     scope = Accounts.Scope.for_user(author)

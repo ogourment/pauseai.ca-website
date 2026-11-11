@@ -26,6 +26,34 @@ defmodule PauseAiCa.AccountManagement do
     |> Repo.aggregate(:count, :id)
   end
 
+  @doc "Fresh scoped account IDs for a complete bounded selection snapshot."
+  def matching_ids(scope, search \\ "") do
+    if Volunteers.allowed?(scope) do
+      ids = matching_query(scope, search) |> limit(5001) |> select([u], u.id) |> Repo.all()
+
+      cond do
+        not Volunteers.allowed?(scope) -> {:error, :unauthorized}
+        length(ids) > 5000 -> {:error, :too_many_matches}
+        true -> {:ok, ids}
+      end
+    else
+      {:error, :unauthorized}
+    end
+  end
+
+  def selected_matching_ids(scope, search, ids) do
+    matching_query(scope, search) |> where([u], u.id in ^ids) |> select([u], u.id) |> Repo.all()
+  end
+
+  defp matching_query(scope, search) do
+    term = "%#{String.trim(search)}%"
+
+    query(scope)
+    |> where([u], ilike(u.email, ^term) or ilike(u.name, ^term))
+    |> distinct([u], u.id)
+    |> order_by([u], asc: u.email)
+  end
+
   def get(scope, id) do
     with {:ok, _} <- Ecto.UUID.cast(id),
          record when not is_nil(record) <-

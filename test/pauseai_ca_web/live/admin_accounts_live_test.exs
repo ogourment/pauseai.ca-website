@@ -16,6 +16,30 @@ defmodule PauseAiCaWeb.AdminAccountsLiveTest do
              live(conn, "/admin/accounts?locale=fr&page=2")
   end
 
+  test "selected accounts open the list chooser and add canonical contacts", %{
+    conn: conn,
+    admin: admin
+  } do
+    scope = Scope.for_user(admin)
+    target = user_fixture(%{email: "account-list-choice@example.org"})
+
+    {:ok, list} =
+      PauseAiCa.ContactLists.save(scope, nil, %{"name" => "Account helpers", "kind" => "static"})
+
+    {:ok, view, _} = live(conn, "/manage/accounts?locale=en&q=account-list-choice")
+    view |> element("#account-select-#{target.id}") |> render_click()
+    view |> element("#account-list-selected") |> render_click()
+    assert has_element?(view, "#account-add-to-list option[value='#{list.id}']", list.name)
+
+    view
+    |> form("#account-add-to-list", %{"collection" => %{"list_id" => list.id}})
+    |> render_submit()
+
+    assert {:ok, saved} = PauseAiCa.ContactLists.get(scope, list.id)
+    assert [person_id] = saved.criteria["person_ids"]
+    assert Repo.get_by!(PhoenixCRM.Address, email: target.email).person_id == person_id
+  end
+
   test "directory counts, stable pagination and bounded pages", %{conn: conn} do
     for n <- 1..26,
         do:
@@ -161,5 +185,54 @@ defmodule PauseAiCaWeb.AdminAccountsLiveTest do
     after
       0 -> :ok
     end
+  end
+
+  test "account collection keeps explicit selection across filters and selects all matches", %{
+    conn: conn
+  } do
+    people = for n <- 1..26, do: user_fixture(%{email: "collection-#{n}@example.org"})
+    {:ok, view, _} = live(conn, "/manage/accounts?locale=en&q=collection-")
+    assert has_element?(view, "#account-collection-select-page[type=checkbox]")
+    view |> element("button[phx-click=select-all-accounts]") |> render_click()
+    assert has_element?(view, "#account-collection-selection", "26 selected across pages")
+    view |> form("#account-search", %{search: "not-matching"}) |> render_change()
+
+    assert has_element?(
+             view,
+             "#account-collection-selection",
+             "26 selected outside the current filters"
+           )
+
+    render_click(view, "select-account", %{"id" => hd(people).id})
+    assert has_element?(view, "#account-collection-selection", "26 selected across pages")
+    view |> element("button[phx-click=clear-account-selection]") |> render_click()
+    assert has_element?(view, "#account-collection-selection", "0 selected across pages")
+  end
+
+  test "manager collection never offers global list administration and matching IDs stay fresh-scoped",
+       %{conn: conn, admin: admin} do
+    scope = Scope.for_user(admin)
+    {:ok, group} = Volunteers.create_group(scope, %{name: "Collection group"})
+    manager = user_fixture()
+    {:ok, grant} = Volunteers.assign_manager(scope, group.id, manager.email)
+
+    target =
+      user_fixture() |> Ecto.Changeset.change(organizing_group_id: group.id) |> Repo.update!()
+
+    foreign = user_fixture()
+    manager_scope = Scope.for_user(manager)
+    assert {:ok, ids} = AccountManagement.matching_ids(manager_scope)
+    assert ids == [target.id]
+    {:ok, view, _} = live(log_in_user(recycle(conn), manager), "/manage/accounts?locale=en")
+    refute has_element?(view, "#account-list-selected")
+    refute has_element?(view, "#account-select-#{foreign.id}")
+    view |> element("button[phx-click=select-all-accounts]") |> render_click()
+    assert has_element?(view, "#account-collection-selection", "1 selected across pages")
+    :ok = Volunteers.revoke_manager(scope, grant.id)
+    assert {:error, :unauthorized} = AccountManagement.matching_ids(manager_scope)
+    assert AccountManagement.selected_matching_ids(manager_scope, "", [target.id]) == []
+    render_click(view, "collection-email", %{})
+    assert has_element?(view, "#account-collection-error")
+    assert Repo.aggregate(PauseAiCa.Mail.Batch, :count) == 0
   end
 end

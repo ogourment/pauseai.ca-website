@@ -134,7 +134,6 @@ defmodule PauseAiCaWeb.Router do
     live_session :require_superadmin_user,
       on_mount: [{PauseAiCaWeb.UserAuth, :require_authenticated}] do
       live "/", AdminMetricsLive, :redirect
-      live "/assistant", AssistantSettingsLive, :index
       live "/assistant/activity", AssistantAuditLive, :index
       live "/assistant/activity/requests/:request_ref", AssistantAuditLive, :request
       live "/dashboard", AdminMetricsLive, :index
@@ -145,9 +144,6 @@ defmodule PauseAiCaWeb.Router do
       live "/interac-donations/:id", AdminInteracDonationsLive, :show
       live "/local-interest", LocalInterestLive, :index
       live "/contact-imports", AdminContactImportLive, :index
-      live "/contacts", AdminContactsLive, :index
-      live "/contacts/legacy/:legacy_id", AdminContactsLive, :legacy
-      live "/contacts/:id", AdminContactsLive, :show
     end
   end
 
@@ -176,6 +172,14 @@ defmodule PauseAiCaWeb.Router do
 
     live_session :require_authenticated_user,
       on_mount: [{PauseAiCaWeb.UserAuth, :require_authenticated}] do
+      scope "/admin" do
+        pipe_through :require_superadmin_user
+        live "/assistant", AssistantSettingsLive, :index
+        live "/contacts", AdminContactsLive, :index
+        live "/contacts/legacy/:legacy_id", AdminContactsLive, :legacy
+        live "/contacts/:id", AdminContactsLive, :show
+      end
+
       live "/groups/:id/join", IncubatorsLive, :join
       live "/manage/blog", BlogEditorLive, :index
       live "/manage/blog/:id", BlogEditorLive, :show
@@ -199,6 +203,7 @@ defmodule PauseAiCaWeb.Router do
       live "/manage/accounts/:account_id/compose", MailDraftsLive, :new
       live "/manage/questions", QuestionDraftsLive, :index
       live "/manage/questions/:id", QuestionDraftsLive, :show
+      live "/manage/lists", ContactListsLive, :index
       live "/manage/mail", MailDraftsLive, :index
       live "/manage/mail/inbox", OutreachInboxLive, :index
       live "/manage/mail/conversations/:id", OutreachInboxLive, :show

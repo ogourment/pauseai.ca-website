@@ -5,7 +5,7 @@ defmodule PauseAiCa.Newsletters.Drafts do
   alias PauseAiCa.Newsletters.Draft
   alias PauseAiCa.Outreach.{Access, Mailboxes}
 
-  def list(scope, archived? \\ false) do
+  def list(scope, archived? \\ false, workspace \\ "") do
     if Volunteers.superadmin?(scope) or Access.eligible?(scope) do
       query =
         from(d in Draft,
@@ -30,11 +30,24 @@ defmodule PauseAiCa.Newsletters.Drafts do
           do: from(d in query, where: not is_nil(d.archived_at)),
           else: from(d in query, where: is_nil(d.archived_at))
 
-      {:ok, Repo.all(query)}
+      case workspace_query(query, workspace) do
+        {:ok, query} -> {:ok, Repo.all(query)}
+        error -> error
+      end
     else
       {:error, :unauthorized}
     end
   end
+
+  defp workspace_query(query, ""), do: {:ok, query}
+
+  defp workspace_query(query, "emails"),
+    do: {:ok, from(d in query, where: d.recipient_mode in ["contacts", "outreach"])}
+
+  defp workspace_query(query, "newsletters"),
+    do: {:ok, from(d in query, where: d.recipient_mode in ["newsletter", "list"])}
+
+  defp workspace_query(_, _), do: {:error, :invalid_workspace}
 
   def get(scope, id) do
     with {:ok, uuid} <- Ecto.UUID.cast(id),
@@ -47,9 +60,17 @@ defmodule PauseAiCa.Newsletters.Drafts do
     end
   end
 
-  def create(scope) do
-    authorized(scope, fn -> Repo.insert!(%Draft{owner_id: scope.user.id}) end)
+  def create(scope, workspace \\ "")
+
+  def create(scope, workspace) when workspace in ["", "emails", "newsletters"] do
+    mode = if workspace == "emails", do: "contacts", else: "newsletter"
+
+    authorized(scope, fn ->
+      Repo.insert!(%Draft{owner_id: scope.user.id, recipient_mode: mode})
+    end)
   end
+
+  def create(_, _), do: {:error, :invalid_workspace}
 
   def create_account_invitations(scope, person_ids, attrs) do
     authorized(scope, fn ->

@@ -3,6 +3,8 @@ defmodule PauseAiCaWeb.NewsletterAudienceLabels do
   def rule_label("city"), do: gettext("City")
   def rule_label("region"), do: gettext("Region")
   def rule_label("fsa"), do: gettext("FSA")
+  def rule_label("static"), do: gettext("Static")
+  def rule_label("manual_include"), do: gettext("Manual selection")
   def status_label(:hard_bounce), do: gettext("Permanent address failure")
   def status_label(:invalid_domain), do: gettext("Invalid domain: verify the address")
   def status_label(:included), do: gettext("Eligible")

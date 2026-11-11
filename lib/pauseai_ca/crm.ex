@@ -25,73 +25,16 @@ defmodule PauseAiCa.CRM do
   # Directory reads are paged by canonical person, never by address or source row.
   # Batch hydration avoids loading profile activity for every search result.
   def directory_page(scope, params) do
-    with true <- Volunteers.superadmin?(scope),
-         {:ok, saved_filter} <- directory_saved_filter(scope, params["saved_filter_id"]) do
-      query_text = String.slice(directory_string(params["q"]), 0, 500)
-      region = String.slice(directory_string(params["region"]), 0, 200)
-      geography_filters = DirectoryGeography.filters(params)
+    with {:ok,
+          %{
+            filtered: filtered,
+            geographies: geographies,
+            q: query_text,
+            per: per,
+            region: region,
+            geography_filters: geography_filters
+          }} <- directory_matches(scope, params) do
       all_rows? = params[:all_rows] == true
-      per = positive_integer(params["per"], 25)
-      per = if per in @directory_sizes, do: per, else: 25
-      pattern = "%" <> escape_search(query_text) <> "%"
-
-      matches =
-        from p in PhoenixCRM.Person,
-          left_join: alias_person in PhoenixCRM.Person,
-          on: alias_person.id == p.id or alias_person.canonical_id == p.id,
-          left_join: address in PhoenixCRM.Address,
-          on: address.person_id == alias_person.id,
-          left_join: link in ContactLink,
-          on: link.person_id == alias_person.id,
-          left_join: contact in Contact,
-          on: contact.id == link.contact_id,
-          where: is_nil(p.canonical_id),
-          select: p.id,
-          distinct: true
-
-      matches =
-        if params["archived"] == "true",
-          do: from([p] in matches, where: not is_nil(p.archived_at)),
-          else: from([p] in matches, where: is_nil(p.archived_at))
-
-      matches =
-        if query_text == "" do
-          matches
-        else
-          from [p, ap, a, l, c] in matches,
-            where:
-              ilike(p.name, ^pattern) or ilike(p.city, ^pattern) or
-                ilike(ap.name, ^pattern) or ilike(ap.city, ^pattern) or
-                ilike(a.email, ^pattern) or ilike(c.name, ^pattern) or
-                ilike(c.city, ^pattern) or ilike(c.email, ^pattern) or
-                ilike(
-                  Geography.expression(c.source_data),
-                  ^pattern
-                ) or
-                fragment(
-                  "EXISTS (SELECT 1 FROM jsonb_each_text(COALESCE(?, '{}'::jsonb)) AS field WHERE field.value ILIKE ?)",
-                  c.source_data,
-                  ^pattern
-                )
-        end
-
-      candidates =
-        Repo.all(
-          from p in PhoenixCRM.Person,
-            where: p.id in subquery(matches),
-            order_by: [asc: p.name, asc: p.id],
-            select: %{id: p.id, city: p.city}
-        )
-
-      geographies = DirectoryGeography.project_people(candidates)
-
-      filtered =
-        Enum.filter(
-          candidates,
-          &(DirectoryGeography.matches?(geographies[&1.id], geography_filters, region) and
-              directory_saved_matches?(geographies[&1.id], saved_filter))
-        )
-
       total = length(filtered)
       pages = max(1, div(total + per - 1, per))
       page = min(positive_integer(params["page"], 1), pages)
@@ -151,6 +94,7 @@ defmodule PauseAiCa.CRM do
         {:ok,
          %{
            records: records,
+           matched_ids: Enum.map(filtered, & &1.id),
            total: total,
            pages: pages,
            page: page,
@@ -168,6 +112,137 @@ defmodule PauseAiCa.CRM do
         {:error, :unauthorized}
       end
     else
+      error -> error
+    end
+  end
+
+  @doc "Fresh canonical matching IDs without profile/address hydration, bounded to a complete snapshot."
+  def directory_ids(scope, params) do
+    with {:ok, %{filtered: filtered}} <- directory_matches(scope, params) do
+      if length(filtered) > 5000,
+        do: {:error, :too_many_matches},
+        else: {:ok, Enum.map(filtered, & &1.id)}
+    end
+  end
+
+  @doc "Bounded, lightweight directory projection for authorized server-side grids."
+  def directory_grid_projection(scope, params) do
+    with {:ok, %{filtered: people, geographies: geographies}} <- directory_matches(scope, params),
+         true <- length(people) <= 5000 do
+      ids = Enum.map(people, & &1.id)
+
+      addresses =
+        Repo.all(
+          from a in PhoenixCRM.Address,
+            join: p in PhoenixCRM.Person,
+            on: p.id == a.person_id,
+            where: p.id in ^ids or p.canonical_id in ^ids,
+            select: {p.canonical_id, p.id, a.email}
+        )
+        |> Enum.group_by(fn {canonical, id, _} -> canonical || id end, &elem(&1, 2))
+
+      rows =
+        Enum.map(people, fn person ->
+          geography = geographies[person.id]
+
+          %{
+            "id" => person.id,
+            "name" => person.name || "",
+            "email" => addresses |> Map.get(person.id, []) |> Enum.sort() |> Enum.join("; "),
+            "city" => geography.city || "",
+            "province" => DirectoryGeography.subdivision_name(geography.subdivision) || "",
+            "fsa" => geography.postal_area || "",
+            "region" => Enum.join(geography.regions, "; ")
+          }
+        end)
+
+      if Volunteers.superadmin?(scope), do: {:ok, rows}, else: {:error, :unauthorized}
+    else
+      false -> {:error, :projection_too_large}
+      error -> error
+    end
+  end
+
+  defp directory_matches(scope, params) do
+    with true <- Volunteers.superadmin?(scope),
+         {:ok, saved_filter} <- directory_saved_filter(scope, params["saved_filter_id"]) do
+      query_text = String.slice(directory_string(params["q"]), 0, 500)
+      region = String.slice(directory_string(params["region"]), 0, 200)
+      geography_filters = DirectoryGeography.filters(params)
+      per = positive_integer(params["per"], 25)
+      per = if per in @directory_sizes, do: per, else: 25
+      pattern = "%" <> escape_search(query_text) <> "%"
+
+      matches =
+        from p in PhoenixCRM.Person,
+          left_join: alias_person in PhoenixCRM.Person,
+          on: alias_person.id == p.id or alias_person.canonical_id == p.id,
+          left_join: address in PhoenixCRM.Address,
+          on: address.person_id == alias_person.id,
+          left_join: link in ContactLink,
+          on: link.person_id == alias_person.id,
+          left_join: contact in Contact,
+          on: contact.id == link.contact_id,
+          where: is_nil(p.canonical_id),
+          select: p.id,
+          distinct: true
+
+      matches =
+        if params["archived"] == "true",
+          do: from([p] in matches, where: not is_nil(p.archived_at)),
+          else: from([p] in matches, where: is_nil(p.archived_at))
+
+      matches =
+        if query_text == "" do
+          matches
+        else
+          from [p, ap, a, l, c] in matches,
+            where:
+              ilike(p.name, ^pattern) or ilike(p.city, ^pattern) or
+                ilike(ap.name, ^pattern) or ilike(ap.city, ^pattern) or
+                ilike(a.email, ^pattern) or ilike(c.name, ^pattern) or
+                ilike(c.city, ^pattern) or ilike(c.email, ^pattern) or
+                ilike(
+                  Geography.expression(c.source_data),
+                  ^pattern
+                ) or
+                fragment(
+                  "EXISTS (SELECT 1 FROM jsonb_each_text(COALESCE(?, '{}'::jsonb)) AS field WHERE field.value ILIKE ?)",
+                  c.source_data,
+                  ^pattern
+                )
+        end
+
+      candidates =
+        Repo.all(
+          from p in PhoenixCRM.Person,
+            where: p.id in subquery(matches),
+            order_by: [asc: p.name, asc: p.id],
+            select: %{id: p.id, city: p.city, name: p.name}
+        )
+
+      geographies = DirectoryGeography.project_people(candidates)
+
+      filtered =
+        Enum.filter(
+          candidates,
+          &(DirectoryGeography.matches?(geographies[&1.id], geography_filters, region) and
+              directory_saved_matches?(&1.id, geographies[&1.id], saved_filter))
+        )
+
+      if Volunteers.superadmin?(scope),
+        do:
+          {:ok,
+           %{
+             filtered: filtered,
+             geographies: geographies,
+             q: query_text,
+             per: per,
+             region: region,
+             geography_filters: geography_filters
+           }},
+        else: {:error, :unauthorized}
+    else
       false -> {:error, :unauthorized}
       error -> error
     end
@@ -176,41 +251,38 @@ defmodule PauseAiCa.CRM do
   defp directory_saved_filter(_scope, id) when id in [nil, ""], do: {:ok, nil}
 
   defp directory_saved_filter(scope, id) do
-    case PhoenixCRM.MailingLists.get(context(), scope, id) do
-      {:ok, %{archived_at: nil, criteria: criteria}} ->
-        if PhoenixCRM.ListRules.valid?(criteria) and
-             Enum.all?(criteria["rules"], &(&1["field"] in ~w(city region fsa))) do
-          rules =
-            Enum.map(criteria["rules"], fn rule ->
-              if rule["field"] == "city",
-                do:
-                  Map.update!(
-                    rule,
-                    "values",
-                    &Enum.map(&1, fn value ->
-                      PhoenixCRM.Geography.city(value, DirectoryGeography.catalogue())
-                    end)
-                  ),
-                else: rule
-            end)
+    with {:ok, %{archived_at: nil, criteria: stored}} <- PauseAiCa.ContactLists.get(scope, id),
+         {:ok, criteria} <- PauseAiCa.ContactLists.canonical_criteria(scope, stored),
+         true <- Enum.all?(Map.get(criteria, "rules", []), &(&1["field"] in ~w(city region fsa))) do
+      rules =
+        Enum.map(Map.get(criteria, "rules", []), fn rule ->
+          if rule["field"] == "city",
+            do:
+              Map.update!(
+                rule,
+                "values",
+                &Enum.map(&1, fn value ->
+                  PhoenixCRM.Geography.city(value, DirectoryGeography.catalogue())
+                end)
+              ),
+            else: rule
+        end)
 
-          {:ok, Map.put(criteria, "rules", rules)}
-        else
-          {:error, :saved_geography_unavailable}
-        end
-
-      _ ->
-        {:error, :saved_geography_unavailable}
+      {:ok,
+       if(Map.has_key?(criteria, "rules"), do: Map.put(criteria, "rules", rules), else: criteria)}
+    else
+      _ -> {:error, :saved_geography_unavailable}
     end
   end
 
-  defp directory_saved_matches?(_geography, nil), do: true
+  defp directory_saved_matches?(_id, _geography, nil), do: true
 
-  defp directory_saved_matches?(geography, criteria) do
+  defp directory_saved_matches?(id, geography, criteria) do
     regions = if geography.regions == [], do: [nil], else: geography.regions
 
     Enum.any?(regions, fn region ->
       PhoenixCRM.ListRules.matches?(criteria, %{
+        "id" => id,
         "city" => geography.city,
         "fsa" => geography.postal_area,
         "region" => region

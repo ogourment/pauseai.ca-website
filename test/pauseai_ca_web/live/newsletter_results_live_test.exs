@@ -35,6 +35,54 @@ defmodule PauseAiCaWeb.NewsletterResultsLiveTest do
     %{conn: log_in_user(conn, admin), scope: scope, batch: batch, delivery: delivery}
   end
 
+  test "workspace and edition survive detail, next and back links with forged context excluded",
+       c do
+    first = clone_batch(c, DateTime.add(c.batch.inserted_at, -10))
+    second = clone_batch(c, DateTime.add(c.batch.inserted_at, -20))
+
+    for batch <- [first, second],
+        do:
+          batch
+          |> Ecto.Changeset.change(recipient_mode: "contacts", edition: "en")
+          |> Repo.update!()
+
+    context = Enum.join([first.id, c.batch.id, second.id], ",")
+    path = "/manage/mail/results?locale=en&workspace=emails&edition=en&context=#{context}"
+    {:ok, view, _} = live(c.conn, path)
+    assert has_element?(view, "#send-#{first.id}")
+    assert has_element?(view, "#send-#{second.id}")
+    refute has_element?(view, "#send-#{c.batch.id}")
+    assert has_element?(view, "#results-workspace option[value=emails][selected]")
+    view |> element("#send-#{first.id} a") |> render_click()
+    assert has_element?(view, "nav a[href*='workspace=emails'][href*='edition=en']", "Next send")
+    view |> element("nav a", "Next send") |> render_click()
+
+    assert has_element?(
+             view,
+             "nav a[href*='workspace=emails'][href*='edition=en']",
+             "Back to results"
+           )
+
+    view |> element("nav a", "Back to results") |> render_click()
+    assert has_element?(view, "#send-#{first.id}")
+    refute has_element?(view, "#send-#{c.batch.id}")
+
+    view
+    |> form("#results-filters", filters: %{workspace: "newsletters", edition: "unknown"})
+    |> render_change()
+
+    assert has_element?(view, "#send-#{c.batch.id}")
+    refute has_element?(view, "#send-#{first.id}")
+  end
+
+  test "a forged result detail outside the workspace is unavailable", c do
+    assert {:error, {:redirect, %{to: "/dashboard"}}} =
+             live(c.conn, "/manage/mail/results/#{c.batch.id}?locale=en&workspace=emails")
+
+    assert {:error, {:redirect, %{to: "/dashboard"}}} =
+             live(c.conn, "/manage/mail/results?locale=en&workspace[unexpected]=emails")
+  end
+
   test "stored summaries distinguish missing, partial and empty observations and retain authority",
        c do
     assert Results.overview(c.scope, [c.batch.id])[c.batch.id].provider == nil

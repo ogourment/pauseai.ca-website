@@ -159,13 +159,13 @@ if System.get_env("ATDD") == "true" do
         |> assert_has("#crm-contact-#{vancouver.person.id}")
         |> refute_has("#crm-contact-#{burnaby.person.id}")
         |> assert_has("#crm-selection-actions",
-          text: tr(locale, "%{count} selected across pages", count: 0),
+          text: tr(locale, "%{count} selected across pages", count: 2),
           exact: false
         )
         |> capture(
           locale,
           "Vancouver means the city",
-          "Changing geographic filters clears the prior selection; Burnaby does not match Vancouver."
+          "Changing geographic filters retains the two explicit selections outside the current filters. Burnaby does not match Vancouver."
         )
         |> select("#crm-cities", tr(locale, "Cities"), option: [], exact: false)
         |> fill_in(tr(locale, "FSA (first three postal-code characters)"), with: "m5v")

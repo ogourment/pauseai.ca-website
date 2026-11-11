@@ -88,12 +88,12 @@ if System.get_env("ATDD") == "true" do
           b
           |> capture(
             scenario,
-            "Account menu before opening Emails",
-            "Click Emails in the Management section: data-navigation-item=pauseai.mail"
+            "Account menu before opening Newsletters",
+            "Click Newsletters in the Management section: data-navigation-item=pauseai.newsletters"
           )
           |> click_link(
-            "#manage-menu [data-navigation-item='pauseai.mail']",
-            tr(locale, "Emails"),
+            "#manage-menu [data-navigation-item='pauseai.newsletters']",
+            tr(locale, "Newsletters"),
             exact: true
           )
           |> connected()
@@ -102,7 +102,7 @@ if System.get_env("ATDD") == "true" do
           b
           |> capture(
             scenario,
-            "Emails workspace before results",
+            "Newsletters workspace before results",
             "Click Sent & results: data-navigation-item=mail.results"
           )
           |> click_link("[data-navigation-item='mail.results']", tr(locale, "Sent & results"),
@@ -177,7 +177,7 @@ if System.get_env("ATDD") == "true" do
 
         b =
           b
-          |> visit("/manage/mail/results?locale=#{locale}")
+          |> visit("/manage/mail/results?locale=#{locale}&workspace=newsletters")
           |> connected()
           |> assert_has("#send-#{newer.id}")
 

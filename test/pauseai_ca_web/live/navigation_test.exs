@@ -24,7 +24,7 @@ defmodule PauseAiCaWeb.NavigationTest do
   test "superadmin gets separate Admin, Management and own account navigation", %{conn: conn} do
     admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
     {:ok, view, html} = live(log_in_user(conn, admin), "/admin/contacts?locale=en")
-    assert has_element?(view, "#admin-menu [data-area=admin]", "Contacts")
+    assert has_element?(view, "#manage-menu [data-area=manage]", "Contacts")
     assert has_element?(view, "#manage-menu [data-area=manage]", "Emails")
     assert has_element?(view, "[data-navigation-item=\"pauseai.contacts\"][aria-current=page]")
     assert has_element?(view, "#account-menu [data-area=account]", "My profile")
@@ -34,6 +34,53 @@ defmodule PauseAiCaWeb.NavigationTest do
     {donate_position, _} = :binary.match(html, "signed-campaign-controls")
     {involvement_position, _} = :binary.match(html, "id=\"involvement-menu\"")
     assert donate_position < involvement_position
+  end
+
+  test "management CRM entries preserve capabilities and resolve closed workspace URLs" do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    items = Navigation.assemble(Scope.for_user(admin), "en")
+
+    crm =
+      Enum.filter(
+        items,
+        &(&1.id in [
+            "pauseai.contacts",
+            "pauseai.accounts",
+            "pauseai.contact_lists",
+            "pauseai.mail",
+            "pauseai.newsletters"
+          ])
+      )
+
+    assert Enum.all?(crm, &(&1.area == :manage))
+    assert length(crm) == 5
+
+    assert {:ok, "/admin/contacts?locale=fr"} =
+             Navigation.resolve_route(:contacts, %{locale: "fr"})
+
+    assert {:ok, "/manage/lists?locale=fr"} =
+             Navigation.resolve_route(:contact_lists, %{locale: "fr"})
+
+    {:ok, emails} = Navigation.resolve_route(:mail, %{locale: "fr"})
+
+    assert URI.decode_query(URI.parse(emails).query) == %{
+             "locale" => "fr",
+             "workspace" => "emails"
+           }
+
+    {:ok, newsletters} = Navigation.resolve_route(:newsletters, %{locale: "en"})
+
+    assert URI.decode_query(URI.parse(newsletters).query) == %{
+             "locale" => "en",
+             "workspace" => "newsletters"
+           }
+
+    admin |> Ecto.Changeset.change(superadmin: false) |> Repo.update!()
+
+    refute Enum.any?(
+             Navigation.assemble(Scope.for_user(admin), "en"),
+             &(&1.id in ["pauseai.contacts", "pauseai.contact_lists", "pauseai.newsletters"])
+           )
   end
 
   test "group manager retains scoped routes and never receives global contact/admin links", %{

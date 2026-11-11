@@ -5,6 +5,49 @@ defmodule PauseAiCaWeb.MailEntryLiveTest do
   alias PauseAiCa.{Repo, Mail, Volunteers}
   alias PauseAiCa.Accounts.{User, Scope}
 
+  test "email and newsletter workspaces show contextual tabs and create the same private editor with explicit audience mode",
+       %{conn: conn} do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    conn = log_in_user(conn, admin)
+    {:ok, emails, _} = live(conn, "/manage/mail?locale=en&workspace=emails")
+    assert has_element?(emails, "[data-navigation-item='mail.drafts'][href*='workspace=emails']")
+    refute has_element?(emails, "[data-navigation-item='mail.subscribers']")
+    refute has_element?(emails, "#mail-new-account-draft")
+    emails |> element("#mail-new-draft") |> render_click()
+
+    email =
+      Repo.get_by!(PauseAiCa.Newsletters.Draft, owner_id: admin.id, recipient_mode: "contacts")
+
+    assert_redirect(emails, "/manage/mail/drafts/#{email.id}?locale=en&workspace=emails")
+
+    {:ok, newsletters, _} = live(conn, "/manage/mail?locale=en&workspace=newsletters")
+
+    assert has_element?(
+             newsletters,
+             "[data-navigation-item='mail.subscribers'][href*='workspace=newsletters']",
+             "Subscribers"
+           )
+
+    refute has_element?(newsletters, "[data-navigation-item='mail.conversations']")
+    refute has_element?(newsletters, "#mail-new-account-draft")
+    refute has_element?(newsletters, "a[href*='/drafts/#{email.id}']")
+    newsletters |> element("#mail-new-draft") |> render_click()
+
+    newsletter =
+      Repo.get_by!(PauseAiCa.Newsletters.Draft, owner_id: admin.id, recipient_mode: "newsletter")
+
+    assert_redirect(
+      newsletters,
+      "/manage/mail/drafts/#{newsletter.id}?locale=en&workspace=newsletters"
+    )
+
+    assert Repo.aggregate(PauseAiCa.Newsletters.Batch, :count) == 0
+    assert Repo.aggregate(PauseAiCa.Newsletters.Delivery, :count) == 0
+
+    assert {:error, {:redirect, %{to: "/dashboard"}}} =
+             live(conn, "/manage/mail?workspace=unexpected")
+  end
+
   test "sent list identifies a single frozen recipient and places management above breadcrumbs",
        %{conn: conn} do
     admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()

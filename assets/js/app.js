@@ -32,13 +32,14 @@ import {LiveSocket} from "phoenix_live_view"
 import {hooks as colocatedHooks} from "phoenix-colocated/pauseai_ca"
 import {PhoenixMarkdownEditor} from "phoenix_markdown_editor/assets/js/phoenix_markdown_editor.js"
 import {PhoenixAgentAssistant, PhoenixAgentAssistantGuided} from "phoenix_agent_assistant/assets/js/phoenix_agent_assistant.js"
+import {PhoenixDataGrid} from "phoenix_data_grid/priv/static/phoenix_data_grid.min.js"
 import topbar from "../vendor/topbar"
 
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: {_csrf_token: csrfToken},
-  hooks: {...colocatedHooks, PhoenixMarkdownEditor, PhoenixAgentAssistant, PhoenixAgentAssistantGuided, FormDraft},
+  hooks: {...colocatedHooks, PhoenixDataGrid, PhoenixMarkdownEditor, PhoenixAgentAssistant, PhoenixAgentAssistantGuided, FormDraft},
   disconnectedTimeout: 1500,
 })
 

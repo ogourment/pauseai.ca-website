@@ -10,6 +10,8 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
      assign(socket,
        locale: locale,
        page_title: gettext("Sent & results"),
+       filters: %{"workspace" => "", "edition" => ""},
+       workspace: "",
        records: [],
        overview: %{},
        navigation: %{ids: [], previous: nil, next: nil},
@@ -28,6 +30,19 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
   end
 
   def handle_params(params, _, socket) do
+    case Results.normalize_filters(Map.take(params, ["workspace", "edition"])) do
+      {:ok, filters} ->
+        load_results(params, assign(socket, filters: filters, workspace: filters["workspace"]))
+
+      _ ->
+        {:noreply,
+         socket
+         |> put_flash(:error, gettext("The results filter is invalid."))
+         |> redirect(to: ~p"/dashboard")}
+    end
+  end
+
+  defp load_results(params, socket) do
     socket = socket |> cancel_async(:results) |> assign(loading: false)
 
     page =
@@ -38,15 +53,16 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
 
     response =
       if params["id"],
-        do: Results.get(socket.assigns.current_scope, params["id"]),
+        do: Results.get(socket.assigns.current_scope, params["id"], socket.assigns.filters),
         else:
           if(params["context"],
             do:
               Results.list_context(
                 socket.assigns.current_scope,
-                String.split(params["context"], ",")
+                String.split(params["context"], ","),
+                socket.assigns.filters
               ),
-            else: Results.list(socket.assigns.current_scope, page)
+            else: Results.list(socket.assigns.current_scope, page, socket.assigns.filters)
           )
 
     case response do
@@ -74,12 +90,18 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
           if params["context"],
             do: String.split(params["context"], ","),
             else:
-              (case Results.list(socket.assigns.current_scope, page) do
+              (case Results.list(socket.assigns.current_scope, page, socket.assigns.filters) do
                  {:ok, rows} -> Enum.map(rows, & &1.id)
                  _ -> []
                end)
 
-        navigation = Results.navigation(socket.assigns.current_scope, result.batch.id, ids)
+        navigation =
+          Results.navigation(
+            socket.assigns.current_scope,
+            result.batch.id,
+            ids,
+            socket.assigns.filters
+          )
 
         socket =
           assign(socket,
@@ -116,6 +138,17 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
     end
   end
 
+  def handle_event("filter", %{"filters" => filters}, socket) do
+    {:noreply,
+     push_patch(socket,
+       to:
+         results_path(
+           socket.assigns.locale,
+           Map.take(filters, ["workspace", "edition"])
+         )
+     )}
+  end
+
   def handle_event("refresh", _, socket) do
     if socket.assigns.loading or is_nil(socket.assigns.result) do
       {:noreply, socket}
@@ -131,7 +164,11 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
   end
 
   def handle_async(:results, {:ok, {:ok, provider}}, socket) do
-    case Results.get(socket.assigns.current_scope, socket.assigns.result.batch.id) do
+    case Results.get(
+           socket.assigns.current_scope,
+           socket.assigns.result.batch.id,
+           socket.assigns.filters
+         ) do
       {:ok, result} ->
         {:noreply,
          assign(socket,
@@ -208,6 +245,7 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
             current_scope={@current_scope}
             locale={@locale}
             active="results"
+            workspace={@workspace}
           />
           <h1 class="text-3xl font-bold">{gettext("Sent & results")}</h1>
           <p class="mt-3">
@@ -253,6 +291,39 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
             )}
           </p>
         </details>
+        <.form
+          :if={is_nil(@result)}
+          for={to_form(@filters, as: "filters")}
+          id="results-filters"
+          phx-change="filter"
+          class="mt-6 flex flex-wrap gap-4"
+        >
+          <.input
+            id="results-workspace"
+            name="filters[workspace]"
+            value={@filters["workspace"]}
+            type="select"
+            label={gettext("Workspace")}
+            options={[
+              {gettext("All email results"), ""},
+              {gettext("Emails"), "emails"},
+              {gettext("Newsletters"), "newsletters"}
+            ]}
+          />
+          <.input
+            id="results-edition"
+            name="filters[edition]"
+            value={@filters["edition"]}
+            type="select"
+            label={gettext("Language edition")}
+            options={[
+              {gettext("All editions"), ""},
+              {gettext("English"), "en"},
+              {gettext("French"), "fr"},
+              {gettext("Bilingual · language unknown only"), "unknown"}
+            ]}
+          />
+        </.form>
         <div :if={is_nil(@result)} class="mt-6 space-y-4">
           <h2 class="text-2xl font-bold">{gettext("Send results at a glance")}</h2>
           <p>
@@ -274,7 +345,7 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
               <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1">
                 <.link
                   class="font-bold underline"
-                  patch={detail_path(batch.id, @locale, @page, @context, batch.id)}
+                  patch={detail_path(batch.id, @locale, @page, @context, batch.id, @filters)}
                 >{edition_label(batch.edition)} · {Date.to_iso8601(
                   DateTime.to_date(batch.inserted_at)
                 )}</.link>
@@ -318,12 +389,12 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
           <div class="flex gap-4">
             <.link
               :if={@page > 1}
-              patch={~p"/manage/mail/results?#{%{page: @page - 1, locale: @locale}}"}
+              patch={results_path(@locale, @filters, %{page: @page - 1})}
               class="underline"
             >{gettext("Previous")}</.link>
             <.link
               :if={length(@records) == 25}
-              patch={~p"/manage/mail/results?#{%{page: @page + 1, locale: @locale}}"}
+              patch={results_path(@locale, @filters, %{page: @page + 1})}
               class="underline"
             >{gettext("Next")}</.link>
           </div>
@@ -333,18 +404,20 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
             <.link
               class="underline"
               patch={
-                ~p"/manage/mail/results?#{%{locale: @locale, page: @page, return: @return_id, context: @context}}" <> "#send-#{@return_id}"
+                results_path(@locale, @filters, %{page: @page, return: @return_id, context: @context}) <> "#send-#{@return_id}"
               }
             >{gettext("Back to results")}</.link>
             <.link
               :if={@navigation.previous}
               class="underline"
-              patch={detail_path(@navigation.previous, @locale, @page, @context, @return_id)}
+              patch={
+                detail_path(@navigation.previous, @locale, @page, @context, @return_id, @filters)
+              }
             >{gettext("Previous send")}</.link>
             <.link
               :if={@navigation.next}
               class="underline"
-              patch={detail_path(@navigation.next, @locale, @page, @context, @return_id)}
+              patch={detail_path(@navigation.next, @locale, @page, @context, @return_id, @filters)}
             >{gettext("Next send")}</.link>
           </nav>
           <h2 class="text-2xl font-bold">{@result.batch.subject}</h2>
@@ -531,9 +604,12 @@ defmodule PauseAiCaWeb.NewsletterResultsLive do
     """
   end
 
-  defp detail_path(id, locale, page, context, return_id),
+  defp detail_path(id, locale, page, context, return_id, filters),
     do:
-      ~p"/manage/mail/results/#{id}?#{%{locale: locale, page: page, context: context, return: return_id}}"
+      ~p"/manage/mail/results/#{id}?#{Map.merge(filters, %{locale: locale, page: page, context: context, return: return_id})}"
+
+  defp results_path(locale, filters, params \\ %{}),
+    do: ~p"/manage/mail/results?#{Map.merge(filters, Map.put(params, :locale, locale))}"
 
   defp preview_document(html) do
     html =

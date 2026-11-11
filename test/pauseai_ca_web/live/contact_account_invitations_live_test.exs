@@ -57,9 +57,10 @@ defmodule PauseAiCaWeb.ContactAccountInvitationsLiveTest do
     refute_receive {:email, _}
   end
 
-  test "the individual action is available in the directory and on the contact profile", %{
-    conn: conn
-  } do
+  test "directory uses one selection toolbar and the contact profile retains the individual action",
+       %{
+         conn: conn
+       } do
     actor = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
     person = Repo.insert!(%PhoenixCRM.Person{name: "Synthetic individual"})
 
@@ -70,7 +71,9 @@ defmodule PauseAiCaWeb.ContactAccountInvitationsLiveTest do
 
     conn = log_in_user(conn, actor)
     {:ok, view, _} = live(conn, "/admin/contacts?locale=en")
-    assert has_element?(view, "#crm-contact-#{person.id} button[phx-click=invite-account]")
+    refute has_element?(view, "#crm-contact-#{person.id} button[phx-click=invite-account]")
+    refute has_element?(view, "#crm-invite-selected")
+    assert has_element?(view, "#crm-contact-#{person.id} a", "Synthetic individual")
     {:ok, profile, _} = live(conn, "/admin/contacts/#{person.id}?locale=en")
     profile |> element("#crm-record button[phx-click=invite-account]") |> render_click()
     assert has_element?(profile, "#crm-invitation-form")

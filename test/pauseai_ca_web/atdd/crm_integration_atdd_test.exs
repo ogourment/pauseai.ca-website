@@ -98,20 +98,23 @@ if System.get_env("ATDD") == "true" do
       b =
         sign_in(c.conn, c.admin)
         |> visit("/admin/dashboard?locale=en")
-        |> PauseAiCaWeb.AtddNavigation.open_section("admin")
+        |> PauseAiCaWeb.AtddNavigation.open_section("manage")
         |> click_link("Contacts")
         |> assert_has("#crm-directory")
         |> refute_has("#announcement-banners")
         |> refute_has("#campaign-prompt")
         |> capture(
           id,
-          "Open Administration then Contacts",
+          "Open Manage then Contacts",
           "Two local records; no accounts created"
         )
 
       b =
         b
-        |> click_link("camille-one@example.org")
+        |> click_link(
+          "#crm-directory a[href='/admin/contacts/#{first.person.id}?locale=en']",
+          "Camille"
+        )
         |> click_button("Reconcile")
         |> select("Other person", option: "camille-two@example.org")
         |> click_button("Compare")

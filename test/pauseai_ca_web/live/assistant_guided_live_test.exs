@@ -133,6 +133,111 @@ defmodule PauseAiCaWeb.AssistantGuidedLiveTest do
     refute_received {:guided_provider_called, _}
   end
 
+  test "Vancouver human step remains visible while waiting for an actual saved list", c do
+    config = Assistant.configuration()
+
+    feature = %{
+      id: "crm-vancouver-guided",
+      title: "Vancouver",
+      summary: "Fixture",
+      introduced_in: Application.spec(:pauseai_ca, :vsn) |> to_string(),
+      entry_path: "/admin/contacts",
+      enabled: true,
+      ready: true,
+      scenarios: ["CRM-UX-VAN-01-en", "CRM-UX-VAN-01-fr"]
+    }
+
+    config =
+      config
+      |> Keyword.update!(:features, &(&1 ++ [feature]))
+      |> Keyword.update!(:feature_evidence, fn evidence ->
+        update_in(
+          evidence,
+          [:results],
+          &Map.merge(&1, %{"CRM-UX-VAN-01-en" => "success", "CRM-UX-VAN-01-fr" => "success"})
+        )
+      end)
+
+    Application.put_env(:pauseai_ca, :agent_assistant, config)
+    {:ok, manifest, _} = Guide.manifest(c.scope, "en")
+    text = PauseAiCa.Assistant.VancouverGuide.example_plan(manifest) |> Jason.encode!()
+    {provider, options} = config[:provider]
+
+    Application.put_env(
+      :pauseai_ca,
+      :agent_assistant,
+      Keyword.put(config, :provider, {provider, Keyword.put(options, :response_text, text)})
+    )
+
+    {:ok, view, _} =
+      live_isolated(c.conn, PauseAiCaWeb.AssistantLive,
+        session: %{"user_token" => c.token, "site_locale" => "en"}
+      )
+
+    render_click(view, "assistant-guided-mode", %{"enabled" => "true"})
+
+    render_submit(view, "assistant-submit", %{
+      "assistant" => %{"text" => "Prepare the Vancouver city list"}
+    })
+
+    render_async(view, 5_000)
+    assert has_element?(view, "#site-assistant-guide-step", "Step 1 of 5")
+    assert has_element?(view, "#vancouver-guide-reference", "31 candidates")
+    assert has_element?(view, "#vancouver-guide-reference", "recorded city Vancouver")
+
+    for {cities, query} <- [{[], ""}, {["Vancouver"], "&cities[]=Vancouver"}] do
+      render_click(view, "assistant-guide-next", %{})
+      assert_push_event(view, "paa:guided-command", %{token: token})
+
+      send(
+        view.pid,
+        {:guided_page_observed,
+         %{
+           "token" => token,
+           "session" => Guide.session_fingerprint(c.token),
+           "url" => "/admin/contacts?locale=en" <> query,
+           "filters" => PauseAiCa.CRM.Geography.filters(%{"cities" => cities}),
+           "count" => 999
+         }}
+      )
+
+      render(view)
+    end
+
+    render_click(view, "assistant-guide-next", %{})
+    assert_push_event(view, "paa:guided-command", %{token: token})
+
+    send(
+      view.pid,
+      {:guided_page_observed,
+       %{
+         "token" => token,
+         "session" => Guide.session_fingerprint(c.token),
+         "url" => "/manage/lists?locale=en"
+       }}
+    )
+
+    assert render(view) =~ "Step 4 of 5"
+    render_click(view, "assistant-guide-next", %{})
+    assert_push_event(view, "paa:guided-command", %{token: human_token, human_step: true})
+
+    send(
+      view.pid,
+      {:guided_page_observed,
+       %{
+         "token" => human_token,
+         "session" => Guide.session_fingerprint(c.token),
+         "url" => "/manage/lists?locale=en"
+       }}
+    )
+
+    assert render(view) =~ "Step 4 of 5"
+    refute has_element?(view, "#site-assistant-guide-error")
+    assert Repo.aggregate(PauseAiCa.Newsletters.Draft, :count) == 0
+    assert_received {:guided_provider_called, _}
+    refute_received {:guided_provider_called, _}
+  end
+
   test "audit failure and demotion stop plan activation and every later action", c do
     {:ok, manifest, _} = Guide.manifest(c.scope, "en")
     text = Guide.example_plan(manifest, "toronto_gta") |> Jason.encode!()

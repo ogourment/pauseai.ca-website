@@ -3,6 +3,7 @@ defmodule PauseAiCaWeb.ManagedAccountsLive do
   alias PauseAiCa.{AccountManagement, AccountEmailHistory, Volunteers}
   alias PauseAiCa.Accounts.UserNotifier
   alias PauseAiCaWeb.VolunteerForms
+  alias PhoenixAppShell.Selection
 
   @impl true
   def mount(params, _, socket) do
@@ -15,6 +16,10 @@ defmodule PauseAiCaWeb.ManagedAccountsLive do
          locale: locale,
          page_title: gettext("Accounts"),
          records: [],
+         selection: Selection.new(),
+         selection_matches: [],
+         collection_lists: nil,
+         collection_error: nil,
          count: 0,
          pages: 1,
          confirm_role: false,
@@ -105,6 +110,13 @@ defmodule PauseAiCaWeb.ManagedAccountsLive do
       {:noreply,
        assign(socket,
          count: count,
+         selection: Selection.scope(socket.assigns.selection, %{q: search}),
+         selection_matches:
+           AccountManagement.selected_matching_ids(
+             socket.assigns.current_scope,
+             search,
+             Selection.ids(socket.assigns.selection)
+           ),
          pages: pages,
          record: nil,
          search: search,
@@ -119,6 +131,115 @@ defmodule PauseAiCaWeb.ManagedAccountsLive do
     do:
       {:noreply,
        push_patch(socket, to: ~p"/manage/accounts?#{%{locale: socket.assigns.locale, q: search}}")}
+
+  def handle_event("select-account", %{"id" => id}, socket) do
+    selection = Selection.toggle(socket.assigns.selection, id, visible_selection_ids(socket))
+    {:noreply, refresh_selection(socket, selection)}
+  end
+
+  def handle_event("select-account-page", _, socket) do
+    selection = Selection.toggle_page(socket.assigns.selection, visible_selection_ids(socket))
+    {:noreply, refresh_selection(socket, selection)}
+  end
+
+  def handle_event("select-all-accounts", _, socket) do
+    with {:ok, ids} <-
+           AccountManagement.matching_ids(socket.assigns.current_scope, socket.assigns.search),
+         {:ok, selection} <- Selection.select_all(socket.assigns.selection, ids) do
+      {:noreply, refresh_selection(socket, selection)}
+    else
+      {:error, :too_many_matches} ->
+        {:noreply,
+         assign(socket,
+           collection_error:
+             gettext("More than 5,000 records match. Narrow the filters before selecting all.")
+         )}
+
+      _ ->
+        {:noreply,
+         assign(socket,
+           collection_error: gettext("The selected accounts are no longer available.")
+         )}
+    end
+  end
+
+  def handle_event("clear-account-selection", _, socket),
+    do:
+      {:noreply,
+       socket
+       |> refresh_selection(Selection.clear(socket.assigns.selection))
+       |> assign(collection_lists: nil)}
+
+  def handle_event("collection-email", _, socket) do
+    scope = socket.assigns.current_scope
+    ids = Selection.ids(socket.assigns.selection)
+
+    result =
+      if Volunteers.superadmin?(scope) do
+        with {:ok, people} <- PauseAiCa.ContactLists.account_people(scope, ids),
+             {:ok, draft} <- PauseAiCa.ContactLists.prepare_email(scope, people),
+             do: {:ok, ~p"/manage/mail/drafts/#{draft.id}?locale=#{socket.assigns.locale}"}
+      else
+        with [first | _] <- ids,
+             {:ok, batch} <- PauseAiCa.Mail.create(scope, first, %{}, ids),
+             do: {:ok, ~p"/manage/mail/#{batch.id}?locale=#{socket.assigns.locale}"}
+      end
+
+    case result do
+      {:ok, path} ->
+        {:noreply, push_navigate(socket, to: path)}
+
+      _ ->
+        {:noreply,
+         assign(socket,
+           collection_error:
+             gettext(
+               "The selected accounts could not be prepared for email. Group managers can prepare up to five currently accessible accounts."
+             )
+         )}
+    end
+  end
+
+  def handle_event("collection-add-to-list", _, socket) do
+    case PauseAiCa.ContactLists.list(socket.assigns.current_scope) do
+      {:ok, lists} ->
+        {:noreply, assign(socket, collection_lists: lists)}
+
+      _ ->
+        {:noreply,
+         assign(socket,
+           collection_error: gettext("List administration requires current superadmin access.")
+         )}
+    end
+  end
+
+  def handle_event("collection-list-save", %{"collection" => %{"list_id" => id}}, socket) do
+    with list when not is_nil(list) <-
+           Enum.find(socket.assigns.collection_lists || [], &(&1.id == id)),
+         {:ok, people} <-
+           PauseAiCa.ContactLists.account_people(
+             socket.assigns.current_scope,
+             Selection.ids(socket.assigns.selection)
+           ),
+         {:ok, _} <-
+           PauseAiCa.ContactLists.add_members(
+             socket.assigns.current_scope,
+             id,
+             people,
+             list.revision
+           ) do
+      {:noreply, assign(socket, collection_lists: nil, collection_error: nil)}
+    else
+      _ ->
+        {:noreply,
+         assign(socket,
+           collection_error:
+             gettext(
+               "The list could not be updated. Reload its current revision and review the selection."
+             )
+         )}
+    end
+  end
 
   def handle_event("edit", %{"account" => attrs}, socket),
     do: {:noreply, assign(socket, form: to_form(attrs, as: "account"))}
@@ -343,6 +464,24 @@ defmodule PauseAiCaWeb.ManagedAccountsLive do
 
   def handle_async(:email_history, {:exit, _reason}, socket),
     do: {:noreply, assign(socket, mail_loading: false, mail_error: :unavailable)}
+
+  defp visible_selection_ids(socket) do
+    ids = Enum.map(Enum.take(socket.assigns.records, 25), & &1.user.id)
+    AccountManagement.selected_matching_ids(socket.assigns.current_scope, "", ids)
+  end
+
+  defp refresh_selection(socket, selection) do
+    assign(socket,
+      selection: selection,
+      selection_matches:
+        AccountManagement.selected_matching_ids(
+          socket.assigns.current_scope,
+          socket.assigns.search,
+          Selection.ids(selection)
+        ),
+      collection_error: nil
+    )
+  end
 
   defp account_values(record),
     do: %{
@@ -660,30 +799,80 @@ defmodule PauseAiCaWeb.ManagedAccountsLive do
               phx-debounce="200"
             />
           </.form>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left">
-              <thead>
-                <tr>
-                  <th>{gettext("Name")}</th><th>{gettext("Email")}</th><th>
-                    {gettext("Incubator / group")}
-                  </th><th>{gettext("Status")}</th>
-                </tr>
-              </thead><tbody>
-                <tr :for={record <- Enum.take(@records, 25)} class="border-t">
-                  <td class="p-3">{record.user.name}</td><td class="p-3">
-                    <.link
-                      navigate={~p"/manage/accounts/#{record.user.id}?locale=#{@locale}"}
-                      class="underline"
-                    >{record.user.email}</.link>
-                  </td><td class="p-3">{record.group && record.group.name}</td><td class="p-3">
-                    {if record.user.confirmed_at,
-                      do: gettext("Email confirmed"),
-                      else: gettext("Account created · email unconfirmed")}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <p :if={@collection_error} id="account-collection-error" role="alert">
+            {@collection_error}
+          </p>
+          <PhoenixAppShell.Collection.collection
+            id="account-collection"
+            rows={Enum.take(@records, 25)}
+            row_id={& &1.user.id}
+            row_dom_id={&("account-row-" <> &1.user.id)}
+            row_checkbox_id={&("account-select-" <> &1.user.id)}
+            selection={@selection}
+            labels={collection_labels(@selection, @selection_matches)}
+            toggle_event="select-account"
+            page_event="select-account-page"
+            all_event="select-all-accounts"
+            clear_event="clear-account-selection"
+            toolbar_class="my-4 flex flex-wrap items-center gap-4"
+            scroll_class="overflow-x-auto"
+            table_class="w-full text-left"
+            button_class="underline"
+          >
+            <:bulk_action :let={selection}>
+              <button
+                type="button"
+                id="account-email-selected"
+                phx-click="collection-email"
+                disabled={selection.count == 0}
+                class="crm-button"
+              >{gettext("Email")}</button>
+              <button
+                :if={@admin?}
+                type="button"
+                id="account-list-selected"
+                phx-click="collection-add-to-list"
+                disabled={selection.count == 0}
+                class="crm-button"
+              >{gettext("Add to list")}</button>
+            </:bulk_action>
+            <:column :let={record} label={gettext("Name")} class="p-3 border-t">
+              {record.user.name}
+            </:column>
+            <:column :let={record} label={gettext("Email")} class="p-3 border-t">
+              <.link
+                navigate={~p"/manage/accounts/#{record.user.id}?locale=#{@locale}"}
+                class="underline"
+              >{record.user.email}</.link>
+            </:column>
+            <:column :let={record} label={gettext("Incubator / group")} class="p-3 border-t">
+              {record.group && record.group.name}
+            </:column>
+            <:column :let={record} label={gettext("Status")} class="p-3 border-t">
+              {if record.user.confirmed_at,
+                do: gettext("Email confirmed"),
+                else: gettext("Account created · email unconfirmed")}
+            </:column>
+          </PhoenixAppShell.Collection.collection>
+          <.form
+            :if={@collection_lists != nil}
+            for={to_form(%{}, as: "collection")}
+            id="account-add-to-list"
+            phx-submit="collection-list-save"
+            class="management-controls"
+          >
+            <.input
+              name="collection[list_id]"
+              value=""
+              type="select"
+              label={gettext("List")}
+              prompt={gettext("Choose a list")}
+              options={Enum.map(@collection_lists, &{&1.name, &1.id})}
+            />
+            <button class="crm-button" disabled={Selection.count(@selection) == 0}>{gettext(
+              "Add selected to list"
+            )}</button>
+          </.form>
           <p :if={@records == []}>{gettext("No accounts found.")}</p>
           <nav class="flex gap-4" aria-label={gettext("Account pages")}>
             <.link
@@ -735,9 +924,9 @@ defmodule PauseAiCaWeb.ManagedAccountsLive do
   defp history_error(:rate_limited), do: gettext("Brevo is limiting requests. Retry shortly.")
   defp history_error(_), do: gettext("Email history could not refresh. Retry shortly.")
 
-  attr :id, :string, required: true
-  attr :value, :any, required: true
-  attr :locale, :string, required: true
+  attr(:id, :string, required: true)
+  attr(:value, :any, required: true)
+  attr(:locale, :string, required: true)
 
   defp history_time(assigns) do
     time =
@@ -777,4 +966,20 @@ defmodule PauseAiCaWeb.ManagedAccountsLive do
 
   defp field_errors(errors, field),
     do: if(errors[field], do: [VolunteerForms.error(errors[field])], else: [])
+
+  defp collection_labels(selection, matched_ids) do
+    %{
+      selection: gettext("%{count} selected across pages", count: Selection.count(selection)),
+      off_filter:
+        gettext("%{count} selected outside the current filters",
+          count: Selection.off_filter_count(selection, matched_ids)
+        ),
+      select_all: gettext("Select all matched"),
+      select_page: gettext("Select this page"),
+      clear: gettext("Clear selection"),
+      select_row: fn record ->
+        gettext("Select %{name}", name: record.user.name || record.user.email)
+      end
+    }
+  end
 end

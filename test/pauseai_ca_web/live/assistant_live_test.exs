@@ -403,9 +403,12 @@ defmodule PauseAiCaWeb.AssistantLiveTest do
       "assistant" => %{"text" => "Comment trouver les contacts?"}
     })
 
-    render_async(view)
-    assert_receive {:assistant_generated, request, _}
+    # Observe the provider boundary before waiting for billing/audit persistence.
+    # This verifies the request locale without imposing the helper's incidental
+    # 100ms completion deadline on the entire database-backed async workflow.
+    assert_receive {:assistant_generated, request, _}, 1_000
     assert request["context"]["locale"] == "fr"
+    render_async(view, 1_000)
   end
 
   test "mode changes retain the just-typed draft before its debounce event", c do

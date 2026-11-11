@@ -18,6 +18,29 @@ defmodule PauseAiCa.NewslettersListsTest do
     end
   end
 
+  test "legacy list editor preserves manual exclusions when geography is saved", c do
+    person = Repo.insert!(%PhoenixCRM.Person{name: "Excluded contact"})
+
+    {:ok, list} =
+      PhoenixCRM.MailingLists.create(PauseAiCa.CRM.context(), c.scope, %{
+        name: "Preserved exclusion",
+        criteria: %{
+          "match" => "any",
+          "rules" => [%{"field" => "city", "operator" => "equals", "values" => ["Vancouver"]}],
+          "exclude_ids" => [person.id]
+        }
+      })
+
+    assert {:ok, updated} = Lists.save(c.scope, list, %{"name" => list.name, "city" => "Toronto"})
+    assert updated.criteria["exclude_ids"] == [person.id]
+    assert updated.criteria["match"] == "any_members_v1"
+
+    refute PhoenixCRM.ListRules.matches?(updated.criteria, %{
+             "id" => person.id,
+             "city" => "Toronto"
+           })
+  end
+
   defp signup(email, attrs, confirmed \\ true) do
     {:ok, request} = Newsletters.request_signup(email, Map.merge(%{consent: true}, attrs))
     if confirmed, do: Newsletters.confirm(request.confirmation_token)
@@ -35,6 +58,79 @@ defmodule PauseAiCa.NewslettersListsTest do
       })
 
     list
+  end
+
+  test "static newsletter membership resolves merged contact addresses without granting consent",
+       c do
+    root = Repo.insert!(%PhoenixCRM.Person{name: "Canonical contact"})
+    alias_person = Repo.insert!(%PhoenixCRM.Person{name: "Merged contact", canonical_id: root.id})
+
+    Repo.insert!(%PhoenixCRM.Address{
+      person_id: alias_person.id,
+      email: "static-alias@example.org"
+    })
+
+    included = signup("static-alias@example.org", %{city: "Elsewhere"})
+    signup("unrelated@example.org", %{city: "Vancouver"})
+
+    {:ok, list} =
+      PhoenixCRM.MailingLists.create(PauseAiCa.CRM.context(), c.scope, %{
+        name: "Static newsletter contacts",
+        criteria: %{"kind" => "static", "person_ids" => [alias_person.id]}
+      })
+
+    assert {:ok, page} = Newsletters.audience_page(c.scope, %{"list_id" => list.id})
+    assert [%{subscription: %{id: id}, matched_fields: ["static"], status: :included}] = page.rows
+    assert id == included.id
+    included |> change(state: "withdrawn", withdrawn_at: DateTime.utc_now()) |> Repo.update!()
+
+    assert {:ok, %{counts: %{withdrawn: 1, included: 0}}} =
+             Newsletters.audience_page(c.scope, %{"list_id" => list.id})
+  end
+
+  test "canonical manual exclusion wins over rule and inclusion while pending consent stays excluded",
+       c do
+    included_person = Repo.insert!(%PhoenixCRM.Person{name: "Manual include"})
+    excluded_person = Repo.insert!(%PhoenixCRM.Person{name: "Manual exclude"})
+
+    alias_person =
+      Repo.insert!(%PhoenixCRM.Person{name: "Excluded alias", canonical_id: excluded_person.id})
+
+    Repo.insert!(%PhoenixCRM.Address{
+      person_id: included_person.id,
+      email: "manual-pending@example.org"
+    })
+
+    Repo.insert!(%PhoenixCRM.Address{
+      person_id: alias_person.id,
+      email: "manual-excluded@example.org"
+    })
+
+    signup("manual-pending@example.org", %{city: "Elsewhere"}, false)
+    signup("manual-excluded@example.org", %{city: "Vancouver"})
+
+    {:ok, list} =
+      PhoenixCRM.MailingLists.create(PauseAiCa.CRM.context(), c.scope, %{
+        name: "Manual newsletter overrides",
+        criteria: %{
+          "match" => "any",
+          "rules" => [%{"field" => "city", "operator" => "equals", "values" => ["Vancouver"]}],
+          "include_ids" => [included_person.id, excluded_person.id],
+          "exclude_ids" => [alias_person.id]
+        }
+      })
+
+    assert {:ok, page} = Newsletters.audience_page(c.scope, %{"list_id" => list.id})
+
+    assert [
+             %{
+               subscription: %{email: "manual-pending@example.org"},
+               matched_fields: ["manual_include"],
+               status: :unconfirmed
+             }
+           ] = page.rows
+
+    assert page.counts.included == 0
   end
 
   test "OR membership is dynamic, unknown geography stays out and consent exclusions remain visible",

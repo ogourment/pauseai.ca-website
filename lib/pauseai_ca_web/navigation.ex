@@ -18,7 +18,7 @@ defmodule PauseAiCaWeb.Navigation do
         65
       ),
       item("pauseai.assistant", gettext_noop("Assistant"), :admin, :assistant, :admin, 64),
-      item("pauseai.contacts", gettext_noop("Contacts"), :admin, :contacts, :admin, 10),
+      item("pauseai.contacts", gettext_noop("Contacts"), :manage, :contacts, :admin, 5),
       item(
         "pauseai.administrators",
         gettext_noop("Administrators"),
@@ -81,8 +81,10 @@ defmodule PauseAiCaWeb.Navigation do
       ),
       item("pauseai.tasks", gettext_noop("Tasks"), :manage, :tasks, :tasks, 15),
       item("pauseai.welcome", gettext_noop("Welcome calls"), :manage, :welcome, :welcome, 17),
-      item("pauseai.accounts", gettext_noop("Accounts"), :manage, :accounts, :organizer, 10),
-      item("pauseai.mail", gettext_noop("Emails"), :manage, :mail, :mail, 20),
+      item("pauseai.accounts", gettext_noop("Accounts"), :manage, :accounts, :organizer, 6),
+      item("pauseai.contact_lists", gettext_noop("Lists"), :manage, :contact_lists, :admin, 7),
+      item("pauseai.mail", gettext_noop("Emails"), :manage, :mail, :mail, 8),
+      item("pauseai.newsletters", gettext_noop("Newsletters"), :manage, :newsletters, :admin, 9),
       item(
         "pauseai.questions",
         gettext_noop("Knowledge content"),
@@ -228,7 +230,9 @@ defmodule PauseAiCaWeb.Navigation do
         :welcome -> "/manage/welcome-calls"
         :my_welcome -> if(locale == "fr", do: "/fr/appels-accueil", else: "/en/welcome-calls")
         :accounts -> "/manage/accounts"
-        :mail -> "/manage/mail"
+        :contact_lists -> "/manage/lists"
+        :mail -> "/manage/mail?workspace=emails"
+        :newsletters -> "/manage/mail?workspace=newsletters"
         :questions -> "/manage/questions"
         :my_dashboard -> if(locale == "fr", do: "/fr/tableau-de-bord", else: "/en/dashboard")
         :my_profile -> if(locale == "fr", do: "/fr/profil", else: "/en/profile")
@@ -259,7 +263,11 @@ defmodule PauseAiCaWeb.Navigation do
 
   defp with_locale(route, locale) do
     uri = URI.parse(route)
-    URI.to_string(%{uri | query: URI.encode_query(%{"locale" => locale})})
+
+    URI.to_string(%{
+      uri
+      | query: URI.encode_query(Map.put(URI.decode_query(uri.query || ""), "locale", locale))
+    })
   end
 
   def menu_items(scope, locale) do

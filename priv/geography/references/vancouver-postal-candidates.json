@@ -1,0 +1,90 @@
+{
+  "id": "ca.bc.vancouver.postal-candidates",
+  "version": "geonames-ca-2026-11-09",
+  "country": "CA",
+  "province": "BC",
+  "city": "Vancouver",
+  "scope": "postal_locality_candidates",
+  "municipal_coverage_verified": false,
+  "candidate_fsas": [
+    "V5K",
+    "V5L",
+    "V5M",
+    "V5N",
+    "V5P",
+    "V5R",
+    "V5S",
+    "V5T",
+    "V5V",
+    "V5W",
+    "V5X",
+    "V5Y",
+    "V5Z",
+    "V6A",
+    "V6B",
+    "V6C",
+    "V6E",
+    "V6G",
+    "V6H",
+    "V6J",
+    "V6K",
+    "V6L",
+    "V6M",
+    "V6N",
+    "V6P",
+    "V6R",
+    "V6S",
+    "V6T",
+    "V6Z",
+    "V7X",
+    "V7Y"
+  ],
+  "city_demo": {
+    "field": "cities",
+    "values": [
+      "Vancouver"
+    ],
+    "uses_candidate_fsas": false
+  },
+  "boundary_warnings": [
+    {
+      "fsa": "V6T",
+      "treatment": "exclude_from_city_only",
+      "reason": "GeoNames labels UBC; UBC is in unincorporated Electoral Area A."
+    },
+    {
+      "fsa": "V6S",
+      "treatment": "municipal_overlap_review_required",
+      "reason": "GeoNames includes South University Endowment Lands, outside the municipality."
+    },
+    {
+      "fsa": "V6N",
+      "treatment": "municipal_overlap_review_required",
+      "reason": "GeoNames includes Musqueam; postal locality does not establish municipal jurisdiction."
+    }
+  ],
+  "source": {
+    "publisher": "GeoNames",
+    "url": "https://download.geonames.org/export/zip/CA.zip",
+    "archive_sha256": "5f6237799474d75fa53c9294ab6c469e8ce7f680034fca4b219aeeb1fdad1917",
+    "last_modified_utc": "2026-11-09T02:48:54Z",
+    "retrieved_on": "2026-11-09",
+    "file": "CA.txt",
+    "filter": "country=CA AND admin_code1=BC AND (place_name=Vancouver OR place_name starts with Vancouver followed by a space)",
+    "matched_rows": 31,
+    "licence": "CC BY 4.0",
+    "licence_url": "https://creativecommons.org/licenses/by/4.0/",
+    "readme_url": "https://download.geonames.org/export/zip/readme.txt"
+  },
+  "citations": [
+    {
+      "title": "Province of British Columbia, University Endowment Lands",
+      "url": "https://www2.gov.bc.ca/gov/content/governments/local-governments/improvement-districts-governance-bodies/university-endowment-lands"
+    },
+    {
+      "title": "Metro Vancouver, Electoral Area A",
+      "url": "https://metrovancouver.org/services/electoral-area-a"
+    }
+  ],
+  "usage": "Complete result of the pinned postal-locality filter, not a certified City of Vancouver FSA list. Do not infer consent, account access, exact residence or municipal containment. Preview recorded city Vancouver for the initial demonstration; choosing postal candidates would be a separate audience rule."
+}

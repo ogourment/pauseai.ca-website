@@ -4,7 +4,7 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
   alias PauseAiCa.Outreach
   import PauseAiCaWeb.NewsletterAudienceLabels
 
-  def mount(params, _, socket) do
+  def mount(params, session, socket) do
     locale = PauseAiCaWeb.Site.locale(params, socket)
     Gettext.put_locale(PauseAiCaWeb.Gettext, locale)
 
@@ -21,6 +21,9 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
         {:ok,
          assign(socket,
            locale: locale,
+           guided_login:
+             PauseAiCa.Assistant.GuidedMode.session_fingerprint(session["user_token"]),
+           guided_uri: nil,
            connected: connected?(socket),
            step: :compose,
            page_title: gettext("Email draft"),
@@ -50,13 +53,28 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
     end
   end
 
-  def handle_params(params, _, socket) do
-    socket = refresh_audience(socket)
+  def handle_params(params, uri, socket) do
+    socket = socket |> assign(guided_uri: uri) |> refresh_audience()
 
     socket =
       if params["batch"] && params["step"] == "review",
         do: socket |> show_batch(params["batch"]) |> assign(step: :review),
         else: socket
+
+    {:noreply, socket}
+  end
+
+  def handle_event("assistant-guided-observe", %{"token" => token}, socket) do
+    if socket.assigns[:draft] do
+      PauseAiCa.Assistant.GuidedMode.observe_list(
+        socket.assigns.current_scope,
+        token,
+        socket.assigns.guided_uri,
+        socket.assigns.guided_login,
+        socket.assigns.draft.mailing_list_id,
+        socket.assigns.draft.id
+      )
+    end
 
     {:noreply, socket}
   end
@@ -713,12 +731,16 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
         }
         class={["crm-surface mx-auto max-w-6xl px-5 py-8", @step == :review && "compose-step-review"]}
       >
+        <div id="assistant-guided-workspace"></div>
         <fieldset disabled={!@connected} class="contents">
           <div class="management-controls">
             <PauseAiCaWeb.MailNavigation.tabs
               current_scope={@current_scope}
               locale={@locale}
               active="drafts"
+              workspace={
+                if @draft.recipient_mode in ["list", "newsletter"], do: "newsletters", else: "emails"
+              }
             />
             <h1 class="mt-5 text-3xl font-bold">{gettext("Email draft")}</h1>
             <div :if={@step == :compose and is_nil(@draft.archived_at)} class="send-action-bar mt-4">
@@ -1240,7 +1262,11 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
                 <button type="button" phx-click="back-to-edit" class="underline">{gettext(
                   "Back to editing"
                 )}</button>
-                <strong>{gettext("%{count} recipients", count: length(@batch_review.deliveries))}</strong>
+                <strong>{ngettext(
+                  "%{count} recipient",
+                  "%{count} recipients",
+                  length(@batch_review.deliveries)
+                )}</strong>
                 <.link
                   :if={PauseAiCa.Volunteers.superadmin?(@current_scope)}
                   id="newsletter-recipients-csv"

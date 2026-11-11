@@ -62,6 +62,11 @@ defmodule PauseAiCa.AssistantGuidedModeTest do
     assert_received {:guided_provider_called, request}
     assert request["context"]["guided_mode"]["manifest_json"]
 
+    assert request["context"]["canadian_references"] ==
+             PauseAiCa.Assistant.CanadianReferences.context()
+
+    assert byte_size(PhoenixAgentAssistant.Canonical.encode(request)) <= 40_000
+
     assert {:ok, _} =
              Guide.start(c.scope, reply.text, "en", %{
                id: "synthetic-session",
@@ -83,7 +88,7 @@ defmodule PauseAiCa.AssistantGuidedModeTest do
     assert command.actions == [
              %{
                type: "activate_menu_item",
-               target_id: "admin-menu-navigation-pauseai.contacts",
+               target_id: "manage-menu-navigation-pauseai.contacts",
                values: nil
              }
            ]

@@ -12,6 +12,7 @@ defmodule PauseAiCaWeb.MailDraftsLive do
       {:ok,
        assign(socket,
          locale: locale,
+         workspace: "",
          page_title: gettext("Emails"),
          batches: [],
          general_drafts: [],
@@ -39,6 +40,27 @@ defmodule PauseAiCaWeb.MailDraftsLive do
 
   @impl true
   def handle_params(params, _, socket) do
+    workspace = Map.get(params, "workspace", "")
+
+    if workspace in ["", "emails", "newsletters"] and
+         (workspace != "newsletters" or Volunteers.superadmin?(socket.assigns.current_scope)) do
+      load_params(
+        params,
+        assign(socket,
+          workspace: workspace,
+          page_title:
+            if(workspace == "newsletters", do: gettext("Newsletters"), else: gettext("Emails"))
+        )
+      )
+    else
+      {:noreply,
+       socket
+       |> put_flash(:error, gettext("Draft or account unavailable."))
+       |> redirect(to: ~p"/dashboard")}
+    end
+  end
+
+  defp load_params(params, socket) do
     scope = socket.assigns.current_scope
 
     socket =
@@ -87,7 +109,7 @@ defmodule PauseAiCaWeb.MailDraftsLive do
 
       true ->
         general =
-          case EmailDrafts.list(scope, socket.assigns.archived_drafts) do
+          case EmailDrafts.list(scope, socket.assigns.archived_drafts, socket.assigns.workspace) do
             {:ok, drafts} -> drafts
             _ -> []
           end
@@ -97,7 +119,7 @@ defmodule PauseAiCaWeb.MailDraftsLive do
            batch: nil,
            anchor: nil,
            draft: nil,
-           batches: Mail.list(scope),
+           batches: if(socket.assigns.workspace == "newsletters", do: [], else: Mail.list(scope)),
            general_drafts: general
          )}
     end
@@ -105,11 +127,12 @@ defmodule PauseAiCaWeb.MailDraftsLive do
 
   @impl true
   def handle_event("new-email-draft", _, socket) do
-    case EmailDrafts.create(socket.assigns.current_scope) do
+    case EmailDrafts.create(socket.assigns.current_scope, socket.assigns.workspace) do
       {:ok, draft} ->
         {:noreply,
          push_navigate(socket,
-           to: ~p"/manage/mail/drafts/#{draft.id}?locale=#{socket.assigns.locale}"
+           to:
+             ~p"/manage/mail/drafts/#{draft.id}?#{workspace_params(socket.assigns.locale, socket.assigns.workspace)}"
          )}
 
       _ ->
@@ -185,6 +208,11 @@ defmodule PauseAiCaWeb.MailDraftsLive do
         {:noreply,
          assign(socket, error: error_message(error), status: gettext("Unsaved changes"))}
     end
+  end
+
+  defp workspace_params(locale, workspace, params \\ %{}) do
+    params = Map.put(params, :locale, locale)
+    if workspace == "", do: params, else: Map.put(params, :workspace, workspace)
   end
 
   defp start_batch(socket, id) do
@@ -340,6 +368,7 @@ defmodule PauseAiCaWeb.MailDraftsLive do
             current_scope={@current_scope}
             locale={@locale}
             active="drafts"
+            workspace={@workspace}
           />
           <h1 class="text-3xl font-bold mb-6">{gettext("Drafts")}</h1>
           <p :if={@batch}>
@@ -379,20 +408,33 @@ defmodule PauseAiCaWeb.MailDraftsLive do
               {gettext("Write the content first. Choose the audience when you are ready.")}
             </p>
             <.link
-              navigate={~p"/manage/mail?archived=#{!@archived_drafts}&locale=#{@locale}"}
+              navigate={
+                ~p"/manage/mail?#{workspace_params(@locale, @workspace, %{archived: !@archived_drafts})}"
+              }
               class="underline"
             >{if @archived_drafts, do: gettext("Active drafts"), else: gettext("Archived drafts")}</.link>
             <ul class="space-y-3">
               <li :for={draft <- @general_drafts}>
                 <.link
-                  navigate={~p"/manage/mail/drafts/#{draft.id}?locale=#{@locale}"}
+                  navigate={
+                    ~p"/manage/mail/drafts/#{draft.id}?#{workspace_params(@locale, @workspace)}"
+                  }
                   class="underline"
                 >{if draft.subject == "", do: gettext("Untitled draft"), else: draft.subject}</.link>
               </li>
             </ul>
-            <h2 class="mt-8 mb-3 text-xl font-semibold">{gettext("Personalized account drafts")}</h2>
+            <h2
+              :if={@workspace != "newsletters" and (@workspace == "" or @batches != [])}
+              class="mt-8 mb-3 text-xl font-semibold"
+            >
+              {gettext("Personalized account drafts")}
+            </h2>
           </section>
           <.link
+            :if={
+              @workspace == "" or
+                (@workspace == "emails" and not Volunteers.superadmin?(@current_scope))
+            }
             id={
               if Volunteers.superadmin?(@current_scope),
                 do: "mail-new-account-draft",
@@ -402,7 +444,7 @@ defmodule PauseAiCaWeb.MailDraftsLive do
             class="crm-button"
           >{if Volunteers.superadmin?(@current_scope),
             do: gettext("New personalized account drafts"),
-            else: gettext("New draft")}</.link>
+            else: gettext("Compose")}</.link>
           <ul>
             <li :for={batch <- @batches}>
               <.link navigate={~p"/manage/mail/#{batch.id}?locale=#{@locale}"}>{if batch.subject == "",

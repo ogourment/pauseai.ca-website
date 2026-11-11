@@ -108,6 +108,7 @@ if System.get_env("ATDD") == "true" do
         b =
           switch_browser_identity(b, &login(&1, c.admin))
           |> visit("/manage/mail?locale=#{locale}")
+          |> click("#mail-more > summary")
           |> click_link("[data-navigation-item='mail.access']", tr(locale, "Mailbox access"))
           |> assert_has("#mailbox-access")
           |> select(tr(locale, "Manager account"),

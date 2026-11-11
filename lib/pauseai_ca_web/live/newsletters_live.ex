@@ -224,8 +224,9 @@ defmodule PauseAiCaWeb.NewslettersLive do
             current_scope={@current_scope}
             locale={@locale}
             active="lists"
+            workspace="newsletters"
           />
-          <h1 class="text-3xl font-bold">{gettext("Newsletter lists")}</h1>
+          <h1 class="text-3xl font-bold">{gettext("Subscribers")}</h1>
           <p class="mt-3">
             {gettext(
               "Manage confirmed subscribers, withdrawals and subscription history here. Compose emails from Drafts."
@@ -244,7 +245,11 @@ defmodule PauseAiCaWeb.NewslettersLive do
           {gettext("Brevo status refreshed.")}
         </p>
         <p :if={@error} id="newsletter-error" role="alert" class="mt-3 crm-error">{@error}</p>
-        <section id="dynamic-mailing-lists" class="mt-8 space-y-4">
+        <section
+          :if={@params["workspace"] != "newsletters"}
+          id="dynamic-mailing-lists"
+          class="mt-8 space-y-4"
+        >
           <h2 class="text-xl font-semibold">{gettext("Dynamic mailing lists")}</h2>
           <p>
             {gettext(
@@ -332,7 +337,10 @@ defmodule PauseAiCaWeb.NewslettersLive do
             <p class="text-sm text-stone-600">
               {gettext("Members match any city, recorded region or FSA rule (OR).")}
             </p>
-            <p :if={@editing_list && @editing_list.criteria["match"] == "all"} class="crm-error">
+            <p
+              :if={@editing_list && PhoenixCRM.ListRules.match_mode(@editing_list.criteria) == "all"}
+              class="crm-error"
+            >
               {gettext(
                 "This older list uses AND. Saving these rules changes it to OR and requires reviewing any prepared batch again."
               )}

@@ -4,7 +4,7 @@ defmodule PauseAiCa.MixProject do
   def project do
     [
       app: :pauseai_ca,
-      version: "0.7.3",
+      version: "0.8.0",
       elixir: "~> 1.17",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -58,7 +58,7 @@ defmodule PauseAiCa.MixProject do
       _ ->
         {:phoenix_app_shell,
          git: "https://github.com/ogourment/phoenix_app_shell-compiled.git",
-         ref: "84fb92f4d801fe6e726355f0cb2e66dbd4110c8e"}
+         ref: "6e5208c5ea6193faec4c8cfd2c08c82aa089933a"}
     end
   end
 
@@ -74,8 +74,21 @@ defmodule PauseAiCa.MixProject do
     end
   end
 
+  defp data_grid_dependency do
+    case System.get_env("PHOENIX_DATA_GRID_PATH") do
+      path when is_binary(path) and path != "" ->
+        {:phoenix_data_grid, path: Path.expand(path)}
+
+      _ ->
+        {:phoenix_data_grid,
+         git: "https://github.com/ogourment/phoenix_data_grid-compiled.git",
+         ref: "7879f0379b9a5174bbd6eaf64534793fd6078be7"}
+    end
+  end
+
   defp deps do
     [
+      data_grid_dependency(),
       app_shell_dependency(),
       agent_assistant_dependency(),
       {:argon2_elixir, "~> 4.0"},
@@ -221,7 +234,7 @@ defmodule PauseAiCa.MixProject do
       _ ->
         {:phoenix_crm,
          git: "https://github.com/ogourment/phoenix_crm-compiled.git",
-         ref: "ff68fcfb4b80ad2ccf0b9382625750e06dc210b4"}
+         ref: "135cbbd3258d72019356c6562ffd3c56125e8229"}
     end
   end
 

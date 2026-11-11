@@ -46,8 +46,8 @@ defmodule PauseAiCaWeb.CrmDirectoryLiveTest do
     assert has_element?(view, "#crm-pagination", "Page 2 of 2 · 26 contacts")
     assert has_element?(view, "#crm-search[value='mtl']")
     assert has_element?(view, "#crm-region option[selected]", "Montréal")
-    assert has_element?(view, "#crm-directory li", "Directory 26")
-    refute has_element?(view, "#crm-directory li", "Directory 01")
+    assert has_element?(view, "#crm-directory tbody tr", "Directory 26")
+    refute has_element?(view, "#crm-directory tbody tr", "Directory 01")
     assert has_element?(view, "#crm-import-contacts", "Import Contacts")
     refute has_element?(view, "#management-more a", "Contact imports")
     assert has_element?(view, "#section-navigation a", "Donation pledges")
@@ -121,5 +121,93 @@ defmodule PauseAiCaWeb.CrmDirectoryLiveTest do
     assert has_element?(view, "#directory-source-summary-#{a.id}", "Montréal")
     assert has_element?(view, "#directory-source-summary-#{b.id}", "Estrie")
     assert has_element?(view, "#crm-pagination", "1 contacts")
+  end
+
+  test "canonical selection includes addressless records, all matches and retained off-filter choices",
+       %{conn: conn} do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    people = for n <- 1..26, do: Repo.insert!(%PhoenixCRM.Person{name: "Collection #{n}"})
+    other = Repo.insert!(%PhoenixCRM.Person{name: "Different record"})
+    scope = Scope.for_user(admin)
+    assert {:ok, ids} = CRM.directory_ids(scope, %{"q" => "Collection"})
+    assert Enum.sort(ids) == Enum.sort(Enum.map(people, & &1.id))
+
+    {:ok, view, _} =
+      live(log_in_user(conn, admin), "/admin/contacts?locale=en&q=Collection&per=10")
+
+    assert has_element?(view, "#crm-collection-select-page[type=checkbox]")
+    view |> element("button[phx-click=select-all-matched]") |> render_click()
+    assert has_element?(view, "#crm-selection-actions", "26 selected across pages")
+    refute has_element?(view, "#crm-contact-#{hd(people).id} button[phx-click=invite-account]")
+    view |> form("#crm-search-form", %{search: "Different record"}) |> render_change()
+    assert has_element?(view, "#crm-selection-actions", "26 selected outside the current filters")
+    assert has_element?(view, "#crm-contact-#{other.id}")
+    render_click(view, "select-contact", %{"id" => hd(people).id})
+    assert has_element?(view, "#crm-selection-actions", "26 selected across pages")
+    view |> element("#crm-select-#{other.id}") |> render_click()
+    assert has_element?(view, "#crm-selection-actions", "27 selected across pages")
+    view |> element("button[phx-click=clear-selection]") |> render_click()
+    assert has_element?(view, "#crm-selection-actions", "0 selected across pages")
+    admin |> Ecto.Changeset.change(superadmin: false) |> Repo.update!()
+    assert {:error, :unauthorized} = CRM.directory_ids(scope, %{})
+  end
+
+  test "list membership removal uses server list context, preserves filters and retains global selection",
+       %{conn: conn} do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    scope = Scope.for_user(admin)
+
+    people =
+      for name <- ["Keep context one", "Second selected"],
+          do: Repo.insert!(%PhoenixCRM.Person{name: name})
+
+    ids = Enum.map(people, & &1.id)
+
+    assert {:ok, list} =
+             PauseAiCa.ContactLists.save(scope, nil, %{
+               "name" => "Remove selection",
+               "kind" => "static"
+             })
+
+    assert {:ok, list} = PauseAiCa.ContactLists.add_members(scope, list.id, ids, list.revision)
+
+    assert {:ok, other} =
+             PauseAiCa.ContactLists.save(scope, nil, %{
+               "name" => "Untouched list",
+               "kind" => "static"
+             })
+
+    assert {:ok, other} = PauseAiCa.ContactLists.add_members(scope, other.id, ids, other.revision)
+
+    {:ok, view, _} =
+      live(
+        log_in_user(conn, admin),
+        "/admin/contacts?locale=en&per=10&saved_filter_id=#{list.id}"
+      )
+
+    refute has_element?(view, "#crm-remove-from-list")
+    view |> element("button[phx-click=select-page]") |> render_click()
+    view |> form("#crm-search-form", %{search: "Keep context"}) |> render_change()
+
+    query =
+      view |> assert_patch() |> URI.parse() |> Map.fetch!(:query) |> Plug.Conn.Query.decode()
+
+    assert query["saved_filter_id"] == list.id
+    assert query["q"] == "Keep context"
+    assert query["per"] == "10"
+    assert has_element?(view, "#crm-selection-actions", "2 selected across pages")
+    render_click(view, "collection-remove-from-list", %{"list_id" => other.id, "revision" => "0"})
+    assert {:ok, changed} = PauseAiCa.ContactLists.get(scope, list.id)
+    assert changed.criteria["person_ids"] == []
+    assert {:ok, ^other} = PauseAiCa.ContactLists.get(scope, other.id)
+    assert has_element?(view, "#crm-search[value='Keep context']")
+    assert has_element?(view, "#crm-per option[value='10'][selected]")
+    assert has_element?(view, "#crm-selection-actions", "2 selected across pages")
+    assert has_element?(view, "#crm-selection-actions", "2 selected outside the current filters")
+    refute has_element?(view, "#crm-contact-#{hd(people).id}")
+    admin |> Ecto.Changeset.change(superadmin: false) |> Repo.update!()
+    render_click(view, "collection-remove-from-list", %{"list_id" => other.id})
+    assert has_element?(view, "#crm-error")
+    assert Repo.get!(PhoenixCRM.MailingList, list.id).revision == changed.revision
   end
 end

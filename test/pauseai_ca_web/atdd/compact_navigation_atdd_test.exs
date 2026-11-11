@@ -178,20 +178,21 @@ if System.get_env("ATDD") == "true" do
         b =
           switch_browser_identity(b, &login(&1, c.admin))
           |> visit("/#{locale}")
-          |> click("#admin-menu > summary")
+          |> click("#manage-menu > summary")
           |> click_link(
-            "#admin-menu [data-navigation-item='pauseai.contacts']",
+            "#manage-menu [data-navigation-item='pauseai.contacts']",
             tr(locale, "Contacts")
           )
           |> assert_has("#crm-contact-#{record.person.id}")
+          |> click("#crm-select-#{record.person.id}")
           |> click_button(
-            "#crm-contact-#{record.person.id} button",
-            tr(locale, "Invite to create an account")
+            "#crm-invite-selected",
+            tr(locale, "Invite selected to create an account")
           )
           |> assert_has("#crm-invitation-form")
           |> capture(
             id,
-            "Admin → Contacts → Invite to create an account",
+            "Management → Contacts → select contact → Invite selected to create an account",
             "Contact invitation is the actual entry branch, without a fixed My Account/Admin prefix"
           )
 
