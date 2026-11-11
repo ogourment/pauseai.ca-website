@@ -105,3 +105,11 @@ hosted in Canada.
 See [`CONTRIBUTING.md`](CONTRIBUTING.md) for development and editorial guidance.
 Contributions can include clearer wording, translations, source corrections,
 accessibility improvements, and code.
+
+## Newsletter provider synchronization · 0.7.3
+
+Concurrent history reconciliation passes share a PostgreSQL advisory lock. A pass
+that finds the lock already held skips quietly; it does not fetch provider history
+or change the saved synchronization result. Provider failures and unexpected
+reconciliation exceptions remain errors. This avoids false operations failure and
+recovery alerts when another pass succeeds at the same time.

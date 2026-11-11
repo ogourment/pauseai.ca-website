@@ -25,6 +25,11 @@ defmodule PauseAiCa.Newsletters.ProviderSyncWorker do
             "Newsletter provider reconciliation needs attention; inspect /manage/mail/results"
           )
 
+        # Another scheduled or manual pass owns the shared database lock.
+        # This pass has no failed work and must not trigger operations alerts.
+        {:error, :busy} ->
+          :ok
+
         {:error, _} ->
           Logger.error(
             "Newsletter provider reconciliation failed; inspect synchronization status"

@@ -316,7 +316,33 @@ defmodule PauseAiCa.NewsletterProviderReconciliationTest do
     assert ProviderSyncWorker.enabled?()
   end
 
-  test "a separate database session holding the poll lock makes reconciliation busy without fetching or mutating" do
+  test "a concurrent worker skips a held poll lock without an error or provider request" do
+    keys = [
+      :mail_environment,
+      :newsletter_provider_sync_enabled,
+      :brevo_api_key,
+      :brevo_history_req_options
+    ]
+
+    previous = Map.new(keys, &{&1, Application.fetch_env(:pauseai_ca, &1)})
+
+    on_exit(fn ->
+      for {key, old} <- previous do
+        case old do
+          {:ok, value} -> Application.put_env(:pauseai_ca, key, value)
+          :error -> Application.delete_env(:pauseai_ca, key)
+        end
+      end
+    end)
+
+    Application.put_env(:pauseai_ca, :mail_environment, :production)
+    Application.put_env(:pauseai_ca, :newsletter_provider_sync_enabled, true)
+    Application.put_env(:pauseai_ca, :brevo_api_key, "synthetic")
+
+    Application.put_env(:pauseai_ca, :brevo_history_req_options,
+      plug: fn _ -> flunk("a busy worker must not request provider history") end
+    )
+
     opts =
       Repo.config() |> Keyword.take([:username, :password, :hostname, :database, :port, :ssl])
 
@@ -330,6 +356,13 @@ defmodule PauseAiCa.NewsletterProviderReconciliationTest do
 
     try do
       assert {:error, :busy} = ProviderSync.run(fn _ -> flunk("busy poll must not fetch") end)
+
+      log =
+        ExUnit.CaptureLog.capture_log([level: :error], fn ->
+          assert {:noreply, nil} = ProviderSyncWorker.handle_info(:reconcile, nil)
+        end)
+
+      assert log == ""
       assert is_nil(ProviderSync.status())
     after
       Postgrex.query!(
@@ -338,6 +371,26 @@ defmodule PauseAiCa.NewsletterProviderReconciliationTest do
         []
       )
     end
+  end
+
+  test "an unexpected reconciliation exception records failure without advancing a successful cursor" do
+    now = DateTime.utc_now()
+    assert {:ok, successful} = ProviderSync.run(fn _ -> {:ok, []} end, now)
+
+    interrupted =
+      successful
+      |> change(partial: true, counts: Map.put(successful.counts, "new_events", "invalid"))
+      |> Repo.update!()
+
+    attempt = DateTime.add(now, 900)
+    assert {:error, :unavailable} = ProviderSync.run(fn _ -> {:ok, []} end, attempt)
+
+    failed = ProviderSync.status()
+    assert failed.last_error == "unavailable"
+    assert failed.last_attempt_at == attempt
+    assert failed.last_success_at == successful.last_success_at
+    assert failed.cursor_at == successful.cursor_at
+    assert failed.counts == interrupted.counts
   end
 
   test "a legitimate empty Brevo report advances a quiet worker pass and clears prior errors" do
