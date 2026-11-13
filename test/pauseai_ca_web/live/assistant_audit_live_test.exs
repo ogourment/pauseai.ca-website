@@ -46,6 +46,29 @@ defmodule PauseAiCaWeb.AssistantAuditLiveTest do
     refute_receive {:assistant_generated, _, _}
   end
 
+  test "token admission failures have a readable explanation without private request content",
+       c do
+    reference = Ecto.UUID.generate()
+
+    record(c, c.other.id, %{
+      "kind" => "request_held",
+      "request_id" => reference,
+      "reason" => "token_limit_unavailable",
+      "text" => "PRIVATE-QUESTION"
+    })
+
+    {:ok, _view, html} =
+      live(
+        log_in_user(c.conn, c.admin),
+        "/admin/assistant/activity/requests/#{reference}?locale=en"
+      )
+
+    assert html =~
+             "The request could not fit the assistant’s configured per-request token allowance."
+
+    refute html =~ "PRIVATE-QUESTION"
+  end
+
   test "protected request route shows typed hold explanation without message or review internals",
        c do
     reference = Ecto.UUID.generate()

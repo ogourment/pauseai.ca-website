@@ -42,4 +42,28 @@ defmodule PauseAiCa.GuidedModeFixtures do
       results: %{"CRM-ASSIST-GUIDE-01-en" => "success", "CRM-ASSIST-GUIDE-01-fr" => "success"}
     })
   end
+
+  def with_production_limits(config) do
+    [guide | _] = config[:features]
+
+    unrelated =
+      for n <- 1..14 do
+        %{
+          id: "feature-#{n}",
+          title: "Application feature #{n}",
+          summary:
+            "Reviewed application functionality and navigation available to the current administrator.",
+          introduced_in: "0.7.0",
+          entry_path: "/admin/contacts",
+          enabled: true,
+          ready: true,
+          scenarios: guide.scenarios
+        }
+      end
+
+    config
+    |> Keyword.put(:max_turn_tokens, 16_384)
+    |> Keyword.put(:max_output_tokens, 4096)
+    |> Keyword.update!(:features, &(&1 ++ unrelated))
+  end
 end

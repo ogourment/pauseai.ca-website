@@ -57,6 +57,43 @@ defmodule PauseAiCa.Assistant.VancouverGuideTest do
     %{scope: scope, session: session, config: config}
   end
 
+  test "Vancouver context fits production turn limits", c do
+    config =
+      c.config |> Keyword.put(:max_turn_tokens, 16_384) |> Keyword.put(:max_output_tokens, 4096)
+
+    unrelated =
+      for n <- 1..14,
+          do: %{
+            id: "other-#{n}",
+            title: "Other feature #{n}",
+            summary: "Verified application feature",
+            introduced_in: "0.7.0",
+            entry_path: "/admin/contacts",
+            enabled: true,
+            ready: true,
+            scenarios: ["CRM-UX-VAN-01-en", "CRM-UX-VAN-01-fr"]
+          }
+
+    config = Keyword.update!(config, :features, &(&1 ++ unrelated))
+    Application.put_env(:pauseai_ca, :agent_assistant, config)
+    assert {:ok, conversation} = Assistant.new_conversation(c.scope)
+
+    assert {:ok, _} =
+             Assistant.run(
+               c.scope,
+               Ecto.UUID.generate(),
+               "Show me Vancouver contacts",
+               conversation,
+               "en",
+               guided_mode: true
+             )
+
+    assert_received {:guided_provider_called, request}
+
+    assert request["context"]["canadian_references"] ==
+             PauseAiCa.Assistant.CanadianReferences.context()
+  end
+
   test "new journey is absent until both exact native outcomes are available", c do
     config =
       Keyword.update!(c.config, :feature_evidence, fn evidence ->

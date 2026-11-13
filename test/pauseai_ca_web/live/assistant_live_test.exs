@@ -519,4 +519,28 @@ defmodule PauseAiCaWeb.AssistantLiveTest do
     assert Repo.aggregate(PhoenixAgentAssistant.Store.Request, :count) == 1
     refute_receive {:assistant_generated, _, _}
   end
+
+  test "an oversized current message gives a useful limit error and remains editable", c do
+    config =
+      Application.get_env(:pauseai_ca, :agent_assistant)
+      |> Keyword.put(:max_turn_tokens, 16_384)
+      |> Keyword.put(:max_output_tokens, 4096)
+
+    Application.put_env(:pauseai_ca, :agent_assistant, config)
+    assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+    token = Accounts.generate_user_session_token(c.admin)
+
+    {:ok, view, _} =
+      live_isolated(c.conn, PauseAiCaWeb.AssistantLive,
+        session: %{"user_token" => token, "site_locale" => "en"}
+      )
+
+    text = String.duplicate("x", 15_000)
+    render_submit(view, "assistant-submit", %{"assistant" => %{"text" => text}})
+    render_async(view, 1_000)
+    assert render(view) =~ "This request exceeds the assistant’s per-request limit."
+    assert has_element?(view, "#site-assistant-text", text)
+    refute_receive {:assistant_generated, _, _}
+    assert Repo.aggregate(PhoenixAgentAssistant.Store.Request, :count) == 0
+  end
 end

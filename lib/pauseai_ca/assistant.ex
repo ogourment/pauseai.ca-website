@@ -567,6 +567,8 @@ defmodule PauseAiCa.Assistant do
         evidence: config[:feature_evidence] || %{}
       }
 
+      guided = Keyword.get(options, :guided_mode, false)
+
       catalogue =
         Catalog.for_actor(config[:features] || [], runtime, fn _ -> eligible?(scope) end)
 
@@ -576,7 +578,13 @@ defmodule PauseAiCa.Assistant do
           "app_version" => identity.version,
           "locale" => locale,
           "build" => identity.release_id,
-          "features" => json(catalogue),
+          "features" =>
+            json(
+              PauseAiCa.Assistant.RequestContext.catalogue(
+                catalogue,
+                if(guided, do: ["crm-guided", "crm-vancouver-guided"], else: :all)
+              )
+            ),
           "history" => []
         },
         "attachments" => []
@@ -585,13 +593,16 @@ defmodule PauseAiCa.Assistant do
       messages =
         Enum.map(previous, fn message -> %{"role" => message.role, "text" => message.text} end)
 
-      guided = Keyword.get(options, :guided_mode, false)
-
       with {:ok, request} <- guided_request(scope, request, locale, guided),
-           {:ok, request} <- PhoenixAgentAssistant.Context.with_history(request, messages) do
+           {:ok, request} <-
+             PauseAiCa.Assistant.RequestContext.prepare(request, messages, config, mode) do
         Runner.run(scope, request_id, request, __MODULE__, config)
       else
-        _ -> {:error, :unavailable}
+        {:error, reason} when reason in [:request_too_large, :token_limit_unavailable] ->
+          {:error, reason}
+
+        _ ->
+          {:error, :unavailable}
       end
     else
       _ -> {:error, :unavailable}
@@ -607,16 +618,23 @@ defmodule PauseAiCa.Assistant do
       request =
         request
         |> put_in(["context", "guided_mode"], knowledge)
-        |> put_in(
-          ["context", "canadian_references"],
-          PauseAiCa.Assistant.CanadianReferences.context()
-        )
+        |> guided_references(knowledge)
 
       {:ok, request}
     end
   end
 
   defp guided_request(_, _, _, _), do: {:error, :unavailable}
+
+  defp guided_references(request, %{"vancouver_example_json" => _}) do
+    put_in(
+      request,
+      ["context", "canadian_references"],
+      PauseAiCa.Assistant.CanadianReferences.context()
+    )
+  end
+
+  defp guided_references(request, _), do: request
 
   @impl true
   def authorize(scope, _phase, admitted) do

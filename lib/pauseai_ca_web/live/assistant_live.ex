@@ -262,6 +262,29 @@ defmodule PauseAiCaWeb.AssistantLive do
     end
   end
 
+  def handle_async(:assistant_reply, {:ok, {:error, reason}}, socket)
+      when reason in [:request_too_large, :token_limit_unavailable] do
+    message =
+      case reason do
+        :request_too_large ->
+          gettext(
+            "This request exceeds the assistant’s per-request limit. Shorten your message or start a new conversation. Your message has been retained."
+          )
+
+        :token_limit_unavailable ->
+          gettext(
+            "The assistant could not check its request limit. Your message has been retained."
+          )
+      end
+
+    {:noreply,
+     assign(socket,
+       pending: false,
+       usage: load_usage(socket.assigns.current_scope),
+       error: message
+     )}
+  end
+
   def handle_async(:assistant_reply, _, socket) do
     usage = load_usage(socket.assigns.current_scope)
 

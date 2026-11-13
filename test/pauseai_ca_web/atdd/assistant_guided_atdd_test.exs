@@ -45,7 +45,12 @@ if System.get_env("ATDD") == "true" do
       env_before =
         Map.new(["PAUSEAI_CA_RELEASE_ID", "PAUSEAI_CA_GIT_SHA"], &{&1, System.get_env(&1)})
 
-      Application.put_env(:pauseai_ca, :agent_assistant, GuidedModeFixtures.configuration(self()))
+      Application.put_env(
+        :pauseai_ca,
+        :agent_assistant,
+        GuidedModeFixtures.configuration(self()) |> GuidedModeFixtures.with_production_limits()
+      )
+
       System.put_env("PAUSEAI_CA_RELEASE_ID", "guided-synthetic-fixture")
       System.put_env("PAUSEAI_CA_GIT_SHA", String.duplicate("a", 40))
 

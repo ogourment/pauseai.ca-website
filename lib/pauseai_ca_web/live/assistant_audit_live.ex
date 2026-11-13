@@ -289,6 +289,13 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
   defp flagged(false), do: gettext("No")
   defp flagged(_), do: nil
 
+  defp hold_reason("token_limit_unavailable"),
+    do:
+      gettext("The request could not fit the assistant’s configured per-request token allowance.")
+
+  defp hold_reason("request_too_large"),
+    do: gettext("The request exceeded the assistant’s per-request limit.")
+
   defp hold_reason("output_safety_review_required"),
     do: gettext("Answer withheld: output review needs attention.")
 

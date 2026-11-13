@@ -11,7 +11,15 @@ defmodule PauseAiCa.AssistantGuidedModeTest do
     old_source = System.get_env("PAUSEAI_CA_GIT_SHA")
     System.put_env("PAUSEAI_CA_RELEASE_ID", "guided-synthetic-fixture")
     System.put_env("PAUSEAI_CA_GIT_SHA", String.duplicate("a", 40))
-    Application.put_env(:pauseai_ca, :agent_assistant, GuidedModeFixtures.configuration(self()))
+
+    Application.put_env(
+      :pauseai_ca,
+      :agent_assistant,
+      GuidedModeFixtures.configuration(self())
+      |> Keyword.put(:max_turn_tokens, 16_384)
+      |> Keyword.put(:max_output_tokens, 4096)
+    )
+
     admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
     scope = Accounts.Scope.for_user(admin)
     assert {:ok, _} = Assistant.set_enabled(scope, true)
@@ -62,8 +70,7 @@ defmodule PauseAiCa.AssistantGuidedModeTest do
     assert_received {:guided_provider_called, request}
     assert request["context"]["guided_mode"]["manifest_json"]
 
-    assert request["context"]["canadian_references"] ==
-             PauseAiCa.Assistant.CanadianReferences.context()
+    refute Map.has_key?(request["context"], "canadian_references")
 
     assert byte_size(PhoenixAgentAssistant.Canonical.encode(request)) <= 40_000
 
@@ -74,6 +81,53 @@ defmodule PauseAiCa.AssistantGuidedModeTest do
              })
 
     assert Repo.aggregate(PauseAiCa.Newsletters.Draft, :count) == 0
+  end
+
+  test "guided coaching fits the deployed turn ceiling with the complete feature catalogue", c do
+    config = Assistant.configuration()
+    [guide] = config[:features]
+
+    features = [
+      guide
+      | for n <- 1..14 do
+          %{
+            id: "feature-#{n}",
+            title: "Application feature #{n}",
+            summary:
+              "Reviewed application functionality and navigation available to the current administrator.",
+            introduced_in: "0.7.0",
+            entry_path: "/admin/contacts",
+            enabled: true,
+            ready: true,
+            scenarios: guide.scenarios
+          }
+        end
+    ]
+
+    Application.put_env(:pauseai_ca, :agent_assistant, Keyword.put(config, :features, features))
+    assert {:ok, conversation} = Assistant.new_conversation(c.scope)
+    assert {:ok, _} = Guide.context(c.scope, "en")
+    assert {:ok, []} = Assistant.history(c.scope, conversation)
+
+    assert {:ok, _} =
+             Assistant.run(
+               c.scope,
+               Ecto.UUID.generate(),
+               "How do I change a contact's language?",
+               conversation,
+               "en",
+               guided_mode: true
+             )
+
+    assert_received {:guided_provider_called, request}
+
+    assert {:ok, bound} =
+             PhoenixAgentAssistant.TextProviderHTTP.input_token_bound(request, %{},
+               instructions:
+                 Assistant.configuration()[:provider] |> elem(1) |> Keyword.fetch!(:instructions)
+             )
+
+    assert bound + 4096 <= 16_384
   end
 
   test "steps bind actual observation route values session and current actor rights", c do
