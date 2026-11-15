@@ -955,6 +955,11 @@ if System.get_env("ATDD") == "true" do
           |> connected()
           |> click_button("#site-assistant-launcher", "Assistant")
           |> assert_has("#site-assistant-error", text: warning)
+          |> assert_has("#site-assistant-error a[href='/admin/assistant?locale=#{locale}']")
+          |> evaluate(
+            "getComputedStyle(document.querySelector('#site-assistant-error a')).textDecorationLine.includes('underline')",
+            &assert(&1)
+          )
           |> assert_has("#site-assistant-form button[type=submit][disabled]")
           |> fill_in("#site-assistant-text", "Message", with: "Retain this draft")
           |> assert_has("#site-assistant-text", value: "Retain this draft")
@@ -965,6 +970,15 @@ if System.get_env("ATDD") == "true" do
             "Assistant then type a draft",
             "Insufficient credit is explained before typing, Send is disabled, and the draft remains editable."
           )
+
+        settings_label =
+          if locale == "fr", do: "Paramètres de l’assistant", else: "Assistant settings"
+
+        browser =
+          browser
+          |> click_link("#site-assistant-error a", settings_label)
+          |> connected()
+          |> assert_has("#assistant-toggle-controls #assistant-availability", text: label)
 
         refute_receive {:assistant_generated, _, _}
         success(id)
