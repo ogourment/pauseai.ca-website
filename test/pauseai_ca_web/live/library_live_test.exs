@@ -69,7 +69,8 @@ defmodule PauseAiCaWeb.LibraryLiveTest do
     end
 
     test "the legacy French learn route opens the French-first edition", %{conn: conn} do
-      {:ok, view, _html} = live(conn, ~p"/fr/learn")
+      assert redirected_to(get(conn, ~p"/fr/learn"), 301) == "/fr/comprendre"
+      {:ok, view, _html} = live(recycle(conn), ~p"/fr/comprendre")
 
       assert has_element?(view, "#voice-saba")
       assert render(view) =~ "Faut-il ralentir l&#39;IA?"

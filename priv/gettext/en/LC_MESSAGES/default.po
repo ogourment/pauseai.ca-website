@@ -30,6 +30,7 @@ msgid "About"
 msgstr "About"
 
 #: lib/pauseai_ca_web/live/protest_press_release_live.ex:137
+#: lib/pauseai_ca_web/seo.ex:46
 #, elixir-autogen, elixir-format
 msgid "About PauseAI Canada"
 msgstr "About PauseAI Canada"
@@ -333,6 +334,7 @@ msgid "Our role"
 msgstr "Our role"
 
 #: lib/pauseai_ca_web/controllers/page_html/strategy.html.heex:9
+#: lib/pauseai_ca_web/seo.ex:50
 #, elixir-autogen, elixir-format
 msgid "Our strategy"
 msgstr "Our strategy"
@@ -370,6 +372,7 @@ msgstr "Privacy"
 
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:85
 #: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:9
+#: lib/pauseai_ca_web/seo.ex:54
 #, elixir-autogen, elixir-format
 msgid "Privacy policy"
 msgstr "Privacy policy"
@@ -545,7 +548,7 @@ msgstr "This summary adapts PauseAI's movement-building analysis to the Canadian
 msgid "Two of the three Turing Award winners for deep learning built their careers in Canada. Both now say the technology they created could escape human control."
 msgstr "Two of the three Turing Award winners for deep learning built their careers in Canada. Both now say the technology they created could escape human control."
 
-#: lib/pauseai_ca_web/controllers/page_controller.ex:53
+#: lib/pauseai_ca_web/controllers/page_controller.ex:56
 #, elixir-autogen, elixir-format
 msgid "Understand and act"
 msgstr "Understand and act"
@@ -2891,11 +2894,12 @@ msgstr "Pagination"
 #: lib/pauseai_ca_web/components/layouts.ex:320
 #: lib/pauseai_ca_web/components/layouts.ex:588
 #: lib/pauseai_ca_web/components/layouts.ex:603
-#: lib/pauseai_ca_web/components/layouts/root.html.heex:12
 #: lib/pauseai_ca_web/components/layouts/root.html.heex:13
+#: lib/pauseai_ca_web/components/layouts/root.html.heex:14
 #: lib/pauseai_ca_web/controllers/page_html/about.html.heex:8
 #: lib/pauseai_ca_web/live/donate_live.ex:344
 #: lib/pauseai_ca_web/live/donate_live.ex:592
+#: lib/pauseai_ca_web/seo.ex:14
 #, elixir-autogen, elixir-format
 msgid "PauseAI Canada"
 msgstr "PauseAI Canada"
@@ -3413,6 +3417,7 @@ msgstr "Researchers in Canada and elsewhere warn that advanced AI could escape h
 
 #: lib/pauseai_ca_web/live/donate_live.ex:260
 #: lib/pauseai_ca_web/live/donate_live.ex:365
+#: lib/pauseai_ca_web/seo.ex:62
 #, elixir-autogen, elixir-format
 msgid "Support PauseAI Canada"
 msgstr "Support PauseAI Canada"
@@ -6615,7 +6620,7 @@ msgstr "New content"
 msgid "No content in this view."
 msgstr "No content in this view."
 
-#: lib/pauseai_ca_web/controllers/page_controller.ex:45
+#: lib/pauseai_ca_web/controllers/page_controller.ex:48
 #: lib/pauseai_ca_web/controllers/page_html/not_found.html.heex:8
 #, elixir-autogen, elixir-format
 msgid "Page not found"
@@ -7772,6 +7777,7 @@ msgstr "Join request saved"
 #: lib/pauseai_ca_web/live/incubators_live.ex:298
 #: lib/pauseai_ca_web/navigation.ex:73
 #: lib/pauseai_ca_web/navigation.ex:76
+#: lib/pauseai_ca_web/seo.ex:58
 #, elixir-autogen
 msgid "Local groups"
 msgstr "Local groups"
@@ -12509,3 +12515,118 @@ msgstr "Usage unavailable"
 #, elixir-autogen, elixir-format
 msgid "Your remaining token allowance cannot cover another request. Your draft is retained."
 msgstr "Your remaining token allowance cannot cover another request. Your draft is retained."
+
+#: lib/pauseai_ca_web/seo.ex:77
+#, elixir-autogen, elixir-format
+msgid "Contact your MP about AI safety"
+msgstr "Contact your MP about AI safety"
+
+#: lib/pauseai_ca_web/seo.ex:93
+#, elixir-autogen, elixir-format
+msgid "Explore AI control and safety questions through PauseAI Canada's interactive Rogue Agent game."
+msgstr "Explore AI control and safety questions through PauseAI Canada's interactive Rogue Agent game."
+
+#: lib/pauseai_ca_web/seo.ex:69
+#, elixir-autogen, elixir-format
+msgid "Explore research, questions and learning resources about advanced AI risks and the case for a global pause."
+msgstr "Explore research, questions and learning resources about advanced AI risks and the case for a global pause."
+
+#: lib/pauseai_ca_web/seo.ex:59
+#, elixir-autogen, elixir-format
+msgid "Find a PauseAI Canada group or incubator, join a local waitlist or offer to help organize in your community."
+msgstr "Find a PauseAI Canada group or incubator, join a local waitlist or offer to help organize in your community."
+
+#: lib/pauseai_ca_web/seo.ex:66
+#, elixir-autogen, elixir-format
+msgid "Get involved with PauseAI Canada"
+msgstr "Get involved with PauseAI Canada"
+
+#: lib/pauseai_ca_web/seo.ex:67
+#, elixir-autogen, elixir-format
+msgid "Get updates, join a local group or offer your help with PauseAI Canada."
+msgstr "Get updates, join a local group or offer your help with PauseAI Canada."
+
+#: lib/pauseai_ca_web/seo.ex:63
+#, elixir-autogen, elixir-format
+msgid "Help fund local organizing and PauseAI Canada's work toward international safeguards for advanced AI."
+msgstr "Help fund local organizing and PauseAI Canada's work toward international safeguards for advanced AI."
+
+#: lib/pauseai_ca_web/seo.ex:55
+#, elixir-autogen, elixir-format
+msgid "How PauseAI Canada handles personal information, website activity and communication preferences."
+msgstr "How PauseAI Canada handles personal information, website activity and communication preferences."
+
+#: lib/pauseai_ca_web/seo.ex:51
+#, elixir-autogen, elixir-format
+msgid "How PauseAI Canada works toward an internationally coordinated pause on advanced AI through public action and political engagement."
+msgstr "How PauseAI Canada works toward an internationally coordinated pause on advanced AI through public action and political engagement."
+
+#: lib/pauseai_ca_web/seo.ex:43
+#, elixir-autogen, elixir-format
+msgid "Join PauseAI Canada in calling for a global pause on advanced AI. Learn about the risks, contact your MP and get involved locally."
+msgstr "Join PauseAI Canada in calling for a global pause on advanced AI. Learn about the risks, contact your MP and get involved locally."
+
+#: lib/pauseai_ca_web/seo.ex:47
+#, elixir-autogen, elixir-format
+msgid "Meet the Canadian movement calling for international safeguards and a global pause on advanced AI."
+msgstr "Meet the Canadian movement calling for international safeguards and a global pause on advanced AI."
+
+#: lib/pauseai_ca_web/seo.ex:90
+#, elixir-autogen, elixir-format
+msgid "Montréal protest press release"
+msgstr "Montréal protest press release"
+
+#: lib/pauseai_ca_web/seo.ex:86
+#, elixir-autogen, elixir-format
+msgid "Montréal protest — September 26, 2026"
+msgstr "Montréal protest — September 26, 2026"
+
+#: lib/pauseai_ca_web/seo.ex:72
+#, elixir-autogen, elixir-format
+msgid "PauseAI Canada articles"
+msgstr "PauseAI Canada articles"
+
+#: lib/pauseai_ca_web/seo.ex:42
+#, elixir-autogen, elixir-format
+msgid "PauseAI Canada — A global pause on advanced AI"
+msgstr "PauseAI Canada — A global pause on advanced AI"
+
+#: lib/pauseai_ca_web/seo.ex:73
+#, elixir-autogen, elixir-format
+msgid "Read news, analysis and updates from PauseAI Canada, with practical ways to get involved."
+msgstr "Read news, analysis and updates from PauseAI Canada, with practical ways to get involved."
+
+#: lib/pauseai_ca_web/seo.ex:87
+#, elixir-autogen, elixir-format
+msgid "Read the recap of PauseAI Canada's September 26, 2026 protest in Montréal."
+msgstr "Read the recap of PauseAI Canada's September 26, 2026 protest in Montréal."
+
+#: lib/pauseai_ca_web/seo.ex:92
+#, elixir-autogen, elixir-format
+msgid "Rogue Agent"
+msgstr "Rogue Agent"
+
+#: lib/pauseai_ca_web/seo.ex:91
+#, elixir-autogen, elixir-format
+msgid "The press release for PauseAI Canada's September 26, 2026 protest in Montréal."
+msgstr "The press release for PauseAI Canada's September 26, 2026 protest in Montréal."
+
+#: lib/pauseai_ca_web/seo.ex:82
+#, elixir-autogen, elixir-format
+msgid "Understand the Warning Shot Protocol and take action on advanced AI risks with PauseAI Canada."
+msgstr "Understand the Warning Shot Protocol and take action on advanced AI risks with PauseAI Canada."
+
+#: lib/pauseai_ca_web/seo.ex:68
+#, elixir-autogen, elixir-format
+msgid "Understand the risks of advanced AI"
+msgstr "Understand the risks of advanced AI"
+
+#: lib/pauseai_ca_web/seo.ex:81
+#, elixir-autogen, elixir-format
+msgid "Warning Shot Protocol"
+msgstr "Warning Shot Protocol"
+
+#: lib/pauseai_ca_web/seo.ex:78
+#, elixir-autogen, elixir-format
+msgid "Write to your Member of Parliament about advanced AI risks and international safeguards using PauseAI Canada's letter tool."
+msgstr "Write to your Member of Parliament about advanced AI risks and international safeguards using PauseAI Canada's letter tool."

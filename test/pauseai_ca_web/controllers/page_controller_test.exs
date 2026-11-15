@@ -1,9 +1,9 @@
 defmodule PauseAiCaWeb.PageControllerTest do
   use PauseAiCaWeb.ConnCase
 
-  test "GET / renders English by default", %{conn: conn} do
+  test "GET / permanently redirects to the canonical English home", %{conn: conn} do
     conn = get(conn, ~p"/")
-    assert html_response(conn, 200) =~ "Where do you stand today?"
+    assert redirected_to(conn, 301) == "/en"
   end
 
   test "the legacy Montreal page permanently redirects to the English home page", %{conn: conn} do

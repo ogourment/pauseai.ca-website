@@ -47,7 +47,18 @@ defmodule PauseAiCa.Blog.Markdown do
 
     {intro, remaining} = Enum.split_while(nodes, &(not match?(%MDEx.Heading{}, &1)))
     {sections, []} = sections(remaining, 0, %{}) |> then(fn {items, rest, _} -> {items, rest} end)
-    %{title: title, intro: html(intro), sections: sections}
+
+    %{
+      title: title,
+      intro: html(intro),
+      sections: sections,
+      summary:
+        intro
+        |> Enum.map_join(" ", &text/1)
+        |> String.replace(~r/\s+/u, " ")
+        |> String.trim()
+        |> String.slice(0, 170)
+    }
   end
 
   defp sections([], _parent, counts), do: {[], [], counts}

@@ -7,13 +7,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
     <%!-- Non-production deployments are reachable but must never be indexed. --%>
-    <meta :if={PauseAiCa.Environment.badged?()} name="robots" content="noindex, nofollow" />
+    <% seo = PauseAiCaWeb.SEO.for_conn(@conn) %>
+    <PhoenixAppShell.SEO.head {seo} />
     <.live_title
       default={gettext("PauseAI Canada")}
-      suffix={" · " <> gettext("PauseAI Canada")}
+      suffix={if seo.canonical, do: "", else: " · " <> gettext("PauseAI Canada")}
       phx-no-format
-    >{assigns[:page_title]}</.live_title>
-    <link rel="icon" href={PauseAiCa.Environment.favicon_path()} type="image/svg+xml" />
+    >{if seo.canonical, do: seo.title, else: assigns[:page_title]}</.live_title>
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48 64x64" />
+    <link rel="icon" href="/images/favicon-96.png" type="image/png" sizes="96x96" />
+    <link rel="icon" href={PauseAiCa.Environment.favicon_path()} type="image/svg+xml" sizes="any" />
+    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png" sizes="180x180" />
     <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
     </script>

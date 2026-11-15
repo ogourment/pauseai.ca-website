@@ -20,6 +20,10 @@ defmodule PauseAiCaWeb.Router do
     plug PauseAiCaWeb.Plugs.RequireInvited
   end
 
+  scope "/" do
+    get "/sitemap.xml", PauseAiCaWeb.SitemapController, :index
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -60,6 +64,8 @@ defmodule PauseAiCaWeb.Router do
     get "/act/:destination", ActController, :go
 
     get "/", PageController, :index
+    get "/canada.html", PageController, :legacy_canada
+    get "/fr/learn", PageController, :legacy_french_learn
     get "/en", PageController, :en
     get "/fr", PageController, :fr
     get "/en/strategy", PageController, :strategy_en
@@ -263,7 +269,6 @@ defmodule PauseAiCaWeb.Router do
       live "/fr/participer", ParticipationLive, :fr
       live "/en/learn", LibraryLive, :en
       live "/fr/comprendre", LibraryLive, :fr
-      live "/fr/learn", LibraryLive, :fr
     end
 
     live_session :current_user,
