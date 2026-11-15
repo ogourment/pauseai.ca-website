@@ -338,6 +338,19 @@ defmodule PauseAiCaWeb.AssistantLive do
      )}
   end
 
+  def handle_async(:assistant_reply, {:ok, {:error, :provider_failed}}, socket) do
+    usage = load_usage(socket.assigns.current_scope)
+
+    {:noreply,
+     assign(socket,
+       pending: false,
+       usage: usage,
+       availability_error:
+         availability_error(socket.assigns.current_scope, usage, socket.assigns.mode),
+       error: gettext("The provider could not return a usable answer. Your message is retained.")
+     )}
+  end
+
   def handle_async(:assistant_reply, _, socket) do
     usage = load_usage(socket.assigns.current_scope)
 
@@ -655,7 +668,7 @@ defmodule PauseAiCaWeb.AssistantLive do
       draft_key={draft_key(assigns)}
       messages={@messages}
       pending={@pending}
-      error={@availability_error || @guide_error || @error}
+      error={@error || @availability_error || @guide_error}
       error_href={
         if @error && @pending_request_id,
           do: "/admin/assistant/activity/requests/#{@pending_request_id}?locale=#{@locale}"

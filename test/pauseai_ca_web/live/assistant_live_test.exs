@@ -6,6 +6,8 @@ defmodule PauseAiCaWeb.AssistantLiveTest do
   alias PhoenixAgentAssistant.Store
 
   setup do
+    alert_worker = Process.whereis(PauseAiCa.Assistant.AlertWorker)
+    if alert_worker, do: :sys.suspend(alert_worker)
     previous = Application.get_env(:pauseai_ca, :agent_assistant)
     previous_build = System.get_env("PAUSEAI_CA_RELEASE_ID")
     System.put_env("PAUSEAI_CA_RELEASE_ID", "assistant-synthetic-fixture")
@@ -37,9 +39,62 @@ defmodule PauseAiCaWeb.AssistantLiveTest do
       if previous_build,
         do: System.put_env("PAUSEAI_CA_RELEASE_ID", previous_build),
         else: System.delete_env("PAUSEAI_CA_RELEASE_ID")
+
+      if alert_worker && Process.alive?(alert_worker), do: :sys.resume(alert_worker)
     end)
 
     %{admin: admin, scope: scope, member: member, other_admin: other_admin}
+  end
+
+  defmodule InvalidProvider do
+    defdelegate input_token_bound(request, mode, options),
+      to: PauseAiCa.AssistantFixtures.Provider
+
+    def generate(_, _, _),
+      do:
+        {:error,
+         {:provider_failure,
+          %{"category" => "invalid_provider_response", "response_section" => "reasoning_item"}}}
+  end
+
+  test "provider failure remains visible when its unknown hold prevents another request", c do
+    config = PauseAiCa.AssistantFixtures.configuration(self())
+
+    config =
+      config
+      |> Keyword.put(:provider, {InvalidProvider, [api_key: "synthetic-fixture"]})
+      |> Keyword.put(:daily_limit_micros, 1000)
+
+    Application.put_env(:pauseai_ca, :agent_assistant, config)
+    assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+    token = Accounts.generate_user_session_token(c.admin)
+
+    {:ok, view, _} =
+      live_isolated(c.conn, PauseAiCaWeb.AssistantLive, session: %{"user_token" => token})
+
+    render_click(view, "assistant-toggle")
+
+    render_submit(view, "assistant-submit", %{
+      "assistant" => %{"text" => "Find the newest onboarding candidates"}
+    })
+
+    render_async(view, 2_000)
+    assert {:ok, usage} = Assistant.token_usage(c.scope)
+    assert usage.remaining_cost_micros < usage.max_turn_cost_micros
+
+    assert has_element?(
+             view,
+             "#site-assistant-error",
+             "The provider could not return a usable answer."
+           )
+
+    assert has_element?(view, "#site-assistant-text", "Find the newest onboarding candidates")
+
+    assert has_element?(
+             view,
+             "#site-assistant-error a[href*='/admin/assistant/activity/requests/']",
+             "Review details"
+           )
   end
 
   defmodule UncertainReview do
