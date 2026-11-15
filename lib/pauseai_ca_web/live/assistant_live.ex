@@ -49,6 +49,7 @@ defmodule PauseAiCaWeb.AssistantLive do
        usage: usage,
        pending: false,
        pending_text: "",
+       pending_request_id: nil,
        error: nil,
        availability_error: availability_error(scope, usage, mode)
      )}
@@ -194,6 +195,7 @@ defmodule PauseAiCaWeb.AssistantLive do
             pending: true,
             draft: text,
             pending_text: text,
+            pending_request_id: request_id,
             pending_guided: guided,
             error: nil,
             usage: usage,
@@ -287,6 +289,44 @@ defmodule PauseAiCaWeb.AssistantLive do
         :token_limit_unavailable ->
           gettext(
             "The assistant could not check its request limit. Your message has been retained."
+          )
+      end
+
+    {:noreply,
+     assign(socket,
+       pending: false,
+       usage: load_usage(socket.assigns.current_scope),
+       error: message
+     )}
+  end
+
+  def handle_async(:assistant_reply, {:ok, {:error, reason}}, socket)
+      when reason in [
+             :input_safety_review_required,
+             :input_safety_blocked,
+             :input_safety_unavailable,
+             :output_safety_review_required,
+             :output_safety_blocked,
+             :output_safety_unavailable
+           ] do
+    message =
+      case reason do
+        :input_safety_unavailable ->
+          gettext("The input review could not complete. Your message is retained.")
+
+        reason when reason in [:input_safety_review_required, :input_safety_blocked] ->
+          gettext(
+            "The automatic input review held your request before answer generation. Your message is retained."
+          )
+
+        :output_safety_unavailable ->
+          gettext(
+            "An answer was generated, but its review could not complete. Your message is retained."
+          )
+
+        _ ->
+          gettext(
+            "An answer was generated and held by the output review. Your message is retained."
           )
       end
 
@@ -616,6 +656,10 @@ defmodule PauseAiCaWeb.AssistantLive do
       messages={@messages}
       pending={@pending}
       error={@availability_error || @guide_error || @error}
+      error_href={
+        if @error && @pending_request_id,
+          do: "/admin/assistant/activity/requests/#{@pending_request_id}?locale=#{@locale}"
+      }
       guided_available={@guide_available}
       guided_mode={@guide_mode}
       allow_new={true}
@@ -638,6 +682,7 @@ defmodule PauseAiCaWeb.AssistantLive do
           budget_limited: gettext("Near usage limit"),
           message: gettext("Message"),
           working: gettext("Working…"),
+          error_details: gettext("Review details"),
           placeholder: gettext("How can I help?")
         }
       }

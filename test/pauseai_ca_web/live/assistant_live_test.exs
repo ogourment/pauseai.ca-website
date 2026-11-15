@@ -42,6 +42,65 @@ defmodule PauseAiCaWeb.AssistantLiveTest do
     %{admin: admin, scope: scope, member: member, other_admin: other_admin}
   end
 
+  defmodule UncertainReview do
+    def review(_request, options) do
+      uncertain =
+        Keyword.get(options, :review_direction) == Keyword.fetch!(options, :uncertain_at)
+
+      {:ok,
+       %{
+         risk: if(uncertain, do: :review, else: :low),
+         probabilities: %{"low" => if(uncertain, do: 0.75, else: 0.99), "block" => 0.01},
+         model: "synthetic-review"
+       }}
+    end
+  end
+
+  for direction <- ["input", "output"] do
+    test "#{direction} review holds explain the phase and preserve the editable question", c do
+      direction = unquote(direction)
+      config = PauseAiCa.AssistantFixtures.configuration(self())
+
+      safety =
+        Keyword.put(
+          config[:safety],
+          :jev,
+          {UncertainReview, [api_key: "synthetic-review", uncertain_at: direction]}
+        )
+
+      Application.put_env(:pauseai_ca, :agent_assistant, Keyword.put(config, :safety, safety))
+      assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+      token = Accounts.generate_user_session_token(c.admin)
+
+      {:ok, view, _} =
+        live_isolated(c.conn, PauseAiCaWeb.AssistantLive, session: %{"user_token" => token})
+
+      render_click(view, "assistant-toggle")
+      question = "How can I find the most recent candidates for onboarding?"
+      render_submit(view, "assistant-submit", %{"assistant" => %{"text" => question}})
+      render_async(view, 2_000)
+      assert has_element?(view, "#site-assistant-text", question)
+      assert has_element?(view, "#site-assistant-form button[type=submit]:not([disabled])")
+
+      assert has_element?(
+               view,
+               "#site-assistant-error a[href^='/admin/assistant/activity/requests/']",
+               "Review details"
+             )
+
+      if direction == "input" do
+        assert render(view) =~ "before answer generation"
+        refute_receive {:assistant_generated, _, _}
+      else
+        assert render(view) =~ "held by the output review"
+        assert_receive {:assistant_generated, _, _}
+      end
+
+      refute render(view) =~ "0.75"
+      assert {:ok, []} = Assistant.history(c.scope, elem(Assistant.conversation(c.scope), 1))
+    end
+  end
+
   test "OFF has no assistant launcher; an administrator explicitly enables it", c do
     conn = log_in_user(c.conn, c.admin)
     {:ok, view, html} = live(conn, "/admin/assistant?locale=en")
@@ -354,12 +413,12 @@ defmodule PauseAiCaWeb.AssistantLiveTest do
     assert {:ok, %{reported_input: 70, reported_output: 10, charged_tokens: 80}} =
              Assistant.token_usage(c.scope)
 
-    assert {:error, :unavailable} =
+    assert {:error, :input_safety_blocked} =
              Assistant.run(c.scope, Ecto.UUID.generate(), "synthetic blocked request", reference)
 
     assert {:ok, [_, _]} = Assistant.history(c.scope, reference)
     assert {:ok, [alert]} = Store.pending_alerts(Assistant.store())
-    assert alert.reason_code == "safety_blocked"
+    assert alert.reason_code == "input_safety_blocked"
     assert {:ok, []} = Assistant.history(Accounts.Scope.for_user(c.other_admin), reference)
   end
 

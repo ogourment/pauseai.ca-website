@@ -33,6 +33,22 @@ if System.get_env("ATDD") == "true" do
         source_file: __ENV__.file
       },
       %{
+        id: "CRM-ASSIST-REVIEW-01-en",
+        title: "Input review hold keeps the question and links protected details",
+        roles: ["Superadmin"],
+        language: "English",
+        device: "Desktop",
+        source_file: __ENV__.file
+      },
+      %{
+        id: "CRM-ASSIST-REVIEW-01-fr",
+        title: "Input review hold keeps the question and links protected details",
+        roles: ["Superadmin"],
+        language: "French",
+        device: "Phone",
+        source_file: __ENV__.file
+      },
+      %{
         id: "AI-INSTR-01-en",
         title: "Restricted instructions, saved draft and explicit publication",
         roles: ["Allowlisted superadmin", "Other superadmin", "Group manager"],
@@ -49,6 +65,17 @@ if System.get_env("ATDD") == "true" do
         source_file: __ENV__.file
       }
     ]
+
+    defmodule UncertainInput do
+      def review(_, _) do
+        {:ok,
+         %{
+           risk: :review,
+           probabilities: %{"low" => 0.75, "block" => 0.01},
+           model: "synthetic-review"
+         }}
+      end
+    end
 
     setup_all do
       AtddEvidence.reset!(
@@ -521,6 +548,62 @@ if System.get_env("ATDD") == "true" do
       refute_received {:email, _}
       success(id)
       browser
+    end
+
+    for {locale, width, height} <- [{"en", 1280, 900}, {"fr", 390, 844}] do
+      @tag screenshot: true
+      @tag browser_context_opts: [viewport: %{width: width, height: height}]
+      test "CRM-ASSIST-REVIEW-01-#{locale} input hold preserves the question and exposes protected review details",
+           c do
+        locale = unquote(locale)
+        id = "CRM-ASSIST-REVIEW-01-#{locale}"
+        config = AssistantFixtures.configuration(self())
+
+        safety =
+          Keyword.put(config[:safety], :jev, {UncertainInput, [api_key: "synthetic-review"]})
+
+        Application.put_env(:pauseai_ca, :agent_assistant, Keyword.put(config, :safety, safety))
+        assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+        question = "How can I find the most recent candidates for onboarding?"
+
+        message =
+          if locale == "fr",
+            do:
+              "Le contrôle automatique a retenu votre demande avant la génération d’une réponse.",
+            else: "The automatic input review held your request before answer generation."
+
+        send_label = if locale == "fr", do: "Envoyer", else: "Send"
+
+        details_label =
+          if locale == "fr", do: "Détails du contrôle", else: "Review details"
+
+        browser =
+          c.conn
+          |> login(c.admin)
+          |> visit("/admin/contacts?locale=#{locale}")
+          |> connected()
+          |> assert_has(".phx-connected #site-assistant-launcher")
+          |> click_button("#site-assistant-launcher", "Assistant")
+          |> fill_in("#site-assistant-text", "Message", with: question)
+          |> click_button("#site-assistant-form button[type=submit]", send_label)
+          |> assert_has("#site-assistant-error", text: message)
+          |> assert_has("#site-assistant-text", value: question)
+          |> assert_has("#site-assistant-form button[type=submit]:not([disabled])")
+          |> assert_has("#site-assistant-error a[href*='/admin/assistant/activity/requests/']",
+            text: details_label
+          )
+          |> capture(
+            id,
+            "Explicit input-review hold",
+            "Assistant on Contacts",
+            "Send the synthetic onboarding question with a75% fixture review",
+            "The request is retained, the input phase is explained, and a protected review-details link is available. The fixture deliberately remains held; it does not claim a real classifier result."
+          )
+
+        refute_receive {:assistant_generated, _, _}
+        success(id)
+        browser
+      end
     end
 
     for {locale, width, height} <- [{"en", 1280, 900}, {"fr", 390, 844}] do

@@ -557,6 +557,7 @@ defmodule PauseAiCa.Assistant do
         configuration()
         |> Keyword.put(:preference, mode)
         |> Keyword.put(:correlation_id, request_id)
+        |> Keyword.put(:review_feedback, :phase)
         |> Keyword.put(:conversation_ref, conversation)
 
       identity = AcceptanceHarness.Health.payload()
@@ -664,7 +665,13 @@ defmodule PauseAiCa.Assistant do
     |> Keyword.put_new_lazy(:instruction_binding, fn ->
       Map.drop(instruction_snapshot(), [:source])
     end)
-    |> Keyword.drop([:preference, :correlation_id, :conversation_ref, :spend_reservation_prepare])
+    |> Keyword.drop([
+      :preference,
+      :correlation_id,
+      :conversation_ref,
+      :spend_reservation_prepare,
+      :review_feedback
+    ])
     |> Map.new()
     |> Map.put(:provider, provider_snapshot(config))
   end
