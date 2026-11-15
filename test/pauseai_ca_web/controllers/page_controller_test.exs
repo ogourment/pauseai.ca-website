@@ -74,6 +74,15 @@ defmodule PauseAiCaWeb.PageControllerTest do
     english_home = html_response(get(conn, ~p"/en"), 200)
     assert english_home =~ "Local groups"
     assert english_home =~ ~s(href="/en/groups")
+
+    for html <- [home, english_home],
+        url <- [
+          "https://www.instagram.com/pauseaicanada/",
+          "https://bsky.app/profile/pauseaicanada.bsky.social",
+          "https://x.com/pauseaicanada"
+        ] do
+      assert html =~ ~s(href="#{url}")
+    end
   end
 
   test "a signed-in reader gets an authenticated bookmark action", %{conn: conn} do

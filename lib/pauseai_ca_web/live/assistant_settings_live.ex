@@ -17,6 +17,9 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
 
   def handle_info(:assistant_settings_changed, socket), do: {:noreply, reload(socket)}
 
+  def handle_info({:assistant_mode_changed, _actor}, socket),
+    do: {:noreply, refresh_readiness(socket)}
+
   def handle_info(:refresh_readiness, socket) do
     Process.send_after(self(), :refresh_readiness, 15_000)
 
@@ -70,12 +73,6 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
   end
 
   defp reload(socket) do
-    pilot =
-      case Assistant.token_usage(socket.assigns.current_scope) do
-        {:ok, usage} -> Map.get(usage, :pilot)
-        _ -> nil
-      end
-
     socket
     |> refresh_readiness()
     |> assign(
@@ -83,13 +80,25 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
       default_limit: Assistant.configuration()[:daily_token_limit],
       quota_ceiling: Assistant.configuration()[:max_daily_token_limit],
       instructions_access:
-        PauseAiCa.Assistant.Instructions.permitted?(socket.assigns.current_scope),
-      pilot: pilot
+        PauseAiCa.Assistant.Instructions.permitted?(socket.assigns.current_scope)
     )
   end
 
   defp refresh_readiness(socket) do
     config = Assistant.configuration()
+    missing = Assistant.readiness()
+
+    usage =
+      case Assistant.token_usage(socket.assigns.current_scope) do
+        {:ok, value} -> value
+        _ -> nil
+      end
+
+    mode =
+      case Assistant.mode(socket.assigns.current_scope) do
+        {:ok, value} -> value
+        _ -> "fast"
+      end
 
     diagnostics =
       if config[:operations_adapter],
@@ -98,8 +107,11 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
 
     assign(socket,
       enabled: PhoenixAgentAssistant.Store.enabled?(Assistant.store()),
-      missing: Assistant.readiness(),
-      diagnostics: diagnostics
+      missing: missing,
+      diagnostics: diagnostics,
+      pilot: usage && Map.get(usage, :pilot),
+      availability:
+        if(missing == [], do: Assistant.budget_status(usage, mode), else: :checks_unavailable)
     )
   end
 
@@ -133,7 +145,33 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
             href={~p"/admin/assistant/instructions?#{[locale: @locale]}"}
             class="underline"
           >{gettext("Instructions")}</.link>
-          <p id="assistant-status">{if @enabled, do: gettext("On"), else: gettext("Off")}</p>
+          <div class="flex flex-wrap items-center gap-3" id="assistant-toggle-controls">
+            <button
+              :if={!@enabled}
+              id="assistant-enable"
+              phx-click="enable"
+              disabled={@missing != []}
+              class="btn btn-primary"
+            >{gettext("Enable assistant")}</button>
+            <button :if={@enabled} id="assistant-disable" phx-click="disable" class="btn btn-outline">{gettext(
+              "Disable assistant"
+            )}</button>
+            <span id="assistant-status">{if @enabled, do: gettext("On"), else: gettext("Off")}</span>
+            <span
+              :if={@enabled || @availability != :ready}
+              id="assistant-availability"
+              role="status"
+              class={
+                if(@availability == :ready,
+                  do: "font-semibold text-green-800",
+                  else: "font-semibold text-amber-900"
+                )
+              }
+            >
+              <span class="text-sm font-normal">{gettext("Your account")} ·</span>
+              {availability_label(@availability)}
+            </span>
+          </div>
           <p :if={@pilot} id="assistant-pilot-budget" role="status">
             {gettext("All-provider pilot · USD %{remaining} / %{limit} remaining through %{date} UTC",
               remaining: usd(@pilot.remaining_micros, @locale),
@@ -144,16 +182,6 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
               "Generation, safety reviews and unresolved usage count toward this shared ceiling."
             )}
           </p>
-          <button
-            :if={!@enabled}
-            id="assistant-enable"
-            phx-click="enable"
-            disabled={@missing != []}
-            class="btn btn-primary"
-          >{gettext("Enable assistant")}</button>
-          <button :if={@enabled} id="assistant-disable" phx-click="disable" class="btn btn-outline">{gettext(
-            "Disable assistant"
-          )}</button>
           <p :if={@error} role="alert">{@error}</p>
         </section>
         <section class="rounded-xl border border-stone-200 p-5 space-y-3" id="assistant-token-limits">
@@ -346,6 +374,14 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
     </Layouts.management>
     """
   end
+
+  defp availability_label(:ready), do: gettext("Ready")
+  defp availability_label(:credit_insufficient), do: gettext("Insufficient credit")
+  defp availability_label(:tokens_insufficient), do: gettext("Insufficient token allowance")
+  defp availability_label(:allocation_unavailable), do: gettext("Credit allocation unavailable")
+  defp availability_label(:usage_unavailable), do: gettext("Usage unavailable")
+  defp availability_label(:checks_unavailable), do: gettext("Temporarily unavailable")
+  defp availability_label(:mode_unavailable), do: gettext("Selected mode unavailable")
 
   defp failure_phase(:audit_confirmation), do: gettext("Independent audit verification")
   defp failure_phase(:readiness_audit), do: gettext("Independent audit verification")

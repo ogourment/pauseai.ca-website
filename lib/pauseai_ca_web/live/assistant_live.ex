@@ -543,23 +543,30 @@ defmodule PauseAiCaWeb.AssistantLive do
   end
 
   defp availability_error(scope, usage, mode) do
+    budget_status = Assistant.budget_status(usage, mode)
+
     cond do
-      is_map(usage) and Map.get(usage, :allocation_active, true) == false ->
+      budget_status == :allocation_unavailable ->
         gettext("Assistant credit allocation is not ready. Your draft is retained.")
 
       not Assistant.visible?(scope) ->
         readiness_message(Assistant.readiness())
 
-      is_nil(usage) ->
+      budget_status == :usage_unavailable ->
         gettext("Usage limits are temporarily unavailable. Your draft is retained.")
 
-      usage.remaining_tokens == 0 ->
-        gettext("Your daily token allowance is exhausted. Your draft is retained.")
+      budget_status == :tokens_insufficient ->
+        gettext(
+          "Your remaining token allowance cannot cover another request. Your draft is retained."
+        )
 
-      usage.remaining_cost_micros < usage.max_turn_cost_micros ->
-        gettext("The daily cost allowance cannot cover another request. Your draft is retained.")
+      budget_status == :credit_insufficient ->
+        gettext(
+          "Available credit cannot cover the USD %{amount} request reservation. Your draft is retained.",
+          amount: usd(usage.max_turn_cost_micros, Gettext.get_locale(PauseAiCaWeb.Gettext))
+        )
 
-      not quality_available?(usage, mode) ->
+      budget_status == :mode_unavailable ->
         gettext("Choose an available mode. Higher modes are paused near a usage limit.")
 
       true ->
@@ -584,14 +591,6 @@ defmodule PauseAiCaWeb.AssistantLive do
        do: "v1:#{actor}:#{conversation}"
 
   defp draft_key(_), do: nil
-
-  defp quality_available?(usage, mode) do
-    case Map.get(usage, :mode_availability) do
-      nil -> true
-      modes when is_map(modes) -> get_in(modes, [mode, :allowed]) == true
-      _ -> false
-    end
-  end
 
   defp usage_summary(nil), do: nil
 
@@ -670,8 +669,16 @@ defmodule PauseAiCaWeb.AssistantLive do
       pending={@pending}
       error={@error || @availability_error || @guide_error}
       error_href={
-        if @error && @pending_request_id,
-          do: "/admin/assistant/activity/requests/#{@pending_request_id}?locale=#{@locale}"
+        cond do
+          @error && @pending_request_id ->
+            "/admin/assistant/activity/requests/#{@pending_request_id}?locale=#{@locale}"
+
+          @availability_error ->
+            "/admin/assistant?locale=#{@locale}"
+
+          true ->
+            nil
+        end
       }
       guided_available={@guide_available}
       guided_mode={@guide_mode}
@@ -692,10 +699,14 @@ defmodule PauseAiCaWeb.AssistantLive do
           minimize: gettext("Minimize assistant"),
           expand: gettext("Expand assistant"),
           mode: gettext("Mode"),
-          budget_limited: gettext("Near usage limit"),
+          budget_limited: gettext("Unavailable"),
           message: gettext("Message"),
           working: gettext("Working…"),
-          error_details: gettext("Review details"),
+          error_details:
+            if(@error && @pending_request_id,
+              do: gettext("Review details"),
+              else: gettext("Assistant settings")
+            ),
           placeholder: gettext("How can I help?")
         }
       }

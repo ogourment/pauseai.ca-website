@@ -9,6 +9,38 @@ if System.get_env("ATDD") == "true" do
     @moduletag :atdd
     @scenarios [
       %{
+        id: "CRM-ASSIST-CREDIT-01-en",
+        title: "Credit warning and account availability beside the enable control",
+        roles: ["Superadmin"],
+        language: "English",
+        device: "Desktop",
+        source_file: __ENV__.file
+      },
+      %{
+        id: "CRM-ASSIST-CREDIT-01-fr",
+        title: "Credit warning and account availability beside the enable control",
+        roles: ["Superadmin"],
+        language: "French",
+        device: "Phone",
+        source_file: __ENV__.file
+      },
+      %{
+        id: "CRM-ASSIST-SOCIAL-01-en",
+        title: "Official Canadian social links in the footer",
+        roles: ["Public reader"],
+        language: "English",
+        device: "Desktop",
+        source_file: __ENV__.file
+      },
+      %{
+        id: "CRM-ASSIST-SOCIAL-01-fr",
+        title: "Official Canadian social links in the footer",
+        roles: ["Public reader"],
+        language: "French",
+        device: "Phone",
+        source_file: __ENV__.file
+      },
+      %{
         id: "CRM-ASSIST-01",
         title: "Enable assistant, preserve draft and account history",
         roles: ["Superadmin"],
@@ -869,6 +901,112 @@ if System.get_env("ATDD") == "true" do
       |> visit("/users/log-in/#{token}?locale=en")
       |> click_button("Keep me logged in on this device")
       |> assert_path("/")
+    end
+
+    for {locale, width, height} <- [{"en", 1280, 900}, {"fr", 390, 844}] do
+      @tag screenshot: true
+      @tag browser_context_opts: [viewport: %{width: width, height: height}]
+      test "CRM-ASSIST-CREDIT-01-#{locale} credit status is beside enable and warned before typing",
+           c do
+        locale = unquote(locale)
+        id = "CRM-ASSIST-CREDIT-01-#{locale}"
+        config = AssistantFixtures.configuration(self()) |> Keyword.put(:daily_limit_micros, 1000)
+        Application.put_env(:pauseai_ca, :agent_assistant, config)
+
+        assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+
+        assert {:ok, _} =
+                 Store.reserve(
+                   Assistant.store(),
+                   c.admin.id,
+                   %{
+                     request_id: Ecto.UUID.generate(),
+                     digest: String.duplicate("a", 64),
+                     mode: "fast",
+                     model: "haiku-fixture",
+                     max_output_tokens: 10
+                   },
+                   config[:audit_keys],
+                   max_cost_micros: 1000,
+                   daily_limit_micros: 1000,
+                   max_tokens: 100,
+                   daily_token_limit: 100_000,
+                   max_daily_token_limit: 1_000_000
+                 )
+
+        label = if locale == "fr", do: "Crédit insuffisant", else: "Insufficient credit"
+        warning = if locale == "fr", do: "Le crédit disponible", else: "Available credit"
+
+        browser =
+          c.conn
+          |> login(c.admin)
+          |> visit("/admin/assistant?locale=#{locale}")
+          |> connected()
+          |> assert_has("#assistant-toggle-controls #assistant-disable")
+          |> assert_has("#assistant-toggle-controls #assistant-availability", text: label)
+          |> capture(
+            id,
+            "Account availability beside the enable control",
+            "Assistant settings",
+            "Open Assistant settings",
+            "Enabled state and insufficient account credit appear together."
+          )
+          |> visit("/admin/contacts?locale=#{locale}")
+          |> connected()
+          |> click_button("#site-assistant-launcher", "Assistant")
+          |> assert_has("#site-assistant-error", text: warning)
+          |> assert_has("#site-assistant-form button[type=submit][disabled]")
+          |> fill_in("#site-assistant-text", "Message", with: "Retain this draft")
+          |> assert_has("#site-assistant-text", value: "Retain this draft")
+          |> capture(
+            id,
+            "Credit warning before submission with editable retained draft",
+            "Contacts",
+            "Assistant then type a draft",
+            "Insufficient credit is explained before typing, Send is disabled, and the draft remains editable."
+          )
+
+        refute_receive {:assistant_generated, _, _}
+        success(id)
+        browser
+      end
+
+      @tag screenshot: true
+      @tag browser_context_opts: [viewport: %{width: width, height: height}]
+      test "CRM-ASSIST-SOCIAL-01-#{locale} public footer links the three supplied Canadian accounts",
+           c do
+        locale = unquote(locale)
+        id = "CRM-ASSIST-SOCIAL-01-#{locale}"
+        home = if locale == "fr", do: "/fr", else: "/en"
+        privacy = if locale == "fr", do: "/fr/confidentialite", else: "/en/privacy"
+        label = if locale == "fr", do: "Confidentialité", else: "Privacy"
+
+        browser =
+          c.conn
+          |> visit(home)
+          |> click_link("footer a[href='#{privacy}']", label)
+          |> assert_has(
+            "footer nav a[href='https://www.instagram.com/pauseaicanada/'][target='_blank']",
+            text: "Instagram"
+          )
+          |> assert_has(
+            "footer nav a[href='https://bsky.app/profile/pauseaicanada.bsky.social'][target='_blank']",
+            text: "Bluesky"
+          )
+          |> assert_has("footer nav a[href='https://x.com/pauseaicanada'][target='_blank']",
+            text: "X"
+          )
+          |> capture(
+            id,
+            "Official Canadian social accounts in the footer",
+            "Public homepage",
+            "Footer Privacy",
+            "Instagram, Bluesky and X use Olivier's supplied Canadian account URLs in both language editions."
+          )
+
+        success(id)
+        browser
+      end
     end
 
     defp connected(browser), do: assert_has(browser, "[data-phx-main].phx-connected")

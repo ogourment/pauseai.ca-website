@@ -331,6 +331,27 @@ defmodule PauseAiCaWeb.Layouts do
           href={if(@locale == "fr", do: ~p"/fr/a-propos#technical", else: ~p"/en/about#technical")}
           class="inline-flex min-h-8 items-center gap-1 whitespace-nowrap hover:text-stone-900"
         >{gettext("Made in Canada")} <span aria-hidden="true">🇨🇦</span></.link>
+        <nav
+          aria-label={gettext("PauseAI Canada social accounts")}
+          class="flex flex-wrap items-center gap-x-4"
+        >
+          <.link
+            :for={
+              {platform, url} <- [
+                {"Instagram", "https://www.instagram.com/pauseaicanada/"},
+                {"Bluesky", "https://bsky.app/profile/pauseaicanada.bsky.social"},
+                {"X", "https://x.com/pauseaicanada"}
+              ]
+            }
+            href={url}
+            target="_blank"
+            rel="me noopener noreferrer"
+            aria-label={gettext("%{platform} (opens in a new tab)", platform: platform)}
+            class="inline-flex min-h-8 items-center whitespace-nowrap hover:text-stone-900"
+          >
+            {platform}
+          </.link>
+        </nav>
       </div>
     </footer>
 

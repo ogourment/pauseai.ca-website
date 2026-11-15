@@ -57,6 +57,101 @@ defmodule PauseAiCaWeb.AssistantLiveTest do
           %{"category" => "invalid_provider_response", "response_section" => "reasoning_item"}}}
   end
 
+  test "credit warnings precede typing and settings show the same effective availability", c do
+    config =
+      PauseAiCa.AssistantFixtures.configuration(self()) |> Keyword.put(:daily_limit_micros, 1000)
+
+    Application.put_env(:pauseai_ca, :agent_assistant, config)
+
+    assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+
+    assert {:ok, _} =
+             Store.reserve(
+               Assistant.store(),
+               c.admin.id,
+               %{
+                 request_id: Ecto.UUID.generate(),
+                 digest: String.duplicate("a", 64),
+                 mode: "fast",
+                 model: "haiku-fixture",
+                 max_output_tokens: 10
+               },
+               config[:audit_keys],
+               max_cost_micros: 1000,
+               daily_limit_micros: 1000,
+               max_tokens: 100,
+               daily_token_limit: 100_000,
+               max_daily_token_limit: 1_000_000
+             )
+
+    assert {:ok, _} = Assistant.set_enabled(c.scope, false)
+    {:ok, settings, _} = live(log_in_user(c.conn, c.admin), "/admin/assistant?locale=en")
+    assert has_element?(settings, "#assistant-toggle-controls #assistant-status", "Off")
+
+    assert has_element?(
+             settings,
+             "#assistant-toggle-controls #assistant-availability",
+             "Insufficient credit"
+           )
+
+    render_click(settings, "enable")
+    assert has_element?(settings, "#assistant-toggle-controls #assistant-status", "On")
+    assert has_element?(settings, "#assistant-availability", "Insufficient credit")
+
+    token = Accounts.generate_user_session_token(c.admin)
+
+    {:ok, composer, _} =
+      live_isolated(c.conn, PauseAiCaWeb.AssistantLive, session: %{"user_token" => token})
+
+    render_click(composer, "assistant-toggle")
+    assert has_element?(composer, "#site-assistant-error", "request reservation")
+
+    assert has_element?(
+             composer,
+             "#site-assistant-error a[href='/admin/assistant?locale=en']",
+             "Assistant settings"
+           )
+
+    assert has_element?(composer, "#site-assistant-form button[type=submit][disabled]")
+    refute has_element?(composer, "#site-assistant-text[readonly]")
+    render_change(composer, "assistant-draft", %{"assistant" => %{"text" => "Retain this draft"}})
+
+    render_submit(composer, "assistant-submit", %{"assistant" => %{"text" => "Retain this draft"}})
+
+    refute_receive {:assistant_generated, _, _}
+
+    Application.put_env(
+      :pauseai_ca,
+      :agent_assistant,
+      Keyword.put(config, :daily_limit_micros, 100_000)
+    )
+
+    send(settings.pid, :refresh_readiness)
+    send(composer.pid, :refresh_access)
+    assert has_element?(settings, "#assistant-availability", "Ready")
+    refute has_element?(composer, "#site-assistant-error")
+    assert has_element?(composer, "#site-assistant-text", "Retain this draft")
+    assert has_element?(composer, "#site-assistant-form button[type=submit]:not([disabled])")
+  end
+
+  test "shared policy reasons distinguish insufficient credit, token headroom and mode limits" do
+    usage = %{
+      remaining_tokens: 100_000,
+      max_turn_tokens: 16_384,
+      remaining_cost_micros: 10_000,
+      max_turn_cost_micros: 1000,
+      mode_availability: %{"normal" => %{allowed: false, reason: :insufficient_remaining}}
+    }
+
+    assert Assistant.budget_status(usage, "normal") == :credit_insufficient
+
+    assert Assistant.budget_status(%{usage | remaining_tokens: 8000}, "normal") ==
+             :tokens_insufficient
+
+    limited = put_in(usage, [:mode_availability, "normal", :reason], :normal_disabled_near_limit)
+    assert Assistant.budget_status(limited, "normal") == :mode_unavailable
+  end
+
   test "provider failure remains visible when its unknown hold prevents another request", c do
     config = PauseAiCa.AssistantFixtures.configuration(self())
 

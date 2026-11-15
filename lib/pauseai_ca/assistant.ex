@@ -406,6 +406,7 @@ defmodule PauseAiCa.Assistant do
        allocation_active: state.shared.active,
        allocation_remaining_micros: state.shared.remaining_micros,
        max_turn_cost_micros: config[:max_turn_cost_micros],
+       max_turn_tokens: config[:max_turn_tokens],
        budget_reset_on: Date.add(day, 1)
      })}
   end
@@ -424,7 +425,47 @@ defmodule PauseAiCa.Assistant do
       {:ok,
        Map.merge(tokens, costs)
        |> Map.put(:max_turn_cost_micros, config[:max_turn_cost_micros])
+       |> Map.put(:max_turn_tokens, config[:max_turn_tokens])
        |> Map.put(:budget_reset_on, Date.add(day, 1))}
+    end
+  end
+
+  @doc "Advisory budget status shared by the composer and its settings control."
+  def budget_status(nil, _mode), do: :usage_unavailable
+
+  def budget_status(usage, mode) when is_map(usage) do
+    cond do
+      Map.get(usage, :allocation_active, true) == false -> :allocation_unavailable
+      usage.remaining_tokens == 0 -> :tokens_insufficient
+      usage.remaining_cost_micros < usage.max_turn_cost_micros -> :credit_insufficient
+      true -> mode_budget_status(usage, mode)
+    end
+  end
+
+  defp mode_budget_status(usage, mode) do
+    case Map.get(usage, :mode_availability) do
+      nil ->
+        :ready
+
+      modes when is_map(modes) ->
+        case Map.get(modes, mode) do
+          %{allowed: true} ->
+            :ready
+
+          %{reason: :allocation_unavailable} ->
+            :allocation_unavailable
+
+          %{reason: :insufficient_remaining} ->
+            if usage.remaining_tokens < usage.max_turn_tokens,
+              do: :tokens_insufficient,
+              else: :credit_insufficient
+
+          _ ->
+            :mode_unavailable
+        end
+
+      _ ->
+        :usage_unavailable
     end
   end
 
