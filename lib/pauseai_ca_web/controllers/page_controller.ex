@@ -2,16 +2,19 @@ defmodule PauseAiCaWeb.PageController do
   use PauseAiCaWeb, :controller
 
   def index(conn, _params) do
-    locale = PauseAiCaWeb.Site.default_locale(conn.host)
-    suffix = if conn.query_string == "", do: "", else: "?" <> conn.query_string
-    conn |> put_status(:moved_permanently) |> redirect(to: "/#{locale}" <> suffix)
+    if PauseAiCaWeb.Site.default_locale(conn.host) == "fr" do
+      suffix = if conn.query_string == "", do: "", else: "?" <> conn.query_string
+      redirect(conn, to: "/fr" <> suffix)
+    else
+      render_home(conn, "en")
+    end
   end
 
   def legacy_canada(conn, _params),
-    do: conn |> put_status(:moved_permanently) |> redirect(to: "/en")
+    do: permanent_redirect(conn, "/en")
 
   def legacy_french_learn(conn, _params),
-    do: conn |> put_status(:moved_permanently) |> redirect(to: "/fr/comprendre")
+    do: permanent_redirect(conn, "/fr/comprendre")
 
   def en(conn, _params), do: render_home(conn, "en")
   def fr(conn, _params), do: render_home(conn, "fr")
@@ -48,10 +51,15 @@ defmodule PauseAiCaWeb.PageController do
     |> render(:not_found, locale: locale, page_title: gettext("Page not found"))
   end
 
+  defp permanent_redirect(conn, path) do
+    destination = if conn.query_string == "", do: path, else: path <> "?" <> conn.query_string
+    conn |> put_status(:moved_permanently) |> redirect(to: destination)
+  end
+
   defp render_home(conn, locale) do
     Gettext.put_locale(PauseAiCaWeb.Gettext, locale)
 
-    render(conn, :home,
+    render(assign(conn, :locale, locale), :home,
       locale: locale,
       page_title: gettext("Understand and act"),
       home_resources: PauseAiCa.Learning.QuestionBank.homepage(locale)

@@ -47,6 +47,7 @@ defmodule PauseAiCaWeb.SEOTest do
 
   test "public pages expose localized crawler metadata using configured origins", %{conn: conn} do
     for {path, language, title} <- [
+          {"/", "en-CA", "PauseAI Canada — A global pause on advanced AI"},
           {"/en", "en-CA", "PauseAI Canada — A global pause on advanced AI"},
           {"/fr", "fr-CA", "PauseIA Canada — Une pause mondiale de l’IA avancée"}
         ] do
@@ -70,6 +71,19 @@ defmodule PauseAiCaWeb.SEOTest do
         |> Enum.filter(&(&1["@type"] == "Organization"))
 
       assert script["name"] == "PauseAI Canada"
+
+      graph =
+        document
+        |> LazyHTML.query("script[type='application/ld+json']")
+        |> LazyHTML.text()
+        |> Jason.decode!()
+        |> Map.fetch!("@graph")
+
+      website = Enum.find(graph, &(&1["@type"] == "WebSite"))
+
+      assert website["url"] ==
+               if(language == "fr-CA", do: "https://pauseia.ca/", else: "https://pauseai.ca/")
+
       refute html =~ "canonical\" href=\"http://www.example.com"
       refute html =~ "canonical\" href=\"https://evil.example"
     end
@@ -94,9 +108,10 @@ defmodule PauseAiCaWeb.SEOTest do
     refute html =~ ~s(type="application/ld+json")
   end
 
-  test "legacy and root URLs redirect permanently", %{conn: conn} do
-    for {old, target} <- [{"/", "/en"}, {"/canada.html", "/en"}, {"/fr/learn", "/fr/comprendre"}] do
-      assert redirected_to(get(conn, old), 301) == target
+  test "legacy URLs redirect permanently and preserve campaign queries", %{conn: conn} do
+    for {old, target} <- [{"/canada.html", "/en"}, {"/fr/learn", "/fr/comprendre"}] do
+      assert redirected_to(get(conn, old <> "?utm_source=newsletter"), 301) ==
+               target <> "?utm_source=newsletter"
     end
   end
 end

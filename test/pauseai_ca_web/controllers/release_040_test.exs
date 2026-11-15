@@ -22,7 +22,7 @@ defmodule PauseAiCaWeb.Release040Test do
   test "French hostname chooses French, preserves the root query and uses a trusted email origin",
        %{conn: conn} do
     conn = %{conn | host: "pauseia.example"}
-    assert redirected_to(get(conn, "/?source=test"), 301) == "/fr?source=test"
+    assert redirected_to(get(conn, "/?source=test")) == "/fr?source=test"
     {:ok, page, html} = live(recycle(conn), "/users/register")
     assert html =~ "Créer un compte"
     assert html =~ ~s(lang="fr")

@@ -188,7 +188,7 @@ defmodule PauseAiCaWeb.SEO do
   defp template_path("fr"), do: "/fr/modeles-de-lettre"
 
   defp organization(locale, name) do
-    home = Site.url(locale, "/#{locale}")
+    home = Site.url(locale, "/")
 
     Jason.encode!(%{
       "@context" => "https://schema.org",
