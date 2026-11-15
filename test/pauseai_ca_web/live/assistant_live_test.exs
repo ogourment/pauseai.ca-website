@@ -456,7 +456,7 @@ defmodule PauseAiCaWeb.AssistantLiveTest do
     assert has_element?(view, "#site-assistant[data-open='true']")
     assert has_element?(view, "#site-assistant-launcher")
     assert has_element?(view, "#site-assistant button[type=submit][disabled]")
-    assert render(view) =~ "temporarily unavailable"
+    assert render(view) =~ "monitoring connection recovers"
     assert Assistant.launcher_visible?(c.scope)
     refute Assistant.visible?(c.scope)
     refute Assistant.launcher_visible?(Accounts.Scope.for_user(c.member))

@@ -422,12 +422,30 @@ if System.get_env("ATDD") == "true" do
         |> assert_has("#site-assistant-messages h2", text: "Recorded geography", exact: true)
         |> fill_in("#site-assistant-text", "Message", with: "Retain this unfinished question")
         |> assert_has("#site-assistant-text", value: "Retain this unfinished question")
+        |> visit("/admin/contacts?locale=en")
+        |> connected()
+        |> click_button("#site-assistant-launcher", "Assistant")
+        |> assert_has("#site-assistant-text", value: "Retain this unfinished question")
         |> capture(
           id,
-          "Reopened history with unfinished draft",
+          "Reload restores the unfinished draft",
           "Contacts reached through the assistant response",
           "Reopen Assistant; type a new question",
           "The stored Markdown response is restored after navigation, and the new unsent question remains editable."
+        )
+
+      browser =
+        browser
+        |> evaluate(
+          "new Promise(resolve => window.liveSocket.disconnect(() => resolve(true)))",
+          &assert(&1)
+        )
+        |> evaluate("window.liveSocket.isConnected()", &refute(&1))
+        |> assert_has("#site-assistant-text", value: "Retain this unfinished question")
+        |> reconnect_assistant()
+        |> open_assistant_if_closed()
+        |> assert_has(".phx-connected #site-assistant-text",
+          value: "Retain this unfinished question"
         )
 
       Application.put_env(
@@ -445,15 +463,20 @@ if System.get_env("ATDD") == "true" do
       browser =
         browser
         |> assert_has("#site-assistant .paa-error",
-          text: "The assistant is temporarily unavailable. Your draft is retained."
+          text: "Send is paused while the assistant’s monitoring connection recovers."
         )
         |> assert_has("#site-assistant-launcher")
         |> assert_has("#site-assistant-dialog[open]")
         |> assert_has("#site-assistant-text", value: "Retain this unfinished question")
         |> assert_has("#site-assistant-form button[type=submit][disabled]")
+        |> visit("/admin/contacts?locale=en")
+        |> connected()
+        |> click_button("#site-assistant-launcher", "Assistant")
+        |> assert_has("#site-assistant-text", value: "Retain this unfinished question")
+        |> assert_has("#site-assistant-form button[type=submit][disabled]")
         |> capture(
           id,
-          "Readiness interruption preserves history and draft",
+          "Reload during a readiness interruption preserves the draft",
           "Reopened persisted response on Contacts",
           "Type an unfinished question; synthetic operations readiness becomes unavailable",
           "The enabled launcher, dialog, prior response and draft remain present. Send is disabled, and no further provider call occurs."
@@ -462,6 +485,39 @@ if System.get_env("ATDD") == "true" do
       assert {:ok, retained} = Assistant.history(c.scope, reference)
       assert retained == history
       refute_receive {:assistant_generated, _, _}
+      Application.put_env(:pauseai_ca, :agent_assistant, config)
+
+      Phoenix.PubSub.broadcast(
+        PauseAiCa.PubSub,
+        "agent_assistant:settings",
+        :assistant_settings_changed
+      )
+
+      browser =
+        browser
+        |> assert_has("#site-assistant-form button[type=submit]:not([disabled])")
+        |> assert_has("#site-assistant-text", value: "Retain this unfinished question")
+        |> click_button("#site-assistant-form button[type=submit]", "Send")
+        |> assert_has("#site-assistant-text", value: "")
+        |> visit("/admin/contacts?locale=en")
+        |> connected()
+        |> click_button("#site-assistant-launcher", "Assistant")
+        |> assert_has("#site-assistant-text", value: "")
+        |> fill_in("#site-assistant-text", "Message", with: "Discard through New conversation")
+        |> click_button("#site-assistant-new", "+")
+        |> assert_has("#site-assistant-text", value: "")
+        |> visit("/admin/contacts?locale=en")
+        |> connected()
+        |> click_button("#site-assistant-launcher", "Assistant")
+        |> assert_has("#site-assistant-text", value: "")
+        |> capture(
+          id,
+          "Recovered Send and explicit draft clearing",
+          "Retained question after readiness recovery",
+          "Send; reload; type a draft; New conversation; reload",
+          "Availability recovers automatically. A successful submission and an explicit New conversation clear their matching drafts."
+        )
+
       refute_received {:email, _}
       success(id)
       browser
@@ -649,6 +705,38 @@ if System.get_env("ATDD") == "true" do
         success(id)
         browser
       end
+    end
+
+    defp reconnect_assistant(browser) do
+      evaluate(
+        browser,
+        """
+        new Promise((resolve, reject) => {
+          window.liveSocket.connect();
+          const deadline = Date.now() + 5000;
+          const timer = setInterval(() => {
+            const owner = document.querySelector('#site-assistant')?.closest('[data-phx-session]');
+            const joined = owner && window.liveSocket.getSocket().channels.some(channel =>
+              channel.topic === `lv:${owner.id}` && channel.state === 'joined');
+            if (joined) { clearInterval(timer); resolve(true); }
+            else if (Date.now() > deadline) { clearInterval(timer); reject(new Error('Assistant channel did not rejoin')); }
+          }, 20);
+        })
+        """,
+        &assert(&1)
+      )
+    end
+
+    defp open_assistant_if_closed(browser) do
+      evaluate(
+        browser,
+        "document.querySelector('#site-assistant-dialog').open",
+        &Process.put(:assistant_dialog_open, &1)
+      )
+
+      if Process.get(:assistant_dialog_open),
+        do: browser,
+        else: click_button(browser, "#site-assistant-launcher", "Assistant")
     end
 
     defp denied_instruction_request(browser, path) do

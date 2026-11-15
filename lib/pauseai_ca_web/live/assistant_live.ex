@@ -214,7 +214,10 @@ defmodule PauseAiCaWeb.AssistantLive do
   defp action("assistant-new", _, %{assigns: %{pending: false}} = socket) do
     case Assistant.new_conversation(socket.assigns.current_scope) do
       {:ok, reference} ->
-        {:noreply, assign(socket, conversation: reference, messages: [], draft: "", error: nil)}
+        {:noreply,
+         socket
+         |> push_event("paa:draft-clear", %{key: draft_key(socket.assigns)})
+         |> assign(conversation: reference, messages: [], draft: "", error: nil)}
 
       _ ->
         {:noreply,
@@ -238,6 +241,16 @@ defmodule PauseAiCaWeb.AssistantLive do
           ]
 
       usage = load_usage(socket.assigns.current_scope)
+
+      socket =
+        if is_nil(socket.assigns.guide_error) do
+          push_event(socket, "paa:draft-clear", %{
+            key: draft_key(socket.assigns),
+            text: socket.assigns.pending_text
+          })
+        else
+          socket
+        end
 
       {:noreply,
        assign(socket,
@@ -482,7 +495,7 @@ defmodule PauseAiCaWeb.AssistantLive do
         gettext("Assistant credit allocation is not ready. Your draft is retained.")
 
       not Assistant.visible?(scope) ->
-        gettext("The assistant is temporarily unavailable. Your draft is retained.")
+        readiness_message(Assistant.readiness())
 
       is_nil(usage) ->
         gettext("Usage limits are temporarily unavailable. Your draft is retained.")
@@ -500,6 +513,24 @@ defmodule PauseAiCaWeb.AssistantLive do
         nil
     end
   end
+
+  defp readiness_message(checks) do
+    if :operator_alerts in checks or :audit_anchor in checks do
+      gettext(
+        "Send is paused while the assistant’s monitoring connection recovers. Your message is retained. Availability is checked automatically."
+      )
+    else
+      gettext(
+        "Send is paused while the assistant’s configuration checks recover. Your message is retained. Availability is checked automatically."
+      )
+    end
+  end
+
+  defp draft_key(%{current_scope: %Scope{user: %{id: actor}}, conversation: conversation})
+       when is_binary(conversation),
+       do: "v1:#{actor}:#{conversation}"
+
+  defp draft_key(_), do: nil
 
   defp quality_available?(usage, mode) do
     case Map.get(usage, :mode_availability) do
@@ -581,6 +612,7 @@ defmodule PauseAiCaWeb.AssistantLive do
       mode={@mode}
       mode_availability={if @usage, do: Map.get(@usage, :mode_availability, %{}), else: %{}}
       draft={@draft}
+      draft_key={draft_key(assigns)}
       messages={@messages}
       pending={@pending}
       error={@availability_error || @guide_error || @error}
