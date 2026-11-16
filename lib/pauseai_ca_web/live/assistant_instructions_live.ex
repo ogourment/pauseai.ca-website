@@ -1,6 +1,7 @@
 defmodule PauseAiCaWeb.AssistantInstructionsLive do
   use PauseAiCaWeb, :live_view
   alias PauseAiCa.Assistant.Instructions
+  alias PhoenixAgentAssistant.InstructionEditor
 
   def mount(params, _, socket) do
     locale = PauseAiCaWeb.Site.locale(params, socket)
@@ -44,14 +45,14 @@ defmodule PauseAiCaWeb.AssistantInstructionsLive do
     socket = edit(socket, source)
 
     result =
-      Instructions.save(socket.assigns.current_scope, socket.assigns.instruction.revision, source)
+      InstructionEditor.save(Instructions, socket.assigns.current_scope, socket.assigns, source)
 
     result(socket, result, gettext("Draft saved"))
   end
 
   defp action("publish", _, %{assigns: %{dirty: false}} = socket) do
     result =
-      Instructions.publish(socket.assigns.current_scope, socket.assigns.instruction.revision)
+      InstructionEditor.publish(Instructions, socket.assigns.current_scope, socket.assigns)
 
     result(socket, result, gettext("Instructions published"))
   end
@@ -61,24 +62,25 @@ defmodule PauseAiCaWeb.AssistantInstructionsLive do
 
   defp action(_, _, socket), do: {:noreply, socket}
 
-  defp edit(socket, source) when is_binary(source) and byte_size(source) <= 24_000 do
-    dirty = source != socket.assigns.instruction.source
+  defp edit(socket, source) do
+    case InstructionEditor.edit(socket.assigns, source) do
+      {:ok, changes} ->
+        socket
+        |> assign(changes)
+        |> assign(
+          status: if(changes.dirty, do: gettext("Unsaved changes"), else: saved_status(socket))
+        )
 
-    assign(socket,
-      form: to_form(%{"source" => source}, as: "instructions"),
-      dirty: dirty,
-      status: if(dirty, do: gettext("Unsaved changes"), else: saved_status(socket))
-    )
+      {:error, :invalid_source} ->
+        assign(socket, error: gettext("Use between 1 and 24,000 bytes of instructions."))
+    end
   end
-
-  defp edit(socket, _),
-    do: assign(socket, error: gettext("Use between 1 and 24,000 bytes of instructions."))
 
   defp saved_status(%{assigns: %{dirty: true}}), do: gettext("Draft saved")
   defp saved_status(socket), do: socket.assigns.status
 
-  defp result(socket, {:ok, _}, status),
-    do: {:noreply, socket |> reload() |> assign(status: status, error: nil)}
+  defp result(socket, {:ok, state}, status),
+    do: {:noreply, socket |> assign(state) |> assign(status: status, error: nil)}
 
   defp result(socket, {:error, :unauthorized}, _), do: {:noreply, denied(socket)}
 
@@ -103,15 +105,8 @@ defmodule PauseAiCaWeb.AssistantInstructionsLive do
        )}
 
   defp reload(socket) do
-    with {:ok, instruction} <- Instructions.get(socket.assigns.current_scope),
-         {:ok, history} <- Instructions.history(socket.assigns.current_scope) do
-      assign(socket,
-        instruction: instruction,
-        history: history,
-        dirty: false,
-        form: to_form(%{"source" => instruction.source}, as: "instructions")
-      )
-    else
+    case InstructionEditor.load(Instructions, socket.assigns.current_scope) do
+      {:ok, state} -> assign(socket, state)
       {:error, :unauthorized} -> denied(socket)
     end
   end
@@ -145,18 +140,36 @@ defmodule PauseAiCaWeb.AssistantInstructionsLive do
             "Permissions, moderation, budgets and execution safeguards are enforced by application code."
           )}
         </p>
-        <p id="assistant-instruction-revision">
-          {gettext("Draft revision %{revision}", revision: @instruction.revision)} ·
-          <%= if @instruction.published_revision do %>
-            {gettext("Published revision %{revision}", revision: @instruction.published_revision)}
-          <% else %>
-            {gettext("Using the bundled application instructions")}
-          <% end %>
-        </p>
-        <p :if={@status} id="assistant-instruction-status" role="status">{@status}</p>
-        <p :if={@error} id="assistant-instruction-error" role="alert">{@error}</p>
-        <.form for={@form} id="assistant-instruction-form" phx-change="edit" phx-submit="save">
-          <fieldset disabled={!connected?(@socket)} class="space-y-4">
+        <InstructionEditor.editor
+          instruction={@instruction}
+          form={@form}
+          history={@history}
+          dirty={@dirty}
+          connected={connected?(@socket)}
+          status={@status}
+          error={@error}
+          class="space-y-5"
+          button_class="crm-button"
+          fieldset_class="space-y-4"
+          revision_label={gettext("Draft revision %{revision}", revision: @instruction.revision)}
+          published_label={
+            if @instruction.published_revision,
+              do:
+                gettext("Published revision %{revision}", revision: @instruction.published_revision),
+              else: gettext("Using the bundled application instructions")
+          }
+          labels={
+            %{
+              save: gettext("Save draft"),
+              saving: gettext("Saving…"),
+              publish: gettext("Publish saved instructions"),
+              publishing: gettext("Publishing…"),
+              published: gettext("Current published instructions"),
+              history: gettext("Revision history")
+            }
+          }
+        >
+          <:editor>
             <.live_component
               module={PhoenixMarkdownEditor.Component}
               id="assistant-instruction-source"
@@ -179,39 +192,16 @@ defmodule PauseAiCaWeb.AssistantInstructionsLive do
               disconnected_message={gettext("Connection interrupted; text retained in this page.")}
               preview_error_message={gettext("Preview unavailable. Your text is retained.")}
             />
-            <button
-              id="assistant-instruction-save"
-              type="submit"
-              class="crm-button"
-              phx-disable-with={gettext("Saving…")}
-            >{gettext("Save draft")}</button>
-          </fieldset>
-        </.form>
-        <button
-          id="assistant-instruction-publish"
-          type="button"
-          phx-click="publish"
-          disabled={@dirty or @instruction.revision == 0 or !connected?(@socket)}
-          class="crm-button"
-          phx-disable-with={gettext("Publishing…")}
-        >{gettext("Publish saved instructions")}</button>
-        <details :if={@instruction.published_source}>
-          <summary>{gettext("Current published instructions")}</summary>
-          <pre class="whitespace-pre-wrap break-words">{@instruction.published_source}</pre>
-        </details>
-        <details id="assistant-instruction-history">
-          <summary>{gettext("Revision history")}</summary>
-          <article
-            :for={revision <- @history}
-            id={"assistant-instruction-revision-#{revision.revision}"}
-            class="mt-4 space-y-2"
-          >
-            <p>
-              {revision.revision} · {revision_action(revision.action)} · {revision.editor_id} · {revision.inserted_at}
-            </p>
-            <pre class="whitespace-pre-wrap break-words">{revision.source}</pre>
-          </article>
-        </details>
+          </:editor>
+          <:history_entry :let={revision}>
+            <article class="mt-4 space-y-2">
+              <p>
+                {revision.revision} · {revision_action(revision.action)} · {revision.editor_id} · {revision.inserted_at}
+              </p>
+              <pre class="whitespace-pre-wrap break-words">{revision.source}</pre>
+            </article>
+          </:history_entry>
+        </InstructionEditor.editor>
       </section>
     </Layouts.management>
     """
