@@ -8,6 +8,9 @@ defmodule PauseAiCaWeb.AssistantAuditLiveTest do
   alias PhoenixAgentAssistant.Store
   alias PhoenixAgentAssistant.Store.{AuditEntry, Stream}
 
+  # Protected review can finish durable audit and generation before its async result.
+  @review_completion_timeout 5_000
+
   setup do
     previous_build = System.get_env("PAUSEAI_CA_RELEASE_ID")
     System.put_env("PAUSEAI_CA_RELEASE_ID", "assistant-synthetic-fixture")
@@ -427,7 +430,7 @@ defmodule PauseAiCaWeb.AssistantAuditLiveTest do
     {reference, conversation} = held_exchange(c)
     path = "/admin/assistant/activity/requests/#{reference}?locale=en"
     {:ok, view, _} = live(log_in_user(c.conn, c.admin), path)
-    html = render_async(view)
+    html = render_async(view, @review_completion_timeout)
     assert html =~ "How can I update a contact?"
     assert html =~ "Use the contact filters to choose a city."
     assert has_element?(view, "#assistant-review-approve", "Approve answer")
@@ -454,7 +457,7 @@ defmodule PauseAiCaWeb.AssistantAuditLiveTest do
     )
     |> render_submit()
 
-    render_async(view)
+    render_async(view, @review_completion_timeout)
     assert has_element?(view, "#assistant-exchange-status", "Approved")
     refute has_element?(view, "#assistant-review-approve")
     assert {:ok, messages} = Assistant.history(c.scope, conversation)
@@ -465,7 +468,7 @@ defmodule PauseAiCaWeb.AssistantAuditLiveTest do
            ]
 
     {:ok, reloaded, _} = live(log_in_user(build_conn(), c.admin), path)
-    render_async(reloaded)
+    render_async(reloaded, @review_completion_timeout)
     assert has_element?(reloaded, "#assistant-human-review-receipt", "Checked the answer")
     assert has_element?(reloaded, "#assistant-exchange-status", "Approved")
     refute_receive {:assistant_generated, _, _}
@@ -506,7 +509,7 @@ defmodule PauseAiCaWeb.AssistantAuditLiveTest do
         "/admin/assistant/activity/requests/#{reference}?locale=en"
       )
 
-    render_async(view)
+    render_async(view, @review_completion_timeout)
     view |> element("#assistant-review-approve") |> render_click()
     Repo.update!(Ecto.Changeset.change(c.admin, superadmin: false))
 
@@ -527,7 +530,7 @@ defmodule PauseAiCaWeb.AssistantAuditLiveTest do
         "/admin/assistant/activity/requests/#{reference}?locale=en"
       )
 
-    render_async(view)
+    render_async(view, @review_completion_timeout)
     view |> element("#assistant-review-reject") |> render_click()
     assert has_element?(view, "#assistant-review-confirmation", "Keep this answer withheld?")
 
@@ -537,7 +540,7 @@ defmodule PauseAiCaWeb.AssistantAuditLiveTest do
     )
     |> render_submit()
 
-    render_async(view)
+    render_async(view, @review_completion_timeout)
     assert has_element?(view, "#assistant-exchange-status", "Rejected")
     assert {:ok, []} = Assistant.history(c.scope, conversation)
     refute has_element?(view, "#assistant-review-approve")
@@ -582,7 +585,7 @@ defmodule PauseAiCaWeb.AssistantAuditLiveTest do
         "/admin/assistant/activity/requests/#{reference}?locale=en"
       )
 
-    render_async(view)
+    render_async(view, @review_completion_timeout)
     assert has_element?(view, "#assistant-review-approve", "Approve request and generate answer")
     view |> element("#assistant-review-approve") |> render_click()
     assert has_element?(view, "#assistant-review-confirmation", "requester's credits")
@@ -591,7 +594,7 @@ defmodule PauseAiCaWeb.AssistantAuditLiveTest do
     |> form("#assistant-review-confirmation", review: %{confirmed: "true"})
     |> render_submit()
 
-    render_async(view)
+    render_async(view, @review_completion_timeout)
     assert_receive {:assistant_generated, generated, _}
     assert generated["text"] == "show me"
     assert Jason.encode!(generated["context"]) =~ "Find local-group candidates"
