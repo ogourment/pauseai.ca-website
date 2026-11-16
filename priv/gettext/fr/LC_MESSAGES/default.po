@@ -11,12 +11,12 @@ msgstr ""
 "Language: fr\n"
 "Plural-Forms: nplurals=2; plural=(n>1);\n"
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:35
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:72
 #, elixir-autogen, elixir-format
 msgid "A pause or treaty could materially reduce that risk."
 msgstr "Une pause ou un traité pourrait réduire sensiblement ce risque."
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:29
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:66
 #, elixir-autogen, elixir-format
 msgid "AI poses a genuine existential risk."
 msgstr "L’IA pose un véritable risque existentiel."
@@ -121,7 +121,7 @@ msgstr "Vérifiez votre boîte de réception"
 msgid "Choose an action"
 msgstr "Choisir une action"
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:61
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:98
 #, elixir-autogen, elixir-format
 msgid "Clear my answers"
 msgstr "Effacer mes réponses"
@@ -147,7 +147,7 @@ msgstr "Copié"
 msgid "Copy the letter"
 msgstr "Copier la lettre"
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:79
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:116
 #, elixir-autogen, elixir-format
 msgid "Create an account to save your progress"
 msgstr "Créer un compte pour enregistrer votre parcours"
@@ -230,7 +230,7 @@ msgstr "Pour aller plus loin"
 msgid "Get involved"
 msgstr "S'impliquer"
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:42
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:79
 #, elixir-autogen, elixir-format
 msgid "International coordination is politically achievable—countries can agree, comply, and enforce it."
 msgstr ""
@@ -384,7 +384,7 @@ msgstr "Code postal"
 msgid "Privacy"
 msgstr "Confidentialité"
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:85
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:122
 #: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:9
 #: lib/pauseai_ca_web/seo.ex:54
 #, elixir-autogen, elixir-format
@@ -442,7 +442,7 @@ msgstr "Ressource enregistrée."
 msgid "Save changes"
 msgstr "Enregistrer les modifications"
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:71
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:108
 #, elixir-autogen, elixir-format
 msgid "Save your answers and continue your path on another device."
 msgstr ""
@@ -487,7 +487,7 @@ msgstr "Paramètres"
 msgid "Should we slow AI down?"
 msgstr "Faut-il ralentir l'IA?"
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:54
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:91
 #, elixir-autogen, elixir-format
 msgid "Show my path"
 msgstr "Mon parcours"
@@ -504,7 +504,7 @@ msgstr "Se connecter"
 msgid "Start here"
 msgstr "Commencez ici"
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:97
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:134
 #, elixir-autogen, elixir-format
 msgid "Start where you have questions."
 msgstr "Commencez là où vous avez des questions."
@@ -638,7 +638,7 @@ msgstr "Ce que nous mesurons"
 msgid "When?"
 msgstr "Quand?"
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:14
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:51
 #, elixir-autogen, elixir-format
 msgid "Where do you stand today?"
 msgstr "Qu’en pensez-vous aujourd’hui?"
@@ -714,7 +714,7 @@ msgstr "Votre espace privé"
 msgid "Your profile"
 msgstr "Votre profil"
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:11
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:48
 #, elixir-autogen, elixir-format
 msgid "Your starting point"
 msgstr "Votre point de départ"
@@ -3032,6 +3032,7 @@ msgstr "Pagination"
 #: lib/pauseai_ca_web/components/layouts/root.html.heex:13
 #: lib/pauseai_ca_web/components/layouts/root.html.heex:14
 #: lib/pauseai_ca_web/controllers/page_html/about.html.heex:8
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:10
 #: lib/pauseai_ca_web/live/donate_live.ex:344
 #: lib/pauseai_ca_web/live/donate_live.ex:592
 #: lib/pauseai_ca_web/seo.ex:14
@@ -3650,6 +3651,7 @@ msgid "Part of an international movement"
 msgstr "Un mouvement international"
 
 #: lib/pauseai_ca_web/controllers/page_html/about.html.heex:13
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:13
 #, elixir-autogen, elixir-format
 msgid "PauseAI Canada is a citizens’ group calling for an international pause in the development of advanced AI until its safety can be established."
 msgstr ""
@@ -6551,7 +6553,7 @@ msgstr "Créer un compte pour conserver et noter mes actions."
 msgid "Enter your details once and choose the options you want."
 msgstr "Entrez vos coordonnées une seule fois et choisissez les options qui vous intéressent."
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:132
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:169
 #: lib/pauseai_ca_web/live/participation_form.ex:402
 #: lib/pauseai_ca_web/live/participation_form.ex:405
 #, elixir-autogen, elixir-format
@@ -6640,7 +6642,8 @@ msgstr "Arrêter le suivi de cette demande locale. Votre compte et vos préfére
 msgid "Subscribe me to the PauseAI Canada newsletter."
 msgstr "M’inscrire à l’infolettre de PauseAI Canada."
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:141
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:26
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:178
 #: lib/pauseai_ca_web/live/participation_form.ex:414
 #: lib/pauseai_ca_web/live/participation_form.ex:417
 #, elixir-autogen, elixir-format
@@ -6735,7 +6738,7 @@ msgstr "Nouvelles canadiennes et rencontres"
 msgid "On your own or with others"
 msgstr "Individuellement ou avec d’autres"
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:123
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:160
 #, elixir-autogen, elixir-format
 msgid "Get updates or take action"
 msgstr "Recevoir des nouvelles ou agir"
@@ -8216,6 +8219,7 @@ msgstr "Demande de participation enregistrée"
 
 #: lib/pauseai_ca_web/components/layouts.ex:323
 #: lib/pauseai_ca_web/components/layouts.ex:487
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:39
 #: lib/pauseai_ca_web/live/incubator_management_live.ex:14
 #: lib/pauseai_ca_web/live/incubator_management_live.ex:380
 #: lib/pauseai_ca_web/live/incubators_live.ex:19
