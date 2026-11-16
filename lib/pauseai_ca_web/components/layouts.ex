@@ -84,7 +84,7 @@ defmodule PauseAiCaWeb.Layouts do
       <nav
         :if={!@current_scope}
         data-journey-start
-        class="mx-auto flex max-w-6xl items-center gap-1 px-2 py-4 sm:gap-2 sm:px-5 lg:gap-5"
+        class="mx-auto flex max-w-6xl flex-wrap items-center gap-1 px-2 py-4 sm:gap-2 sm:px-5 lg:gap-5"
         aria-label="Main navigation"
       >
         <a
@@ -112,7 +112,7 @@ defmodule PauseAiCaWeb.Layouts do
           )}</span>
         </a>
         <details id="learn-menu" class="act-menu relative hidden md:block">
-          <summary class="cursor-pointer list-none text-base font-medium text-stone-700 hover:text-stone-950">
+          <summary class="cursor-pointer list-none whitespace-nowrap text-base font-medium text-stone-700 hover:text-stone-950">
             {gettext("Learn")}
           </summary>
           <div class="absolute left-0 z-50 mt-2 w-64 overflow-hidden rounded-xl border border-stone-200 bg-white shadow-lg">
@@ -127,7 +127,7 @@ defmodule PauseAiCaWeb.Layouts do
           </div>
         </details>
         <.link
-          class="hidden text-base font-medium text-brand-ink hover:text-stone-950 lg:inline"
+          class="hidden whitespace-nowrap text-base font-medium text-brand-ink hover:text-stone-950 lg:inline"
           navigate={if(@locale == "fr", do: ~p"/fr/signal-d-alarme", else: ~p"/en/warning-shot")}
         >
           {gettext("Warning shot")}
@@ -137,7 +137,7 @@ defmodule PauseAiCaWeb.Layouts do
           navigate={if @locale == "fr", do: ~p"/fr/faire-un-don", else: ~p"/en/donate"}
           class="inline-flex min-h-9 shrink-0 items-center justify-center whitespace-nowrap rounded-full bg-brand px-2 py-1 text-sm font-bold text-stone-950 hover:bg-brand-strong sm:px-4"
         >
-          <span class="leading-4">{gettext("Donate")}</span>
+          <span class="leading-4">{pgettext("header donation link", "Donate")}</span>
         </.link>
         <PauseAiCaWeb.CampaignCountdown.timer
           :if={@menu_countdown}
@@ -147,7 +147,7 @@ defmodule PauseAiCaWeb.Layouts do
         />
         <%!-- The menu is CSS-only, so it still works before JavaScript loads. --%>
         <details id="involvement-menu" class="act-menu static md:relative">
-          <summary class="cursor-pointer list-none text-base font-medium text-stone-700 hover:text-stone-950">
+          <summary class="cursor-pointer list-none whitespace-nowrap text-base font-medium text-stone-700 hover:text-stone-950">
             <span class="sr-only sm:not-sr-only">{gettext("Get involved")}</span>
             <.icon name="hero-bars-3" class="size-6 sm:hidden" />
           </summary>
@@ -174,7 +174,7 @@ defmodule PauseAiCaWeb.Layouts do
         </details>
 
         <.link
-          class="hidden text-base font-medium text-stone-700 hover:text-stone-950 lg:inline"
+          class="hidden whitespace-nowrap text-base font-medium text-stone-700 hover:text-stone-950 lg:inline"
           href={if(@locale == "fr", do: ~p"/fr/a-propos", else: ~p"/en/about")}
         >{gettext("About")}</.link>
 
@@ -191,8 +191,7 @@ defmodule PauseAiCaWeb.Layouts do
           class="whitespace-nowrap rounded-full bg-stone-900 px-2 py-2 text-sm font-semibold text-white hover:bg-stone-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand sm:px-4 sm:text-base"
           href={~p"/users/log-in?#{%{from: "header", locale: @locale}}"}
         >
-          <span class="xl:hidden">{gettext("Account")}</span>
-          <span class="hidden xl:inline">{gettext("Sign in / Sign up")}</span>
+          {pgettext("header account entry", "Sign in")}
         </.link>
       </nav>
       <script :type={Phoenix.LiveView.ColocatedHook} name=".HeaderHeight">
@@ -238,7 +237,7 @@ defmodule PauseAiCaWeb.Layouts do
         href={if @locale == "fr", do: ~p"/fr/faire-un-don", else: ~p"/en/donate"}
         class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 bg-stone-950 px-4 py-2.5 text-center text-white hover:bg-stone-800 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-white"
       >
-        <span class="font-semibold">{gettext("Help build the movement for an AI pause")}</span>
+        <span class="text-pretty font-semibold">{gettext("Help build the movement for an AI pause")}</span>
         <span class="text-sm">{PauseAiCaWeb.CampaignCountdown.deadline(@campaign_countdown)}</span>
         <span class="whitespace-nowrap text-sm font-semibold underline underline-offset-4">
           {gettext("Support the campaign")} <span aria-hidden="true">→</span>

@@ -25,7 +25,7 @@ defmodule PauseAiCaWeb.CampaignMenuLiveTest do
     %{admin: admin}
   end
 
-  test "anonymous and signed-in home headers show two boxes before the final seven days", %{
+  test "anonymous and signed-in home headers show compact localized countdown tokens", %{
     admin: admin
   } do
     for user <- [nil, admin], path <- ["/en", "/fr"] do
@@ -37,6 +37,18 @@ defmodule PauseAiCaWeb.CampaignMenuLiveTest do
                LazyHTML.query(html, "#menu-countdown [data-countdown-part]:not([hidden])")
              ) ==
                2
+
+      day_suffix = if path == "/fr", do: "j", else: "d"
+      days = LazyHTML.text(LazyHTML.query(html, "#menu-countdown [data-countdown-unit=days]"))
+      hours = LazyHTML.text(LazyHTML.query(html, "#menu-countdown [data-countdown-unit=hours]"))
+
+      assert String.trim(days) =~ ~r/^\d+#{day_suffix}$/
+      assert String.trim(hours) =~ ~r/^\d+h$/
+
+      if is_nil(user) do
+        assert String.trim(LazyHTML.text(LazyHTML.query(html, "#account-entry"))) ==
+                 if(path == "/fr", do: "Connexion", else: "Sign in")
+      end
     end
   end
 

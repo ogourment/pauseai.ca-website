@@ -499,6 +499,11 @@ msgstr "Voir mon parcours suggéré"
 msgid "Sign in"
 msgstr "Se connecter"
 
+#, elixir-autogen, elixir-format
+msgctxt "header account entry"
+msgid "Sign in"
+msgstr "Connexion"
+
 #: lib/pauseai_ca_web/live/dashboard_live.ex:401
 #, elixir-autogen, elixir-format
 msgid "Start here"
@@ -10198,7 +10203,7 @@ msgstr "Créer un article"
 #: lib/pauseai_ca_web/components/layouts.ex:241
 #, elixir-autogen, elixir-format
 msgid "Help build the movement for an AI pause"
-msgstr "Aidez à bâtir le mouvement pour une pause de l’IA"
+msgstr "Aidez à bâtir le mouvement pour une pause de l’IA"
 
 #: lib/pauseai_ca_web/live/donation_page_live.ex:950
 #, elixir-autogen, elixir-format
@@ -13370,3 +13375,8 @@ msgstr "La question et l’historique conservés seront transmis avec les consig
 #, elixir-autogen, elixir-format
 msgid "Confirm that you reviewed the displayed question and input review results."
 msgstr "Confirmez que vous avez examiné la question affichée et les résultats du contrôle de la demande."
+
+#, elixir-autogen, elixir-format
+msgctxt "header donation link"
+msgid "Donate"
+msgstr "Donner"

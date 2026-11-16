@@ -64,23 +64,23 @@ defmodule PauseAiCaWeb.CampaignCountdown do
             class={
               if @compact,
                 do:
-                  "inline-flex min-w-7 flex-col items-center rounded bg-stone-950 px-1 py-0.5 text-center text-white",
+                  "inline-flex shrink-0 items-center whitespace-nowrap rounded bg-stone-950 px-1 py-0.5 text-center text-white",
                 else:
                   "flex min-w-0 flex-1 flex-col rounded-md bg-stone-950 px-1.5 py-2 text-center text-white"
             }
           >
             <span
               data-countdown-unit={unit}
+              data-countdown-suffix={if @compact, do: short_unit(unit)}
               class={
                 if @compact,
                   do: "text-sm font-bold leading-4",
                   else: "font-heading text-2xl font-bold tabular-nums sm:text-3xl"
               }
             >
-              {Map.fetch!(@state.parts, unit) |> Integer.to_string() |> String.pad_leading(2, "0")}
+              {display_unit(Map.fetch!(@state.parts, unit), unit, @compact)}
             </span>
-            <span :if={@compact} aria-hidden="true" class="text-[9px] leading-3">{short_unit(unit)}</span>
-            <span class={if @compact, do: "sr-only", else: "mt-1 text-[10px]"}>{label}</span>
+            <span :if={!@compact} class="mt-1 text-[10px]">{label}</span>
           </span>
         </span>
         <span class={if @compact, do: "sr-only", else: "mt-2 block text-xs"}>
@@ -117,7 +117,7 @@ defmodule PauseAiCaWeb.CampaignCountdown do
               this.el.setAttribute('aria-label', ended ? this.el.dataset.labelEnded : selected.map(unit => `${parts[unit]} ${this.el.dataset['label' + unit[0].toUpperCase() + unit.slice(1)]}`).join(' '))
               for (const [unit, value] of Object.entries(parts)) {
                 const node = this.el.querySelector(`[data-countdown-unit="${unit}"]`)
-                const text = String(value).padStart(2, '0')
+                const text = compact ? `${value}${node.dataset.countdownSuffix}` : String(value).padStart(2, '0')
                 if (node.textContent.trim() !== text) node.textContent = text
               }
               if (ended && this.interval) { clearInterval(this.interval); this.interval = null }
@@ -137,6 +137,11 @@ defmodule PauseAiCaWeb.CampaignCountdown do
     </span>
     """
   end
+
+  defp display_unit(value, unit, true), do: "#{value}#{short_unit(unit)}"
+
+  defp display_unit(value, _unit, false),
+    do: value |> Integer.to_string() |> String.pad_leading(2, "0")
 
   defp unit_label(:days), do: gettext("days")
   defp unit_label(:hours), do: gettext("hours")
