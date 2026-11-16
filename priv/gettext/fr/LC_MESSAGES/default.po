@@ -487,11 +487,6 @@ msgstr "Paramètres"
 msgid "Should we slow AI down?"
 msgstr "Faut-il ralentir l'IA?"
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:91
-#, elixir-autogen, elixir-format
-msgid "Show my path"
-msgstr "Mon parcours"
-
 #: lib/pauseai_ca_web/live/mp_guide_component.ex:191
 #: lib/pauseai_ca_web/live/user_live/login.ex:100
 #: lib/pauseai_ca_web/live/user_live/login.ex:136
@@ -741,7 +736,7 @@ msgstr "fermer"
 msgid "en-CA"
 msgstr "fr-CA"
 
-#: lib/pauseai_ca_web/controllers/page_html.ex:98
+#: lib/pauseai_ca_web/controllers/page_html.ex:100
 #, elixir-autogen, elixir-format
 msgid "Agree"
 msgstr "Plutôt"
@@ -761,7 +756,7 @@ msgstr "Bilingue"
 msgid "Contacted a representative"
 msgstr "Contacté une personne élue"
 
-#: lib/pauseai_ca_web/controllers/page_html.ex:96
+#: lib/pauseai_ca_web/controllers/page_html.ex:98
 #, elixir-autogen, elixir-format
 msgid "Disagree"
 msgstr "Peu"
@@ -801,7 +796,7 @@ msgstr "Rejoint PauseIA"
 msgid "Met a representative"
 msgstr "Rencontré une personne élue"
 
-#: lib/pauseai_ca_web/controllers/page_html.ex:97
+#: lib/pauseai_ca_web/controllers/page_html.ex:99
 #, elixir-autogen, elixir-format
 msgid "Mixed"
 msgstr "Mitigé"
@@ -846,12 +841,12 @@ msgstr "Sénat"
 msgid "Signed the PauseAI statement"
 msgstr "Signé la déclaration"
 
-#: lib/pauseai_ca_web/controllers/page_html.ex:99
+#: lib/pauseai_ca_web/controllers/page_html.ex:101
 #, elixir-autogen, elixir-format
 msgid "Strongly agree"
 msgstr "Tout à fait"
 
-#: lib/pauseai_ca_web/controllers/page_html.ex:95
+#: lib/pauseai_ca_web/controllers/page_html.ex:97
 #, elixir-autogen, elixir-format
 msgid "Strongly disagree"
 msgstr "Pas du tout"
@@ -897,7 +892,7 @@ msgstr "Comprendre une pause"
 msgid "Understand existential risk"
 msgstr "Comprendre le risque existentiel"
 
-#: lib/pauseai_ca_web/controllers/page_html.ex:94
+#: lib/pauseai_ca_web/controllers/page_html.ex:96
 #, elixir-autogen, elixir-format
 msgid "Unsure"
 msgstr "Je ne sais pas"
@@ -1819,7 +1814,7 @@ msgstr "Environ combien de personnes sont venues?"
 msgid "Roughly how many people were there?"
 msgstr "Environ combien de personnes étaient présentes?"
 
-#: lib/pauseai_ca_web/controllers/page_html.ex:59
+#: lib/pauseai_ca_web/controllers/page_html.ex:61
 #, elixir-autogen, elixir-format
 msgid "Suggested first"
 msgstr "À lire en premier"
@@ -13383,3 +13378,8 @@ msgstr "Connexion"
 msgctxt "header donation link"
 msgid "Donate"
 msgstr "Donner"
+
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:91
+#, elixir-autogen, elixir-format
+msgid "Show my path"
+msgstr "Mon parcours"
