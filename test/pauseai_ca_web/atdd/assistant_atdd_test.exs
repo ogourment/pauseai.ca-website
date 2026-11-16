@@ -99,7 +99,7 @@ if System.get_env("ATDD") == "true" do
       %{
         id: "ASSIST-EXCHANGE-01-en",
         title: "Inspect a held exchange, confirm its release and show local activity times",
-        roles: ["Superadmin requester", "Other superadmin", "Revoked requester"],
+        roles: ["Requester", "Superadmin reviewer", "Revoked reviewer"],
         language: "English",
         device: "Desktop",
         source_file: __ENV__.file
@@ -107,7 +107,7 @@ if System.get_env("ATDD") == "true" do
       %{
         id: "ASSIST-EXCHANGE-01-fr",
         title: "Inspect a held exchange, confirm its release and show local activity times",
-        roles: ["Superadmin requester", "Other superadmin", "Revoked requester"],
+        roles: ["Requester", "Superadmin reviewer", "Revoked reviewer"],
         language: "French",
         device: "Phone",
         source_file: __ENV__.file
@@ -697,7 +697,7 @@ if System.get_env("ATDD") == "true" do
 
         browser =
           c.conn
-          |> login(c.admin)
+          |> login(c.other)
           |> visit("/admin/assistant/activity?locale=#{locale}")
           |> connected()
           |> capture(
@@ -778,6 +778,7 @@ if System.get_env("ATDD") == "true" do
           |> connected()
           |> assert_has("#assistant-human-review-receipt", text: "Reviewed this synthetic answer")
           |> refute_has("#assistant-review-approve")
+          |> switch_browser_identity(&login(&1, c.admin))
           |> visit("/admin/contacts?locale=#{locale}")
           |> connected()
           |> click_button("#site-assistant-launcher", "Assistant")
@@ -800,17 +801,17 @@ if System.get_env("ATDD") == "true" do
           |> switch_browser_identity(&login(&1, c.other))
           |> visit(path)
           |> connected()
-          |> assert_has("#assistant-exchange-error",
-            text: tr(locale, "This exchange is available to the administrator who requested it.")
+          |> assert_has("#assistant-review-answer",
+            text: "Use the contact filters to choose a city."
           )
-          |> refute_has("#assistant-review-answer")
+          |> assert_has("#assistant-human-review-receipt", text: "Reviewed this synthetic answer")
           |> refute_has("#assistant-review-approve")
           |> capture(
             id,
-            "Another administrator retains metadata access",
-            "A different signed-in administrator",
-            "Open the same protected request link",
-            "The conversation owner's retained content stays private. This account sees activity metadata and cannot approve the answer."
+            "Superadmin review receipt survives identity changes",
+            "Requester conversation history",
+            "Sign in as the reviewing superadmin; open the protected request link",
+            "The superadmin can review another requester's saved exchange and durable approval."
           )
 
         second_reference = Ecto.UUID.generate()
@@ -848,7 +849,7 @@ if System.get_env("ATDD") == "true" do
           |> capture(
             id,
             "Revoked access denies the pending confirmation",
-            "An owner's already-open confirmation",
+            "A superadmin's already-open confirmation",
             "Revoke the role in the synthetic fixture; Confirm approval",
             "Fresh authorization redirects the revoked account and the second answer stays withheld."
           )

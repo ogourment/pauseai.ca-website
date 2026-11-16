@@ -120,20 +120,18 @@ defmodule PauseAiCa.Assistant.RequestReview do
     ]
   end
 
-  defp authorize(scope, _action, actor) do
-    if scope.user.id == actor do
-      authorized =
-        Repo.all(
-          from u in Accounts.User,
-            where: u.id == ^actor and u.superadmin == true and not is_nil(u.confirmed_at),
-            lock: "FOR SHARE",
-            select: u.id
-        )
+  defp authorize(scope, _action, _requester) do
+    reviewer = scope.user.id
 
-      if authorized == [actor], do: :ok, else: {:error, :forbidden}
-    else
-      {:error, :forbidden}
-    end
+    authorized =
+      Repo.all(
+        from u in Accounts.User,
+          where: u.id == ^reviewer and u.superadmin == true and not is_nil(u.confirmed_at),
+          lock: "FOR SHARE",
+          select: u.id
+      )
+
+    if authorized == [reviewer], do: :ok, else: {:error, :forbidden}
   end
 
   defp policy_binding,

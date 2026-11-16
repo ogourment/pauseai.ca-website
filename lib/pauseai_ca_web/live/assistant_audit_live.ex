@@ -155,7 +155,7 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
                exchange: nil,
                exchange_loading: false,
                exchange_error:
-                 gettext("This exchange is available to the administrator who requested it.")
+                 gettext("Superadmin permission is required to review this exchange.")
              )}
 
           _ ->

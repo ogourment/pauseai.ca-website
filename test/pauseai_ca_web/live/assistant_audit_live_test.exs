@@ -471,29 +471,29 @@ defmodule PauseAiCaWeb.AssistantAuditLiveTest do
     refute_receive {:assistant_generated, _, _}
   end
 
-  test "another administrator sees metadata while the retained exchange stays requester-private",
-       c do
-    {reference, _} = held_exchange(c)
+  test "a different superadmin reviews and approves the requester's retained answer", c do
+    {reference, conversation} = held_exchange(c)
+    reviewer_scope = Accounts.Scope.for_user(c.other)
+    assert {:ok, review} = PauseAiCa.Assistant.RequestReview.read(reviewer_scope, reference)
+    assert review.actor_id == c.admin.id
+
+    assert {:ok, confirmation} =
+             PauseAiCa.Assistant.RequestReview.confirmation(reviewer_scope, review, :approve)
+
+    assert {:ok, approved} =
+             PauseAiCa.Assistant.RequestReview.decide(
+               reviewer_scope,
+               reference,
+               confirmation.token,
+               "Superadmin reviewed this answer"
+             )
+
+    assert approved.status == :approved
+    assert {:ok, [_, _]} = Assistant.history(c.scope, conversation)
 
     assert {:error, :forbidden} =
-             PauseAiCa.Assistant.RequestReview.read(Accounts.Scope.for_user(c.other), reference)
+             PauseAiCa.Assistant.RequestReview.read(Accounts.Scope.for_user(c.member), reference)
 
-    {:ok, view, _} =
-      live(
-        log_in_user(c.conn, c.other),
-        "/admin/assistant/activity/requests/#{reference}?locale=en"
-      )
-
-    render_async(view)
-
-    assert has_element?(
-             view,
-             "#assistant-exchange-error",
-             "This exchange is available to the administrator who requested it."
-           )
-
-    refute has_element?(view, "#assistant-review-answer")
-    refute has_element?(view, "#assistant-review-approve")
     refute_receive {:assistant_generated, _, _}
   end
 
