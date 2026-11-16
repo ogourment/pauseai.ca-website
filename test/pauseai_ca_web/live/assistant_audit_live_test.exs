@@ -544,6 +544,179 @@ defmodule PauseAiCaWeb.AssistantAuditLiveTest do
     refute_receive {:assistant_generated, _, _}
   end
 
+  test "superadmin approves another requester's input and generates its frozen turn once", c do
+    config =
+      Keyword.put(
+        c.config,
+        :safety,
+        Keyword.put(
+          c.config[:safety],
+          :jev,
+          {PauseAiCa.AssistantFixtures.HeldInput, [api_key: "synthetic-review"]}
+        )
+      )
+
+    assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+    assert {:ok, conversation} = Assistant.conversation(c.scope)
+
+    assert {:ok, _} =
+             Assistant.run(
+               c.scope,
+               Ecto.UUID.generate(),
+               "Find local-group candidates",
+               conversation
+             )
+
+    assert_receive {:assistant_generated, _, _}
+    Application.put_env(:pauseai_ca, :agent_assistant, config)
+    reference = Ecto.UUID.generate()
+
+    assert {:error, :input_safety_review_required} =
+             Assistant.run(c.scope, reference, "show me", conversation)
+
+    refute_receive {:assistant_generated, _, _}
+
+    {:ok, view, _} =
+      live(
+        log_in_user(c.conn, c.other),
+        "/admin/assistant/activity/requests/#{reference}?locale=en"
+      )
+
+    render_async(view)
+    assert has_element?(view, "#assistant-review-approve", "Approve request and generate answer")
+    view |> element("#assistant-review-approve") |> render_click()
+    assert has_element?(view, "#assistant-review-confirmation", "requester's credits")
+
+    view
+    |> form("#assistant-review-confirmation", review: %{confirmed: "true"})
+    |> render_submit()
+
+    render_async(view)
+    assert_receive {:assistant_generated, generated, _}
+    assert generated["text"] == "show me"
+    assert Jason.encode!(generated["context"]) =~ "Find local-group candidates"
+    assert {:ok, [_, _, question, answer]} = Assistant.history(c.scope, conversation)
+    assert question.text == "show me"
+    assert answer.text == "Use the contact filters to choose a city."
+
+    assert {:ok, child} =
+             PauseAiCa.Assistant.RequestReview.resume(Accounts.Scope.for_user(c.other), reference)
+
+    assert child.status == :released
+    refute_receive {:assistant_generated, _, _}
+    assert {:ok, [_, _, _, _]} = Assistant.history(c.scope, conversation)
+  end
+
+  test "approved input still holds a generated answer that needs output review", c do
+    config =
+      Keyword.put(
+        c.config,
+        :safety,
+        Keyword.put(
+          c.config[:safety],
+          :jev,
+          {PauseAiCa.AssistantFixtures.HeldInput, [api_key: "synthetic-review"]}
+        )
+      )
+
+    Application.put_env(:pauseai_ca, :agent_assistant, config)
+    assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+    assert {:ok, conversation} = Assistant.conversation(c.scope)
+    reference = Ecto.UUID.generate()
+
+    assert {:error, :input_safety_review_required} =
+             Assistant.run(c.scope, reference, "show me", conversation)
+
+    reviewer = Accounts.Scope.for_user(c.other)
+    assert {:ok, review} = PauseAiCa.Assistant.RequestReview.read(reviewer, reference)
+
+    assert {:ok, confirmation} =
+             PauseAiCa.Assistant.RequestReview.confirmation(reviewer, review, :approve)
+
+    config =
+      Keyword.put(
+        config,
+        :safety,
+        Keyword.put(
+          config[:safety],
+          :jev,
+          {PauseAiCa.AssistantFixtures.HeldOutput, [api_key: "synthetic-review"]}
+        )
+      )
+
+    Application.put_env(:pauseai_ca, :agent_assistant, config)
+
+    assert {:ok, child} =
+             PauseAiCa.Assistant.RequestReview.decide(
+               reviewer,
+               reference,
+               confirmation.token,
+               "Reviewed input"
+             )
+
+    assert child.phase == :output and child.status == :held
+    assert child.approvable
+    assert_receive {:assistant_generated, _, _}
+    assert {:ok, []} = Assistant.history(c.scope, conversation)
+
+    assert {:ok, confirmation} =
+             PauseAiCa.Assistant.RequestReview.confirmation(reviewer, child, :approve)
+
+    assert {:ok, %{status: :approved}} =
+             PauseAiCa.Assistant.RequestReview.decide(
+               reviewer,
+               child.request_ref,
+               confirmation.token,
+               "Reviewed output"
+             )
+
+    assert {:ok, [_, _]} = Assistant.history(c.scope, conversation)
+    refute_receive {:assistant_generated, _, _}
+  end
+
+  test "input approval cannot generate after reviewer revocation", c do
+    config =
+      Keyword.put(
+        c.config,
+        :safety,
+        Keyword.put(
+          c.config[:safety],
+          :jev,
+          {PauseAiCa.AssistantFixtures.HeldInput, [api_key: "synthetic-review"]}
+        )
+      )
+
+    Application.put_env(:pauseai_ca, :agent_assistant, config)
+    assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+    assert {:ok, conversation} = Assistant.conversation(c.scope)
+    reference = Ecto.UUID.generate()
+
+    assert {:error, :input_safety_review_required} =
+             Assistant.run(c.scope, reference, "show me", conversation)
+
+    reviewer = Accounts.Scope.for_user(c.other)
+    assert {:ok, review} = PauseAiCa.Assistant.RequestReview.read(reviewer, reference)
+
+    assert {:ok, _} =
+             PhoenixAgentAssistant.RequestReview.decide(
+               Assistant.store(),
+               reference,
+               c.other.id,
+               :approve,
+               "Reviewed input",
+               review.snapshot,
+               Assistant.configuration()[:audit_keys],
+               authorize: fn _, _ -> :ok end,
+               anchor: fn _ -> :ok end,
+               expires_at: DateTime.add(DateTime.utc_now(), 300)
+             )
+
+    Repo.update!(Ecto.Changeset.change(c.other, superadmin: false))
+    assert {:error, :forbidden} = PauseAiCa.Assistant.RequestReview.resume(reviewer, reference)
+    refute_receive {:assistant_generated, _, _}
+    assert {:ok, []} = Assistant.history(c.scope, conversation)
+  end
+
   defp held_exchange(c) do
     config =
       Keyword.put(

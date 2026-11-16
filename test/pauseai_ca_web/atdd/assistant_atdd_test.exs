@@ -97,6 +97,22 @@ if System.get_env("ATDD") == "true" do
         source_file: __ENV__.file
       },
       %{
+        id: "ASSIST-INPUT-01-en",
+        title: "Approve a held input and generate its original contextual turn once",
+        roles: ["Requester", "Superadmin reviewer", "Revoked reviewer"],
+        language: "English",
+        device: "Desktop",
+        source_file: __ENV__.file
+      },
+      %{
+        id: "ASSIST-INPUT-01-fr",
+        title: "Approve a held input and generate its original contextual turn once",
+        roles: ["Requester", "Superadmin reviewer", "Revoked reviewer"],
+        language: "French",
+        device: "Phone",
+        source_file: __ENV__.file
+      },
+      %{
         id: "ASSIST-EXCHANGE-01-en",
         title: "Inspect a held exchange, confirm its release and show local activity times",
         roles: ["Requester", "Superadmin reviewer", "Revoked reviewer"],
@@ -861,6 +877,188 @@ if System.get_env("ATDD") == "true" do
                    conversation,
                    config[:audit_keys]
                  )
+
+        refute_receive {:assistant_generated, _, _}
+        success(id)
+        browser
+      end
+    end
+
+    for {locale, width, height} <- [{"en", 1280, 900}, {"fr", 390, 844}] do
+      @tag screenshot: true
+      @tag browser_context_opts: [viewport: %{width: width, height: height}]
+      test "ASSIST-INPUT-01-#{locale} approve held input then generate and review its frozen context",
+           c do
+        locale = unquote(locale)
+        id = "ASSIST-INPUT-01-#{locale}"
+        config = Application.fetch_env!(:pauseai_ca, :agent_assistant)
+        assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+        assert {:ok, conversation} = Assistant.conversation(c.scope)
+
+        assert {:ok, _} =
+                 Assistant.run(
+                   c.scope,
+                   Ecto.UUID.generate(),
+                   "Find local-group candidates",
+                   conversation,
+                   locale
+                 )
+
+        assert_receive {:assistant_generated, _, _}
+
+        safety =
+          Keyword.put(
+            config[:safety],
+            :jev,
+            {AssistantFixtures.HeldInput, [api_key: "synthetic-review"]}
+          )
+
+        Application.put_env(:pauseai_ca, :agent_assistant, Keyword.put(config, :safety, safety))
+
+        browser =
+          c.conn
+          |> login(c.admin)
+          |> visit("/admin/contacts?locale=#{locale}")
+          |> connected()
+          |> click_button("#site-assistant-launcher", "Assistant")
+          |> fill_in("#site-assistant-text", tr(locale, "Message"), with: "show me")
+          |> click_button("#site-assistant-form button[type=submit]", tr(locale, "Send"))
+          |> assert_has(".paa-error",
+            text:
+              tr(
+                locale,
+                "The automatic input review held your request before answer generation. Your message is retained."
+              )
+          )
+          |> capture(
+            id,
+            "Input held with the original conversational context",
+            "Contacts → Assistant",
+            "Type show me; Send",
+            "The input-review warning retains the message and links to its protected request."
+          )
+
+        refute_receive {:assistant_generated, _, _}
+
+        evaluate(
+          browser,
+          "document.querySelector('.paa-error a').getAttribute('href')",
+          fn path -> send(self(), {:input_review_path, path}) end
+        )
+
+        assert_receive {:input_review_path, path}
+        reference = path |> URI.parse() |> Map.fetch!(:path) |> String.split("/") |> List.last()
+
+        browser =
+          browser
+          |> click_link(".paa-error a", tr(locale, "Review details"))
+          |> assert_has("#assistant-review-approve",
+            text: tr(locale, "Approve request and generate answer")
+          )
+          |> capture(
+            id,
+            "The protected input has an approval action",
+            "Input hold warning / Telegram",
+            "Review details / Open protected request review",
+            "The retained question, input scores, Approve request and generate answer, and Reject request are visible."
+          )
+          |> switch_browser_identity(&login(&1, c.other))
+          |> visit(path)
+          |> connected()
+          |> click_button(
+            "#assistant-review-approve",
+            tr(locale, "Approve request and generate answer")
+          )
+          |> assert_has("#assistant-review-confirmation",
+            text: tr(locale, "Approve this request and generate an answer?")
+          )
+          |> capture(
+            id,
+            "Confirm generation on the requester's credits",
+            "Protected held input as another superadmin",
+            "Approve request and generate answer",
+            "The confirmation discloses the frozen context/model, fresh permissions/credits and mandatory output review."
+          )
+          |> check(
+            "#assistant-review-confirmed",
+            tr(locale, "I reviewed the displayed question and input review results.")
+          )
+          |> click_button("#assistant-review-confirm", tr(locale, "Confirm approval"))
+          |> assert_has("#assistant-review-answer",
+            text: "Use the contact filters to choose a city."
+          )
+          |> assert_has("#assistant-exchange-status",
+            text: tr(locale, "The answer was released automatically."),
+            exact: true
+          )
+          |> capture(
+            id,
+            "The generated answer passed output review",
+            "Completed superadmin confirmation",
+            "Confirm approval",
+            "Exactly one fixture generation uses the frozen request. The result opens its continued request with normal output review."
+          )
+
+        assert_receive {:assistant_generated, generated, _}
+        assert generated["text"] == "show me"
+        assert Jason.encode!(generated["context"]) =~ "Find local-group candidates"
+        assert {:ok, child} = PauseAiCa.Assistant.RequestReview.resume(c.other_scope, reference)
+        assert child.status == :released
+        refute_receive {:assistant_generated, _, _}
+
+        browser =
+          browser
+          |> switch_browser_identity(&login(&1, c.admin))
+          |> visit("/admin/contacts?locale=#{locale}")
+          |> connected()
+          |> click_button("#site-assistant-launcher", "Assistant")
+          |> assert_has(".paa-message[data-role=user]", text: "show me")
+          |> capture(
+            id,
+            "Answer available to the original requester",
+            "Continued protected request",
+            "Sign in as requester → Contacts → Assistant",
+            "The original conversation contains the approved follow-up and its answer, without replaying generation."
+          )
+
+        second_reference = Ecto.UUID.generate()
+
+        assert {:error, :input_safety_review_required} =
+                 Assistant.run(
+                   c.scope,
+                   second_reference,
+                   "Show Montréal candidates",
+                   conversation,
+                   locale
+                 )
+
+        browser =
+          browser
+          |> switch_browser_identity(&login(&1, c.other))
+          |> visit("/admin/assistant/activity/requests/#{second_reference}?locale=#{locale}")
+          |> connected()
+          |> click_button(
+            "#assistant-review-approve",
+            tr(locale, "Approve request and generate answer")
+          )
+          |> check(
+            "#assistant-review-confirmed",
+            tr(locale, "I reviewed the displayed question and input review results.")
+          )
+
+        Repo.update!(Ecto.Changeset.change(c.other, superadmin: false))
+
+        browser =
+          browser
+          |> click_button("#assistant-review-confirm", tr(locale, "Confirm approval"))
+          |> assert_path("/")
+          |> capture(
+            id,
+            "Revoked reviewer cannot generate",
+            "Open input confirmation",
+            "Revoke fixture superadmin; Confirm approval",
+            "Fresh authorization denies the decision and no generation starts."
+          )
 
         refute_receive {:assistant_generated, _, _}
         success(id)

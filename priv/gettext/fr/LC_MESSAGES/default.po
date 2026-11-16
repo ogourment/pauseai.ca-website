@@ -1133,7 +1133,7 @@ msgstr "Accorder l’accès superadmin"
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:1246
 #: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:100
 #: lib/pauseai_ca_web/live/admin_interac_donations_live.ex:329
-#: lib/pauseai_ca_web/live/assistant_live.ex:822
+#: lib/pauseai_ca_web/live/assistant_live.ex:853
 #: lib/pauseai_ca_web/live/local_interest_live.ex:97
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:889
 #: lib/pauseai_ca_web/live/mp_guide_component.ex:213
@@ -1753,7 +1753,7 @@ msgstr "Action mise à jour."
 
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:878
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:924
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:671
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:749
 #: lib/pauseai_ca_web/live/dashboard_live.ex:527
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:521
 #, elixir-autogen, elixir-format
@@ -1911,7 +1911,7 @@ msgstr "Un administrateur doit vérifier cette ligne."
 msgid "Assign manager"
 msgstr "Attribuer le rôle de gestionnaire"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:823
+#: lib/pauseai_ca_web/live/assistant_live.ex:854
 #: lib/pauseai_ca_web/live/mp_guide_component.ex:214
 #: lib/pauseai_ca_web/live/volunteer_profile_live.ex:147
 #, elixir-autogen, elixir-format
@@ -2106,7 +2106,7 @@ msgstr ""
 msgid "Existing account"
 msgstr "Compte existant"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:816
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:907
 #: lib/pauseai_ca_web/live/newsletter_results_live.ex:627
 #: lib/pauseai_ca_web/live/newsletter_results_live.ex:702
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:692
@@ -2645,7 +2645,7 @@ msgstr "État"
 msgid "View batch and invitation actions"
 msgstr "Voir le lot et les actions d’invitation"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:818
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:909
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:946
 #: lib/pauseai_ca_web/live/welcome_calls_live.ex:99
 #: lib/pauseai_ca_web/live/welcome_management_live.ex:286
@@ -2659,14 +2659,14 @@ msgid "Access"
 msgstr "Accès"
 
 #: lib/pauseai_ca_web/components/layouts.ex:194
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:420
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:439
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:455
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:474
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:589
 #, elixir-autogen, elixir-format
 msgid "Account"
 msgstr "Compte"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:759
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:850
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:961
 #: lib/pauseai_ca_web/live/newsletter_results_live.ex:713
 #, elixir-autogen, elixir-format
@@ -3894,8 +3894,8 @@ msgid "Account and Brevo history"
 msgstr "Compte et historique Brevo"
 
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:1418
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:410
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:440
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:445
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:475
 #: lib/pauseai_ca_web/live/incubator_management_live.ex:718
 #: lib/pauseai_ca_web/live/tasks_live.ex:75
 #: lib/pauseai_ca_web/live/tasks_live.ex:414
@@ -5528,7 +5528,7 @@ msgstr "Opinion"
 msgid "Optional image URL"
 msgstr "URL d’image facultative"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:514
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:549
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:231
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:439
 #, elixir-autogen, elixir-format
@@ -5992,7 +5992,7 @@ msgstr "Approuver le lot"
 msgid "Approve the reviewed batch before sending."
 msgstr "Approuvez le lot révisé avant de l’envoyer."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:810
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:901
 #: lib/pauseai_ca_web/live/incubators_live.ex:240
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:588
 #, elixir-autogen, elixir-format
@@ -6168,7 +6168,7 @@ msgstr ""
 "La sélection contient un désabonnement ou une adresse bloquée. Vérifiez les "
 "destinataires."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:764
+#: lib/pauseai_ca_web/live/assistant_live.ex:795
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:1327
 #, elixir-autogen, elixir-format
 msgid "Send"
@@ -6854,7 +6854,7 @@ msgstr "Enregistrez ce brouillon avant de créer une autre édition."
 msgid "The last Markdown link is incomplete. Finish its URL and closing parenthesis before preparing a batch."
 msgstr "Le dernier lien Markdown est incomplet. Terminez son URL et fermez la parenthèse avant de préparer un lot."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:817
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:908
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:1047
 #: lib/pauseai_ca_web/live/tasks_live.ex:298
 #: lib/pauseai_ca_web/live/welcome_management_live.ex:294
@@ -7294,7 +7294,7 @@ msgstr "Ouvrez un envoi pour consulter ses destinataires enregistrés, son état
 msgid "Partial report: the provider page limit was reached. Counts are lower bounds."
 msgstr "Rapport partiel : la limite de pages du fournisseur est atteinte. Les nombres sont des minimums."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:819
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:910
 #: lib/pauseai_ca_web/live/newsletter_results_live.ex:699
 #: lib/pauseai_ca_web/live/slack_community_live.ex:337
 #: lib/pauseai_ca_web/live/welcome_calls_live.ex:102
@@ -8446,7 +8446,7 @@ msgstr "Cette fiche a changé. Rechargez la page avant de réessayer."
 msgid "This reference is invalid, expired or already used. Ask the applicant for a new one."
 msgstr "Cette référence est invalide, expirée ou déjà utilisée. Demandez-en une nouvelle à la personne."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:769
+#: lib/pauseai_ca_web/live/assistant_live.ex:800
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:242
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:243
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:244
@@ -9076,7 +9076,7 @@ msgstr "Saisissez un message de 4 000 caractères au maximum."
 msgid "Get original link"
 msgstr "Obtenir le lien d’origine"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:772
+#: lib/pauseai_ca_web/live/assistant_live.ex:803
 #: lib/pauseai_ca_web/live/slack_community_live.ex:500
 #, elixir-autogen
 msgid "Message"
@@ -10744,7 +10744,7 @@ msgstr "Nom indiqué sur le virement"
 
 #: lib/pauseai_ca_web/components/interac_declaration_form.ex:91
 #: lib/pauseai_ca_web/live/admin_interac_donations_live.ex:202
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:767
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:858
 #, elixir-autogen, elixir-format
 msgid "No"
 msgstr "Non"
@@ -10848,7 +10848,7 @@ msgstr "Voir le compte associé"
 
 #: lib/pauseai_ca_web/components/interac_declaration_form.ex:91
 #: lib/pauseai_ca_web/live/admin_interac_donations_live.ex:202
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:766
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:857
 #, elixir-autogen, elixir-format
 msgid "Yes"
 msgstr "Oui"
@@ -11021,7 +11021,7 @@ msgstr "Les filtres géographiques précis et enregistrés remplacent la région
 msgid "This saved geography filter is unavailable. Choose another filter or clear it."
 msgstr "Ce filtre géographique enregistré n’est plus disponible. Choisissez-en un autre ou retirez-le."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:760
+#: lib/pauseai_ca_web/live/assistant_live.ex:791
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:12
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:131
 #: lib/pauseai_ca_web/navigation.ex:20
@@ -11029,7 +11029,7 @@ msgstr "Ce filtre géographique enregistré n’est plus disponible. Choisissez-
 msgid "Assistant"
 msgstr "Assistant"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:765
+#: lib/pauseai_ca_web/live/assistant_live.ex:796
 #, elixir-autogen, elixir-format
 msgid "Close assistant"
 msgstr "Fermer l’assistant"
@@ -11044,12 +11044,12 @@ msgstr "Désactiver l’assistant"
 msgid "Enable assistant"
 msgstr "Activer l’assistant"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:767
+#: lib/pauseai_ca_web/live/assistant_live.ex:798
 #, elixir-autogen, elixir-format
 msgid "Expand assistant"
 msgstr "Agrandir l’assistant"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:757
+#: lib/pauseai_ca_web/live/assistant_live.ex:788
 #, elixir-autogen, elixir-format
 msgid "Fast"
 msgstr "Rapide"
@@ -11064,12 +11064,12 @@ msgstr "Modèles Rapide, Normal et Élevé"
 msgid "Help organizers use the website, review information and prepare their next action."
 msgstr "Aider les responsables à utiliser le site, à examiner les informations et à préparer leur prochaine action."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:759
+#: lib/pauseai_ca_web/live/assistant_live.ex:790
 #, elixir-autogen, elixir-format
 msgid "High"
 msgstr "Élevé"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:779
+#: lib/pauseai_ca_web/live/assistant_live.ex:810
 #, elixir-autogen, elixir-format
 msgid "How can I help?"
 msgstr "Comment puis-je vous aider?"
@@ -11086,12 +11086,12 @@ msgstr "Vérification indépendante du journal"
 msgid "Jev safety review"
 msgstr "Vérification de sécurité Jev"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:766
+#: lib/pauseai_ca_web/live/assistant_live.ex:797
 #, elixir-autogen, elixir-format
 msgid "Minimize assistant"
 msgstr "Réduire l’assistant"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:768
+#: lib/pauseai_ca_web/live/assistant_live.ex:799
 #, elixir-autogen, elixir-format
 msgid "Mode"
 msgstr "Mode"
@@ -11101,7 +11101,7 @@ msgstr "Mode"
 msgid "Moderation checks"
 msgstr "Vérifications de modération"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:758
+#: lib/pauseai_ca_web/live/assistant_live.ex:789
 #, elixir-autogen, elixir-format
 msgid "Normal"
 msgstr "Normal"
@@ -11158,12 +11158,12 @@ msgstr "Limites de coût vérifiées"
 msgid "Verified operator alerts"
 msgstr "Alertes vérifiées"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:773
+#: lib/pauseai_ca_web/live/assistant_live.ex:804
 #, elixir-autogen, elixir-format
 msgid "Working…"
 msgstr "En cours…"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:672
+#: lib/pauseai_ca_web/live/assistant_live.ex:703
 #, elixir-autogen, elixir-format
 msgid "%{remaining} / %{limit} tokens remaining today"
 msgstr "%{remaining} / %{limit} jetons restants aujourd’hui"
@@ -11185,8 +11185,8 @@ msgstr "Limite quotidienne de jetons"
 msgid "Default per admin: %{limit} tokens/day"
 msgstr "Valeur par défaut : %{limit} jetons par jour et par administrateur"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:538
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:754
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:573
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:845
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:208
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:231
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:242
@@ -11194,18 +11194,18 @@ msgstr "Valeur par défaut : %{limit} jetons par jour et par administrateur"
 msgid "Input"
 msgstr "Entrée"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:763
+#: lib/pauseai_ca_web/live/assistant_live.ex:794
 #, elixir-autogen, elixir-format
 msgid "Move assistant with arrow keys"
 msgstr "Déplacer l’assistant avec les touches fléchées"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:762
+#: lib/pauseai_ca_web/live/assistant_live.ex:793
 #, elixir-autogen, elixir-format
 msgid "New conversation"
 msgstr "Nouvelle conversation"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:539
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:755
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:574
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:846
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:209
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:233
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:243
@@ -11220,7 +11220,7 @@ msgstr "Sortie"
 msgid "Remaining"
 msgstr "Restants"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:814
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:905
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:213
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:236
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:244
@@ -11255,8 +11255,8 @@ msgid "Verified website feature catalogue"
 msgstr "Catalogue vérifié des fonctionnalités du site"
 
 #: lib/pauseai_ca_web/live/assistant_audit_live.ex:18
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:366
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:371
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:401
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:406
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:141
 #, elixir-autogen, elixir-format
 msgid "Activity & security"
@@ -11267,181 +11267,181 @@ msgstr "Activité et sécurité"
 msgid "Activity cannot be loaded securely."
 msgstr "L’activité ne peut pas être chargée de manière sécurisée."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:802
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:893
 #, elixir-autogen, elixir-format
 msgid "Alert intake outcome"
 msgstr "Résultat de réception de l’alerte"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:423
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:458
 #, elixir-autogen, elixir-format
 msgid "All accounts"
 msgstr "Tous les comptes"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:401
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:413
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:436
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:448
 #, elixir-autogen, elixir-format
 msgid "All activity"
 msgstr "Toutes les activités"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:803
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:894
 #, elixir-autogen, elixir-format
 msgid "Assistant setting changed"
 msgstr "Paramètre de l’assistant modifié"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:808
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:899
 #, elixir-autogen, elixir-format
 msgid "Audit accessed"
 msgstr "Journal consulté"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:794
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:885
 #, elixir-autogen, elixir-format
 msgid "Budget reserved"
 msgstr "Budget réservé"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:806
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:897
 #, elixir-autogen, elixir-format
 msgid "Conversation started"
 msgstr "Conversation commencée"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:813
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:904
 #, elixir-autogen, elixir-format
 msgid "Held"
 msgstr "Retenu"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:804
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:895
 #, elixir-autogen, elixir-format
 msgid "Mode changed"
 msgstr "Mode modifié"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:474
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:509
 #, elixir-autogen, elixir-format
 msgid "Newest"
 msgstr "Plus récentes"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:450
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:485
 #, elixir-autogen, elixir-format
 msgid "No matching activity in the remaining records."
 msgstr "Aucune activité correspondante dans les enregistrements restants."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:449
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:484
 #, elixir-autogen, elixir-format
 msgid "No matching activity on this page. Continue to search older records."
 msgstr "Aucune activité correspondante sur cette page. Poursuivez la recherche parmi les enregistrements plus anciens."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:481
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:516
 #, elixir-autogen, elixir-format
 msgid "Older"
 msgstr "Plus anciennes"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:801
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:892
 #, elixir-autogen, elixir-format
 msgid "Operator alert queued"
 msgstr "Alerte à l’opérateur mise en file"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:441
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:476
 #, elixir-autogen, elixir-format
 msgid "Outcome"
 msgstr "Résultat"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:373
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:408
 #, elixir-autogen, elixir-format
 msgid "Protected activity metadata. Message content is not displayed."
 msgstr "Métadonnées d’activité protégées. Le contenu des messages n’est pas affiché."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:821
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:912
 #, elixir-autogen, elixir-format
 msgid "Recorded"
 msgstr "Enregistré"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:809
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:900
 #, elixir-autogen, elixir-format
 msgid "Recorded activity"
 msgstr "Activité enregistrée"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:812
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:903
 #, elixir-autogen, elixir-format
 msgid "Released"
 msgstr "Communiqué"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:800
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:891
 #, elixir-autogen, elixir-format
 msgid "Request finished"
 msgstr "Demande terminée"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:799
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:890
 #, elixir-autogen, elixir-format
 msgid "Request held"
 msgstr "Demande retenue"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:793
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:884
 #, elixir-autogen, elixir-format
 msgid "Request recorded"
 msgstr "Demande enregistrée"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:795
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:886
 #, elixir-autogen, elixir-format
 msgid "Response recorded"
 msgstr "Réponse enregistrée"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:797
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:888
 #, elixir-autogen, elixir-format
 msgid "Response released"
 msgstr "Réponse communiquée"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:798
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:889
 #, elixir-autogen, elixir-format
 msgid "Safety review"
 msgstr "Vérification de sécurité"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:820
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:911
 #, elixir-autogen, elixir-format
 msgid "Submitting"
 msgstr "Transmission en cours"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:815
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:906
 #, elixir-autogen, elixir-format
 msgid "Succeeded"
 msgstr "Réussi"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:453
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:488
 #, elixir-autogen, elixir-format
 msgid "This page searched a bounded set of protected records. More records remain."
 msgstr "Cette page a parcouru un ensemble limité d’enregistrements protégés. D’autres enregistrements restent à parcourir."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:438
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:473
 #, elixir-autogen, elixir-format
 msgid "Time"
 msgstr "Heure"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:805
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:896
 #, elixir-autogen, elixir-format
 msgid "Token limit changed"
 msgstr "Limite de jetons modifiée"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:442
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:477
 #, elixir-autogen, elixir-format
 msgid "Tokens"
 msgstr "Jetons"
 
 #: lib/pauseai_ca_web/live/assistant_audit_live.ex:55
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:424
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:493
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:574
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:459
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:528
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:609
 #, elixir-autogen, elixir-format
 msgid "Unlisted account"
 msgstr "Compte non répertorié"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:456
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:491
 #, elixir-autogen, elixir-format
 msgid "About this view"
 msgstr "À propos de cette vue"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:370
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:405
 #, elixir-autogen, elixir-format
 msgid "Back to assistant"
 msgstr "Retour à l’assistant"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:458
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:493
 #, elixir-autogen, elixir-format
 msgid "Up to 100 recorded accounts appear in the filter, including former administrators. — means token usage is unknown."
 msgstr "Le filtre présente au plus 100 comptes enregistrés, y compris les anciens administrateurs. — indique une utilisation de jetons inconnue."
@@ -11516,17 +11516,17 @@ msgstr "Déconnectez-vous pour choisir une autre adresse courriel."
 msgid "Use a different account"
 msgstr "Utiliser un autre compte"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:622
+#: lib/pauseai_ca_web/live/assistant_live.ex:653
 #, elixir-autogen
 msgid "Usage limits are temporarily unavailable. Your draft is retained."
 msgstr "Les limites d’utilisation sont temporairement indisponibles. Votre brouillon est conservé."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:705
+#: lib/pauseai_ca_web/live/assistant_live.ex:736
 #, elixir-autogen
 msgid "USD %{remaining} available for reservations; USD %{turn} reserved per request"
 msgstr "%{remaining} USD disponibles pour les réservations ; %{turn} USD réservés par requête"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:679
+#: lib/pauseai_ca_web/live/assistant_live.ex:710
 #, elixir-autogen
 msgid "Budget resets on %{date} at 00:00 UTC"
 msgstr "Le budget est réinitialisé le %{date} à 00:00 UTC"
@@ -11616,17 +11616,17 @@ msgid_plural "Provider report: USD %{amount} (%{count} stages)"
 msgstr[0] "Valeur déclarée par le fournisseur : USD %{amount} (%{count} étape)"
 msgstr[1] "Valeur déclarée par le fournisseur : USD %{amount} (%{count} étapes)"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:636
+#: lib/pauseai_ca_web/live/assistant_live.ex:667
 #, elixir-autogen
 msgid "Choose an available mode. Higher modes are paused near a usage limit."
 msgstr "Choisissez un mode disponible. Les modes supérieurs sont suspendus à l’approche d’une limite d’usage."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:694
+#: lib/pauseai_ca_web/live/assistant_live.ex:725
 #, elixir-autogen
 msgid "USD %{remaining} remaining today; USD %{pending} held for pending usage"
 msgstr "USD %{remaining} disponibles aujourd’hui ; USD %{pending} réservés pour l’usage à confirmer"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:699
+#: lib/pauseai_ca_web/live/assistant_live.ex:730
 #, elixir-autogen
 msgid "USD %{remaining} of assistant allocation available"
 msgstr "USD %{remaining} disponibles dans l’allocation de l’assistant"
@@ -11641,134 +11641,134 @@ msgstr "Registre des coûts par administrateur"
 msgid "Designated assistant credit allocation"
 msgstr "Allocation de crédits réservée à l’assistant"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:757
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:848
 #, elixir-autogen, elixir-format
 msgid "Allowed"
 msgstr "Autorisé"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:778
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:869
 #, elixir-autogen, elixir-format
 msgid "Answer withheld: output review needs attention."
 msgstr "Réponse retenue : le contrôle de sortie nécessite un examen."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:781
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:872
 #, elixir-autogen, elixir-format
 msgid "Answer withheld: output safety checks blocked it."
 msgstr "Réponse retenue : les contrôles de sécurité en sortie l’ont bloquée."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:784
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:875
 #, elixir-autogen, elixir-format
 msgid "Answer withheld: output safety checks were unavailable."
 msgstr "Réponse retenue : les contrôles de sécurité en sortie étaient indisponibles."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:616
+#: lib/pauseai_ca_web/live/assistant_live.ex:647
 #, elixir-autogen, elixir-format
 msgid "Assistant credit allocation is not ready. Your draft is retained."
 msgstr "L’allocation de crédits de l’assistant n’est pas prête. Votre brouillon est conservé."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:758
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:849
 #, elixir-autogen, elixir-format
 msgid "Held for review"
 msgstr "Retenu pour examen"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:786
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:877
 #, elixir-autogen, elixir-format
 msgid "Input review needs attention."
 msgstr "Le contrôle d’entrée nécessite un examen."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:787
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:878
 #, elixir-autogen, elixir-format
 msgid "Input safety checks blocked the request."
 msgstr "Les contrôles de sécurité en entrée ont bloqué la demande."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:788
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:879
 #, elixir-autogen, elixir-format
 msgid "Input safety checks were unavailable."
 msgstr "Les contrôles de sécurité en entrée étaient indisponibles."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:379
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:414
 #, elixir-autogen, elixir-format
 msgid "Low-risk and malicious scores are independent yes-probabilities, not a combined confidence score."
 msgstr "Les scores de faible risque et de malveillance sont des probabilités indépendantes de réponse « oui », pas un score de confiance combiné."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:555
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:743
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:590
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:834
 #, elixir-autogen, elixir-format
 msgid "Low-risk yes probability"
 msgstr "Probabilité « oui » pour le faible risque"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:560
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:744
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:595
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:835
 #, elixir-autogen, elixir-format
 msgid "Malicious yes probability"
 msgstr "Probabilité « oui » pour la malveillance"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:565
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:745
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:600
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:836
 #, elixir-autogen, elixir-format
 msgid "Moderation flagged"
 msgstr "Signalement par la modération"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:807
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:898
 #, elixir-autogen, elixir-format
 msgid "Provider usage recorded"
 msgstr "Utilisation du fournisseur enregistrée"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:376
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:411
 #, elixir-autogen, elixir-format
 msgid "Request activity"
 msgstr "Activité de la demande"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:377
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:727
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:412
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:818
 #, elixir-autogen, elixir-format
 msgid "Request reference"
 msgstr "Référence de la demande"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:545
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:741
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:580
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:832
 #, elixir-autogen, elixir-format
 msgid "Review action"
 msgstr "Décision du contrôle"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:443
-#: lib/pauseai_ca_web/live/assistant_live.ex:776
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:478
+#: lib/pauseai_ca_web/live/assistant_live.ex:807
 #, elixir-autogen, elixir-format
 msgid "Review details"
 msgstr "Détails du contrôle"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:740
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:831
 #, elixir-autogen, elixir-format
 msgid "Review direction"
 msgstr "Étape du contrôle"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:550
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:742
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:585
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:833
 #, elixir-autogen, elixir-format
 msgid "Review policy"
 msgstr "Règle de contrôle"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:761
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:852
 #, elixir-autogen, elixir-format
 msgid "Strict policy"
 msgstr "Règle stricte"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:762
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:853
 #, elixir-autogen, elixir-format
 msgid "Text coaching policy"
 msgstr "Règle de conseil textuel"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:789
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:880
 #, elixir-autogen, elixir-format
 msgid "The request could not continue safely."
 msgstr "La demande n’a pas pu se poursuivre en sécurité."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:731
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:822
 #, elixir-autogen, elixir-format
 msgid "Why it was held"
 msgstr "Motif de la retenue"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:684
+#: lib/pauseai_ca_web/live/assistant_live.ex:715
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:176
 #, elixir-autogen, elixir-format
 msgid "All-provider pilot · USD %{remaining} / %{limit} remaining through %{date} UTC"
@@ -11880,41 +11880,41 @@ msgstr "Les instructions fournies avec l’application sont utilisées"
 msgid "Valid all-provider pilot ceiling"
 msgstr "Plafond d’essai tous fournisseurs valide"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:591
+#: lib/pauseai_ca_web/live/assistant_live.ex:622
 #, elixir-autogen, elixir-format
 msgid "Complete · %{count} contacts match this area."
 msgstr "Terminé · %{count} contacts correspondent à cette zone."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:824
+#: lib/pauseai_ca_web/live/assistant_live.ex:855
 #: lib/pauseai_ca_web/live/mp_guide_component.ex:194
 #: lib/pauseai_ca_web/live/mp_guide_component.ex:215
 #, elixir-autogen, elixir-format
 msgid "Exit"
 msgstr "Quitter"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:761
-#: lib/pauseai_ca_web/live/assistant_live.ex:821
+#: lib/pauseai_ca_web/live/assistant_live.ex:792
+#: lib/pauseai_ca_web/live/assistant_live.ex:852
 #, elixir-autogen, elixir-format
 msgid "Guided mode"
 msgstr "Mode guidé"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:537
-#: lib/pauseai_ca_web/live/assistant_live.ex:538
+#: lib/pauseai_ca_web/live/assistant_live.ex:568
+#: lib/pauseai_ca_web/live/assistant_live.ex:569
 #, elixir-autogen, elixir-format
 msgid "The guide could not be verified. Your message is retained."
 msgstr "Le guide n’a pas pu être vérifié. Votre message est conservé."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:549
+#: lib/pauseai_ca_web/live/assistant_live.ex:580
 #, elixir-autogen, elixir-format
 msgid "This page or your access changed. The guide stopped. Use Back or Exit."
 msgstr "Cette page ou vos droits d’accès ont changé. Le guide s’est arrêté. Revenez en arrière ou quittez le guide."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:533
+#: lib/pauseai_ca_web/live/assistant_live.ex:564
 #, elixir-autogen, elixir-format
 msgid "Your guide is ready. Use Next to continue."
 msgstr "Votre guide est prêt. Cliquez sur Suivant pour continuer."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:586
+#: lib/pauseai_ca_web/live/assistant_live.ex:617
 #, elixir-autogen, elixir-format
 msgid "Step 2 of 2 · Choose %{area} in Named areas."
 msgstr "Étape 2 sur 2 · Choisissez %{area} parmi les zones nommées."
@@ -12457,7 +12457,7 @@ msgstr "Toutes les listes"
 msgid "All types"
 msgstr "Tous les types"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:576
+#: lib/pauseai_ca_web/live/assistant_live.ex:607
 #, elixir-autogen, elixir-format
 msgid "Complete · Your newsletter draft is open for review. Nothing was sent."
 msgstr "Terminé · Le brouillon de votre infolettre est ouvert pour vérification. Aucun envoi n’a été effectué."
@@ -12500,7 +12500,7 @@ msgstr "RTA — trois premiers caractères du code postal"
 msgid "Find a list"
 msgstr "Rechercher une liste"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:805
+#: lib/pauseai_ca_web/live/assistant_live.ex:836
 #, elixir-autogen, elixir-format
 msgid "GeoNames public source · pinned 9 November 2026"
 msgstr "Source publique GeoNames · version figée au 9 novembre 2026"
@@ -12589,32 +12589,32 @@ msgstr "Données sources"
 msgid "Static"
 msgstr "Statique"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:583
+#: lib/pauseai_ca_web/live/assistant_live.ex:614
 #, elixir-autogen, elixir-format
 msgid "Step 1 of 2 · Open Contacts through the Manage menu."
 msgstr "Étape 1 sur 2 · Ouvrez Contacts depuis le menu Gestion."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:559
+#: lib/pauseai_ca_web/live/assistant_live.ex:590
 #, elixir-autogen, elixir-format
 msgid "Step 1 of 5 · Open Contacts."
 msgstr "Étape 1 sur 5 · Ouvrez Contacts."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:562
+#: lib/pauseai_ca_web/live/assistant_live.ex:593
 #, elixir-autogen, elixir-format
 msgid "Step 2 of 5 · Choose Vancouver in Cities and preview the matches."
 msgstr "Étape 2 sur 5 · Choisissez Vancouver dans Villes et vérifiez les résultats."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:565
+#: lib/pauseai_ca_web/live/assistant_live.ex:596
 #, elixir-autogen, elixir-format
 msgid "Step 3 of 5 · Open Lists."
 msgstr "Étape 3 sur 5 · Ouvrez Listes."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:568
+#: lib/pauseai_ca_web/live/assistant_live.ex:599
 #, elixir-autogen, elixir-format
 msgid "Step 4 of 5 · Name a dynamic list, set city to Vancouver, then choose Save list."
 msgstr "Étape 4 sur 5 · Nommez une liste dynamique, indiquez Vancouver comme ville, puis choisissez Enregistrer la liste."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:573
+#: lib/pauseai_ca_web/live/assistant_live.ex:604
 #, elixir-autogen, elixir-format
 msgid "Step 5 of 5 · Review the saved list, then choose Compose newsletter."
 msgstr "Étape 5 sur 5 · Vérifiez la liste enregistrée, puis choisissez Rédiger une infolettre."
@@ -12651,7 +12651,7 @@ msgstr "Impossible de préparer un courriel pour les comptes sélectionnés. Les
 msgid "The selected records could not be prepared for email. Review the selection and current permissions."
 msgstr "Impossible de préparer un courriel pour les fiches sélectionnées. Vérifiez la sélection et vos droits d’accès actuels."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:795
+#: lib/pauseai_ca_web/live/assistant_live.ex:826
 #, elixir-autogen, elixir-format
 msgid "These postal-locality candidates do not establish city boundaries. V6T includes UBC; V6S and V6N need boundary review. This guide selects recorded city Vancouver, without adding these FSAs to the audience."
 msgstr "Ces zones postales candidates ne définissent pas les limites de la ville. V6T comprend l’UBC. Les limites de V6S et V6N doivent être vérifiées. Ce guide sélectionne la ville enregistrée Vancouver, sans ajouter ces RTA aux critères de destinataires."
@@ -12679,7 +12679,7 @@ msgstr "Impossible de préparer un courriel pour cette liste. Vérifiez les cont
 msgid "Type"
 msgstr "Type"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:789
+#: lib/pauseai_ca_web/live/assistant_live.ex:820
 #, elixir-autogen, elixir-format
 msgid "Vancouver postal-area reference · 31 candidates"
 msgstr "Référence postale de Vancouver · 31 RTA candidates"
@@ -12859,27 +12859,28 @@ msgstr "L’assistant n’a pas pu vérifier la limite de cette demande. Votre m
 msgid "This request exceeds the assistant’s per-request limit. Shorten your message or start a new conversation. Your message has been retained."
 msgstr "Cette demande dépasse la limite de l’assistant par requête. Raccourcissez votre message ou commencez une nouvelle conversation. Votre message a été conservé."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:772
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:863
 #, elixir-autogen, elixir-format
 msgid "The request could not fit the assistant’s configured per-request token allowance."
 msgstr "La demande ne tenait pas dans le budget de jetons configuré par requête pour l’assistant."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:775
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:866
 #, elixir-autogen, elixir-format
 msgid "The request exceeded the assistant’s per-request limit."
 msgstr "La demande dépassait la limite de l’assistant par requête."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:649
+#: lib/pauseai_ca_web/live/assistant_live.ex:680
 #, elixir-autogen, elixir-format
 msgid "Send is paused while the assistant’s configuration checks recover. Your message is retained. Availability is checked automatically."
 msgstr "L’envoi est suspendu pendant le rétablissement des vérifications de configuration de l’assistant. Votre message est conservé. La disponibilité est vérifiée automatiquement."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:645
+#: lib/pauseai_ca_web/live/assistant_live.ex:676
 #, elixir-autogen, elixir-format
 msgid "Send is paused while the assistant’s monitoring connection recovers. Your message is retained. Availability is checked automatically."
 msgstr "L’envoi est suspendu pendant le rétablissement de la connexion de suivi de l’assistant. Votre message est conservé. La disponibilité est vérifiée automatiquement."
 
 #: lib/pauseai_ca_web/live/assistant_live.ex:333
+#: lib/pauseai_ca_web/live/assistant_live.ex:475
 #, elixir-autogen, elixir-format
 msgid "An answer was generated and held by the output review. Your message is retained."
 msgstr "Une réponse a été générée et retenue par le contrôle de sortie. Votre message est conservé."
@@ -12909,12 +12910,12 @@ msgstr "Le fournisseur n’a pas pu renvoyer de réponse exploitable. Votre mess
 msgid "%{platform} (opens in a new tab)"
 msgstr "%{platform} (s’ouvre dans un nouvel onglet)"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:777
+#: lib/pauseai_ca_web/live/assistant_live.ex:808
 #, elixir-autogen, elixir-format
 msgid "Assistant settings"
 msgstr "Paramètres de l’assistant"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:630
+#: lib/pauseai_ca_web/live/assistant_live.ex:661
 #, elixir-autogen, elixir-format
 msgid "Available credit cannot cover the USD %{amount} request reservation. Your draft is retained."
 msgstr "Le crédit disponible ne couvre pas la réserve de %{amount} USD nécessaire à une demande. Votre brouillon est conservé."
@@ -12959,7 +12960,7 @@ msgstr "Temporairement indisponible"
 msgid "Usage unavailable"
 msgstr "Suivi de consommation indisponible"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:625
+#: lib/pauseai_ca_web/live/assistant_live.ex:656
 #, elixir-autogen, elixir-format
 msgid "Your remaining token allowance cannot cover another request. Your draft is retained."
 msgstr "Votre quota de jetons restant ne permet pas de lancer une autre demande. Votre brouillon est conservé."
@@ -13079,218 +13080,288 @@ msgstr "Protocole du signal d’alarme"
 msgid "Write to your Member of Parliament about advanced AI risks and international safeguards using PauseAI Canada's letter tool."
 msgstr "Écrivez à votre député sur les risques de l’IA avancée et les garanties internationales avec l’outil de PauseIA Canada."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:771
+#: lib/pauseai_ca_web/live/assistant_live.ex:802
 #, elixir-autogen, elixir-format
 msgid "Daily token allowance remaining"
 msgstr "Allocation quotidienne de jetons restante"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:770
+#: lib/pauseai_ca_web/live/assistant_live.ex:801
 #, elixir-autogen, elixir-format
 msgid "Daily tokens"
 msgstr "Jetons quotidiens"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:581
-#, elixir-autogen, elixir-format
-msgid "A human review decision is recorded for this exact answer."
-msgstr "Une décision humaine est enregistrée pour cette réponse précise."
-
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:520
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:555
 #, elixir-autogen, elixir-format
 msgid "Answer"
 msgstr "Réponse"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:688
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:779
 #, elixir-autogen, elixir-format
 msgid "Answer held for human review."
 msgstr "Réponse en attente d’un examen humain."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:596
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:636
 #, elixir-autogen, elixir-format
 msgid "Approve answer"
 msgstr "Approuver la réponse"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:691
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:782
 #, elixir-autogen, elixir-format
 msgid "Approved · The answer is available in its conversation history."
 msgstr "Approuvée · La réponse est disponible dans l’historique de sa conversation."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:535
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:570
 #, elixir-autogen, elixir-format
 msgid "Automated review results"
 msgstr "Résultats des contrôles automatiques"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:664
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:742
 #, elixir-autogen, elixir-format
 msgid "Confirm approval"
 msgstr "Confirmer l’approbation"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:668
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:746
 #, elixir-autogen, elixir-format
 msgid "Confirm rejection"
 msgstr "Confirmer le rejet"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:295
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:330
 #, elixir-autogen, elixir-format
 msgid "Confirm that you reviewed the displayed answer."
 msgstr "Confirmez que vous avez examiné la réponse affichée."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:463
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:498
 #, elixir-autogen, elixir-format
 msgid "Each displayed activity record is checked for authenticity. Exchange review verifies its complete conversation chain. Times use your browser’s timezone; the original UTC value is available on hover. These database times are separate from protected event timestamps."
 msgstr "L’authenticité de chaque activité affichée est vérifiée. L’examen de l’échange vérifie toute la chaîne de sa conversation. Les heures utilisent le fuseau de votre navigateur. La valeur UTC d’origine apparaît au survol. Ces heures de la base de données sont distinctes des horodatages protégés des événements."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:571
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:606
 #, elixir-autogen, elixir-format
 msgid "Generation model"
 msgstr "Modèle de génération"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:521
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:556
 #, elixir-autogen, elixir-format
 msgid "Held answer"
 msgstr "Réponse retenue"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:792
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:883
 #, elixir-autogen, elixir-format
 msgid "Human review decision"
 msgstr "Décision d’examen humain"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:791
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:882
 #, elixir-autogen, elixir-format
 msgid "Human review requested"
 msgstr "Examen humain demandé"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:647
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:719
 #, elixir-autogen, elixir-format
 msgid "I reviewed the displayed question, answer and review results."
 msgstr "J’ai examiné la question, la réponse et les résultats des contrôles affichés."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:621
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:678
 #, elixir-autogen, elixir-format
 msgid "Keep this answer withheld?"
 msgstr "Rejeter cette réponse?"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:387
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:422
 #, elixir-autogen, elixir-format
 msgid "Loading the protected exchange…"
 msgstr "Chargement de l’échange protégé…"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:532
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:567
 #, elixir-autogen, elixir-format
 msgid "No generated answer was retained for this request."
 msgstr "Aucune réponse générée n’a été conservée pour cette demande."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:512
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:547
 #, elixir-autogen, elixir-format
 msgid "Question and answer"
 msgstr "Question et réponse"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:648
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:720
 #, elixir-autogen, elixir-format
 msgid "Reason (optional)"
 msgstr "Motif (facultatif)"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:659
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:734
 #, elixir-autogen, elixir-format
 msgid "Recording the decision…"
 msgstr "Enregistrement de la décision…"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:603
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:646
 #, elixir-autogen, elixir-format
 msgid "Reject answer"
 msgstr "Rejeter la réponse"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:811
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:902
 #, elixir-autogen, elixir-format
 msgid "Rejected"
 msgstr "Rejetée"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:693
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:784
 #, elixir-autogen, elixir-format
 msgid "Rejected · The answer remains withheld."
 msgstr "Rejetée · La réponse reste retenue."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:620
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:675
 #, elixir-autogen, elixir-format
 msgid "Release this answer?"
 msgstr "Autoriser cette réponse?"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:694
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:785
 #, elixir-autogen, elixir-format
 msgid "The answer was released automatically."
 msgstr "La réponse a été autorisée automatiquement."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:626
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:695
 #, elixir-autogen, elixir-format
 msgid "The answer will remain withheld and the rejection will be recorded."
 msgstr "La réponse restera retenue et le rejet sera enregistré."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:714
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:805
 #, elixir-autogen, elixir-format
 msgid "The decision could not be completed securely. Your review inputs are retained. Try again or reload this request."
 msgstr "La décision n’a pas pu être enregistrée de façon sécurisée. Vos saisies sont conservées. Réessayez ou rechargez cette demande."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:625
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:692
 #, elixir-autogen, elixir-format
 msgid "The displayed answer will be added to its conversation history."
 msgstr "La réponse affichée sera ajoutée à l’historique de sa conversation."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:469
+#: lib/pauseai_ca_web/live/assistant_live.ex:480
 #, elixir-autogen, elixir-format
 msgid "The held answer was rejected after human review. Your message is retained."
 msgstr "La réponse retenue a été rejetée après un examen humain. Votre message est conservé."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:710
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:801
 #, elixir-autogen, elixir-format
 msgid "The reason must be at most 500 characters."
 msgstr "Le motif doit comporter au plus 500 caractères."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:167
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:181
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:178
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:192
 #, elixir-autogen, elixir-format
 msgid "The saved exchange could not be loaded securely. Its activity is available below."
 msgstr "L’échange conservé n’a pas pu être chargé de façon sécurisée. Son activité est disponible ci-dessous."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:702
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:793
 #, elixir-autogen, elixir-format
 msgid "This answer already has a decision or changed since you reviewed it. Reload the request to see its current status."
 msgstr "Cette réponse a déjà fait l’objet d’une décision ou a changé depuis votre examen. Rechargez la demande pour voir son état actuel."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:698
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:789
 #, elixir-autogen, elixir-format
 msgid "This confirmation expired. Cancel and review the answer again."
 msgstr "Cette confirmation a expiré. Annulez et examinez à nouveau la réponse."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:695
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:786
 #, elixir-autogen, elixir-format
 msgid "This exchange cannot be reviewed securely."
 msgstr "Cet échange ne peut pas être examiné de façon sécurisée."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:606
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:654
 #, elixir-autogen, elixir-format
 msgid "This request has no completed output review that is eligible for an answer approval. Its recorded reason is in the activity below."
 msgstr "Cette demande n’a pas de contrôle de réponse terminé permettant une approbation. Le motif enregistré figure dans l’activité ci-dessous."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:685
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:772
 #, elixir-autogen, elixir-format
 msgid "This request stopped before an answer was retained."
 msgstr "Cette demande s’est arrêtée avant qu’une réponse soit conservée."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:629
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:699
 #, elixir-autogen, elixir-format
 msgid "Confirmation valid until"
 msgstr "Confirmation valable jusqu’au"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:574
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:609
 #, elixir-autogen, elixir-format
 msgid "Reviewed by %{account}"
 msgstr "Examen effectué par %{account}"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:707
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:798
 #, elixir-autogen, elixir-format
 msgid "Review permission changed. Reload this request to see its current status."
 msgstr "Les droits d’examen ont changé. Rechargez cette demande pour voir son état actuel."
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:158
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:169
 #, elixir-autogen, elixir-format
 msgid "Superadmin permission is required to review this exchange."
 msgstr "Une autorisation de superadministrateur est requise pour examiner cet échange."
+
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:616
+#, elixir-autogen, elixir-format
+msgid "A human review decision is recorded for this exact exchange."
+msgstr "Une décision humaine est enregistrée pour cet échange précis."
+
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:635
+#, elixir-autogen, elixir-format
+msgid "Approve request and generate answer"
+msgstr "Approuver la demande et générer une réponse"
+
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:669
+#, elixir-autogen, elixir-format
+msgid "Approve this request and generate an answer?"
+msgstr "Approuver cette demande et générer une réponse ?"
+
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:777
+#, elixir-autogen, elixir-format
+msgid "Generation has started. Its final result has not been recorded yet."
+msgstr "La génération a commencé. Son résultat final n’est pas encore enregistré."
+
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:718
+#, elixir-autogen, elixir-format
+msgid "I reviewed the displayed question and input review results."
+msgstr "J’ai examiné la question affichée et les résultats du contrôle de la demande."
+
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:766
+#, elixir-autogen, elixir-format
+msgid "Input approved. Continue generation of the retained request."
+msgstr "Demande approuvée. Poursuivez la génération à partir de la demande conservée."
+
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:763
+#, elixir-autogen, elixir-format
+msgid "Input held for superadmin review. Approve the request to generate an answer."
+msgstr "Demande en attente d’un examen par un superadministrateur. Approuvez-la pour générer une réponse."
+
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:733
+#, elixir-autogen, elixir-format
+msgid "Recording approval and generating the answer…"
+msgstr "Enregistrement de l’approbation et génération de la réponse…"
+
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:645
+#, elixir-autogen, elixir-format
+msgid "Reject request"
+msgstr "Rejeter la demande"
+
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:672
+#, elixir-autogen, elixir-format
+msgid "Reject this request?"
+msgstr "Rejeter cette demande ?"
+
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:769
+#, elixir-autogen, elixir-format
+msgid "Request rejected. No answer will be generated."
+msgstr "Demande rejetée. Aucune réponse ne sera générée."
+
+#: lib/pauseai_ca_web/live/assistant_live.ex:470
+#, elixir-autogen, elixir-format
+msgid "The request was rejected after superadmin review. Your message is retained."
+msgstr "La demande a été rejetée après examen par un superadministrateur. Votre message est conservé."
+
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:689
+#, elixir-autogen, elixir-format
+msgid "The request will stay withheld. No answer will be generated."
+msgstr "La demande restera en attente. Aucune réponse ne sera générée."
+
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:652
+#, elixir-autogen, elixir-format
+msgid "View continued request"
+msgstr "Voir la suite de la demande"
+
+#: lib/pauseai_ca_web/live/assistant_audit_live.ex:684
+#, elixir-autogen, elixir-format
+msgid "The saved question and conversation history will be sent for generation with current application guidance and the original model. Current permissions and credits are checked. Generation uses the requester's credits and the answer still passes output review."
+msgstr "La question et l’historique conservés seront transmis avec les consignes actuelles de l’application et le modèle d’origine. Les droits et les crédits actuels sont vérifiés. La génération utilise les crédits de la personne ayant fait la demande. La réponse sera ensuite contrôlée."

@@ -102,6 +102,17 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
   def handle_info(:review_access_refresh, socket) do
     if Assistant.eligible?(socket.assigns.current_scope) do
       Process.send_after(self(), :review_access_refresh, 15_000)
+
+      socket =
+        if match?(%{status: :running}, socket.assigns.exchange) and
+             not socket.assigns.decision_pending,
+           do:
+             load_exchange(
+               assign(socket, exchange: nil, exchange_loading: false),
+               socket.assigns.request_ref
+             ),
+           else: socket
+
       {:noreply, socket}
     else
       {:noreply, deny(socket)}
@@ -187,15 +198,34 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
     if Assistant.eligible?(socket.assigns.current_scope) do
       case result do
         {:ok, exchange} ->
+          updated =
+            assign(socket,
+              exchange: exchange,
+              reviewer_label: reviewer_label(exchange),
+              confirmation: nil,
+              decision_pending: false,
+              decision_error: nil,
+              decision_reason: "",
+              decision_confirmed: false
+            )
+
+          updated =
+            if exchange.request_ref != socket.assigns.request_ref,
+              do:
+                push_patch(updated,
+                  to: activity_path(exchange.request_ref, %{"locale" => socket.assigns.locale})
+                ),
+              else: updated
+
+          {:noreply, updated}
+
+        {:error, {:input_approved, exchange, reason}} ->
           {:noreply,
            assign(socket,
              exchange: exchange,
-             reviewer_label: reviewer_label(exchange),
              confirmation: nil,
              decision_pending: false,
-             decision_error: nil,
-             decision_reason: "",
-             decision_confirmed: false
+             decision_error: decision_error(reason)
            )}
 
         {:error, reason} ->
@@ -224,10 +254,15 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
 
   @impl true
   def handle_event("prepare-decision", %{"decision" => action}, socket) do
-    decision = if action == "approve", do: :approve, else: :reject
+    decision =
+      case action do
+        "approve" -> :approve
+        "resume" -> :resume
+        _ -> :reject
+      end
 
     case socket.assigns.exchange do
-      %{status: :held, approvable: true} = exchange ->
+      %{status: status, approvable: true} = exchange when status in [:held, :input_approved] ->
         case RequestReview.confirmation(socket.assigns.current_scope, exchange, decision) do
           {:ok, confirmation} ->
             {:noreply,
@@ -515,7 +550,7 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
       <div id="assistant-review-question" class="paa-message" data-role="user">
         <p>{@exchange.question}</p>
       </div>
-      <h3 class="font-semibold">
+      <h3 :if={@exchange.phase != :input} class="font-semibold">
         {if @exchange.status in [:approved, :released],
           do: gettext("Answer"),
           else: gettext("Held answer")}
@@ -528,7 +563,7 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
       >
         {PhoenixAgentAssistant.ResponseMarkdown.render(@exchange.answer)}
       </div>
-      <p :if={is_nil(@exchange.answer)}>
+      <p :if={is_nil(@exchange.answer) and @exchange.phase != :input}>
         {gettext("No generated answer was retained for this request.")}
       </p>
       <details class="assistant-review-scores">
@@ -579,29 +614,42 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
           data-locale={@locale}
           phx-hook="PhoenixAgentAssistantTime"
         >{@exchange.decision["decided_at"]}</time>. {gettext(
-          "A human review decision is recorded for this exact answer."
+          "A human review decision is recorded for this exact exchange."
         )}
         <span :if={@exchange.decision["reason"] != ""}>{@exchange.decision["reason"]}</span>
       </p>
       <div
-        :if={@exchange.status == :held and @exchange.approvable and is_nil(@confirmation)}
+        :if={
+          @exchange.status in [:held, :input_approved] and @exchange.approvable and
+            is_nil(@confirmation)
+        }
         class="assistant-review-actions"
       >
         <button
           id="assistant-review-approve"
           type="button"
           phx-click="prepare-decision"
-          phx-value-decision="approve"
+          phx-value-decision={if @exchange.status == :input_approved, do: "resume", else: "approve"}
           class="assistant-review-approve"
-        ><.icon name="hero-check" /> {gettext("Approve answer")}</button>
+        ><.icon name="hero-check" /> {if @exchange.phase == :input,
+          do: gettext("Approve request and generate answer"),
+          else: gettext("Approve answer")}</button>
         <button
+          :if={@exchange.status == :held}
           id="assistant-review-reject"
           type="button"
           phx-click="prepare-decision"
           phx-value-decision="reject"
           class="assistant-review-reject"
-        ><.icon name="hero-x-mark" /> {gettext("Reject answer")}</button>
+        ><.icon name="hero-x-mark" /> {if @exchange.phase == :input,
+          do: gettext("Reject request"),
+          else: gettext("Reject answer")}</button>
       </div>
+      <.link
+        :if={@exchange.continuation_exists}
+        navigate={activity_path(@exchange.resume_ref, %{"locale" => @locale})}
+        id="assistant-review-continuation"
+      >{gettext("View continued request")}</.link>
       <p :if={@exchange.status == :held and not @exchange.approvable}>
         {gettext(
           "This request has no completed output review that is eligible for an answer approval. Its recorded reason is in the activity below."
@@ -616,14 +664,36 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
       >
         <fieldset disabled={@decision_pending}>
           <legend class="text-lg font-semibold">
-            {if @confirmation.decision == :approve,
-              do: gettext("Release this answer?"),
-              else: gettext("Keep this answer withheld?")}
+            {cond do
+              @exchange.phase == :input and @confirmation.decision != :reject ->
+                gettext("Approve this request and generate an answer?")
+
+              @exchange.phase == :input ->
+                gettext("Reject this request?")
+
+              @confirmation.decision == :approve ->
+                gettext("Release this answer?")
+
+              true ->
+                gettext("Keep this answer withheld?")
+            end}
           </legend>
           <p>
-            {if @confirmation.decision == :approve,
-              do: gettext("The displayed answer will be added to its conversation history."),
-              else: gettext("The answer will remain withheld and the rejection will be recorded.")}
+            {cond do
+              @exchange.phase == :input and @confirmation.decision != :reject ->
+                gettext(
+                  "The saved question and conversation history will be sent for generation with current application guidance and the original model. Current permissions and credits are checked. Generation uses the requester's credits and the answer still passes output review."
+                )
+
+              @exchange.phase == :input ->
+                gettext("The request will stay withheld. No answer will be generated.")
+
+              @confirmation.decision == :approve ->
+                gettext("The displayed answer will be added to its conversation history.")
+
+              true ->
+                gettext("The answer will remain withheld and the rejection will be recorded.")
+            end}
           </p>
           <p>
             {gettext("Confirmation valid until")}
@@ -644,7 +714,9 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
             value="true"
             checked={@decision_confirmed}
             phx-mounted={Phoenix.LiveView.JS.focus()}
-          /> {gettext("I reviewed the displayed question, answer and review results.")}</label>
+          /> {if @exchange.phase == :input,
+            do: gettext("I reviewed the displayed question and input review results."),
+            else: gettext("I reviewed the displayed question, answer and review results.")}</label>
           <label for="assistant-review-reason">{gettext("Reason (optional)")}</label>
           <textarea
             id="assistant-review-reason"
@@ -656,10 +728,16 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
           <p :if={@decision_error} id="assistant-review-decision-error" role="alert">
             {@decision_error}
           </p>
-          <p :if={@decision_pending} role="status">{gettext("Recording the decision…")}</p>
+          <p :if={@decision_pending} role="status">
+            {if @exchange.phase == :input,
+              do: gettext("Recording approval and generating the answer…"),
+              else: gettext("Recording the decision…")}
+          </p>
           <div class="assistant-review-actions">
-            <button id="assistant-review-confirm" type="submit" class="assistant-review-approve">{if @confirmation.decision ==
+            <button id="assistant-review-confirm" type="submit" class="assistant-review-approve">{if @confirmation.decision in [
                                                                                                        :approve,
+                                                                                                       :resume
+                                                                                                     ],
                                                                                                      do:
                                                                                                        gettext(
                                                                                                          "Confirm approval"
@@ -681,10 +759,23 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
     """
   end
 
+  defp review_status(%{status: :held, phase: :input}),
+    do: gettext("Input held for superadmin review. Approve the request to generate an answer.")
+
+  defp review_status(%{status: :input_approved}),
+    do: gettext("Input approved. Continue generation of the retained request.")
+
+  defp review_status(%{status: :rejected, phase: :input}),
+    do: gettext("Request rejected. No answer will be generated.")
+
   defp review_status(%{status: :held, answer: nil}),
     do: gettext("This request stopped before an answer was retained.")
 
   defp review_status(%{status: status}), do: review_status(status)
+
+  defp review_status(:running),
+    do: gettext("Generation has started. Its final result has not been recorded yet.")
+
   defp review_status(:held), do: gettext("Answer held for human review.")
 
   defp review_status(:approved),

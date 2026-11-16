@@ -46,6 +46,70 @@ defmodule PauseAiCaWeb.AssistantGuidedLiveTest do
     %{admin: admin, scope: scope, token: token}
   end
 
+  test "approved held input refreshes guided bindings after a release and prepares the requester guide",
+       c do
+    config = Assistant.configuration()
+
+    config =
+      Keyword.put(
+        config,
+        :safety,
+        Keyword.put(
+          config[:safety],
+          :jev,
+          {PauseAiCa.AssistantFixtures.HeldInput, [api_key: "synthetic-review"]}
+        )
+      )
+
+    Application.put_env(:pauseai_ca, :agent_assistant, config)
+
+    {:ok, view, _} =
+      live_isolated(c.conn, PauseAiCaWeb.AssistantLive,
+        session: %{"user_token" => c.token, "site_locale" => "en"}
+      )
+
+    render_click(view, "assistant-guided-mode", %{"enabled" => "true"})
+    render_submit(view, "assistant-submit", %{"assistant" => %{"text" => "show me"}})
+    assert render_async(view, 5_000) =~ "input review held"
+    refute_receive {:guided_provider_called, _}
+    import Ecto.Query
+
+    reference =
+      Repo.one!(
+        from r in PhoenixAgentAssistant.Store.Request,
+          where: r.namespace == ^Assistant.store().namespace and r.actor_id == ^c.admin.id,
+          select: r.request_key
+      )
+
+    System.put_env("PAUSEAI_CA_RELEASE_ID", "guided-after-input-hold")
+
+    config =
+      Keyword.update!(config, :feature_evidence, &Map.put(&1, :build, "guided-after-input-hold"))
+
+    Application.put_env(:pauseai_ca, :agent_assistant, config)
+    assert {:ok, review} = PauseAiCa.Assistant.RequestReview.read(c.scope, reference)
+
+    assert {:ok, confirmation} =
+             PauseAiCa.Assistant.RequestReview.confirmation(c.scope, review, :approve)
+
+    assert {:ok, child} =
+             PauseAiCa.Assistant.RequestReview.decide(
+               c.scope,
+               reference,
+               confirmation.token,
+               "Reviewed input"
+             )
+
+    assert child.status == :released
+    assert_receive {:guided_provider_called, generated}
+    assert generated["text"] == "show me"
+    manifest = Jason.decode!(generated["context"]["guided_mode"]["manifest_json"])
+    assert manifest["identity"]["build"] == "guided-after-input-hold"
+    render(view)
+    assert has_element?(view, "#site-assistant-guide")
+    refute_receive {:guided_provider_called, _}
+  end
+
   test "unrequested client acknowledgement and claimed URL/count cannot advance a guide", c do
     {:ok, view, _} =
       live_isolated(c.conn, PauseAiCaWeb.AssistantLive,

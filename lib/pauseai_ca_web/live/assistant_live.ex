@@ -443,9 +443,10 @@ defmodule PauseAiCaWeb.AssistantLive do
       case Assistant.history(socket.assigns.current_scope, socket.assigns.conversation) do
         {:ok, messages} ->
           same_request = socket.assigns.pending_request_id in [nil, notice.request_ref]
+          {socket, messages} = reviewed_continuation(socket, messages, notice, same_request)
 
           clear =
-            notice.status == :approved and same_request and
+            notice.status == :approved and same_request and is_nil(socket.assigns.guide_error) and
               socket.assigns.draft == notice.question
 
           socket =
@@ -465,6 +466,16 @@ defmodule PauseAiCaWeb.AssistantLive do
               notice.status == :approved ->
                 nil
 
+              notice.status == :rejected and notice.phase == :input ->
+                gettext(
+                  "The request was rejected after superadmin review. Your message is retained."
+                )
+
+              notice.status == :output_held ->
+                gettext(
+                  "An answer was generated and held by the output review. Your message is retained."
+                )
+
               true ->
                 gettext(
                   "The held answer was rejected after human review. Your message is retained."
@@ -473,6 +484,11 @@ defmodule PauseAiCaWeb.AssistantLive do
 
           assign(socket,
             messages: messages,
+            pending_request_id:
+              if(same_request and is_binary(notice.followup_ref),
+                do: notice.followup_ref,
+                else: socket.assigns.pending_request_id
+              ),
             review_refresh_required: nil,
             error: error,
             draft: if(clear, do: "", else: socket.assigns.draft)
@@ -483,6 +499,21 @@ defmodule PauseAiCaWeb.AssistantLive do
       end
     else
       socket
+    end
+  end
+
+  defp reviewed_continuation(socket, messages, notice, same_request) do
+    if same_request and is_binary(notice.followup_ref) and notice.status == :approved do
+      case List.pop_at(messages, -1) do
+        {%{role: "assistant", text: text} = last, previous} ->
+          {socket, display} = reviewed_guide(socket, text)
+          {socket, previous ++ [%{last | text: display}]}
+
+        _ ->
+          {socket, messages}
+      end
+    else
+      {socket, messages}
     end
   end
 

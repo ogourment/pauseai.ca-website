@@ -38,6 +38,23 @@ defmodule PauseAiCa.AssistantFixtures do
     end
   end
 
+  defmodule HeldInput do
+    def review(_, options) do
+      input? = options[:review_direction] == "input"
+
+      {:ok,
+       %{
+         risk: if(input?, do: :review, else: :low),
+         model: "synthetic-input-review",
+         probabilities:
+           if(input?,
+             do: %{"low" => 0.86, "block" => 0.02},
+             else: %{"low" => 1.0, "block" => 0.0}
+           )
+       }}
+    end
+  end
+
   defmodule HeldOutput do
     def review(_, options) do
       output? = options[:review_direction] == "output"

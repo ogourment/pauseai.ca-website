@@ -603,16 +603,7 @@ defmodule PauseAiCa.Assistant do
 
       identity = AcceptanceHarness.Health.payload()
 
-      runtime = %{
-        version: identity.version,
-        build: identity.release_id,
-        evidence: config[:feature_evidence] || %{}
-      }
-
       guided = Keyword.get(options, :guided_mode, false)
-
-      catalogue =
-        Catalog.for_actor(config[:features] || [], runtime, fn _ -> eligible?(scope) end)
 
       request = %{
         "text" => text,
@@ -620,13 +611,7 @@ defmodule PauseAiCa.Assistant do
           "app_version" => identity.version,
           "locale" => locale,
           "build" => identity.release_id,
-          "features" =>
-            json(
-              PauseAiCa.Assistant.RequestContext.catalogue(
-                catalogue,
-                if(guided, do: ["crm-guided", "crm-vancouver-guided"], else: :all)
-              )
-            ),
+          "features" => reviewed_catalogue(scope, config, identity, guided),
           "history" => []
         },
         "attachments" => []
@@ -652,6 +637,41 @@ defmodule PauseAiCa.Assistant do
   end
 
   def run(_, _, _, _, _, _), do: {:error, :unavailable}
+
+  def refresh_reviewed_context(scope, saved, config) do
+    locale = get_in(saved, ["context", "locale"])
+    guided = is_map(get_in(saved, ["context", "guided_mode"]))
+    identity = AcceptanceHarness.Health.payload()
+
+    if locale in ["en", "fr"] do
+      context =
+        saved["context"]
+        |> Map.put("app_version", identity.version)
+        |> Map.put("build", identity.release_id)
+        |> Map.put("features", reviewed_catalogue(scope, config, identity, guided))
+
+      guided_request(scope, Map.put(saved, "context", context), locale, guided)
+    else
+      {:error, :review_changed}
+    end
+  end
+
+  defp reviewed_catalogue(scope, config, identity, guided) do
+    runtime = %{
+      version: identity.version,
+      build: identity.release_id,
+      evidence: config[:feature_evidence] || %{}
+    }
+
+    catalogue = Catalog.for_actor(config[:features] || [], runtime, fn _ -> eligible?(scope) end)
+
+    json(
+      PauseAiCa.Assistant.RequestContext.catalogue(
+        catalogue,
+        if(guided, do: ["crm-guided", "crm-vancouver-guided"], else: :all)
+      )
+    )
+  end
 
   defp guided_request(_scope, request, _locale, false), do: {:ok, request}
 
@@ -681,6 +701,7 @@ defmodule PauseAiCa.Assistant do
   @impl true
   def authorize(scope, _phase, admitted) do
     with true <- visible?(scope),
+         true <- PauseAiCa.Assistant.RequestReview.reviewer_current?(admitted),
          current = configuration(),
          true <- execution_snapshot(admitted) == execution_snapshot(current),
          true <- funded_snapshot_current?(admitted, current) do
@@ -711,7 +732,8 @@ defmodule PauseAiCa.Assistant do
       :correlation_id,
       :conversation_ref,
       :spend_reservation_prepare,
-      :review_feedback
+      :review_feedback,
+      :input_review_approval
     ])
     |> Map.new()
     |> Map.put(:provider, provider_snapshot(config))
@@ -771,12 +793,29 @@ defmodule PauseAiCa.Assistant do
       })
 
     with {:ok, %{entry: entry}} <-
-           Store.record(store(), actor(scope), Ecto.UUID.generate(), event, config[:audit_keys],
+           Store.record(
+             store(),
+             actor(scope),
+             record_key(event, config),
+             event,
+             config[:audit_keys],
              stream: config[:conversation_ref] || "assistant"
            ),
          :ok <- anchor_entry(entry, config),
          do: :ok
   end
+
+  defp record_key(%{"kind" => "request"}, config) do
+    if config[:input_review_approval],
+      do: "reviewed-input/" <> config[:correlation_id],
+      else: Ecto.UUID.generate()
+  end
+
+  defp record_key(_, _), do: Ecto.UUID.generate()
+
+  @impl true
+  def approved_input(scope, request, config),
+    do: PauseAiCa.Assistant.RequestReview.approved_input(scope, request, config)
 
   @impl true
   def alert(scope, reason, config) do
