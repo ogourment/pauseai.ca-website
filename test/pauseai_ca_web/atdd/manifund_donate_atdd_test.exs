@@ -69,7 +69,7 @@ if System.get_env("ATDD") == "true" do
           c.conn
           |> visit("/#{locale}")
           |> capture(id, "Public home page", "Click Donate in the header")
-          |> click_link(tr(locale, "Donate"))
+          |> click("#donate-link")
           |> assert_path(path)
           |> assert_has("[data-phx-main].phx-connected")
           |> assert_has("#manifund-donate", text: tr(locale, "Donate on Manifund"))

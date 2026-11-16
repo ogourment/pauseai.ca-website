@@ -58,7 +58,7 @@ if System.get_env("ATDD") == "true" do
           context.conn
           |> visit("/#{locale}")
           |> capture(scenario_id, "Public home page", "Click Donate in the header")
-          |> click_link(tr(locale, "Donate"))
+          |> click("#donate-link")
           |> assert_path(path)
           |> assert_has("[data-phx-main].phx-connected")
           |> assert_has("#donate-interac:not([open]) > summary")

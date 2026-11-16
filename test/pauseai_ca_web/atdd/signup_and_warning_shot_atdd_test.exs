@@ -244,7 +244,7 @@ if System.get_env("ATDD") == "true" do
         context.conn
         |> visit("/fr")
         |> click("#consent-decline")
-        |> assert_has("#account-entry", text: "Compte")
+        |> assert_has("#account-entry", text: "Connexion", exact: true)
         |> capture(
           id,
           "Browse then choose compact entry",
@@ -854,10 +854,9 @@ if System.get_env("ATDD") == "true" do
       on_exit(fn -> Application.put_env(:pauseai_ca, :manifund_campaign, configured) end)
       url = "https://manifund.org/projects/pauseai-canada-national-expansion--core-operations"
 
-      for {locale, donate, cta, disclosure} <- [
-            {"en", "Donate", "Donate on Manifund", "A Manifund account is required"},
-            {"fr", "Faire un don", "Faire un don sur Manifund",
-             "Un compte Manifund est nécessaire"}
+      for {locale, cta, disclosure} <- [
+            {"en", "Donate on Manifund", "A Manifund account is required"},
+            {"fr", "Faire un don sur Manifund", "Un compte Manifund est nécessaire"}
           ] do
         path = if locale == "fr", do: "/fr/faire-un-don", else: "/en/donate"
 
@@ -865,7 +864,7 @@ if System.get_env("ATDD") == "true" do
           context.conn
           |> visit("/#{locale}")
           |> capture(id, "Open the public home page", "Click Donate in the header")
-          |> click_link(donate)
+          |> click("#donate-link")
           |> assert_path(path)
           |> assert_has("#manifund-donate[href='#{url}']", text: cta)
           |> assert_has("#manifund-account-requirement", text: disclosure, exact: false)

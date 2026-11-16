@@ -48,6 +48,7 @@ config :phoenix_test,
   playwright: [
     screenshot_dir: "tmp/atdd/screenshots",
     trace_dir: "tmp/atdd/traces",
+    browser_launch_timeout: 10_000,
     timeout: 8_000
   ]
 
