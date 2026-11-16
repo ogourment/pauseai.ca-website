@@ -437,3 +437,9 @@ h3 {
 @media(max-width:639px){[data-compact=true] [data-countdown-secondary=true]{display:none}}
 
 @media(max-width:359px){#site-header nav[data-journey-start]{gap:.125rem;padding-inline:.25rem}#site-header nav[data-journey-start]>a:first-child img{width:1.75rem;height:1.75rem}}
+
+/* Keep assistant actions and focus indicators legible on the site palette. */
+.paa {
+  --assistant-accent: #c2410c;
+  --assistant-accent-text: #fff;
+}
