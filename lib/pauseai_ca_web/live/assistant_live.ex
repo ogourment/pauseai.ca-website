@@ -21,7 +21,11 @@ defmodule PauseAiCaWeb.AssistantLive do
     if connected?(socket) do
       Process.send_after(self(), :refresh_access, 15_000)
       Phoenix.PubSub.subscribe(PauseAiCa.PubSub, "agent_assistant:settings")
-      if user, do: Phoenix.PubSub.subscribe(PauseAiCa.PubSub, Guide.topic(user.id))
+
+      if user do
+        Phoenix.PubSub.subscribe(PauseAiCa.PubSub, Guide.topic(user.id))
+        Phoenix.PubSub.subscribe(PauseAiCa.PubSub, "agent_assistant:review:" <> user.id)
+      end
     end
 
     {conversation, messages} = load_conversation(scope)
@@ -50,6 +54,7 @@ defmodule PauseAiCaWeb.AssistantLive do
        pending: false,
        pending_text: "",
        pending_request_id: nil,
+       review_refresh_required: nil,
        error: nil,
        availability_error: availability_error(scope, usage, mode)
      )}
@@ -420,12 +425,73 @@ defmodule PauseAiCaWeb.AssistantLive do
     end
   end
 
+  def handle_info({:assistant_review_decided, conversation, notice}, socket) do
+    if socket.assigns.conversation == conversation do
+      socket = assign(socket, review_refresh_required: notice)
+      {:noreply, refresh(socket)}
+    else
+      {:noreply, refresh(socket)}
+    end
+  end
+
   def handle_info(:assistant_settings_changed, socket), do: {:noreply, refresh(socket)}
+
+  defp refresh_review(socket) do
+    notice = socket.assigns.review_refresh_required
+
+    if notice && not socket.assigns.pending do
+      case Assistant.history(socket.assigns.current_scope, socket.assigns.conversation) do
+        {:ok, messages} ->
+          same_request = socket.assigns.pending_request_id in [nil, notice.request_ref]
+
+          clear =
+            notice.status == :approved and same_request and
+              socket.assigns.draft == notice.question
+
+          socket =
+            if clear,
+              do:
+                push_event(socket, "paa:draft-clear", %{
+                  key: draft_key(socket.assigns),
+                  text: notice.question
+                }),
+              else: socket
+
+          error =
+            cond do
+              socket.assigns.pending_request_id != notice.request_ref ->
+                socket.assigns.error
+
+              notice.status == :approved ->
+                nil
+
+              true ->
+                gettext(
+                  "The held answer was rejected after human review. Your message is retained."
+                )
+            end
+
+          assign(socket,
+            messages: messages,
+            review_refresh_required: nil,
+            error: error,
+            draft: if(clear, do: "", else: socket.assigns.draft)
+          )
+
+        _ ->
+          socket
+      end
+    else
+      socket
+    end
+  end
 
   defp refresh(socket) do
     scope = socket.assigns.current_scope
 
     if Assistant.launcher_visible?(scope) do
+      socket = refresh_review(socket)
+
       {reference, messages} =
         if socket.assigns.conversation,
           do: {socket.assigns.conversation, socket.assigns.messages},

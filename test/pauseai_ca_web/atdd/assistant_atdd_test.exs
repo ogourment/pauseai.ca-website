@@ -95,6 +95,22 @@ if System.get_env("ATDD") == "true" do
         language: "French",
         device: "Phone",
         source_file: __ENV__.file
+      },
+      %{
+        id: "ASSIST-EXCHANGE-01-en",
+        title: "Inspect a held exchange, confirm its release and show local activity times",
+        roles: ["Superadmin requester", "Other superadmin", "Revoked requester"],
+        language: "English",
+        device: "Desktop",
+        source_file: __ENV__.file
+      },
+      %{
+        id: "ASSIST-EXCHANGE-01-fr",
+        title: "Inspect a held exchange, confirm its release and show local activity times",
+        roles: ["Superadmin requester", "Other superadmin", "Revoked requester"],
+        language: "French",
+        device: "Phone",
+        source_file: __ENV__.file
       }
     ]
 
@@ -631,6 +647,219 @@ if System.get_env("ATDD") == "true" do
             "Send the synthetic onboarding question with a75% fixture review",
             "The request is retained, the input phase is explained, and a protected review-details link is available. The fixture deliberately remains held; it does not claim a real classifier result."
           )
+
+        refute_receive {:assistant_generated, _, _}
+        success(id)
+        browser
+      end
+    end
+
+    for {locale, width, height} <- [{"en", 1280, 900}, {"fr", 390, 844}] do
+      @tag screenshot: true
+      @tag browser_context_opts: [
+             viewport: %{width: width, height: height},
+             timezoneId: "America/Toronto"
+           ]
+      test "ASSIST-EXCHANGE-01-#{locale} inspect and approve a held answer with local times", c do
+        locale = unquote(locale)
+        id = "ASSIST-EXCHANGE-01-#{locale}"
+        config = Application.fetch_env!(:pauseai_ca, :agent_assistant)
+
+        safety =
+          Keyword.put(
+            config[:safety],
+            :jev,
+            {AssistantFixtures.HeldOutput, [api_key: "synthetic-review"]}
+          )
+
+        Application.put_env(:pauseai_ca, :agent_assistant, Keyword.put(config, :safety, safety))
+        assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+        assert {:ok, conversation} = Assistant.conversation(c.scope)
+        reference = Ecto.UUID.generate()
+        question = "How can I find Toronto contacts?"
+
+        assert {:error, :output_safety_review_required} =
+                 Assistant.run(c.scope, reference, question, conversation, locale)
+
+        assert_receive {:assistant_generated, _, _}
+        import Ecto.Query
+
+        Repo.update_all(
+          from(e in PhoenixAgentAssistant.Store.AuditEntry,
+            join: stream in PhoenixAgentAssistant.Store.Stream,
+            on: e.stream_id == stream.id,
+            where: stream.namespace == ^Assistant.store().namespace
+          ),
+          set: [inserted_at: ~U[2026-11-16 02:02:48.000000Z]]
+        )
+
+        path = "/admin/assistant/activity/requests/#{reference}?locale=#{locale}"
+
+        browser =
+          c.conn
+          |> login(c.admin)
+          |> visit("/admin/assistant/activity?locale=#{locale}")
+          |> connected()
+          |> capture(
+            id,
+            "Find a held request",
+            "Admin → Assistant → Activity & security",
+            "Open Activity & security",
+            "The protected activity list links to its exact request."
+          )
+          |> click_link(
+            "#assistant-audit-table a[href*='#{reference}']",
+            tr(locale, "Request recorded")
+          )
+          |> assert_has("#assistant-review-question", text: question)
+          |> assert_has("#assistant-review-answer",
+            text: "Use the contact filters to choose a city."
+          )
+          |> assert_has("#assistant-review-approve", text: tr(locale, "Approve answer"))
+
+        evaluate(
+          browser,
+          "Array.from(document.querySelectorAll('#assistant-audit-table time')).map(x => ({text:x.textContent,iso:x.dateTime,locale:x.dataset.locale}))",
+          fn times ->
+            assert times != []
+
+            for time <- times do
+              assert time["locale"] == locale
+              assert time["iso"] =~ "2026-11-16T02:02:48"
+              assert time["text"] =~ if(locale == "fr", do: "21:02:48", else: "9:02:48")
+              assert time["text"] =~ if(locale == "fr", do: "15 nov.", else: "Nov 15")
+            end
+          end
+        )
+
+        browser =
+          browser
+          |> capture(
+            id,
+            "Read the retained question and held answer",
+            "Protected activity list",
+            "Request recorded; equivalent to the Telegram request link",
+            "The exact retained exchange and clear Approve answer / Reject answer controls are visible. Times use the browser’s Toronto timezone."
+          )
+          |> click_button("#assistant-review-approve", tr(locale, "Approve answer"))
+          |> fill_in("#assistant-review-reason", tr(locale, "Reason (optional)"),
+            with: "Reviewed this synthetic answer"
+          )
+          |> click_button("#assistant-review-confirm", tr(locale, "Confirm approval"))
+          |> assert_has("#assistant-review-decision-error",
+            text: tr(locale, "Confirm that you reviewed the displayed answer.")
+          )
+          |> assert_has("#assistant-review-reason", value: "Reviewed this synthetic answer")
+          |> capture(
+            id,
+            "Confirmation preserves the review reason",
+            "Held answer → Approve answer",
+            "Type an optional reason; Confirm approval without checking the acknowledgement",
+            "The confirmation remains open, the reason is retained, and the acknowledgement is required."
+          )
+          |> check(
+            "#assistant-review-confirmed",
+            tr(locale, "I reviewed the displayed question, answer and review results.")
+          )
+          |> click_button("#assistant-review-confirm", tr(locale, "Confirm approval"))
+          |> assert_has("#assistant-exchange-status",
+            text: tr(locale, "Approved · The answer is available in its conversation history."),
+            exact: true
+          )
+          |> refute_has("#assistant-review-approve")
+          |> capture(
+            id,
+            "Approval recorded for the existing answer",
+            "Completed confirmation",
+            "Confirm approval",
+            "The existing answer is released once; its decision and optional reason are durable."
+          )
+          |> visit(path)
+          |> connected()
+          |> assert_has("#assistant-human-review-receipt", text: "Reviewed this synthetic answer")
+          |> refute_has("#assistant-review-approve")
+          |> visit("/admin/contacts?locale=#{locale}")
+          |> connected()
+          |> click_button("#site-assistant-launcher", "Assistant")
+          |> assert_has(".paa-message[data-role=assistant]",
+            text: "Use the contact filters to choose a city."
+          )
+          |> capture(
+            id,
+            "Released answer in conversation history",
+            "Approved request after reload",
+            "Contacts → Assistant",
+            "The original retained answer appears in its conversation history. Approval creates no new provider request."
+          )
+
+        refute_receive {:assistant_generated, _, _}
+        assert {:ok, [_, _]} = Assistant.history(c.scope, conversation)
+
+        browser =
+          browser
+          |> switch_browser_identity(&login(&1, c.other))
+          |> visit(path)
+          |> connected()
+          |> assert_has("#assistant-exchange-error",
+            text: tr(locale, "This exchange is available to the administrator who requested it.")
+          )
+          |> refute_has("#assistant-review-answer")
+          |> refute_has("#assistant-review-approve")
+          |> capture(
+            id,
+            "Another administrator retains metadata access",
+            "A different signed-in administrator",
+            "Open the same protected request link",
+            "The conversation owner's retained content stays private. This account sees activity metadata and cannot approve the answer."
+          )
+
+        second_reference = Ecto.UUID.generate()
+
+        assert {:error, :output_safety_review_required} =
+                 Assistant.run(
+                   c.scope,
+                   second_reference,
+                   "How can I find Montréal contacts?",
+                   conversation,
+                   locale
+                 )
+
+        assert_receive {:assistant_generated, _, _}
+
+        browser =
+          browser
+          |> switch_browser_identity(&login(&1, c.admin))
+          |> visit("/admin/assistant/activity/requests/#{second_reference}?locale=#{locale}")
+          |> connected()
+          |> assert_has("#assistant-review-approve")
+          |> click_button("#assistant-review-approve", tr(locale, "Approve answer"))
+          |> check(
+            "#assistant-review-confirmed",
+            tr(locale, "I reviewed the displayed question, answer and review results.")
+          )
+
+        Repo.update!(Ecto.Changeset.change(c.admin, superadmin: false))
+
+        browser =
+          browser
+          |> click_button("#assistant-review-confirm", tr(locale, "Confirm approval"))
+          |> assert_path("/")
+          |> refute_has("#assistant-review-answer")
+          |> capture(
+            id,
+            "Revoked access denies the pending confirmation",
+            "An owner's already-open confirmation",
+            "Revoke the role in the synthetic fixture; Confirm approval",
+            "Fresh authorization redirects the revoked account and the second answer stays withheld."
+          )
+
+        assert {:ok, [_, _]} =
+                 PhoenixAgentAssistant.History.read(
+                   Assistant.store(),
+                   c.admin.id,
+                   conversation,
+                   config[:audit_keys]
+                 )
 
         refute_receive {:assistant_generated, _, _}
         success(id)

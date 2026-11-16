@@ -9,6 +9,8 @@ defmodule PauseAiCaWeb.AssistantAuditLiveTest do
   alias PhoenixAgentAssistant.Store.{AuditEntry, Stream}
 
   setup do
+    previous_build = System.get_env("PAUSEAI_CA_RELEASE_ID")
+    System.put_env("PAUSEAI_CA_RELEASE_ID", "assistant-synthetic-fixture")
     old = Application.fetch_env(:pauseai_ca, :agent_assistant)
     config = PauseAiCa.AssistantFixtures.configuration(self())
     Application.put_env(:pauseai_ca, :agent_assistant, config)
@@ -17,6 +19,10 @@ defmodule PauseAiCaWeb.AssistantAuditLiveTest do
     member = user_fixture()
 
     on_exit(fn ->
+      if previous_build,
+        do: System.put_env("PAUSEAI_CA_RELEASE_ID", previous_build),
+        else: System.delete_env("PAUSEAI_CA_RELEASE_ID")
+
       case old do
         {:ok, value} -> Application.put_env(:pauseai_ca, :agent_assistant, value)
         :error -> Application.delete_env(:pauseai_ca, :agent_assistant)
@@ -414,6 +420,152 @@ defmodule PauseAiCaWeb.AssistantAuditLiveTest do
     assert has_element?(view, "#mail-new-draft", "Compose")
     view |> element("#mail-new-draft") |> render_click()
     assert Repo.aggregate(PauseAiCa.Newsletters.Draft, :count) == count + 1
+  end
+
+  test "a reviewer reads the held exchange, confirms approval, and finds the existing answer in history",
+       c do
+    {reference, conversation} = held_exchange(c)
+    path = "/admin/assistant/activity/requests/#{reference}?locale=en"
+    {:ok, view, _} = live(log_in_user(c.conn, c.admin), path)
+    html = render_async(view)
+    assert html =~ "How can I update a contact?"
+    assert html =~ "Use the contact filters to choose a city."
+    assert has_element?(view, "#assistant-review-approve", "Approve answer")
+    view |> element("#assistant-review-approve") |> render_click()
+    assert has_element?(view, "#assistant-review-confirmation", "Release this answer?")
+
+    view
+    |> form("#assistant-review-confirmation",
+      review: %{reason: "Checked the answer"}
+    )
+    |> render_submit()
+
+    assert has_element?(
+             view,
+             "#assistant-review-decision-error",
+             "Confirm that you reviewed the displayed answer."
+           )
+
+    assert has_element?(view, "#assistant-review-reason", "Checked the answer")
+
+    view
+    |> form("#assistant-review-confirmation",
+      review: %{reason: "Checked the answer", confirmed: "true"}
+    )
+    |> render_submit()
+
+    render_async(view)
+    assert has_element?(view, "#assistant-exchange-status", "Approved")
+    refute has_element?(view, "#assistant-review-approve")
+    assert {:ok, messages} = Assistant.history(c.scope, conversation)
+
+    assert Enum.map(messages, & &1.text) == [
+             "How can I update a contact?",
+             "Use the contact filters to choose a city."
+           ]
+
+    {:ok, reloaded, _} = live(log_in_user(build_conn(), c.admin), path)
+    render_async(reloaded)
+    assert has_element?(reloaded, "#assistant-human-review-receipt", "Checked the answer")
+    assert has_element?(reloaded, "#assistant-exchange-status", "Approved")
+    refute_receive {:assistant_generated, _, _}
+  end
+
+  test "another administrator sees metadata while the retained exchange stays requester-private",
+       c do
+    {reference, _} = held_exchange(c)
+
+    assert {:error, :forbidden} =
+             PauseAiCa.Assistant.RequestReview.read(Accounts.Scope.for_user(c.other), reference)
+
+    {:ok, view, _} =
+      live(
+        log_in_user(c.conn, c.other),
+        "/admin/assistant/activity/requests/#{reference}?locale=en"
+      )
+
+    render_async(view)
+
+    assert has_element?(
+             view,
+             "#assistant-exchange-error",
+             "This exchange is available to the administrator who requested it."
+           )
+
+    refute has_element?(view, "#assistant-review-answer")
+    refute has_element?(view, "#assistant-review-approve")
+    refute_receive {:assistant_generated, _, _}
+  end
+
+  test "the reviewer's revoked role clears the confirmation and protected content", c do
+    {reference, _} = held_exchange(c)
+
+    {:ok, view, _} =
+      live(
+        log_in_user(c.conn, c.admin),
+        "/admin/assistant/activity/requests/#{reference}?locale=en"
+      )
+
+    render_async(view)
+    view |> element("#assistant-review-approve") |> render_click()
+    Repo.update!(Ecto.Changeset.change(c.admin, superadmin: false))
+
+    view
+    |> form("#assistant-review-confirmation", review: %{confirmed: "true"})
+    |> render_submit()
+
+    assert_redirect(view, "/")
+    refute_receive {:assistant_generated, _, _}
+  end
+
+  test "the requesting administrator can reject a held answer and retain its audit decision", c do
+    {reference, conversation} = held_exchange(c)
+
+    {:ok, view, _} =
+      live(
+        log_in_user(c.conn, c.admin),
+        "/admin/assistant/activity/requests/#{reference}?locale=en"
+      )
+
+    render_async(view)
+    view |> element("#assistant-review-reject") |> render_click()
+    assert has_element?(view, "#assistant-review-confirmation", "Keep this answer withheld?")
+
+    view
+    |> form("#assistant-review-confirmation",
+      review: %{confirmed: "true", reason: "Keep this answer withheld"}
+    )
+    |> render_submit()
+
+    render_async(view)
+    assert has_element?(view, "#assistant-exchange-status", "Rejected")
+    assert {:ok, []} = Assistant.history(c.scope, conversation)
+    refute has_element?(view, "#assistant-review-approve")
+    refute_receive {:assistant_generated, _, _}
+  end
+
+  defp held_exchange(c) do
+    config =
+      Keyword.put(
+        c.config,
+        :safety,
+        Keyword.put(
+          c.config[:safety],
+          :jev,
+          {PauseAiCa.AssistantFixtures.HeldOutput, [api_key: "synthetic-review"]}
+        )
+      )
+
+    Application.put_env(:pauseai_ca, :agent_assistant, config)
+    assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+    assert {:ok, conversation} = Assistant.conversation(c.scope)
+    reference = Ecto.UUID.generate()
+
+    assert {:error, :output_safety_review_required} =
+             Assistant.run(c.scope, reference, "How can I update a contact?", conversation, "en")
+
+    assert_receive {:assistant_generated, _, _}
+    {reference, conversation}
   end
 
   defp record(c, actor, event) do

@@ -443,3 +443,23 @@ h3 {
   --assistant-accent: #c2410c;
   --assistant-accent-text: #fff;
 }
+
+.assistant-review-exchange { max-width: 52rem; margin-block: 1rem; }
+.assistant-review-exchange h3 { margin-block: .75rem .35rem; }
+.assistant-review-scores { margin-block: 1rem; }
+.assistant-review-scores summary { cursor: pointer; min-height: 44px; }
+.assistant-review-scores dl > div { display: flex; gap: 1rem; justify-content: space-between; }
+.assistant-review-actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-block: 1rem; }
+.assistant-review-exchange button { min-height: 44px; border: 1px solid #78716c; padding: .6rem .85rem; border-radius: .5rem; font: inherit; cursor: pointer; }
+.assistant-review-exchange .assistant-review-approve { background: #166534; color: #fff; }
+.assistant-review-exchange .assistant-review-reject { background: #fff; color: #991b1b; }
+.assistant-review-exchange button:focus-visible, .assistant-review-confirmation textarea:focus-visible, .assistant-review-confirmation input:focus-visible { outline: 3px solid #c2410c; outline-offset: 3px; }
+.assistant-review-exchange button:disabled, .assistant-review-confirmation fieldset:disabled { opacity: .65; cursor: wait; }
+.assistant-review-confirmation { padding: 1rem; border: 1px solid #78716c; border-radius: .5rem; }
+.assistant-review-confirmation label { display: block; margin-block: .6rem; }
+.assistant-review-confirmation textarea { width: 100%; border: 1px solid #78716c; padding: .5rem; background: #fff; color: #292524; border-radius: .4rem; }
+
+.assistant-review-confirmation label:has(input[type=checkbox]) { display: flex; align-items: center; gap: .5rem; min-height: 44px; }
+
+.assistant-review-exchange { overflow-wrap: anywhere; }
+.assistant-review-confirmation input[type=checkbox] { accent-color: #166534; }
