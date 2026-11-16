@@ -470,11 +470,6 @@ msgstr ""
 msgid "Should we slow AI down?"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:91
-#, elixir-autogen, elixir-format
-msgid "Show my suggested path"
-msgstr ""
-
 #: lib/pauseai_ca_web/live/mp_guide_component.ex:191
 #: lib/pauseai_ca_web/live/user_live/login.ex:100
 #: lib/pauseai_ca_web/live/user_live/login.ex:136
@@ -12936,4 +12931,9 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgctxt "header donation link"
 msgid "Donate"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:91
+#, elixir-autogen, elixir-format
+msgid "Show my path"
 msgstr ""

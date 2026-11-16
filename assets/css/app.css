@@ -227,6 +227,8 @@ h3 {
 }
 
 .belief-option {
+  flex: 1 0 auto;
+  white-space: nowrap;
   min-height: 3.5rem;
   cursor: pointer;
   border: 1px solid #d6d3d1;
@@ -268,12 +270,6 @@ h3 {
 
 .resource-card.is-recommended .recommendation-badge {
   display: inline-flex;
-}
-
-@media (max-width: 640px) {
-  .belief-question [role="group"] {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

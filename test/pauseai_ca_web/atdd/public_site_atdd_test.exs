@@ -31,9 +31,10 @@ if System.get_env("ATDD") == "true" do
         |> refute_has("#campaign-prompt")
         |> refute_has("[data-learning-root]")
         |> assert_has("#resource-grid .resource-card", count: 4)
-        |> click_button("Show my suggested path")
+        |> click("#show-path")
         |> assert_has("#resource-risk.is-recommended")
-        |> assert_has("h1", text: "Where do you stand today?")
+        |> assert_has("#home-introduction h1", text: "PauseAI Canada", exact: true)
+        |> assert_has("#questions h2", text: "Where do you stand today?", exact: true)
         |> BrowserScreenshot.capture(
           "public-site-01-home.png",
           &PhoenixTest.Playwright.screenshot/2

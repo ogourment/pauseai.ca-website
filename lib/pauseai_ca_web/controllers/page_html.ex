@@ -14,15 +14,17 @@ defmodule PauseAiCaWeb.PageHTML do
   def belief_question(assigns) do
     ~H"""
     <fieldset
-      class="belief-question rounded-3xl border border-stone-200 bg-white p-6 shadow-sm"
+      class="belief-question min-w-0 rounded-3xl border border-stone-200 bg-white p-3 shadow-sm sm:p-6"
       data-question={@id}
     >
       <legend class="sr-only">{@question}</legend>
-      <div class="flex gap-4">
+      <div class="flex gap-2 sm:gap-4">
         <span class="font-mono text-sm font-bold text-brand">{@number}</span>
-        <p class="text-lg font-semibold leading-7 text-stone-900">{@question}</p>
+        <p class="text-lg font-semibold leading-7 text-stone-900 [overflow-wrap:anywhere]">
+          {@question}
+        </p>
       </div>
-      <div class="mt-5 grid grid-cols-6 gap-2" role="group" aria-label={@question}>
+      <div class="mt-5 flex flex-wrap gap-2" role="group" aria-label={@question}>
         <button
           :for={{value, label} <- answer_options(@locale)}
           type="button"
