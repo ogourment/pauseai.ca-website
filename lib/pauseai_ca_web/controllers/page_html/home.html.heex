@@ -4,15 +4,52 @@
   locale={@locale}
   promote_warning_shot={false}
 >
-  <section id="questions" class="mx-auto max-w-6xl px-5 py-20">
+  <section id="home-introduction" class="bg-[#18352f] text-white">
+    <div class="mx-auto max-w-6xl px-3 py-12 sm:px-5 sm:py-16">
+      <h1 class="font-heading text-4xl leading-tight sm:text-5xl">
+        {gettext("PauseAI Canada")}
+      </h1>
+      <p class="mt-4 max-w-2xl text-lg leading-relaxed">
+        {gettext(
+          "PauseAI Canada is a citizens’ group calling for an international pause in the development of advanced AI until its safety can be established."
+        )}
+      </p>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <.link
+          id="home-take-action"
+          href={
+            if @locale == "fr",
+              do: ~p"/fr/participer?intent=action",
+              else: ~p"/en/participate?intent=action"
+          }
+          class="inline-flex min-h-11 items-center whitespace-nowrap rounded-full bg-brand px-3 py-2 font-semibold sm:px-5 text-stone-950 hover:bg-brand-strong focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+        >{gettext("Take action")}</.link>
+        <.link
+          id="home-local-groups"
+          href={
+            if Application.get_env(:pauseai_ca, :incubators_enabled, false) do
+              if @locale == "fr", do: ~p"/fr/groupes", else: ~p"/en/groups"
+            else
+              if @locale == "fr",
+                do: ~p"/fr/participer?intent=waitlist",
+                else: ~p"/en/participate?intent=waitlist"
+            end
+          }
+          class="inline-flex min-h-11 items-center whitespace-nowrap rounded-full border border-white px-3 py-2 font-semibold sm:px-5 text-white hover:bg-white hover:text-[#18352f] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+        >{gettext("Local groups")}</.link>
+      </div>
+    </div>
+  </section>
+
+  <section id="questions" class="mx-auto max-w-6xl px-5 py-12 sm:py-16">
     <div class="grid gap-12 lg:grid-cols-[0.7fr_1.3fr]">
       <div>
         <p class="eyebrow">
           {gettext("Your starting point")}
         </p>
-        <h1 class="mt-3 font-serif text-4xl leading-tight text-stone-950">
+        <h2 class="mt-3 font-serif text-4xl leading-tight text-stone-950">
           {gettext("Where do you stand today?")}
-        </h1>
+        </h2>
       </div>
 
       <div
