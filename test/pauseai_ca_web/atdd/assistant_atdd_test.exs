@@ -972,6 +972,14 @@ if System.get_env("ATDD") == "true" do
           |> assert_has("#assistant-review-confirmation",
             text: tr(locale, "Approve this request and generate an answer?")
           )
+          |> click_button("#assistant-review-confirm", tr(locale, "Confirm approval"))
+          |> assert_has("#assistant-review-decision-error",
+            text:
+              tr(
+                locale,
+                "Confirm that you reviewed the displayed question and input review results."
+              )
+          )
           |> capture(
             id,
             "Confirm generation on the requester's credits",

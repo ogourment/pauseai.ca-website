@@ -327,7 +327,14 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
          assign(socket,
            decision_reason: reason,
            decision_confirmed: false,
-           decision_error: gettext("Confirm that you reviewed the displayed answer.")
+           decision_error:
+             if(socket.assigns.exchange.phase == :input,
+               do:
+                 gettext(
+                   "Confirm that you reviewed the displayed question and input review results."
+                 ),
+               else: gettext("Confirm that you reviewed the displayed answer.")
+             )
          )}
 
       true ->
