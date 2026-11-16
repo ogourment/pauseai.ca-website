@@ -463,3 +463,8 @@ h3 {
 
 .assistant-review-exchange { overflow-wrap: anywhere; }
 .assistant-review-confirmation input[type=checkbox] { accent-color: #166534; }
+
+/* Keep the floating launcher clear of the operator's review confirmation. */
+body:has(#assistant-review-confirmation) #site-assistant-launcher {
+  visibility: hidden;
+}
