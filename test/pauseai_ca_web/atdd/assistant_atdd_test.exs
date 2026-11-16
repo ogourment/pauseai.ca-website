@@ -833,7 +833,13 @@ if System.get_env("ATDD") == "true" do
             const owner = document.querySelector('#site-assistant')?.closest('[data-phx-session]');
             const joined = owner && window.liveSocket.getSocket().channels.some(channel =>
               channel.topic === `lv:${owner.id}` && channel.state === 'joined');
-            if (joined) { clearInterval(timer); resolve(true); }
+            const assistant = document.querySelector('#site-assistant');
+            const stored = sessionStorage.getItem('paa:draft:' + assistant?.dataset.draftKey);
+            const expected = stored ? JSON.parse(stored).text : null;
+            const restored = expected === null || assistant?.querySelector('textarea')?.value === expected;
+            if (joined && owner.classList.contains('phx-connected') && restored) {
+              clearInterval(timer); resolve(true);
+            }
             else if (Date.now() > deadline) { clearInterval(timer); reject(new Error('Assistant channel did not rejoin')); }
           }, 20);
         })

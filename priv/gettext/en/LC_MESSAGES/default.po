@@ -1080,7 +1080,7 @@ msgstr "Make superadmin"
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:1246
 #: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:100
 #: lib/pauseai_ca_web/live/admin_interac_donations_live.ex:329
-#: lib/pauseai_ca_web/live/assistant_live.ex:753
+#: lib/pauseai_ca_web/live/assistant_live.ex:756
 #: lib/pauseai_ca_web/live/local_interest_live.ex:97
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:889
 #: lib/pauseai_ca_web/live/mp_guide_component.ex:213
@@ -1820,7 +1820,7 @@ msgstr "An administrator must review this row."
 msgid "Assign manager"
 msgstr "Assign manager"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:754
+#: lib/pauseai_ca_web/live/assistant_live.ex:757
 #: lib/pauseai_ca_web/live/mp_guide_component.ex:214
 #: lib/pauseai_ca_web/live/volunteer_profile_live.ex:147
 #, elixir-autogen, elixir-format
@@ -5729,7 +5729,7 @@ msgstr "Select visible available recipients"
 msgid "Selected recipients include a withdrawal or blocked address. Review the selection."
 msgstr "Selected recipients include a withdrawal or blocked address. Review the selection."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:697
+#: lib/pauseai_ca_web/live/assistant_live.ex:698
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:1327
 #, elixir-autogen, elixir-format
 msgid "Send"
@@ -7997,7 +7997,7 @@ msgstr "This record changed. Reload the page before trying again."
 msgid "This reference is invalid, expired or already used. Ask the applicant for a new one."
 msgstr "This reference is invalid, expired or already used. Ask the applicant for a new one."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:702
+#: lib/pauseai_ca_web/live/assistant_live.ex:703
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:242
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:243
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:244
@@ -8627,7 +8627,7 @@ msgstr "Enter a message of up to 4,000 characters."
 msgid "Get original link"
 msgstr "Get original link"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:703
+#: lib/pauseai_ca_web/live/assistant_live.ex:706
 #: lib/pauseai_ca_web/live/slack_community_live.ex:500
 #, elixir-autogen
 msgid "Message"
@@ -10572,7 +10572,7 @@ msgstr "Specific and saved geographic filters replace the recorded region. Text 
 msgid "This saved geography filter is unavailable. Choose another filter or clear it."
 msgstr "This saved geography filter is unavailable. Choose another filter or clear it."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:693
+#: lib/pauseai_ca_web/live/assistant_live.ex:694
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:12
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:131
 #: lib/pauseai_ca_web/navigation.ex:20
@@ -10580,7 +10580,7 @@ msgstr "This saved geography filter is unavailable. Choose another filter or cle
 msgid "Assistant"
 msgstr "Assistant"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:698
+#: lib/pauseai_ca_web/live/assistant_live.ex:699
 #, elixir-autogen, elixir-format
 msgid "Close assistant"
 msgstr "Close assistant"
@@ -10595,12 +10595,12 @@ msgstr "Disable assistant"
 msgid "Enable assistant"
 msgstr "Enable assistant"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:700
+#: lib/pauseai_ca_web/live/assistant_live.ex:701
 #, elixir-autogen, elixir-format
 msgid "Expand assistant"
 msgstr "Expand assistant"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:690
+#: lib/pauseai_ca_web/live/assistant_live.ex:691
 #, elixir-autogen, elixir-format
 msgid "Fast"
 msgstr "Fast"
@@ -10615,12 +10615,12 @@ msgstr "Fast, Normal and High models"
 msgid "Help organizers use the website, review information and prepare their next action."
 msgstr "Help organizers use the website, review information and prepare their next action."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:692
+#: lib/pauseai_ca_web/live/assistant_live.ex:693
 #, elixir-autogen, elixir-format
 msgid "High"
 msgstr "High"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:710
+#: lib/pauseai_ca_web/live/assistant_live.ex:713
 #, elixir-autogen, elixir-format
 msgid "How can I help?"
 msgstr "How can I help?"
@@ -10637,12 +10637,12 @@ msgstr "Independent audit verification"
 msgid "Jev safety review"
 msgstr "Jev safety review"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:699
+#: lib/pauseai_ca_web/live/assistant_live.ex:700
 #, elixir-autogen, elixir-format
 msgid "Minimize assistant"
 msgstr "Minimize assistant"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:701
+#: lib/pauseai_ca_web/live/assistant_live.ex:702
 #, elixir-autogen, elixir-format
 msgid "Mode"
 msgstr "Mode"
@@ -10652,7 +10652,7 @@ msgstr "Mode"
 msgid "Moderation checks"
 msgstr "Moderation checks"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:691
+#: lib/pauseai_ca_web/live/assistant_live.ex:692
 #, elixir-autogen, elixir-format
 msgid "Normal"
 msgstr "Normal"
@@ -10709,7 +10709,7 @@ msgstr "Verified cost limits"
 msgid "Verified operator alerts"
 msgstr "Verified operator alerts"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:704
+#: lib/pauseai_ca_web/live/assistant_live.ex:707
 #, elixir-autogen, elixir-format
 msgid "Working…"
 msgstr "Working…"
@@ -10744,12 +10744,12 @@ msgstr "Default per admin: %{limit} tokens/day"
 msgid "Input"
 msgstr "Input"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:696
+#: lib/pauseai_ca_web/live/assistant_live.ex:697
 #, elixir-autogen, elixir-format
 msgid "Move assistant with arrow keys"
 msgstr "Move assistant with arrow keys"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:695
+#: lib/pauseai_ca_web/live/assistant_live.ex:696
 #, elixir-autogen, elixir-format
 msgid "New conversation"
 msgstr "New conversation"
@@ -11285,7 +11285,7 @@ msgid "Review action"
 msgstr "Review action"
 
 #: lib/pauseai_ca_web/live/assistant_audit_live.ex:195
-#: lib/pauseai_ca_web/live/assistant_live.ex:707
+#: lib/pauseai_ca_web/live/assistant_live.ex:710
 #, elixir-autogen, elixir-format
 msgid "Review details"
 msgstr "Review details"
@@ -11437,15 +11437,15 @@ msgstr "Valid all-provider pilot ceiling"
 msgid "Complete · %{count} contacts match this area."
 msgstr "Complete · %{count} contacts match this area."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:755
+#: lib/pauseai_ca_web/live/assistant_live.ex:758
 #: lib/pauseai_ca_web/live/mp_guide_component.ex:194
 #: lib/pauseai_ca_web/live/mp_guide_component.ex:215
 #, elixir-autogen, elixir-format
 msgid "Exit"
 msgstr "Exit"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:694
-#: lib/pauseai_ca_web/live/assistant_live.ex:752
+#: lib/pauseai_ca_web/live/assistant_live.ex:695
+#: lib/pauseai_ca_web/live/assistant_live.ex:755
 #, elixir-autogen, elixir-format
 msgid "Guided mode"
 msgstr "Guided mode"
@@ -12052,7 +12052,7 @@ msgstr "FSAs — first three postal-code characters"
 msgid "Find a list"
 msgstr "Find a list"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:736
+#: lib/pauseai_ca_web/live/assistant_live.ex:739
 #, elixir-autogen, elixir-format
 msgid "GeoNames public source · pinned 9 November 2026"
 msgstr "GeoNames public source · pinned 9 November 2026"
@@ -12203,7 +12203,7 @@ msgstr "The selected accounts could not be prepared for email. Group managers ca
 msgid "The selected records could not be prepared for email. Review the selection and current permissions."
 msgstr "The selected records could not be prepared for email. Review the selection and current permissions."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:726
+#: lib/pauseai_ca_web/live/assistant_live.ex:729
 #, elixir-autogen, elixir-format
 msgid "These postal-locality candidates do not establish city boundaries. V6T includes UBC; V6S and V6N need boundary review. This guide selects recorded city Vancouver, without adding these FSAs to the audience."
 msgstr "These postal-locality candidates do not establish city boundaries. V6T includes UBC; V6S and V6N need boundary review. This guide selects recorded city Vancouver, without adding these FSAs to the audience."
@@ -12231,7 +12231,7 @@ msgstr "This list could not be prepared for email. Check its current contacts."
 msgid "Type"
 msgstr "Type"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:720
+#: lib/pauseai_ca_web/live/assistant_live.ex:723
 #, elixir-autogen, elixir-format
 msgid "Vancouver postal-area reference · 31 candidates"
 msgstr "Vancouver postal-area reference · 31 candidates"
@@ -12461,7 +12461,7 @@ msgstr "The provider could not return a usable answer. Your message is retained.
 msgid "%{platform} (opens in a new tab)"
 msgstr "%{platform} (opens in a new tab)"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:708
+#: lib/pauseai_ca_web/live/assistant_live.ex:711
 #, elixir-autogen, elixir-format
 msgid "Assistant settings"
 msgstr "Assistant settings"
@@ -12630,3 +12630,13 @@ msgstr "Warning Shot Protocol"
 #, elixir-autogen, elixir-format
 msgid "Write to your Member of Parliament about advanced AI risks and international safeguards using PauseAI Canada's letter tool."
 msgstr "Write to your Member of Parliament about advanced AI risks and international safeguards using PauseAI Canada's letter tool."
+
+#: lib/pauseai_ca_web/live/assistant_live.ex:705
+#, elixir-autogen, elixir-format
+msgid "Daily token allowance remaining"
+msgstr "Daily token allowance remaining"
+
+#: lib/pauseai_ca_web/live/assistant_live.ex:704
+#, elixir-autogen, elixir-format
+msgid "Daily tokens"
+msgstr "Daily tokens"

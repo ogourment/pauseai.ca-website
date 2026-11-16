@@ -684,6 +684,7 @@ defmodule PauseAiCaWeb.AssistantLive do
       guided_mode={@guide_mode}
       allow_new={true}
       usage_summary={usage_summary(@usage)}
+      usage_percent={@usage && div(@usage.remaining_tokens * 100, max(@usage.limit, 1))}
       quota_exhausted={not is_nil(@availability_error)}
       labels={
         %{
@@ -700,6 +701,8 @@ defmodule PauseAiCaWeb.AssistantLive do
           expand: gettext("Expand assistant"),
           mode: gettext("Mode"),
           budget_limited: gettext("Unavailable"),
+          usage_details: gettext("Daily tokens"),
+          usage_remaining: gettext("Daily token allowance remaining"),
           message: gettext("Message"),
           working: gettext("Working…"),
           error_details:
