@@ -47,13 +47,17 @@ defmodule PauseAiCaWeb.Layouts do
   slot :management_navigation
   attr :breadcrumb_context, :map, default: %{}
   attr :breadcrumb_scope, :string, default: nil
+  attr :show_current_breadcrumb, :boolean, default: true
   attr :active_tab, :string, default: nil
   slot :inner_block, required: true
 
   def app(assigns) do
+    locale = assigns.locale || Gettext.get_locale(PauseAiCaWeb.Gettext)
+
     assigns =
       assigns
-      |> assign(:locale, assigns.locale || Gettext.get_locale(PauseAiCaWeb.Gettext))
+      |> assign(:locale, locale)
+      |> assign(:learn_items, learn_items(locale))
       |> assign(
         :campaign_countdown,
         PauseAiCa.Donations.Campaign.countdown(PauseAiCa.Donations.Pages.published())
@@ -79,6 +83,7 @@ defmodule PauseAiCaWeb.Layouts do
         locale={@locale}
         translated_path={@translated_path}
         countdown={@menu_countdown}
+        learn_items={@learn_items}
         active_tab={@active_tab}
       />
       <nav
@@ -117,7 +122,7 @@ defmodule PauseAiCaWeb.Layouts do
           </summary>
           <div class="absolute left-0 z-50 mt-2 w-64 overflow-hidden rounded-xl border border-stone-200 bg-white shadow-lg">
             <.link
-              :for={{id, label, href} <- learn_items(@locale)}
+              :for={{id, label, href} <- @learn_items}
               id={"learn-#{id}"}
               href={if(id == "rogue-game", do: href)}
               navigate={if(id != "rogue-game", do: href)}
@@ -157,7 +162,7 @@ defmodule PauseAiCaWeb.Layouts do
                 {gettext("Learn")}
               </p>
               <.link
-                :for={{id, label, href} <- learn_items(@locale)}
+                :for={{id, label, href} <- @learn_items}
                 id={"mobile-learn-#{id}"}
                 href={if(id == "rogue-game", do: href)}
                 navigate={if(id != "rogue-game", do: href)}
@@ -299,7 +304,7 @@ defmodule PauseAiCaWeb.Layouts do
     </div>
 
     {render_slot(@management_navigation)}
-    <div class="mx-auto max-w-6xl px-5 pt-3">
+    <div class={["mx-auto max-w-6xl px-5 pt-3", !@show_current_breadcrumb && "breadcrumb-links-only"]}>
       <PhoenixAppShell.Components.breadcrumbs
         label={gettext("Breadcrumbs")}
         scope={(if @current_scope && @current_scope.user, do: @current_scope.user.id, else: "guest") <> if(@breadcrumb_scope, do: ":" <> @breadcrumb_scope, else: "")}
@@ -522,13 +527,13 @@ defmodule PauseAiCaWeb.Layouts do
     """
   end
 
-  attr :locale, :string, required: true
+  attr :learn_items, :list, required: true
   attr :prefix, :string, required: true
 
   defp learning_links(assigns) do
     ~H"""
     <.link
-      :for={{id, label, href} <- learn_items(@locale)}
+      :for={{id, label, href} <- @learn_items}
       id={@prefix <> id}
       href={if id == "rogue-game", do: href}
       navigate={if id != "rogue-game", do: href}
@@ -567,6 +572,7 @@ defmodule PauseAiCaWeb.Layouts do
   attr :locale, :string, required: true
   attr :translated_path, :string, default: nil
   attr :countdown, :map, default: nil
+  attr :learn_items, :list, required: true
   attr :active_tab, :string, default: nil
 
   defp signed_in_navigation(assigns) do
@@ -611,7 +617,7 @@ defmodule PauseAiCaWeb.Layouts do
             class="section-public-link font-bold"
           >{gettext("Donate")}</.link>
           <p class="section-menu-heading">{gettext("Learn")}</p>
-          <.learning_links locale={@locale} prefix="mobile-learn-" />
+          <.learning_links learn_items={@learn_items} prefix="mobile-learn-" />
           <.link
             navigate={if @locale == "fr", do: ~p"/fr/signal-d-alarme", else: ~p"/en/warning-shot"}
             class="section-public-link"
@@ -626,7 +632,9 @@ defmodule PauseAiCaWeb.Layouts do
       </details>
       <details id="learn-menu" class="act-menu section-menu section-wide-public">
         <summary>{gettext("Learn")}</summary>
-        <div class="section-menu-panel"><.learning_links locale={@locale} prefix="learn-" /></div>
+        <div class="section-menu-panel">
+          <.learning_links learn_items={@learn_items} prefix="learn-" />
+        </div>
       </details>
       <.link
         navigate={if @locale == "fr", do: ~p"/fr/signal-d-alarme", else: ~p"/en/warning-shot"}
@@ -704,20 +712,27 @@ defmodule PauseAiCaWeb.Layouts do
   end
 
   defp learn_items(locale) do
-    [
-      {"blog", gettext("Blog"), if(locale == "fr", do: ~p"/fr/blogue", else: ~p"/en/blog")},
-      {"test", gettext("Take the test"),
-       if(locale == "fr", do: ~p"/fr#questions", else: ~p"/en#questions")},
-      {"rogue-game", gettext("Play the Rogue Agent Popup Game"),
-       if(locale == "fr", do: ~p"/fr/agent-rebelle", else: ~p"/en/rogue-agent")},
-      {"risks", gettext("Learn about the risks"),
-       if(locale == "fr", do: ~p"/fr/comprendre", else: ~p"/en/learn")},
-      {"basket", gettext("My learning list"),
-       if(locale == "fr",
-         do: ~p"/fr/comprendre#my-learning-list",
-         else: ~p"/en/learn#my-learning-list"
-       )}
-    ]
+    blog =
+      if PauseAiCa.Blog.published_in?(locale) do
+        [{"blog", gettext("Blog"), PauseAiCaWeb.BlogLive.path(locale)}]
+      else
+        []
+      end
+
+    blog ++
+      [
+        {"test", gettext("Take the test"),
+         if(locale == "fr", do: ~p"/fr#questions", else: ~p"/en#questions")},
+        {"rogue-game", gettext("Play the Rogue Agent Popup Game"),
+         if(locale == "fr", do: ~p"/fr/agent-rebelle", else: ~p"/en/rogue-agent")},
+        {"risks", gettext("Learn about the risks"),
+         if(locale == "fr", do: ~p"/fr/comprendre", else: ~p"/en/learn")},
+        {"basket", gettext("My learning list"),
+         if(locale == "fr",
+           do: ~p"/fr/comprendre#my-learning-list",
+           else: ~p"/en/learn#my-learning-list"
+         )}
+      ]
   end
 
   @doc "Task-focused layout for management and administration."

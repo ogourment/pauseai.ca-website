@@ -44,6 +44,7 @@ defmodule PauseAiCaWeb.LibraryLive do
       flash={@flash}
       current_scope={@current_scope}
       locale={@locale}
+      show_current_breadcrumb={false}
       translated_path={if(@locale == "fr", do: ~p"/en/learn", else: ~p"/fr/comprendre")}
     >
       <section class="mx-auto max-w-5xl px-5 pt-14 pb-8">

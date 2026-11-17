@@ -18,6 +18,7 @@ defmodule PauseAiCaWeb.ProtestPressReleaseLive do
   def render(assigns) do
     ~H"""
     <Layouts.app
+      show_current_breadcrumb={false}
       flash={@flash}
       current_scope={@current_scope}
       locale={@locale}

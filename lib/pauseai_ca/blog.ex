@@ -18,6 +18,14 @@ defmodule PauseAiCa.Blog do
     )
   end
 
+  def published_in?(locale) do
+    Repo.exists?(
+      from a in Article,
+        where:
+          is_nil(a.archived_at) and fragment("jsonb_exists(?, ?)", a.published_payload, ^locale)
+    )
+  end
+
   def published(slug) do
     Repo.one(
       from a in Article,

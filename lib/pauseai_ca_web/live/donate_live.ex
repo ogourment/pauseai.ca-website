@@ -200,6 +200,7 @@ defmodule PauseAiCaWeb.DonateLive do
     ~H"""
     <%= if @donation_page do %>
       <Layouts.app
+        show_current_breadcrumb={false}
         show_menu_countdown={false}
         flash={@flash}
         current_scope={@current_scope}
@@ -248,6 +249,7 @@ defmodule PauseAiCaWeb.DonateLive do
   defp campaign_page(assigns) do
     ~H"""
     <Layouts.app
+      show_current_breadcrumb={false}
       show_menu_countdown={false}
       flash={@flash}
       current_scope={@current_scope}
@@ -353,6 +355,7 @@ defmodule PauseAiCaWeb.DonateLive do
   defp legacy_pledge_page(assigns) do
     ~H"""
     <Layouts.app
+      show_current_breadcrumb={false}
       show_menu_countdown={false}
       flash={@flash}
       current_scope={@current_scope}

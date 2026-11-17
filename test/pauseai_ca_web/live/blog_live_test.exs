@@ -44,6 +44,20 @@ defmodule PauseAiCaWeb.BlogLiveTest do
     assert has_element?(fr, "#blog-section-detail-fr[open] #blog-section-complete-fr[open]")
   end
 
+  test "the public blog menu follows publication in the reader’s language", %{scope: scope} do
+    {:ok, article} = Blog.create(scope, "navigation-availability")
+    {:ok, article} = Blog.save(scope, article, Map.put(payload(), "fr", %{"markdown" => ""}))
+
+    refute get(build_conn(), "/en") |> html_response(200) =~ ~s(id="learn-blog")
+    {:ok, article} = Blog.publish(scope, article)
+
+    assert get(build_conn(), "/en") |> html_response(200) =~ ~s(id="learn-blog")
+    refute get(build_conn(), "/fr") |> html_response(200) =~ ~s(id="learn-blog")
+
+    {:ok, _} = Blog.unpublish(scope, article)
+    refute get(build_conn(), "/en") |> html_response(200) =~ ~s(id="learn-blog")
+  end
+
   test "authored defaults, explicit depth overrides and language links remain distinct", %{
     conn: conn,
     scope: scope

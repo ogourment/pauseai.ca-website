@@ -24,7 +24,12 @@ defmodule PauseAiCaWeb.ParticipationLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash} current_scope={@current_scope} locale={@locale}>
+    <Layouts.app
+      show_current_breadcrumb={false}
+      flash={@flash}
+      current_scope={@current_scope}
+      locale={@locale}
+    >
       <div class="mx-auto max-w-5xl px-5 py-12">
         <.live_component
           module={PauseAiCaWeb.ParticipationForm}
