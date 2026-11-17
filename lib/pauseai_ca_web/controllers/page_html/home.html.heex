@@ -5,11 +5,18 @@
   show_current_breadcrumb={false}
   promote_warning_shot={false}
 >
-  <section id="home-introduction" class="bg-[#18352f] text-white">
+  <section id="home-introduction" class="bg-stone-800 text-white">
     <div class="mx-auto grid max-w-6xl grid-cols-1 items-center gap-6 px-3 py-12 sm:px-5 sm:py-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
       <div>
-        <h1 class="font-heading text-4xl leading-tight sm:text-5xl">
-          {gettext("PauseAI Canada")}
+        <h1 class="flex items-center gap-2.5 font-heading text-4xl leading-tight sm:text-5xl">
+          <img
+            src={~p"/images/pauseai-canada-logo.png"}
+            width="44"
+            height="44"
+            alt=""
+            class="h-auto w-[clamp(2rem,4vw,2.75rem)] shrink-0"
+          />
+          <span>{gettext("PauseAI Canada")}</span>
         </h1>
         <p class="mt-4 max-w-2xl text-lg leading-relaxed">
           {gettext(
@@ -37,7 +44,7 @@
                   else: ~p"/en/participate?intent=waitlist"
               end
             }
-            class="inline-flex min-h-11 items-center whitespace-nowrap rounded-full border border-white px-3 py-2 font-semibold sm:px-5 text-white hover:bg-white hover:text-[#18352f] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            class="inline-flex min-h-11 items-center whitespace-nowrap rounded-full border border-white px-3 py-2 font-semibold sm:px-5 text-white hover:bg-white hover:text-stone-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
           >{gettext("Local groups")}</.link>
         </div>
       </div>
