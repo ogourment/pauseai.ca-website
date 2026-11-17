@@ -11,12 +11,12 @@
 msgid ""
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:73
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:133
 #, elixir-autogen, elixir-format
 msgid "A pause or treaty could materially reduce that risk."
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:67
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:127
 #, elixir-autogen, elixir-format
 msgid "AI poses a genuine existential risk."
 msgstr ""
@@ -114,7 +114,7 @@ msgstr ""
 msgid "Choose an action"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:99
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:159
 #, elixir-autogen, elixir-format
 msgid "Clear my answers"
 msgstr ""
@@ -140,7 +140,7 @@ msgstr ""
 msgid "Copy the letter"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:117
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:177
 #, elixir-autogen, elixir-format
 msgid "Create an account to save your progress"
 msgstr ""
@@ -223,7 +223,7 @@ msgstr ""
 msgid "Get involved"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:80
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:140
 #, elixir-autogen, elixir-format
 msgid "International coordination is politically achievable—countries can agree, comply, and enforce it."
 msgstr ""
@@ -370,7 +370,7 @@ msgstr ""
 msgid "Privacy"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:123
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:183
 #: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:10
 #: lib/pauseai_ca_web/seo.ex:54
 #, elixir-autogen, elixir-format
@@ -428,7 +428,7 @@ msgstr ""
 msgid "Save changes"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:109
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:169
 #, elixir-autogen, elixir-format
 msgid "Save your answers and continue your path on another device."
 msgstr ""
@@ -482,7 +482,7 @@ msgstr ""
 msgid "Start here"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:135
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:195
 #, elixir-autogen, elixir-format
 msgid "Start where you have questions."
 msgstr ""
@@ -601,7 +601,7 @@ msgstr ""
 msgid "When?"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:52
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:112
 #, elixir-autogen, elixir-format
 msgid "Where do you stand today?"
 msgstr ""
@@ -673,7 +673,7 @@ msgstr ""
 msgid "Your profile"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:49
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:109
 #, elixir-autogen, elixir-format
 msgid "Your starting point"
 msgstr ""
@@ -2890,7 +2890,7 @@ msgstr ""
 #: lib/pauseai_ca_web/components/layouts/root.html.heex:13
 #: lib/pauseai_ca_web/components/layouts/root.html.heex:14
 #: lib/pauseai_ca_web/controllers/page_html/about.html.heex:9
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:11
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:12
 #: lib/pauseai_ca_web/live/donate_live.ex:346
 #: lib/pauseai_ca_web/live/donate_live.ex:595
 #: lib/pauseai_ca_web/seo.ex:14
@@ -3000,11 +3000,13 @@ msgstr ""
 msgid "Calling for a global pause. Photo: Clara Lacasse."
 msgstr ""
 
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:57
 #: lib/pauseai_ca_web/live/protest_recap_live.ex:69
 #, elixir-autogen, elixir-format
 msgid "Demonstrators holding a PauseAI banner and signs at Phillips Square"
 msgstr ""
 
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:67
 #: lib/pauseai_ca_web/live/donate_live.ex:390
 #: lib/pauseai_ca_web/live/protest_recap_live.ex:152
 #, elixir-autogen, elixir-format
@@ -3087,6 +3089,7 @@ msgstr ""
 msgid "Media inquiries"
 msgstr ""
 
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:88
 #: lib/pauseai_ca_web/live/donate_live.ex:395
 #, elixir-autogen, elixir-format
 msgid "Montréal, September 26. Photo: Clara Lacasse."
@@ -3395,7 +3398,7 @@ msgid "Part of an international movement"
 msgstr ""
 
 #: lib/pauseai_ca_web/controllers/page_html/about.html.heex:14
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:14
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:15
 #, elixir-autogen, elixir-format
 msgid "PauseAI Canada is a citizens’ group calling for an international pause in the development of advanced AI until its safety can be established."
 msgstr ""
@@ -6102,7 +6105,7 @@ msgstr ""
 msgid "Enter your details once and choose the options you want."
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:170
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:230
 #: lib/pauseai_ca_web/live/participation_form.ex:402
 #: lib/pauseai_ca_web/live/participation_form.ex:405
 #, elixir-autogen, elixir-format
@@ -6191,8 +6194,8 @@ msgstr ""
 msgid "Subscribe me to the PauseAI Canada newsletter."
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:27
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:179
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:28
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:239
 #: lib/pauseai_ca_web/live/participation_form.ex:414
 #: lib/pauseai_ca_web/live/participation_form.ex:417
 #, elixir-autogen, elixir-format
@@ -6287,7 +6290,7 @@ msgstr ""
 msgid "On your own or with others"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:161
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:221
 #, elixir-autogen, elixir-format
 msgid "Get updates or take action"
 msgstr ""
@@ -7768,7 +7771,7 @@ msgstr ""
 
 #: lib/pauseai_ca_web/components/layouts.ex:328
 #: lib/pauseai_ca_web/components/layouts.ex:492
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:40
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:41
 #: lib/pauseai_ca_web/live/incubator_management_live.ex:14
 #: lib/pauseai_ca_web/live/incubator_management_live.ex:380
 #: lib/pauseai_ca_web/live/incubators_live.ex:19
@@ -12933,7 +12936,17 @@ msgctxt "header donation link"
 msgid "Donate"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:92
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:152
 #, elixir-autogen, elixir-format
 msgid "Show my path"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:93
+#, elixir-autogen, elixir-format
+msgid "London, February 28. Photo: Emily Whitty."
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:76
+#, elixir-autogen, elixir-format
+msgid "Two London marchers holding a PauseAI sign and a handwritten placard"
 msgstr ""
