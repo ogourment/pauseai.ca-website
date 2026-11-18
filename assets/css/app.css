@@ -109,14 +109,33 @@
 
 /* PauseAI brand tokens, kept in sync with pauseai.info.
    Fonts are self-hosted under priv/static/fonts:
-   Roboto Slab (Apache-2.0) for body, Saira Condensed (SIL OFL 1.1) for headings. */
+   Inter (SIL OFL 1.1) for body and headings. Earlier brand font assets remain available. */
 @theme {
   --color-brand: #f68b1e;
   --color-brand-strong: #ff9416;
   --color-brand-wash: #ffe7cc;
   --color-brand-ink: #b35f00;
-  --font-heading: "Saira Condensed", Impact, "Helvetica Neue Condensed", sans-serif;
-  --font-body: "Roboto Slab", Georgia, "Times New Roman", serif;
+  --font-heading: "Inter", Arial, sans-serif;
+  --font-body: "Inter", Arial, sans-serif;
+}
+
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/inter-latin-ext-variable.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/inter-latin-variable.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @font-face {
@@ -466,3 +485,46 @@ h3 {
 body:has(#assistant-review-confirmation) #site-assistant-launcher {
   visibility: hidden;
 }
+
+
+.home-opening { position:relative; isolation:isolate; overflow:hidden; }
+.home-opening-layout { position:relative; z-index:1; min-height:34rem; display:flex; align-items:center; padding-block:3rem 6.5rem; pointer-events:none; }
+.home-opening-copy { max-width:32rem; padding:1.5rem; background:rgb(41 37 36 / .96); border-radius:.75rem; pointer-events:auto; }
+.home-opening-copy h1 { font-weight:750; letter-spacing:-.035em; }
+.home-opening #home-photo-wall { position:absolute; inset:0; margin:0; }
+.home-opening .home-photo-grid { position:absolute; inset:0; display:grid; grid-template-columns:1fr; }
+.home-opening .home-photo-grid picture { height:100%; min-height:0; }
+.home-opening .home-photo-grid img { height:100%; width:100%; object-fit:cover; }
+.home-opening .home-photo-grid picture img { object-position:55% center; }
+.home-opening #home-photo-wall figcaption { position:absolute; bottom:1rem; right:1rem; left:1rem; width:fit-content; margin-left:auto; padding:.6rem .8rem; background:rgb(28 25 23 / .96); border-radius:.35rem; font-size:.75rem; }
+.chapter-directory { display:grid; gap:1.5rem; align-items:start; }
+.chapter-map { position:relative; background:#eee8df; border-radius:1rem; overflow:hidden; }
+.chapter-map img { display:block; width:100%; height:auto; }
+.chapter-map-pins { display:flex; flex-wrap:wrap; gap:.5rem; padding:0 1rem 1rem; }
+.chapter-map-pins a { display:inline-flex; align-items:center; gap:.4rem; min-height:2.75rem; padding:.4rem .65rem; background:white; border-radius:.4rem; font-size:.875rem; font-weight:650; color:#292524; }
+.chapter-map-pins a::before { content:""; width:.6rem; height:.6rem; border-radius:50%; background:#b45309; flex:none; }
+.chapter-cards { display:grid; gap:1rem; min-width:0; }
+.chapter-card { overflow:hidden; border:1px solid #d6d3d1; background:#fff; border-radius:.75rem; scroll-margin-top:7rem; }
+.chapter-card-content { padding:1.25rem; }
+.chapter-card-photo { display:block; width:100%; aspect-ratio:2/1; object-fit:cover; }
+.chapter-card-credit { font-size:.75rem; color:#57534e; }
+.chapter-card .btn { white-space:nowrap; }
+.chapter-map-pins a:focus-visible { outline:3px solid #292524; outline-offset:3px; }
+@media(min-width:768px) {
+ .chapter-directory { grid-template-columns:minmax(0,1fr) minmax(0,1.2fr); }
+ .chapter-map { position:sticky; top:6rem; }
+}
+@media(min-width:1024px) {
+ .home-opening .home-photo-grid { grid-template-columns:3fr 1fr; grid-template-rows:1fr 1fr; gap:.25rem; }
+ .home-opening .home-photo-grid picture { grid-row:span 2; }
+ .home-opening-layout { min-height:36rem; }
+}
+@media(max-width:639px) {
+ .home-opening-layout { min-height:44rem; align-items:flex-start; padding-top:1rem; padding-bottom:17rem; }
+ .home-opening-copy { padding:1.25rem; }
+ .home-opening-copy h1 { font-size:clamp(1.5rem,7vw,2.25rem); }
+ .home-opening .home-photo-grid picture img { object-position:65% center; }
+}
+.chapter-card .btn-primary { background:var(--color-brand); color:#1c1917; border-color:#b35f00; }
+.chapter-card .btn-primary:hover { background:var(--color-brand-strong); }
+.chapter-card .btn:focus-visible { outline:3px solid #292524; outline-offset:3px; }

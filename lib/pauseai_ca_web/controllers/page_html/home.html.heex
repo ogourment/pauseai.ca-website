@@ -5,9 +5,9 @@
   show_current_breadcrumb={false}
   promote_warning_shot={false}
 >
-  <section id="home-introduction" class="bg-stone-800 text-white">
-    <div class="mx-auto grid max-w-6xl grid-cols-1 items-center gap-6 px-3 py-12 sm:px-5 sm:py-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
-      <div>
+  <section id="home-introduction" class="home-opening bg-stone-800 text-white">
+    <div class="home-opening-layout mx-auto max-w-6xl px-3 sm:px-5">
+      <div class="home-opening-copy">
         <h1 class="flex items-center gap-2.5 font-heading text-4xl leading-tight sm:text-5xl">
           <img
             src={~p"/images/pauseai-canada-logo.png"}
@@ -48,65 +48,65 @@
           >{gettext("Local groups")}</.link>
         </div>
       </div>
-      <figure id="home-photo-wall">
-        <div class="overflow-hidden rounded-2xl lg:grid lg:grid-cols-[2fr_1fr] lg:gap-1">
-          <picture class="block lg:row-span-2">
-            <source
-              type="image/webp"
-              srcset={"#{~p"/images/protest-2026-09-26/clara-lacasse-3-small.webp"} 640w, #{~p"/images/protest-2026-09-26/clara-lacasse-3.webp"} 1200w"}
-              sizes="(min-width: 1152px) 400px, (min-width: 1024px) 36vw, calc(100vw - 24px)"
-            />
-            <img
-              src={~p"/images/protest-2026-09-26/clara-lacasse-3.jpg"}
-              width="1200"
-              height="960"
-              fetchpriority="high"
-              alt={gettext("Demonstrators holding a PauseAI banner and signs at Phillips Square")}
-              class="block h-auto w-full"
-            />
-          </picture>
-          <img
-            src={~p"/images/protest-2026-09-26/clara-lacasse-7-small.webp"}
-            width="640"
-            height="512"
-            loading="lazy"
-            decoding="async"
-            alt={gettext("Demonstrators holding signs calling for a worldwide pause on AI")}
-            class="hidden h-0 min-h-full w-full object-cover lg:block"
-          />
-          <img
-            src={~p"/images/protest-2026-02-28-london/emily-whitty-pauseai-signs.jpg"}
-            width="750"
-            height="500"
-            loading="lazy"
-            decoding="async"
-            alt={gettext("Two London marchers holding a PauseAI sign and a handwritten placard")}
-            class="hidden h-0 min-h-full w-full object-cover object-[50%_35%] lg:block"
-          />
-        </div>
-        <figcaption class="mt-2 text-sm">
-          <.link
-            href={
-              if @locale == "fr",
-                do: ~p"/fr/manifestation-montreal-2026-09-26",
-                else: ~p"/en/montreal-protest-2026-09-26"
-            }
-            class="underline underline-offset-4 hover:text-white/80"
-          >{gettext("Montréal, September 26. Photo: Clara Lacasse.")}</.link>
-          <span class="mt-1 hidden lg:block">
-            <a
-              href="https://www.aiforculture.com/news-and-updates/photos-from-pull-the-plug-march-london-on-feb-28-2026"
-              class="underline underline-offset-4 hover:text-white/80"
-            >{gettext("London, February 28. Photo: Emily Whitty.")}</a>
-            ·
-            <a
-              href="https://creativecommons.org/licenses/by/4.0/"
-              class="underline underline-offset-4 hover:text-white/80"
-            >CC BY 4.0</a>
-          </span>
-        </figcaption>
-      </figure>
     </div>
+    <figure id="home-photo-wall">
+      <div class="home-photo-grid">
+        <picture class="block lg:row-span-2">
+          <source
+            type="image/webp"
+            srcset={"#{~p"/images/protest-2026-09-26/clara-lacasse-3-small.webp"} 640w, #{~p"/images/protest-2026-09-26/clara-lacasse-3.webp"} 1200w"}
+            sizes="(min-width: 1024px) 75vw, 100vw"
+          />
+          <img
+            src={~p"/images/protest-2026-09-26/clara-lacasse-3.jpg"}
+            width="1200"
+            height="960"
+            fetchpriority="high"
+            alt={gettext("Demonstrators holding a PauseAI banner and signs at Phillips Square")}
+            class="block h-auto w-full"
+          />
+        </picture>
+        <img
+          src={~p"/images/protest-2026-09-26/clara-lacasse-7-small.webp"}
+          width="640"
+          height="512"
+          loading="lazy"
+          decoding="async"
+          alt={gettext("Demonstrators holding signs calling for a worldwide pause on AI")}
+          class="hidden h-0 min-h-full w-full object-cover lg:block"
+        />
+        <img
+          src={~p"/images/protest-2026-02-28-london/emily-whitty-pauseai-signs.jpg"}
+          width="750"
+          height="500"
+          loading="lazy"
+          decoding="async"
+          alt={gettext("Two London marchers holding a PauseAI sign and a handwritten placard")}
+          class="hidden h-0 min-h-full w-full object-cover object-[50%_35%] lg:block"
+        />
+      </div>
+      <figcaption class="mt-2 text-sm">
+        <.link
+          href={
+            if @locale == "fr",
+              do: ~p"/fr/manifestation-montreal-2026-09-26",
+              else: ~p"/en/montreal-protest-2026-09-26"
+          }
+          class="underline underline-offset-4 hover:text-white/80"
+        >{gettext("Montréal, September 26. Photo: Clara Lacasse.")}</.link>
+        <span class="mt-1 hidden lg:block">
+          <a
+            href="https://www.aiforculture.com/news-and-updates/photos-from-pull-the-plug-march-london-on-feb-28-2026"
+            class="underline underline-offset-4 hover:text-white/80"
+          >{gettext("London, February 28. Photo: Emily Whitty.")}</a>
+          ·
+          <a
+            href="https://creativecommons.org/licenses/by/4.0/"
+            class="underline underline-offset-4 hover:text-white/80"
+          >CC BY 4.0</a>
+        </span>
+      </figcaption>
+    </figure>
   </section>
 
   <section id="questions" class="mx-auto max-w-6xl px-3 py-12 sm:px-5 sm:py-16">

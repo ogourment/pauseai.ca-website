@@ -231,6 +231,25 @@ defmodule PauseAiCaWeb.IncubatorsLive do
 
   def directory("fr"), do: "/fr/groupes"
   def directory(_), do: "/en/groups"
+
+  @chapter_locations %{
+    "montreal" => %{x: 72.21, y: 82.95},
+    "ottawa" => %{x: 69.59, y: 84.18},
+    "toronto" => %{x: 65.71, y: 89.61}
+  }
+
+  defp chapter_location(group) do
+    name =
+      group.name_en
+      |> String.normalize(:nfd)
+      |> String.replace(~r/\p{Mn}/u, "")
+      |> String.downcase()
+
+    Enum.find_value(@chapter_locations, fn {city, position} ->
+      if String.contains?(name, city), do: Map.put(position, :city, city)
+    end)
+  end
+
   defp title(group, "fr"), do: group.name_fr
   defp title(group, _), do: group.name_en
   defp summary(group, "fr"), do: group.summary_fr
@@ -288,7 +307,11 @@ defmodule PauseAiCaWeb.IncubatorsLive do
       translated_path={directory(if @locale == "fr", do: "en", else: "fr")}
     >
       <section
-        class="mx-auto max-w-4xl px-5 py-8 space-y-6 [&_.label]:whitespace-normal [&_.label]:items-start [&_.label]:max-w-full [&_.checkbox]:shrink-0"
+        class={[
+          "mx-auto px-3 sm:px-5 py-8 space-y-6",
+          if(@group, do: "max-w-4xl", else: "max-w-6xl"),
+          " [&_.label]:whitespace-normal [&_.label]:items-start [&_.label]:max-w-full [&_.checkbox]:shrink-0"
+        ]}
         id="incubators"
       >
         <nav aria-label={gettext("Breadcrumbs")} class="text-sm">
@@ -310,70 +333,113 @@ defmodule PauseAiCaWeb.IncubatorsLive do
           <p :if={@groups == []}>
             {gettext("Join a local waitlist below or offer to help start an incubator in your area.")}
           </p>
-          <article
-            :for={group <- @groups}
-            class="rounded-xl border border-base-300 p-5 space-y-3"
-            id={"group-#{group.group_id}"}
-          >
-            <h2 class="text-xl font-semibold">{title(group, @locale)}</h2>
-            <p :if={group.stage == "incubator"} class="text-sm">{gettext("Incubator")}</p>
-            <p class="whitespace-pre-line">{summary(group, @locale)}</p>
-            <p :if={group.fsas != []} class="text-sm">
-              {gettext("Postal areas")}: {Enum.join(group.fsas, ", ")}<br />{gettext(
-                "FSA: the first three characters of your postal code, for example H2X."
-              )}
-            </p>
-            <div class="flex flex-wrap gap-4 items-center">
-              <.link
-                :if={group.stage == "active"}
-                href={"/groups/#{group.group_id}/join?#{URI.encode_query(%{locale: @locale})}"}
-                class="btn btn-primary"
-              >{gettext("Request to join")}</.link>
-              <button
-                type="button"
-                phx-click="choose-group"
-                phx-value-group-id={group.group_id}
-                phx-target="#participation"
-                class="btn btn-outline"
-              >{gettext("Join the waitlist")}</button>
-              <button
-                :if={group.stage == "incubator"}
-                type="button"
-                phx-click="choose-group"
-                phx-value-group-id={group.group_id}
-                phx-value-kind="help"
-                phx-target="#participation"
-                class="btn btn-outline"
-              >{gettext("I can help")}</button>
-              <.link
-                :if={group.events_url not in [nil, ""]}
-                href={group.events_url}
-                class="underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >{gettext("Group events")}</.link>
+          <div class="chapter-directory">
+            <div :if={@groups != []} class="chapter-map" id="chapter-map">
+              <div class="relative">
+                <img src={~p"/images/canada-chapters.svg"} width="640" height="520" alt="" />
+                <span
+                  :for={group <- @groups}
+                  :if={chapter_location(group)}
+                  class="absolute h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-700 ring-2 ring-white"
+                  style={"left: #{chapter_location(group).x}%; top: #{chapter_location(group).y}%"}
+                  aria-hidden="true"
+                ></span>
+              </div>
+              <nav class="chapter-map-pins" aria-label={gettext("Local groups")}>
+                <a :for={group <- @groups} href={"#group-#{group.group_id}"}>
+                  {title(group, @locale)}
+                </a>
+              </nav>
             </div>
-            <div
-              :if={Incubators.upcoming_event?(group)}
-              id={"group-next-event-#{group.group_id}"}
-              class="space-y-1"
-            >
-              <.link
-                href={group.next_event_url}
-                class="font-semibold underline"
-                target="_blank"
-                rel="noopener noreferrer"
+            <div class="chapter-cards">
+              <article
+                :for={group <- @groups}
+                class="chapter-card"
+                id={"group-#{group.group_id}"}
               >
-                {if @locale == "fr", do: group.next_event_title_fr, else: group.next_event_title_en}
-              </.link>
-              <p>
-                <time datetime={DateTime.to_iso8601(group.next_event_starts_at)}>{PauseAiCa.Welcome.display_time(
-                  group.next_event_starts_at,
-                  group.next_event_timezone
-                )}</time>
-              </p>
+                <img
+                  :if={chapter_location(group) && chapter_location(group).city == "montreal"}
+                  src={~p"/images/protest-2026-09-26/clara-lacasse-3-small.webp"}
+                  width="640"
+                  height="512"
+                  loading="lazy"
+                  class="chapter-card-photo"
+                  alt={gettext("Demonstrators holding a PauseAI banner and signs at Phillips Square")}
+                />
+                <div class="chapter-card-content space-y-3">
+                  <h2 class="text-2xl font-bold">{title(group, @locale)}</h2>
+                  <.link
+                    :if={chapter_location(group) && chapter_location(group).city == "montreal"}
+                    href={
+                      if @locale == "fr",
+                        do: ~p"/fr/manifestation-montreal-2026-09-26",
+                        else: ~p"/en/montreal-protest-2026-09-26"
+                    }
+                    class="chapter-card-credit underline"
+                  >{gettext("Montréal, September 26. Photo: Clara Lacasse.")}</.link>
+                  <p :if={group.stage == "incubator"} class="text-sm">{gettext("Incubator")}</p>
+                  <p class="whitespace-pre-line">{summary(group, @locale)}</p>
+                  <p :if={group.fsas != []} class="text-sm">
+                    {gettext("Postal areas")}: {Enum.join(group.fsas, ", ")}<br />{gettext(
+                      "FSA: the first three characters of your postal code, for example H2X."
+                    )}
+                  </p>
+                  <div class="flex flex-wrap gap-4 items-center">
+                    <.link
+                      :if={group.stage == "active"}
+                      href={"/groups/#{group.group_id}/join?#{URI.encode_query(%{locale: @locale})}"}
+                      class="btn btn-primary"
+                    >{gettext("Request to join")}</.link>
+                    <button
+                      type="button"
+                      phx-click="choose-group"
+                      phx-value-group-id={group.group_id}
+                      phx-target="#participation"
+                      class="btn btn-outline"
+                    >{gettext("Join the waitlist")}</button>
+                    <button
+                      :if={group.stage == "incubator"}
+                      type="button"
+                      phx-click="choose-group"
+                      phx-value-group-id={group.group_id}
+                      phx-value-kind="help"
+                      phx-target="#participation"
+                      class="btn btn-outline"
+                    >{gettext("I can help")}</button>
+                    <.link
+                      :if={group.events_url not in [nil, ""]}
+                      href={group.events_url}
+                      class="underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >{gettext("Group events")}</.link>
+                  </div>
+                  <div
+                    :if={Incubators.upcoming_event?(group)}
+                    id={"group-next-event-#{group.group_id}"}
+                    class="space-y-1"
+                  >
+                    <.link
+                      href={group.next_event_url}
+                      class="font-semibold underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {if @locale == "fr",
+                        do: group.next_event_title_fr,
+                        else: group.next_event_title_en}
+                    </.link>
+                    <p>
+                      <time datetime={DateTime.to_iso8601(group.next_event_starts_at)}>{PauseAiCa.Welcome.display_time(
+                        group.next_event_starts_at,
+                        group.next_event_timezone
+                      )}</time>
+                    </p>
+                  </div>
+                </div>
+              </article>
             </div>
-          </article>
+          </div>
           <div id="group-participation" class="rounded-xl border border-base-300 p-5">
             <.live_component
               module={PauseAiCaWeb.ParticipationForm}
