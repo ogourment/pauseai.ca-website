@@ -146,7 +146,7 @@ defmodule PauseAiCaWeb.ProtestPressReleaseLive do
             <a href="mailto:info@pauseai.ca" class="underline">info@pauseai.ca</a>
           </p>
           <.link
-            navigate={
+            href={
               if @locale == "fr",
                 do: ~p"/fr/manifestation-montreal-2026-09-26",
                 else: ~p"/en/montreal-protest-2026-09-26"

@@ -82,6 +82,16 @@ defmodule PauseAiCaWeb.SEO do
          gettext(
            "Understand the Warning Shot Protocol and take action on advanced AI risks with PauseAI Canada."
          )},
+        {"/our-actions", "/nos-actions", gettext("Our actions"),
+         gettext(
+           "Read about PauseAI Canada's Montréal and Toronto marches, with photographs and Montréal press releases."
+         )},
+        {"/montreal-protest-2026-11-14/press-release",
+         "/manifestation-montreal-2026-11-14/communique",
+         gettext("Montréal march press release — November 16, 2026"),
+         gettext(
+           "PauseAI Canada's November 16 press release following the November 14 Montréal march for an AI treaty."
+         )},
         {"/montreal-protest-2026-09-26", "/manifestation-montreal-2026-09-26",
          gettext("Montréal protest — September 26, 2026"),
          gettext("Read the recap of PauseAI Canada's September 26, 2026 protest in Montréal.")},

@@ -137,10 +137,10 @@ defmodule PauseAiCaWeb.PageControllerTest do
     assert about_en =~ "Join PauseAI Canada"
     assert about_en =~ "https://pauseai.info/"
     assert about_en =~ ~s(id="about-protest-link")
-    assert about_en =~ ~s(href="/en/montreal-protest-2026-09-26")
+    assert about_en =~ ~s(href="/en/our-actions")
     about_fr = html_response(get(conn, ~p"/fr/a-propos"), 200)
     assert about_fr =~ ~s(id="about")
-    assert about_fr =~ "Une quarantaine"
-    assert about_fr =~ ~s(href="/fr/manifestation-montreal-2026-09-26")
+    assert about_fr =~ "Nos actions récentes"
+    assert about_fr =~ ~s(href="/fr/nos-actions")
   end
 end

@@ -323,6 +323,11 @@ defmodule PauseAiCaWeb.Layouts do
           href={if(@locale == "fr", do: ~p"/fr/a-propos", else: ~p"/en/about")}
         >{gettext("PauseAI Canada")} – {gettext("About")}</.link>
         <.link
+          id="footer-our-actions"
+          href={if @locale == "fr", do: ~p"/fr/nos-actions", else: ~p"/en/our-actions"}
+          class="inline-flex min-h-8 items-center whitespace-nowrap hover:text-stone-900"
+        >{gettext("Our actions")}</.link>
+        <.link
           class="inline-flex min-h-8 items-center whitespace-nowrap hover:text-stone-900"
           href={if(@locale == "fr", do: ~p"/fr/groupes", else: ~p"/en/groups")}
         >{gettext("Local groups")}</.link>

@@ -46,7 +46,7 @@ defmodule PauseAiCaWeb.ProtestRecapLive do
           </p>
           <.link
             id="protest-press-release"
-            navigate={
+            href={
               if @locale == "fr",
                 do: ~p"/fr/manifestation-montreal-2026-09-26/communique",
                 else: ~p"/en/montreal-protest-2026-09-26/press-release"

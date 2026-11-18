@@ -257,6 +257,10 @@ defmodule PauseAiCaWeb.Router do
       live "/fr/groupes", IncubatorsLive, :fr
       live "/en/donate", DonateLive, :en
       live "/fr/faire-un-don", DonateLive, :fr
+      live "/en/our-actions", ActionsLive, :en
+      live "/fr/nos-actions", ActionsLive, :fr
+      live "/en/montreal-protest-2026-11-14/press-release", NovemberPressReleaseLive, :en
+      live "/fr/manifestation-montreal-2026-11-14/communique", NovemberPressReleaseLive, :fr
       live "/en/montreal-protest-2026-09-26", ProtestRecapLive, :en
       live "/fr/manifestation-montreal-2026-09-26", ProtestRecapLive, :fr
       live "/en/montreal-protest-2026-09-26/press-release", ProtestPressReleaseLive, :en
