@@ -520,10 +520,11 @@ body:has(#assistant-review-confirmation) #site-assistant-launcher {
  .home-opening-layout { min-height:36rem; }
 }
 @media(max-width:639px) {
- .home-opening-layout { min-height:44rem; align-items:flex-start; padding-top:1rem; padding-bottom:17rem; }
+ .home-opening-layout { min-height:0; align-items:flex-start; padding-top:1rem; padding-bottom:25rem; }
  .home-opening-copy { padding:1.25rem; }
  .home-opening-copy h1 { font-size:clamp(1.5rem,7vw,2.25rem); }
- .home-opening .home-photo-grid picture img { object-position:65% center; }
+ .home-opening .home-photo-grid { top:auto; height:24rem; }
+ .home-opening .home-photo-grid picture img { object-position:center; }
 }
 .chapter-card .btn-primary { background:var(--color-brand); color:#1c1917; border-color:#b35f00; }
 .chapter-card .btn-primary:hover { background:var(--color-brand-strong); }
