@@ -33,9 +33,17 @@ defmodule PauseAiCaWeb.PublishedDonateLiveTest do
         ] do
       {:ok, view, _} = live(conn, path)
       assert has_element?(view, "h1", title)
-      refute has_element?(view, "#donation-funding-unknown")
-      refute has_element?(view, "#donation-gift-form")
-      refute has_element?(view, "#donation-buckets")
+      assert has_element?(view, "#donation-funding-unknown")
+      assert has_element?(view, "#donation-mobile-funding-unknown")
+      assert has_element?(view, "#donation-gift-form")
+      assert has_element?(view, "#donation-buckets article[data-kind='bucket']")
+      refute has_element?(view, "#donation-minimum-progress")
+      refute has_element?(view, "#donation-funding-source")
+      refute has_element?(view, "#donation-buckets [role='progressbar']")
+      html = render_change(form(view, "#donation-gift-form", gift: %{amount: "50"}))
+      assert bucket_ids(html) == ["bucket:first:small-first", "bucket:first:small-second"]
+      assert has_element?(view, "#donation-funding-unknown")
+      assert Repo.aggregate(Pledge, :count) == 0
       assert has_element?(view, "#manifund-donate[data-donation='manifund'][target='_blank']")
       assert has_element?(view, "#donation-brochure[data-donation='brochure']")
 
@@ -255,7 +263,8 @@ defmodule PauseAiCaWeb.PublishedDonateLiveTest do
     {:ok, mismatched, _} = live(conn, "/en/donate")
     refute has_element?(mismatched, "#donation-funding-source")
     refute has_element?(mismatched, "#donation-minimum-progress")
-    refute has_element?(mismatched, "#donation-gift-form")
+    assert has_element?(mismatched, "#donation-funding-unknown")
+    assert has_element?(mismatched, "#donation-gift-form")
     assert has_element?(mismatched, "#manifund-donate")
   end
 

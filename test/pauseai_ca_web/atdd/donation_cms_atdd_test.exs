@@ -150,14 +150,33 @@ if System.get_env("ATDD") == "true" do
           |> assert_has("[data-phx-main].phx-connected")
           |> assert_has("h1", text: title)
           |> assert_has("#manifund-donate")
-          |> refute_has("#donation-funding-unknown")
-          |> refute_has("#donation-gift-form")
-          |> refute_has("#donation-buckets")
+          |> assert_has("#donation-funding-unknown")
+          |> assert_has("#donation-buckets article[data-kind='bucket']")
+          |> refute_has("#donation-funding-source")
+          |> refute_has("#donation-minimum-progress")
           |> capture(
             id,
             "Published synthetic donation page",
             "Publish makes the saved edition visible in the isolated database"
           )
+
+        gift_label = original.payload["editions"][locale]["gift_label"]
+
+        browser =
+          if locale == "fr" do
+            browser
+            |> click_button(tr(locale, "Try a donation"))
+            |> assert_has("#donation-mobile-dialog[open] #donation-mobile-funding-unknown")
+            |> fill_in("#donation-mobile-gift", gift_label, with: "25")
+            |> assert_has("#donation-mobile-buckets [role='progressbar']")
+            |> screenshot("donation-planning-fr.png", full_page: false)
+            |> click("#donation-mobile-close")
+          else
+            browser
+            |> fill_in("#donation-gift", gift_label, with: "25")
+            |> assert_has("#donation-buckets [role='progressbar']")
+            |> screenshot("donation-planning-en.png", full_page: false)
+          end
 
         assert Pages.published()["editions"][locale]["title"] == title
 

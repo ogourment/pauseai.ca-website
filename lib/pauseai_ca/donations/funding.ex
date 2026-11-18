@@ -59,8 +59,21 @@ defmodule PauseAiCa.Donations.Funding do
   @doc false
   def fetch(get_json, now) do
     with {:ok, campaign} <- PauseAiCa.Donations.Campaign.current(),
-         {:ok, pending} <- Manifund.fetch(campaign.project_id, get_json, max_pages: 10),
-         {:ok, fx_json} <- get_json.(@fx_url),
+         {:ok, result} <- Manifund.fetch(campaign.project_id, get_json, max_pages: 10) do
+      normalize(result, get_json, now)
+    else
+      _ -> {:error, :unavailable}
+    end
+  end
+
+  # A successful lifecycle observation replaces any cached proposal baseline.
+  # It carries no public amount and needs no currency conversion.
+  defp normalize(%{measure: :funding_unavailable} = result, _, now) do
+    {:ok, Map.put(result, :fetched_at, now)}
+  end
+
+  defp normalize(%{measure: :pending_offers} = pending, get_json, now) do
+    with {:ok, fx_json} <- get_json.(@fx_url),
          {:ok, rate, date} <- fx(fx_json, now) do
       amount = pending.pending_offer_minor |> Decimal.new() |> Decimal.mult(rate)
       amount_minor = amount |> Decimal.round(0, :half_up) |> Decimal.to_integer()
@@ -68,7 +81,7 @@ defmodule PauseAiCa.Donations.Funding do
       if amount_minor <= 9_007_199_254_740_991 do
         {:ok,
          %{
-           project_id: campaign.project_id,
+           project_id: pending.project_id,
            amount_minor: amount_minor,
            currency: "CAD",
            measure: :pending_offers,

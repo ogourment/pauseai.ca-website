@@ -18,10 +18,19 @@ defmodule PauseAiCa.DonationFundingTest do
   end
 
   test "unsupported project lifecycle never produces a public funding amount" do
-    for stage <- ["active", "completed", "cancelled", "unknown"] do
+    for stage <- ["completed", "cancelled", "unknown"] do
       assert {:error, :unavailable} =
                Funding.fetch(fetcher(Map.put(project(), "stage", stage), fx()), @now)
     end
+  end
+
+  test "an active grant is cached without requesting FX or reporting a funding amount" do
+    active = project() |> Map.merge(%{"stage" => "active", "bids" => []})
+
+    assert {:ok, %{measure: :funding_unavailable, received_minor: nil} = observation} =
+             Funding.fetch(fn "https://manifund.org/api/v0/projects" -> {:ok, [active]} end, @now)
+
+    refute Map.has_key?(observation, :amount_minor)
   end
 
   test "missing, stale, future and malformed FX fail closed instead of assuming parity or zero" do

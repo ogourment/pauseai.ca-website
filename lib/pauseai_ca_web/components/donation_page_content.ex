@@ -63,7 +63,10 @@ defmodule PauseAiCaWeb.DonationPageContent do
         countdown:
           if(assigns.campaign_active, do: PauseAiCa.Donations.Campaign.countdown(assigns.page)),
         projection: projection,
-        show_projection: assigns.preview_mode || (projection && projection.baseline_known?),
+        show_projection: assigns.preview_mode || not is_nil(projection),
+        funding_unknown:
+          (assigns.preview_mode || not is_nil(projection)) &&
+            !match?(%{baseline_known?: true}, projection),
         active_stage: active,
         cards: rows,
         card_json: Jason.encode!(rows),
@@ -136,7 +139,7 @@ defmodule PauseAiCaWeb.DonationPageContent do
           {text(@copy, note(@projection))}
         </p>
         <p
-          :if={@preview_mode && (!@projection || !@projection.baseline_known?)}
+          :if={@funding_unknown}
           id={"#{@prefix}-funding-unknown"}
           class="mt-3 text-sm font-semibold text-stone-700"
         >
@@ -151,7 +154,7 @@ defmodule PauseAiCaWeb.DonationPageContent do
         </p>
         <p
           :if={
-            !@preview_mode && @show_projection && Map.get(@observation, :measure) == :pending_offers
+            !@preview_mode && @show_projection && match?(%{measure: :pending_offers}, @observation)
           }
           id="donation-funding-source"
           class="mt-3 text-sm text-stone-600"
@@ -181,6 +184,7 @@ defmodule PauseAiCaWeb.DonationPageContent do
               card_json={@card_json}
               gift_value={@gift_value}
               input_error={@input_error}
+              funding_unknown={@funding_unknown}
               preview_mode={@preview_mode}
               preview_event={@preview_event}
             />
@@ -473,6 +477,7 @@ defmodule PauseAiCaWeb.DonationPageContent do
   attr :card_json, :string, required: true
   attr :gift_value, :string, required: true
   attr :input_error, :string, default: nil
+  attr :funding_unknown, :boolean, required: true
   attr :preview_mode, :boolean, required: true
   attr :preview_event, :string, default: nil
 
@@ -537,6 +542,13 @@ defmodule PauseAiCaWeb.DonationPageContent do
           </div>
         </div>
         <div class="donation-simulator-cards">
+          <p
+            :if={@funding_unknown}
+            id={"#{@prefix}-mobile-funding-unknown"}
+            class="mb-3 text-sm font-semibold"
+          >
+            {text(@copy, "funding_unknown")}
+          </p>
           <.bucket_stack prefix={@prefix <> "-mobile"} cards={@cards} card_json={@card_json} />
         </div>
       </dialog>
