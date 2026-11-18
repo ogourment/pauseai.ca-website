@@ -571,3 +571,22 @@ body:has(#assistant-review-confirmation) #site-assistant-launcher {
 .chapter-card .btn-primary { background:var(--color-brand); color:#1c1917; border-color:#b35f00; }
 .chapter-card .btn-primary:hover { background:var(--color-brand-strong); }
 .chapter-card .btn:focus-visible { outline:3px solid #292524; outline-offset:3px; }
+
+#home-updates a:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
+
+#mp-guide-controller button:focus-visible,
+#mp-guide-controller a:focus-visible {
+  outline: 2px solid #292524;
+  outline-offset: 4px;
+}
+
+#participation-form fieldset {
+  min-inline-size: 0;
+}
+
+#participation-form .label {
+  white-space: normal;
+}

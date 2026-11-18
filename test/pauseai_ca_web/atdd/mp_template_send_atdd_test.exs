@@ -132,7 +132,7 @@ if System.get_env("ATDD") == "true" do
         |> assert_has("#mp-template-public-revision", text: to_string(published.revision))
         |> click_link("#mp-template-personalize", tr(locale, "Personalize this letter"))
         |> assert_has("[data-phx-main].phx-connected")
-        |> click_button("#mp-guide-start", tr(locale, "Guide me through this"))
+        |> click_button("#mp-guide-start", tr(locale, "Guide"))
         |> assert_has("#mp-guide-sign-in")
         |> click_link("#mp-guide-sign-in a", tr(locale, "Sign in"))
         |> fill_in("#login_form_magic_email", tr(locale, "Email"), with: friend_email)

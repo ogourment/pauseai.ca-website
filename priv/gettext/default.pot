@@ -193,6 +193,7 @@ msgstr ""
 msgid "Events"
 msgstr ""
 
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:200
 #: lib/pauseai_ca_web/live/profile_live.ex:188
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:1257
 #, elixir-autogen, elixir-format
@@ -471,7 +472,7 @@ msgstr ""
 msgid "Should we slow AI down?"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/mp_guide_component.ex:191
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:242
 #: lib/pauseai_ca_web/live/user_live/login.ex:100
 #: lib/pauseai_ca_web/live/user_live/login.ex:136
 #, elixir-autogen, elixir-format
@@ -1079,7 +1080,7 @@ msgstr ""
 #: lib/pauseai_ca_web/live/assistant_live.ex:853
 #: lib/pauseai_ca_web/live/local_interest_live.ex:97
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:889
-#: lib/pauseai_ca_web/live/mp_guide_component.ex:213
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:265
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:1082
 #: lib/pauseai_ca_web/live/newsletter_results_live.ex:399
 #: lib/pauseai_ca_web/live/newsletters_live.ex:504
@@ -1681,6 +1682,7 @@ msgstr ""
 #: lib/pauseai_ca_web/live/contact_lists_live.ex:478
 #: lib/pauseai_ca_web/live/contact_lists_live.ex:532
 #: lib/pauseai_ca_web/live/dashboard_live.ex:577
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:216
 #, elixir-autogen, elixir-format
 msgid "Edit"
 msgstr ""
@@ -1817,7 +1819,7 @@ msgid "Assign manager"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/assistant_live.ex:854
-#: lib/pauseai_ca_web/live/mp_guide_component.ex:214
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:266
 #: lib/pauseai_ca_web/live/volunteer_profile_live.ex:147
 #, elixir-autogen, elixir-format
 msgid "Back"
@@ -2717,7 +2719,7 @@ msgstr ""
 msgid "Provider events"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/actions_live.ex:216
+#: lib/pauseai_ca_web/live/actions_live.ex:256
 #: lib/pauseai_ca_web/live/protest_recap_live.ex:132
 #, elixir-autogen, elixir-format
 msgid "Read the report in Le Devoir (French)"
@@ -2992,19 +2994,20 @@ msgstr ""
 msgid "Grant access and notify"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/actions_live.ex:170
+#: lib/pauseai_ca_web/live/actions_live.ex:210
 #: lib/pauseai_ca_web/live/protest_recap_live.ex:74
 #, elixir-autogen, elixir-format
 msgid "At Phillips Square, Montréal. Photo: Clara Lacasse."
 msgstr ""
 
+#: lib/pauseai_ca_web/live/actions_live.ex:280
 #: lib/pauseai_ca_web/live/protest_recap_live.ex:157
 #, elixir-autogen, elixir-format
 msgid "Calling for a global pause. Photo: Clara Lacasse."
 msgstr ""
 
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:65
-#: lib/pauseai_ca_web/live/actions_live.ex:166
+#: lib/pauseai_ca_web/live/actions_live.ex:206
 #: lib/pauseai_ca_web/live/incubators_live.ex:367
 #: lib/pauseai_ca_web/live/protest_recap_live.ex:69
 #, elixir-autogen, elixir-format
@@ -3012,17 +3015,20 @@ msgid "Demonstrators holding a PauseAI banner and signs at Phillips Square"
 msgstr ""
 
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:75
+#: lib/pauseai_ca_web/live/actions_live.ex:275
 #: lib/pauseai_ca_web/live/donate_live.ex:390
 #: lib/pauseai_ca_web/live/protest_recap_live.ex:152
 #, elixir-autogen, elixir-format
 msgid "Demonstrators holding signs calling for a worldwide pause on AI"
 msgstr ""
 
+#: lib/pauseai_ca_web/live/actions_live.ex:298
 #: lib/pauseai_ca_web/live/protest_recap_live.ex:175
 #, elixir-autogen, elixir-format
 msgid "Jeremy Eliosoff wearing a yellow PauseAI shirt at the Montréal protest"
 msgstr ""
 
+#: lib/pauseai_ca_web/live/actions_live.ex:304
 #: lib/pauseai_ca_web/live/protest_recap_live.ex:181
 #, elixir-autogen, elixir-format
 msgid "Jeremy Eliosoff. Photo: Clara Lacasse."
@@ -3068,7 +3074,7 @@ msgstr ""
 msgid "Jeremy Eliosoff at the Montréal protest"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/actions_live.ex:191
+#: lib/pauseai_ca_web/live/actions_live.ex:231
 #: lib/pauseai_ca_web/live/protest_press_release_live.ex:114
 #: lib/pauseai_ca_web/live/protest_recap_live.ex:122
 #, elixir-autogen, elixir-format
@@ -3244,7 +3250,7 @@ msgstr ""
 msgid "Support an international treaty banning the development of superintelligent AI."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/actions_live.ex:186
+#: lib/pauseai_ca_web/live/actions_live.ex:226
 #: lib/pauseai_ca_web/live/protest_recap_live.ex:117
 #, elixir-autogen, elixir-format
 msgid "We need to give ourselves more time to learn how to control AI systems before making them even more powerful. A pause is necessary."
@@ -6098,7 +6104,6 @@ msgstr ""
 msgid "Enter your details once and choose the options you want."
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:237
 #: lib/pauseai_ca_web/live/participation_form.ex:402
 #: lib/pauseai_ca_web/live/participation_form.ex:405
 #, elixir-autogen, elixir-format
@@ -6188,8 +6193,8 @@ msgid "Subscribe me to the PauseAI Canada newsletter."
 msgstr ""
 
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:35
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:246
-#: lib/pauseai_ca_web/live/actions_live.ex:229
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:252
+#: lib/pauseai_ca_web/live/actions_live.ex:317
 #: lib/pauseai_ca_web/live/participation_form.ex:414
 #: lib/pauseai_ca_web/live/participation_form.ex:417
 #, elixir-autogen, elixir-format
@@ -6284,7 +6289,7 @@ msgstr ""
 msgid "On your own or with others"
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:228
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:232
 #, elixir-autogen, elixir-format
 msgid "Get updates or take action"
 msgstr ""
@@ -11434,8 +11439,8 @@ msgid "Complete · %{count} contacts match this area."
 msgstr ""
 
 #: lib/pauseai_ca_web/live/assistant_live.ex:855
-#: lib/pauseai_ca_web/live/mp_guide_component.ex:194
-#: lib/pauseai_ca_web/live/mp_guide_component.ex:215
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:248
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:267
 #, elixir-autogen, elixir-format
 msgid "Exit"
 msgstr ""
@@ -11568,11 +11573,6 @@ msgstr ""
 msgid "Enter your name and postal code, then choose Continue to my letter. Your account records an action only after sending."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/mp_guide_component.ex:180
-#, elixir-autogen, elixir-format
-msgid "Guide me through this"
-msgstr ""
-
 #: lib/pauseai_ca_web/live/mp_templates_live.ex:342
 #, elixir-autogen, elixir-format
 msgid "I have the author's permission to publish this template."
@@ -11595,7 +11595,7 @@ msgstr ""
 msgid "MP campaign templates"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/mp_guide_component.ex:212
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:264
 #, elixir-autogen, elixir-format
 msgid "MP letter guide"
 msgstr ""
@@ -11665,7 +11665,7 @@ msgstr ""
 msgid "Share this template with friends and family"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/mp_guide_component.ex:187
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:235
 #, elixir-autogen, elixir-format
 msgid "Sign in and confirm your email before starting if you want this letter recorded in your account. You can use the MP form without account tracking."
 msgstr ""
@@ -12951,7 +12951,7 @@ msgstr ""
 msgid "Alongside the Montreal march, demonstrations took place on Saturday in Toronto, Vancouver, Washington, D.C., San Francisco, New York, Boston, Paris, Marseille, and Berlin. These citizen mobilizations were part of a global day of action ahead of the APEC Summit in Shenzhen on November 18 and 19, where world leaders will gather, and which represents a key opportunity to begin negotiating an international AI treaty."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/actions_live.ex:175
+#: lib/pauseai_ca_web/live/actions_live.ex:215
 #, elixir-autogen, elixir-format
 msgid "Around 40 people gathered at Phillips Square on September 26 for a global, coordinated pause in advanced AI development. The peaceful demonstration ran from 1 to 2 p.m., and organizers distributed around a hundred educational brochures."
 msgstr ""
@@ -12966,7 +12966,7 @@ msgstr ""
 msgid "Defined as AI surpassing human capabilities across most cognitive tasks, superintelligence is the stated goal of frontier AI companies, including OpenAI and Anthropic, despite warnings from experts such as Yoshua Bengio and Geoffrey Hinton that developing it without reliable control and alignment methods would pose an existential threat to humanity."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/actions_live.ex:203
+#: lib/pauseai_ca_web/live/actions_live.ex:243
 #, elixir-autogen, elixir-format
 msgid "Event details and photos"
 msgstr ""
@@ -12997,7 +12997,7 @@ msgstr ""
 msgid "March in Montreal: PauseAI Canada Urges Mark Carney to Demand an International Treaty Banning Superintelligence at the APEC Summit"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/actions_live.ex:61
+#: lib/pauseai_ca_web/live/actions_live.ex:118
 #, elixir-autogen, elixir-format
 msgid "Marchers carrying PauseAI signs and a banner through Montréal on November 14."
 msgstr ""
@@ -13046,7 +13046,7 @@ msgstr ""
 msgid "Participants gathered at Dorchester Square at 1 p.m., then marched to the U.S. Consulate and the Chinese Consulate."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/actions_live.ex:180
+#: lib/pauseai_ca_web/live/actions_live.ex:220
 #, elixir-autogen, elixir-format
 msgid "PauseAI Canada called on the government to recognize artificial superintelligence as a national security threat, support an international treaty prohibiting its development and coordinate a global pause under democratic control."
 msgstr ""
@@ -13061,7 +13061,7 @@ msgstr ""
 msgid "PauseAI Canada's November 16 press release following the November 14 Montréal march for an AI treaty."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/actions_live.ex:146
+#: lib/pauseai_ca_web/live/actions_live.ex:184
 #, elixir-autogen, elixir-format
 msgid "Photo source: PauseAI Toronto."
 msgstr ""
@@ -13087,7 +13087,7 @@ msgid "Read about PauseAI Canada's Montréal and Toronto marches, with photograp
 msgstr ""
 
 #: lib/pauseai_ca_web/live/actions_live.ex:104
-#: lib/pauseai_ca_web/live/actions_live.ex:212
+#: lib/pauseai_ca_web/live/actions_live.ex:252
 #, elixir-autogen, elixir-format
 msgid "Read the press release"
 msgstr ""
@@ -13107,7 +13107,7 @@ msgstr ""
 msgid "The Coalition for an AI Treaty brought together PauseAI Canada, Stop the AI Race and Horizon Omega for a march in Montréal on November 14."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/actions_live.ex:121
+#: lib/pauseai_ca_web/live/actions_live.ex:159
 #, elixir-autogen, elixir-format
 msgid "The Montréal and Toronto marches were part of a day of action ahead of the APEC summit."
 msgstr ""
@@ -13122,17 +13122,17 @@ msgstr ""
 msgid "They called for an international treaty prohibiting the development of artificial superintelligence until there is broad scientific consensus that it can be done safely and controllably, and strong public buy-in."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/actions_live.ex:139
+#: lib/pauseai_ca_web/live/actions_live.ex:177
 #, elixir-autogen, elixir-format
 msgid "Toronto marchers crossing a downtown street with signs calling for an AI treaty."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/actions_live.ex:116
+#: lib/pauseai_ca_web/live/actions_live.ex:154
 #, elixir-autogen, elixir-format
 msgid "Toronto’s AI Treaty March began with speeches at Queen’s Park. Participants marched to the U.S. Consulate and finished at Nathan Phillips Square."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/actions_live.ex:128
+#: lib/pauseai_ca_web/live/actions_live.ex:166
 #, elixir-autogen, elixir-format
 msgid "Toronto’s account of the march"
 msgstr ""
@@ -13148,12 +13148,12 @@ msgid "“People are starting to recognize the threat. In the past few months, \
 msgstr ""
 
 #: lib/pauseai_ca_web/live/actions_live.ex:50
-#: lib/pauseai_ca_web/live/actions_live.ex:111
+#: lib/pauseai_ca_web/live/actions_live.ex:149
 #, elixir-autogen, elixir-format
 msgid "November 14, 2026"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/actions_live.ex:156
+#: lib/pauseai_ca_web/live/actions_live.ex:194
 #, elixir-autogen, elixir-format
 msgid "September 26, 2026"
 msgstr ""
@@ -13171,4 +13171,90 @@ msgstr ""
 #: lib/pauseai_ca_web/live/actions_live.ex:41
 #, elixir-autogen, elixir-format
 msgid "Toronto · Nov. 14"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:192
+#, elixir-autogen, elixir-format
+msgid "1. Find your MP"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:204
+#, elixir-autogen, elixir-format
+msgid "2. Make it personal"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:219
+#, elixir-autogen, elixir-format
+msgid "3. Review and send"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:221
+#, elixir-autogen, elixir-format
+msgid "Check the MP, sender address and final letter. Choose your delivery method. You authorize and send the message yourself."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:215
+#, elixir-autogen, elixir-format
+msgid "Edit my letter"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:206
+#, elixir-autogen, elixir-format
+msgid "Edit the suggested subject and letter. Explain why an AI treaty matters to you and replace any remaining placeholders."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:194
+#, elixir-autogen, elixir-format
+msgid "Enter your details and postal code, then choose Continue to my letter."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/actions_live.ex:137
+#, elixir-autogen, elixir-format
+msgid "Marchers with a megaphone and signs calling for a treaty now."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/actions_live.ex:125
+#, elixir-autogen, elixir-format
+msgid "Marching through downtown Montréal. Photo: Clara Lacasse."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/actions_live.ex:61
+#, elixir-autogen, elixir-format
+msgid "Montréal marchers gathered behind the orange PauseAI banner with signs calling for an AI treaty on November 14."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:230
+#, elixir-autogen, elixir-format
+msgid "Review my letter"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/actions_live.ex:141
+#, elixir-autogen, elixir-format
+msgid "Voices for an AI treaty. Photo: Clara Lacasse."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:186
+#, elixir-autogen, elixir-format
+msgid "Write to your MP in three steps"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:180
+#, elixir-autogen, elixir-format
+msgid "Guide"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:231
+#, elixir-autogen, elixir-format
+msgid "Review"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:201
+#, elixir-autogen, elixir-format
+msgid "Start"
+msgstr ""
+
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:243
+#, elixir-autogen, elixir-format
+msgctxt "homepage CTA"
+msgid "Get updates"
 msgstr ""

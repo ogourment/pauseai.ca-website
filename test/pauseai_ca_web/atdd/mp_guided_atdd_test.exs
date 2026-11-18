@@ -84,7 +84,7 @@ if System.get_env("ATDD") == "true" do
           "Email your MP",
           "Guidance is independent of paid chat and organizer rights."
         )
-        |> click_button("#mp-guide-start", tr(locale, "Guide me through this"))
+        |> click_button("#mp-guide-start", tr(locale, "Guide"))
         |> click_button("#mp-guide-next", tr(locale, "Next"))
         |> assert_has("#participation_postal_code:focus")
         |> evaluate("document.activeElement.id", &assert(&1 == "participation_postal_code"))
@@ -146,7 +146,7 @@ if System.get_env("ATDD") == "true" do
           "Back, then Exit",
           "Guide navigation preserves the person's letter. Pasted script text is never executed."
         )
-        |> click_button("#mp-guide-start", tr(locale, "Guide me through this"))
+        |> click_button("#mp-guide-start", tr(locale, "Guide"))
         |> click_button("#mp-guide-next", tr(locale, "Next"))
         |> assert_has("#mp-guide-step",
           text:

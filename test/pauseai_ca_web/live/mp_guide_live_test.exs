@@ -18,12 +18,31 @@ defmodule PauseAiCaWeb.MPGuideLiveTest do
     :ok
   end
 
-  test "anonymous start explains confirmed-account tracking without opening paid chat", %{
+  test "anonymous guide explains all three steps and follows the visitor into their letter", %{
     conn: conn
   } do
     {:ok, view, _} = live(conn, "/en/contact-your-mp")
     view |> element("#mp-guide-start") |> render_click()
     assert has_element?(view, "#mp-guide-sign-in", "Sign in")
+    assert has_element?(view, "#mp-guide-lookup-step", "1. Find your MP")
+    assert has_element?(view, "#mp-guide-editor-step", "2. Make it personal")
+    assert has_element?(view, "#mp-guide-review-step", "3. Review and send")
+
+    view
+    |> form("#participation-form",
+      participation: %{
+        name: "Synthetic Visitor",
+        email: "visitor@example.invalid",
+        postal_code: "H2X 1Y4",
+        account: "false",
+        newsletter: "false"
+      }
+    )
+    |> render_submit()
+
+    assert has_element?(view, "#mp-results")
+    assert has_element?(view, "#mp-guide-editor-step button", "Edit")
+    assert has_element?(view, "#letter_body")
     refute has_element?(view, "#mp-guide-next")
     refute has_element?(view, "#site-assistant-launcher")
     assert Repo.aggregate(PauseAiCa.Engagement.Action, :count) == 0

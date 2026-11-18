@@ -50,19 +50,19 @@ defmodule PauseAiCaWeb.ActionsLive do
             <time datetime="2026-11-14" class="inline-block max-w-full">{gettext("November 14, 2026")}</time>
           </h2>
           <div class="mt-6 grid items-start gap-8 lg:grid-cols-2">
-            <figure>
+            <figure class="lg:col-span-2">
               <img
-                src={~p"/images/protest-2026-11-14/clara-lacasse-8.jpg"}
-                srcset={"#{~p"/images/protest-2026-11-14/clara-lacasse-8-small.jpg"} 640w, #{~p"/images/protest-2026-11-14/clara-lacasse-8.jpg"} 1200w"}
-                sizes="(min-width:1024px) 540px, calc(100vw - 24px)"
+                src={~p"/images/protest-2026-11-14/clara-lacasse-34.jpg"}
+                srcset={"#{~p"/images/protest-2026-11-14/clara-lacasse-34-small.jpg"} 640w, #{~p"/images/protest-2026-11-14/clara-lacasse-34.jpg"} 1200w"}
+                sizes="(min-width:1152px) 1112px, calc(100vw - 24px)"
                 width="1200"
                 height="960"
                 alt={
                   gettext(
-                    "Marchers carrying PauseAI signs and a banner through Montréal on November 14."
+                    "Montréal marchers gathered behind the orange PauseAI banner with signs calling for an AI treaty on November 14."
                   )
                 }
-                class="h-auto w-full rounded-xl"
+                class="h-auto max-h-[38rem] w-full rounded-xl object-cover object-bottom"
                 fetchpriority="high"
               />
               <figcaption class="mt-2 text-sm text-stone-600">
@@ -72,7 +72,7 @@ defmodule PauseAiCaWeb.ActionsLive do
                 >{gettext("Photo: Clara Lacasse. November 14, 2026.")}</a>
               </figcaption>
             </figure>
-            <div>
+            <div class="lg:col-span-2">
               <p class="mt-4 leading-8 text-stone-700">
                 {gettext(
                   "The Coalition for an AI Treaty brought together PauseAI Canada, Stop the AI Race and Horizon Omega for a march in Montréal on November 14."
@@ -103,6 +103,44 @@ defmodule PauseAiCaWeb.ActionsLive do
                 class="mt-6 inline-block font-semibold underline decoration-brand decoration-2 underline-offset-4"
               >{gettext("Read the press release")}</.link>
             </div>
+          </div>
+          <div class="mt-8 grid items-start gap-8 md:grid-cols-2">
+            <figure>
+              <img
+                src={~p"/images/protest-2026-11-14/clara-lacasse-8.jpg"}
+                srcset={"#{~p"/images/protest-2026-11-14/clara-lacasse-8-small.jpg"} 640w, #{~p"/images/protest-2026-11-14/clara-lacasse-8.jpg"} 1200w"}
+                sizes="(min-width:768px) 540px, calc(100vw - 24px)"
+                width="1200"
+                height="960"
+                loading="lazy"
+                decoding="async"
+                alt={
+                  gettext(
+                    "Marchers carrying PauseAI signs and a banner through Montréal on November 14."
+                  )
+                }
+                class="h-auto w-full rounded-xl"
+              />
+              <figcaption class="mt-2 text-sm text-stone-600">
+                {gettext("Marching through downtown Montréal. Photo: Clara Lacasse.")}
+              </figcaption>
+            </figure>
+            <figure>
+              <img
+                src={~p"/images/protest-2026-11-14/clara-lacasse-23.jpg"}
+                srcset={"#{~p"/images/protest-2026-11-14/clara-lacasse-23-small.jpg"} 640w, #{~p"/images/protest-2026-11-14/clara-lacasse-23.jpg"} 1200w"}
+                sizes="(min-width:768px) 540px, calc(100vw - 24px)"
+                width="1200"
+                height="960"
+                loading="lazy"
+                decoding="async"
+                alt={gettext("Marchers with a megaphone and signs calling for a treaty now.")}
+                class="h-auto w-full rounded-xl"
+              />
+              <figcaption class="mt-2 text-sm text-stone-600">
+                {gettext("Voices for an AI treaty. Photo: Clara Lacasse.")}
+              </figcaption>
+            </figure>
           </div>
         </section>
         <section id="toronto-2026-11-14" class="mt-12 scroll-mt-40 border-t border-stone-300 pt-10">
@@ -158,9 +196,11 @@ defmodule PauseAiCaWeb.ActionsLive do
           <div class="mt-6 grid items-start gap-8 lg:grid-cols-2">
             <figure>
               <img
-                src={~p"/images/protest-2026-09-26/clara-lacasse-3-small.webp"}
-                width="640"
-                height="512"
+                src={~p"/images/protest-2026-09-26/clara-lacasse-3.webp"}
+                srcset={"#{~p"/images/protest-2026-09-26/clara-lacasse-3-small.webp"} 640w, #{~p"/images/protest-2026-09-26/clara-lacasse-3.webp"} 1200w"}
+                sizes="(min-width:1024px) 540px, calc(100vw - 24px)"
+                width="1200"
+                height="960"
                 loading="lazy"
                 decoding="async"
                 alt={gettext("Demonstrators holding a PauseAI banner and signs at Phillips Square")}
@@ -216,6 +256,54 @@ defmodule PauseAiCaWeb.ActionsLive do
                 >{gettext("Read the report in Le Devoir (French)")}</a>
               </div>
             </div>
+          </div>
+          <div class="mt-8 grid items-start gap-8 md:grid-cols-[3fr_2fr]">
+            <figure>
+              <picture>
+                <source
+                  type="image/webp"
+                  srcset={"#{~p"/images/protest-2026-09-26/clara-lacasse-7-small.webp"} 640w, #{~p"/images/protest-2026-09-26/clara-lacasse-7.webp"} 1200w"}
+                  sizes="(min-width: 768px) 650px, calc(100vw - 40px)"
+                />
+                <img
+                  id="actions-september-photo-7"
+                  src={~p"/images/protest-2026-09-26/clara-lacasse-7.jpg"}
+                  width="1200"
+                  height="960"
+                  loading="lazy"
+                  decoding="async"
+                  alt={gettext("Demonstrators holding signs calling for a worldwide pause on AI")}
+                  class="h-auto w-full rounded-xl"
+                />
+              </picture>
+              <figcaption class="mt-3 text-sm text-stone-600">
+                {gettext("Calling for a global pause. Photo: Clara Lacasse.")}
+              </figcaption>
+            </figure>
+            <figure>
+              <picture>
+                <source
+                  type="image/webp"
+                  srcset={"#{~p"/images/protest-2026-09-26/clara-lacasse-14-small.webp"} 512w, #{~p"/images/protest-2026-09-26/clara-lacasse-14.webp"} 960w"}
+                  sizes="(min-width: 768px) 430px, calc(100vw - 40px)"
+                />
+                <img
+                  id="actions-september-photo-14"
+                  src={~p"/images/protest-2026-09-26/clara-lacasse-14.jpg"}
+                  width="960"
+                  height="1200"
+                  loading="lazy"
+                  decoding="async"
+                  alt={
+                    gettext("Jeremy Eliosoff wearing a yellow PauseAI shirt at the Montréal protest")
+                  }
+                  class="h-auto w-full rounded-xl"
+                />
+              </picture>
+              <figcaption class="mt-3 text-sm text-stone-600">
+                {gettext("Jeremy Eliosoff. Photo: Clara Lacasse.")}
+              </figcaption>
+            </figure>
           </div>
         </section>
         <div class="mt-12 border-t border-stone-300 pt-8">

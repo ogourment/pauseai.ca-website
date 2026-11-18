@@ -11998,11 +11998,6 @@ msgstr "L’envoi doit être vérifié. Conservez ce brouillon et contactez-nous
 msgid "Enter your name and postal code, then choose Continue to my letter. Your account records an action only after sending."
 msgstr "Indiquez votre nom et votre code postal, puis choisissez « Continuer vers ma lettre ». L’action sera inscrite dans votre compte après l’envoi."
 
-#: lib/pauseai_ca_web/live/mp_guide_component.ex:180
-#, elixir-autogen, elixir-format
-msgid "Guide me through this"
-msgstr "Me guider"
-
 #: lib/pauseai_ca_web/live/mp_templates_live.ex:342
 #, elixir-autogen, elixir-format
 msgid "I have the author's permission to publish this template."
@@ -13594,3 +13589,105 @@ msgstr "Montréal · 26 sept."
 #, elixir-autogen, elixir-format
 msgid "Toronto · Nov. 14"
 msgstr "Toronto · 14 nov."
+
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:192
+#, elixir-autogen, elixir-format
+msgid "1. Find your MP"
+msgstr "1. Trouvez votre député"
+
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:204
+#, elixir-autogen, elixir-format
+msgid "2. Make it personal"
+msgstr "2. Personnalisez votre lettre"
+
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:219
+#, elixir-autogen, elixir-format
+msgid "3. Review and send"
+msgstr "3. Vérifiez et envoyez"
+
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:221
+#, elixir-autogen, elixir-format
+msgid ""
+"Check the MP, sender address and final letter. Choose your delivery method. "
+"You authorize and send the message yourself."
+msgstr ""
+"Vérifiez le député, votre adresse d’envoi et la lettre finale. Choisissez le"
+" mode d’envoi. Vous autorisez et envoyez vous-même le message."
+
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:215
+#, elixir-autogen, elixir-format
+msgid "Edit my letter"
+msgstr "Modifier ma lettre"
+
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:206
+#, elixir-autogen, elixir-format
+msgid ""
+"Edit the suggested subject and letter. Explain why an AI treaty matters to "
+"you and replace any remaining placeholders."
+msgstr ""
+"Modifiez l’objet et la lettre proposés. Expliquez pourquoi un traité sur "
+"l’IA vous tient à cœur et remplacez les champs encore entre accolades."
+
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:194
+#, elixir-autogen, elixir-format
+msgid "Enter your details and postal code, then choose Continue to my letter."
+msgstr ""
+"Saisissez vos coordonnées et votre code postal, puis choisissez Continuer "
+"vers ma lettre."
+
+#: lib/pauseai_ca_web/live/actions_live.ex:137
+#, elixir-autogen, elixir-format
+msgid "Marchers with a megaphone and signs calling for a treaty now."
+msgstr ""
+"Des manifestants avec un mégaphone et des pancartes réclamant un traité dès "
+"maintenant."
+
+#: lib/pauseai_ca_web/live/actions_live.ex:125
+#, elixir-autogen, elixir-format
+msgid "Marching through downtown Montréal. Photo: Clara Lacasse."
+msgstr "Dans les rues du centre-ville de Montréal. Photo : Clara Lacasse."
+
+#: lib/pauseai_ca_web/live/actions_live.ex:61
+#, elixir-autogen, elixir-format
+msgid ""
+"Montréal marchers gathered behind the orange PauseAI banner with signs "
+"calling for an AI treaty on November 14."
+msgstr ""
+"Les manifestants de Montréal réunis derrière la bannière orange de PauseAI, "
+"avec des pancartes réclamant un traité sur l’IA, le 14 novembre."
+
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:230
+#, elixir-autogen, elixir-format
+msgid "Review my letter"
+msgstr "Vérifier ma lettre"
+
+#: lib/pauseai_ca_web/live/actions_live.ex:141
+#, elixir-autogen, elixir-format
+msgid "Voices for an AI treaty. Photo: Clara Lacasse."
+msgstr "Des voix pour un traité sur l’IA. Photo : Clara Lacasse."
+
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:186
+#, elixir-autogen, elixir-format
+msgid "Write to your MP in three steps"
+msgstr "Écrivez à votre député en trois étapes"
+
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:180
+#, elixir-autogen, elixir-format
+msgid "Guide"
+msgstr "Guide"
+
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:231
+#, elixir-autogen, elixir-format
+msgid "Review"
+msgstr "Vérifier"
+
+#: lib/pauseai_ca_web/live/mp_guide_component.ex:201
+#, elixir-autogen, elixir-format
+msgid "Start"
+msgstr "Commencer"
+
+#: lib/pauseai_ca_web/controllers/page_html/home.html.heex:243
+#, elixir-autogen, elixir-format
+msgctxt "homepage CTA"
+msgid "Get updates"
+msgstr "Nouvelles"
