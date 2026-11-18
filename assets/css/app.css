@@ -107,7 +107,7 @@
 /* Make LiveView wrapper divs transparent for layout */
 [data-phx-session], [data-phx-teleported-src] { display: contents }
 
-/* PauseAI brand tokens, kept in sync with pauseai.info.
+/* PauseAI Canada brand tokens and self-hosted typography.
    Fonts are self-hosted under priv/static/fonts:
    Lato for headings and Inter for body text (both SIL OFL 1.1). Earlier brand font assets remain available. */
 @theme {
@@ -276,6 +276,7 @@ h3 {
 
 h1, h2, h3 {
   font-weight: 700;
+  overflow-wrap: anywhere;
 }
 
 .eyebrow {

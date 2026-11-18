@@ -24,25 +24,30 @@ defmodule PauseAiCaWeb.ActionsLive do
           {gettext("Our actions")}
         </h1>
         <p class="mt-5 max-w-3xl text-xl leading-8 text-stone-700">
-          {gettext("Marches and public actions for an international treaty on advanced AI.")}
+          {gettext("Marches and public actions for an international treaty on advanced AI.")
+          |> String.replace(~r/ (?=[^ ]+$)/u, "\u00A0")}
         </p>
         <nav
           class="mt-7 flex flex-wrap gap-x-6 gap-y-3 text-sm font-semibold"
           aria-label={gettext("Our actions")}
         >
-          <a href="#montreal-2026-11-14" class="underline decoration-brand underline-offset-4">{gettext(
-            "Montréal · November 14, 2026"
-          )}</a>
-          <a href="#toronto-2026-11-14" class="underline decoration-brand underline-offset-4">{gettext(
-            "Toronto · November 14, 2026"
-          )}</a>
-          <a href="#montreal-2026-09-26" class="underline decoration-brand underline-offset-4">{gettext(
-            "Montréal · September 26, 2026"
-          )}</a>
+          <a
+            href="#montreal-2026-11-14"
+            class="whitespace-nowrap underline decoration-brand underline-offset-4"
+          >{gettext("Montréal · Nov. 14")}</a>
+          <a
+            href="#toronto-2026-11-14"
+            class="whitespace-nowrap underline decoration-brand underline-offset-4"
+          >{gettext("Toronto · Nov. 14")}</a>
+          <a
+            href="#montreal-2026-09-26"
+            class="whitespace-nowrap underline decoration-brand underline-offset-4"
+          >{gettext("Montréal · Sept. 26")}</a>
         </nav>
         <section id="montreal-2026-11-14" class="mt-12 scroll-mt-40 border-t border-stone-300 pt-10">
           <h2 class="font-heading text-3xl text-stone-950">
-            {gettext("Montréal · November 14, 2026")}
+            Montréal ·
+            <time datetime="2026-11-14" class="inline-block max-w-full">{gettext("November 14, 2026")}</time>
           </h2>
           <div class="mt-6 grid items-start gap-8 lg:grid-cols-2">
             <figure>
@@ -102,7 +107,8 @@ defmodule PauseAiCaWeb.ActionsLive do
         </section>
         <section id="toronto-2026-11-14" class="mt-12 scroll-mt-40 border-t border-stone-300 pt-10">
           <h2 class="font-heading text-3xl text-stone-950">
-            {gettext("Toronto · November 14, 2026")}
+            Toronto ·
+            <time datetime="2026-11-14" class="inline-block max-w-full">{gettext("November 14, 2026")}</time>
           </h2>
           <div class="mt-6 grid items-start gap-8 lg:grid-cols-2">
             <div>
@@ -146,7 +152,8 @@ defmodule PauseAiCaWeb.ActionsLive do
         </section>
         <section id="montreal-2026-09-26" class="mt-12 scroll-mt-40 border-t border-stone-300 pt-10">
           <h2 class="font-heading text-3xl text-stone-950">
-            {gettext("Montréal · September 26, 2026")}
+            Montréal ·
+            <time datetime="2026-09-26" class="inline-block max-w-full">{gettext("September 26, 2026")}</time>
           </h2>
           <div class="mt-6 grid items-start gap-8 lg:grid-cols-2">
             <figure>
