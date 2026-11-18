@@ -9,6 +9,22 @@ if System.get_env("ATDD") == "true" do
     @moduletag :atdd
     @scenarios [
       %{
+        id: "CRM-ASSIST-LAUNCHER-01-en",
+        title: "Movable assistant leaves social links accessible",
+        roles: ["Superadmin"],
+        language: "English",
+        device: "Desktop",
+        source_file: __ENV__.file
+      },
+      %{
+        id: "CRM-ASSIST-LAUNCHER-01-fr",
+        title: "Movable assistant leaves social links accessible",
+        roles: ["Superadmin"],
+        language: "French",
+        device: "Phone",
+        source_file: __ENV__.file
+      },
+      %{
         id: "CRM-ASSIST-CREDIT-01-en",
         title: "Credit warning and account availability beside the enable control",
         roles: ["Superadmin"],
@@ -1421,6 +1437,56 @@ if System.get_env("ATDD") == "true" do
           |> click_link("#site-assistant-error a", settings_label)
           |> connected()
           |> assert_has("#assistant-toggle-controls #assistant-availability", text: label)
+
+        refute_receive {:assistant_generated, _, _}
+        success(id)
+        browser
+      end
+
+      @tag screenshot: true
+      @tag browser_context_opts: [viewport: %{width: width, height: height}]
+      test "CRM-ASSIST-LAUNCHER-01-#{locale} enabled assistant leaves footer links accessible",
+           c do
+        locale = unquote(locale)
+        id = "CRM-ASSIST-LAUNCHER-01-#{locale}"
+        assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+
+        browser =
+          c.conn
+          |> login(c.admin)
+          |> visit("/#{locale}")
+          |> assert_has(".phx-connected #site-assistant-launcher svg[aria-hidden=true]")
+          |> assert_has("#site-assistant-launcher-help",
+            text:
+              tr(
+                locale,
+                "Drag this button to move it, or use the arrow keys when focused. Home resets its position."
+              )
+          )
+          |> evaluate(
+            """
+            new Promise(resolve => {
+              document.querySelector('#site-footer').scrollIntoView({block: 'end', behavior: 'instant'});
+              requestAnimationFrame(() => requestAnimationFrame(() => {
+                resolve([...document.querySelectorAll('#site-footer a[target="_blank"]')].every(link => {
+                  const box = link.getBoundingClientRect();
+                  return document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2)?.closest('a') === link;
+                }));
+              }));
+            })
+            """,
+            &assert(&1)
+          )
+          |> screenshot("#{id}-footer-viewport.png", full_page: false)
+          |> capture(
+            id,
+            "Assistant icon and reachable social links",
+            "Homepage footer",
+            "Scroll to the footer with assistant enabled",
+            "Social links remain reachable before moving the assistant; the launcher exposes localized movement help."
+          )
+          |> click_button("#site-assistant-launcher", "Assistant")
+          |> assert_has("#site-assistant-dialog[open]")
 
         refute_receive {:assistant_generated, _, _}
         success(id)

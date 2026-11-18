@@ -590,3 +590,8 @@ body:has(#assistant-review-confirmation) #site-assistant-launcher {
 #participation-form .label {
   white-space: normal;
 }
+
+/* Keep the last footer links above the assistant at its default corner. */
+body:has(#site-assistant-launcher) #site-footer {
+  padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+}

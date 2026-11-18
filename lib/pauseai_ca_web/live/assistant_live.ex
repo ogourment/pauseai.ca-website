@@ -789,6 +789,10 @@ defmodule PauseAiCaWeb.AssistantLive do
           "normal" => gettext("Normal"),
           "high" => gettext("High"),
           assistant: gettext("Assistant"),
+          launcher_move:
+            gettext(
+              "Drag this button to move it, or use the arrow keys when focused. Home resets its position."
+            ),
           guided_mode: gettext("Guided mode"),
           new_conversation: gettext("New conversation"),
           move: gettext("Move assistant with arrow keys"),
