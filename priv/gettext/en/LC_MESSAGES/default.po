@@ -2810,7 +2810,7 @@ msgstr "Amount you intend to give (CAD, optional)"
 msgid "Browser visits — all time"
 msgstr "Browser visits — all time"
 
-#: lib/pauseai_ca_web/components/donation_page_content.ex:325
+#: lib/pauseai_ca_web/components/donation_page_content.ex:338
 #: lib/pauseai_ca_web/live/donate_live.ex:346
 #: lib/pauseai_ca_web/live/donate_live.ex:595
 #, elixir-autogen, elixir-format
@@ -2827,7 +2827,7 @@ msgstr "Contact permission applies to the pledge. No payment has been collected 
 msgid "Contact permission recorded"
 msgstr "Contact permission recorded"
 
-#: lib/pauseai_ca_web/components/donation_page_content.ex:325
+#: lib/pauseai_ca_web/components/donation_page_content.ex:338
 #: lib/pauseai_ca_web/live/donate_live.ex:346
 #: lib/pauseai_ca_web/live/donate_live.ex:595
 #, elixir-autogen, elixir-format
@@ -2886,7 +2886,7 @@ msgstr "Pagination"
 
 #: lib/pauseai_ca/outreach_notifier.ex:29
 #: lib/pauseai_ca_web/components/auth_layout.ex:20
-#: lib/pauseai_ca_web/components/donation_page_content.ex:325
+#: lib/pauseai_ca_web/components/donation_page_content.ex:338
 #: lib/pauseai_ca_web/components/layouts.ex:115
 #: lib/pauseai_ca_web/components/layouts.ex:324
 #: lib/pauseai_ca_web/components/layouts.ex:598
@@ -8827,8 +8827,8 @@ msgstr "Join a waitlist or help start an incubator"
 msgid "Help Canadians make the case for an international pause on the development of the most powerful AI systems. Your donation helps people organize locally, explain the risks, and bring concrete requests to elected representatives."
 msgstr "Help Canadians make the case for an international pause on the development of the most powerful AI systems. Your donation helps people organize locally, explain the risks, and bring concrete requests to elected representatives."
 
-#: lib/pauseai_ca_web/components/donation_page_content.ex:255
 #: lib/pauseai_ca_web/components/donation_page_content.ex:268
+#: lib/pauseai_ca_web/components/donation_page_content.ex:281
 #: lib/pauseai_ca_web/live/donate_live.ex:296
 #: lib/pauseai_ca_web/live/donate_live.ex:617
 #, elixir-autogen, elixir-format
@@ -9318,13 +9318,13 @@ msgstr "Leave blank to preview unknown funding."
 msgid "The threshold applies separately to the active stage budget and to the full programme budget."
 msgstr "The threshold applies separately to the active stage budget and to the full programme budget."
 
-#: lib/pauseai_ca_web/components/donation_page_content.ex:516
+#: lib/pauseai_ca_web/components/donation_page_content.ex:529
 #, elixir-autogen, elixir-format
 msgid "Close"
 msgstr "Close"
 
-#: lib/pauseai_ca_web/components/donation_page_content.ex:499
-#: lib/pauseai_ca_web/components/donation_page_content.ex:509
+#: lib/pauseai_ca_web/components/donation_page_content.ex:512
+#: lib/pauseai_ca_web/components/donation_page_content.ex:522
 #, elixir-autogen, elixir-format
 msgid "Try a donation"
 msgstr "Try a donation"
@@ -10172,7 +10172,7 @@ msgstr "View conversation"
 msgid "This sending address is not activated. Save the draft and finish mailbox setup before sending."
 msgstr "This sending address is not activated. Save the draft and finish mailbox setup before sending."
 
-#: lib/pauseai_ca_web/components/donation_page_content.ex:420
+#: lib/pauseai_ca_web/components/donation_page_content.ex:433
 #, elixir-autogen, elixir-format
 msgid "A Manifund account is required to donate"
 msgstr "A Manifund account is required to donate"
@@ -11700,27 +11700,27 @@ msgstr "Your account or sender address has changed. Sign in again before sending
 msgid "Your sent letter is recorded in your account. This confirms the website outcome, not that your MP has read it."
 msgstr "Your sent letter is recorded in your account. This confirms the website outcome, not that your MP has read it."
 
-#: lib/pauseai_ca_web/components/donation_page_content.ex:695
+#: lib/pauseai_ca_web/components/donation_page_content.ex:708
 #, elixir-autogen, elixir-format
 msgid "%{percent}% of the minimum"
 msgstr "%{percent}% of the minimum"
 
-#: lib/pauseai_ca_web/components/donation_page_content.ex:174
+#: lib/pauseai_ca_web/components/donation_page_content.ex:187
 #, elixir-autogen, elixir-format
 msgid "Funds become available after the minimum is reached, Manifund approves the project and the grant agreement is signed."
 msgstr "Funds become available after the minimum is reached, Manifund approves the project and the grant agreement is signed."
 
-#: lib/pauseai_ca_web/components/donation_page_content.ex:704
+#: lib/pauseai_ca_web/components/donation_page_content.ex:717
 #, elixir-autogen, elixir-format
 msgid "Minimum funding target"
 msgstr "Minimum funding target"
 
-#: lib/pauseai_ca_web/components/donation_page_content.ex:728
+#: lib/pauseai_ca_web/components/donation_page_content.ex:741
 #, elixir-autogen, elixir-format
 msgid "Minimum reached"
 msgstr "Minimum reached"
 
-#: lib/pauseai_ca_web/components/donation_page_content.ex:710
+#: lib/pauseai_ca_web/components/donation_page_content.ex:723
 #, elixir-autogen, elixir-format
 msgid "%{amount} / %{minimum} pledged"
 msgstr "%{amount} / %{minimum} pledged"
@@ -13270,3 +13270,8 @@ msgstr "Get updates"
 #, elixir-autogen, elixir-format
 msgid "Drag this button to move it, or use the arrow keys when focused. Home resets its position."
 msgstr "Drag this button to move it, or use the arrow keys when focused. Home resets its position."
+
+#: lib/pauseai_ca_web/components/donation_page_content.ex:174
+#, elixir-autogen, elixir-format
+msgid "Manifund reports %{usd} raised (%{cad}). USD converted at %{rate} CAD on %{date} (Bank of Canada)."
+msgstr "Manifund reports %{usd} raised (%{cad}). USD converted at %{rate} CAD on %{date} (Bank of Canada)."

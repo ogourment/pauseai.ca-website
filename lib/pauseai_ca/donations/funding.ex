@@ -1,5 +1,5 @@
 defmodule PauseAiCa.Donations.Funding do
-  @moduledoc "Read-only cached pending offers, with dated CAD conversion; never a received-funds total."
+  @moduledoc "Read-only cached Manifund totals, with dated CAD conversion; never a received-funds total."
   alias PhoenixDonations.{Cache, Providers.Manifund}
   @server __MODULE__.Cache
   @fx_url "https://www.bankofcanada.ca/valet/observations/FXUSDCAD/json?recent=1"
@@ -53,48 +53,60 @@ defmodule PauseAiCa.Donations.Funding do
   end
 
   def fetch do
-    fetch(&PauseAiCa.Donations.FundingHTTP.get_json/1, DateTime.utc_now())
+    alias PauseAiCa.Donations.FundingHTTP
+    fetch(&FundingHTTP.get_json/1, DateTime.utc_now(), &FundingHTTP.post_rpc/2)
   end
 
   @doc false
-  def fetch(get_json, now) do
+  def fetch(get_json, now, post_rpc \\ fn _, _ -> {:error, :unavailable} end) do
     with {:ok, campaign} <- PauseAiCa.Donations.Campaign.current(),
          {:ok, result} <- Manifund.fetch(campaign.project_id, get_json, max_pages: 10) do
-      normalize(result, get_json, now)
+      normalize(result, campaign, get_json, post_rpc, now)
     else
       _ -> {:error, :unavailable}
     end
   end
 
-  # A successful lifecycle observation replaces any cached proposal baseline.
-  # It carries no public amount and needs no currency conversion.
-  defp normalize(%{measure: :funding_unavailable} = result, _, now) do
-    {:ok, Map.put(result, :fetched_at, now)}
+  defp normalize(%{measure: :funding_unavailable} = active, campaign, get_json, post_rpc, now) do
+    with {:ok, %{raised_minor: usd_minor} = raised} <-
+           Manifund.fetch_raised(campaign.url, post_rpc),
+         {:ok, value} <- convert(raised, campaign.project_id, usd_minor, get_json, now) do
+      {:ok, value}
+    else
+      # Replace a proposal observation as soon as the grant becomes active.
+      _ -> {:ok, Map.put(active, :fetched_at, now)}
+    end
   end
 
-  defp normalize(%{measure: :pending_offers} = pending, get_json, now) do
+  defp normalize(
+         %{measure: :pending_offers, pending_offer_minor: usd_minor} = pending,
+         campaign,
+         get_json,
+         _,
+         now
+       ) do
+    convert(pending, campaign.project_id, usd_minor, get_json, now)
+  end
+
+  defp convert(observation, id, usd_minor, get_json, now) do
     with {:ok, fx_json} <- get_json.(@fx_url),
          {:ok, rate, date} <- fx(fx_json, now) do
-      amount = pending.pending_offer_minor |> Decimal.new() |> Decimal.mult(rate)
+      amount = usd_minor |> Decimal.new() |> Decimal.mult(rate)
       amount_minor = amount |> Decimal.round(0, :half_up) |> Decimal.to_integer()
 
       if amount_minor <= 9_007_199_254_740_991 do
         {:ok,
-         %{
-           project_id: pending.project_id,
+         Map.merge(observation, %{
+           project_id: id,
            amount_minor: amount_minor,
            currency: "CAD",
-           measure: :pending_offers,
-           pending_offer_minor: pending.pending_offer_minor,
            source_currency: "USD",
            received_minor: nil,
-           source: pending.source,
-           limitation: pending.limitation,
            fx_rate: Decimal.to_string(rate, :normal),
            fx_date: date,
            fx_source: @fx_url,
            fetched_at: now
-         }}
+         })}
       else
         {:error, :unavailable}
       end
@@ -123,14 +135,14 @@ defmodule PauseAiCa.Donations.Funding do
          %{
            amount_minor: amount,
            currency: "CAD",
-           measure: :pending_offers,
+           measure: measure,
            received_minor: nil,
            fx_date: %Date{} = date,
            fetched_at: %DateTime{} = observed
          },
          now
        )
-       when is_integer(amount) and amount >= 0 do
+       when measure in [:pending_offers, :raised] and is_integer(amount) and amount >= 0 do
     age = DateTime.diff(now, observed)
     if age >= 0 and age <= @max_age and recent_date?(date, now), do: :ok, else: :error
   end

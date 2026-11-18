@@ -294,7 +294,21 @@ defmodule PauseAiCaWeb.PublishedDonateLiveTest do
     end
   end
 
-  defp enable_funding(amount) do
+  test "the public page uses reported active funding as the bucket baseline", %{conn: conn} do
+    enable_funding(1_443_391, %{measure: :raised, raised_minor: 1_010_000})
+    publish(put_in(Pages.defaults(), ["editions", "en", "title"], "Active campaign"))
+
+    for path <- ["/en/donate", "/fr/faire-un-don"] do
+      {:ok, view, _} = live(conn, path)
+      assert has_element?(view, "#donation-funding-raised")
+      assert has_element?(view, "#donation-buckets [role='progressbar']")
+      refute has_element?(view, "#donation-funding-unknown")
+      refute has_element?(view, "#donation-funding-source")
+      refute has_element?(view, "#donation-minimum-progress")
+    end
+  end
+
+  defp enable_funding(amount, overrides \\ %{}) do
     keys = [:donation_funding_enabled, :manifund_donations_enabled, :donation_funding_cache]
     previous = Map.new(keys, &{&1, Application.fetch_env(:pauseai_ca, &1)})
 
@@ -310,18 +324,20 @@ defmodule PauseAiCaWeb.PublishedDonateLiveTest do
     {:ok, campaign} = PauseAiCa.Donations.Campaign.current()
     now = DateTime.utc_now()
 
-    value = %{
-      project_id: campaign.project_id,
-      amount_minor: amount,
-      source_currency: "USD",
-      pending_offer_minor: 10_000,
-      currency: "CAD",
-      measure: :pending_offers,
-      received_minor: nil,
-      fx_rate: "1.4038",
-      fx_date: DateTime.to_date(now),
-      fetched_at: now
-    }
+    value =
+      %{
+        project_id: campaign.project_id,
+        amount_minor: amount,
+        source_currency: "USD",
+        pending_offer_minor: 10_000,
+        currency: "CAD",
+        measure: :pending_offers,
+        received_minor: nil,
+        fx_rate: "1.4038",
+        fx_date: DateTime.to_date(now),
+        fetched_at: now
+      }
+      |> Map.merge(overrides)
 
     parent = self()
 

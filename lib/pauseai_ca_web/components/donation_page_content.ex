@@ -167,6 +167,19 @@ defmodule PauseAiCaWeb.DonationPageContent do
           )}
         </p>
         <p
+          :if={!@preview_mode && @show_projection && match?(%{measure: :raised}, @observation)}
+          id="donation-funding-raised"
+          class="mt-3 text-sm text-stone-600"
+        >
+          {gettext(
+            "Manifund reports %{usd} raised (%{cad}). USD converted at %{rate} CAD on %{date} (Bank of Canada).",
+            usd: money(@observation.raised_minor, @locale, "USD"),
+            cad: money(@observation.amount_minor, @locale),
+            rate: @observation.fx_rate,
+            date: Date.to_iso8601(@observation.fx_date)
+          )}
+        </p>
+        <p
           :if={@minimum_progress}
           id={"#{@prefix}-minimum-note"}
           class="mt-2 text-xs leading-5 text-stone-600"

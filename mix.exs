@@ -4,7 +4,7 @@ defmodule PauseAiCa.MixProject do
   def project do
     [
       app: :pauseai_ca,
-      version: "0.8.24",
+      version: "0.8.25",
       elixir: "~> 1.17",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -198,7 +198,7 @@ defmodule PauseAiCa.MixProject do
       _ ->
         {:phoenix_donations,
          git: "https://github.com/ogourment/phoenix_donations-compiled.git",
-         ref: "a70b04b9c38492bd3855379960f59cfa103fa936"}
+         ref: "8dd9bbf57220ceb938e21ceb34f5c61e93801263"}
     end
   end
 

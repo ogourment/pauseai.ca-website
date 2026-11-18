@@ -33,6 +33,39 @@ defmodule PauseAiCa.DonationFundingTest do
     refute Map.has_key?(observation, :amount_minor)
   end
 
+  test "active grants use the reported aggregate and dated CAD conversion" do
+    active = Map.put(project(), "stage", "active")
+    {:ok, campaign} = PauseAiCa.Donations.Campaign.current()
+
+    details = %{
+      "stage" => "active",
+      "type" => "grant",
+      "url" => campaign.url,
+      "total_raised" => 10_100
+    }
+
+    post = fn "https://manifund.org/api/mcp", _ ->
+      {:ok,
+       %{
+         "id" => 1,
+         "jsonrpc" => "2.0",
+         "result" => %{
+           "content" => [%{"type" => "text", "text" => JSON.encode!(details)}]
+         }
+       }}
+    end
+
+    assert {:ok, observation} = Funding.fetch(fetcher(active, fx()), @now, post)
+
+    assert %{
+             measure: :raised,
+             raised_minor: 1_010_000,
+             amount_minor: 1_417_838,
+             received_minor: nil,
+             fx_date: ~D[2026-10-27]
+           } = observation
+  end
+
   test "missing, stale, future and malformed FX fail closed instead of assuming parity or zero" do
     for response <- [
           %{},
