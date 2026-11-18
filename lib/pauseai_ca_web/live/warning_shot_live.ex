@@ -733,7 +733,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
                 rel="noreferrer"
                 class="font-semibold text-stone-900 underline decoration-brand decoration-2 underline-offset-4"
               >
-                {@copy.act_read} <span aria-hidden="true">↗</span>
+                {@copy.act_read}
               </a>
             </p>
           </div>

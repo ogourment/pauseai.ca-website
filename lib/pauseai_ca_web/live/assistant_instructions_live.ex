@@ -177,7 +177,7 @@ defmodule PauseAiCaWeb.AssistantInstructionsLive do
               name="instructions[source]"
               input_attrs={[required: true, maxlength: 24_000]}
               label={gettext("Application instructions · Markdown")}
-              preview_label={gettext("Preview ↗")}
+              preview_label={gettext("Preview in a new window")}
               preview_title={gettext("Instructions")}
               render_preview={
                 fn source ->

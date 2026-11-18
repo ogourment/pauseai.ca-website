@@ -129,7 +129,7 @@ defmodule PauseAiCaWeb.ProtestRecapLive do
                 href={@source}
                 rel="noreferrer"
                 class="mt-2 inline-block underline decoration-brand decoration-2 underline-offset-4"
-              >{gettext("Read the report in Le Devoir (French)")} ↗</a>
+              >{gettext("Read the report in Le Devoir (French)")}</a>
             </aside>
           </div>
         </section>

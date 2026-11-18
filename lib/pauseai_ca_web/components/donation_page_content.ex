@@ -262,7 +262,7 @@ defmodule PauseAiCaWeb.DonationPageContent do
                 class="inline-flex items-center gap-1.5 rounded-lg bg-brand px-5 py-3 font-semibold text-stone-950 hover:bg-brand-strong"
               >
                 <span class="min-w-0">{text(@copy, "cta_label")}</span>
-                <span class="shrink-0" aria-hidden="true">↗</span><span
+                <span
                   :if={!@preview_mode}
                   class="sr-only"
                 >{gettext("Opens in a new tab")}</span>
@@ -278,9 +278,7 @@ defmodule PauseAiCaWeb.DonationPageContent do
                 aria-disabled={if @preview_mode, do: "true"}
                 class="font-semibold underline underline-offset-4"
               >{text(@copy, "brochure_label")}
-              <span aria-hidden="true">↗</span><span :if={!@preview_mode} class="sr-only">{gettext(
-                "Opens in a new tab"
-              )}</span></a>
+              <span :if={!@preview_mode} class="sr-only">{gettext("Opens in a new tab")}</span></a>
             </div>
             <p
               :if={@campaign_url && present?(@copy, "account_requirement")}

@@ -1116,7 +1116,7 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
                 source={@form[:source].value || ""}
                 name="draft[source]"
                 label={gettext("Message · Markdown")}
-                preview_label={gettext("Preview ↗")}
+                preview_label={gettext("Preview in a new window")}
                 preview_title={gettext("Newsletter preview")}
                 popup_blocked_message={gettext("Allow the preview window, then try again.")}
                 preview_open_message={gettext("Preview opened")}

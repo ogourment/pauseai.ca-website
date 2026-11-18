@@ -507,7 +507,7 @@ defmodule PauseAiCaWeb.QuestionDraftsLive do
               source={@form[:answer].value || ""}
               name="question[answer]"
               label={gettext("Explanation · Markdown")}
-              preview_label={gettext("Preview ↗")}
+              preview_label={gettext("Preview in a new window")}
               preview_title={@form[:question].value || ""}
               render_preview={&Render.html/1}
               popup_blocked_message={gettext("Allow the preview window, then try again.")}

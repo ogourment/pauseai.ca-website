@@ -586,7 +586,7 @@ defmodule PauseAiCaWeb.MailDraftsLive do
               source={@form[:source].value || ""}
               name="template[source]"
               label={gettext("Message template · Markdown")}
-              preview_label={gettext("Preview ↗")}
+              preview_label={gettext("Preview in a new window")}
               preview_title={gettext("Template preview")}
               popup_blocked_message={gettext("Allow the preview window, then try again.")}
               preview_open_message={gettext("Preview opened")}
@@ -626,7 +626,7 @@ defmodule PauseAiCaWeb.MailDraftsLive do
               source={@draft_form[:source].value || ""}
               name="draft[source]"
               label={gettext("Message · Markdown")}
-              preview_label={gettext("Preview ↗")}
+              preview_label={gettext("Preview in a new window")}
               preview_title={@draft_form[:subject].value}
               popup_blocked_message={gettext("Allow the preview window, then try again.")}
               preview_open_message={gettext("Preview opened")}

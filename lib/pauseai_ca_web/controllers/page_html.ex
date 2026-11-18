@@ -72,7 +72,7 @@ defmodule PauseAiCaWeb.PageHTML do
         rel="noreferrer"
         class="mt-6 inline-flex font-semibold text-stone-900 underline decoration-brand decoration-2 underline-offset-4"
       >
-        {@cta} <span aria-hidden="true">&nbsp;↗</span>
+        {@cta} <span class="sr-only">{gettext("Opens in a new tab")}</span>
       </a>
       <p class="mt-5 text-xs text-stone-400">Source: {@source}</p>
       <.resource_bookmark

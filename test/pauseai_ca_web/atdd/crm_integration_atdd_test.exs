@@ -307,7 +307,7 @@ if System.get_env("ATDD") == "true" do
 
       b =
         b
-        |> click_button("#mail-draft-form [data-pme-preview]", "Preview ↗")
+        |> click_button("#mail-draft-form [data-pme-preview]", "Preview in a new window")
         |> assert_has("#mail-draft .pme-status", text: "Preview updated")
 
       evaluate(

@@ -292,7 +292,7 @@ defmodule PauseAiCaWeb.DonateLive do
               class="mt-5 inline-flex items-center gap-1.5 rounded-lg bg-brand px-5 py-3 font-semibold text-stone-950 hover:bg-brand-strong"
             >
               <span>{gettext("Donate on Manifund")}</span>
-              <span class="shrink-0" aria-hidden="true">↗</span>
+
               <span class="sr-only">{gettext("Opens in a new tab")}</span>
             </a>
             <p id="manifund-account-requirement" class="mt-3 text-sm leading-6 text-stone-700">
@@ -613,7 +613,7 @@ defmodule PauseAiCaWeb.DonateLive do
         rel="noopener noreferrer"
         class="font-semibold underline underline-offset-4"
       >
-        {gettext("Read our brochure (PDF)")} <span aria-hidden="true">↗</span>
+        {gettext("Read our brochure (PDF)")}
         <span class="sr-only">{gettext("Opens in a new tab")}</span>
       </a>
     </p>

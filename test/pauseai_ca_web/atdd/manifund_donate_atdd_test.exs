@@ -83,6 +83,8 @@ if System.get_env("ATDD") == "true" do
           |> assert_has(
             "#manifund-donate[href='#{@url}'][target='_blank'][data-donation='manifund']"
           )
+          |> assert_has("#manifund-donate .sr-only", text: tr(locale, "Opens in a new tab"))
+          |> refute_has("#manifund-donate", text: "↗")
           |> assert_has("#manifund-proposal[href='#{@url}']")
           |> assert_has("details#donate-interac:not([open]) > summary")
           |> refute_has("#donation-email")

@@ -336,7 +336,7 @@ defmodule PauseAiCaWeb.BlogEditorLive do
                 name={"article[#{locale}][markdown]"}
                 label={gettext("Article Markdown")}
                 render_preview={&PauseAiCaWeb.BlogContent.preview/1}
-                preview_label={gettext("Preview ↗")}
+                preview_label={gettext("Preview in a new window")}
                 preview_title={gettext("Draft preview")}
                 popup_blocked_message={gettext("Allow the preview window, then try again.")}
                 preview_open_message={gettext("Preview opened")}

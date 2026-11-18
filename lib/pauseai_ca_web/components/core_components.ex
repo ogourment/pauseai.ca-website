@@ -204,7 +204,8 @@ defmodule PauseAiCaWeb.CoreComponents do
       rel="noopener"
       class={@class}
     >
-      {gettext("Open development mailbox")} ↗
+      {gettext("Open development mailbox")}
+      <span class="sr-only">{gettext("Opens in a new tab")}</span>
     </a>
     """
   end

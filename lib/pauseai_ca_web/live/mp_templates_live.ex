@@ -309,7 +309,7 @@ defmodule PauseAiCaWeb.MPTemplatesLive do
                   source={@payload["editions"][locale]["body"]}
                   name={"campaign[editions][#{locale}][body]"}
                   label={gettext("Letter body · Markdown")}
-                  preview_label={gettext("Preview ↗")}
+                  preview_label={gettext("Preview in a new window")}
                   preview_title={gettext("Campaign letter preview")}
                   render_preview={
                     fn source ->

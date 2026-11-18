@@ -152,7 +152,7 @@ defmodule PauseAiCaWeb.LibraryLive do
             rel="noreferrer"
             class="font-semibold text-stone-900 underline decoration-brand decoration-2 underline-offset-4"
           >
-            {parliament_source(@locale)} <span aria-hidden="true">↗</span>
+            {parliament_source(@locale)}
           </a>
         </p>
       </section>
@@ -201,7 +201,7 @@ defmodule PauseAiCaWeb.LibraryLive do
                 rel="noreferrer"
                 class="mt-4 inline-flex font-semibold text-stone-900 underline decoration-brand decoration-2 underline-offset-4"
               >
-                {read_label(@locale)} <span aria-hidden="true">↗</span>
+                {read_label(@locale)} <span class="sr-only">{gettext("Opens in a new tab")}</span>
               </a>
               <.resource_bookmark
                 title={Resource.copy(resource, @locale).title}
