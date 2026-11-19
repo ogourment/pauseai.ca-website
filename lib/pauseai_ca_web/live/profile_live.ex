@@ -131,6 +131,12 @@ defmodule PauseAiCaWeb.ProfileLive do
           {gettext("My profile")}
         </h1>
 
+        <.link
+          id="volunteer-profile-link"
+          navigate={if @locale == "fr", do: ~p"/fr/profil/benevolat", else: ~p"/en/profile/volunteer"}
+          class="mt-4 inline-block underline"
+        >{gettext("Volunteer profile")}</.link>
+
         <.form
           for={@phone_form}
           id="profile-phone-form"

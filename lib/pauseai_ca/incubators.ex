@@ -6,6 +6,7 @@ defmodule PauseAiCa.Incubators do
   alias PauseAiCa.{Repo, Volunteers}
   alias PauseAiCa.Accounts.{Scope, User}
   alias PauseAiCa.Volunteers.{Group, Manager}
+  alias PauseAiCa.Volunteers.Profile, as: VolunteerProfile
   alias PauseAiCa.Incubators.{Profile, Membership, Event, Responsibility}
 
   @public ~w(group_id name_en name_fr summary_en summary_fr fsas stage events_url next_event_title_en next_event_title_fr next_event_starts_at next_event_timezone next_event_url whatsapp_enabled)a
@@ -347,9 +348,21 @@ defmodule PauseAiCa.Incubators do
     with :ok <- manager(scope, group_id) do
       {:ok,
        Repo.all(
-         from m in Membership, where: m.group_id == ^group_id, order_by: [desc: m.updated_at]
+         from m in Membership,
+           left_join: p in VolunteerProfile,
+           on:
+             p.user_id == m.user_id and m.status in ["approved", "admitted"] and
+               not m.external_removal_pending,
+           where: m.group_id == ^group_id,
+           order_by: [desc: m.updated_at],
+           select: {m, p.details}
        )
-       |> Enum.map(&Map.drop(Map.from_struct(&1), [:code_hash]))}
+       |> Enum.map(fn {member, details} ->
+         member
+         |> Map.from_struct()
+         |> Map.drop([:code_hash])
+         |> Map.put(:contribution, PhoenixCommunity.ContributionProfile.shared(details))
+       end)}
     end
   end
 

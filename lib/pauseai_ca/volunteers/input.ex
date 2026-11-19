@@ -21,6 +21,9 @@ defmodule PauseAiCa.Volunteers.Input do
     "pays" => "country"
   }
 
+  @skill_ids ~w(video_editing event_support outreach facilitation translation technology)
+
+  def skill_ids, do: @skill_ids
   def fields, do: @fields
   def profile_fields, do: @profile_fields
 
@@ -160,7 +163,15 @@ defmodule PauseAiCa.Volunteers.Input do
     )
   end
 
-  def profile(attrs), do: Map.take(normalize(attrs), @profile_fields)
+  def profile(attrs) do
+    normalize(attrs)
+    |> Map.take(@profile_fields)
+    |> Map.put(
+      "selected_skills",
+      PhoenixCommunity.ContributionProfile.selections(attrs["selected_skills"], skill_ids())
+    )
+    |> Map.put("share_contribution", attrs["share_contribution"] in [true, "true"])
+  end
 
   def profile_details(attrs) do
     {:ok, skills} = parse_skills(attrs["skills"] || "")

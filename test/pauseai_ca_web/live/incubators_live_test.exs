@@ -44,6 +44,51 @@ defmodule PauseAiCaWeb.IncubatorsLiveTest do
     end
   end
 
+  test "a group manager adds, edits and ends a responsibility on the group screen", c do
+    member =
+      Repo.insert!(%Incubators.Membership{
+        group_id: c.group.id,
+        user_id: c.member.id,
+        display_name: "Review member",
+        conduct_at: DateTime.utc_now(),
+        status: "approved"
+      })
+
+    {:ok, view, _} =
+      live(log_in_user(build_conn(), c.manager), "/manage/groups?group=#{c.group.id}&locale=en")
+
+    view |> element("#group-responsibilities button", "Add responsibility") |> render_click()
+
+    view
+    |> form("#group-responsibility-form",
+      responsibility: %{
+        member: "#{member.id}:#{member.revision}",
+        title: "Video Editor",
+        starts_on: "2026-11-19"
+      }
+    )
+    |> render_submit()
+
+    assert has_element?(view, "#group-responsibilities li", "Video Editor")
+    view |> element("#group-responsibilities li button", "Edit") |> render_click()
+
+    view
+    |> form("#group-responsibility-form",
+      responsibility: %{title: "Video Lead", starts_on: "2026-11-19"}
+    )
+    |> render_submit()
+
+    assert has_element?(view, "#group-responsibilities li", "Video Lead")
+    view |> element("#group-responsibilities li button", "End responsibility") |> render_click()
+
+    view
+    |> form("#group-responsibility-form", responsibility: %{ends_on: "2026-11-20"})
+    |> render_submit()
+
+    assert has_element?(view, "#group-responsibilities li time[datetime='2026-11-20']")
+    refute has_element?(view, "#group-responsibilities li button", "End responsibility")
+  end
+
   @tag :empty_groups
   test "opening the event editor preserves an unconfigured group's complete draft", c do
     {:ok, group} = Volunteers.create_group(c.admin, %{name: "Unconfigured group"})

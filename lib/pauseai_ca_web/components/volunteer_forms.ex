@@ -74,6 +74,27 @@ defmodule PauseAiCaWeb.VolunteerForms do
           max="168"
           label={gettext("Hours available per week")}
         />
+        <fieldset class="space-y-2">
+          <legend class="font-semibold">{label("selected_skills")}</legend>
+          <input type="hidden" name="profile[selected_skills][]" value="" />
+          <label
+            :for={skill <- PauseAiCa.Volunteers.Input.skill_ids()}
+            class="flex items-center gap-2"
+          >
+            <input
+              type="checkbox"
+              name="profile[selected_skills][]"
+              value={skill}
+              checked={skill in List.wrap(@form[:selected_skills].value)}
+            />
+            {skill_label(skill)}
+          </label>
+        </fieldset>
+        <.input
+          field={@form[:share_contribution]}
+          type="checkbox"
+          label={label("share_contribution")}
+        />
         <.input
           field={@form[:skills]}
           errors={if @errors["skills"], do: [error(@errors["skills"])], else: []}
@@ -145,6 +166,31 @@ defmodule PauseAiCaWeb.VolunteerForms do
   def label("skills"), do: gettext("Skills and proficiency")
   def label("other_skills"), do: gettext("Other skills")
   def label("application_message"), do: gettext("What would you like to help with?")
+
+  def label("selected_skills"), do: gettext("Skills you can offer")
+
+  def label("share_contribution"),
+    do: gettext("Share skills and hours with managers of my groups")
+
+  def skill_label("video_editing"), do: gettext("Video editing")
+  def skill_label("event_support"), do: gettext("Event support")
+  def skill_label("outreach"), do: gettext("Outreach")
+  def skill_label("facilitation"), do: gettext("Facilitation")
+  def skill_label("translation"), do: gettext("Translation")
+  def skill_label("technology"), do: gettext("Technology")
+  def skill_label(_), do: nil
+
+  def profile_value("selected_skills", values), do: skill_summary(values)
+
+  def profile_value("share_contribution", value) when value in [true, "true"],
+    do: gettext("Managers of my groups")
+
+  def profile_value("share_contribution", _), do: gettext("Private")
+  def profile_value(_, value), do: value
+
+  def skill_summary(values) do
+    values |> List.wrap() |> Enum.map(&skill_label/1) |> Enum.reject(&is_nil/1) |> Enum.join(", ")
+  end
 
   def error(:required), do: gettext("This field is required.")
   def error(:invalid_email), do: gettext("Enter a valid email address.")

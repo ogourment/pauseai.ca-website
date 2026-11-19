@@ -143,6 +143,54 @@ defmodule PauseAiCa.IncubatorsTest do
     assert Enum.count(events, &String.starts_with?(&1.action, "responsibility_")) == 3
   end
 
+  test "organizers see only opted-in published contribution fields of their current members", c do
+    member =
+      Repo.insert!(%Membership{
+        group_id: c.group.id,
+        user_id: c.member.user.id,
+        display_name: "Synthetic Editor",
+        conduct_at: DateTime.utc_now(),
+        status: "approved"
+      })
+
+    attrs = %{
+      "selected_skills" => ["video_editing", "", "other", "video_editing"],
+      "share_contribution" => "true",
+      "availability_hours_per_week" => "0",
+      "other_skills" => "Private notes"
+    }
+
+    assert {:ok, _} = Volunteers.save_profile(c.member, attrs, "contribution")
+    assert {:ok, [%{contribution: %{}} = draft_view]} = Incubators.roster(c.manager, c.group.id)
+    assert draft_view.contribution == %{}
+
+    assert {:ok, _} = Volunteers.save_profile(c.member, attrs, "review", true)
+    assert {:ok, [shared]} = Incubators.roster(c.manager, c.group.id)
+
+    assert shared.contribution == %{
+             "selected_skills" => ["video_editing"],
+             "availability_hours_per_week" => 0
+           }
+
+    assert {:error, :forbidden} = Incubators.roster(c.manager, c.other.id)
+
+    assert {:ok, _} =
+             Volunteers.save_profile(
+               c.member,
+               %{attrs | "share_contribution" => false},
+               "review",
+               true
+             )
+
+    assert {:ok, [private]} = Incubators.roster(c.manager, c.group.id)
+    assert private.contribution == %{}
+
+    assert {:ok, _} = Volunteers.save_profile(c.member, attrs, "review", true)
+    Repo.update!(change(member, status: "suspended"))
+    assert {:ok, [inactive]} = Incubators.roster(c.manager, c.group.id)
+    assert inactive.contribution == %{}
+  end
+
   defp apply_request(c, identifier \\ "@synthetic_member") do
     {:ok, m} =
       Incubators.request(c.member, c.group.id, %{

@@ -4,8 +4,8 @@ defmodule PauseAiCaWeb.VolunteerProfileLive do
   alias PauseAiCaWeb.VolunteerForms
 
   @impl true
-  def mount(params, _, socket) do
-    locale = if params["locale"] == "fr", do: "fr", else: "en"
+  def mount(_params, _, socket) do
+    locale = if socket.assigns.live_action == :fr, do: "fr", else: "en"
     Gettext.put_locale(PauseAiCaWeb.Gettext, locale)
     socket = assign(socket, :locale, locale)
     profile = Volunteers.get_profile(socket.assigns.current_scope)
@@ -35,7 +35,10 @@ defmodule PauseAiCaWeb.VolunteerProfileLive do
       save(socket, Map.merge(socket.assigns.values, attrs), socket.assigns.step, false)
 
     {:noreply,
-     if(saved.assigns.saved?, do: push_navigate(saved, to: ~p"/dashboard"), else: saved)}
+     if(saved.assigns.saved?,
+       do: push_navigate(saved, to: profile_path(saved.assigns.locale)),
+       else: saved
+     )}
   end
 
   def handle_event("save", _, socket),
@@ -60,6 +63,9 @@ defmodule PauseAiCaWeb.VolunteerProfileLive do
        )}
 
   def handle_event("publish", _, socket), do: save(socket, socket.assigns.values, "review", true)
+
+  defp profile_path("fr"), do: ~p"/fr/profil"
+  defp profile_path(_), do: ~p"/en/profile"
 
   defp save(socket, values, step, publish?) do
     case Volunteers.save_profile(socket.assigns.current_scope, values, step, publish?) do
@@ -101,7 +107,9 @@ defmodule PauseAiCaWeb.VolunteerProfileLive do
       flash={@flash}
       current_scope={@current_scope}
       locale={@locale}
-      translated_path={~p"/volunteer-profile?locale=#{if(@locale == "fr", do: "en", else: "fr")}"}
+      translated_path={
+        if @locale == "fr", do: ~p"/en/profile/volunteer", else: ~p"/fr/profil/benevolat"
+      }
     >
       <section class="mx-auto max-w-3xl space-y-5 px-5 py-12" id="volunteer-profile" lang={@locale}>
         <h1 class="text-4xl font-bold">{gettext("Volunteer profile")}</h1>
@@ -118,9 +126,9 @@ defmodule PauseAiCaWeb.VolunteerProfileLive do
         >
           <%= if @step == "review" do %>
             <dl>
-              <div :for={{key, value} <- @values} :if={value != ""} class="mb-3">
+              <div :for={{key, value} <- @values} :if={value not in ["", []]} class="mb-3">
                 <dt class="font-semibold">{VolunteerForms.label(key)}</dt><dd class="whitespace-pre-wrap">
-                  {value}
+                  {VolunteerForms.profile_value(key, value)}
                 </dd>
               </div>
             </dl>

@@ -591,6 +591,22 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
                   {gettext("WhatsApp identifier")}: {member.identifier}
                 </p><p :if={member.matched_at}>{gettext("Identifier matched")}</p>
               </div>
+              <dl
+                :if={member.contribution != %{}}
+                class="text-sm"
+                id={"member-contribution-#{member.id}"}
+              >
+                <div :if={member.contribution["selected_skills"] not in [nil, []]}>
+                  <dt class="font-semibold">{gettext("Skills you can offer")}</dt>
+                  <dd>
+                    {PauseAiCaWeb.VolunteerForms.skill_summary(member.contribution["selected_skills"])}
+                  </dd>
+                </div>
+                <div :if={is_integer(member.contribution["availability_hours_per_week"])}>
+                  <dt class="font-semibold">{gettext("Hours available per week")}</dt>
+                  <dd>{member.contribution["availability_hours_per_week"]}</dd>
+                </div>
+              </dl>
               <form
                 :if={
                   (member.status == "pending" and !member.matched_at and @profile) &&
@@ -714,6 +730,13 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
               </form>
             </article>
           </section>
+          <.live_component
+            module={PauseAiCaWeb.GroupResponsibilitiesComponent}
+            id={"responsibilities-#{@group_id}"}
+            group_id={@group_id}
+            scope={@current_scope}
+            roster={@roster}
+          />
           <section class="space-y-3" id="incubator-activity">
             <h2 class="text-xl font-semibold">{gettext("Activity")}</h2><p :if={@events == []}>
               {gettext("No activity yet.")}

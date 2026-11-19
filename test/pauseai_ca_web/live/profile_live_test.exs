@@ -12,6 +12,48 @@ defmodule PauseAiCaWeb.ProfileLiveTest do
     assert {:error, {:redirect, %{to: "/users/log-in"}}} = live(conn, ~p"/en/profile")
   end
 
+  test "the volunteer editor is reachable in both languages and resumes its saved draft", %{
+    conn: conn,
+    user: user
+  } do
+    for {profile, volunteer} <- [
+          {"/en/profile", "/en/profile/volunteer"},
+          {"/fr/profil", "/fr/profil/benevolat"}
+        ] do
+      assert {:ok, view, _} = live(conn, profile)
+      assert has_element?(view, "#volunteer-profile-link[href='#{volunteer}']")
+      assert {:ok, editor, _} = live(conn, volunteer)
+      assert has_element?(editor, "#volunteer-profile-form")
+    end
+
+    assert {:ok, editor, _} = live(conn, "/en/profile/volunteer")
+    render_click(editor, "next")
+
+    render_change(editor, "change", %{
+      "profile" => %{
+        "availability_hours_per_week" => "3",
+        "selected_skills" => ["", "video_editing"],
+        "share_contribution" => "true"
+      }
+    })
+
+    assert {:ok, _profile, _html} =
+             editor
+             |> render_submit("save", %{"profile" => %{"availability_hours_per_week" => "3"}})
+             |> follow_redirect(conn, "/en/profile")
+
+    assert PauseAiCa.Volunteers.get_profile(PauseAiCa.Accounts.Scope.for_user(user)).draft[
+             "availability_hours_per_week"
+           ] == "3"
+
+    assert {:ok, reopened, _} = live(conn, "/en/profile/volunteer")
+    assert has_element?(reopened, "input[name='profile[availability_hours_per_week]'][value='3']")
+    assert has_element?(reopened, "input[value='video_editing'][checked]")
+    render_click(reopened, "next")
+    assert has_element?(reopened, "dd", "Video editing")
+    assert has_element?(reopened, "dd", "Managers of my groups")
+  end
+
   test "phone is optional and can be saved or cleared without a full postal code", %{
     conn: conn,
     user: user

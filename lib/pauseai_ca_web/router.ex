@@ -231,6 +231,8 @@ defmodule PauseAiCaWeb.Router do
       live "/fr/tableau-de-bord", DashboardLive, :fr
       live "/en/profile", ProfileLive, :en
       live "/fr/profil", ProfileLive, :fr
+      live "/en/profile/volunteer", VolunteerProfileLive, :en
+      live "/fr/profil/benevolat", VolunteerProfileLive, :fr
       live "/users/settings", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
     end
