@@ -6,7 +6,7 @@ defmodule PauseAiCa.Incubators do
   alias PauseAiCa.{Repo, Volunteers}
   alias PauseAiCa.Accounts.{Scope, User}
   alias PauseAiCa.Volunteers.{Group, Manager}
-  alias PauseAiCa.Incubators.{Profile, Membership, Event}
+  alias PauseAiCa.Incubators.{Profile, Membership, Event, Responsibility}
 
   @public ~w(group_id name_en name_fr summary_en summary_fr fsas stage events_url next_event_title_en next_event_title_fr next_event_starts_at next_event_timezone next_event_url whatsapp_enabled)a
   @profile_fields Enum.reject(@public, &(&1 == :group_id)) ++
@@ -352,6 +352,90 @@ defmodule PauseAiCa.Incubators do
        |> Enum.map(&Map.drop(Map.from_struct(&1), [:code_hash]))}
     end
   end
+
+  def responsibilities(scope, group_id) do
+    with :ok <- manager(scope, group_id) do
+      {:ok,
+       Repo.all(
+         from r in Responsibility,
+           join: m in assoc(r, :membership),
+           where: m.group_id == ^group_id,
+           order_by: [asc_nulls_first: r.ends_on, asc: r.title, asc: r.id],
+           preload: [membership: m]
+       )}
+    end
+  end
+
+  def add_responsibility(scope, group_id, membership_id, membership_revision, attrs) do
+    manage(scope, group_id, membership_id, membership_revision, fn member ->
+      save_responsibility(
+        scope,
+        member,
+        %Responsibility{membership_id: member.id},
+        :responsibility_added,
+        PhoenixCommunity.Responsibility.add(member.status, attrs)
+      )
+    end)
+  end
+
+  def edit_responsibility(scope, group_id, id, revision, attrs) do
+    manage_responsibility(scope, group_id, id, :responsibility_edited, fn member,
+                                                                          responsibility ->
+      PhoenixCommunity.Responsibility.edit(member.status, responsibility, revision, attrs)
+    end)
+  end
+
+  def end_responsibility(scope, group_id, id, revision, %Date{} = date) do
+    manage_responsibility(scope, group_id, id, :responsibility_ended, fn _member,
+                                                                         responsibility ->
+      PhoenixCommunity.Responsibility.finish(responsibility, revision, date)
+    end)
+  end
+
+  defp manage_responsibility(scope, group_id, id, action, plan) do
+    with :ok <- manager(scope, group_id), true <- uuid?(id) do
+      transaction(fn ->
+        lock_group!(scope, group_id)
+
+        case Repo.one(
+               from r in Responsibility,
+                 join: m in assoc(r, :membership),
+                 where: r.id == ^id and m.group_id == ^group_id,
+                 select: {r, m}
+             ) do
+          {responsibility, member} ->
+            save_responsibility(
+              scope,
+              member,
+              responsibility,
+              action,
+              plan.(member, responsibility)
+            )
+
+          nil ->
+            Repo.rollback(:not_found)
+        end
+      end)
+    else
+      _ -> {:error, :forbidden}
+    end
+  end
+
+  defp save_responsibility(scope, member, responsibility, action, {:ok, changes}) do
+    saved = responsibility |> change(changes) |> Repo.insert_or_update!()
+
+    event(scope, member.group_id, member.id, Atom.to_string(action), %{
+      "responsibility_id" => saved.id,
+      "title" => saved.title,
+      "starts_on" => Date.to_iso8601(saved.starts_on),
+      "ends_on" => saved.ends_on && Date.to_iso8601(saved.ends_on),
+      "revision" => saved.revision
+    })
+
+    {:ok, saved}
+  end
+
+  defp save_responsibility(_, _, _, _, {:error, reason}), do: Repo.rollback(reason)
 
   def activity(scope, group_id) do
     with :ok <- manager(scope, group_id),

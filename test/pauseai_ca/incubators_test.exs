@@ -78,6 +78,71 @@ defmodule PauseAiCa.IncubatorsTest do
     assert revision == c.profile.revision
   end
 
+  test "group responsibilities are scoped, revisioned, and keep membership permissions", c do
+    member =
+      Repo.insert!(%Membership{
+        group_id: c.group.id,
+        user_id: c.member.user.id,
+        display_name: "Synthetic Editor",
+        conduct_at: DateTime.utc_now(),
+        status: "approved"
+      })
+
+    attrs = %{title: "Video Editor", starts_on: ~D[2026-11-19]}
+
+    assert {:error, :forbidden} =
+             Incubators.add_responsibility(
+               c.member,
+               c.group.id,
+               member.id,
+               member.revision,
+               attrs
+             )
+
+    assert {:ok, role} =
+             Incubators.add_responsibility(
+               c.manager,
+               c.group.id,
+               member.id,
+               member.revision,
+               attrs
+             )
+
+    assert {:error, :not_found} =
+             Incubators.edit_responsibility(c.admin, c.other.id, role.id, role.revision, attrs)
+
+    assert {:ok, edited} =
+             Incubators.edit_responsibility(c.manager, c.group.id, role.id, role.revision, %{
+               attrs
+               | title: "Video Lead"
+             })
+
+    assert {:error, :stale} =
+             Incubators.end_responsibility(
+               c.manager,
+               c.group.id,
+               role.id,
+               role.revision,
+               ~D[2026-11-20]
+             )
+
+    assert {:ok, ended} =
+             Incubators.end_responsibility(
+               c.manager,
+               c.group.id,
+               edited.id,
+               edited.revision,
+               ~D[2026-11-20]
+             )
+
+    assert {:ok, [record]} = Incubators.responsibilities(c.manager, c.group.id)
+    assert record.id == ended.id and record.ends_on == ~D[2026-11-20]
+    assert Repo.get!(Membership, member.id).role == "member"
+
+    assert {:ok, events} = Incubators.activity(c.manager, c.group.id)
+    assert Enum.count(events, &String.starts_with?(&1.action, "responsibility_")) == 3
+  end
+
   defp apply_request(c, identifier \\ "@synthetic_member") do
     {:ok, m} =
       Incubators.request(c.member, c.group.id, %{
