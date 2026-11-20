@@ -6,6 +6,8 @@ defmodule PauseAiCaWeb.LocalInterestLive do
     locale = PauseAiCaWeb.Site.locale(params, socket)
     Gettext.put_locale(PauseAiCaWeb.Gettext, locale)
 
+    if connected?(socket), do: Process.send_after(self(), :refresh_queue, 30_000)
+
     case PauseAiCa.Participation.local_requests(socket.assigns.current_scope, params["page"] || 1) do
       {:ok, result} ->
         {:ok,
@@ -27,6 +29,12 @@ defmodule PauseAiCaWeb.LocalInterestLive do
       {:ok, result} -> {:noreply, assign(socket, requests: result.entries, pagination: result)}
       _ -> {:noreply, push_navigate(socket, to: ~p"/dashboard")}
     end
+  end
+
+  @impl true
+  def handle_info(:refresh_queue, socket) do
+    Process.send_after(self(), :refresh_queue, 30_000)
+    handle_params(%{"page" => socket.assigns.pagination.page}, nil, socket)
   end
 
   @impl true
@@ -73,6 +81,43 @@ defmodule PauseAiCaWeb.LocalInterestLive do
             phx-value-id={request.id}
             class="mt-2 rounded border border-stone-300 px-3 py-1"
           >{gettext("I’ll follow up")}</button>
+          <div
+            :if={request.followup_owner_id == @current_scope.user.id}
+            class="mt-3 flex flex-wrap gap-4"
+          >
+            <a
+              href={"mailto:" <> URI.encode(request.email, &URI.char_unreserved?/1)}
+              class="underline"
+            >{gettext("Email the volunteer")}</a>
+            <.link
+              :if={request.context["incubator_group_id"]}
+              href={
+                ~p"/manage/welcome-calls?#{%{group: request.context["incubator_group_id"], locale: @locale}}"
+              }
+              class="underline"
+            >{gettext("Check onboarding calls")}</.link>
+          </div>
+          <p :if={request.context["interests"] not in [nil, []]} class="mt-2">
+            {Enum.map_join(
+              request.context["interests"],
+              ", ",
+              &PauseAiCaWeb.VolunteerForms.skill_label/1
+            )}
+          </p>
+          <p
+            :if={
+              request.followup_owner_id == @current_scope.user.id &&
+                request.context["incubator_group_id"]
+            }
+            class="mt-2 text-sm"
+          >
+            <.link
+              href={
+                ~p"/groups/#{request.context["incubator_group_id"]}/join?#{%{locale: request.locale}}"
+              }
+              class="underline"
+            >{gettext("Membership link to share after follow-up")}</.link>
+          </p>
           <p :if={request.help_text} class="mt-2 whitespace-pre-wrap">{request.help_text}</p>
           <p class="mt-2 text-sm text-stone-600">
             {String.upcase(request.locale)} · {Calendar.strftime(request.confirmed_at, "%Y-%m-%d")}
@@ -87,12 +132,12 @@ defmodule PauseAiCaWeb.LocalInterestLive do
         )}</span>
         <.link
           :if={@pagination.page > 1}
-          patch={~p"/admin/local-interest?#{%{locale: @locale, page: @pagination.page - 1}}"}
+          patch={~p"/manage/local-interest?#{%{locale: @locale, page: @pagination.page - 1}}"}
           class="underline"
         >{gettext("Previous")}</.link>
         <.link
           :if={@pagination.page < @pagination.pages}
-          patch={~p"/admin/local-interest?#{%{locale: @locale, page: @pagination.page + 1}}"}
+          patch={~p"/manage/local-interest?#{%{locale: @locale, page: @pagination.page + 1}}"}
           class="underline"
         >{gettext("Next")}</.link>
       </nav>

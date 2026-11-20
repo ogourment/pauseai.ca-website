@@ -117,8 +117,12 @@ if System.get_env("ATDD") == "true" do
         |> connected()
         |> assert_has("#group-#{group.id}", text: "Synthetic local activities")
         |> refute_has("a[href='https://chat.whatsapp.com/synthetic-local-review']")
-        |> capture(locale, "Applicant opens the public directory", "Click Request to join")
-        |> click_link(tr(locale, "Request to join"))
+        |> capture(
+          locale,
+          "Applicant opens the public directory",
+          "Open the membership link shared by the organizer"
+        )
+        |> visit("/groups/#{group.id}/join?locale=#{locale}")
         |> connected()
         |> assert_has("input[name='application[display_name]']", value: "Synthetic applicant")
         |> fill_in(tr(locale, "Your WhatsApp identifier"), with: "+15555550123")

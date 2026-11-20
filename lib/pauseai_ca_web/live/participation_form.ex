@@ -67,19 +67,19 @@ defmodule PauseAiCaWeb.ParticipationForm do
 
   def handle_event(
         "choose-group",
-        %{"group-id" => group_id} = event_params,
+        %{"group-id" => group_id},
         %{assigns: %{group_focused: true}} = socket
       ) do
     case PauseAiCa.Incubators.public_group(group_id) do
       {:ok, group} ->
-        kind = if event_params["kind"] == "help", do: "help", else: "waitlist"
+        kind = "help"
+        name = if socket.assigns.locale == "fr", do: group.name_fr, else: group.name_en
 
         params =
           socket.assigns.params
           |> Map.put("local", "true")
           |> Map.put("local_kind", kind)
-
-        name = if socket.assigns.locale == "fr", do: group.name_fr, else: group.name_en
+          |> Map.put("city", name)
 
         {:noreply,
          assign(socket,
@@ -95,6 +95,21 @@ defmodule PauseAiCaWeb.ParticipationForm do
         {:noreply, socket}
     end
   end
+
+  def handle_event("clear-group", _, %{assigns: %{group_focused: true}} = socket) do
+    params = Map.put(socket.assigns.params, "city", "")
+
+    {:noreply,
+     assign(socket,
+       selected_group: nil,
+       selected_group_id: nil,
+       params: params,
+       form: to_form(params, as: socket.assigns.form_as)
+     )}
+  end
+
+  def handle_event("choose", _, %{assigns: %{group_focused: true}} = socket),
+    do: {:noreply, socket}
 
   def handle_event("choose", %{"intent" => intent}, socket)
       when intent in ~w(newsletter action account waitlist help) do
@@ -129,7 +144,21 @@ defmodule PauseAiCaWeb.ParticipationForm do
   end
 
   def handle_event("restore-draft", %{"values" => values}, socket) do
-    params = parameters(values, socket.assigns.current_scope, socket.assigns.params)
+    socket =
+      if socket.assigns.group_focused && is_nil(socket.assigns.selected_group_id) do
+        case PauseAiCa.Incubators.public_group(values["interest_group"]) do
+          {:ok, group} ->
+            name = if socket.assigns.locale == "fr", do: group.name_fr, else: group.name_en
+            assign(socket, selected_group_id: group.group_id, selected_group: name)
+
+          _ ->
+            socket
+        end
+      else
+        socket
+      end
+
+    params = entry_parameters(values, socket.assigns)
 
     params =
       case socket.assigns.intent do
@@ -137,7 +166,13 @@ defmodule PauseAiCaWeb.ParticipationForm do
           params
           |> Map.put("local", "true")
           |> Map.put("local_kind", value)
-          |> Map.put("city", socket.assigns.params["city"])
+          |> Map.put(
+            "city",
+            if(socket.assigns.group_focused,
+              do: socket.assigns.selected_group || params["city"],
+              else: socket.assigns.params["city"]
+            )
+          )
 
         value when value in ["action", "account"] ->
           Map.put(params, "account", "true")
@@ -150,7 +185,7 @@ defmodule PauseAiCaWeb.ParticipationForm do
   end
 
   def handle_event("validate", %{"participation" => raw} = event, socket) do
-    params = parameters(raw, socket.assigns.current_scope, socket.assigns.params)
+    params = entry_parameters(raw, socket.assigns)
 
     changed =
       case event["_target"] do
@@ -179,7 +214,7 @@ defmodule PauseAiCaWeb.ParticipationForm do
   end
 
   def handle_event("save", %{"participation" => raw}, socket) do
-    params = parameters(raw, socket.assigns.current_scope, socket.assigns.params)
+    params = entry_parameters(raw, socket.assigns)
     params = Map.reject(params, fn {key, _} -> String.starts_with?(key, "_unused_") end)
     params = if socket.assigns.intent == "mp", do: mp_parameters(params), else: params
 
@@ -255,6 +290,11 @@ defmodule PauseAiCaWeb.ParticipationForm do
         )
     end
 
+    context =
+      if socket.assigns.group_focused,
+        do: Map.put(context, "interests", params["interests"] || []),
+        else: context
+
     case Participation.request(attributes(params, locale), context, url_fun) do
       {:ok, _} ->
         {:noreply,
@@ -287,6 +327,25 @@ defmodule PauseAiCaWeb.ParticipationForm do
            form: to_form(params, as: socket.assigns.form_as),
            state: :delivery_error
          )}
+    end
+  end
+
+  defp entry_parameters(raw, assigns) do
+    params = parameters(raw, assigns.current_scope, assigns.params)
+
+    if assigns.group_focused do
+      skills = PauseAiCa.Volunteers.Input.skill_ids()
+      selected = Enum.filter(skills, &(&1 in List.wrap(raw["interests"] || params["interests"])))
+
+      Map.merge(params, %{
+        "interests" => selected,
+        "account" => "false",
+        "newsletter" => "false",
+        "local" => "true",
+        "local_kind" => "help"
+      })
+    else
+      params
     end
   end
 
@@ -422,7 +481,7 @@ defmodule PauseAiCaWeb.ParticipationForm do
         <h2 class="font-heading text-3xl">
           {cond do
             @group_focused ->
-              gettext("Join a waitlist or help start an incubator")
+              gettext("Volunteer with a local group")
 
             @intent == "mp" ->
               gettext("Your details and choices")
@@ -441,7 +500,7 @@ defmodule PauseAiCaWeb.ParticipationForm do
           end}
         </h2>
         <div
-          :if={@intent not in ["newsletter", "mp"]}
+          :if={!@group_focused and @intent not in ["newsletter", "mp"]}
           id="participation-motivations"
           class="mt-4 flex flex-wrap gap-2"
         >
@@ -451,13 +510,8 @@ defmodule PauseAiCaWeb.ParticipationForm do
                 [
                   {"account", gettext("Record my actions")},
                   {"waitlist", gettext("Join the waitlist")},
-                  {"help",
-                   if(@group_focused,
-                     do: gettext("Help start an incubator"),
-                     else: gettext("I can help")
-                   )}
+                  {"help", gettext("I can help")}
                 ]
-                |> Enum.reject(fn {kind, _} -> @group_focused && kind == "account" end)
             }
             type="button"
             phx-click="choose"
@@ -468,14 +522,21 @@ defmodule PauseAiCaWeb.ParticipationForm do
           >{label}</button>
         </div>
         <p class="mt-3 text-sm text-stone-600">
-          {gettext("Enter your details once and choose the options you want.")}
+          {if @group_focused,
+            do:
+              gettext(
+                "Tell us what interests you. After you confirm your email, an organizer can contact you or invite you to an onboarding call."
+              ),
+            else: gettext("Enter your details once and choose the options you want.")}
         </p>
         <.form
           for={@form}
           id={@form_id}
           phx-hook="FormDraft"
+          data-submitted={to_string(@state == :pending)}
+          data-interest-group={if @group_focused, do: @selected_group_id || ""}
           data-draft-prefix={@form_as}
-          data-draft-key={"pauseai:participation:" <> if(@current_scope, do: @current_scope.user.id, else: "anonymous") <> if(@intent == "mp", do: ":mp", else: "")}
+          data-draft-key={"pauseai:participation:" <> if(@current_scope, do: @current_scope.user.id, else: "anonymous") <> cond do @group_focused -> ":group-interest"; @intent == "mp" -> ":mp"; true -> "" end}
           phx-change="validate"
           phx-submit="save"
           phx-target={@myself}
@@ -533,7 +594,7 @@ defmodule PauseAiCaWeb.ParticipationForm do
             autocomplete="tel"
             maxlength="40"
           />
-          <fieldset class="mt-3 space-y-3">
+          <fieldset :if={!@group_focused} class="mt-3 space-y-3">
             <legend class="sr-only">{gettext("Your choices")}</legend>
             <.input
               :for={{field, label} <- ordered_choices(@intent, @current_scope)}
@@ -553,10 +614,18 @@ defmodule PauseAiCaWeb.ParticipationForm do
               class="mb-3 text-sm font-semibold"
             >
               {if @params["local_kind"] == "help",
-                do: gettext("Offer to help %{group}", group: @selected_group),
+                do: gettext("Group: %{group}", group: @selected_group),
                 else: gettext("Waitlist for %{group}", group: @selected_group)}
             </p>
+            <button
+              :if={@selected_group}
+              type="button"
+              phx-click="clear-group"
+              phx-target={@myself}
+              class="mb-2 underline"
+            >{gettext("Choose another location")}</button>
             <.input
+              readonly={!!@selected_group}
               field={@form[:city]}
               label={gettext("Where would you like to get involved?")}
               autocomplete="address-level2"
@@ -566,6 +635,22 @@ defmodule PauseAiCaWeb.ParticipationForm do
             <datalist :if={@group_focused} id="participation-group-cities">
               <option :for={city <- @group_cities} value={city} />
             </datalist>
+            <fieldset :if={@group_focused} class="my-4">
+              <legend class="font-semibold">{gettext("What interests you? (optional)")}</legend>
+              <input type="hidden" name={@form_as <> "[interests][]"} value="" />
+              <label
+                :for={skill <- PauseAiCa.Volunteers.Input.skill_ids()}
+                class="mr-4 inline-flex items-center gap-2 py-2"
+              >
+                <input
+                  type="checkbox"
+                  name={@form_as <> "[interests][]"}
+                  value={skill}
+                  checked={skill in (@params["interests"] || [])}
+                />
+                {PauseAiCaWeb.VolunteerForms.skill_label(skill)}
+              </label>
+            </fieldset>
             <input type="hidden" name={@form_as <> "[local_kind]"} value={@params["local_kind"]} />
             <.input
               :if={@params["local_kind"] == "help"}
@@ -596,7 +681,11 @@ defmodule PauseAiCaWeb.ParticipationForm do
             class="mt-5 rounded-full bg-brand px-6 py-3 font-heading text-lg font-bold text-stone-950"
           >{if @registration,
             do: gettext("Email me a secure link"),
-            else: selected_submit_label(@intent, @current_scope, @params)}</button>
+            else:
+              if(@group_focused,
+                do: gettext("Send my interest"),
+                else: selected_submit_label(@intent, @current_scope, @params)
+              )}</button>
         </.form>
         <p
           :if={@state == :invalid}

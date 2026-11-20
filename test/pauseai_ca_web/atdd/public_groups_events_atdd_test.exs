@@ -49,8 +49,8 @@ if System.get_env("ATDD") == "true" do
         discard_fixture_emails()
         baseline = counts()
         directory = if locale == "fr", do: "/fr/groupes", else: "/en/groups"
-        help_control = "#group-#{groups.toronto.id} button[phx-value-kind='help']"
-        waitlist_control = "#group-#{groups.ottawa.id} button[phx-click='choose-group']"
+        help_control = "#group-#{groups.toronto.id} a[data-group-interest]"
+        waitlist_control = "#group-#{groups.ottawa.id} a[data-group-interest]"
 
         # The public home is static. Only wait for LiveView after entering Groups.
         b =
@@ -79,13 +79,13 @@ if System.get_env("ATDD") == "true" do
         end
 
         b
-        |> assert_has("#group-#{groups.montreal.id} a[href*='/join?']",
-          text: tr(locale, "Request to join")
+        |> assert_has("#group-#{groups.montreal.id} a[data-group-interest]",
+          text: tr(locale, "Get involved")
         )
         |> refute_has("#group-#{groups.toronto.id} a[href*='/join?']")
         |> refute_has("#group-#{groups.ottawa.id} a[href*='/join?']")
-        |> assert_has(help_control, text: tr(locale, "I can help"))
-        |> assert_has(waitlist_control, text: tr(locale, "Join the waitlist"))
+        |> assert_has(help_control, text: tr(locale, "Get involved"))
+        |> assert_has(waitlist_control, text: tr(locale, "Get involved"))
         |> refute_has("#group-next-event-#{groups.ottawa.id}")
 
         for group <- [groups.montreal, groups.toronto] do
@@ -128,7 +128,7 @@ if System.get_env("ATDD") == "true" do
           |> fill_in(tr(locale, "Name"), with: "Morgan Synthetic")
           |> fill_in(tr(locale, "Your email"), with: "groups-demo-#{locale}@example.org")
           |> fill_in(tr(locale, "FSA"), with: "H2X")
-          |> click_button(help_control, tr(locale, "I can help"), exact: true)
+          |> click_link(help_control, tr(locale, "Get involved"), exact: true)
           |> assert_has("#participation-selected-group",
             text: tr_group(locale, :help, groups.toronto.name)
           )
@@ -141,12 +141,12 @@ if System.get_env("ATDD") == "true" do
             "Click #{help_control}",
             "Toronto selected with help intent; personal details retained"
           )
-          |> click_button(waitlist_control, tr(locale, "Join the waitlist"), exact: true)
+          |> click_link(waitlist_control, tr(locale, "Get involved"), exact: true)
           |> assert_has("#participation-selected-group",
             text: tr_group(locale, :waitlist, groups.ottawa.name)
           )
-          |> assert_local_kind("waitlist")
-          |> refute_has("textarea[name='participation[help_text]']")
+          |> assert_local_kind("help")
+          |> assert_has("textarea[name='participation[help_text]']")
           |> assert_person_details(locale)
           |> capture(
             locale,
@@ -270,10 +270,10 @@ if System.get_env("ATDD") == "true" do
       Gettext.with_locale(PauseAiCaWeb.Gettext, locale, fn ->
         case kind do
           :help ->
-            Gettext.gettext(PauseAiCaWeb.Gettext, "Offer to help %{group}", group: group)
+            Gettext.gettext(PauseAiCaWeb.Gettext, "Group: %{group}", group: group)
 
           :waitlist ->
-            Gettext.gettext(PauseAiCaWeb.Gettext, "Waitlist for %{group}", group: group)
+            Gettext.gettext(PauseAiCaWeb.Gettext, "Group: %{group}", group: group)
         end
       end)
     end

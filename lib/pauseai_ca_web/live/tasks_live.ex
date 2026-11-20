@@ -290,12 +290,12 @@ defmodule PauseAiCaWeb.TasksLive do
       else: options
   end
 
-  defp status("open"), do: gettext("Open")
-  defp status("in_progress"), do: gettext("In progress")
-  defp status("in_review"), do: gettext("In review")
-  defp status("done"), do: gettext("Done")
-  defp status("cancelled"), do: gettext("Cancelled")
-  defp status(_), do: gettext("Unknown")
+  def status("open"), do: gettext("Open")
+  def status("in_progress"), do: gettext("In progress")
+  def status("in_review"), do: gettext("In review")
+  def status("done"), do: gettext("Done")
+  def status("cancelled"), do: gettext("Cancelled")
+  def status(_), do: gettext("Unknown")
   defp action("created"), do: gettext("Created")
   defp action("updated"), do: gettext("Updated")
   defp action("delegated"), do: gettext("Reassigned")

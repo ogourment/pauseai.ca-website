@@ -37,6 +37,45 @@ defmodule PauseAiCa.Volunteers do
 
   def groups(_), do: []
 
+  def my_group_work(%Scope{user: %{id: user_id}}) do
+    memberships =
+      from m in PauseAiCa.Incubators.Membership,
+        join: g in Group,
+        on: g.id == m.group_id,
+        join: u in User,
+        on: u.id == m.user_id,
+        where:
+          m.user_id == ^user_id and not is_nil(u.confirmed_at) and
+            m.status in ["approved", "admitted"] and not m.external_removal_pending
+
+    roles =
+      Repo.all(
+        from [m, g] in memberships,
+          join: r in PauseAiCa.Incubators.Responsibility,
+          on: r.membership_id == m.id,
+          where: is_nil(r.ends_on) and r.starts_on <= ^Date.utc_today(),
+          order_by: [g.name, r.title],
+          select: %{group: g.name, title: r.title}
+      )
+
+    tasks =
+      Repo.all(
+        from [m, g] in memberships,
+          join: t in PauseAiCa.Tasks.Task,
+          on: t.group_id == m.group_id and t.assignee_id == m.user_id,
+          order_by: [asc_nulls_last: t.due_date, asc: t.title],
+          select: %{
+            group: g.name,
+            title: t.title,
+            description: t.description,
+            status: t.status,
+            due_date: t.due_date
+          }
+      )
+
+    %{roles: roles, tasks: tasks}
+  end
+
   def create_group(scope, attrs) do
     if superadmin?(scope) do
       %Group{}

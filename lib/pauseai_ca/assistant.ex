@@ -157,9 +157,22 @@ defmodule PauseAiCa.Assistant do
   end
 
   def eligible?(scope), do: Volunteers.superadmin?(scope)
+
+  defp chat_accounts do
+    managers = from m in Volunteers.Manager, select: m.user_id
+
+    from u in PauseAiCa.Accounts.User,
+      where: not is_nil(u.confirmed_at) and (u.superadmin or u.id in subquery(managers))
+  end
+
+  def chat_allowed?(%Scope{user: %{id: id}}),
+    do: Repo.exists?(from u in chat_accounts(), where: u.id == ^id)
+
+  def chat_allowed?(_), do: false
+
   # Allocated users retain history access while readiness or daily headroom recovers.
   def launcher_visible?(scope),
-    do: eligible?(scope) and Store.enabled?(store()) and positive_token_allocation?(scope)
+    do: chat_allowed?(scope) and Store.enabled?(store()) and positive_token_allocation?(scope)
 
   defp positive_token_allocation?(scope) do
     config = Application.get_env(:pauseai_ca, :agent_assistant, [])
@@ -292,7 +305,7 @@ defmodule PauseAiCa.Assistant do
   end
 
   def mode(scope) do
-    if eligible?(scope), do: Store.mode(store(), actor(scope)), else: {:error, :forbidden}
+    if chat_allowed?(scope), do: Store.mode(store(), actor(scope)), else: {:error, :forbidden}
   end
 
   def set_mode(scope, mode) do
@@ -359,7 +372,7 @@ defmodule PauseAiCa.Assistant do
   end
 
   def token_usage(scope) do
-    if eligible?(scope) do
+    if chat_allowed?(scope) do
       config = configuration()
       day = Date.utc_today()
 
@@ -475,12 +488,7 @@ defmodule PauseAiCa.Assistant do
       day = Date.utc_today()
       namespace = store().namespace
 
-      current =
-        Repo.all(
-          from(u in PauseAiCa.Accounts.User,
-            where: u.superadmin == true and not is_nil(u.confirmed_at)
-          )
-        )
+      current = Repo.all(chat_accounts())
 
       historical =
         Repo.all(
@@ -510,7 +518,8 @@ defmodule PauseAiCa.Assistant do
         %{
           id: id,
           email: user && user.email,
-          current_admin: MapSet.member?(current_ids, id),
+          current_admin: !!(user && user.superadmin && MapSet.member?(current_ids, id)),
+          chat_allowed: MapSet.member?(current_ids, id),
           usage:
             Store.token_usage(
               store(),
@@ -558,8 +567,8 @@ defmodule PauseAiCa.Assistant do
     with true <- eligible?(scope),
          true <-
            is_integer(limit) and limit >= 0 and limit <= configuration()[:max_daily_token_limit],
-         %PauseAiCa.Accounts.User{superadmin: true, confirmed_at: at} when not is_nil(at) <-
-           Repo.get(PauseAiCa.Accounts.User, target_id) do
+         {:ok, target_id} <- Ecto.UUID.cast(target_id),
+         true <- Repo.exists?(from u in chat_accounts(), where: u.id == ^target_id) do
       result =
         Store.set_token_limit(
           store(),
@@ -663,7 +672,16 @@ defmodule PauseAiCa.Assistant do
       evidence: config[:feature_evidence] || %{}
     }
 
-    catalogue = Catalog.for_actor(config[:features] || [], runtime, fn _ -> eligible?(scope) end)
+    admin = eligible?(scope)
+    organizer = chat_allowed?(scope)
+
+    organizer_features =
+      ~w(group-admission group-public-events local-followup task-member-assignment organizer-tasks)
+
+    catalogue =
+      Catalog.for_actor(config[:features] || [], runtime, fn feature ->
+        admin or (organizer and feature.id in organizer_features)
+      end)
 
     json(
       PauseAiCa.Assistant.RequestContext.catalogue(

@@ -191,7 +191,7 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
               "Daily generation input and output tokens. Uncertain requests keep their reservation. Quotas reset at 00:00 UTC."
             )}
           </p>
-          <p>{gettext("Default per admin: %{limit} tokens/day", limit: @default_limit)}</p>
+          <p>{gettext("Default per eligible account: %{limit} tokens/day", limit: @default_limit)}</p>
           <p class="text-sm" id="assistant-cost-explanation">
             {gettext(
               "USD service value may use configured estimates and does not determine cash paid after credits. Unknown holds are conservative limits, not charges."
@@ -201,7 +201,7 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
             <table role="table">
               <thead role="rowgroup">
                 <tr role="row">
-                  <th role="columnheader" scope="col">{gettext("Admin")}</th><th
+                  <th role="columnheader" scope="col">{gettext("Account")}</th><th
                     role="columnheader"
                     scope="col"
                   >
@@ -221,9 +221,11 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
               </thead>
               <tbody role="rowgroup">
                 <tr :for={admin <- @admins} role="row">
-                  <td role="cell" data-label={gettext("Admin")}>
+                  <td role="cell" data-label={gettext("Account")}>
                     {admin.email || gettext("Unavailable account")}
-                    <span :if={!admin.current_admin} class="block text-xs">{gettext("Former admin")}</span>
+                    <span :if={!admin.chat_allowed} class="block text-xs">{gettext(
+                      "Former participant"
+                    )}</span>
                     <span :if={is_nil(admin.email)} class="block text-xs break-all">{admin.id}</span>
                   </td>
                   <%= case admin.usage do %>
@@ -304,8 +306,8 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
               name="assistant_settings[actor_id]"
               type="select"
               value=""
-              label={gettext("Admin")}
-              options={@admins |> Enum.filter(& &1.current_admin) |> Enum.map(&{&1.email, &1.id})}
+              label={gettext("Account")}
+              options={@admins |> Enum.filter(& &1.chat_allowed) |> Enum.map(&{&1.email, &1.id})}
             />
             <.input
               id="assistant-token-limit"
@@ -321,7 +323,7 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
           </.form>
           <p class="text-sm">
             {gettext(
-              "Set zero to stop new requests for that admin. Existing conversations are retained."
+              "Set zero to stop new requests for that account. Existing conversations are retained."
             )}
           </p>
         </section>

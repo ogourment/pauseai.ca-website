@@ -127,7 +127,9 @@ defmodule PauseAiCa.Assistant.FundedBridgeTest do
         expires_at: nil
       })
 
-  defp install_http(c) do
+  defp install_http(c, actor_id \\ nil) do
+    actor_id = actor_id || c.admin.id
+
     Req.Test.stub(__MODULE__, fn conn ->
       number = Agent.get(c.state, &length(&1.calls))
 
@@ -139,7 +141,7 @@ defmodule PauseAiCa.Assistant.FundedBridgeTest do
       ticket =
         Repo.one!(
           from(r in Request,
-            where: r.actor_id == ^c.admin.id,
+            where: r.actor_id == ^actor_id,
             order_by: [desc: r.inserted_at],
             limit: 1
           )
@@ -256,6 +258,28 @@ defmodule PauseAiCa.Assistant.FundedBridgeTest do
     end
 
     assert Agent.get(c.state, & &1.calls) == []
+  end
+
+  test "confirmed organizer uses the attested pool under their own identity until their grant ends",
+       c do
+    {:ok, group} = PauseAiCa.Volunteers.create_group(c.scope, %{name: "Ottawa"})
+    {:ok, grant} = PauseAiCa.Volunteers.assign_manager(c.scope, group.id, c.member.email)
+    organizer = Accounts.Scope.for_user(c.member)
+    {:ok, ref} = Assistant.conversation(organizer)
+
+    assert {:error, :unavailable} =
+             Assistant.run(organizer, Ecto.UUID.generate(), "Help me assign our video edit", ref)
+
+    attest(c)
+    install_http(c, c.member.id)
+
+    assert {:ok, %{text: "Synthetic released reply"}} =
+             Assistant.run(organizer, Ecto.UUID.generate(), "Help me assign our video edit", ref)
+
+    assert Repo.aggregate(from(e in SpendEntry, where: e.actor_id == ^c.member.id), :count) == 15
+    assert Repo.aggregate(from(e in SpendEntry, where: e.actor_id == ^c.admin.id), :count) == 0
+    :ok = PauseAiCa.Volunteers.revoke_manager(c.scope, grant.id)
+    assert {:error, :forbidden} = Assistant.authorize(organizer, :provider, c.config)
   end
 
   test "attested positive allocation uses main bridge, five planned/anchored stages before actual adapter fixtures",

@@ -55,12 +55,12 @@ msgstr ""
 msgid "Actions"
 msgstr "Actions"
 
-#: lib/pauseai_ca_web/live/profile_live.ex:248
+#: lib/pauseai_ca_web/live/profile_live.ex:285
 #, elixir-autogen, elixir-format
 msgid "Add"
 msgstr "Ajouter"
 
-#: lib/pauseai_ca_web/live/profile_live.ex:244
+#: lib/pauseai_ca_web/live/profile_live.ex:281
 #, elixir-autogen, elixir-format
 msgid "Add a resource"
 msgstr "Ajouter une ressource"
@@ -180,7 +180,7 @@ msgstr "Modifier mon profil"
 msgid "Email a friend"
 msgstr "Écrire à un·e ami·e"
 
-#: lib/pauseai_ca_web/live/profile_live.ex:82
+#: lib/pauseai_ca_web/live/profile_live.ex:93
 #, elixir-autogen, elixir-format
 msgid "Enter a complete web address."
 msgstr "Entrez une adresse web complète."
@@ -201,7 +201,7 @@ msgid "Events"
 msgstr "Événements"
 
 #: lib/pauseai_ca_web/live/mp_guide_component.ex:200
-#: lib/pauseai_ca_web/live/profile_live.ex:194
+#: lib/pauseai_ca_web/live/profile_live.ex:231
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:1257
 #, elixir-autogen, elixir-format
 msgid "Find my MP"
@@ -214,7 +214,7 @@ msgstr "Trouver mon député·e"
 msgid "Français"
 msgstr "English"
 
-#: lib/pauseai_ca_web/live/profile_live.ex:177
+#: lib/pauseai_ca_web/live/profile_live.ex:214
 #, elixir-autogen, elixir-format
 msgid "Full postal code"
 msgstr "Code postal complet"
@@ -227,6 +227,7 @@ msgstr "Pour aller plus loin"
 #: lib/pauseai_ca_web/components/layouts.ex:156
 #: lib/pauseai_ca_web/components/layouts.ex:630
 #: lib/pauseai_ca_web/components/layouts.ex:663
+#: lib/pauseai_ca_web/live/incubators_live.ex:399
 #: lib/pauseai_ca_web/live/participation_live.ex:16
 #, elixir-autogen, elixir-format
 msgid "Get involved"
@@ -268,7 +269,7 @@ msgid "Manage my learning path"
 msgstr "Gérer mon parcours"
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:233
-#: lib/pauseai_ca_web/live/profile_live.ex:277
+#: lib/pauseai_ca_web/live/profile_live.ex:314
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:483
 #, elixir-autogen, elixir-format
 msgid "Move toward action"
@@ -286,20 +287,20 @@ msgstr "Mon député"
 msgid "My dashboard"
 msgstr "Mon tableau de bord"
 
-#: lib/pauseai_ca_web/live/profile_live.ex:216
+#: lib/pauseai_ca_web/live/profile_live.ex:253
 #, elixir-autogen, elixir-format
 msgid "My learning path"
 msgstr "Mon parcours d’apprentissage"
 
-#: lib/pauseai_ca_web/live/profile_live.ex:15
-#: lib/pauseai_ca_web/live/profile_live.ex:131
+#: lib/pauseai_ca_web/live/profile_live.ex:17
+#: lib/pauseai_ca_web/live/profile_live.ex:142
 #: lib/pauseai_ca_web/live/volunteer_profile_live.ex:164
 #: lib/pauseai_ca_web/navigation.ex:104
 #, elixir-autogen, elixir-format
 msgid "My profile"
 msgstr "Mon profil"
 
-#: lib/pauseai_ca_web/live/profile_live.ex:159
+#: lib/pauseai_ca_web/live/profile_live.ex:196
 #, elixir-autogen, elixir-format
 msgid "My riding"
 msgstr "Ma circonscription"
@@ -358,7 +359,7 @@ msgstr "Notre stratégie"
 msgid "Parliamentarians have already signed"
 msgstr "Des parlementaires l'ont déjà signée"
 
-#: lib/pauseai_ca_web/live/profile_live.ex:209
+#: lib/pauseai_ca_web/live/profile_live.ex:246
 #, elixir-autogen, elixir-format
 msgid "Position on pausing advanced AI: not yet documented by PauseAI Canada."
 msgstr ""
@@ -372,7 +373,7 @@ msgstr "Position sur une pause de l’IA avancée : pas encore documentée."
 
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:154
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:564
-#: lib/pauseai_ca_web/live/participation_form.ex:494
+#: lib/pauseai_ca_web/live/participation_form.ex:555
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:928
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:970
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:1251
@@ -393,7 +394,7 @@ msgstr "Confidentialité"
 msgid "Privacy policy"
 msgstr "Politique de confidentialité"
 
-#: lib/pauseai_ca_web/live/profile_live.ex:55
+#: lib/pauseai_ca_web/live/profile_live.ex:66
 #: lib/pauseai_ca_web/live/volunteer_profile_live.ex:86
 #, elixir-autogen, elixir-format
 msgid "Profile saved."
@@ -423,8 +424,8 @@ msgstr "Noter en privé"
 #: lib/pauseai_ca_web/live/administrators_live.ex:129
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:533
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:623
-#: lib/pauseai_ca_web/live/profile_live.ex:230
-#: lib/pauseai_ca_web/live/profile_live.ex:263
+#: lib/pauseai_ca_web/live/profile_live.ex:267
+#: lib/pauseai_ca_web/live/profile_live.ex:300
 #, elixir-autogen, elixir-format
 msgid "Remove"
 msgstr "Retirer"
@@ -450,7 +451,7 @@ msgstr ""
 msgid "Saved for later"
 msgstr "À lire plus tard"
 
-#: lib/pauseai_ca_web/live/profile_live.ex:191
+#: lib/pauseai_ca_web/live/profile_live.ex:228
 #, elixir-autogen, elixir-format
 msgid "Send me relevant local updates"
 msgstr "M’envoyer des nouvelles locales pertinentes"
@@ -460,7 +461,7 @@ msgstr "M’envoyer des nouvelles locales pertinentes"
 msgid "Send the letter"
 msgstr "Envoyer la lettre"
 
-#: lib/pauseai_ca_web/live/participation_form.ex:595
+#: lib/pauseai_ca_web/live/participation_form.ex:680
 #: lib/pauseai_ca_web/live/user_live/login.ex:56
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:1290
 #, elixir-autogen, elixir-format
@@ -511,7 +512,7 @@ msgstr "Commencez là où vous avez des questions."
 msgid "Subject"
 msgstr "Objet"
 
-#: lib/pauseai_ca_web/live/profile_live.ex:276
+#: lib/pauseai_ca_web/live/profile_live.ex:313
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:482
 #, elixir-autogen, elixir-format
 msgid "Test coordination"
@@ -671,7 +672,7 @@ msgstr "Votre compte"
 msgid "Your answers and actions"
 msgstr "Vos réponses et vos actions"
 
-#: lib/pauseai_ca_web/live/participation_form.ex:522
+#: lib/pauseai_ca_web/live/participation_form.ex:583
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:1283
 #, elixir-autogen, elixir-format
 msgid "Your email"
@@ -878,13 +879,13 @@ msgstr ""
 "écrivez directement à votre député·e."
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:231
-#: lib/pauseai_ca_web/live/profile_live.ex:275
+#: lib/pauseai_ca_web/live/profile_live.ex:312
 #, elixir-autogen, elixir-format
 msgid "Understand a pause"
 msgstr "Comprendre une pause"
 
 #: lib/pauseai_ca_web/live/dashboard_live.ex:230
-#: lib/pauseai_ca_web/live/profile_live.ex:274
+#: lib/pauseai_ca_web/live/profile_live.ex:311
 #, elixir-autogen, elixir-format
 msgid "Understand existential risk"
 msgstr "Comprendre le risque existentiel"
@@ -905,17 +906,17 @@ msgid "Worth a minute of your time"
 msgstr "Ça vaut une minute"
 
 #: lib/pauseai_ca_web/components/volunteer_forms.ex:198
-#: lib/pauseai_ca_web/live/profile_live.ex:113
+#: lib/pauseai_ca_web/live/profile_live.ex:124
 #, elixir-autogen, elixir-format
 msgid "Enter a complete Canadian postal code."
 msgstr "Entrez un code postal canadien complet."
 
-#: lib/pauseai_ca_web/live/profile_live.ex:116
+#: lib/pauseai_ca_web/live/profile_live.ex:127
 #, elixir-autogen, elixir-format
 msgid "No federal MP was found for that postal code."
 msgstr "Aucun député fédéral trouvé pour ce code postal."
 
-#: lib/pauseai_ca_web/live/profile_live.ex:118
+#: lib/pauseai_ca_web/live/profile_live.ex:129
 #, elixir-autogen, elixir-format
 msgid "The MP lookup is temporarily unavailable."
 msgstr "La recherche du député est temporairement indisponible."
@@ -941,7 +942,7 @@ msgid "Want to participate? Join PauseAI Canada."
 msgstr "Vous souhaitez participer? Rejoignez PauseIA Canada."
 
 #: lib/pauseai_ca_web/components/layouts.ex:504
-#: lib/pauseai_ca_web/live/participation_form.ex:662
+#: lib/pauseai_ca_web/live/participation_form.ex:751
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:58
 #: lib/pauseai_ca_web/live/warning_shot_live.ex:743
 #, elixir-autogen, elixir-format
@@ -958,7 +959,7 @@ msgstr "Écrire à votre député·e"
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:1455
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:1464
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:569
-#: lib/pauseai_ca_web/live/profile_live.ex:185
+#: lib/pauseai_ca_web/live/profile_live.ex:222
 #: lib/pauseai_ca_web/newsletter_audience_labels.ex:3
 #, elixir-autogen, elixir-format
 msgid "City"
@@ -1052,11 +1053,11 @@ msgstr "Nous l’avons enregistrée comme étant en attente de confirmation."
 #: lib/pauseai_ca_web/live/contact_lists_live.ex:548
 #: lib/pauseai_ca_web/live/contact_lists_live.ex:608
 #: lib/pauseai_ca_web/live/donate_live.ex:539
-#: lib/pauseai_ca_web/live/incubators_live.ex:515
+#: lib/pauseai_ca_web/live/incubators_live.ex:507
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:543
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:839
-#: lib/pauseai_ca_web/live/participation_form.ex:487
-#: lib/pauseai_ca_web/live/profile_live.ex:171
+#: lib/pauseai_ca_web/live/participation_form.ex:548
+#: lib/pauseai_ca_web/live/profile_live.ex:208
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:926
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:950
 #, elixir-autogen, elixir-format
@@ -1125,8 +1126,8 @@ msgstr "Accorder l’accès superadmin"
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:1246
 #: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:100
 #: lib/pauseai_ca_web/live/admin_interac_donations_live.ex:329
-#: lib/pauseai_ca_web/live/assistant_live.ex:857
-#: lib/pauseai_ca_web/live/local_interest_live.ex:97
+#: lib/pauseai_ca_web/live/assistant_live.ex:858
+#: lib/pauseai_ca_web/live/local_interest_live.ex:142
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:889
 #: lib/pauseai_ca_web/live/mp_guide_component.ex:265
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:1082
@@ -1152,7 +1153,7 @@ msgstr "Page %{page} sur %{page_count}"
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:1234
 #: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:95
 #: lib/pauseai_ca_web/live/admin_interac_donations_live.ex:324
-#: lib/pauseai_ca_web/live/local_interest_live.ex:92
+#: lib/pauseai_ca_web/live/local_interest_live.ex:137
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:881
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:1071
 #: lib/pauseai_ca_web/live/newsletter_results_live.ex:394
@@ -1529,8 +1530,8 @@ msgid "Continue browsing"
 msgstr "Continuer à naviguer"
 
 #: lib/pauseai_ca_web/components/learning_journey.ex:165
-#: lib/pauseai_ca_web/live/participation_form.ex:350
-#: lib/pauseai_ca_web/live/participation_form.ex:437
+#: lib/pauseai_ca_web/live/participation_form.ex:409
+#: lib/pauseai_ca_web/live/participation_form.ex:496
 #, elixir-autogen, elixir-format
 msgid "Create an account"
 msgstr "Créer un compte"
@@ -1572,7 +1573,7 @@ msgstr ""
 #: lib/pauseai_ca_web/live/incubator_management_live.ex:555
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:829
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:842
-#: lib/pauseai_ca_web/live/participation_form.ex:522
+#: lib/pauseai_ca_web/live/participation_form.ex:583
 #: lib/pauseai_ca_web/live/user_live/login.ex:45
 #: lib/pauseai_ca_web/live/user_live/login.ex:121
 #: lib/pauseai_ca_web/live/volunteer_signups_live.ex:927
@@ -1581,7 +1582,7 @@ msgstr ""
 msgid "Email"
 msgstr "Courriel"
 
-#: lib/pauseai_ca_web/live/participation_form.ex:598
+#: lib/pauseai_ca_web/live/participation_form.ex:683
 #: lib/pauseai_ca_web/live/user_live/login.ex:59
 #, elixir-autogen, elixir-format
 msgid "Email me a secure link"
@@ -1905,7 +1906,7 @@ msgstr "Un administrateur doit vérifier cette ligne."
 msgid "Assign manager"
 msgstr "Attribuer le rôle de gestionnaire"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:858
+#: lib/pauseai_ca_web/live/assistant_live.ex:859
 #: lib/pauseai_ca_web/live/mp_guide_component.ex:266
 #: lib/pauseai_ca_web/live/volunteer_profile_live.ex:155
 #, elixir-autogen, elixir-format
@@ -2505,7 +2506,7 @@ msgstr ""
 msgid "Verified provider outcome"
 msgstr "Résultat vérifié du fournisseur"
 
-#: lib/pauseai_ca_web/live/profile_live.ex:138
+#: lib/pauseai_ca_web/live/profile_live.ex:149
 #: lib/pauseai_ca_web/live/volunteer_profile_live.ex:15
 #: lib/pauseai_ca_web/live/volunteer_profile_live.ex:115
 #, elixir-autogen, elixir-format
@@ -2656,6 +2657,9 @@ msgstr "Accès"
 
 #: lib/pauseai_ca_web/live/assistant_audit_live.ex:462
 #: lib/pauseai_ca_web/live/assistant_audit_live.ex:481
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:204
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:224
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:309
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:589
 #, elixir-autogen, elixir-format
 msgid "Account"
@@ -2915,7 +2919,7 @@ msgstr "Non attribué"
 msgid "Unsubscribed"
 msgstr "Désabonnement"
 
-#: lib/pauseai_ca_web/live/participation_form.ex:664
+#: lib/pauseai_ca_web/live/participation_form.ex:753
 #: lib/pauseai_ca_web/live/protest_recap_live.ex:215
 #, elixir-autogen, elixir-format
 msgid "Upcoming events"
@@ -3526,7 +3530,7 @@ msgstr "%{action} : %{title}"
 #: lib/pauseai_ca_web/controllers/newsletter_html/action.html.heex:3
 #: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:42
 #: lib/pauseai_ca_web/live/newsletter_results_live.ex:353
-#: lib/pauseai_ca_web/live/participation_form.ex:431
+#: lib/pauseai_ca_web/live/participation_form.ex:490
 #, elixir-autogen, elixir-format
 msgid "Newsletter"
 msgstr "Infolettre"
@@ -3786,7 +3790,7 @@ msgstr ""
 "enregistrées et aux promesses de don."
 
 #: lib/pauseai_ca_web/controllers/page_html/about.html.heex:111
-#: lib/pauseai_ca_web/live/participation_form.ex:590
+#: lib/pauseai_ca_web/live/participation_form.ex:675
 #: lib/pauseai_ca_web/live/user_live/login.ex:89
 #, elixir-autogen, elixir-format
 msgid "Read our privacy policy."
@@ -4432,7 +4436,7 @@ msgid "Stay informed"
 msgstr "Rester au courant"
 
 #: lib/pauseai_ca_web/components/learning_journey.ex:153
-#: lib/pauseai_ca_web/live/participation_form.ex:345
+#: lib/pauseai_ca_web/live/participation_form.ex:404
 #, elixir-autogen, elixir-format
 msgid "Subscribe"
 msgstr "S’abonner"
@@ -4635,7 +4639,7 @@ msgstr ""
 " cinq destinataires au brouillon."
 
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:1219
-#: lib/pauseai_ca_web/live/local_interest_live.ex:82
+#: lib/pauseai_ca_web/live/local_interest_live.ex:127
 #, elixir-autogen, elixir-format
 msgid "Contact pages"
 msgstr "Pages de contacts"
@@ -5911,9 +5915,6 @@ msgstr ""
 "Ce brouillon a changé dans un autre onglet. Votre texte est conservé ici. "
 "Copiez-le avant de recharger la version enregistrée."
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:204
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:224
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:307
 #: lib/pauseai_ca_web/navigation.ex:285
 #, elixir-autogen, elixir-format
 msgid "Admin"
@@ -6149,7 +6150,7 @@ msgstr ""
 "La sélection contient un désabonnement ou une adresse bloquée. Vérifiez les "
 "destinataires."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:799
+#: lib/pauseai_ca_web/live/assistant_live.ex:800
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:1327
 #, elixir-autogen, elixir-format
 msgid "Send"
@@ -6310,7 +6311,7 @@ msgstr "Préfixe postal"
 
 #: lib/pauseai_ca_web/components/data_grid_components.ex:15
 #: lib/pauseai_ca_web/controllers/participation_html/edit.html.heex:20
-#: lib/pauseai_ca_web/live/participation_form.ex:494
+#: lib/pauseai_ca_web/live/participation_form.ex:555
 #: lib/pauseai_ca_web/newsletter_audience_labels.ex:5
 #, elixir-autogen, elixir-format
 msgid "FSA"
@@ -6490,12 +6491,12 @@ msgstr "Profils enregistrés sans adresse courriel utilisable. Les données sour
 msgid "Unresolved source profiles"
 msgstr "Profils à identifier"
 
-#: lib/pauseai_ca_web/live/participation_form.ex:615
+#: lib/pauseai_ca_web/live/participation_form.ex:704
 #, elixir-autogen, elixir-format
 msgid "Check your email to confirm your choices. You can keep browsing while you wait."
 msgstr "Consultez vos courriels pour confirmer vos choix. Vous pouvez continuer à parcourir le site en attendant."
 
-#: lib/pauseai_ca_web/live/participation_form.ex:440
+#: lib/pauseai_ca_web/live/participation_form.ex:499
 #, elixir-autogen, elixir-format
 msgid "Choose how to take part"
 msgstr "Choisissez comment participer"
@@ -6519,36 +6520,35 @@ msgid "Confirming…"
 msgstr "Confirmation…"
 
 #: lib/pauseai_ca_web/controllers/participation_html/edit.html.heex:48
-#: lib/pauseai_ca_web/live/participation_form.ex:373
+#: lib/pauseai_ca_web/live/participation_form.ex:432
 #, elixir-autogen, elixir-format
 msgid "Contact me about joining or helping a local group."
 msgstr "Contactez-moi pour rejoindre ou aider un groupe local."
 
 #: lib/pauseai_ca_web/controllers/participation_html/edit.html.heex:38
-#: lib/pauseai_ca_web/live/participation_form.ex:371
+#: lib/pauseai_ca_web/live/participation_form.ex:430
 #, elixir-autogen, elixir-format
 msgid "Create an account to save and record my actions."
 msgstr "Créer un compte pour conserver et noter mes actions."
 
-#: lib/pauseai_ca_web/live/participation_form.ex:471
+#: lib/pauseai_ca_web/live/participation_form.ex:530
 #, elixir-autogen, elixir-format
 msgid "Enter your details once and choose the options you want."
 msgstr "Entrez vos coordonnées une seule fois et choisissez les options qui vous intéressent."
 
-#: lib/pauseai_ca_web/live/participation_form.ex:402
-#: lib/pauseai_ca_web/live/participation_form.ex:405
+#: lib/pauseai_ca_web/live/participation_form.ex:461
+#: lib/pauseai_ca_web/live/participation_form.ex:464
 #, elixir-autogen, elixir-format
 msgid "Get updates"
 msgstr "Recevoir des nouvelles"
 
-#: lib/pauseai_ca_web/live/participation_form.ex:574
+#: lib/pauseai_ca_web/live/participation_form.ex:659
 #, elixir-autogen, elixir-format
 msgid "How would you like to help?"
 msgstr "Comment souhaitez-vous aider?"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:408
-#: lib/pauseai_ca_web/live/local_interest_live.ex:60
-#: lib/pauseai_ca_web/live/participation_form.ex:457
+#: lib/pauseai_ca_web/live/local_interest_live.ex:68
+#: lib/pauseai_ca_web/live/participation_form.ex:513
 #, elixir-autogen, elixir-format
 msgid "I can help"
 msgstr "Je peux aider"
@@ -6558,16 +6558,15 @@ msgstr "Je peux aider"
 msgid "Join or help a local group"
 msgstr "Rejoindre ou aider un groupe local"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:399
-#: lib/pauseai_ca_web/live/participation_form.ex:346
-#: lib/pauseai_ca_web/live/participation_form.ex:453
+#: lib/pauseai_ca_web/live/participation_form.ex:405
+#: lib/pauseai_ca_web/live/participation_form.ex:512
 #, elixir-autogen, elixir-format
 msgid "Join the waitlist"
 msgstr "Rejoindre la liste d’attente"
 
 #: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:50
-#: lib/pauseai_ca_web/live/local_interest_live.ex:14
-#: lib/pauseai_ca_web/live/local_interest_live.ex:49
+#: lib/pauseai_ca_web/live/local_interest_live.ex:16
+#: lib/pauseai_ca_web/live/local_interest_live.ex:57
 #: lib/pauseai_ca_web/navigation.ex:14
 #, elixir-autogen, elixir-format
 msgid "Local participation"
@@ -6579,12 +6578,12 @@ msgstr "Participation locale"
 msgid "Local waitlist"
 msgstr "Liste d’attente locale"
 
-#: lib/pauseai_ca_web/live/local_interest_live.ex:53
+#: lib/pauseai_ca_web/live/local_interest_live.ex:61
 #, elixir-autogen, elixir-format
 msgid "No confirmed local requests yet."
 msgstr "Aucune demande locale confirmée pour le moment."
 
-#: lib/pauseai_ca_web/live/participation_form.ex:347
+#: lib/pauseai_ca_web/live/participation_form.ex:406
 #, elixir-autogen, elixir-format
 msgid "Offer my help"
 msgstr "Proposer mon aide"
@@ -6601,13 +6600,13 @@ msgid "PauseAI Canada newsletter"
 msgstr "Infolettre de PauseAI Canada"
 
 #: lib/pauseai_ca_web/components/layouts.ex:514
-#: lib/pauseai_ca_web/live/participation_form.ex:452
+#: lib/pauseai_ca_web/live/participation_form.ex:511
 #, elixir-autogen, elixir-format
 msgid "Record my actions"
 msgstr "Noter mes actions"
 
 #: lib/pauseai_ca_web/controllers/participation_html/edit.html.heex:67
-#: lib/pauseai_ca_web/live/participation_form.ex:350
+#: lib/pauseai_ca_web/live/participation_form.ex:409
 #, elixir-autogen, elixir-format
 msgid "Save my choices"
 msgstr "Enregistrer mes choix"
@@ -6618,7 +6617,7 @@ msgid "Stop follow-up on this local request. Your account and newsletter prefere
 msgstr "Arrêter le suivi de cette demande locale. Votre compte et vos préférences d’infolettre se gèrent séparément."
 
 #: lib/pauseai_ca_web/controllers/participation_html/edit.html.heex:33
-#: lib/pauseai_ca_web/live/participation_form.ex:367
+#: lib/pauseai_ca_web/live/participation_form.ex:426
 #, elixir-autogen, elixir-format
 msgid "Subscribe me to the PauseAI Canada newsletter."
 msgstr "M’inscrire à l’infolettre de PauseAI Canada."
@@ -6626,8 +6625,8 @@ msgstr "M’inscrire à l’infolettre de PauseAI Canada."
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:35
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:252
 #: lib/pauseai_ca_web/live/actions_live.ex:317
-#: lib/pauseai_ca_web/live/participation_form.ex:414
-#: lib/pauseai_ca_web/live/participation_form.ex:417
+#: lib/pauseai_ca_web/live/participation_form.ex:473
+#: lib/pauseai_ca_web/live/participation_form.ex:476
 #, elixir-autogen, elixir-format
 msgid "Take action"
 msgstr "Agir"
@@ -6637,17 +6636,17 @@ msgstr "Agir"
 msgid "This link is invalid or has expired. Please request a new confirmation."
 msgstr "Ce lien est invalide ou a expiré. Veuillez demander une nouvelle confirmation."
 
-#: lib/pauseai_ca_web/live/participation_form.ex:370
+#: lib/pauseai_ca_web/live/participation_form.ex:429
 #, elixir-autogen, elixir-format
 msgid "Use my account to save and record my actions."
 msgstr "Utiliser mon compte pour conserver et noter mes actions."
 
-#: lib/pauseai_ca_web/live/participation_form.ex:634
+#: lib/pauseai_ca_web/live/participation_form.ex:723
 #, elixir-autogen, elixir-format
 msgid "We could not send your confirmation. Your details are still here. Please try again."
 msgstr "Nous n’avons pas pu envoyer votre confirmation. Vos coordonnées sont toujours ici. Veuillez réessayer."
 
-#: lib/pauseai_ca_web/live/participation_form.ex:578
+#: lib/pauseai_ca_web/live/participation_form.ex:663
 #, elixir-autogen, elixir-format
 msgid "We will email you about your request. You can withdraw it at any time."
 msgstr "Nous vous écrirons au sujet de votre demande. Vous pouvez la retirer à tout moment."
@@ -6659,7 +6658,7 @@ msgid "Withdraw my local request"
 msgstr "Retirer ma demande locale"
 
 #: lib/pauseai_ca_web/controllers/participation_html/action.html.heex:31
-#: lib/pauseai_ca_web/live/incubators_live.ex:501
+#: lib/pauseai_ca_web/live/incubators_live.ex:493
 #, elixir-autogen, elixir-format
 msgid "Withdraw request"
 msgstr "Retirer la demande"
@@ -6670,7 +6669,7 @@ msgid "You are signed in, but your other signup choices could not be applied. Pl
 msgstr "Vous êtes connecté·e, mais vos autres choix d’inscription n’ont pas pu être appliqués. Veuillez les vérifier et demander une nouvelle confirmation."
 
 #: lib/pauseai_ca_web/controllers/participation_controller.ex:172
-#: lib/pauseai_ca_web/live/participation_form.ex:537
+#: lib/pauseai_ca_web/live/participation_form.ex:598
 #, elixir-autogen, elixir-format
 msgid "Your choices"
 msgstr "Vos choix"
@@ -6680,42 +6679,37 @@ msgstr "Vos choix"
 msgid "Your local request is withdrawn."
 msgstr "Votre demande locale est retirée."
 
-#: lib/pauseai_ca_web/live/participation_form.ex:434
+#: lib/pauseai_ca_web/live/participation_form.ex:493
 #, elixir-autogen, elixir-format
 msgid "%{city}: join the waitlist or offer help"
 msgstr "%{city} : rejoignez la liste d’attente ou proposez votre aide"
 
-#: lib/pauseai_ca_web/live/participation_form.ex:651
+#: lib/pauseai_ca_web/live/participation_form.ex:740
 #, elixir-autogen, elixir-format
 msgid "More ways to act"
 msgstr "D’autres façons d’agir"
 
-#: lib/pauseai_ca_web/live/participation_form.ex:624
+#: lib/pauseai_ca_web/live/participation_form.ex:713
 #, elixir-autogen, elixir-format
 msgid "Please wait one minute before requesting a new confirmation. Your details are still here."
 msgstr "Veuillez attendre une minute avant de demander une nouvelle confirmation. Vos coordonnées sont toujours ici."
 
-#: lib/pauseai_ca_web/live/participation_form.ex:644
+#: lib/pauseai_ca_web/live/participation_form.ex:733
 #, elixir-autogen, elixir-format
 msgid "Sign the PauseAI statement"
 msgstr "Signer la déclaration de PauseAI"
 
-#: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:52
-#, elixir-autogen, elixir-format
-msgid "When you join a local waitlist or offer help, we store your email, optional name and postal area, the location where you want to get involved, and any help details you provide. Authorized administrators use these details for private follow-up. You can withdraw your request using the link in your confirmation email. Withdrawal stops local follow-up; account and newsletter choices remain separate."
-msgstr "Lorsque vous rejoignez une liste d’attente locale ou proposez votre aide, nous conservons votre adresse courriel, votre nom et votre région postale facultatifs, le lieu où vous souhaitez vous impliquer et les détails d’aide que vous fournissez. Les administrateurs autorisés utilisent ces renseignements pour un suivi privé. Vous pouvez retirer votre demande à l’aide du lien dans votre courriel de confirmation. Le retrait arrête le suivi local; les choix de compte et d’infolettre restent distincts."
-
-#: lib/pauseai_ca_web/live/participation_form.ex:561
+#: lib/pauseai_ca_web/live/participation_form.ex:630
 #, elixir-autogen, elixir-format
 msgid "Where would you like to get involved?"
 msgstr "Où souhaitez-vous vous impliquer?"
 
-#: lib/pauseai_ca_web/live/participation_form.ex:406
+#: lib/pauseai_ca_web/live/participation_form.ex:465
 #, elixir-autogen, elixir-format
 msgid "Canadian news and meetings"
 msgstr "Nouvelles canadiennes et rencontres"
 
-#: lib/pauseai_ca_web/live/participation_form.ex:418
+#: lib/pauseai_ca_web/live/participation_form.ex:477
 #, elixir-autogen, elixir-format
 msgid "On your own or with others"
 msgstr "Individuellement ou avec d’autres"
@@ -6725,12 +6719,12 @@ msgstr "Individuellement ou avec d’autres"
 msgid "Get updates or take action"
 msgstr "Recevoir des nouvelles ou agir"
 
-#: lib/pauseai_ca_web/live/local_interest_live.ex:83
+#: lib/pauseai_ca_web/live/local_interest_live.ex:128
 #, elixir-autogen, elixir-format
 msgid "Page %{page} of %{pages} · %{total} requests"
 msgstr "Page %{page} sur %{pages} · %{total} demandes"
 
-#: lib/pauseai_ca_web/live/participation_form.ex:607
+#: lib/pauseai_ca_web/live/participation_form.ex:696
 #, elixir-autogen, elixir-format
 msgid "Please check the highlighted fields."
 msgstr "Veuillez vérifier les champs signalés."
@@ -6740,7 +6734,7 @@ msgstr "Veuillez vérifier les champs signalés."
 msgid "Welcome %{email}"
 msgstr "Bienvenue %{email}"
 
-#: lib/pauseai_ca_web/live/local_interest_live.ex:67
+#: lib/pauseai_ca_web/live/local_interest_live.ex:75
 #, elixir-autogen, elixir-format
 msgid "Your follow-up"
 msgstr "Votre suivi"
@@ -7597,7 +7591,7 @@ msgstr "et %{count} autres"
 msgid "Account to save and record actions"
 msgstr "Compte pour conserver et noter mes actions"
 
-#: lib/pauseai_ca_web/live/participation_form.ex:361
+#: lib/pauseai_ca_web/live/participation_form.ex:420
 #, elixir-autogen, elixir-format
 msgid "Continue"
 msgstr "Continuer"
@@ -7667,18 +7661,18 @@ msgstr "Indiquez un numéro de téléphone contenant de 7 à 20 chiffres."
 #: lib/pauseai_ca_web/controllers/participation_html/action.html.heex:64
 #: lib/pauseai_ca_web/controllers/participation_html/edit.html.heex:66
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:549
-#: lib/pauseai_ca_web/live/participation_form.ex:532
-#: lib/pauseai_ca_web/live/profile_live.ex:149
+#: lib/pauseai_ca_web/live/participation_form.ex:593
+#: lib/pauseai_ca_web/live/profile_live.ex:186
 #, elixir-autogen, elixir-format
 msgid "Phone (optional)"
 msgstr "Téléphone (facultatif)"
 
-#: lib/pauseai_ca_web/live/profile_live.ex:30
+#: lib/pauseai_ca_web/live/profile_live.ex:41
 #, elixir-autogen, elixir-format
 msgid "Phone number saved."
 msgstr "Numéro de téléphone enregistré."
 
-#: lib/pauseai_ca_web/live/profile_live.ex:153
+#: lib/pauseai_ca_web/live/profile_live.ex:190
 #, elixir-autogen, elixir-format
 msgid "Save phone number"
 msgstr "Enregistrer le numéro"
@@ -7701,7 +7695,7 @@ msgid "Check your email to confirm your updated choices."
 msgstr "Consultez votre boîte courriel pour confirmer vos choix modifiés."
 
 #: lib/pauseai_ca_web/controllers/participation_html/edit.html.heex:26
-#: lib/pauseai_ca_web/live/participation_form.ex:505
+#: lib/pauseai_ca_web/live/participation_form.ex:566
 #, elixir-autogen, elixir-format
 msgid "First three characters of your postal code, e.g. H2X."
 msgstr "Trois premiers caractères de votre code postal, p. ex. H2X."
@@ -7721,7 +7715,7 @@ msgstr "Lorsque vous vous inscrivez, nous conservons votre adresse courriel, vot
 msgid "Your current choices stay in effect until you confirm the changes by email."
 msgstr "Vos choix actuels restent en vigueur jusqu’à la confirmation des modifications par courriel."
 
-#: lib/pauseai_ca_web/live/participation_form.ex:352
+#: lib/pauseai_ca_web/live/participation_form.ex:411
 #, elixir-autogen, elixir-format
 msgid "Continue to my letter"
 msgstr "Continuer vers ma lettre"
@@ -7731,17 +7725,17 @@ msgstr "Continuer vers ma lettre"
 msgid "Find your MP, edit your letter and choose how to send it."
 msgstr "Trouvez votre député·e, adaptez votre lettre et choisissez comment l’envoyer."
 
-#: lib/pauseai_ca_web/live/participation_form.ex:513
+#: lib/pauseai_ca_web/live/participation_form.ex:574
 #, elixir-autogen, elixir-format
 msgid "Full postal code to find your MP. Its first three characters (FSA) identify your newsletter area."
 msgstr "Le code postal complet permet de trouver votre député·e. Ses trois premiers caractères (RTA) indiquent votre secteur pour l’infolettre."
 
-#: lib/pauseai_ca_web/live/participation_form.ex:582
+#: lib/pauseai_ca_web/live/participation_form.ex:667
 #, elixir-autogen, elixir-format
 msgid "You can contact your MP without an account or newsletter subscription. If you select either option, we will also email you a link to confirm your choices."
 msgstr "Vous pouvez écrire à votre député·e sans créer de compte ni vous abonner à l’infolettre. Si vous cochez une de ces options, nous vous enverrons aussi un lien pour confirmer vos choix."
 
-#: lib/pauseai_ca_web/live/participation_form.ex:428
+#: lib/pauseai_ca_web/live/participation_form.ex:487
 #, elixir-autogen, elixir-format
 msgid "Your details and choices"
 msgstr "Vos coordonnées et vos choix"
@@ -7844,6 +7838,7 @@ msgstr "Description"
 msgid "Done"
 msgstr "Terminée"
 
+#: lib/pauseai_ca_web/live/profile_live.ex:170
 #: lib/pauseai_ca_web/live/tasks_live.ex:319
 #: lib/pauseai_ca_web/live/tasks_live.ex:510
 #: lib/pauseai_ca_web/live/tasks_live.ex:586
@@ -8069,7 +8064,7 @@ msgstr "Confirmer l’admission"
 msgid "Confirm external removal"
 msgstr "Confirmer le retrait externe"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:470
+#: lib/pauseai_ca_web/live/incubators_live.ex:462
 #, elixir-autogen
 msgid "Create private matching reference"
 msgstr "Créer une référence privée"
@@ -8086,7 +8081,7 @@ msgstr "Refuser la demande"
 msgid "Declined"
 msgstr "Refusée"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:512
+#: lib/pauseai_ca_web/live/incubators_live.ex:504
 #, elixir-autogen
 msgid "Edit your request"
 msgstr "Modifier votre demande"
@@ -8106,7 +8101,7 @@ msgstr "Nom en anglais"
 msgid "External removal confirmed"
 msgstr "Retrait externe confirmé"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:464
+#: lib/pauseai_ca_web/live/incubators_live.ex:456
 #, elixir-autogen
 msgid "External removal is awaiting manager confirmation."
 msgstr "Le retrait externe attend la confirmation d’un responsable."
@@ -8142,7 +8137,7 @@ msgstr "Configuration du groupe"
 msgid "Group configuration saved."
 msgstr "La configuration du groupe a été enregistrée."
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:415
+#: lib/pauseai_ca_web/live/incubators_live.ex:407
 #, elixir-autogen
 msgid "Group events"
 msgstr "Événements du groupe"
@@ -8173,7 +8168,7 @@ msgstr "Groupe modifié"
 msgid "Home"
 msgstr "Accueil"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:539
+#: lib/pauseai_ca_web/live/incubators_live.ex:531
 #, elixir-autogen
 msgid "I agree to follow these conduct rules."
 msgstr "Je m’engage à respecter ces règles de conduite."
@@ -8258,7 +8253,7 @@ msgstr "Aucune demande pour le moment."
 msgid "Offer a manager-approved WhatsApp group"
 msgstr "Proposer un groupe WhatsApp avec admission approuvée par les responsables"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:490
+#: lib/pauseai_ca_web/live/incubators_live.ex:482
 #, elixir-autogen
 msgid "Open WhatsApp invitation"
 msgstr "Ouvrir l’invitation WhatsApp"
@@ -8339,8 +8334,7 @@ msgstr "Demande approuvée"
 msgid "Request declined"
 msgstr "Demande refusée"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:392
-#: lib/pauseai_ca_web/live/incubators_live.ex:513
+#: lib/pauseai_ca_web/live/incubators_live.ex:505
 #, elixir-autogen
 msgid "Request to join"
 msgstr "Demander à rejoindre"
@@ -8355,7 +8349,7 @@ msgstr "Demande retirée"
 msgid "Requests and members"
 msgstr "Demandes et membres"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:531
+#: lib/pauseai_ca_web/live/incubators_live.ex:523
 #, elixir-autogen
 msgid "Respect others, protect personal information and follow the group manager's conduct guidance."
 msgstr "Respectez les autres, protégez les renseignements personnels et suivez les consignes de conduite du responsable du groupe."
@@ -8370,12 +8364,12 @@ msgstr "Enregistrer la configuration"
 msgid "Save group role"
 msgstr "Enregistrer le rôle"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:545
+#: lib/pauseai_ca_web/live/incubators_live.ex:537
 #, elixir-autogen
 msgid "Save request"
 msgstr "Enregistrer la demande"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:472
+#: lib/pauseai_ca_web/live/incubators_live.ex:464
 #, elixir-autogen
 msgid "Send this reference privately to the group manager using your WhatsApp account. It expires after 15 minutes and can be used once."
 msgstr "Envoyez cette référence en privé au responsable du groupe depuis votre compte WhatsApp. Elle expire après 15 minutes et ne sert qu’une fois."
@@ -8385,7 +8379,7 @@ msgstr "Envoyez cette référence en privé au responsable du groupe depuis votr
 msgid "Separate multiple areas with commas. These areas describe the group; they do not grant membership."
 msgstr "Séparez les secteurs par des virgules. Ces secteurs décrivent le groupe ; ils n’accordent pas l’adhésion."
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:483
+#: lib/pauseai_ca_web/live/incubators_live.ex:475
 #, elixir-autogen
 msgid "Show my invitation"
 msgstr "Afficher mon invitation"
@@ -8400,7 +8394,7 @@ msgstr "Suspendre la participation"
 msgid "Suspended"
 msgstr "Suspendue"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:492
+#: lib/pauseai_ca_web/live/incubators_live.ex:484
 #, elixir-autogen
 msgid "The group manager must approve admission in WhatsApp. Website approval does not add you automatically."
 msgstr "Le responsable du groupe doit approuver votre admission dans WhatsApp. L’approbation sur le site ne vous ajoute pas automatiquement."
@@ -8431,13 +8425,13 @@ msgstr "Cette fiche a changé. Rechargez la page avant de réessayer."
 msgid "This reference is invalid, expired or already used. Ask the applicant for a new one."
 msgstr "Cette référence est invalide, expirée ou déjà utilisée. Demandez-en une nouvelle à la personne."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:804
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:242
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:243
+#: lib/pauseai_ca_web/live/assistant_live.ex:805
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:244
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:245
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:246
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:247
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:289
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:249
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:291
 #: lib/pauseai_ca_web/live/incubators_live.ex:265
 #: lib/pauseai_ca_web/live/mailbox_access_live.ex:221
 #: lib/pauseai_ca_web/live/slack_community_live.ex:343
@@ -8445,7 +8439,7 @@ msgstr "Cette référence est invalide, expirée ou déjà utilisée. Demandez-e
 msgid "Unavailable"
 msgstr "Indisponible"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:524
+#: lib/pauseai_ca_web/live/incubators_live.ex:516
 #, elixir-autogen
 msgid "Use the phone number or identifier the manager can recognize in WhatsApp. Only group managers can review it."
 msgstr "Utilisez le numéro de téléphone ou l’identifiant que le responsable peut reconnaître dans WhatsApp. Seuls les responsables du groupe peuvent le consulter."
@@ -8460,7 +8454,7 @@ msgstr "L’approbation sur le site et l’admission dans WhatsApp sont distinct
 msgid "WhatsApp identifier"
 msgstr "Identifiant WhatsApp"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:499
+#: lib/pauseai_ca_web/live/incubators_live.ex:491
 #, elixir-autogen
 msgid "Withdraw your request and group access?"
 msgstr "Retirer votre demande et votre accès au groupe ?"
@@ -8470,12 +8464,12 @@ msgstr "Retirer votre demande et votre accès au groupe ?"
 msgid "You do not manage any groups."
 msgstr "Vous ne gérez aucun groupe."
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:519
+#: lib/pauseai_ca_web/live/incubators_live.ex:511
 #, elixir-autogen
 msgid "Your WhatsApp identifier"
 msgstr "Votre identifiant WhatsApp"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:462
+#: lib/pauseai_ca_web/live/incubators_live.ex:454
 #, elixir-autogen
 msgid "Your request"
 msgstr "Votre demande"
@@ -8500,12 +8494,12 @@ msgstr "Recharger et abandonner les modifications non enregistrées de votre dem
 msgid "Reload request"
 msgstr "Recharger la demande"
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:543
+#: lib/pauseai_ca_web/live/incubators_live.ex:535
 #, elixir-autogen
 msgid "Please agree to the conduct rules before saving your request."
 msgstr "Veuillez accepter les règles de conduite avant d’enregistrer votre demande."
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:526
+#: lib/pauseai_ca_web/live/incubators_live.ex:518
 #, elixir-autogen
 msgid "When joining with a phone number, other WhatsApp group members can see that number. Use an active username where supported."
 msgstr "Si vous rejoignez le groupe avec un numéro de téléphone, les autres membres WhatsApp peuvent le voir. Utilisez un nom d’utilisateur actif lorsque cette option est proposée."
@@ -9061,7 +9055,7 @@ msgstr "Saisissez un message de 4 000 caractères au maximum."
 msgid "Get original link"
 msgstr "Obtenir le lien d’origine"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:807
+#: lib/pauseai_ca_web/live/assistant_live.ex:808
 #: lib/pauseai_ca_web/live/slack_community_live.ex:500
 #, elixir-autogen
 msgid "Message"
@@ -9239,20 +9233,10 @@ msgstr "Votre compte sur le site doit être explicitement lié à votre compte S
 msgid "Capture thread replies"
 msgstr "Copier les réponses du fil"
 
-#: lib/pauseai_ca_web/live/participation_form.ex:456
-#, elixir-autogen, elixir-format
-msgid "Help start an incubator"
-msgstr "Aider à créer un incubateur"
-
 #: lib/pauseai_ca_web/live/incubators_live.ex:334
 #, elixir-autogen, elixir-format
 msgid "Join a local waitlist below or offer to help start an incubator in your area."
 msgstr "Inscrivez-vous à une liste d’attente locale ci-dessous ou proposez votre aide pour créer un incubateur dans votre région."
-
-#: lib/pauseai_ca_web/live/participation_form.ex:425
-#, elixir-autogen, elixir-format
-msgid "Join a waitlist or help start an incubator"
-msgstr "Rejoindre une liste d’attente ou aider à créer un incubateur"
 
 #: lib/pauseai_ca_web/live/donate_live.ex:266
 #, elixir-autogen, elixir-format
@@ -9276,7 +9260,7 @@ msgstr "S’ouvre dans un nouvel onglet"
 msgid "Support local groups in Toronto and across Canada, public meetings and outreach materials, and research and briefings for conversations with MPs."
 msgstr "Soutenez les groupes locaux à Toronto et ailleurs au Canada, les rencontres publiques et les outils de sensibilisation, ainsi que la recherche et les documents préparatoires aux échanges avec les député·es."
 
-#: lib/pauseai_ca_web/live/participation_form.ex:557
+#: lib/pauseai_ca_web/live/participation_form.ex:618
 #, elixir-autogen, elixir-format
 msgid "Waitlist for %{group}"
 msgstr "Liste d’attente pour %{group}"
@@ -11010,7 +10994,7 @@ msgstr "Les filtres géographiques précis et enregistrés remplacent la région
 msgid "This saved geography filter is unavailable. Choose another filter or clear it."
 msgstr "Ce filtre géographique enregistré n’est plus disponible. Choisissez-en un autre ou retirez-le."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:791
+#: lib/pauseai_ca_web/live/assistant_live.ex:792
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:12
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:131
 #: lib/pauseai_ca_web/navigation.ex:20
@@ -11018,7 +11002,7 @@ msgstr "Ce filtre géographique enregistré n’est plus disponible. Choisissez-
 msgid "Assistant"
 msgstr "Assistant"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:800
+#: lib/pauseai_ca_web/live/assistant_live.ex:801
 #, elixir-autogen, elixir-format
 msgid "Close assistant"
 msgstr "Fermer l’assistant"
@@ -11033,17 +11017,17 @@ msgstr "Désactiver l’assistant"
 msgid "Enable assistant"
 msgstr "Activer l’assistant"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:802
+#: lib/pauseai_ca_web/live/assistant_live.ex:803
 #, elixir-autogen, elixir-format
 msgid "Expand assistant"
 msgstr "Agrandir l’assistant"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:788
+#: lib/pauseai_ca_web/live/assistant_live.ex:789
 #, elixir-autogen, elixir-format
 msgid "Fast"
 msgstr "Rapide"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:442
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:444
 #, elixir-autogen, elixir-format
 msgid "Fast, Normal and High models"
 msgstr "Modèles Rapide, Normal et Élevé"
@@ -11053,44 +11037,44 @@ msgstr "Modèles Rapide, Normal et Élevé"
 msgid "Help organizers use the website, review information and prepare their next action."
 msgstr "Aider les responsables à utiliser le site, à examiner les informations et à préparer leur prochaine action."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:790
+#: lib/pauseai_ca_web/live/assistant_live.ex:791
 #, elixir-autogen, elixir-format
 msgid "High"
 msgstr "Élevé"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:814
+#: lib/pauseai_ca_web/live/assistant_live.ex:815
 #, elixir-autogen, elixir-format
 msgid "How can I help?"
 msgstr "Comment puis-je vous aider?"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:386
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:387
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:448
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:388
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:389
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:450
 #, elixir-autogen, elixir-format
 msgid "Independent audit verification"
 msgstr "Vérification indépendante du journal"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:445
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:447
 #, elixir-autogen, elixir-format
 msgid "Jev safety review"
 msgstr "Vérification de sécurité Jev"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:801
+#: lib/pauseai_ca_web/live/assistant_live.ex:802
 #, elixir-autogen, elixir-format
 msgid "Minimize assistant"
 msgstr "Réduire l’assistant"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:803
+#: lib/pauseai_ca_web/live/assistant_live.ex:804
 #, elixir-autogen, elixir-format
 msgid "Mode"
 msgstr "Mode"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:444
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:446
 #, elixir-autogen, elixir-format
 msgid "Moderation checks"
 msgstr "Vérifications de modération"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:789
+#: lib/pauseai_ca_web/live/assistant_live.ex:790
 #, elixir-autogen, elixir-format
 msgid "Normal"
 msgstr "Normal"
@@ -11105,12 +11089,12 @@ msgstr "Désactivé"
 msgid "On"
 msgstr "Activé"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:441
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:443
 #, elixir-autogen, elixir-format
 msgid "Protected audit storage"
 msgstr "Stockage protégé du journal"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:336
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:338
 #, elixir-autogen, elixir-format
 msgid "Setup required"
 msgstr "Configuration requise"
@@ -11120,75 +11104,70 @@ msgstr "Configuration requise"
 msgid "The assistant could not be changed. Check its readiness and your access."
 msgstr "Impossible de modifier l’assistant. Vérifiez sa configuration et vos droits d’accès."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:232
-#: lib/pauseai_ca_web/live/assistant_live.ex:368
+#: lib/pauseai_ca_web/live/assistant_live.ex:233
+#: lib/pauseai_ca_web/live/assistant_live.ex:369
 #, elixir-autogen, elixir-format
 msgid "The assistant is unavailable. Your message has been retained."
 msgstr "L’assistant est indisponible. Votre message a été conservé."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:176
+#: lib/pauseai_ca_web/live/assistant_live.ex:177
 #, elixir-autogen, elixir-format
 msgid "This mode is unavailable. Your message has been retained."
 msgstr "Ce mode est indisponible. Votre message a été conservé."
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:446
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:448
 #, elixir-autogen, elixir-format
 msgid "Usage limits"
 msgstr "Limites d’utilisation"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:449
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:451
 #, elixir-autogen, elixir-format
 msgid "Verified cost limits"
 msgstr "Limites de coût vérifiées"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:389
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:447
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:391
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:449
 #, elixir-autogen, elixir-format
 msgid "Verified operator alerts"
 msgstr "Alertes vérifiées"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:808
+#: lib/pauseai_ca_web/live/assistant_live.ex:809
 #, elixir-autogen, elixir-format
 msgid "Working…"
 msgstr "En cours…"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:703
+#: lib/pauseai_ca_web/live/assistant_live.ex:704
 #, elixir-autogen, elixir-format
 msgid "%{remaining} / %{limit} tokens remaining today"
 msgstr "%{remaining} / %{limit} jetons restants aujourd’hui"
 
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:218
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:240
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:246
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:242
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:248
 #, elixir-autogen, elixir-format
 msgid "Daily limit"
 msgstr "Limite quotidienne"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:318
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:320
 #, elixir-autogen, elixir-format
 msgid "Daily token limit"
 msgstr "Limite quotidienne de jetons"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:194
-#, elixir-autogen, elixir-format
-msgid "Default per admin: %{limit} tokens/day"
-msgstr "Valeur par défaut : %{limit} jetons par jour et par administrateur"
-
 #: lib/pauseai_ca_web/live/assistant_audit_live.ex:580
 #: lib/pauseai_ca_web/live/assistant_audit_live.ex:852
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:208
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:231
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:242
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:233
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:244
 #, elixir-autogen, elixir-format
 msgid "Input"
 msgstr "Entrée"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:798
+#: lib/pauseai_ca_web/live/assistant_live.ex:799
 #, elixir-autogen, elixir-format
 msgid "Move assistant with arrow keys"
 msgstr "Déplacer l’assistant avec les touches fléchées"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:797
+#: lib/pauseai_ca_web/live/assistant_live.ex:798
 #, elixir-autogen, elixir-format
 msgid "New conversation"
 msgstr "Nouvelle conversation"
@@ -11196,36 +11175,31 @@ msgstr "Nouvelle conversation"
 #: lib/pauseai_ca_web/live/assistant_audit_live.ex:581
 #: lib/pauseai_ca_web/live/assistant_audit_live.ex:853
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:209
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:233
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:243
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:235
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:245
 #, elixir-autogen, elixir-format
 msgid "Output"
 msgstr "Sortie"
 
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:214
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:238
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:245
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:240
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:247
 #, elixir-autogen, elixir-format
 msgid "Remaining"
 msgstr "Restants"
 
 #: lib/pauseai_ca_web/live/assistant_audit_live.ex:912
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:213
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:236
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:244
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:238
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:246
 #, elixir-autogen, elixir-format
 msgid "Reserved"
 msgstr "Réservé"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:320
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:322
 #, elixir-autogen, elixir-format
 msgid "Save limit"
 msgstr "Enregistrer la limite"
-
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:323
-#, elixir-autogen, elixir-format
-msgid "Set zero to stop new requests for that admin. Existing conversations are retained."
-msgstr "Indiquez zéro pour bloquer les nouvelles requêtes de cet administrateur. Les conversations existantes sont conservées."
 
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:52
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:57
@@ -11238,7 +11212,7 @@ msgstr "Impossible de modifier la limite de jetons."
 msgid "Token usage and limits"
 msgstr "Utilisation et limites de jetons"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:440
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:442
 #, elixir-autogen, elixir-format
 msgid "Verified website feature catalogue"
 msgstr "Catalogue vérifié des fonctionnalités du site"
@@ -11505,17 +11479,17 @@ msgstr "Déconnectez-vous pour choisir une autre adresse courriel."
 msgid "Use a different account"
 msgstr "Utiliser un autre compte"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:653
+#: lib/pauseai_ca_web/live/assistant_live.ex:654
 #, elixir-autogen
 msgid "Usage limits are temporarily unavailable. Your draft is retained."
 msgstr "Les limites d’utilisation sont temporairement indisponibles. Votre brouillon est conservé."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:736
+#: lib/pauseai_ca_web/live/assistant_live.ex:737
 #, elixir-autogen
 msgid "USD %{remaining} available for reservations; USD %{turn} reserved per request"
 msgstr "%{remaining} USD disponibles pour les réservations ; %{turn} USD réservés par requête"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:710
+#: lib/pauseai_ca_web/live/assistant_live.ex:711
 #, elixir-autogen
 msgid "Budget resets on %{date} at 00:00 UTC"
 msgstr "Le budget est réinitialisé le %{date} à 00:00 UTC"
@@ -11531,101 +11505,96 @@ msgid "USD service value may use configured estimates and does not determine cas
 msgstr "La valeur du service en USD peut être estimée et ne détermine pas le montant réellement payé après application des crédits. Les réserves à confirmer sont des plafonds prudents, pas des frais facturés."
 
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:219
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:252
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:254
 #, elixir-autogen
 msgid "USD service value"
 msgstr "Valeur du service en USD"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:226
-#, elixir-autogen
-msgid "Former admin"
-msgstr "Ancien administrateur"
-
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:257
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:259
 #, elixir-autogen
 msgid "Settled value: USD %{amount}"
 msgstr "Valeur établie : USD %{amount}"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:261
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:263
 #, elixir-autogen
 msgid "No settled value yet"
 msgstr "Valeur non établie"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:264
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:266
 #, elixir-autogen
 msgid "Unknown hold: USD %{amount}"
 msgstr "Réserve à confirmer : USD %{amount}"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:273
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:275
 #, elixir-autogen
 msgid "Cost evidence"
 msgstr "Détail des coûts"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:278
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:280
 #, elixir-autogen
 msgid "Estimates and provider reports may cover the same stages; do not add them."
 msgstr "Les estimations et les valeurs déclarées peuvent couvrir les mêmes étapes ; elles ne s’additionnent pas."
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:284
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:286
 #, elixir-autogen
 msgid "Reserved limit: USD %{amount}"
 msgstr "Réserve maximale : USD %{amount}"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:287
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:289
 #, elixir-autogen
 msgid "Settled service value unavailable"
 msgstr "Valeur établie du service indisponible"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:413
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:415
 #, elixir-autogen
 msgid "Configured estimate unavailable"
 msgstr "Estimation indisponible"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:426
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:428
 #, elixir-autogen
 msgid "Provider report unavailable"
 msgstr "Valeur déclarée par le fournisseur indisponible"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:443
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:445
 #, elixir-autogen
 msgid "Generation provider connection"
 msgstr "Connexion au service de génération"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:417
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:419
 #, elixir-autogen
 msgid "Configured estimate: USD %{amount} (%{count} stage)"
 msgid_plural "Configured estimate: USD %{amount} (%{count} stages)"
 msgstr[0] "Estimation : USD %{amount} (%{count} étape)"
 msgstr[1] "Estimation : USD %{amount} (%{count} étapes)"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:430
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:432
 #, elixir-autogen
 msgid "Provider report: USD %{amount} (%{count} stage)"
 msgid_plural "Provider report: USD %{amount} (%{count} stages)"
 msgstr[0] "Valeur déclarée par le fournisseur : USD %{amount} (%{count} étape)"
 msgstr[1] "Valeur déclarée par le fournisseur : USD %{amount} (%{count} étapes)"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:667
+#: lib/pauseai_ca_web/live/assistant_live.ex:668
 #, elixir-autogen
 msgid "Choose an available mode. Higher modes are paused near a usage limit."
 msgstr "Choisissez un mode disponible. Les modes supérieurs sont suspendus à l’approche d’une limite d’usage."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:725
+#: lib/pauseai_ca_web/live/assistant_live.ex:726
 #, elixir-autogen
 msgid "USD %{remaining} remaining today; USD %{pending} held for pending usage"
 msgstr "USD %{remaining} disponibles aujourd’hui ; USD %{pending} réservés pour l’usage à confirmer"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:730
+#: lib/pauseai_ca_web/live/assistant_live.ex:731
 #, elixir-autogen
 msgid "USD %{remaining} of assistant allocation available"
 msgstr "USD %{remaining} disponibles dans l’allocation de l’assistant"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:438
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:440
 #, elixir-autogen
 msgid "Per-admin spending ledger"
 msgstr "Registre des coûts par administrateur"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:439
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:441
 #, elixir-autogen
 msgid "Designated assistant credit allocation"
 msgstr "Allocation de crédits réservée à l’assistant"
@@ -11650,7 +11619,7 @@ msgstr "Réponse retenue : les contrôles de sécurité en sortie l’ont bloqu�
 msgid "Answer withheld: output safety checks were unavailable."
 msgstr "Réponse retenue : les contrôles de sécurité en sortie étaient indisponibles."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:647
+#: lib/pauseai_ca_web/live/assistant_live.ex:648
 #, elixir-autogen, elixir-format
 msgid "Assistant credit allocation is not ready. Your draft is retained."
 msgstr "L’allocation de crédits de l’assistant n’est pas prête. Votre brouillon est conservé."
@@ -11721,7 +11690,7 @@ msgid "Review action"
 msgstr "Décision du contrôle"
 
 #: lib/pauseai_ca_web/live/assistant_audit_live.ex:485
-#: lib/pauseai_ca_web/live/assistant_live.ex:811
+#: lib/pauseai_ca_web/live/assistant_live.ex:812
 #, elixir-autogen, elixir-format
 msgid "Review details"
 msgstr "Détails du contrôle"
@@ -11757,7 +11726,7 @@ msgstr "La demande n’a pas pu se poursuivre en sécurité."
 msgid "Why it was held"
 msgstr "Motif de la retenue"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:715
+#: lib/pauseai_ca_web/live/assistant_live.ex:716
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:176
 #, elixir-autogen, elixir-format
 msgid "All-provider pilot · USD %{remaining} / %{limit} remaining through %{date} UTC"
@@ -11828,7 +11797,7 @@ msgstr "Les permissions, la modération, les budgets et les protections d’exé
 msgid "Publish saved instructions"
 msgstr "Publier les instructions enregistrées"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:450
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:452
 #, elixir-autogen, elixir-format
 msgid "Published application instructions"
 msgstr "Instructions de l’application publiées"
@@ -11844,7 +11813,7 @@ msgstr "Révision publiée %{revision}"
 msgid "Publishing…"
 msgstr "Publication…"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:453
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:455
 #, elixir-autogen, elixir-format
 msgid "Required generation and safety spend tracking"
 msgstr "Suivi obligatoire des coûts de génération et de contrôle de sécurité"
@@ -11864,46 +11833,46 @@ msgstr "Les instructions doivent contenir entre 1 et 24 000 octets."
 msgid "Using the bundled application instructions"
 msgstr "Les instructions fournies avec l’application sont utilisées"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:455
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:457
 #, elixir-autogen, elixir-format
 msgid "Valid all-provider pilot ceiling"
 msgstr "Plafond d’essai tous fournisseurs valide"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:622
+#: lib/pauseai_ca_web/live/assistant_live.ex:623
 #, elixir-autogen, elixir-format
 msgid "Complete · %{count} contacts match this area."
 msgstr "Terminé · %{count} contacts correspondent à cette zone."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:859
+#: lib/pauseai_ca_web/live/assistant_live.ex:860
 #: lib/pauseai_ca_web/live/mp_guide_component.ex:248
 #: lib/pauseai_ca_web/live/mp_guide_component.ex:267
 #, elixir-autogen, elixir-format
 msgid "Exit"
 msgstr "Quitter"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:796
-#: lib/pauseai_ca_web/live/assistant_live.ex:856
+#: lib/pauseai_ca_web/live/assistant_live.ex:797
+#: lib/pauseai_ca_web/live/assistant_live.ex:857
 #, elixir-autogen, elixir-format
 msgid "Guided mode"
 msgstr "Mode guidé"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:568
 #: lib/pauseai_ca_web/live/assistant_live.ex:569
+#: lib/pauseai_ca_web/live/assistant_live.ex:570
 #, elixir-autogen, elixir-format
 msgid "The guide could not be verified. Your message is retained."
 msgstr "Le guide n’a pas pu être vérifié. Votre message est conservé."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:580
+#: lib/pauseai_ca_web/live/assistant_live.ex:581
 #, elixir-autogen, elixir-format
 msgid "This page or your access changed. The guide stopped. Use Back or Exit."
 msgstr "Cette page ou vos droits d’accès ont changé. Le guide s’est arrêté. Revenez en arrière ou quittez le guide."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:564
+#: lib/pauseai_ca_web/live/assistant_live.ex:565
 #, elixir-autogen, elixir-format
 msgid "Your guide is ready. Use Next to continue."
 msgstr "Votre guide est prêt. Cliquez sur Suivant pour continuer."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:617
+#: lib/pauseai_ca_web/live/assistant_live.ex:618
 #, elixir-autogen, elixir-format
 msgid "Step 2 of 2 · Choose %{area} in Named areas."
 msgstr "Étape 2 sur 2 · Choisissez %{area} parmi les zones nommées."
@@ -12207,7 +12176,7 @@ msgstr "Cette adhésion ne peut pas être réactivée par cet ajout de compte."
 msgid "Active group"
 msgstr "Groupe actif"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:396
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:398
 #, elixir-autogen, elixir-format
 msgid "Cause not supplied"
 msgstr "Cause non précisée"
@@ -12227,17 +12196,17 @@ msgstr "Choisissez un membre ou un responsable"
 msgid "Complete every event field, or clear them all. Past events are hidden automatically."
 msgstr "Remplissez tous les champs de l’événement ou effacez-les tous. Les événements passés sont masqués automatiquement."
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:390
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:392
 #, elixir-autogen, elixir-format
 msgid "Configuration"
 msgstr "Configuration"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:394
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:396
 #, elixir-autogen, elixir-format
 msgid "Configuration required"
 msgstr "Configuration requise"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:363
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:365
 #, elixir-autogen, elixir-format
 msgid "Current verification required"
 msgstr "Une nouvelle vérification est nécessaire"
@@ -12262,7 +12231,7 @@ msgstr "Lien de l’événement"
 msgid "Event time zone"
 msgstr "Fuseau horaire de l’événement"
 
-#: lib/pauseai_ca_web/live/local_interest_live.ex:64
+#: lib/pauseai_ca_web/live/local_interest_live.ex:72
 #, elixir-autogen, elixir-format
 msgid "Follow-up by %{organizer}"
 msgstr "Suivi par %{organizer}"
@@ -12283,22 +12252,22 @@ msgstr "État du groupe"
 msgid "Incubator"
 msgstr "Incubateur"
 
-#: lib/pauseai_ca_web/live/local_interest_live.ex:75
+#: lib/pauseai_ca_web/live/local_interest_live.ex:83
 #, elixir-autogen, elixir-format
 msgid "I’ll follow up"
 msgstr "Je prends en charge le suivi"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:352
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:354
 #, elixir-autogen, elixir-format
 msgid "Last operational check"
 msgstr "Dernière vérification du service"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:358
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:360
 #, elixir-autogen, elixir-format
 msgid "Last successful readiness check"
 msgstr "Dernière vérification réussie"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:391
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:393
 #, elixir-autogen, elixir-format
 msgid "Local readiness record"
 msgstr "Résultat de vérification local"
@@ -12308,12 +12277,7 @@ msgstr "Résultat de vérification local"
 msgid "Next group event"
 msgstr "Prochain événement du groupe"
 
-#: lib/pauseai_ca_web/live/participation_form.ex:556
-#, elixir-autogen, elixir-format
-msgid "Offer to help %{group}"
-msgstr "Proposer votre aide à %{group}"
-
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:388
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:390
 #, elixir-autogen, elixir-format
 msgid "Operator alert audit verification"
 msgstr "Vérification indépendante des alertes"
@@ -12323,42 +12287,42 @@ msgstr "Vérification indépendante des alertes"
 msgid "Previously assigned account"
 msgstr "Compte précédemment assigné"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:392
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:394
 #, elixir-autogen, elixir-format
 msgid "Readiness refresh"
 msgstr "Actualisation des vérifications"
 
-#: lib/pauseai_ca_web/live/local_interest_live.ex:61
+#: lib/pauseai_ca_web/live/local_interest_live.ex:69
 #, elixir-autogen, elixir-format
 msgid "Requested to join a local group"
 msgstr "Demande pour rejoindre un groupe local"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:395
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:397
 #, elixir-autogen, elixir-format
 msgid "Unresolved operator alerts"
 msgstr "Alertes non résolues"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:368
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:370
 #, elixir-autogen, elixir-format
 msgid "Verification duration %{milliseconds} ms"
 msgstr "Durée de la vérification %{milliseconds} ms"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:335
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:337
 #, elixir-autogen, elixir-format
 msgid "Assistant temporarily unavailable"
 msgstr "Assistant temporairement indisponible"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:339
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:341
 #, elixir-autogen, elixir-format
 msgid "Checks run automatically. New requests can resume when all checks pass."
 msgstr "Les vérifications sont automatiques. Les nouvelles demandes pourront reprendre une fois toutes les vérifications réussies."
 
-#: lib/pauseai_ca_web/live/local_interest_live.ex:51
+#: lib/pauseai_ca_web/live/local_interest_live.ex:59
 #, elixir-autogen, elixir-format
 msgid "Requests to join a local group and offers of help. Choose a request to follow up."
 msgstr "Demandes pour rejoindre un groupe local et offres d’aide. Choisissez une demande pour en assurer le suivi."
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:342
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:344
 #, elixir-autogen, elixir-format
 msgid "The independent security receiver verifies the integrity of the assistant’s activity log."
 msgstr "Le service de sécurité indépendant vérifie l’intégrité du journal d’activité de l’assistant."
@@ -12441,7 +12405,7 @@ msgstr "Toutes les listes"
 msgid "All types"
 msgstr "Tous les types"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:607
+#: lib/pauseai_ca_web/live/assistant_live.ex:608
 #, elixir-autogen, elixir-format
 msgid "Complete · Your newsletter draft is open for review. Nothing was sent."
 msgstr "Terminé · Le brouillon de votre infolettre est ouvert pour vérification. Aucun envoi n’a été effectué."
@@ -12484,7 +12448,7 @@ msgstr "RTA — trois premiers caractères du code postal"
 msgid "Find a list"
 msgstr "Rechercher une liste"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:840
+#: lib/pauseai_ca_web/live/assistant_live.ex:841
 #, elixir-autogen, elixir-format
 msgid "GeoNames public source · pinned 9 November 2026"
 msgstr "Source publique GeoNames · version figée au 9 novembre 2026"
@@ -12573,32 +12537,32 @@ msgstr "Données sources"
 msgid "Static"
 msgstr "Statique"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:614
+#: lib/pauseai_ca_web/live/assistant_live.ex:615
 #, elixir-autogen, elixir-format
 msgid "Step 1 of 2 · Open Contacts through the Manage menu."
 msgstr "Étape 1 sur 2 · Ouvrez Contacts depuis le menu Gestion."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:590
+#: lib/pauseai_ca_web/live/assistant_live.ex:591
 #, elixir-autogen, elixir-format
 msgid "Step 1 of 5 · Open Contacts."
 msgstr "Étape 1 sur 5 · Ouvrez Contacts."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:593
+#: lib/pauseai_ca_web/live/assistant_live.ex:594
 #, elixir-autogen, elixir-format
 msgid "Step 2 of 5 · Choose Vancouver in Cities and preview the matches."
 msgstr "Étape 2 sur 5 · Choisissez Vancouver dans Villes et vérifiez les résultats."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:596
+#: lib/pauseai_ca_web/live/assistant_live.ex:597
 #, elixir-autogen, elixir-format
 msgid "Step 3 of 5 · Open Lists."
 msgstr "Étape 3 sur 5 · Ouvrez Listes."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:599
+#: lib/pauseai_ca_web/live/assistant_live.ex:600
 #, elixir-autogen, elixir-format
 msgid "Step 4 of 5 · Name a dynamic list, set city to Vancouver, then choose Save list."
 msgstr "Étape 4 sur 5 · Nommez une liste dynamique, indiquez Vancouver comme ville, puis choisissez Enregistrer la liste."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:604
+#: lib/pauseai_ca_web/live/assistant_live.ex:605
 #, elixir-autogen, elixir-format
 msgid "Step 5 of 5 · Review the saved list, then choose Compose newsletter."
 msgstr "Étape 5 sur 5 · Vérifiez la liste enregistrée, puis choisissez Rédiger une infolettre."
@@ -12635,7 +12599,7 @@ msgstr "Impossible de préparer un courriel pour les comptes sélectionnés. Les
 msgid "The selected records could not be prepared for email. Review the selection and current permissions."
 msgstr "Impossible de préparer un courriel pour les fiches sélectionnées. Vérifiez la sélection et vos droits d’accès actuels."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:830
+#: lib/pauseai_ca_web/live/assistant_live.ex:831
 #, elixir-autogen, elixir-format
 msgid "These postal-locality candidates do not establish city boundaries. V6T includes UBC; V6S and V6N need boundary review. This guide selects recorded city Vancouver, without adding these FSAs to the audience."
 msgstr "Ces zones postales candidates ne définissent pas les limites de la ville. V6T comprend l’UBC. Les limites de V6S et V6N doivent être vérifiées. Ce guide sélectionne la ville enregistrée Vancouver, sans ajouter ces RTA aux critères de destinataires."
@@ -12663,7 +12627,7 @@ msgstr "Impossible de préparer un courriel pour cette liste. Vérifiez les cont
 msgid "Type"
 msgstr "Type"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:824
+#: lib/pauseai_ca_web/live/assistant_live.ex:825
 #, elixir-autogen, elixir-format
 msgid "Vancouver postal-area reference · 31 candidates"
 msgstr "Référence postale de Vancouver · 31 RTA candidates"
@@ -12833,12 +12797,12 @@ msgstr "Géographie et zones enregistrées"
 msgid "Open details"
 msgstr "Ouvrir la fiche"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:295
+#: lib/pauseai_ca_web/live/assistant_live.ex:296
 #, elixir-autogen, elixir-format
 msgid "The assistant could not check its request limit. Your message has been retained."
 msgstr "L’assistant n’a pas pu vérifier la limite de cette demande. Votre message a été conservé."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:290
+#: lib/pauseai_ca_web/live/assistant_live.ex:291
 #, elixir-autogen, elixir-format
 msgid "This request exceeds the assistant’s per-request limit. Shorten your message or start a new conversation. Your message has been retained."
 msgstr "Cette demande dépasse la limite de l’assistant par requête. Raccourcissez votre message ou commencez une nouvelle conversation. Votre message a été conservé."
@@ -12853,38 +12817,38 @@ msgstr "La demande ne tenait pas dans le budget de jetons configuré par requêt
 msgid "The request exceeded the assistant’s per-request limit."
 msgstr "La demande dépassait la limite de l’assistant par requête."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:680
+#: lib/pauseai_ca_web/live/assistant_live.ex:681
 #, elixir-autogen, elixir-format
 msgid "Send is paused while the assistant’s configuration checks recover. Your message is retained. Availability is checked automatically."
 msgstr "L’envoi est suspendu pendant le rétablissement des vérifications de configuration de l’assistant. Votre message est conservé. La disponibilité est vérifiée automatiquement."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:676
+#: lib/pauseai_ca_web/live/assistant_live.ex:677
 #, elixir-autogen, elixir-format
 msgid "Send is paused while the assistant’s monitoring connection recovers. Your message is retained. Availability is checked automatically."
 msgstr "L’envoi est suspendu pendant le rétablissement de la connexion de suivi de l’assistant. Votre message est conservé. La disponibilité est vérifiée automatiquement."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:333
-#: lib/pauseai_ca_web/live/assistant_live.ex:475
+#: lib/pauseai_ca_web/live/assistant_live.ex:334
+#: lib/pauseai_ca_web/live/assistant_live.ex:476
 #, elixir-autogen, elixir-format
 msgid "An answer was generated and held by the output review. Your message is retained."
 msgstr "Une réponse a été générée et retenue par le contrôle de sortie. Votre message est conservé."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:328
+#: lib/pauseai_ca_web/live/assistant_live.ex:329
 #, elixir-autogen, elixir-format
 msgid "An answer was generated, but its review could not complete. Your message is retained."
 msgstr "Une réponse a été générée, mais son contrôle n’a pas pu aboutir. Votre message est conservé."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:323
+#: lib/pauseai_ca_web/live/assistant_live.ex:324
 #, elixir-autogen, elixir-format
 msgid "The automatic input review held your request before answer generation. Your message is retained."
 msgstr "Le contrôle automatique a retenu votre demande avant la génération d’une réponse. Votre message est conservé."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:320
+#: lib/pauseai_ca_web/live/assistant_live.ex:321
 #, elixir-autogen, elixir-format
 msgid "The input review could not complete. Your message is retained."
 msgstr "Le contrôle de votre demande n’a pas pu aboutir. Votre message est conservé."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:355
+#: lib/pauseai_ca_web/live/assistant_live.ex:356
 #, elixir-autogen, elixir-format
 msgid "The provider could not return a usable answer. Your message is retained."
 msgstr "Le fournisseur n’a pas pu renvoyer de réponse exploitable. Votre message est conservé."
@@ -12894,27 +12858,27 @@ msgstr "Le fournisseur n’a pas pu renvoyer de réponse exploitable. Votre mess
 msgid "%{platform} (opens in a new tab)"
 msgstr "%{platform} (s’ouvre dans un nouvel onglet)"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:812
+#: lib/pauseai_ca_web/live/assistant_live.ex:813
 #, elixir-autogen, elixir-format
 msgid "Assistant settings"
 msgstr "Paramètres de l’assistant"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:661
+#: lib/pauseai_ca_web/live/assistant_live.ex:662
 #, elixir-autogen, elixir-format
 msgid "Available credit cannot cover the USD %{amount} request reservation. Your draft is retained."
 msgstr "Le crédit disponible ne couvre pas la réserve de %{amount} USD nécessaire à une demande. Votre brouillon est conservé."
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:381
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:383
 #, elixir-autogen, elixir-format
 msgid "Credit allocation unavailable"
 msgstr "Attribution de crédit indisponible"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:379
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:381
 #, elixir-autogen, elixir-format
 msgid "Insufficient credit"
 msgstr "Crédit insuffisant"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:380
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:382
 #, elixir-autogen, elixir-format
 msgid "Insufficient token allowance"
 msgstr "Quota de jetons insuffisant"
@@ -12924,27 +12888,27 @@ msgstr "Quota de jetons insuffisant"
 msgid "PauseAI Canada social accounts"
 msgstr "Comptes sociaux de PauseIA Canada"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:378
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:380
 #, elixir-autogen, elixir-format
 msgid "Ready"
 msgstr "Disponible"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:384
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:386
 #, elixir-autogen, elixir-format
 msgid "Selected mode unavailable"
 msgstr "Mode sélectionné indisponible"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:383
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:385
 #, elixir-autogen, elixir-format
 msgid "Temporarily unavailable"
 msgstr "Temporairement indisponible"
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:382
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:384
 #, elixir-autogen, elixir-format
 msgid "Usage unavailable"
 msgstr "Suivi de consommation indisponible"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:656
+#: lib/pauseai_ca_web/live/assistant_live.ex:657
 #, elixir-autogen, elixir-format
 msgid "Your remaining token allowance cannot cover another request. Your draft is retained."
 msgstr "Votre quota de jetons restant ne permet pas de lancer une autre demande. Votre brouillon est conservé."
@@ -13064,12 +13028,12 @@ msgstr "Protocole du signal d’alarme"
 msgid "Write to your Member of Parliament about advanced AI risks and international safeguards using PauseAI Canada's letter tool."
 msgstr "Écrivez à votre député sur les risques de l’IA avancée et les garanties internationales avec l’outil de PauseIA Canada."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:806
+#: lib/pauseai_ca_web/live/assistant_live.ex:807
 #, elixir-autogen, elixir-format
 msgid "Daily token allowance remaining"
 msgstr "Allocation quotidienne de jetons restante"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:805
+#: lib/pauseai_ca_web/live/assistant_live.ex:806
 #, elixir-autogen, elixir-format
 msgid "Daily tokens"
 msgstr "Jetons quotidiens"
@@ -13214,7 +13178,7 @@ msgstr "La décision n’a pas pu être enregistrée de façon sécurisée. Vos 
 msgid "The displayed answer will be added to its conversation history."
 msgstr "La réponse affichée sera ajoutée à l’historique de sa conversation."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:480
+#: lib/pauseai_ca_web/live/assistant_live.ex:481
 #, elixir-autogen, elixir-format
 msgid "The held answer was rejected after human review. Your message is retained."
 msgstr "La réponse retenue a été rejetée après un examen humain. Votre message est conservé."
@@ -13330,7 +13294,7 @@ msgstr "Rejeter cette demande ?"
 msgid "Request rejected. No answer will be generated."
 msgstr "Demande rejetée. Aucune réponse ne sera générée."
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:470
+#: lib/pauseai_ca_web/live/assistant_live.ex:471
 #, elixir-autogen, elixir-format
 msgid "The request was rejected after superadmin review. Your message is retained."
 msgstr "La demande a été rejetée après examen par un superadministrateur. Votre message est conservé."
@@ -13705,7 +13669,7 @@ msgctxt "homepage CTA"
 msgid "Get updates"
 msgstr "Nouvelles"
 
-#: lib/pauseai_ca_web/live/assistant_live.ex:793
+#: lib/pauseai_ca_web/live/assistant_live.ex:794
 #, elixir-autogen, elixir-format
 msgid "Drag this button to move it, or use the arrow keys when focused. Home resets its position."
 msgstr "Faites glisser ce bouton pour le déplacer, ou utilisez les touches fléchées lorsqu’il est sélectionné. La touche Début rétablit sa position."
@@ -13851,3 +13815,83 @@ msgstr "Traduction"
 #, elixir-autogen, elixir-format
 msgid "Video editing"
 msgstr "Montage vidéo"
+
+#: lib/pauseai_ca_web/live/profile_live.ex:162
+#, elixir-autogen, elixir-format
+msgid "Assigned to me"
+msgstr "Mes tâches"
+
+#: lib/pauseai_ca_web/live/local_interest_live.ex:98
+#, elixir-autogen, elixir-format
+msgid "Check onboarding calls"
+msgstr "Consulter les appels d’accueil"
+
+#: lib/pauseai_ca_web/live/local_interest_live.ex:91
+#, elixir-autogen, elixir-format
+msgid "Email the volunteer"
+msgstr "Écrire au bénévole"
+
+#: lib/pauseai_ca_web/live/participation_form.ex:617
+#, elixir-autogen, elixir-format
+msgid "Group: %{group}"
+msgstr "Groupe : %{group}"
+
+#: lib/pauseai_ca_web/live/profile_live.ex:156
+#, elixir-autogen, elixir-format
+msgid "My group work"
+msgstr "Mon travail dans le groupe"
+
+#: lib/pauseai_ca_web/live/profile_live.ex:157
+#, elixir-autogen, elixir-format
+msgid "My roles"
+msgstr "Mes rôles"
+
+#: lib/pauseai_ca_web/live/participation_form.ex:686
+#, elixir-autogen, elixir-format
+msgid "Send my interest"
+msgstr "Envoyer ma demande"
+
+#: lib/pauseai_ca_web/live/participation_form.ex:527
+#, elixir-autogen, elixir-format
+msgid "Tell us what interests you. After you confirm your email, an organizer can contact you or invite you to an onboarding call."
+msgstr "Dites-nous ce qui vous intéresse. Après confirmation de votre adresse courriel, une personne du groupe pourra vous contacter ou vous inviter à un appel d’accueil."
+
+#: lib/pauseai_ca_web/live/participation_form.ex:484
+#, elixir-autogen, elixir-format
+msgid "Volunteer with a local group"
+msgstr "Faire du bénévolat dans un groupe local"
+
+#: lib/pauseai_ca_web/live/participation_form.ex:639
+#, elixir-autogen, elixir-format
+msgid "What interests you? (optional)"
+msgstr "Qu’est-ce qui vous intéresse? (facultatif)"
+
+#: lib/pauseai_ca_web/live/participation_form.ex:626
+#, elixir-autogen, elixir-format
+msgid "Choose another location"
+msgstr "Choisir un autre lieu"
+
+#: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:52
+#, elixir-autogen, elixir-format
+msgid "When you join a local waitlist or offer help, we store your email, optional name and postal area, the location where you want to get involved, and any help details you provide. National administrators and organizers of the group you select can read your request and follow up with you. You can withdraw your request using the link in your confirmation email. Withdrawal stops local follow-up; account and newsletter choices remain separate."
+msgstr "Lorsque vous manifestez votre intérêt pour un groupe local, nous conservons votre adresse courriel, les coordonnées facultatives que vous donnez, le lieu choisi et votre offre d’aide. Les administrateurs nationaux et les responsables du groupe choisi peuvent consulter votre demande et vous contacter. Le lien dans le courriel de confirmation vous permet de retirer votre demande. Le retrait met fin au suivi local. Votre compte et votre abonnement à l’infolettre sont gérés séparément."
+
+#: lib/pauseai_ca_web/live/local_interest_live.ex:119
+#, elixir-autogen, elixir-format
+msgid "Membership link to share after follow-up"
+msgstr "Lien d’adhésion à partager après le premier contact"
+
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:194
+#, elixir-autogen, elixir-format
+msgid "Default per eligible account: %{limit} tokens/day"
+msgstr "Valeur par défaut par compte admissible : %{limit} jetons par jour"
+
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:226
+#, elixir-autogen, elixir-format
+msgid "Former participant"
+msgstr "Ancien compte participant"
+
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:325
+#, elixir-autogen, elixir-format
+msgid "Set zero to stop new requests for that account. Existing conversations are retained."
+msgstr "Indiquez zéro pour bloquer les nouvelles demandes de ce compte. Les conversations existantes sont conservées."

@@ -34,6 +34,7 @@ defmodule PauseAiCaWeb.AssistantLive do
     {:ok,
      assign(socket,
        current_scope: scope,
+       admin_controls: Assistant.eligible?(scope),
        guide_session: %{
          id: Ecto.UUID.generate(),
          login: Guide.session_fingerprint(session["user_token"])
@@ -532,6 +533,7 @@ defmodule PauseAiCaWeb.AssistantLive do
 
       assign(socket,
         eligible: true,
+        admin_controls: Assistant.eligible?(scope),
         guide_available: guide_available?(scope, socket.assigns.locale),
         conversation: reference,
         messages: messages,
@@ -689,9 +691,16 @@ defmodule PauseAiCaWeb.AssistantLive do
 
   defp draft_key(_), do: nil
 
-  defp usage_summary(nil), do: nil
+  defp usage_summary(nil, _admin), do: nil
 
-  defp usage_summary(usage) do
+  defp usage_summary(usage, false) do
+    gettext("%{remaining} / %{limit} tokens remaining today",
+      remaining: usage.remaining_tokens,
+      limit: usage.limit
+    )
+  end
+
+  defp usage_summary(usage, true) do
     locale = Gettext.get_locale(PauseAiCaWeb.Gettext)
 
     date =
@@ -767,10 +776,10 @@ defmodule PauseAiCaWeb.AssistantLive do
       error={@error || @availability_error || @guide_error}
       error_href={
         cond do
-          @error && @pending_request_id ->
+          @admin_controls && @error && @pending_request_id ->
             "/admin/assistant/activity/requests/#{@pending_request_id}?locale=#{@locale}"
 
-          @availability_error ->
+          @admin_controls && @availability_error ->
             "/admin/assistant?locale=#{@locale}"
 
           true ->
@@ -780,7 +789,7 @@ defmodule PauseAiCaWeb.AssistantLive do
       guided_available={@guide_available}
       guided_mode={@guide_mode}
       allow_new={true}
-      usage_summary={usage_summary(@usage)}
+      usage_summary={usage_summary(@usage, @admin_controls)}
       usage_percent={@usage && div(@usage.remaining_tokens * 100, max(@usage.limit, 1))}
       quota_exhausted={not is_nil(@availability_error)}
       labels={

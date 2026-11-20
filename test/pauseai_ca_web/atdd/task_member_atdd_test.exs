@@ -44,17 +44,17 @@ if System.get_env("ATDD") == "true" do
       Ecto.Adapters.SQL.Sandbox.mode(Repo, {:shared, self()})
       admin = named_user("Synthetic administrator", true)
       manager = named_user("Synthetic organizer")
-      member = named_user("Synthetic newsletter member")
+      member = named_user("Synthetic video editor")
       admin_scope = Accounts.Scope.for_user(admin)
       manager_scope = Accounts.Scope.for_user(manager)
       member_scope = Accounts.Scope.for_user(member)
-      {:ok, group} = Volunteers.create_group(admin_scope, %{name: "Synthetic newsletter group"})
+      {:ok, group} = Volunteers.create_group(admin_scope, %{name: "Synthetic Ottawa group"})
       {:ok, _} = Volunteers.assign_manager(admin_scope, group.id, manager.email)
 
       {:ok, _} =
         Incubators.configure(admin_scope, group.id, %{
-          "name_en" => "Synthetic newsletter group",
-          "name_fr" => "Groupe de bulletin synthétique",
+          "name_en" => "Synthetic Ottawa group",
+          "name_fr" => "Groupe fictif d’Ottawa",
           "published" => true,
           "whatsapp_enabled" => false
         })
@@ -76,10 +76,26 @@ if System.get_env("ATDD") == "true" do
       baseline = protected_counts()
       id = "TASK-MEMBER-01-#{locale}"
 
+      role_title = if locale == "fr", do: "Montage vidéo", else: "Video Editor"
+
+      browser =
+        browser
+        |> visit("/manage/groups?group=#{group.id}&locale=#{locale}")
+        |> assert_has("[data-phx-main].phx-connected")
+        |> click_button(tr(locale, "Add responsibility"))
+        |> select("#group-responsibility-form select", tr(locale, "Member"),
+          exact: false,
+          option: member.name
+        )
+        |> fill_in(tr(locale, "Responsibility"), with: role_title)
+        |> fill_in(tr(locale, "Start date"), with: Date.to_iso8601(Date.utc_today()))
+        |> click_button(tr(locale, "Save responsibility"))
+        |> assert_has("#group-responsibilities li", text: role_title)
+
       title =
         if locale == "fr",
-          do: "Bulletin toutes les deux semaines",
-          else: "Newsletter every two weeks"
+          do: "Monter la vidéo de la marche du 14 novembre",
+          else: "Edit the November 14 march footage"
 
       browser =
         browser
@@ -139,6 +155,23 @@ if System.get_env("ATDD") == "true" do
       assert {:error, :unauthorized} = Tasks.members(member_scope, group.id)
       assert protected_counts() == baseline
       refute_received {:email, _}
+      {member_token, _} = generate_user_magic_link_token(member)
+      profile = if locale == "fr", do: "/fr/profil", else: "/en/profile"
+
+      viewport =
+        if locale == "fr", do: %{width: 390, height: 844}, else: %{width: 1280, height: 900}
+
+      config = PhoenixTest.Playwright.Config.validate!(browser_context_opts: [viewport: viewport])
+
+      PhoenixTest.Playwright.Case.new_session(config, c)
+      |> visit("/users/log-in/#{member_token}")
+      |> click_button("Keep me logged in on this device")
+      |> assert_path("/")
+      |> visit(profile)
+      |> assert_has("#my-group-work", text: title)
+      |> assert_has("#my-group-work", text: role_title)
+      |> capture(id, "Member reads their assignment", "Signed-in member", "My profile")
+
       AtddEvidence.mark_scenario_success!(Enum.find(@scenarios, &(&1.id == id)))
       browser
     end

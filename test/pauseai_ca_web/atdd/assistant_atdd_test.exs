@@ -9,6 +9,14 @@ if System.get_env("ATDD") == "true" do
     @moduletag :atdd
     @scenarios [
       %{
+        id: "VOL-ASSIST-ACCESS-01",
+        title: "Organizer reads a coaching response and loses access after revocation",
+        roles: ["Group organizer"],
+        language: "English",
+        device: "Desktop",
+        source_file: __ENV__.file
+      },
+      %{
         id: "CRM-ASSIST-LAUNCHER-01-en",
         title: "Movable assistant leaves social links accessible",
         roles: ["Superadmin"],
@@ -221,6 +229,51 @@ if System.get_env("ATDD") == "true" do
     end
 
     @tag screenshot: true
+    test "VOL-ASSIST-ACCESS-01 organizer opens chat from My profile", c do
+      organizer = user_fixture(%{email: "synthetic-ottawa-organizer@example.org"})
+      {:ok, group} = PauseAiCa.Volunteers.create_group(c.scope, %{name: "Ottawa"})
+      {:ok, grant} = PauseAiCa.Volunteers.assign_manager(c.scope, group.id, organizer.email)
+      config = Application.fetch_env!(:pauseai_ca, :agent_assistant)
+      {module, opts} = config[:provider]
+      reply = "Open Manage → Tasks, choose Ottawa and select Add task."
+
+      Application.put_env(
+        :pauseai_ca,
+        :agent_assistant,
+        Keyword.put(config, :provider, {module, Keyword.put(opts, :response_text, reply)})
+      )
+
+      {:ok, _} = Assistant.set_enabled(c.scope, true)
+
+      b =
+        c.conn
+        |> login(organizer)
+        |> visit("/en/profile")
+        |> connected()
+        |> click_button("#site-assistant-launcher", "Assistant")
+        |> fill_in("#site-assistant-text", "Message", with: "Where can I assign the march video?")
+        |> click_button("#site-assistant-form button[type=submit]", "Send")
+        |> assert_has("#site-assistant-messages", text: reply)
+        |> capture(
+          "VOL-ASSIST-ACCESS-01",
+          "Organizer chat",
+          "My profile",
+          "Send",
+          "Synthetic provider response in the organizer’s conversation"
+        )
+
+      assert_receive {:assistant_generated, _, _}
+      :ok = PauseAiCa.Volunteers.revoke_manager(c.scope, grant.id)
+
+      b
+      |> fill_in("#site-assistant-text", "Message", with: "Continue")
+      |> refute_has("#site-assistant-launcher")
+
+      refute_receive {:assistant_generated, _, _}
+      success("VOL-ASSIST-ACCESS-01")
+    end
+
+    @tag screenshot: true
     @tag browser_context_opts: [viewport: %{width: 1280, height: 900}]
     test "CRM-ASSIST-01 OFF to real floating conversation and persistent account preference", c do
       id = "CRM-ASSIST-01"
@@ -428,7 +481,7 @@ if System.get_env("ATDD") == "true" do
         |> switch_browser_identity(&login(&1, c.admin))
         |> visit("/admin/assistant?locale=fr")
         |> connected()
-        |> select("#assistant-token-limit-form select", tr(locale, "Admin"),
+        |> select("#assistant-token-limit-form select", tr(locale, "Account"),
           option: c.other.email,
           exact: false
         )
@@ -1335,7 +1388,7 @@ if System.get_env("ATDD") == "true" do
 
     defp set_limit(browser, email, limit, locale) do
       browser
-      |> select("#assistant-token-limit-form select", tr(locale, "Admin"),
+      |> select("#assistant-token-limit-form select", tr(locale, "Account"),
         option: email,
         exact: false
       )

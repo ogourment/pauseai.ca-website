@@ -70,7 +70,7 @@ if System.get_env("ATDD") == "true" do
           |> click_button("Keep me logged in on this device")
           |> assert_path("/")
           |> visit("/#{locale}")
-          |> AtddNavigation.open_section("admin")
+          |> AtddNavigation.open_section("manage")
           |> capture(
             id,
             "Administration menu",
@@ -78,7 +78,7 @@ if System.get_env("ATDD") == "true" do
             "Administration menu"
           )
           |> click_link(
-            "#admin-menu [data-navigation-item='pauseai.local-interest']",
+            "#manage-menu [data-navigation-item='pauseai.local-interest']",
             tr(locale, "Local participation"),
             exact: true
           )

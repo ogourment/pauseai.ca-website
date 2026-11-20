@@ -46,6 +46,87 @@ defmodule PauseAiCaWeb.AssistantLiveTest do
     %{admin: admin, scope: scope, member: member, other_admin: other_admin}
   end
 
+  test "organizer can chat within funding limits and loses access on revocation", c do
+    {:ok, group} = PauseAiCa.Volunteers.create_group(c.scope, %{name: "Ottawa"})
+    organizer = Accounts.Scope.for_user(c.member)
+    {:ok, grant} = PauseAiCa.Volunteers.assign_manager(c.scope, group.id, c.member.email)
+    assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+    assert {:error, :not_ready} = Assistant.set_enabled(organizer, false)
+    assert [] == Assistant.admin_usage(organizer)
+    assert {:error, :forbidden} = Assistant.RequestReview.read(organizer, Ecto.UUID.generate())
+    assert %{status: 403} = log_in_user(build_conn(), c.member) |> get("/admin/assistant")
+    assert {:ok, conversation} = Assistant.new_conversation(organizer)
+
+    assert {:ok, _} =
+             Assistant.run(
+               organizer,
+               Ecto.UUID.generate(),
+               "How can I welcome a new editor?",
+               conversation,
+               "en"
+             )
+
+    assert_receive {:assistant_generated, _, _}
+    assert {:ok, _} = Assistant.set_token_limit(c.scope, c.member.id, 0)
+    refute Assistant.launcher_visible?(organizer)
+    assert {:ok, _} = Assistant.set_token_limit(c.scope, c.member.id, 50000)
+    assert Assistant.launcher_visible?(organizer)
+    :ok = PauseAiCa.Volunteers.revoke_manager(c.scope, grant.id)
+    refute Assistant.launcher_visible?(organizer)
+    assert {:error, _} = Assistant.history(organizer, conversation)
+
+    assert {:error, _} =
+             Assistant.run(organizer, Ecto.UUID.generate(), "Continue", conversation, "en")
+
+    refute_receive {:assistant_generated, _, _}
+  end
+
+  defmodule CoachingProbe do
+    defdelegate input_token_bound(request, mode, options),
+      to: PauseAiCa.AssistantFixtures.Provider
+
+    def generate(request, mode, options) do
+      send(options[:observer], {:coaching_received, options[:instructions]})
+      PauseAiCa.AssistantFixtures.Provider.generate(request, mode, options)
+    end
+  end
+
+  test "a volunteer handoff question reaches the provider with instructions for each participant",
+       c do
+    config = Application.fetch_env!(:pauseai_ca, :agent_assistant)
+    {_provider, options} = config[:provider]
+
+    Application.put_env(
+      :pauseai_ca,
+      :agent_assistant,
+      Keyword.put(config, :provider, {CoachingProbe, options})
+    )
+
+    assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+    assert {:ok, conversation} = Assistant.new_conversation(c.scope)
+
+    assert {:ok, _} =
+             Assistant.run(
+               c.scope,
+               Ecto.UUID.generate(),
+               "How do I assign the march edit and where does the member see it?",
+               conversation,
+               "en"
+             )
+
+    assert_receive {:coaching_received, instructions}
+
+    for label <- [
+          "confirm your email",
+          "Manage → Local participation",
+          "Responsibilities",
+          "Assigned to",
+          "My group work"
+        ] do
+      assert instructions =~ label
+    end
+  end
+
   defmodule InvalidProvider do
     defdelegate input_token_bound(request, mode, options),
       to: PauseAiCa.AssistantFixtures.Provider

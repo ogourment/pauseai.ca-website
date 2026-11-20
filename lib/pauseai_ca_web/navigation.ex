@@ -12,9 +12,9 @@ defmodule PauseAiCaWeb.Navigation do
       item(
         "pauseai.local-interest",
         gettext_noop("Local participation"),
-        :admin,
+        :manage,
         :local_interest,
-        :admin,
+        :organizer,
         65
       ),
       item("pauseai.assistant", gettext_noop("Assistant"), :admin, :assistant, :admin, 64),
@@ -213,7 +213,7 @@ defmodule PauseAiCaWeb.Navigation do
       case key do
         :assistant -> "/admin/assistant"
         :contacts -> "/admin/contacts"
-        :local_interest -> "/admin/local-interest"
+        :local_interest -> "/manage/local-interest"
         :administrators -> "/manage/administrators"
         :dashboard -> "/admin/dashboard"
         :blog -> "/manage/blog"

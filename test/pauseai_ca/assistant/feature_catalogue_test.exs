@@ -365,7 +365,7 @@ defmodule PauseAiCa.Assistant.FeatureCatalogueTest do
     for {id, prefixes, version} <- [
           {"group-enrollment", ["GROUP-ADMIN-01"], "0.6.19"},
           {"group-public-events", ["PUBLIC-GROUPS-EVENTS-01", "GROUP-EVENT-EDITOR-01"], "0.7.0"},
-          {"local-followup", ["LOCAL-FOLLOWUP-01"], "0.7.0"},
+          {"local-followup", ["LOCAL-FOLLOWUP-01", "GROUP-PART-01"], "0.7.0"},
           {"task-member-assignment", ["TASK-MEMBER-01"], "0.7.0"}
         ] do
       feature = Enum.find(loaded.features, &(&1.id == id))

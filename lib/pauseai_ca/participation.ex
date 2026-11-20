@@ -77,7 +77,8 @@ defmodule PauseAiCa.Participation do
               ~w(name phone fsa city help_text newsletter account local_kind locale)a
 
             if Map.take(recent, fields) == Map.take(values, fields) and
-                 local_group_key(recent.context) == group_key,
+                 local_group_key(recent.context) == group_key and
+                 Map.get(recent.context, "interests", []) == Map.get(context, "interests", []),
                do: Repo.rollback(:cooldown),
                else: Repo.rollback(:changed_choices_cooldown)
           end
@@ -412,6 +413,7 @@ defmodule PauseAiCa.Participation do
 
           changes = [
             local_kind: nil,
+            context: Map.drop(request.context, ["interests", "incubator_group_id"]),
             help_text: nil,
             city: nil,
             followup_owner_id: nil,
@@ -441,11 +443,7 @@ defmodule PauseAiCa.Participation do
   end
 
   def local_requests(scope, requested_page \\ 1) do
-    if PauseAiCa.Volunteers.superadmin?(scope) do
-      query =
-        from r in Request,
-          where: r.state == "confirmed" and not is_nil(r.local_kind) and is_nil(r.withdrawn_at)
-
+    with {:ok, query} <- followup_queue(scope) do
       total = Repo.aggregate(query, :count)
       pages = max(1, Integer.ceil_div(total, 25))
 
@@ -467,17 +465,37 @@ defmodule PauseAiCa.Participation do
         )
 
       {:ok, %{entries: entries, page: page, pages: pages, total: total}}
-    else
-      {:error, :unauthorized}
+    end
+  end
+
+  defp followup_queue(scope) do
+    confirmed =
+      from r in Request,
+        where: r.state == "confirmed" and not is_nil(r.local_kind) and is_nil(r.withdrawn_at)
+
+    cond do
+      PauseAiCa.Volunteers.superadmin?(scope) ->
+        {:ok, confirmed}
+
+      true ->
+        ids = Enum.map(PauseAiCa.Volunteers.groups(scope), & &1.id)
+
+        if ids == [],
+          do: {:error, :unauthorized},
+          else:
+            {:ok,
+             from(r in confirmed, where: fragment("?->>'incubator_group_id'", r.context) in ^ids)}
     end
   end
 
   def claim(scope, id) do
-    with true <- PauseAiCa.Volunteers.superadmin?(scope),
+    with {:ok, queue} <- followup_queue(scope),
          {:ok, id} <- Ecto.UUID.cast(id),
-         %Request{state: "confirmed", withdrawn_at: nil, local_kind: kind} = request
-         when not is_nil(kind) <- Repo.get(Request, id) do
-      request |> Ecto.Changeset.change(followup_owner_id: scope.user.id) |> Repo.update()
+         {1, [request]} <-
+           Repo.update_all(from(r in queue, where: r.id == ^id, select: r),
+             set: [followup_owner_id: scope.user.id]
+           ) do
+      {:ok, request}
     else
       _ -> {:error, :unauthorized}
     end

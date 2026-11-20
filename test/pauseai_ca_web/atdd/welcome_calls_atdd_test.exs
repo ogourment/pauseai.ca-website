@@ -83,8 +83,12 @@ if System.get_env("ATDD") == "true" do
           |> capture(id, "Applicant opens Get involved", "Click Local groups")
           |> click_link("#act-local-groups", tr(locale, "Local groups"), exact: true)
           |> assert_has("[data-phx-main].phx-connected")
-          |> capture(id, "Configured local group directory", "Click Request to join")
-          |> click_link(tr(locale, "Request to join"))
+          |> capture(
+            id,
+            "Configured local group directory",
+            "Open the membership link shared by the organizer"
+          )
+          |> visit("/groups/#{group.id}/join?locale=#{locale}")
           |> assert_has("[data-phx-main].phx-connected")
           |> check(tr(locale, "I agree to follow these conduct rules."))
           |> click_button(tr(locale, "Save request"))

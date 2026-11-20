@@ -221,8 +221,7 @@ defmodule PauseAiCaWeb.IncubatorsLiveTest do
 
     {:ok, view, _} = live(build_conn(), "/en/groups")
     card = "#group-#{c.group.id}"
-    assert has_element?(view, card <> " button", "Join the waitlist")
-    assert has_element?(view, card <> " button[phx-value-kind=help]", "I can help")
+    assert has_element?(view, card <> " a", "Get involved")
     refute has_element?(view, card <> " a[href*=join]")
 
     assert has_element?(
@@ -444,7 +443,7 @@ defmodule PauseAiCaWeb.IncubatorsLiveTest do
   test "bilingual public directory exposes configured groups without invitation or roster", c do
     {:ok, english, html} = live(build_conn(), "/en/groups")
     assert has_element?(english, "h2", "Review local group")
-    assert has_element?(english, "a[href='/groups/#{c.group.id}/join?locale=en']")
+    assert has_element?(english, "#group-#{c.group.id} a", "Get involved")
     assert html =~ "first three characters"
     refute html =~ "private-review-only"
     refute html =~ c.member.email

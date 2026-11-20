@@ -188,7 +188,7 @@ defmodule PauseAiCaWeb.AssistantSpendUsageTest do
            } = Enum.find(rows, &(&1.id == missing))
 
     {:ok, view, html} = live(log_in_user(c.conn, c.admin), "/admin/assistant?locale=en")
-    assert html =~ "spend-former@example.org" and html =~ "Former admin"
+    assert html =~ "spend-former@example.org" and html =~ "Former participant"
     assert html =~ missing and html =~ "Unavailable account"
     refute has_element?(view, "#assistant-admin-selector option[value='#{c.other.id}']")
     refute has_element?(view, "#assistant-admin-selector option[value='#{missing}']")

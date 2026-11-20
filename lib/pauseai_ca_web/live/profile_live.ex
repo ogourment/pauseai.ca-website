@@ -1,7 +1,7 @@
 defmodule PauseAiCaWeb.ProfileLive do
   use PauseAiCaWeb, :live_view
 
-  alias PauseAiCa.{Accounts, Campaigns}
+  alias PauseAiCa.{Accounts, Campaigns, Volunteers}
 
   @impl true
   def mount(_params, _session, socket) do
@@ -9,14 +9,25 @@ defmodule PauseAiCaWeb.ProfileLive do
     Gettext.put_locale(PauseAiCaWeb.Gettext, locale)
     user = socket.assigns.current_scope.user
 
+    if connected?(socket), do: Process.send_after(self(), :refresh_group_work, 30_000)
+
     {:ok,
      socket
      |> assign(:locale, locale)
      |> assign(:page_title, gettext("My profile"))
+     |> assign(:group_work, Volunteers.my_group_work(socket.assigns.current_scope))
      |> assign(:profile_user, user)
      |> assign(:phone_form, to_form(Accounts.change_user_phone(user), as: "phone"))
      |> assign_profile_form(user)
      |> assign(:resource_form, to_form(%{"url" => ""}, as: "resource"))}
+  end
+
+  @impl true
+  def handle_info(:refresh_group_work, socket) do
+    Process.send_after(self(), :refresh_group_work, 30_000)
+
+    {:noreply,
+     assign(socket, :group_work, Volunteers.my_group_work(socket.assigns.current_scope))}
   end
 
   @impl true
@@ -136,6 +147,32 @@ defmodule PauseAiCaWeb.ProfileLive do
           navigate={if @locale == "fr", do: ~p"/fr/profil/benevolat", else: ~p"/en/profile/volunteer"}
           class="mt-4 inline-block underline"
         >{gettext("Volunteer profile")}</.link>
+
+        <section
+          :if={@group_work.roles != [] or @group_work.tasks != []}
+          id="my-group-work"
+          class="mt-6 rounded-xl border border-stone-200 bg-white p-5"
+        >
+          <h2 class="font-serif text-3xl">{gettext("My group work")}</h2>
+          <h3 :if={@group_work.roles != []} class="mt-4 font-semibold">{gettext("My roles")}</h3>
+          <ul>
+            <li :for={r <- @group_work.roles}>{r.title} · {r.group}</li>
+          </ul>
+          <h3 :if={@group_work.tasks != []} class="mt-4 font-semibold">
+            {gettext("Assigned to me")}
+          </h3>
+          <ul class="space-y-3">
+            <li :for={t <- @group_work.tasks}>
+              <p><strong>{t.title}</strong> · {t.group}</p>
+              <p class="text-sm">{PauseAiCaWeb.TasksLive.status(t.status)}</p>
+              <p :if={t.description} class="whitespace-pre-line">{t.description}</p>
+              <p :if={t.due_date}>
+                {gettext("Due date")} ·
+                <time datetime={Date.to_iso8601(t.due_date)}>{t.due_date}</time>
+              </p>
+            </li>
+          </ul>
+        </section>
 
         <.form
           for={@phone_form}

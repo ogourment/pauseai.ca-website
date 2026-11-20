@@ -385,27 +385,19 @@ defmodule PauseAiCaWeb.IncubatorsLive do
                     )}
                   </p>
                   <div class="flex flex-wrap gap-4 items-center">
-                    <.link
-                      :if={group.stage == "active"}
-                      href={"/groups/#{group.group_id}/join?#{URI.encode_query(%{locale: @locale})}"}
+                    <a
+                      href="#group-participation"
+                      data-group-interest
+                      phx-click={
+                        JS.push("choose-group", target: "#participation")
+                        |> JS.focus(to: "#participation_name")
+                      }
+                      phx-value-group-id={group.group_id}
+                      phx-target="#participation"
                       class="btn btn-primary"
-                    >{gettext("Request to join")}</.link>
-                    <button
-                      type="button"
-                      phx-click="choose-group"
-                      phx-value-group-id={group.group_id}
-                      phx-target="#participation"
-                      class="btn btn-outline"
-                    >{gettext("Join the waitlist")}</button>
-                    <button
-                      :if={group.stage == "incubator"}
-                      type="button"
-                      phx-click="choose-group"
-                      phx-value-group-id={group.group_id}
-                      phx-value-kind="help"
-                      phx-target="#participation"
-                      class="btn btn-outline"
-                    >{gettext("I can help")}</button>
+                    >
+                      {gettext("Get involved")}
+                    </a>
                     <.link
                       :if={group.events_url not in [nil, ""]}
                       href={group.events_url}
@@ -447,7 +439,7 @@ defmodule PauseAiCaWeb.IncubatorsLive do
               locale={@locale}
               current_scope={@current_scope}
               context={@participation_context}
-              intent="waitlist"
+              intent="help"
               city=""
               registration={false}
               show_ctas={false}

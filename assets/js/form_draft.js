@@ -9,14 +9,29 @@ export const FormDraft = {
       this.el.querySelectorAll('input,textarea,select').forEach(field => {
         if (!field.name.startsWith(this.prefix) || ['hidden','password','file'].includes(field.type) || field.readOnly) return
         const name = field.name.slice(this.prefix.length, -1)
+        if (field.name.endsWith('][]') && field.type === 'checkbox') {
+          const key = field.name.slice(this.prefix.length, -3)
+          const group = Array.from(this.el.elements).filter(input => input.name === field.name && input.type === 'checkbox')
+          values[key] = group.filter(input => input.checked).map(input => input.value)
+          return
+        }
         values[name] = field.type === 'checkbox' ? String(field.checked) : field.value
       })
+      if (this.el.hasAttribute('data-interest-group')) values.interest_group = this.el.dataset.interestGroup
       try { sessionStorage.setItem(this.key, JSON.stringify({at: Date.now(), values})) } catch (_) {}
     }
     this.el.addEventListener('input', this.saveDraft)
     this.el.addEventListener('change', this.saveDraft)
     const values = this.readDraft()
     if (Object.keys(values).length) this.pushEventTo(this.el, 'restore-draft', {values})
+  },
+  updated() {
+    if (!this.el.hasAttribute('data-interest-group')) return
+    if (this.el.dataset.submitted === 'true') {
+      try { sessionStorage.removeItem(this.key) } catch (_) {}
+    } else {
+      this.saveDraft()
+    }
   },
   readDraft() {
     try {

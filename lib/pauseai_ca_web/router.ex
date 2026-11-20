@@ -198,6 +198,7 @@ defmodule PauseAiCaWeb.Router do
       live "/manage/tasks/new", TasksLive, :new
       live "/manage/tasks/:id", TasksLive, :show
       live "/manage/accounts", ManagedAccountsLive, :index
+      live "/manage/local-interest", LocalInterestLive, :index
       live "/manage/welcome-calls", WelcomeManagementLive, :index
       live "/manage/welcome-calls/new", WelcomeManagementLive, :new
       live "/manage/welcome-calls/:id", WelcomeManagementLive, :show

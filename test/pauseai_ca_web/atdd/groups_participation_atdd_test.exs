@@ -58,10 +58,10 @@ if System.get_env("ATDD") == "true" do
           |> capture(
             locale,
             "Local groups shared form",
-            "Enter details once; choose a waitlist or offer to help start an incubator"
+            "Enter details once; state your volunteer interests"
           )
 
-        for {kind, city} <- [{"waitlist", "Toronto"}, {"help", "Montréal"}], reduce: b do
+        for {kind, city} <- [{"local", "Toronto"}, {"help", "Montréal"}], reduce: b do
           b ->
             email = "local-#{kind}-#{locale}@example.org"
 
@@ -70,8 +70,7 @@ if System.get_env("ATDD") == "true" do
                 do:
                   b
                   |> visit(path)
-                  |> assert_has("[data-phx-main].phx-connected")
-                  |> click_button(tr(locale, "Help start an incubator")),
+                  |> assert_has("[data-phx-main].phx-connected"),
                 else: b
 
             b =
@@ -84,23 +83,42 @@ if System.get_env("ATDD") == "true" do
             b =
               if kind == "help",
                 do:
-                  fill_in(b, tr(locale, "How would you like to help?"),
+                  b
+                  |> check(tr(locale, "Video editing"))
+                  |> check(tr(locale, "Translation"))
+                  |> fill_in(tr(locale, "How would you like to help?"),
                     with: "I can help find a venue."
                   ),
                 else: b
+
+            b =
+              if kind == "help" do
+                b
+                |> visit(path)
+                |> assert_has("[data-phx-main].phx-connected")
+                |> assert_has("input[name='participation[email]']", value: email)
+                |> assert_has("input[value='video_editing']:checked")
+                |> assert_has("input[value='translation']:checked")
+              else
+                b
+              end
 
             b =
               b
               |> capture(
                 locale,
                 "#{kind}: details and explicit choices",
-                "Only local contact is selected; account and newsletter choices remain available"
+                "The request is for local organizer follow-up"
               )
               |> click("#participation-submit")
               |> assert_has("#account-email-pending")
 
             request = Repo.get_by!(Participation.Request, email: email)
-            assert request.state == "pending" and request.local_kind == kind
+            assert request.state == "pending" and request.local_kind == "help"
+
+            if kind == "help",
+              do: assert(request.context["interests"] == ["video_editing", "translation"])
+
             assert request.account == false and request.newsletter == false
             assert counts() == baseline
             assert_receive {:email, mail}, 8_000
