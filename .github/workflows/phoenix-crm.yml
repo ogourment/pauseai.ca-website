@@ -107,6 +107,19 @@ jobs:
         env:
           MIX_ENV: prod
         run: mix assets.deploy
+      - name: Verify the digested browser error reporter is served
+        run: |
+          mix run --no-start -e '
+            static = Path.expand("priv/static")
+            manifest = Jason.decode!(File.read!(Path.join(static, "cache_manifest.json")))
+            path = Map.fetch!(manifest["latest"], "scripts/incident-reporter.js")
+            conn = Plug.Test.conn(:get, "/" <> path)
+            opts = Plug.Static.init(at: "/", from: static, only: PauseAiCaWeb.static_paths())
+            case Plug.Static.call(conn, opts) do
+              %{status: 200, halted: true} -> :ok
+              _ -> raise "The fingerprinted incident reporter is not served"
+            end
+          '
       - name: Build production release
         if: ${{ inputs.build-release }}
         env:
