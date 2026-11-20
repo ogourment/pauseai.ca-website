@@ -292,7 +292,7 @@ defmodule PauseAiCaWeb.ParticipationForm do
 
     context =
       if socket.assigns.group_focused,
-        do: Map.put(context, "interests", params["interests"] || []),
+        do: Map.merge(context, Map.take(params, ~w(interests experience))),
         else: context
 
     case Participation.request(attributes(params, locale), context, url_fun) do
@@ -339,6 +339,11 @@ defmodule PauseAiCaWeb.ParticipationForm do
 
       Map.merge(params, %{
         "interests" => selected,
+        "experience" =>
+          PauseAiCa.Volunteers.Input.experience(
+            raw["experience"] || params["experience"],
+            selected
+          ),
         "account" => "false",
         "newsletter" => "false",
         "local" => "true",
@@ -635,22 +640,13 @@ defmodule PauseAiCaWeb.ParticipationForm do
             <datalist :if={@group_focused} id="participation-group-cities">
               <option :for={city <- @group_cities} value={city} />
             </datalist>
-            <fieldset :if={@group_focused} class="my-4">
-              <legend class="font-semibold">{gettext("What interests you? (optional)")}</legend>
-              <input type="hidden" name={@form_as <> "[interests][]"} value="" />
-              <label
-                :for={skill <- PauseAiCa.Volunteers.Input.skill_ids()}
-                class="mr-4 inline-flex items-center gap-2 py-2"
-              >
-                <input
-                  type="checkbox"
-                  name={@form_as <> "[interests][]"}
-                  value={skill}
-                  checked={skill in (@params["interests"] || [])}
-                />
-                {PauseAiCaWeb.VolunteerForms.skill_label(skill)}
-              </label>
-            </fieldset>
+            <PauseAiCaWeb.VolunteerForms.activities
+              :if={@group_focused}
+              prefix={@form_as}
+              field="interests"
+              selected={@params["interests"] || []}
+              experience={@params["experience"] || %{}}
+            />
             <input type="hidden" name={@form_as <> "[local_kind]"} value={@params["local_kind"]} />
             <.input
               :if={@params["local_kind"] == "help"}

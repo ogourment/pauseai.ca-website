@@ -98,10 +98,9 @@ defmodule PauseAiCaWeb.LocalInterestLive do
             >{gettext("Check onboarding calls")}</.link>
           </div>
           <p :if={request.context["interests"] not in [nil, []]} class="mt-2">
-            {Enum.map_join(
+            {PauseAiCaWeb.VolunteerForms.skill_summary(
               request.context["interests"],
-              ", ",
-              &PauseAiCaWeb.VolunteerForms.skill_label/1
+              request.context["experience"] || %{}
             )}
           </p>
           <p

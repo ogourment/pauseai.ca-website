@@ -84,7 +84,11 @@ if System.get_env("ATDD") == "true" do
               if kind == "help",
                 do:
                   b
+                  |> PhoenixTest.Playwright.click("#participation-activities-creative summary")
                   |> check(tr(locale, "Video editing"))
+                  |> PhoenixTest.Playwright.click(
+                    "input[data-experience=video_editing][value=done]"
+                  )
                   |> check(tr(locale, "Translation"))
                   |> fill_in(tr(locale, "How would you like to help?"),
                     with: "I can help find a venue."
@@ -99,6 +103,7 @@ if System.get_env("ATDD") == "true" do
                 |> assert_has("input[name='participation[email]']", value: email)
                 |> assert_has("input[value='video_editing']:checked")
                 |> assert_has("input[value='translation']:checked")
+                |> assert_has("input[data-experience=video_editing][value=done]:checked")
               else
                 b
               end
@@ -116,8 +121,10 @@ if System.get_env("ATDD") == "true" do
             request = Repo.get_by!(Participation.Request, email: email)
             assert request.state == "pending" and request.local_kind == "help"
 
-            if kind == "help",
-              do: assert(request.context["interests"] == ["video_editing", "translation"])
+            if kind == "help" do
+              assert request.context["interests"] == ["video_editing", "translation"]
+              assert request.context["experience"] == %{"video_editing" => "done"}
+            end
 
             assert request.account == false and request.newsletter == false
             assert counts() == baseline

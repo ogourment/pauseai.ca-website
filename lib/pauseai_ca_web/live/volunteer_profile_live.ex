@@ -24,7 +24,7 @@ defmodule PauseAiCaWeb.VolunteerProfileLive do
 
   @impl true
   def handle_event("change", %{"profile" => attrs}, socket) do
-    values = Map.merge(socket.assigns.values, attrs)
+    values = PauseAiCa.Volunteers.Input.merge_profile(socket.assigns.values, attrs)
 
     {:noreply,
      assign(socket, values: values, saved?: false, form: to_form(values, as: "profile"))}
@@ -32,7 +32,12 @@ defmodule PauseAiCaWeb.VolunteerProfileLive do
 
   def handle_event("save", %{"profile" => attrs}, socket) do
     {:noreply, saved} =
-      save(socket, Map.merge(socket.assigns.values, attrs), socket.assigns.step, false)
+      save(
+        socket,
+        PauseAiCa.Volunteers.Input.merge_profile(socket.assigns.values, attrs),
+        socket.assigns.step,
+        false
+      )
 
     {:noreply,
      if(saved.assigns.saved?,
@@ -126,7 +131,7 @@ defmodule PauseAiCaWeb.VolunteerProfileLive do
         >
           <%= if @step == "review" do %>
             <dl>
-              <div :for={{key, value} <- @values} :if={value not in ["", []]} class="mb-3">
+              <div :for={{key, value} <- @values} :if={value not in ["", [], %{}]} class="mb-3">
                 <dt class="font-semibold">{VolunteerForms.label(key)}</dt><dd class="whitespace-pre-wrap">
                   {VolunteerForms.profile_value(key, value)}
                 </dd>

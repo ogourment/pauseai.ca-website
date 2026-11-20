@@ -21,7 +21,25 @@ defmodule PauseAiCa.Volunteers.Input do
     "pays" => "country"
   }
 
-  @skill_ids ~w(video_editing event_support outreach facilitation translation technology)
+  @skill_groups [
+    {"public", ~w(flyers posters tabling calls outreach)},
+    {"creative", ~w(photography filming video_editing design writing translation signs)},
+    {"press", ~w(pitch interview press_release social)},
+    {"events", ~w(venue logistics workshop march event_support facilitation)},
+    {"care", ~w(welcome buddy access care_breaks)},
+    {"research", ~w(research_issue brief mp notes)},
+    {"operations", ~w(coordination funding expenses website technology)}
+  ]
+  @skill_ids Enum.flat_map(@skill_groups, &elem(&1, 1)) ++ ["first_task"]
+  def skill_groups, do: @skill_groups
+
+  def experience(values, selected),
+    do:
+      PhoenixCommunity.ContributionProfile.experience(
+        values,
+        selected -- ["first_task"],
+        ~w(learn done guide)
+      )
 
   def skill_ids, do: @skill_ids
   def fields, do: @fields
@@ -163,13 +181,24 @@ defmodule PauseAiCa.Volunteers.Input do
     )
   end
 
+  def merge_profile(values, attrs) do
+    merged = Map.merge(values, attrs)
+    Map.put(merged, "experience", experience(merged["experience"], selections(merged)))
+  end
+
+  defp selections(attrs),
+    do: PhoenixCommunity.ContributionProfile.selections(attrs["selected_skills"], skill_ids())
+
   def profile(attrs) do
     normalize(attrs)
     |> Map.take(@profile_fields)
     |> Map.put(
       "selected_skills",
-      PhoenixCommunity.ContributionProfile.selections(attrs["selected_skills"], skill_ids())
+      selections(attrs)
     )
+    |> then(fn profile ->
+      Map.put(profile, "experience", experience(attrs["experience"], profile["selected_skills"]))
+    end)
     |> Map.put("share_contribution", attrs["share_contribution"] in [true, "true"])
   end
 

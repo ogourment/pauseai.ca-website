@@ -6,8 +6,13 @@ export const FormDraft = {
     this.prefix = this.el.dataset.draftPrefix + '['
     this.saveDraft = () => {
       const values = this.readDraft()
+      if (this.el.querySelector("[data-experience]") || values.experience) values.experience = {}
       this.el.querySelectorAll('input,textarea,select').forEach(field => {
         if (!field.name.startsWith(this.prefix) || ['hidden','password','file'].includes(field.type) || field.readOnly) return
+        if (field.dataset.experience) {
+          if (field.checked && field.value) values.experience[field.dataset.experience] = field.value
+          return
+        }
         const name = field.name.slice(this.prefix.length, -1)
         if (field.name.endsWith('][]') && field.type === 'checkbox') {
           const key = field.name.slice(this.prefix.length, -3)

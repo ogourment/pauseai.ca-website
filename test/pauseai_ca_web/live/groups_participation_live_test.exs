@@ -30,11 +30,16 @@ defmodule PauseAiCaWeb.GroupsParticipationLiveTest do
       assert has_element?(view, "#participation-selected-group", "Ottawa")
 
       view
+      |> form("#participation-form", participation: %{interests: ["video_editing"]})
+      |> render_change()
+
+      view
       |> form("#participation-form",
         participation: %{
           name: "Review volunteer",
           email: "editor@example.org",
           interests: ["video_editing", "translation"],
+          experience: %{video_editing: "done"},
           help_text: "I can caption the march video."
         }
       )
@@ -58,7 +63,7 @@ defmodule PauseAiCaWeb.GroupsParticipationLiveTest do
       assert {:ok, _} = Participation.confirm(token)
       {:ok, review, _} = live(organizer_conn, path)
       row = "#local-request-#{request.id}"
-      assert has_element?(review, row, "Video editing")
+      assert has_element?(review, row, "Video editing (I’ve done this before)")
       assert has_element?(review, row, "caption the march video")
       review |> element(row <> " button", "I’ll follow up") |> render_click()
       assert has_element?(review, row <> " a", "Email the volunteer")

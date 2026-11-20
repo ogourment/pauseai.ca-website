@@ -155,6 +155,7 @@ defmodule PauseAiCa.IncubatorsTest do
 
     attrs = %{
       "selected_skills" => ["video_editing", "", "other", "video_editing"],
+      "experience" => %{"video_editing" => "guide", "photography" => "done"},
       "share_contribution" => "true",
       "availability_hours_per_week" => "0",
       "other_skills" => "Private notes"
@@ -169,6 +170,7 @@ defmodule PauseAiCa.IncubatorsTest do
 
     assert shared.contribution == %{
              "selected_skills" => ["video_editing"],
+             "experience" => %{"video_editing" => "guide"},
              "availability_hours_per_week" => 0
            }
 

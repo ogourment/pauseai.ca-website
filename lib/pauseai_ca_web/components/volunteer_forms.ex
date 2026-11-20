@@ -74,22 +74,12 @@ defmodule PauseAiCaWeb.VolunteerForms do
           max="168"
           label={gettext("Hours available per week")}
         />
-        <fieldset class="space-y-2">
-          <legend class="font-semibold">{label("selected_skills")}</legend>
-          <input type="hidden" name="profile[selected_skills][]" value="" />
-          <label
-            :for={skill <- PauseAiCa.Volunteers.Input.skill_ids()}
-            class="flex items-center gap-2"
-          >
-            <input
-              type="checkbox"
-              name="profile[selected_skills][]"
-              value={skill}
-              checked={skill in List.wrap(@form[:selected_skills].value)}
-            />
-            {skill_label(skill)}
-          </label>
-        </fieldset>
+        <.activities
+          prefix="profile"
+          field="selected_skills"
+          selected={List.wrap(@form[:selected_skills].value)}
+          experience={@form[:experience].value || %{}}
+        />
         <.input
           field={@form[:share_contribution]}
           type="checkbox"
@@ -118,6 +108,56 @@ defmodule PauseAiCaWeb.VolunteerForms do
         />
       <% end %>
     </div>
+    """
+  end
+
+  attr :prefix, :string, required: true
+  attr :field, :string, required: true
+  attr :selected, :list, required: true
+  attr :experience, :map, required: true
+
+  def activities(assigns) do
+    ~H"""
+    <fieldset class="space-y-2 sm:col-span-2">
+      <legend class="font-semibold">{gettext("What would you like to try?")}</legend>
+      <p>{gettext("Experience is optional.")}</p>
+      <input type="hidden" name={@prefix <> "[" <> @field <> "][]"} value="" />
+      <details
+        :for={{group, ids} <- PauseAiCa.Volunteers.Input.skill_groups()}
+        id={@prefix <> "-activities-" <> group}
+        class="border-t py-2"
+        open={Enum.any?(ids, &(&1 in @selected))}
+      >
+        <summary class="cursor-pointer font-semibold">{skill_label(group)}</summary>
+        <div :for={id <- ids} class="py-1">
+          <label><input
+            type="checkbox"
+            name={@prefix <> "[" <> @field <> "][]"}
+            value={id}
+            checked={id in @selected}
+          /> {skill_label(id)}</label>
+          <fieldset :if={id in @selected} class="ml-5 border-l pl-3">
+            <legend>{gettext("Experience")} · {skill_label(id)}</legend>
+            <label :for={level <- ~w(learn done guide) ++ [""]} class="block">
+              <input
+                type="radio"
+                data-experience={id}
+                name={@prefix <> "[experience][" <> id <> "]"}
+                value={level}
+                checked={(@experience[id] || "") == level}
+              />
+              {if level == "", do: gettext("Leave unanswered"), else: skill_label(level)}
+            </label>
+          </fieldset>
+        </div>
+      </details>
+      <label class="block"><input
+        type="checkbox"
+        name={@prefix <> "[" <> @field <> "][]"}
+        value="first_task"
+        checked={"first_task" in @selected}
+      /> {skill_label("first_task")}</label>
+    </fieldset>
     """
   end
 
@@ -170,15 +210,59 @@ defmodule PauseAiCaWeb.VolunteerForms do
   def label("selected_skills"), do: gettext("Skills you can offer")
 
   def label("share_contribution"),
-    do: gettext("Share skills and hours with managers of my groups")
+    do: gettext("Share my activities, experience and hours with my group managers")
 
-  def skill_label("video_editing"), do: gettext("Video editing")
-  def skill_label("event_support"), do: gettext("Event support")
+  def label("experience"), do: gettext("Experience")
+
+  def skill_label("public"), do: gettext("Talk to the public")
+  def skill_label("flyers"), do: gettext("Distribute flyers")
+  def skill_label("posters"), do: gettext("Put up posters")
+  def skill_label("tabling"), do: gettext("Staff an information table")
+  def skill_label("calls"), do: gettext("Make outreach calls")
   def skill_label("outreach"), do: gettext("Outreach")
-  def skill_label("facilitation"), do: gettext("Facilitation")
+  def skill_label("creative"), do: gettext("Make things and tell stories")
+  def skill_label("photography"), do: gettext("Photograph an event")
+  def skill_label("filming"), do: gettext("Film an event")
+  def skill_label("video_editing"), do: gettext("Video editing")
+  def skill_label("design"), do: gettext("Design flyers and posters")
+  def skill_label("writing"), do: gettext("Write materials")
   def skill_label("translation"), do: gettext("Translation")
+  def skill_label("signs"), do: gettext("Make signs")
+  def skill_label("press"), do: gettext("Work with the press and online")
+  def skill_label("pitch"), do: gettext("Pitch a local story")
+  def skill_label("interview"), do: gettext("Give a media interview")
+  def skill_label("press_release"), do: gettext("Write a press release")
+  def skill_label("social"), do: gettext("Run social accounts")
+  def skill_label("events"), do: gettext("Plan events and workshops")
+  def skill_label("venue"), do: gettext("Find an accessible venue")
+  def skill_label("logistics"), do: gettext("Arrange equipment or food")
+  def skill_label("workshop"), do: gettext("Facilitate a workshop")
+  def skill_label("march"), do: gettext("Coordinate a peaceful march")
+  def skill_label("event_support"), do: gettext("Event support")
+  def skill_label("facilitation"), do: gettext("Facilitation")
+  def skill_label("care"), do: gettext("Welcome and care for people")
+  def skill_label("welcome"), do: gettext("Welcome new members")
+  def skill_label("buddy"), do: gettext("Buddy a first-time volunteer")
+  def skill_label("access"), do: gettext("Arrange interpretation or remote access")
+  def skill_label("care_breaks"), do: gettext("Plan breaks and check-ins")
+  def skill_label("research"), do: gettext("Research and meet decision-makers")
+  def skill_label("research_issue"), do: gettext("Research an issue")
+  def skill_label("brief"), do: gettext("Prepare a briefing")
+  def skill_label("mp"), do: gettext("Arrange an MP meeting")
+  def skill_label("notes"), do: gettext("Take notes and follow up")
+  def skill_label("operations"), do: gettext("Keep the group running")
+  def skill_label("coordination"), do: gettext("Coordinate volunteers")
+  def skill_label("funding"), do: gettext("Apply for funding")
+  def skill_label("expenses"), do: gettext("Track expenses")
+  def skill_label("website"), do: gettext("Maintain the website or other tools")
   def skill_label("technology"), do: gettext("Technology")
+  def skill_label("first_task"), do: gettext("Help me find a first task")
+  def skill_label("learn"), do: gettext("I’d like to learn")
+  def skill_label("done"), do: gettext("I’ve done this before")
+  def skill_label("guide"), do: gettext("I can guide someone")
   def skill_label(_), do: nil
+
+  def profile_value("experience", levels), do: skill_summary(Map.keys(levels), levels)
 
   def profile_value("selected_skills", values), do: skill_summary(values)
 
@@ -188,8 +272,17 @@ defmodule PauseAiCaWeb.VolunteerForms do
   def profile_value("share_contribution", _), do: gettext("Private")
   def profile_value(_, value), do: value
 
-  def skill_summary(values) do
-    values |> List.wrap() |> Enum.map(&skill_label/1) |> Enum.reject(&is_nil/1) |> Enum.join(", ")
+  def skill_summary(values, levels \\ %{}) do
+    values
+    |> List.wrap()
+    |> Enum.map(fn id ->
+      case levels[id] do
+        level when level in ~w(learn done guide) -> "#{skill_label(id)} (#{skill_label(level)})"
+        _ -> skill_label(id)
+      end
+    end)
+    |> Enum.reject(&is_nil/1)
+    |> Enum.join(", ")
   end
 
   def error(:required), do: gettext("This field is required.")

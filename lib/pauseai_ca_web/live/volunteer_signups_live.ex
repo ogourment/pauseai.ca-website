@@ -246,7 +246,7 @@ defmodule PauseAiCaWeb.VolunteerSignupsLive do
   def handle_event("profile-change", %{"profile" => values}, socket) do
     rows =
       Enum.map(socket.assigns.rows, fn row ->
-        if row["key"] == socket.assigns.row_key, do: Map.merge(row, values), else: row
+        if row["key"] == socket.assigns.row_key, do: Input.merge_profile(row, values), else: row
       end)
 
     {:noreply,

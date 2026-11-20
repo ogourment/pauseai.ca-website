@@ -33,6 +33,7 @@ defmodule PauseAiCaWeb.ProfileLiveTest do
       "profile" => %{
         "availability_hours_per_week" => "3",
         "selected_skills" => ["", "video_editing"],
+        "experience" => %{"video_editing" => "guide", "photography" => "done"},
         "share_contribution" => "true"
       }
     })
@@ -49,8 +50,10 @@ defmodule PauseAiCaWeb.ProfileLiveTest do
     assert {:ok, reopened, _} = live(conn, "/en/profile/volunteer")
     assert has_element?(reopened, "input[name='profile[availability_hours_per_week]'][value='3']")
     assert has_element?(reopened, "input[value='video_editing'][checked]")
+    assert has_element?(reopened, "input[data-experience=video_editing][value=guide][checked]")
+    refute has_element?(reopened, "input[data-experience=photography]")
     render_click(reopened, "next")
-    assert has_element?(reopened, "dd", "Video editing")
+    assert has_element?(reopened, "dd", "Video editing (I can guide someone)")
     assert has_element?(reopened, "dd", "Managers of my groups")
   end
 

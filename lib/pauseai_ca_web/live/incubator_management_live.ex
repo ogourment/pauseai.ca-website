@@ -599,7 +599,10 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
                 <div :if={member.contribution["selected_skills"] not in [nil, []]}>
                   <dt class="font-semibold">{gettext("Skills you can offer")}</dt>
                   <dd>
-                    {PauseAiCaWeb.VolunteerForms.skill_summary(member.contribution["selected_skills"])}
+                    {PauseAiCaWeb.VolunteerForms.skill_summary(
+                      member.contribution["selected_skills"],
+                      member.contribution["experience"] || %{}
+                    )}
                   </dd>
                 </div>
                 <div :if={is_integer(member.contribution["availability_hours_per_week"])}>

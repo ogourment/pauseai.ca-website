@@ -78,7 +78,8 @@ defmodule PauseAiCa.Participation do
 
             if Map.take(recent, fields) == Map.take(values, fields) and
                  local_group_key(recent.context) == group_key and
-                 Map.get(recent.context, "interests", []) == Map.get(context, "interests", []),
+                 Map.get(recent.context, "interests", []) == Map.get(context, "interests", []) and
+                 Map.get(recent.context, "experience", %{}) == Map.get(context, "experience", %{}),
                do: Repo.rollback(:cooldown),
                else: Repo.rollback(:changed_choices_cooldown)
           end
@@ -413,7 +414,7 @@ defmodule PauseAiCa.Participation do
 
           changes = [
             local_kind: nil,
-            context: Map.drop(request.context, ["interests", "incubator_group_id"]),
+            context: Map.drop(request.context, ["interests", "experience", "incubator_group_id"]),
             help_text: nil,
             city: nil,
             followup_owner_id: nil,
