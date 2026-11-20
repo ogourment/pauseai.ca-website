@@ -49,8 +49,12 @@ defmodule PauseAiCa.Accounts.Onboarding do
       flow = Phoenix.Token.encrypt(Endpoint, @salt, Map.put(context, "user_id", user.id))
 
       case Accounts.deliver_login_instructions(user, &url_fun.(&1, flow), opts) do
-        {:ok, _email} -> {:ok, user, created?, flow}
-        {:error, _reason} -> {:error, :delivery, user, created?, flow}
+        {:ok, _email} ->
+          {:ok, user, created?, flow}
+
+        {:error, reason} ->
+          if id = context["participation_id"], do: PauseAiCa.Incidents.confirmation(reason, id)
+          {:error, :delivery, user, created?, flow}
       end
     end
   end

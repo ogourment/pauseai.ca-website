@@ -49,6 +49,8 @@ defmodule PauseAiCaWeb.Endpoint do
   # Authenticate and durably store outreach before parsing/logging provider bodies.
   plug PauseAiCaWeb.OutreachInboundPlug
 
+  plug PauseAiCaWeb.Plugs.ClientErrorBody
+
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
     pass: ["*/*"],

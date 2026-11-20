@@ -441,3 +441,18 @@ if path = System.get_env("PAUSEAI_ASSISTANT_CONFIG_FILE") do
     {:error, _} -> config :pauseai_ca, :agent_assistant, []
   end
 end
+
+# An absent route leaves local incident recording enabled. A configured but
+# unreadable or mismatched destination must be visible during release startup.
+if mail_environment in [:staging, :production] && System.get_env("PAUSEAI_OPS_TELEGRAM_FILE") do
+  with {:ok, json} <- File.read(System.fetch_env!("PAUSEAI_OPS_TELEGRAM_FILE")),
+       {:ok, %{"environment" => env, "bot_token" => token, "chat_id" => chat}} <-
+         Jason.decode(json),
+       true <-
+         env == to_string(mail_environment) and is_binary(token) and is_binary(chat) and
+           token != "" and chat != "" do
+    config :pauseai_ca, :ops_telegram, {token, chat}
+  else
+    _ -> raise "Invalid PauseAI operational Telegram route for this environment"
+  end
+end

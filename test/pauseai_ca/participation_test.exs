@@ -404,4 +404,24 @@ defmodule PauseAiCa.ParticipationTest do
     assert {:error, :unauthorized} = Participation.local_requests(scope)
     assert {:error, :unauthorized} = Participation.claim(scope, hd(last).id)
   end
+
+  test "staging volunteer confirmation blocked before dispatch records the failed operation" do
+    previous = Application.fetch_env!(:pauseai_ca, :mail_environment)
+    Application.put_env(:pauseai_ca, :mail_environment, :staging)
+    on_exit(fn -> Application.put_env(:pauseai_ca, :mail_environment, previous) end)
+
+    assert {:error, :confirmation_unavailable} =
+             Participation.request(attrs(%{"local_kind" => "help"}), context(), urls())
+
+    request = Repo.one!(Request)
+    assert request.delivery_state == "failed"
+    PauseAiCa.Incidents.flush()
+
+    assert %{rows: [[ref]]} =
+             Repo.query!(
+               "select request_ref::text from operational_incidents where environment='staging' and category='staging_actor_required'"
+             )
+
+    assert ref == request.id
+  end
 end

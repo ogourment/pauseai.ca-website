@@ -154,8 +154,12 @@ defmodule PauseAiCa.Participation do
       )
 
     case PauseAiCa.Mailer.deliver(email) do
-      {:ok, _} -> delivered(request, nil, :accepted)
-      _ -> delivered(request, nil, :failed)
+      {:ok, _} ->
+        delivered(request, nil, :accepted)
+
+      {:error, reason} ->
+        PauseAiCa.Incidents.confirmation(reason, request.id)
+        delivered(request, nil, :failed)
     end
   end
 

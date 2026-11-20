@@ -24,6 +24,17 @@ defmodule PauseAiCaWeb.Router do
     get "/sitemap.xml", PauseAiCaWeb.SitemapController, :index
   end
 
+  pipeline :browser_reports do
+    plug :accepts, ["json"]
+    plug :fetch_session
+    plug :protect_from_forgery
+  end
+
+  scope "/", PauseAiCaWeb do
+    pipe_through :browser_reports
+    post "/client-errors", ClientErrorController, :create
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end

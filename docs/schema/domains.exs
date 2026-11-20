@@ -24,7 +24,8 @@
   %{
     id: "incubator_admission",
     title: "Local groups and admission",
-    tables: ~w(incubator_profiles incubator_memberships incubator_membership_events group_responsibilities)
+    tables:
+      ~w(incubator_profiles incubator_memberships incubator_membership_events group_responsibilities)
   },
   %{id: "identity", title: "Identity", tables: ["users", "users_tokens"]},
   %{
@@ -116,5 +117,9 @@
       "acceptance_harness_steps"
     ]
   },
-  %{id: "platform", title: "Database platform", tables: ["schema_migrations"]}
+  %{
+    id: "platform",
+    title: "Database platform",
+    tables: ~w(schema_migrations operational_incidents operational_alert_attempts)
+  }
 ]

@@ -1,3 +1,4 @@
+import {watchConnection} from "./client_errors"
 import {installJourneyBreadcrumbs} from "phoenix_app_shell/assets/js/journey.mjs"
 // If you want to use Phoenix channels, run `mix help phx.gen.channel`
 // to get started and then uncomment the line below.
@@ -49,6 +50,7 @@ window.addEventListener("phx:page-loading-start", _info => topbar.show(300))
 window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
 
 // connect if there are any LiveViews on the page
+watchConnection(liveSocket.socket)
 liveSocket.connect()
 installJourneyBreadcrumbs({startSelector: "[data-journey-start] a[href]"})
 
