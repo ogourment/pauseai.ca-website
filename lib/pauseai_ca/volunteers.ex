@@ -53,16 +53,28 @@ defmodule PauseAiCa.Volunteers do
         from [m, g] in memberships,
           join: r in PauseAiCa.Incubators.Responsibility,
           on: r.membership_id == m.id,
-          where: is_nil(r.ends_on) and r.starts_on <= ^Date.utc_today(),
+          where:
+            (is_nil(r.ends_on) or r.ends_on >= ^Date.utc_today()) and
+              r.starts_on <= ^Date.utc_today(),
           order_by: [g.name, r.title],
           select: %{group: g.name, title: r.title}
       )
 
     tasks =
       Repo.all(
-        from [m, g] in memberships,
-          join: t in PauseAiCa.Tasks.Task,
-          on: t.group_id == m.group_id and t.assignee_id == m.user_id,
+        from t in PauseAiCa.Tasks.Task,
+          join: g in Group,
+          on: g.id == t.group_id,
+          join: u in User,
+          on: u.id == t.assignee_id,
+          where: u.id == ^user_id and not is_nil(u.confirmed_at),
+          where:
+            t.group_id in subquery(from [m, _g] in memberships, select: m.group_id) or
+              t.group_id in subquery(
+                from manager in Manager,
+                  where: manager.user_id == ^user_id,
+                  select: manager.group_id
+              ),
           order_by: [asc_nulls_last: t.due_date, asc: t.title],
           select: %{
             group: g.name,

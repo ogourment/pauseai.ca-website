@@ -114,7 +114,7 @@
   --color-brand: #f68b1e;
   --color-brand-strong: #ff9416;
   --color-brand-wash: #ffe7cc;
-  --color-brand-ink: #b35f00;
+  --color-brand-ink: #995000;
   --font-heading: "Lato", Arial, sans-serif;
   --font-body: "Inter", Arial, sans-serif;
 }
@@ -588,6 +588,7 @@ body:has(#assistant-review-confirmation) #site-assistant-launcher {
 }
 
 #participation-form .label {
+  color: #57534e;
   white-space: normal;
 }
 
