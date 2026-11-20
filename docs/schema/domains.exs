@@ -24,7 +24,7 @@
   %{
     id: "incubator_admission",
     title: "Local groups and admission",
-    tables: ~w(incubator_profiles incubator_memberships incubator_membership_events)
+    tables: ~w(incubator_profiles incubator_memberships incubator_membership_events group_responsibilities)
   },
   %{id: "identity", title: "Identity", tables: ["users", "users_tokens"]},
   %{

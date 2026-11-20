@@ -776,6 +776,23 @@ digraph Schema {
   ];
 
 
+  "public.group_responsibilities" [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.group_responsibilities</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">membership_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">title</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">character varying NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">starts_on</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">date NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">ends_on</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">date</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">revision</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">integer NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
   "public.incubator_membership_events" [
     label=<
       <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
@@ -1738,6 +1755,7 @@ digraph Schema {
   "public.donation_page_revisions" -> "public.users" [label="editor_id -> id"];
   "public.donation_page_revisions" -> "public.donation_pages" [label="page_id -> id"];
   "public.donation_pages" -> "public.users" [label="updated_by -> id"];
+  "public.group_responsibilities" -> "public.incubator_memberships" [label="membership_id -> id"];
   "public.incubator_membership_events" -> "public.users" [label="actor_id -> id"];
   "public.incubator_membership_events" -> "public.volunteer_groups" [label="group_id -> id"];
   "public.incubator_membership_events" -> "public.incubator_memberships" [label="membership_id -> id"];

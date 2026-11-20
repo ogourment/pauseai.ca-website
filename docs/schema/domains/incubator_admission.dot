@@ -31,6 +31,13 @@ digraph incubator_admission {
     </TABLE>
   >];
 
+  "group_responsibilities" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.group_responsibilities</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">membership_id</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">title</TD><TD ALIGN="LEFT">character varying NOT NULL</TD></TR><TR><TD ALIGN="LEFT">starts_on</TD><TD ALIGN="LEFT">date NOT NULL</TD></TR><TR><TD ALIGN="LEFT">ends_on</TD><TD ALIGN="LEFT">date NULL</TD></TR><TR><TD ALIGN="LEFT">revision</TD><TD ALIGN="LEFT">integer NOT NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
   }
 
   subgraph cluster_external {
@@ -54,6 +61,7 @@ digraph incubator_admission {
 
   }
 
+  "group_responsibilities" -> "incubator_memberships" [label="membership_id -> id", color="#64748b"];
   "incubator_membership_events" -> "users" [label="actor_id -> id", color="#d97706", style="dashed", penwidth=1.5];
   "incubator_membership_events" -> "volunteer_groups" [label="group_id -> id", color="#d97706", style="dashed", penwidth=1.5];
   "incubator_membership_events" -> "incubator_memberships" [label="membership_id -> id", color="#64748b"];
