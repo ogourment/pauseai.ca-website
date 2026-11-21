@@ -373,30 +373,41 @@ outreach_enabled = System.get_env("PAUSEAI_OUTREACH_ENABLED") == "true"
 outreach_verified = System.get_env("PAUSEAI_OUTREACH_SENDERS_VERIFIED") == "true"
 outreach_owner = System.get_env("PAUSEAI_OUTREACH_OWNER_ID")
 
-config :pauseai_ca, :outreach_mailboxes, [
-  %{
-    id: "outreach_en",
-    name: "PauseAI Canada",
-    email: "hello@pauseai.ca",
-    locale: "en",
-    owner_id: outreach_owner,
-    enabled?: outreach_enabled,
-    verified?: outreach_verified,
-    receiving_addresses: [System.get_env("PAUSEAI_OUTREACH_RECEIVE_EN", "hello@reply.pauseai.ca")]
-  },
-  %{
-    id: "outreach_fr",
-    name: "PauseIA Canada",
-    email: "bonjour@pauseia.ca",
-    locale: "fr",
-    owner_id: outreach_owner,
-    enabled?: outreach_enabled,
-    verified?: outreach_verified,
-    receiving_addresses: [
-      System.get_env("PAUSEAI_OUTREACH_RECEIVE_FR", "bonjour@reponse.pauseia.ca")
-    ]
-  }
-]
+outreach_mailboxes =
+  case System.get_env("PAUSEAI_OUTREACH_MAILBOXES") do
+    nil ->
+      [
+        %{
+          id: "outreach_en",
+          name: "PauseAI Canada",
+          email: "hello@pauseai.ca",
+          locale: "en",
+          owner_id: outreach_owner,
+          enabled?: outreach_enabled,
+          verified?: outreach_verified,
+          receiving_addresses: [
+            System.get_env("PAUSEAI_OUTREACH_RECEIVE_EN", "hello@reply.pauseai.ca")
+          ]
+        },
+        %{
+          id: "outreach_fr",
+          name: "PauseIA Canada",
+          email: "bonjour@pauseia.ca",
+          locale: "fr",
+          owner_id: outreach_owner,
+          enabled?: outreach_enabled,
+          verified?: outreach_verified,
+          receiving_addresses: [
+            System.get_env("PAUSEAI_OUTREACH_RECEIVE_FR", "bonjour@reponse.pauseia.ca")
+          ]
+        }
+      ]
+
+    catalog ->
+      catalog |> Jason.decode!() |> PauseAiCa.Outreach.Mailboxes.catalog!(outreach_owner)
+  end
+
+config :pauseai_ca, :outreach_mailboxes, outreach_mailboxes
 
 outreach_token =
   case System.get_env("PAUSEAI_OUTREACH_WEBHOOK_TOKEN_FILE") do

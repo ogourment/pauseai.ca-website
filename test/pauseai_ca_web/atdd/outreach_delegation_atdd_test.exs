@@ -23,14 +23,31 @@ if System.get_env("ATDD") == "true" do
                      source_file: __ENV__.file
                    }
 
+    @canada_scenario %{
+      id: "MAIL-CANADA-ATDD-01",
+      title: "Shared Canada mailbox",
+      tags: ["mail", "delegation", "authorization"],
+      roles: ["Superadmin", "Group manager"],
+      language: "English",
+      device: "Desktop",
+      surface: "LiveView",
+      host_os: "Linux",
+      theme: "light",
+      source_file: __ENV__.file
+    }
+
     setup_all do
-      AtddEvidence.reset!("OUTREACH-DELEGATE-01 · Manage mailbox access", @scenarios, %{
-        browser: "Chromium",
-        viewport: "1280×900 desktop / 390×844 phone",
-        surface: "LiveView",
-        host_os: "Linux",
-        theme: "light"
-      })
+      AtddEvidence.reset!(
+        "OUTREACH-DELEGATE-01 · Manage mailbox access",
+        @scenarios ++ [@canada_scenario],
+        %{
+          browser: "Chromium",
+          viewport: "1280×900 desktop / 390×844 phone",
+          surface: "LiveView",
+          host_os: "Linux",
+          theme: "light"
+        }
+      )
 
       on_exit(fn -> AtddEvidence.finalize!() end)
       :ok
@@ -64,6 +81,7 @@ if System.get_env("ATDD") == "true" do
               name: "PauseAI Canada",
               email: email,
               locale: locale,
+              receiving_addresses: [email],
               owner_id: admin.id,
               enabled?: true,
               verified?: true
@@ -200,6 +218,147 @@ if System.get_env("ATDD") == "true" do
         _ = b
         AtddEvidence.mark_scenario_success!(Enum.find(@scenarios, &(&1.id == id)))
       end
+    end
+
+    @tag screenshot: true
+    @tag browser_context_opts: [viewport: %{width: 1280, height: 900}]
+    test "MAIL-CANADA-ATDD-01 delegates only Canada and preserves each unsigned reply author",
+         c do
+      ref = "outreach_canada"
+      address = "canada@pauseai.ca"
+      id = @canada_scenario.id
+      boxes = Application.fetch_env!(:pauseai_ca, :outreach_mailboxes)
+
+      canada = %{
+        id: ref,
+        name: "Canada",
+        email: address,
+        locale: "en",
+        owner_id: c.admin.id,
+        receiving_addresses: ["canada@inbound.example.org"],
+        enabled?: true,
+        verified?: true
+      }
+
+      Application.put_env(:pauseai_ca, :outreach_mailboxes, boxes ++ [canada])
+      previous = Application.fetch_env(:swoosh, :shared_test_process)
+      Application.put_env(:swoosh, :shared_test_process, self())
+
+      on_exit(fn ->
+        case previous do
+          {:ok, pid} -> Application.put_env(:swoosh, :shared_test_process, pid)
+          :error -> Application.delete_env(:swoosh, :shared_test_process)
+        end
+      end)
+
+      b =
+        c.conn
+        |> login(c.admin)
+        |> visit("/manage/mail/access?locale=en")
+        |> select("Manager account", option: "Synthetic Manager · #{c.manager.email}")
+        |> click_button("#mailbox-cell-#{ref}-#{c.manager.id} button", "Grant access")
+        |> assert_has("#mailbox-cell-#{ref}-#{c.manager.id} button", text: "Revoke")
+
+      recipient = "partner@example.org"
+      subject = "National organizing question"
+
+      payload = %{
+        "items" => [
+          %{
+            "Uuid" => [Ecto.UUID.generate()],
+            "MessageId" => "<#{Ecto.UUID.generate()}@example.org>",
+            "Recipients" => canada.receiving_addresses,
+            "From" => %{"Address" => recipient},
+            "To" => [%{"Address" => address}],
+            "Subject" => subject,
+            "RawTextBody" => "When can we meet?",
+            "SentAtDate" => "Mon, 02 Nov 2026 00:00:00 +0000",
+            "Attachments" => []
+          }
+        ]
+      }
+
+      assert {:ok, %{messages: [incoming], quarantined: []}} = Outreach.ingest(payload)
+      assert incoming.mailbox_ref == ref
+      path = "/manage/mail/conversations/#{incoming.conversation_id}?locale=en"
+
+      b =
+        b
+        |> switch_browser_identity(&login(&1, c.manager))
+        |> visit("/manage/mail/inbox?locale=en")
+        |> click("#outreach-compose > summary")
+        |> only_mailbox("select[name='outreach[mailbox_ref]']", ref)
+        |> click_link(nil, subject, exact: false)
+        |> assert_has("#outreach-messages", text: "When can we meet?")
+        |> capture(
+          id,
+          "Canada-only manager opens the incoming question",
+          "Only Canada is available to this manager"
+        )
+
+      b =
+        Enum.reduce(
+          [{c.manager, "Tuesday works."}, {c.admin, "Friday also works."}],
+          b,
+          fn {actor, body}, browser ->
+            browser =
+              if actor.id == c.admin.id,
+                do: switch_browser_identity(browser, &login(&1, actor)),
+                else: browser
+
+            browser =
+              browser
+              |> visit(path)
+              |> click_button("Reply")
+              |> fill_in("Message · Markdown", with: body)
+              |> click_button("Save")
+              |> assert_has("#newsletter-save-status", text: "Saved", exact: true)
+              |> check("I reviewed these contacts’ eligibility for this invitation or message.")
+              |> click_button("Review & send")
+              |> assert_has("#newsletter-batch-review", text: recipient)
+              |> click_button("Send now")
+              |> assert_has("#newsletter-delivery-progress", text: "Completed", timeout: 30_000)
+
+            assert_receive {:email, %{from: {_, ^address}, to: [{_, ^recipient}]} = sent}, 8_000
+            assert sent.text_body =~ body
+
+            archived =
+              Repo.get_by!(PhoenixCRM.Message,
+                conversation_id: incoming.conversation_id,
+                direction: :outbound,
+                actor_id: actor.id
+              )
+
+            assert archived.body_text == sent.text_body
+            browser
+          end
+        )
+
+      b =
+        b
+        |> visit("/manage/mail/access?locale=en")
+        |> select("Manager account", option: "Synthetic Manager · #{c.manager.email}")
+        |> click_button("#mailbox-cell-#{ref}-#{c.manager.id} button", "Revoke")
+        |> assert_has("#mailbox-cell-#{ref}-#{c.manager.id} button", text: "Grant access")
+        |> switch_browser_identity(&login(&1, c.manager))
+        |> visit(path)
+        |> assert_has("#outreach-no-access")
+        |> refute_has("#outreach-messages")
+
+      b
+      |> switch_browser_identity(&login(&1, c.admin))
+      |> visit(path)
+      |> assert_has("#outreach-messages", text: "Synthetic Manager")
+      |> assert_has("#outreach-messages", text: "Synthetic Admin")
+      |> assert_has("#outreach-messages", text: "Tuesday works.")
+      |> assert_has("#outreach-messages", text: "Friday also works.")
+      |> capture(
+        id,
+        "Admin reopens the conversation after revocation",
+        "Both unsigned replies retain their authors"
+      )
+
+      AtddEvidence.mark_scenario_success!(@canada_scenario)
     end
 
     defp conversation(ref, subject, actor_id) do

@@ -54,7 +54,7 @@ defmodule PauseAiCa.Outreach.Mailboxes do
       }
     end)
     |> Enum.filter(fn box ->
-      box.id in ["outreach_en", "outreach_fr"] and box.locale in ["en", "fr"] and
+      valid_ref?(box.id) and box.locale in ["en", "fr"] and
         valid_email?(box.email) and is_binary(box.name) and
         not String.contains?(box.name, ["\r", "\n"])
     end)
@@ -92,6 +92,55 @@ defmodule PauseAiCa.Outreach.Mailboxes do
         end
     end
   end
+
+  def valid_ref?(ref), do: is_binary(ref) and Regex.match?(~r/\A[a-z][a-z0-9_]{0,63}\z/, ref)
+
+  def catalog!(entries, owner) when is_list(entries) do
+    boxes =
+      Enum.map(entries, fn
+        %{"id" => id, "email" => email, "name" => name, "locale" => locale} = entry ->
+          aliases = Map.get(entry, "receiving_addresses", [email])
+          enabled = Map.get(entry, "enabled", false)
+          verified = Map.get(entry, "verified", false)
+
+          unless valid_ref?(id) and valid_email?(email) and is_binary(name) and
+                   String.trim(name) != "" and not String.contains?(name, ["\r", "\n"]) and
+                   locale in ["en", "fr"] and is_list(aliases) and aliases != [] and
+                   Enum.all?(aliases, &valid_email?/1) and
+                   is_boolean(enabled) and is_boolean(verified) do
+            raise ArgumentError, "Invalid outreach mailbox configuration"
+          end
+
+          %{
+            id: id,
+            name: name,
+            email: email,
+            locale: locale,
+            receiving_addresses: aliases,
+            enabled?: enabled,
+            verified?: verified,
+            owner_id: owner
+          }
+
+        _ ->
+          raise ArgumentError, "Missing outreach mailbox configuration fields"
+      end)
+
+    ids = Enum.map(boxes, & &1.id)
+
+    addresses =
+      Enum.flat_map(boxes, fn box ->
+        [box.email | box.receiving_addresses] |> Enum.map(&String.downcase/1) |> Enum.uniq()
+      end)
+
+    unless Enum.uniq(ids) == ids and Enum.uniq(addresses) == addresses do
+      raise ArgumentError, "Overlapping outreach mailbox IDs or addresses"
+    end
+
+    boxes
+  end
+
+  def catalog!(_, _), do: raise(ArgumentError, "Expected an array of outreach mailboxes")
 
   def valid_email?(email),
     do:
