@@ -85,8 +85,30 @@ if System.get_env("ATDD") == "true" do
       |> assert_has("h2", text: "Toronto meetups")
       |> assert_has("strong", text: "local volunteers")
       |> assert_has("article img[src$='toronto-crossing.jpg']")
+      |> assert_has("figure figcaption", text: "PauseAI Toronto")
+      |> PhoenixTest.Playwright.evaluate(
+        "document.querySelector('article figure').getBoundingClientRect().left >= document.querySelector('article h1').getBoundingClientRect().right",
+        &assert(&1)
+      )
       |> refute_has("p", text: "Private changes")
       |> PhoenixTest.Playwright.screenshot("chapter-published.png")
+
+      assert %{id: _} =
+               PlaywrightEx.send(
+                 %{
+                   guid: c.conn.page_id,
+                   method: :set_viewport_size,
+                   params: %{viewport_size: %{width: 390, height: 844}}
+                 },
+                 timeout: 5000
+               )
+
+      c.conn
+      |> PhoenixTest.Playwright.evaluate(
+        "innerWidth === 390 && document.documentElement.scrollWidth <= innerWidth && document.querySelector('article figure').getBoundingClientRect().top >= document.querySelector('article a').getBoundingClientRect().bottom",
+        &assert(&1)
+      )
+      |> PhoenixTest.Playwright.screenshot("chapter-photo-phone.png")
     end
 
     @tag browser_context_opts: [viewport: %{width: 390, height: 844}]

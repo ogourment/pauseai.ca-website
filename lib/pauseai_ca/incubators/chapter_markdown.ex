@@ -17,11 +17,43 @@ defmodule PauseAiCa.Incubators.ChapterMarkdown do
   end
 
   def render(source) do
-    source
-    |> MDEx.parse_document!()
-    |> MDEx.Document.update_nodes(MDEx.Image, fn image ->
-      if image.url in [@toronto, @montreal], do: image, else: %MDEx.Text{literal: ""}
-    end)
+    doc =
+      source
+      |> MDEx.parse_document!()
+      |> MDEx.Document.update_nodes(MDEx.Image, fn image ->
+        if image.url in [@toronto, @montreal], do: image, else: %MDEx.Text{literal: ""}
+      end)
+
+    {intro, rest} =
+      Enum.split_while(doc.nodes, fn
+        %MDEx.Paragraph{nodes: [%MDEx.Image{}]} -> false
+        _ -> true
+      end)
+
+    {photo, caption, body} =
+      case rest do
+        [image, %MDEx.Paragraph{nodes: [%MDEx.Emph{}]} = caption | body] ->
+          {[image], [caption], body}
+
+        [image | body] ->
+          {[image], [], body}
+
+        [] ->
+          {[], [], []}
+      end
+
+    %{
+      intro: html(doc, intro),
+      photo: html(doc, photo),
+      caption: html(doc, caption),
+      body: html(doc, body)
+    }
+  end
+
+  defp html(_doc, []), do: ""
+
+  defp html(doc, nodes) do
+    %{doc | nodes: nodes}
     |> MDEx.to_html!(render: [escape: true], sanitize: [url_schemes: ["https", "http", "mailto"]])
   end
 end

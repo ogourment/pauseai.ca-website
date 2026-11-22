@@ -99,7 +99,10 @@ defmodule PauseAiCaWeb.ChapterLive do
       current_scope={@current_scope}
       translated_path={@path <> "?locale=" <> if(@locale == "fr", do: "en", else: "fr")}
     >
-      <section class="mx-auto max-w-4xl space-y-5 px-4 py-8">
+      <section class={[
+        "mx-auto space-y-5 px-4 py-8",
+        if(@live_action == :show, do: "max-w-6xl", else: "max-w-4xl")
+      ]}>
         <.link href={IncubatorsLive.directory(@locale)} class="underline">{gettext("Local groups")}</.link>
         <%= if @live_action == :show do %>
           <div data-published-chapter>
@@ -195,27 +198,53 @@ defmodule PauseAiCaWeb.ChapterLive do
     assigns =
       assign(assigns,
         content_lang: lang,
-        welcome_html: ChapterMarkdown.render(assigns.content[lang] || "")
+        welcome: ChapterMarkdown.render(assigns.content[lang] || "")
       )
 
     ~H"""
-    <article class="space-y-4">
-      <h1 class="text-4xl font-bold">
-        {if @locale == "fr", do: @group.name_fr, else: @group.name_en}
-      </h1>
-      <p>{gettext("A local chapter of PauseAI Canada.")}</p>
-      <div
-        class="space-y-3 leading-relaxed [&_h2]:text-2xl [&_h3]:text-xl [&_a]:underline [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-6 [&_ol]:pl-6 [&_img]:rounded-xl"
-        lang={@content_lang}
-      >
-        {raw(@welcome_html)}
+    <article class="space-y-6">
+      <div class={["grid items-start gap-6", @welcome.photo != "" && "md:grid-cols-2 md:gap-10"]}>
+        <div class="min-w-0 space-y-4">
+          <h1 class="text-4xl font-bold">
+            {if @locale == "fr", do: @group.name_fr, else: @group.name_en}
+          </h1>
+          <p>{gettext("A local chapter of PauseAI Canada.")}</p>
+          <.welcome_text html={@welcome.intro} lang={@content_lang} />
+          <div class="flex flex-wrap items-center gap-4">
+            <.link
+              href={IncubatorsLive.directory(@locale) <> "#group-#{@group.group_id}"}
+              class="btn btn-primary"
+            >{gettext("Get involved")}</.link>
+            <.link :if={@group.events_url} href={@group.events_url} class="underline">{gettext(
+              "Events"
+            )}</.link>
+          </div>
+        </div>
+        <figure
+          :if={@welcome.photo != ""}
+          lang={@content_lang}
+          class="min-w-0 [&_img]:w-full [&_img]:h-auto [&_img]:rounded-xl"
+        >
+          {raw(@welcome.photo)}
+          <figcaption :if={@welcome.caption != ""} class="mt-2 text-sm">
+            {raw(@welcome.caption)}
+          </figcaption>
+        </figure>
       </div>
-      <.link
-        href={IncubatorsLive.directory(@locale) <> "#group-#{@group.group_id}"}
-        class="btn btn-primary"
-      >{gettext("Get involved")}</.link>
-      <.link :if={@group.events_url} href={@group.events_url} class="underline">{gettext("Events")}</.link>
+      <.welcome_text html={@welcome.body} lang={@content_lang} />
     </article>
+    """
+  end
+
+  defp welcome_text(assigns) do
+    ~H"""
+    <div
+      :if={@html != ""}
+      lang={@lang}
+      class="max-w-prose space-y-3 leading-relaxed [&_h2]:text-2xl [&_h3]:text-xl [&_a]:underline [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-6 [&_ol]:pl-6 [&_img]:rounded-xl"
+    >
+      {raw(@html)}
+    </div>
     """
   end
 end
