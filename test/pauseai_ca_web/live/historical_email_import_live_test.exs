@@ -100,6 +100,29 @@ defmodule PauseAiCaWeb.HistoricalEmailImportLiveTest do
     assert denied.status in [302, 404]
   end
 
+  test "a partial upload cannot be previewed and completes without losing the file", c do
+    {:ok, view, _} = live(log_in_user(c.conn, c.admin), "/manage/mail/import?locale=en")
+    assert has_element?(view, "#email-import-form button[disabled]", "Preview import")
+
+    file =
+      file_input(view, "#email-import-form", :email, [
+        %{name: "march.eml", content: email(), type: "message/rfc822"}
+      ])
+
+    render_upload(file, "march.eml", 40)
+
+    render_submit(view, "preview", %{
+      "import" => %{"source_kind" => "file", "mailbox_ref" => "outreach_en"}
+    })
+
+    assert has_element?(view, "[role=alert]", "still uploading")
+    refute has_element?(view, "#email-import-preview")
+    render_upload(file, "march.eml", 60)
+    refute has_element?(view, "#email-import-form button[disabled]", "Preview import")
+    view |> form("#email-import-form") |> render_submit()
+    assert has_element?(view, "#email-import-preview")
+  end
+
   test "repeat import reuses the message, conflicting Message-ID fails and revoked authority is enforced",
        c do
     {:ok, preview} = HistoricalImport.preview(c.scope, "outreach_en", email())

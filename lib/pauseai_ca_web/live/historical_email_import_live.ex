@@ -34,7 +34,11 @@ defmodule PauseAiCaWeb.HistoricalEmailImportLive do
          saved: nil,
          connected: connected?(socket)
        )
-       |> allow_upload(:email, accept: ~w(.eml .txt), max_entries: 1, max_file_size: 5_000_000)}
+       |> allow_upload(:email,
+         accept: ~w(.eml .txt),
+         max_entries: 1,
+         max_file_size: 5_000_000
+       )}
     else
       {:ok, redirect(socket, to: ~p"/manage/mail/inbox?locale=#{locale}")}
     end
@@ -55,31 +59,20 @@ defmodule PauseAiCaWeb.HistoricalEmailImportLive do
   end
 
   def handle_event("preview", %{"import" => attrs}, socket) do
-    raw =
-      case attrs["source_kind"] do
-        "paste" ->
-          attrs["original_source"] || ""
-
-        _ ->
-          uploaded =
-            consume_uploaded_entries(socket, :email, fn %{path: path}, _ ->
-              {:ok, File.read!(path)}
-            end)
-            |> List.first()
-
-          uploaded || socket.assigns.raw
-      end
-
-    case HistoricalImport.preview(socket.assigns.current_scope, attrs["mailbox_ref"], raw) do
-      {:ok, preview} ->
-        {:noreply,
-         assign(socket,
-           raw: raw,
-           preview: preview,
-           attrs: attrs,
-           form: to_form(attrs, as: "import"),
-           error: nil
-         )}
+    with {:ok, raw} <- preview_source(socket, attrs),
+         {:ok, preview} <-
+           HistoricalImport.preview(socket.assigns.current_scope, attrs["mailbox_ref"], raw) do
+      {:noreply,
+       assign(socket,
+         raw: raw,
+         preview: preview,
+         attrs: attrs,
+         form: to_form(attrs, as: "import"),
+         error: nil
+       )}
+    else
+      {:error, :uploading} ->
+        {:noreply, assign(socket, preview: nil, error: gettext("Your file is still uploading."))}
 
       {:error, _} ->
         {:noreply,
@@ -311,9 +304,13 @@ defmodule PauseAiCaWeb.HistoricalEmailImportLive do
                   </p>
                 </div>
               <% end %>
-              <button class="crm-button" phx-disable-with={gettext("Preparing preview…")}>{gettext(
-                "Preview import"
-              )}</button>
+              <button
+                class="crm-button"
+                disabled={
+                  @attrs["source_kind"] != "paste" and not file_ready?(@uploads.email.entries, @raw)
+                }
+                phx-disable-with={gettext("Preparing preview…")}
+              >{gettext("Preview import")}</button>
             </fieldset>
           </.form>
           <section :if={@preview} id="email-import-preview" class="crm-panel space-y-4">
@@ -393,6 +390,35 @@ defmodule PauseAiCaWeb.HistoricalEmailImportLive do
       </section>
     </Layouts.management>
     """
+  end
+
+  defp preview_source(_socket, %{"source_kind" => "paste"} = attrs),
+    do: {:ok, attrs["original_source"] || ""}
+
+  defp preview_source(socket, _attrs) do
+    case uploaded_entries(socket, :email) do
+      {[], []} ->
+        {:ok, socket.assigns.raw}
+
+      {[_], []} ->
+        [raw] =
+          consume_uploaded_entries(socket, :email, fn %{path: path}, _ ->
+            {:ok, File.read!(path)}
+          end)
+
+        {:ok, raw}
+
+      _ ->
+        {:error, :uploading}
+    end
+  end
+
+  defp file_ready?(entries, raw) do
+    case entries do
+      [] -> is_binary(raw)
+      [entry] -> entry.valid? and (entry.progress == 0 or entry.done?)
+      _ -> false
+    end
   end
 
   defp reset_source_input(socket, attrs) do
