@@ -25,6 +25,7 @@ defmodule PauseAiCaWeb.IncubatorsLiveTest do
         Incubators.configure(admin, group.id, %{
           "name_en" => "Review local group",
           "name_fr" => "Groupe local de démonstration",
+          "area_served" => "local",
           "published" => true,
           "fsas" => "H2X",
           "whatsapp_enabled" => true,
@@ -42,6 +43,29 @@ defmodule PauseAiCaWeb.IncubatorsLiveTest do
         profile: profile
       }
     end
+  end
+
+  test "Manage remembers each organizer’s last visit and scopes new activity to their groups",
+       c do
+    conn = log_in_user(build_conn(), c.manager)
+    {:ok, first, _} = live(conn, "/manage")
+    assert has_element?(first, "#group-snapshot", "Your next visit")
+    {:ok, other} = Volunteers.create_group(c.admin, %{name: "Other group"})
+
+    for group <- [c.group, other] do
+      Repo.insert!(%Incubators.Event{
+        group_id: group.id,
+        actor_id: c.admin.user.id,
+        action: "configure"
+      })
+    end
+
+    {:ok, second, _} = live(conn, "/manage")
+    assert has_element?(second, "#group-snapshot", "1 group activity entry")
+    assert has_element?(second, "#group-snapshot a", c.group.name)
+    refute has_element?(second, "#group-snapshot", other.name)
+    {:ok, third, _} = live(conn, "/manage")
+    assert has_element?(third, "#group-snapshot", "0 group activity entries")
   end
 
   test "group history stays off the members page and pages through older records", c do
@@ -106,6 +130,8 @@ defmodule PauseAiCaWeb.IncubatorsLiveTest do
       Incubators.configure(c.admin, second.id, %{
         "name_en" => "Ottawa",
         "name_fr" => "Ottawa",
+        "area_served" => "local",
+        "fsas" => "H2X",
         "published" => true
       })
 

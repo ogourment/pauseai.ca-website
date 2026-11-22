@@ -305,6 +305,8 @@ defmodule PauseAiCa.WelcomeTest do
       PauseAiCa.Incubators.configure(c.admin, c.group.id, %{
         "name_en" => "Configured group",
         "name_fr" => "Groupe configuré",
+        "area_served" => "local",
+        "fsas" => "H2X",
         "published" => true
       })
 

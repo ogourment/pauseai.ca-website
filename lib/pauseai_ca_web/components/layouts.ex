@@ -54,8 +54,14 @@ defmodule PauseAiCaWeb.Layouts do
   def app(assigns) do
     locale = assigns.locale || Gettext.get_locale(PauseAiCaWeb.Gettext)
 
+    items =
+      if assigns.current_scope,
+        do: PauseAiCaWeb.Navigation.assemble(assigns.current_scope, locale),
+        else: []
+
     assigns =
       assigns
+      |> assign(:navigation_items, items)
       |> assign(:locale, locale)
       |> assign(:learn_items, learn_items(locale))
       |> assign(
@@ -84,6 +90,7 @@ defmodule PauseAiCaWeb.Layouts do
         translated_path={@translated_path}
         countdown={@menu_countdown}
         learn_items={@learn_items}
+        items={@navigation_items}
         active_tab={@active_tab}
       />
       <nav
@@ -305,7 +312,22 @@ defmodule PauseAiCaWeb.Layouts do
     </div>
 
     {render_slot(@management_navigation)}
-    <div class={["mx-auto max-w-6xl px-5 pt-3", !@show_current_breadcrumb && "breadcrumb-links-only"]}>
+    <div class={[
+      "mx-auto max-w-6xl px-5 pt-3",
+      @active_tab && "workspace-trail",
+      !@show_current_breadcrumb && "breadcrumb-links-only"
+    ]}>
+      <span
+        :if={
+          @active_tab &&
+            Enum.any?(@navigation_items, &(&1.area == :manage and &1.id == "pauseai." <> @active_tab))
+        }
+        class="workspace-root"
+        data-journey-start
+      >
+        <.link href={~p"/manage?#{[locale: @locale]}"}>{gettext("Manage")}</.link>
+        <span aria-hidden="true">›</span>
+      </span>
       <PhoenixAppShell.Components.breadcrumbs
         label={gettext("Breadcrumbs")}
         scope={(if @current_scope && @current_scope.user, do: @current_scope.user.id, else: "guest") <> if(@breadcrumb_scope, do: ":" <> @breadcrumb_scope, else: "")}
@@ -559,7 +581,29 @@ defmodule PauseAiCaWeb.Layouts do
     ~H"""
     <details :if={Enum.any?(@items, &(&1.area == @area))} id={@id} class="act-menu section-menu">
       <summary>{@label}</summary>
-      <div class="section-menu-panel">
+      <div :if={@area == :manage} class="section-menu-panel manage-panel">
+        <.link
+          href={~p"/manage?#{[locale: Gettext.get_locale(PauseAiCaWeb.Gettext)]}"}
+          class="section-public-link manage-overview"
+        >{gettext("Manage overview")}</.link>
+        <div class="manage-sections">
+          <div :for={section <- PauseAiCaWeb.Navigation.manage_sections(@items)}>
+            <p class="section-menu-heading">{section.label}</p>
+            <PhoenixAppShell.Components.navigation
+              id={
+                if section.key == "people", do: @id <> "-navigation", else: @id <> "-" <> section.key
+              }
+              items={section.items}
+              area={:manage}
+              label={section.label}
+              area_labels={PauseAiCaWeb.Navigation.area_labels()}
+              active_id={@active_id}
+              compact
+            />
+          </div>
+        </div>
+      </div>
+      <div :if={@area != :manage} class="section-menu-panel">
         <PhoenixAppShell.Components.navigation
           id={@id <> "-navigation"}
           items={@items}
@@ -581,10 +625,11 @@ defmodule PauseAiCaWeb.Layouts do
   attr :learn_items, :list, required: true
   attr :active_tab, :string, default: nil
 
+  attr :items, :list, required: true
+
   defp signed_in_navigation(assigns) do
     assigns =
       assign(assigns,
-        items: PauseAiCaWeb.Navigation.assemble(assigns.current_scope, assigns.locale),
         active_id: if(assigns.active_tab, do: "pauseai." <> assigns.active_tab)
       )
 

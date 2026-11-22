@@ -200,6 +200,8 @@ defmodule PauseAiCaWeb.Router do
       end
 
       live "/groups/:id/join", IncubatorsLive, :join
+      live "/manage/group-websites", ChapterLive, :index
+      live "/manage", ManageLive, :index
       live "/manage/blog", BlogEditorLive, :index
       live "/manage/blog/:id", BlogEditorLive, :show
       live "/manage/mp-templates", MPTemplatesLive, :index

@@ -324,6 +324,7 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
             "stage" => "active",
             "name_en" => "",
             "name_fr" => "",
+            "area_served" => "internal",
             "fsas" => "",
             "published" => false,
             "whatsapp_enabled" => false,
@@ -457,13 +458,14 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
                 if(key == @tab, do: "border-b-2 border-current font-bold", else: "underline")
               ]}
             >{label}</.link>
-          </nav>
-          <div hidden={@tab != "settings"}>
+
             <.link
               :if={@profile && @profile.published}
               href={"/manage/groups/#{@group_id}/homepage?locale=#{@locale}"}
-              class="link"
+              class="px-3 py-2 underline"
             >{gettext("Edit chapter homepage")}</.link>
+          </nav>
+          <div hidden={@tab != "settings"}>
             <.form
               for={@form}
               phx-submit="configure"
@@ -501,11 +503,25 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
                 />
               </div>
               <.input
+                field={@form[:area_served]}
+                type="select"
+                label={gettext("Area served")}
+                options={[
+                  {gettext("Canada-wide or non-geographic"), "internal"},
+                  {gettext("Local area"), "local"}
+                ]}
+              />
+              <.input
+                field={@form[:office_address]}
+                label={gettext("Office address (optional, for managers)")}
+                maxlength="250"
+              />
+              <.input
                 field={@form[:fsas]}
                 label={gettext("Postal areas")}
                 aria-describedby="incubator-fsa-help"
               /><p id="incubator-fsa-help" class="text-sm">
-                {gettext("FSA: the first three characters of your postal code, for example H2X.")} {gettext(
+                {gettext("Enter a postal code or its first three characters (FSA), for example H2X.")} {gettext(
                   "Separate multiple areas with commas. These areas describe the group; they do not grant membership."
                 )}
               </p>

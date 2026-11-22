@@ -61,6 +61,8 @@ if System.get_env("ATDD") == "true" do
         Incubators.configure(scope, group.id, %{
           "name_en" => "Synthetic organizer group",
           "name_fr" => "Groupe de démonstration",
+          "area_served" => "local",
+          "fsas" => "H2X",
           "published" => true,
           "whatsapp_enabled" => false
         })

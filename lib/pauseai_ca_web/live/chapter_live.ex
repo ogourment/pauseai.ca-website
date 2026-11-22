@@ -14,6 +14,18 @@ defmodule PauseAiCaWeb.ChapterLive do
       not Application.get_env(:pauseai_ca, :incubators_enabled, false) ->
         {:ok, redirect(socket, to: IncubatorsLive.directory(locale))}
 
+      socket.assigns.live_action == :index ->
+        scope = socket.assigns.current_scope
+
+        if PauseAiCa.Volunteers.allowed?(scope) do
+          groups = Incubators.managed_groups(scope)
+          ids = MapSet.new(groups, & &1.id)
+          chapters = Enum.filter(Incubators.public_groups(), &MapSet.member?(ids, &1.group_id))
+          {:ok, assign(socket, chapters: chapters, page_title: gettext("Group websites"))}
+        else
+          {:ok, redirect(socket, to: ~p"/dashboard")}
+        end
+
       socket.assigns.live_action == :show ->
         chapter = Incubators.published_chapter!(params["slug"])
         {:ok, assign(socket, chapter: chapter, path: "/groups/#{chapter.slug}")}
@@ -91,12 +103,45 @@ defmodule PauseAiCaWeb.ChapterLive do
   end
 
   @impl true
+  def render(%{live_action: :index} = assigns) do
+    ~H"""
+    <Layouts.management
+      current_scope={@current_scope}
+      flash={@flash}
+      locale={@locale}
+      active_tab="group-websites"
+    >
+      <section class="mx-auto max-w-4xl px-5 py-8">
+        <h1 class="mb-5 text-3xl font-bold">{gettext("Group websites")}</h1>
+        <p :if={@chapters == []}>
+          {gettext("None of the groups you manage is published in the local directory.")}
+        </p>
+        <ul class="divide-y divide-stone-200">
+          <li
+            :for={chapter <- @chapters}
+            class="flex flex-wrap items-center justify-between gap-3 py-4"
+          >
+            <strong>{if @locale == "fr", do: chapter.name_fr, else: chapter.name_en}</strong>
+            <.link
+              class="underline"
+              href={~p"/manage/groups/#{chapter.group_id}/homepage?#{[locale: @locale]}"}
+            >{gettext("Edit chapter homepage")}<span class="sr-only"> · {if @locale == "fr",
+              do: chapter.name_fr,
+              else: chapter.name_en}</span></.link>
+          </li>
+        </ul>
+      </section>
+    </Layouts.management>
+    """
+  end
+
   def render(assigns) do
     ~H"""
     <Layouts.app
       flash={@flash}
       locale={@locale}
       current_scope={@current_scope}
+      active_tab={if @live_action == :edit, do: "group-websites"}
       translated_path={@path <> "?locale=" <> if(@locale == "fr", do: "en", else: "fr")}
     >
       <section class={[

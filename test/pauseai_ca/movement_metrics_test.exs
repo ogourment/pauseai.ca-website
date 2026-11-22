@@ -40,6 +40,8 @@ defmodule PauseAiCa.MovementMetricsTest do
           group_id: group.id,
           name_en: "Local group",
           name_fr: "Groupe local",
+          area_served: "local",
+          fsas: ["H2X"],
           published: published
         })
 

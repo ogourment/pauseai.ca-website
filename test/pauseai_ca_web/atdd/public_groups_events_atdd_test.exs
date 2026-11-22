@@ -189,6 +189,8 @@ if System.get_env("ATDD") == "true" do
           attrs = %{
             name_en: name,
             name_fr: name,
+            area_served: "local",
+            fsas: ["H2X"],
             published: true,
             stage: stage,
             events_url: events_url

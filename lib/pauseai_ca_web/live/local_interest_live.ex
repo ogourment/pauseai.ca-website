@@ -52,7 +52,7 @@ defmodule PauseAiCaWeb.LocalInterestLive do
       flash={@flash}
       current_scope={@current_scope}
       locale={@locale}
-      active_tab="contacts"
+      active_tab="local-interest"
     >
       <h1 class="font-heading text-3xl">{gettext("Local participation")}</h1>
       <p class="mt-3 text-stone-600">

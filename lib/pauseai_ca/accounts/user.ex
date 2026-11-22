@@ -13,6 +13,7 @@ defmodule PauseAiCa.Accounts.User do
     field :organizer_notes, :string, default: "", redact: true
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
+    field :last_manage_visit_at, :utc_datetime_usec
     field :confirmed_at, :utc_datetime
     field :signup_entry_point, :string
     field :authenticated_at, :utc_datetime, virtual: true

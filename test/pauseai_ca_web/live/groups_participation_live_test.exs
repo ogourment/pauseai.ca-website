@@ -22,6 +22,8 @@ defmodule PauseAiCaWeb.GroupsParticipationLiveTest do
           name_en: "Ottawa",
           name_fr: "Ottawa",
           stage: unquote(stage),
+          area_served: "local",
+          fsas: ["H2X"],
           published: true
         })
 

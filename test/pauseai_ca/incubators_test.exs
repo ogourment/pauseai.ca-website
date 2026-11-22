@@ -16,6 +16,7 @@ defmodule PauseAiCa.IncubatorsTest do
     attrs = %{
       "name_en" => "Local group",
       "name_fr" => "Groupe local",
+      "area_served" => "local",
       "published" => true,
       "fsas" => "H2X, H2Y",
       "whatsapp_enabled" => true,
@@ -35,6 +36,34 @@ defmodule PauseAiCa.IncubatorsTest do
       grant: grant,
       profile: profile
     }
+  end
+
+  test "local directory publication requires a local service area and keeps the office private",
+       c do
+    {:ok, group} = Volunteers.create_group(c.admin, %{name: "Locality test"})
+
+    attrs = %{
+      "name_en" => "Test",
+      "name_fr" => "Test",
+      "published" => true,
+      "office_address" => "Private office"
+    }
+
+    assert {:error, %Ecto.Changeset{}} =
+             Incubators.configure(c.admin, group.id, Map.put(attrs, "fsas", "K1P"))
+
+    local = Map.put(attrs, "area_served", "local")
+    assert {:error, %Ecto.Changeset{}} = Incubators.configure(c.admin, group.id, local)
+
+    assert {:ok, profile} =
+             Incubators.configure(c.admin, group.id, Map.put(local, "fsas", "h2w 1a1, M5H"))
+
+    assert profile.fsas == ["H2W", "M5H"]
+    assert {:ok, public} = Incubators.public_group(group.id)
+    refute Map.has_key?(public, :office_address)
+
+    assert {:error, %Ecto.Changeset{}} =
+             Incubators.configure(c.admin, group.id, %{fsas: ""}, profile.revision)
   end
 
   test "legacy active stage and configurable incubator event use local time without private fields",
@@ -285,6 +314,8 @@ defmodule PauseAiCa.IncubatorsTest do
              Incubators.configure(c.admin, c.other.id, %{
                "name_en" => "Second",
                "name_fr" => "Deuxième",
+               "area_served" => "local",
+               "fsas" => "H2X",
                "published" => true
              })
 

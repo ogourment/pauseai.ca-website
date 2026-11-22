@@ -7,6 +7,8 @@ defmodule PauseAiCa.Incubators.Profile do
     field :name_fr, :string
     field :summary_en, :string, default: ""
     field :summary_fr, :string, default: ""
+    field :office_address, :string
+    field :area_served, :string, default: "internal"
     field :fsas, {:array, :string}, default: []
     field :published, :boolean, default: false
     field :chapter_slug, :string

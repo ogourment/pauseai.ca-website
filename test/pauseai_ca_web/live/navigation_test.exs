@@ -186,6 +186,23 @@ defmodule PauseAiCaWeb.NavigationTest do
     refute has_element?(delegated_view, "[data-navigation-item='mail.conversations']")
   end
 
+  test "Manage overview and menu expose each authorized destination once", %{conn: conn} do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    items = Navigation.assemble(Scope.for_user(admin), "en")
+    sections = Navigation.manage_sections(items)
+    expected = for item <- items, item.area == :manage, do: item.id
+    actual = for section <- sections, item <- section.items, do: item.id
+    assert Enum.sort(expected) == Enum.sort(actual)
+    {:ok, view, _} = live(log_in_user(conn, admin), "/manage?locale=en")
+
+    for section <- sections, item <- section.items do
+      assert has_element?(view, "main ##{section.key} a[href='#{item.href}']", item.label)
+      assert has_element?(view, "#manage-menu [data-navigation-item='#{item.id}']", item.label)
+    end
+
+    assert {:error, {:redirect, _}} = live(log_in_user(conn, user_fixture()), "/manage")
+  end
+
   defp counts,
     do:
       Enum.map(

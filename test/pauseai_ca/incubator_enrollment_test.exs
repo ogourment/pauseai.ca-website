@@ -16,6 +16,8 @@ defmodule PauseAiCa.IncubatorEnrollmentTest do
       Incubators.configure(admin, group.id, %{
         name_en: "Enrollment",
         name_fr: "Adhésion",
+        area_served: "local",
+        fsas: ["H2X"],
         published: true
       })
 

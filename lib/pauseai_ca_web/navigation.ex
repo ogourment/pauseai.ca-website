@@ -79,6 +79,14 @@ defmodule PauseAiCaWeb.Navigation do
         :incubators,
         25
       ),
+      item(
+        "pauseai.group-websites",
+        gettext_noop("Group websites"),
+        :manage,
+        :group_websites,
+        :groups,
+        15
+      ),
       item("pauseai.tasks", gettext_noop("Tasks"), :manage, :tasks, :tasks, 15),
       item("pauseai.welcome", gettext_noop("Welcome calls"), :manage, :welcome, :welcome, 17),
       item("pauseai.accounts", gettext_noop("Accounts"), :manage, :accounts, :organizer, 6),
@@ -224,6 +232,7 @@ defmodule PauseAiCaWeb.Navigation do
         :versions -> "/admin/versions"
         :acceptance -> "/admin/acceptance"
         :groups -> "/manage/groups"
+        :group_websites -> "/manage/group-websites"
         :my_groups -> if(locale == "fr", do: "/fr/groupes", else: "/en/groups")
         :slack -> "/community/slack"
         :tasks -> "/manage/tasks"
@@ -268,6 +277,24 @@ defmodule PauseAiCaWeb.Navigation do
       uri
       | query: URI.encode_query(Map.put(URI.decode_query(uri.query || ""), "locale", locale))
     })
+  end
+
+  def manage_sections(items) do
+    sections = [
+      {"people", gettext("People"), ~w(contacts accounts contact_lists)},
+      {"groups", gettext("Group work"), ~w(groups group-websites tasks welcome local-interest)},
+      {"communications", gettext("Communications"), ~w(mail newsletters)},
+      {"content", gettext("Website content"), ~w(questions blog mp-templates donations)}
+    ]
+
+    for {key, label, ids} <- sections,
+        links =
+          Enum.filter(
+            items,
+            &(&1.area == :manage and String.replace_prefix(&1.id, "pauseai.", "") in ids)
+          ),
+        links != [],
+        do: %{key: key, label: label, items: links}
   end
 
   def menu_items(scope, locale) do

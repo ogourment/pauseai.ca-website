@@ -45,6 +45,8 @@ if System.get_env("ATDD") == "true" do
           Incubators.configure(scope, group.id, %{
             name_en: "Synthetic event editor group",
             name_fr: "Groupe fictif pour les événements",
+            area_served: "local",
+            fsas: ["H2X"],
             published: true
           })
 

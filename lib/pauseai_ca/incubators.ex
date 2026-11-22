@@ -12,6 +12,8 @@ defmodule PauseAiCa.Incubators do
   @public ~w(group_id name_en name_fr summary_en summary_fr fsas stage events_url next_event_title_en next_event_title_fr next_event_starts_at next_event_timezone next_event_url whatsapp_enabled)a
   @profile_fields Enum.reject(@public, &(&1 == :group_id)) ++
                     [
+                      :area_served,
+                      :office_address,
                       :published,
                       :moderator_contact,
                       :whatsapp_invite_url,
@@ -130,6 +132,49 @@ defmodule PauseAiCa.Incubators do
       DateTime.compare(profile.next_event_starts_at, now) == :gt
   end
 
+  def manage_overview(scope, record_visit?) do
+    ids = Enum.map(managed_groups(scope), & &1.id)
+
+    {:ok, stats} =
+      Repo.transaction(fn ->
+        query = from u in User, where: u.id == ^scope.user.id, select: u.last_manage_visit_at
+
+        previous =
+          Repo.one!(if record_visit?, do: from(u in query, lock: "FOR UPDATE"), else: query)
+
+        now = DateTime.utc_now()
+
+        pending =
+          Repo.aggregate(
+            from(m in Membership, where: m.group_id in ^ids and m.status == "pending"),
+            :count
+          )
+
+        changes =
+          if previous do
+            Repo.all(
+              from e in Event,
+                join: g in Group,
+                on: g.id == e.group_id,
+                where: e.group_id in ^ids and e.inserted_at > ^previous and e.inserted_at <= ^now,
+                group_by: [g.id, g.name],
+                order_by: g.name,
+                select: %{id: g.id, name: g.name, count: count(e.id)}
+            )
+          end
+
+        if record_visit?,
+          do:
+            Repo.update_all(from(u in User, where: u.id == ^scope.user.id),
+              set: [last_manage_visit_at: now]
+            )
+
+        %{groups: length(ids), pending: pending, changes: changes}
+      end)
+
+    stats
+  end
+
   def managed_groups(scope), do: Volunteers.groups(scope)
 
   def superadmin_nonmember?(scope, group_id) do
@@ -166,7 +211,7 @@ defmodule PauseAiCa.Incubators do
         changeset =
           current
           |> cast(attrs, @profile_fields)
-          |> validate_required([:name_en, :name_fr, :stage])
+          |> validate_required([:name_en, :name_fr, :stage, :area_served])
           |> validate_length(:name_en, max: 100)
           |> validate_length(:name_fr, max: 100)
           |> validate_length(:summary_en, max: 2000)
@@ -180,6 +225,9 @@ defmodule PauseAiCa.Incubators do
                do: [],
                else: [fsas: "use the first three postal-code characters, for example H2X"]
           end)
+          |> validate_inclusion(:area_served, ["local", "internal"])
+          |> validate_length(:office_address, max: 250)
+          |> validate_directory(current)
           |> validate_inclusion(:stage, ["active", "incubator"])
           |> validate_length(:next_event_title_en, max: 200)
           |> validate_length(:next_event_title_fr, max: 200)
@@ -831,11 +879,43 @@ defmodule PauseAiCa.Incubators do
   defp blank?(value), do: value in [nil, ""]
   defp truthy?(value), do: value in [true, "true", "on"]
 
+  defp validate_directory(cs, current) do
+    cond do
+      !get_field(cs, :published) ->
+        cs
+
+      get_field(cs, :area_served) != "local" ->
+        add_error(
+          cs,
+          :area_served,
+          dgettext_noop("errors", "Only a local group can be published in the directory.")
+        )
+
+      get_field(cs, :fsas) == [] and (!current.published or current.fsas != []) ->
+        add_error(
+          cs,
+          :fsas,
+          dgettext_noop("errors", "Enter at least one service-area FSA before publishing.")
+        )
+
+      true ->
+        cs
+    end
+  end
+
   defp parse_fsas(value) when is_binary(value),
-    do: value |> String.upcase() |> String.split(~r/[\s,;]+/, trim: true) |> Enum.uniq()
+    do:
+      value
+      |> String.upcase()
+      |> String.replace(
+        ~r/\b([ABCEGHJKLMNPRSTVXY]\d[ABCEGHJKLMNPRSTVWXYZ]) ?\d[ABCEGHJKLMNPRSTVWXYZ]\d\b/,
+        "\\1"
+      )
+      |> String.split(~r/[\s,;]+/, trim: true)
+      |> Enum.uniq()
 
   defp parse_fsas(value) when is_list(value),
-    do: value |> Enum.map(&String.upcase(String.trim(&1))) |> Enum.uniq()
+    do: value |> Enum.join(",") |> parse_fsas()
 
   defp parse_fsas(_), do: []
 

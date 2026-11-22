@@ -55,6 +55,8 @@ if System.get_env("ATDD") == "true" do
         Incubators.configure(admin_scope, group.id, %{
           "name_en" => "Synthetic Ottawa group",
           "name_fr" => "Groupe fictif d’Ottawa",
+          "area_served" => "local",
+          "fsas" => "H2X",
           "published" => true,
           "whatsapp_enabled" => false
         })

@@ -61,6 +61,7 @@ if System.get_env("ATDD") == "true" do
           "name_en" => "Synthetic local group",
           "name_fr" => "Groupe local de démonstration",
           "fsas" => "H2X",
+          "area_served" => "local",
           "published" => true,
           "whatsapp_enabled" => true,
           "whatsapp_approval_confirmed" => true,

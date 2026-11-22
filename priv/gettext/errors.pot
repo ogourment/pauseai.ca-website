@@ -128,7 +128,7 @@ msgstr ""
 msgid "enter a city or postal area for local follow-up"
 msgstr ""
 
-#: lib/pauseai_ca/accounts/user.ex:72
+#: lib/pauseai_ca/accounts/user.ex:73
 #, elixir-autogen, elixir-format
 msgid "enter a phone number with 7 to 20 digits"
 msgstr ""
@@ -147,17 +147,27 @@ msgstr ""
 msgid "must be a positive amount with at most two decimal places"
 msgstr ""
 
-#: lib/pauseai_ca/incubators.ex:197
+#: lib/pauseai_ca/incubators.ex:245
 #, elixir-autogen, elixir-format
 msgid "choose an active group or incubator"
 msgstr ""
 
-#: lib/pauseai_ca/incubators.ex:207
+#: lib/pauseai_ca/incubators.ex:255
 #, elixir-autogen, elixir-format
 msgid "use a valid local date, time and time zone"
 msgstr ""
 
-#: lib/pauseai_ca/incubators.ex:858
+#: lib/pauseai_ca/incubators.ex:953
 #, elixir-autogen, elixir-format
 msgid "use a valid time zone"
+msgstr ""
+
+#: lib/pauseai_ca/incubators.ex:898
+#, elixir-autogen, elixir-format
+msgid "Enter at least one service-area FSA before publishing."
+msgstr ""
+
+#: lib/pauseai_ca/incubators.ex:891
+#, elixir-autogen, elixir-format
+msgid "Only a local group can be published in the directory."
 msgstr ""

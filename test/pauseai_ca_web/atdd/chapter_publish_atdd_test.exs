@@ -23,6 +23,8 @@ if System.get_env("ATDD") == "true" do
         Incubators.configure(admin, group.id, %{
           "name_en" => "Toronto",
           "name_fr" => "Toronto",
+          "area_served" => "local",
+          "fsas" => "H2X",
           "published" => true
         })
 
@@ -129,6 +131,8 @@ if System.get_env("ATDD") == "true" do
           "name_en" => "Ottawa",
           "name_fr" => "Ottawa",
           "summary_fr" => "Le groupe local à Ottawa",
+          "area_served" => "local",
+          "fsas" => "H2X",
           "published" => true
         })
 

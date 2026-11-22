@@ -623,3 +623,9 @@ body:has(#site-assistant-launcher) #site-footer {
   outline: 3px solid var(--color-base-content);
   outline-offset: 3px;
 }
+
+.workspace-trail:has(.workspace-root){display:flex;align-items:baseline;flex-wrap:wrap;column-gap:.5rem}
+.workspace-root{display:inline-flex;gap:.5rem;font-size:.875rem}
+.workspace-root a{text-decoration:underline}
+.manage-panel .manage-overview{border-bottom:1px solid #e7e5e4;border-radius:0}
+@media(min-width:640px){.section-menu-panel.manage-panel{width:min(32rem,80vw)}.manage-sections{display:grid;grid-template-columns:1fr 1fr;gap:.35rem .8rem}}

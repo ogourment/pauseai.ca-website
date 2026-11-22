@@ -60,6 +60,8 @@ if System.get_env("ATDD") == "true" do
           Incubators.configure(admin_scope, group.id, %{
             "name_en" => "Synthetic welcome group",
             "name_fr" => "Groupe d’accueil synthétique",
+            "area_served" => "local",
+            "fsas" => "H2X",
             "published" => true
           })
 

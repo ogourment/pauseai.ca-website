@@ -335,6 +335,8 @@ defmodule PauseAiCa.ParticipationTest do
       group_id: group.id,
       name_en: "Target incubator",
       name_fr: "Incubateur cible",
+      area_served: "local",
+      fsas: ["H2X"],
       published: true
     })
 
