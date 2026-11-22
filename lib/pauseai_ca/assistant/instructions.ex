@@ -109,6 +109,10 @@ defmodule PauseAiCa.Assistant.Instructions do
 
         if action == :publish and instruction.revision == 0, do: Repo.rollback(:draft_required)
 
+        if action == :publish and
+             not PauseAiCa.Assistant.draft_instructions_fit?(instruction.source),
+           do: Repo.rollback(:instruction_capacity)
+
         instruction =
           if instruction.__meta__.state == :built,
             do: Repo.insert!(instruction),

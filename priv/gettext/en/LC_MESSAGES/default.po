@@ -14101,3 +14101,13 @@ msgstr "Your groups"
 
 msgid "Your next visit will show new group activity here."
 msgstr "Your next visit will show new group activity here."
+
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:455
+#, elixir-autogen, elixir-format
+msgid "Published instructions must fit within the configured request limit"
+msgstr "Published instructions must fit within the configured request limit"
+
+#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:92
+#, elixir-autogen, elixir-format
+msgid "The saved draft exceeds the configured request limit. Shorten it before publishing."
+msgstr "The saved draft exceeds the configured request limit. Shorten it before publishing."

@@ -14550,3 +14550,13 @@ msgstr "Adresse du bureau (facultative, visible par les gestionnaires)"
 
 msgid "Enter a postal code or its first three characters (FSA), for example H2X."
 msgstr "Entrez un code postal ou ses trois premiers caractères (RTA), par exemple H2X."
+
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:455
+#, elixir-autogen, elixir-format
+msgid "Published instructions must fit within the configured request limit"
+msgstr "Les instructions publiées doivent respecter la limite configurée pour les requêtes"
+
+#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:92
+#, elixir-autogen, elixir-format
+msgid "The saved draft exceeds the configured request limit. Shorten it before publishing."
+msgstr "Le brouillon enregistré dépasse la limite configurée pour les requêtes. Raccourcissez-le avant de le publier."

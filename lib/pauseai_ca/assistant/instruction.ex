@@ -2,6 +2,8 @@ defmodule PauseAiCa.Assistant.Instruction do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @max_source_bytes 24_000
+
   @primary_key {:id, :integer, autogenerate: false}
   schema "assistant_instructions" do
     field :source, :string
@@ -14,6 +16,8 @@ defmodule PauseAiCa.Assistant.Instruction do
     timestamps(type: :utc_datetime_usec)
   end
 
+  def max_source_bytes, do: @max_source_bytes
+
   def changeset(instruction, attrs) do
     instruction
     |> cast(attrs, [
@@ -25,7 +29,7 @@ defmodule PauseAiCa.Assistant.Instruction do
       :published_at
     ])
     |> validate_required([:source])
-    |> validate_length(:source, max: 24_000, count: :bytes)
+    |> validate_length(:source, max: @max_source_bytes, count: :bytes)
     |> optimistic_lock(:revision)
   end
 end

@@ -69,4 +69,58 @@ defmodule PauseAiCa.Assistant.RequestContextTest do
                "normal"
              )
   end
+
+  test "published instruction length and the full catalogue fit all staging modes at 32,768" do
+    instructions = String.duplicate("é", 9857)
+
+    features =
+      for id <- 1..15 do
+        %{
+          "id" => "fixture-feature-#{id}",
+          "title" => "Synthetic organizer feature",
+          "entry_path" => "/manage/example",
+          "introduced_in" => "0.1.0",
+          "summary" => String.duplicate("Guide the organizer to the next permitted step. ", 2),
+          "status" => "available",
+          "reason" => "verified_available"
+        }
+      end
+
+    request = %{
+      "text" => "Where can I find a local group? Give me the menu path in one sentence.",
+      "context" => %{
+        "locale" => "en",
+        "app_version" => "0.8.36",
+        "build" => "pauseai-ca-0.8.36-00000000",
+        "history" => [],
+        "features" => features
+      },
+      "attachments" => []
+    }
+
+    config =
+      Keyword.merge(config(),
+        max_turn_tokens: 32_768,
+        models: Map.new(~w(fast normal high), &{&1, %{model: "synthetic-model"}}),
+        provider: {TextProviderHTTP, [instructions: instructions, max_instruction_bytes: 24_000]}
+      )
+
+    for mode <- ~w(fast normal high) do
+      assert {:ok, bounded} = RequestContext.prepare(request, [], config, mode)
+      assert bounded["text"] == request["text"]
+      assert bounded["context"]["features"] == features
+      refute bounded["context"]["history_truncated"]
+
+      assert {:error, :request_too_large} =
+               RequestContext.prepare(
+                 request,
+                 [],
+                 Keyword.put(config, :max_turn_tokens, 16_384),
+                 mode
+               )
+    end
+
+    oversized = Map.update!(request, "text", &(&1 <> String.duplicate("x", 12_000)))
+    assert {:error, :request_too_large} = RequestContext.prepare(oversized, [], config, "normal")
+  end
 end

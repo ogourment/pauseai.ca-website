@@ -451,6 +451,9 @@ defmodule PauseAiCaWeb.AssistantSettingsLive do
   defp readiness_label(:price_policy), do: gettext("Verified cost limits")
   defp readiness_label(:instructions), do: gettext("Published application instructions")
 
+  defp readiness_label(:instruction_capacity),
+    do: gettext("Published instructions must fit within the configured request limit")
+
   defp readiness_label(:stage_tracking),
     do: gettext("Required generation and safety spend tracking")
 

@@ -118,6 +118,31 @@ defmodule PauseAiCaWeb.AssistantInstructionsLiveTest do
     assert {:ok, %{source: "First coaching version"}} = Instructions.effective()
   end
 
+  test "a draft beyond the runtime request limit stays saved and cannot replace the live revision",
+       c do
+    config = Application.fetch_env!(:pauseai_ca, :agent_assistant)
+
+    Application.put_env(
+      :pauseai_ca,
+      :agent_assistant,
+      Keyword.merge(config,
+        provider: {PhoenixAgentAssistant.OpenAI, []},
+        max_turn_tokens: 16_384
+      )
+    )
+
+    {:ok, fallback} = Instructions.effective()
+    source = String.duplicate("é", 9857)
+    assert {:ok, draft} = Instructions.save(c.scope, 0, source)
+
+    {:ok, view, _} = live(log_in_user(c.conn, c.owner), "/admin/assistant/instructions?locale=en")
+    view |> element("#assistant-instruction-publish") |> render_click()
+
+    assert render(view) =~ "The saved draft exceeds the configured request limit."
+    assert {:ok, ^fallback} = Instructions.effective()
+    assert {:ok, ^draft} = Instructions.get(c.scope)
+  end
+
   test "fresh account email and role protect stale scopes and forged events", c do
     {:ok, view, _} = live(log_in_user(c.conn, c.owner), "/admin/assistant/instructions?locale=en")
     c.owner |> Ecto.Changeset.change(superadmin: false) |> Repo.update!()

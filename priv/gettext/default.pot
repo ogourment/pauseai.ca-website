@@ -2280,7 +2280,7 @@ msgstr ""
 msgid "Save and exit"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:163
+#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:173
 #: lib/pauseai_ca_web/live/chapter_live.ex:176
 #: lib/pauseai_ca_web/live/donation_page_live.ex:586
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:638
@@ -2922,7 +2922,7 @@ msgstr ""
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:1297
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:1310
 #: lib/pauseai_ca_web/live/administrators_live.ex:113
-#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:164
+#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:174
 #: lib/pauseai_ca_web/live/donate_live.ex:592
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:638
 #: lib/pauseai_ca_web/live/mp_templates_live.ex:330
@@ -3881,7 +3881,7 @@ msgstr ""
 msgid "Untitled draft"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:189
+#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:199
 #: lib/pauseai_ca_web/live/blog_editor_live.ex:341
 #: lib/pauseai_ca_web/live/chapter_live.ex:201
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:591
@@ -3893,7 +3893,7 @@ msgstr ""
 msgid "Allow the preview window, then try again."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:192
+#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:202
 #: lib/pauseai_ca_web/live/blog_editor_live.ex:344
 #: lib/pauseai_ca_web/live/chapter_live.ex:205
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:594
@@ -3905,7 +3905,7 @@ msgstr ""
 msgid "Connection interrupted; text retained in this page."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:190
+#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:200
 #: lib/pauseai_ca_web/live/blog_editor_live.ex:342
 #: lib/pauseai_ca_web/live/chapter_live.ex:202
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:592
@@ -3917,7 +3917,7 @@ msgstr ""
 msgid "Preview opened"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:193
+#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:203
 #: lib/pauseai_ca_web/live/blog_editor_live.ex:345
 #: lib/pauseai_ca_web/live/chapter_live.ex:204
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:595
@@ -3929,7 +3929,7 @@ msgstr ""
 msgid "Preview unavailable. Your text is retained."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:191
+#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:201
 #: lib/pauseai_ca_web/live/blog_editor_live.ex:343
 #: lib/pauseai_ca_web/live/chapter_live.ex:203
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:593
@@ -9207,7 +9207,7 @@ msgstr ""
 msgid "Review %{field}."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:168
+#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:178
 #: lib/pauseai_ca_web/live/blog_editor_live.ex:386
 #: lib/pauseai_ca_web/live/donation_page_live.ex:613
 #: lib/pauseai_ca_web/live/donation_page_live.ex:1045
@@ -11312,17 +11312,17 @@ msgstr ""
 msgid "All-provider pilot · USD %{remaining} / %{limit} remaining through %{date} UTC"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:179
+#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:189
 #, elixir-autogen, elixir-format
 msgid "Application instructions · Markdown"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:167
+#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:177
 #, elixir-autogen, elixir-format
 msgid "Current published instructions"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:154
+#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:164
 #: lib/pauseai_ca_web/live/mp_templates_live.ex:250
 #, elixir-autogen, elixir-format
 msgid "Draft revision %{revision}"
@@ -11330,7 +11330,7 @@ msgstr ""
 
 #: lib/pauseai_ca_web/live/assistant_instructions_live.ex:50
 #: lib/pauseai_ca_web/live/assistant_instructions_live.ex:79
-#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:117
+#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:127
 #: lib/pauseai_ca_web/live/chapter_live.ex:69
 #: lib/pauseai_ca_web/live/mp_templates_live.ex:95
 #: lib/pauseai_ca_web/live/mp_templates_live.ex:124
@@ -11339,7 +11339,7 @@ msgstr ""
 msgid "Draft saved"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:134
+#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:144
 #, elixir-autogen, elixir-format
 msgid "Edit the application coaching supplied to the assistant. Save a draft, then publish it to apply it to new turns."
 msgstr ""
@@ -11350,30 +11350,30 @@ msgid "Generation, safety reviews and unresolved usage count toward this shared 
 msgstr ""
 
 #: lib/pauseai_ca_web/live/assistant_instructions_live.ex:15
-#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:132
-#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:181
+#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:142
+#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:191
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:147
 #, elixir-autogen, elixir-format
 msgid "Instructions"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:92
+#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:102
 #, elixir-autogen, elixir-format
 msgid "Instructions changed in another session. Your text is retained. Copy it before reloading."
 msgstr ""
 
 #: lib/pauseai_ca_web/live/assistant_instructions_live.ex:57
-#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:118
+#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:128
 #, elixir-autogen, elixir-format
 msgid "Instructions published"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:139
+#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:149
 #, elixir-autogen, elixir-format
 msgid "Permissions, moderation, budgets and execution safeguards are enforced by application code."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:165
+#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:175
 #, elixir-autogen, elixir-format
 msgid "Publish saved instructions"
 msgstr ""
@@ -11383,23 +11383,23 @@ msgstr ""
 msgid "Published application instructions"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:158
+#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:168
 #, elixir-autogen, elixir-format
 msgid "Published revision %{revision}"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:166
+#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:176
 #: lib/pauseai_ca_web/live/mp_templates_live.ex:348
 #, elixir-autogen, elixir-format
 msgid "Publishing…"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:455
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:458
 #, elixir-autogen, elixir-format
 msgid "Required generation and safety spend tracking"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:102
+#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:112
 #, elixir-autogen, elixir-format
 msgid "The change could not be saved. Use between 1 and 24,000 bytes of instructions."
 msgstr ""
@@ -11409,12 +11409,12 @@ msgstr ""
 msgid "Use between 1 and 24,000 bytes of instructions."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:159
+#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:169
 #, elixir-autogen, elixir-format
 msgid "Using the bundled application instructions"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_settings_live.ex:457
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:460
 #, elixir-autogen, elixir-format
 msgid "Valid all-provider pilot ceiling"
 msgstr ""
@@ -13254,7 +13254,7 @@ msgstr ""
 msgid "Manifund reports %{usd} raised (%{cad}). USD converted at %{rate} CAD on %{date} (Bank of Canada)."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:180
+#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:190
 #: lib/pauseai_ca_web/live/blog_editor_live.ex:339
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:589
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:629
@@ -14152,4 +14152,14 @@ msgstr ""
 #: lib/pauseai_ca_web/live/manage_live.ex:71
 #, elixir-autogen, elixir-format
 msgid "Your next visit will show new group activity here."
+msgstr ""
+
+#: lib/pauseai_ca_web/live/assistant_settings_live.ex:455
+#, elixir-autogen, elixir-format
+msgid "Published instructions must fit within the configured request limit"
+msgstr ""
+
+#: lib/pauseai_ca_web/live/assistant_instructions_live.ex:92
+#, elixir-autogen, elixir-format
+msgid "The saved draft exceeds the configured request limit. Shorten it before publishing."
 msgstr ""

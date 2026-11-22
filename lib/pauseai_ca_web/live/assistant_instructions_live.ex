@@ -84,6 +84,16 @@ defmodule PauseAiCaWeb.AssistantInstructionsLive do
 
   defp result(socket, {:error, :unauthorized}, _), do: {:noreply, denied(socket)}
 
+  defp result(socket, {:error, :instruction_capacity}, _),
+    do:
+      {:noreply,
+       assign(socket,
+         error:
+           gettext(
+             "The saved draft exceeds the configured request limit. Shorten it before publishing."
+           )
+       )}
+
   defp result(socket, {:error, :stale}, _),
     do:
       {:noreply,

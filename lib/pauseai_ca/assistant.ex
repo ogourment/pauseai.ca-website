@@ -5,6 +5,7 @@ defmodule PauseAiCa.Assistant do
   alias PhoenixAgentAssistant.{Catalog, History, Modes, Runner, Store}
   alias PauseAiCa.{Repo, Volunteers}
   alias PauseAiCa.Accounts.Scope
+  alias PauseAiCa.Assistant.{Instruction, RequestContext}
 
   def store, do: Store.new(Repo, "pauseai-canada")
 
@@ -26,11 +27,12 @@ defmodule PauseAiCa.Assistant do
 
     case config[:provider] do
       {module, options} when is_list(options) ->
-        Keyword.put(
-          config,
-          :provider,
-          {module, Keyword.put(options, :instructions, instructions.source)}
-        )
+        options =
+          options
+          |> Keyword.put(:instructions, instructions.source)
+          |> Keyword.put_new(:max_instruction_bytes, Instruction.max_source_bytes())
+
+        Keyword.put(config, :provider, {module, options})
 
       _ ->
         config
@@ -217,7 +219,8 @@ defmodule PauseAiCa.Assistant do
       {:audit_anchor, operations.audit_anchor == true},
       {:price_policy, match?({:ok, _}, PhoenixAgentAssistant.Pricing.bound(config))},
       {:feature_catalogue, catalogue_ready?(config)},
-      {:instructions, config[:instruction_binding][:revision] != :unavailable}
+      {:instructions, config[:instruction_binding][:revision] != :unavailable},
+      {:instruction_capacity, instructions_fit?(config)}
     ]
 
     checks =
@@ -666,29 +669,79 @@ defmodule PauseAiCa.Assistant do
   end
 
   defp reviewed_catalogue(scope, config, identity, guided) do
-    runtime = %{
-      version: identity.version,
-      build: identity.release_id,
-      evidence: config[:feature_evidence] || %{}
-    }
-
     admin = eligible?(scope)
     organizer = chat_allowed?(scope)
 
     organizer_features =
       ~w(group-admission group-public-events local-followup task-member-assignment organizer-tasks)
 
-    catalogue =
-      Catalog.for_actor(config[:features] || [], runtime, fn feature ->
-        admin or (organizer and feature.id in organizer_features)
-      end)
+    authorized? = fn feature -> admin or (organizer and feature.id in organizer_features) end
+    coaching_catalogue(config, identity, authorized?, guided)
+  end
+
+  defp coaching_catalogue(config, identity, authorized?, guided) do
+    runtime = %{
+      version: identity.version,
+      build: identity.release_id,
+      evidence: config[:feature_evidence] || %{}
+    }
+
+    catalogue = Catalog.for_actor(config[:features] || [], runtime, authorized?)
 
     json(
-      PauseAiCa.Assistant.RequestContext.catalogue(
+      RequestContext.catalogue(
         catalogue,
         if(guided, do: ["crm-guided", "crm-vancouver-guided"], else: :all)
       )
     )
+  end
+
+  def draft_instructions_fit?(source) do
+    config = configuration()
+
+    case config[:provider] do
+      {provider, options} when is_list(options) ->
+        config
+        |> Keyword.put(:provider, {provider, Keyword.put(options, :instructions, source)})
+        |> instructions_fit?()
+
+      _ ->
+        true
+    end
+  end
+
+  defp instructions_fit?(config) do
+    case config[:provider] do
+      {provider, _}
+      when provider in [
+             PhoenixAgentAssistant.Anthropic,
+             PhoenixAgentAssistant.OpenAI,
+             PhoenixAgentAssistant.OpenRouter
+           ] ->
+        identity = AcceptanceHarness.Health.payload()
+
+        request = %{
+          "text" => "Hello",
+          "attachments" => [],
+          "context" => %{
+            "app_version" => identity.version,
+            "build" => identity.release_id,
+            "locale" => "en",
+            "features" => coaching_catalogue(config, identity, fn _ -> true end, false),
+            "history" => []
+          }
+        }
+
+        allowed_modes = config[:allowed_modes] || ~w(fast normal high)
+        models = config[:models] || %{}
+
+        allowed_modes
+        |> Enum.filter(&match?({:ok, _}, Modes.resolve(&1, models, allowed_modes)))
+        |> Enum.all?(&match?({:ok, _}, RequestContext.prepare(request, [], config, &1)))
+
+      _ ->
+        true
+    end
   end
 
   defp guided_request(_scope, request, _locale, false), do: {:ok, request}
@@ -763,6 +816,7 @@ defmodule PauseAiCa.Assistant do
         {module,
          options
          |> Keyword.put_new_lazy(:instructions, fn -> instruction_snapshot().source end)
+         |> Keyword.put_new(:max_instruction_bytes, Instruction.max_source_bytes())
          |> Map.new()}
 
       _ ->
