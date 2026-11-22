@@ -116,7 +116,8 @@ if System.get_env("ATDD") == "true" do
           (() => {
             const content = document.querySelector('.management-content');
             const heading = content.querySelector('h1').getBoundingClientRect();
-            const crumbs = document.querySelector('.app-shell-breadcrumbs').getBoundingClientRect();
+            // The Manage link is the first visible breadcrumb on a management page.
+            const crumbs = document.querySelector('.workspace-root a').getBoundingClientRect();
             return Math.abs(heading.left - crumbs.left) <= 1 && heading.left >= 19;
           })()
           """,
