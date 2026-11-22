@@ -457,7 +457,10 @@ defmodule PauseAiCa.Assistant.Operations do
 
     audit = config[:audit_keys] || %{}
 
+    # The delivery contract changed to give each synthetic readiness probe an
+    # independent fingerprint. Historical deduplicated receipts cannot prove it.
     payload = %{
+      "readiness_probe_version" => 2,
       "provider" => provider,
       "models" => config[:models] || %{},
       "reviews" =>

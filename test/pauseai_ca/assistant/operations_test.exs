@@ -497,6 +497,41 @@ defmodule PauseAiCa.Assistant.OperationsTest do
     refute_received {:assistant_generated, _, _}
   end
 
+  test "a legacy probe identity cannot authorize the versioned readiness check" do
+    legacy = "093f88a7636e56f81c7dd801fc1e724d964bad36fb5f91b2feae9031fc65eebf"
+
+    :persistent_term.put({Operations, :status}, %{
+      fingerprint: legacy,
+      checked_at: System.monotonic_time(:millisecond),
+      audit_anchor: true,
+      alerts: true
+    })
+
+    refute Operations.fingerprint([]) == legacy
+    assert Operations.status([]) == %{audit_anchor: false, alerts: false}
+  end
+
+  test "a deduplicated probe never authorizes Send and a fresh probe needs its own receipt", c do
+    older = Keyword.put(c.config, :instruction_binding, %{revision: 1, digest: "synthetic"})
+    Agent.update(c.remote, &Map.put(&1, :decision, "deduplicated"))
+
+    assert Operations.refresh(older) == %{audit_anchor: true, alerts: false}
+
+    Agent.update(c.remote, &Map.put(&1, :decision, "delivered"))
+    assert Operations.refresh(c.config) == %{audit_anchor: true, alerts: true}
+
+    [first, second] = Agent.get(c.remote, & &1.alert_posts)
+    refute first["fingerprint"] == second["fingerprint"]
+    refute first["idempotency_key"] == second["idempotency_key"]
+
+    assert Repo.aggregate(
+             from(a in Alert,
+               where: a.namespace == ^Assistant.store().namespace and a.state == "accepted"
+             ),
+             :count
+           ) == 2
+  end
+
   test "repeated unchanged configuration reuses anchors and the same accepted alert", c do
     assert Operations.refresh(c.config) == %{audit_anchor: true, alerts: true}
     first = Agent.get(c.remote, & &1)
