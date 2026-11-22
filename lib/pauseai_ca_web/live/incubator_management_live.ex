@@ -408,6 +408,11 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
         </header>
         <p :if={@error} role="alert" class="rounded border border-warning p-4">{@error}</p>
         <div :if={@group_id} class="space-y-8">
+          <.link
+            :if={@profile && @profile.published}
+            href={"/manage/groups/#{@group_id}/homepage?locale=#{@locale}"}
+            class="link"
+          >{gettext("Edit chapter homepage")}</.link>
           <.form
             for={@form}
             phx-submit="configure"

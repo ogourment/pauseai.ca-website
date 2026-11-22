@@ -333,3 +333,14 @@ document.addEventListener('toggle', event => {
   bubble.style.left=Math.max(12,Math.min(innerWidth-bubble.offsetWidth-12,rect.right-bubble.offsetWidth))+'px'
   bubble.style.top=Math.max(12,Math.min(innerHeight-bubble.offsetHeight-12,rect.top-bubble.offsetHeight-10))+'px'
 }, true)
+
+
+// Insert the selected library image into the edition being edited.
+document.addEventListener("chapter:insert-image", event => {
+  const button = event.target.closest("button[data-snippet]")
+  const field = button?.closest("[id^='chapter-edition-']")?.querySelector("[data-pme-source]")
+  if (!field) return
+  field.setRangeText(button.dataset.snippet, field.selectionStart, field.selectionEnd, "end")
+  field.dispatchEvent(new Event("input", {bubbles: true}))
+  field.focus()
+})

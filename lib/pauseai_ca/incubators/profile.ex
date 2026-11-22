@@ -9,6 +9,9 @@ defmodule PauseAiCa.Incubators.Profile do
     field :summary_fr, :string, default: ""
     field :fsas, {:array, :string}, default: []
     field :published, :boolean, default: false
+    field :chapter_slug, :string
+    field :chapter_draft, :map, default: %{}
+    field :chapter_content, :map
     field :stage, :string, default: "active"
     field :events_url, :string
     field :next_event_title_en, :string

@@ -203,6 +203,7 @@ defmodule PauseAiCaWeb.Router do
       live "/manage/mp-templates", MPTemplatesLive, :index
       live "/manage/mp-templates/:id", MPTemplatesLive, :edit
       live "/manage/donations", DonationPageLive, :index
+      live "/manage/groups/:id/homepage", ChapterLive, :edit
       live "/manage/groups", IncubatorManagementLive, :index
       live "/community/slack", SlackCommunityLive, :index
       live "/manage/tasks", TasksLive, :index
@@ -259,6 +260,10 @@ defmodule PauseAiCaWeb.Router do
     # Public campaign pages. They work signed in or signed out, so they are not
     # in :require_authenticated_user — but they do carry :require_invited, which
     # closes them on staging only. The sign-in routes below must not carry it.
+    get "/groups", PageController, :groups_en
+    get "/groupes", PageController, :groups_fr
+    get "/toronto", PageController, :toronto
+
     live_session :public_content,
       on_mount: [{PauseAiCaWeb.UserAuth, :require_invited}] do
       live "/en/blog", BlogLive, :index_en
@@ -267,6 +272,7 @@ defmodule PauseAiCaWeb.Router do
       live "/fr/blogue/:slug", BlogLive, :show_fr
       live "/en/mp-templates/:slug", MPTemplateLive, :en
       live "/fr/modeles-de-lettre/:slug", MPTemplateLive, :fr
+      live "/groups/:slug", ChapterLive, :show
       live "/en/groups", IncubatorsLive, :en
       live "/fr/groupes", IncubatorsLive, :fr
       live "/en/donate", DonateLive, :en

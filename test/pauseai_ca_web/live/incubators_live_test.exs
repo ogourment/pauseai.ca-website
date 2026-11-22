@@ -44,6 +44,67 @@ defmodule PauseAiCaWeb.IncubatorsLiveTest do
     end
   end
 
+  test "directory shortcuts and the Toronto chapter shortcut preserve the query", %{conn: conn} do
+    for {short, canonical} <- [
+          {"/groups", "/en/groups"},
+          {"/groupes", "/fr/groupes"},
+          {"/toronto", "/groups/toronto"}
+        ] do
+      assert redirected_to(get(conn, short <> "?from=event"), 301) == canonical <> "?from=event"
+    end
+  end
+
+  test "CHAPTER-PUBLISH-01 scoped draft, preview, publication and revocation", c do
+    {:ok, view, _} =
+      live(log_in_user(build_conn(), c.manager), "/manage/groups/#{c.group.id}/homepage")
+
+    fields = %{chapter: %{slug: "toronto", en: "First welcome", fr: "Bienvenue"}}
+    view |> form("#chapter-form", fields) |> render_submit()
+    assert has_element?(view, "#chapter-editor-en [data-pme-preview]")
+    refute has_element?(view, "#chapter-preview")
+    assert_raise Ecto.NoResultsError, fn -> live(build_conn(), "/groups/toronto") end
+    view |> element("#chapter-publish") |> render_click()
+    {:ok, _, public} = live(build_conn(), "/groups/toronto")
+    assert public =~ "First welcome"
+
+    view
+    |> form("#chapter-form", put_in(fields, [:chapter, :en], "Private revision"))
+    |> render_submit()
+
+    {:ok, _, still_public} = live(build_conn(), "/groups/toronto")
+    refute still_public =~ "Private revision"
+    {:ok, second} = Volunteers.create_group(c.admin, %{name: "Other chapter"})
+
+    assert {:error, {:redirect, _}} =
+             live(log_in_user(build_conn(), c.manager), "/manage/groups/#{second.id}/homepage")
+
+    {:ok, _} =
+      Incubators.configure(c.admin, second.id, %{
+        "name_en" => "Ottawa",
+        "name_fr" => "Ottawa",
+        "published" => true
+      })
+
+    {:ok, second_editor, _} =
+      live(log_in_user(build_conn(), c.admin.user), "/manage/groups/#{second.id}/homepage")
+
+    second_editor
+    |> form("#chapter-form",
+      chapter: %{slug: "ottawa", en: "Ottawa welcome", fr: "Accueil Ottawa"}
+    )
+    |> render_submit()
+
+    second_editor |> element("#chapter-publish") |> render_click()
+    {:ok, _, french} = live(build_conn(), "/groups/ottawa?locale=fr")
+    assert french =~ "Accueil Ottawa"
+    refute french =~ "First welcome"
+    Volunteers.revoke_manager(c.admin, c.grant.id)
+    view |> element("#chapter-publish") |> render_click()
+    {:ok, _, after_revoke} = live(build_conn(), "/groups/toronto")
+    assert after_revoke =~ "First welcome"
+    refute after_revoke =~ "Private revision"
+  end
+
   test "a group manager adds, edits and ends a responsibility on the group screen", c do
     member =
       Repo.insert!(%Incubators.Membership{

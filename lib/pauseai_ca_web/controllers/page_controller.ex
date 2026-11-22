@@ -10,6 +10,10 @@ defmodule PauseAiCaWeb.PageController do
     end
   end
 
+  def groups_en(conn, _), do: permanent_redirect(conn, "/en/groups")
+  def groups_fr(conn, _), do: permanent_redirect(conn, "/fr/groupes")
+  def toronto(conn, _), do: permanent_redirect(conn, "/groups/toronto")
+
   def legacy_canada(conn, _params),
     do: permanent_redirect(conn, "/en")
 

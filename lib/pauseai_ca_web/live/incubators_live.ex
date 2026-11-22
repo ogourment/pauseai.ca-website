@@ -377,6 +377,11 @@ defmodule PauseAiCaWeb.IncubatorsLive do
                     }
                     class="chapter-card-credit underline"
                   >{gettext("Montréal, September 26. Photo: Clara Lacasse.")}</.link>
+                  <.link
+                    :if={group.chapter_slug}
+                    href={"/groups/#{group.chapter_slug}?locale=#{@locale}"}
+                    class="link"
+                  >{gettext("Visit chapter homepage")}</.link>
                   <p :if={group.stage == "incubator"} class="text-sm">{gettext("Incubator")}</p>
                   <p class="whitespace-pre-line">{summary(group, @locale)}</p>
                   <p :if={group.fsas != []} class="text-sm">

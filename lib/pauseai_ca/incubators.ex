@@ -20,7 +20,9 @@ defmodule PauseAiCa.Incubators do
 
   def public_groups(fsa \\ nil) do
     Repo.all(from p in Profile, where: p.published, order_by: p.name_en)
-    |> Enum.map(&Map.take(&1, @public))
+    |> Enum.map(fn p ->
+      Map.put(Map.take(p, @public), :chapter_slug, p.chapter_content && p.chapter_slug)
+    end)
     |> Enum.sort_by(fn p -> {fsa not in p.fsas, p.name_en} end)
   end
 
@@ -32,6 +34,94 @@ defmodule PauseAiCa.Incubators do
       end
     else
       {:error, :not_found}
+    end
+  end
+
+  def published_chapter!(slug) do
+    p =
+      Repo.one!(
+        from p in Profile,
+          where: p.published and p.chapter_slug == ^slug and not is_nil(p.chapter_content)
+      )
+
+    Map.merge(Map.take(p, @public), %{slug: slug, content: p.chapter_content})
+  end
+
+  def save_chapter(scope, group_id, revision, attrs) when is_map(attrs),
+    do: edit_chapter(scope, group_id, revision, {:draft, attrs})
+
+  def publish_chapter(scope, group_id, revision),
+    do: edit_chapter(scope, group_id, revision, :publish)
+
+  defp edit_chapter(scope, group_id, revision, action) do
+    with :ok <- manager(scope, group_id) do
+      Repo.transaction(fn ->
+        lock_group!(scope, group_id)
+
+        unless Volunteers.superadmin?(scope) do
+          grant =
+            Repo.one(
+              from m in Manager,
+                where: m.user_id == ^scope.user.id and m.group_id == ^group_id,
+                lock: "FOR SHARE"
+            )
+
+          unless grant, do: Repo.rollback(:forbidden)
+        end
+
+        profile = Repo.get_by(Profile, group_id: group_id, published: true)
+        unless profile, do: Repo.rollback(:not_found)
+        if profile.revision != revision, do: Repo.rollback(:stale)
+
+        {changeset, label} =
+          case action do
+            {:draft, attrs} ->
+              content = Map.take(attrs, ~w(en fr))
+
+              unless Enum.all?(~w(en fr), fn key ->
+                       is_binary(content[key]) and String.length(content[key]) <= 4000
+                     end),
+                     do: Repo.rollback(:invalid)
+
+              slug = profile.chapter_slug || attrs["slug"]
+
+              cs =
+                profile
+                |> cast(%{"chapter_slug" => slug}, [:chapter_slug])
+                |> put_change(:chapter_draft, content)
+
+              {cs
+               |> validate_required(:chapter_slug)
+               |> validate_format(:chapter_slug, ~r/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+               |> validate_length(:chapter_slug, max: 80)
+               |> unique_constraint(:chapter_slug), "saved"}
+
+            :publish ->
+              unless profile.chapter_slug &&
+                       Enum.any?(~w(en fr), &(String.trim(profile.chapter_draft[&1] || "") != "")),
+                     do: Repo.rollback(:incomplete)
+
+              {change(profile, chapter_content: profile.chapter_draft), "published"}
+          end
+
+        case PhoenixCMS.Revisions.update(
+               Repo,
+               put_change(changeset, :revision, revision + 1),
+               PauseAiCa.Incubators.ChapterEdit,
+               fn saved ->
+                 %{
+                   group_id: group_id,
+                   actor_id: scope.user.id,
+                   revision: saved.revision,
+                   action: label,
+                   content: saved.chapter_draft
+                 }
+               end
+             ) do
+          {:ok, saved} -> saved
+          {:error, reason} -> Repo.rollback(reason)
+        end
+      end)
     end
   end
 
