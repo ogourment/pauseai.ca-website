@@ -254,11 +254,13 @@ defmodule PauseAiCaWeb.HistoricalEmailImportLive do
               <.input
                 field={@form[:mailbox_ref]}
                 type="select"
-                label={gettext("Mailbox")}
+                label={gettext("Save to mailbox")}
                 options={Enum.map(@mailboxes, &{&1.email, &1.id})}
               />
               <p>
-                {gettext("The imported message is visible to people with access to this mailbox.")}
+                {gettext(
+                  "People with access to this mailbox can read the copy. Sender and recipients come from the original email."
+                )}
               </p>
               <.input
                 field={@form[:context]}
