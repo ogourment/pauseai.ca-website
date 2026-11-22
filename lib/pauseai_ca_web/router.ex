@@ -183,6 +183,8 @@ defmodule PauseAiCaWeb.Router do
 
     get "/volunteer-profile", VolunteerProfileRedirectController, :index
 
+    get "/manage/mail/originals/:conversation_id/:message_id", HistoricalEmailController, :show
+
     get "/manage/mail/attachments/:receipt_id/:item_index/:attachment_index",
         OutreachAttachmentController,
         :show
@@ -224,6 +226,7 @@ defmodule PauseAiCaWeb.Router do
       live "/manage/questions/:id", QuestionDraftsLive, :show
       live "/manage/lists", ContactListsLive, :index
       live "/manage/mail", MailDraftsLive, :index
+      live "/manage/mail/import", HistoricalEmailImportLive, :index
       live "/manage/mail/inbox", OutreachInboxLive, :index
       live "/manage/mail/conversations/:id", OutreachInboxLive, :show
       live "/manage/mail/results", NewsletterResultsLive, :index

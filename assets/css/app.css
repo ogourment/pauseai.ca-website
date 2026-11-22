@@ -596,3 +596,30 @@ body:has(#assistant-review-confirmation) #site-assistant-launcher {
 body:has(#site-assistant-launcher) #site-footer {
   padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
 }
+/* Historical import keeps field boundaries and keyboard focus visible. */
+#historical-email-import input:not([type="file"]),
+#historical-email-import select,
+#historical-email-import textarea,
+#historical-email-import .crm-button {
+  border-color: color-mix(in srgb, var(--color-base-content) 60%, var(--color-base-100));
+}
+#historical-email-import :is(a, button, input, select, textarea):focus-visible {
+  outline-color: var(--color-base-content);
+}
+#historical-email-import {
+  overflow-wrap: anywhere;
+}
+#historical-email-import .label {
+  white-space: normal;
+  align-items: flex-start;
+  max-width: 100%;
+}
+#historical-email-import input::placeholder,
+#historical-email-import textarea::placeholder {
+  color: color-mix(in srgb, var(--color-base-content) 60%, var(--color-base-100));
+  opacity: 1;
+}
+.mail-tabs #mail-more :is(summary, a):focus-visible {
+  outline: 3px solid var(--color-base-content);
+  outline-offset: 3px;
+}

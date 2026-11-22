@@ -35,6 +35,7 @@ defmodule PauseAiCaWeb.AdminContactsLive do
          origins: [],
          activities: [],
          email_history: [],
+         conversations: [],
          note_form: to_form(%{}, as: "note"),
          note_error: nil,
          note_authors: %{},
@@ -702,6 +703,7 @@ defmodule PauseAiCaWeb.AdminContactsLive do
       origins: CRM.origins(scope, record.person.id),
       activities: activities,
       email_history: email_history,
+      conversations: PauseAiCa.Outreach.HistoricalImport.contact_history(scope, record.addresses),
       note_form: to_form(%{}, as: "note"),
       note_error: nil,
       note_authors: note_authors(activities),
@@ -1389,6 +1391,16 @@ defmodule PauseAiCaWeb.AdminContactsLive do
                 <span :if={date["source_record_id"]}> · {date["source_record_id"]}</span>
               </li>
             </ul>
+          </section>
+          <section id="crm-conversations" class="mt-8 space-y-3">
+            <h2 class="text-xl font-bold">{gettext("Email conversations")}</h2>
+            <p :if={@conversations == []}>{gettext("No recorded conversations.")}</p>
+            <article :for={conversation <- @conversations}>
+              <.link
+                navigate={~p"/manage/mail/conversations/#{conversation.id}?locale=#{@locale}"}
+                class="underline"
+              >{conversation.subject}</.link>
+            </article>
           </section>
           <section id="crm-email-history" class="mt-8">
             <h2 class="text-xl font-bold">{gettext("Email history")}</h2>

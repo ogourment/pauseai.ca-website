@@ -38,6 +38,12 @@ defmodule PauseAiCaWeb.MailNavigation do
         <summary>{gettext("More")}</summary>
         <.link
           :if={@workspace == "emails"}
+          data-navigation-item="mail.import"
+          navigate={~p"/manage/mail/import?locale=#{@locale}"}
+          aria-current={if @active == "import", do: "page"}
+        >{gettext("Import an existing email")}</.link>
+        <.link
+          :if={@workspace == "emails"}
           data-navigation-item="mail.access"
           href={"/manage/mail/access?locale=" <> @locale}
           aria-current={if @active == "access", do: "page"}

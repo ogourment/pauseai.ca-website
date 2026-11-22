@@ -7,6 +7,8 @@
 # General application configuration
 import Config
 
+config :mime, :types, %{"message/rfc822" => ["eml"]}
+
 # The campaign handoff is consumer-owned; no donor data or provider requests
 # are needed to render the public summary. Enable the replacement after review.
 config :pauseai_ca, :manifund_donations_enabled, true
@@ -147,6 +149,7 @@ import_config "#{config_env()}.exs"
 config :phoenix, :filter_parameters, [
   "review",
   "withdrawal",
+  "original_source",
   "assistant",
   "assistant_settings",
   "instructions",

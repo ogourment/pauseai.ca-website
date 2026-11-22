@@ -294,6 +294,8 @@ defmodule PauseAiCaWeb.OutreachInboxLive do
         %{
           id: message.id,
           direction: message.direction,
+          direction_label:
+            if(message.source["kind"] == "historical_import", do: gettext("Imported email")),
           sender_email: envelope_value(envelope, "from"),
           sender_name: "",
           recipient_emails: envelope_value(envelope, "to"),
@@ -304,7 +306,11 @@ defmodule PauseAiCaWeb.OutreachInboxLive do
             if(message.direction in [:outbound, "outbound"],
               do: Map.get(message, :actor_name) || gettext("Not recorded")
             ),
-          outcome_label: outcome_label(message.outcome),
+          outcome_label:
+            if(message.source["kind"] == "historical_import",
+              do: gettext("Historical import · delivery unknown"),
+              else: outcome_label(message.outcome)
+            ),
           attachments:
             Enum.map(message.attachments || [], fn attachment ->
               %{
@@ -406,6 +412,20 @@ defmodule PauseAiCaWeb.OutreachInboxLive do
             </h1>
             <p :if={@error} role="alert" class="crm-error">{@error}</p>
             <%= if @conversation do %>
+              <section
+                :for={message <- @messages}
+                :if={message.source["kind"] == "historical_import"}
+                class="crm-panel space-y-2"
+              >
+                <p><strong>{gettext("Historical import")}</strong> · {message.source["context"]}</p>
+                <p>{gettext("Recorded by")} {message.actor_name || gettext("Not recorded")}</p>
+                <p class="break-all">CC {envelope_value(message.envelope, "cc")}</p>
+                <p class="break-all">BCC {envelope_value(message.envelope, "bcc")}</p>
+                <.link
+                  href={~p"/manage/mail/originals/#{@conversation.id}/#{message.id}"}
+                  class="underline"
+                >{gettext("Download original email")}</.link>
+              </section>
               <p class="break-all">{@mailbox.name} &lt;{@mailbox.email}&gt;</p>
               <div class="flex flex-wrap gap-4 items-center">
                 <button

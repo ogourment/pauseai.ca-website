@@ -13764,3 +13764,276 @@ msgstr "Insert image"
 #, elixir-autogen
 msgid "## Next meetup\n\nJoin **local volunteers**.\n\n- Bring a friend\n- [Find an event](https://pauseai.ca/en/groups)"
 msgstr "## Next meetup\n\nJoin **local volunteers**.\n\n- Bring a friend\n- [Find an event](https://pauseai.ca/en/groups)"
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:131
+#, elixir-autogen, elixir-format
+msgid "Access or contact matches changed. Preview the email again before importing."
+msgstr "Access or contact matches changed. Preview the email again before importing."
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:242
+#, elixir-autogen, elixir-format
+msgid "Already recorded. The existing message was retained."
+msgstr "Already recorded. The existing message was retained."
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:367
+#, elixir-autogen, elixir-format
+msgid "Bcc includes only addresses present in the original file. Delivery and reading status remain unknown."
+msgstr "Bcc includes only addresses present in the original file. Delivery and reading status remain unknown."
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:387
+#, elixir-autogen, elixir-format
+msgid "Confirm import"
+msgstr "Confirm import"
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:143
+#, elixir-autogen, elixir-format
+msgid "Confirm that you reviewed the message and recipient matches."
+msgstr "Confirm that you reviewed the message and recipient matches."
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:346
+#, elixir-autogen, elixir-format
+msgid "Contact matches"
+msgstr "Contact matches"
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:272
+#, elixir-autogen, elixir-format
+msgid "Context (optional)"
+msgstr "Context (optional)"
+
+#: lib/pauseai_ca_web/live/outreach_inbox_live.ex:427
+#, elixir-autogen, elixir-format
+msgid "Download original email"
+msgstr "Download original email"
+
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:1025
+#, elixir-autogen, elixir-format
+msgid "Email conversations"
+msgstr "Email conversations"
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:243
+#, elixir-autogen, elixir-format
+msgid "Email recorded."
+msgstr "Email recorded."
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:274
+#, elixir-autogen, elixir-format
+msgid "For example, Montréal march outreach"
+msgstr "For example, Montréal march outreach"
+
+#: lib/pauseai_ca_web/live/outreach_inbox_live.ex:420
+#, elixir-autogen, elixir-format
+msgid "Historical import"
+msgstr "Historical import"
+
+#: lib/pauseai_ca_web/live/outreach_inbox_live.ex:311
+#, elixir-autogen, elixir-format
+msgid "Historical import · delivery unknown"
+msgstr "Historical import · delivery unknown"
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:176
+#, elixir-autogen, elixir-format
+msgid "Historical imports preserve the original sender and recipients. They create no contacts or subscriptions and send no email or notifications."
+msgstr "Historical imports preserve the original sender and recipients. They create no contacts or subscriptions and send no email or notifications."
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:383
+#, elixir-autogen, elixir-format
+msgid "I reviewed the original message, recipient matches and mailbox access."
+msgstr "I reviewed the original message, recipient matches and mailbox access."
+
+#: lib/pauseai_ca_web/components/mail_navigation.ex:47
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:27
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:169
+#, elixir-autogen, elixir-format
+msgid "Import an existing email"
+msgstr "Import an existing email"
+
+#: lib/pauseai_ca_web/live/outreach_inbox_live.ex:298
+#, elixir-autogen, elixir-format
+msgid "Imported email"
+msgstr "Imported email"
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:363
+#, elixir-autogen, elixir-format
+msgid "Message content"
+msgstr "Message content"
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:332
+#, elixir-autogen, elixir-format
+msgid "Message-ID"
+msgstr "Message-ID"
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:358
+#, elixir-autogen, elixir-format
+msgid "No matching contact. Address retained in the message."
+msgstr "No matching contact. Address retained in the message."
+
+#: lib/pauseai_ca_web/live/admin_contacts_live.ex:1026
+#, elixir-autogen, elixir-format
+msgid "No recorded conversations."
+msgstr "No recorded conversations."
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:250
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:345
+#, elixir-autogen, elixir-format
+msgid "Open conversation"
+msgstr "Open conversation"
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:328
+#, elixir-autogen, elixir-format
+msgid "Original date"
+msgstr "Original date"
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:314
+#, elixir-autogen, elixir-format
+msgid "Preparing preview…"
+msgstr "Preparing preview…"
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:314
+#, elixir-autogen, elixir-format
+msgid "Preview import"
+msgstr "Preview import"
+
+#: lib/pauseai_ca_web/live/outreach_inbox_live.ex:421
+#, elixir-autogen, elixir-format
+msgid "Recorded by"
+msgstr "Recorded by"
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:320
+#, elixir-autogen, elixir-format
+msgid "Review the import"
+msgstr "Review the import"
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:268
+#, elixir-autogen, elixir-format
+msgid "The imported message is visible to people with access to this mailbox."
+msgstr "The imported message is visible to people with access to this mailbox."
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:337
+#, elixir-autogen, elixir-format
+msgid "This Message-ID already exists. Confirmation checks for an exact duplicate."
+msgstr "This Message-ID already exists. Confirmation checks for an exact duplicate."
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:122
+#, elixir-autogen, elixir-format
+msgid "This Message-ID is already recorded with different content. Review the existing conversation."
+msgstr "This Message-ID is already recorded with different content. Review the existing conversation."
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:310
+#, elixir-autogen, elixir-format
+msgid "Choose one .eml or original-source .txt file up to 5 MB."
+msgstr "Choose one .eml or original-source .txt file up to 5 MB."
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:291
+#, elixir-autogen, elixir-format
+msgid "Complete original message source"
+msgstr "Complete original message source"
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:281
+#, elixir-autogen, elixir-format
+msgid "Email file (.eml or original-source .txt)"
+msgstr "Email file (.eml or original-source .txt)"
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:232
+#, elixir-autogen, elixir-format
+msgid "For another person’s sent email, ask them for their original export to retain any available Bcc recipients."
+msgstr "For another person’s sent email, ask them for their original export to retain any available Bcc recipients."
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:183
+#, elixir-autogen, elixir-format
+msgid "Gmail on a computer"
+msgstr "Gmail on a computer"
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:196
+#, elixir-autogen, elixir-format
+msgid "Gmail’s download instructions"
+msgstr "Gmail’s download instructions"
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:181
+#, elixir-autogen, elixir-format
+msgid "How do I get the original email?"
+msgstr "How do I get the original email?"
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:279
+#, elixir-autogen, elixir-format
+msgid "Import from"
+msgstr "Import from"
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:201
+#, elixir-autogen, elixir-format
+msgid "In Outlook on the web, open the message and choose More actions → Download. In new Outlook, choose More actions → Save as. Select EML when a format choice is offered."
+msgstr "In Outlook on the web, open the message and choose More actions → Download. In new Outlook, choose More actions → Save as. Select EML when a format choice is offered."
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:185
+#, elixir-autogen, elixir-format
+msgid "Open the message in Gmail. For a sent email, start in Sent."
+msgstr "Open the message in Gmail. For a sent email, start in Sent."
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:215
+#, elixir-autogen, elixir-format
+msgid "Open the message, choose the three-dot More menu under the sender details, then Export. Save the email file and upload it here."
+msgstr "Open the message, choose the three-dot More menu under the sender details, then Export. Save the email file and upload it here."
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:187
+#, elixir-autogen, elixir-format
+msgid "Open the message’s three-dot More menu and choose Download message."
+msgstr "Open the message’s three-dot More menu and choose Download message."
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:297
+#, elixir-autogen, elixir-format
+msgid "Original email (.eml or .txt, up to 5 MB)"
+msgstr "Original email (.eml or .txt, up to 5 MB)"
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:199
+#, elixir-autogen, elixir-format
+msgid "Outlook"
+msgstr "Outlook"
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:210
+#, elixir-autogen, elixir-format
+msgid "Outlook’s save instructions"
+msgstr "Outlook’s save instructions"
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:282
+#, elixir-autogen, elixir-format
+msgid "Paste original message source"
+msgstr "Paste original message source"
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:293
+#, elixir-autogen, elixir-format
+msgid "Paste the original headers, a blank line, and the message body."
+msgstr "Paste the original headers, a blank line, and the message body."
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:213
+#, elixir-autogen, elixir-format
+msgid "Proton Mail"
+msgstr "Proton Mail"
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:224
+#, elixir-autogen, elixir-format
+msgid "Proton Mail’s export instructions"
+msgstr "Proton Mail’s export instructions"
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:88
+#, elixir-autogen, elixir-format
+msgid "Provide complete original message source up to 5 MB, including sender, recipients, Date and Message-ID."
+msgstr "Provide complete original message source up to 5 MB, including sender, recipients, Date and Message-ID."
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:171
+#, elixir-autogen, elixir-format
+msgid "Record an earlier sent or received email and connect its participants to existing CRM contacts."
+msgstr "Record an earlier sent or received email and connect its participants to existing CRM contacts."
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:189
+#, elixir-autogen, elixir-format
+msgid "Upload the downloaded .eml file here, then preview the import."
+msgstr "Upload the downloaded .eml file here, then preview the import."
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:227
+#, elixir-autogen, elixir-format
+msgid "You can also paste the complete original message source or upload it as a .txt file. Include its headers and body so the CRM can match addresses, preserve the date and recognize repeat imports."
+msgstr "You can also paste the complete original message source or upload it as a .txt file. Include its headers and body so the CRM can match addresses, preserve the date and recognize repeat imports."
+
+#: lib/pauseai_ca_web/live/historical_email_import_live.ex:161
+#, elixir-autogen, elixir-format
+msgid "Back to Emails"
+msgstr "Back to Emails"
