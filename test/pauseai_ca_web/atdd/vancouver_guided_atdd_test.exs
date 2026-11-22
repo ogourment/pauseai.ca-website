@@ -204,6 +204,7 @@ if System.get_env("ATDD") == "true" do
               )
           )
           |> click_button("#site-assistant-guide-next", tr(locale, "Next"))
+          |> assert_has("#list_name:focus")
           |> fill_in("#list_name", tr(locale, "Name"), with: list_name)
           |> fill_in("#list_city", tr(locale, "Cities"), with: "Vancouver")
           |> capture(
