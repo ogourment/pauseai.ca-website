@@ -44,6 +44,30 @@ defmodule PauseAiCaWeb.IncubatorsLiveTest do
     end
   end
 
+  test "group history stays off the members page and pages through older records", c do
+    for _ <- 1..15 do
+      Repo.insert!(%Incubators.Event{
+        group_id: c.group.id,
+        actor_id: c.manager.id,
+        action: "configured"
+      })
+    end
+
+    path = "/manage/groups?group=#{c.group.id}&locale=en"
+    {:ok, view, _} = live(log_in_user(build_conn(), c.manager), path)
+    refute has_element?(view, "#incubator-activity")
+    view |> element("nav a", "Activity") |> render_click()
+    first = view |> element("#incubator-activity ul") |> render()
+    assert has_element?(view, "#incubator-activity li:nth-child(10)")
+    refute has_element?(view, "#incubator-activity li:nth-child(11)")
+    view |> element("#incubator-activity a", "Next") |> render_click()
+    assert has_element?(view, "#incubator-activity a", "Previous")
+    refute has_element?(view, "#incubator-activity a", "Next")
+    view |> element("#incubator-activity a", "Previous") |> render_click()
+
+    assert first == view |> element("#incubator-activity ul") |> render()
+  end
+
   test "directory shortcuts and the Toronto chapter shortcut preserve the query", %{conn: conn} do
     for {short, canonical} <- [
           {"/groups", "/en/groups"},
@@ -211,7 +235,7 @@ defmodule PauseAiCaWeb.IncubatorsLiveTest do
            )
 
     view |> element("#incubator-next-event summary") |> render_click()
-    assert_patch(view, path)
+    assert_patch(view, path <> "&tab=settings")
     refute has_element?(view, "#incubator-next-event[open]")
     view |> element("#incubator-next-event summary") |> render_click()
     assert_patch(view, path <> "&section=next-event")

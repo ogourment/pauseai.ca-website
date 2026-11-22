@@ -66,13 +66,14 @@ if System.get_env("ATDD") == "true" do
           |> assert_has("#account-menu")
           |> visit("/#{locale}")
           |> AtddNavigation.open_section("manage")
-          |> capture(locale, "Management menu", "Open Management menu", "Click Local groups")
+          |> capture(locale, "Management menu", "Open Management menu", "Click Groups")
           |> click_link(
             "#manage-menu [data-navigation-item='pauseai.groups']",
-            tr(locale, "Local groups"),
+            tr(locale, "Groups"),
             exact: true
           )
           |> assert_has("[data-phx-main].phx-connected")
+          |> PhoenixTest.Playwright.click("nav a[href*='tab=settings']")
           |> assert_has("#incubator-config")
           |> PhoenixTest.Playwright.click("#incubator-next-event summary")
           |> assert_path("/manage/groups",

@@ -81,6 +81,7 @@ if System.get_env("ATDD") == "true" do
       browser =
         browser
         |> visit("/manage/groups?group=#{group.id}&locale=#{locale}")
+        |> PhoenixTest.Playwright.click("nav a[href*='tab=responsibilities']")
         |> assert_has("[data-phx-main].phx-connected")
         |> click_button(tr(locale, "Add responsibility"))
         |> select("#group-responsibility-form select", tr(locale, "Member"),

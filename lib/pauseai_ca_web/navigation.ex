@@ -70,7 +70,7 @@ defmodule PauseAiCaWeb.Navigation do
         36
       ),
       item("pauseai.donations", gettext_noop("Donation page"), :manage, :donations, :admin, 35),
-      item("pauseai.groups", gettext_noop("Local groups"), :manage, :groups, :groups, 14),
+      item("pauseai.groups", gettext_noop("Groups"), :manage, :groups, :groups, 14),
       item(
         "pauseai.my-groups",
         gettext_noop("Local groups"),

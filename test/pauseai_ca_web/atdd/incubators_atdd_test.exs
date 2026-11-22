@@ -80,14 +80,15 @@ if System.get_env("ATDD") == "true" do
         |> capture(
           locale,
           "Manager account menu: preceding screen",
-          "Click Local groups in the Management section of the account menu"
+          "Click Groups in the Management section of the account menu"
         )
         |> click_link(
           "#manage-menu [data-navigation-item='pauseai.groups']",
-          tr(locale, "Local groups"),
+          tr(locale, "Groups"),
           exact: true
         )
         |> connected()
+        |> PhoenixTest.Playwright.click("nav a[href*='tab=settings']")
         |> capture(
           locale,
           "Manager opens group configuration",
@@ -111,7 +112,7 @@ if System.get_env("ATDD") == "true" do
         |> capture(
           locale,
           "Applicant involvement menu: preceding screen",
-          "Click Local groups in Get involved"
+          "Click Groups in Get involved"
         )
         |> click_link("#act-local-groups", tr(locale, "Local groups"), exact: true)
         |> connected()
@@ -214,6 +215,7 @@ if System.get_env("ATDD") == "true" do
           "Click Confirm external removal after the manual external check"
         )
         |> click_button(tr(locale, "Confirm external removal"))
+        |> PhoenixTest.Playwright.click("nav a[href*='tab=activity']")
         |> assert_has("#incubator-activity",
           text: tr(locale, "External removal confirmed"),
           exact: false

@@ -552,6 +552,21 @@ defmodule PauseAiCa.Incubators do
             )}
   end
 
+  def activity_page(scope, group_id, page) when is_integer(page) and page > 0 do
+    with :ok <- manager(scope, group_id) do
+      rows =
+        Repo.all(
+          from e in Event,
+            where: e.group_id == ^group_id,
+            order_by: [desc: e.inserted_at, desc: e.id],
+            limit: 11,
+            offset: ^((page - 1) * 10)
+        )
+
+      {:ok, Enum.take(rows, 10), length(rows) > 10}
+    end
+  end
+
   def match_reference(scope, group_id, id, code, revision) do
     manage(scope, group_id, id, revision, fn m ->
       valid =

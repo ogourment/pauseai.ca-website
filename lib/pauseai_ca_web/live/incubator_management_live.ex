@@ -11,10 +11,13 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
     socket =
       assign(socket,
         locale: locale,
-        page_title: gettext("Local groups"),
+        page_title: gettext("Groups"),
         groups: [],
         group_id: nil,
         requested_group: false,
+        tab: "members",
+        activity_page: 1,
+        more_activity: false,
         next_event_open: false,
         profile: nil,
         roster: [],
@@ -47,12 +50,32 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
        assign(socket,
          groups: groups,
          group_id: group_id,
+         tab: active_tab(params),
+         activity_page: activity_page(params["page"]),
          requested_group: params["group"] != nil,
          next_event_open: params["section"] == "next-event"
        ),
        not same_group?
      )}
   end
+
+  defp active_tab(%{"section" => "next-event"}), do: "settings"
+  defp active_tab(%{"tab" => tab}) when tab in ~w(settings responsibilities activity), do: tab
+  defp active_tab(_), do: "members"
+
+  defp activity_page(value) when is_binary(value) and byte_size(value) <= 6 do
+    case Integer.parse(value) do
+      {page, ""} when page > 0 -> page
+      _ -> 1
+    end
+  end
+
+  defp activity_page(_), do: 1
+
+  defp load_activity(%{tab: "activity"} = assigns),
+    do: Incubators.activity_page(assigns.current_scope, assigns.group_id, assigns.activity_page)
+
+  defp load_activity(_), do: {:ok, [], false}
 
   @impl true
   def handle_event(event, params, socket) do
@@ -68,7 +91,12 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
     with {:ok, _} <-
            Incubators.configuration(socket.assigns.current_scope, socket.assigns.group_id) do
       path = management_path(socket.assigns.group_id, socket.assigns.locale)
-      path = if socket.assigns.next_event_open, do: path, else: path <> "&section=next-event"
+
+      path =
+        if socket.assigns.next_event_open,
+          do: path <> "&tab=settings",
+          else: path <> "&section=next-event"
+
       {:noreply, push_patch(socket, to: path, replace: true)}
     else
       _ -> {:noreply, denied(socket)}
@@ -284,7 +312,7 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
     with true <- enabled?(),
          {:ok, profile} <- Incubators.configuration(scope, id),
          {:ok, roster} <- Incubators.roster(scope, id),
-         {:ok, events} <- Incubators.activity(scope, id) do
+         {:ok, events, more_activity} <- load_activity(socket.assigns) do
       attrs =
         if profile do
           Map.from_struct(profile)
@@ -307,6 +335,7 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
         profile: if(reset_form, do: profile, else: socket.assigns.profile),
         roster: roster,
         events: events,
+        more_activity: more_activity,
         form: if(reset_form, do: to_form(attrs, as: "profile"), else: socket.assigns.form),
         error: nil,
         superadmin: Volunteers.superadmin?(scope),
@@ -377,7 +406,7 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
       >
         <header class="rounded-xl border border-base-300 bg-base-200 p-4 space-y-3">
           <div class="flex flex-wrap justify-between gap-3 items-center">
-            <h1 class="text-2xl font-bold">{gettext("Local groups")}</h1><.link
+            <h1 class="text-2xl font-bold">{gettext("Groups")}</h1><.link
               href={UI.directory(@locale)}
               class="underline"
             >{gettext("Public directory")}</.link>
@@ -408,344 +437,371 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
         </header>
         <p :if={@error} role="alert" class="rounded border border-warning p-4">{@error}</p>
         <div :if={@group_id} class="space-y-8">
-          <.link
-            :if={@profile && @profile.published}
-            href={"/manage/groups/#{@group_id}/homepage?locale=#{@locale}"}
-            class="link"
-          >{gettext("Edit chapter homepage")}</.link>
-          <.form
-            for={@form}
-            phx-submit="configure"
-            phx-change="configure_validate"
-            id="incubator-config"
-            class="rounded-xl border border-base-300 p-5 space-y-4"
+          <nav
+            aria-label={gettext("Groups")}
+            class="flex flex-wrap gap-1 border-b border-base-300"
           >
-            <input type="hidden" name="_group_ref" value={@group_id} />
-            <input type="hidden" name="_profile_revision" value={@profile && @profile.revision} />
-            <h2 class="text-xl font-semibold">{gettext("Group configuration")}</h2>
-            <div class="grid gap-4 md:grid-cols-2">
-              <.input
-                field={@form[:name_en]}
-                label={gettext("English name")}
-                required
-                maxlength="100"
-              /><.input
-                field={@form[:name_fr]}
-                label={gettext("French name")}
-                required
-                maxlength="100"
-              />
-            </div>
-            <div class="grid gap-4 md:grid-cols-2">
-              <.input
-                field={@form[:summary_en]}
-                type="textarea"
-                label={gettext("English description")}
-                maxlength="2000"
-              /><.input
-                field={@form[:summary_fr]}
-                type="textarea"
-                label={gettext("French description")}
-                maxlength="2000"
-              />
-            </div>
-            <.input
-              field={@form[:fsas]}
-              label={gettext("Postal areas")}
-              aria-describedby="incubator-fsa-help"
-            /><p id="incubator-fsa-help" class="text-sm">
-              {gettext("FSA: the first three characters of your postal code, for example H2X.")} {gettext(
-                "Separate multiple areas with commas. These areas describe the group; they do not grant membership."
-              )}
-            </p>
-            <.input
-              field={@form[:stage]}
-              type="select"
-              label={gettext("Group stage")}
-              options={[{gettext("Active group"), "active"}, {gettext("Incubator"), "incubator"}]}
-            />
-            <.input field={@form[:events_url]} type="url" label={gettext("Public events link")} />
-            <details
-              id="incubator-next-event"
-              open={@next_event_open}
-              class="rounded-lg border border-base-300 p-4"
-            >
-              <summary phx-click="toggle-next-event" class="cursor-pointer font-semibold">
-                {gettext("Next group event")}
-              </summary>
-              <div class="space-y-4 pt-4">
-                <.input
-                  field={@form[:next_event_title_en]}
-                  label={gettext("English event title")}
-                  maxlength="200"
-                />
-                <.input
-                  field={@form[:next_event_title_fr]}
-                  label={gettext("French event title")}
-                  maxlength="200"
-                />
-                <.input
-                  field={@form[:next_event_local_start]}
-                  type="datetime-local"
-                  label={gettext("Event date and local time")}
-                />
-                <.input
-                  field={@form[:next_event_timezone]}
-                  label={gettext("Event time zone")}
-                  placeholder="America/Toronto"
-                />
-                <.input field={@form[:next_event_url]} type="url" label={gettext("Event link")} />
-                <p class="text-sm">
-                  {gettext(
-                    "Complete every event field, or clear them all. Past events are hidden automatically."
-                  )}
-                </p>
-              </div>
-            </details>
-            <.input
-              field={@form[:whatsapp_enabled]}
-              type="checkbox"
-              label={gettext("Offer a manager-approved WhatsApp group")}
-            />
-            <.input
-              :if={@form[:whatsapp_enabled].value in [true, "true"]}
-              field={@form[:moderator_contact]}
-              label={gettext("Private WhatsApp verification contact")}
-              maxlength="200"
-            />
-            <.input
-              field={@form[:whatsapp_invite_url]}
-              type="url"
-              label={gettext("Private WhatsApp invitation link")}
-            />
-            <.input
-              field={@form[:whatsapp_approval_confirmed]}
-              type="checkbox"
-              label={gettext("I confirmed that managers approve new members in WhatsApp.")}
-            />
-            <p class="text-sm">
-              {gettext(
-                "Website approval and WhatsApp admission are separate. Confirm admission manually after checking the external group."
-              )}
-            </p>
-            <.input
-              :if={@superadmin}
-              field={@form[:published]}
-              type="checkbox"
-              label={gettext("Publish in the public directory")}
-            />
-            <p :if={!@superadmin} class="text-sm">
-              {gettext("A superadmin publishes this group in the public directory.")}
-            </p>
-            <button type="submit" class="btn btn-primary">{gettext("Save configuration")}</button>
-          </.form>
-          <.form
-            :if={@superadmin and @group_id}
-            for={@add_member_form}
-            id="incubator-add-member"
-            phx-change="change-existing-member"
-            phx-submit="add-existing-member"
-            class="rounded-xl border border-base-300 p-4 space-y-3"
-          >
-            <h2 class="text-xl font-semibold">{gettext("Add existing account")}</h2>
-            <fieldset
-              disabled={!connected?(@socket)}
-              class="grid gap-3 md:grid-cols-[minmax(0,1fr)_12rem_auto] md:items-end"
+            <.link
+              :for={
+                {key, label} <- [
+                  {"members", gettext("Requests and members")},
+                  {"responsibilities", gettext("Responsibilities")},
+                  {"settings", gettext("Group configuration")},
+                  {"activity", gettext("Activity")}
+                ]
+              }
+              patch={management_path(@group_id, @locale) <> "&tab=" <> key}
+              aria-current={if key == @tab, do: "page"}
+              class={[
+                "px-3 py-2",
+                if(key == @tab, do: "border-b-2 border-current font-bold", else: "underline")
+              ]}
+            >{label}</.link>
+          </nav>
+          <div hidden={@tab != "settings"}>
+            <.link
+              :if={@profile && @profile.published}
+              href={"/manage/groups/#{@group_id}/homepage?locale=#{@locale}"}
+              class="link"
+            >{gettext("Edit chapter homepage")}</.link>
+            <.form
+              for={@form}
+              phx-submit="configure"
+              phx-change="configure_validate"
+              id="incubator-config"
+              class="rounded-xl border border-base-300 p-5 space-y-4"
             >
               <input type="hidden" name="_group_ref" value={@group_id} />
-              <.input
-                id="enrollment-email"
-                field={@add_member_form[:email]}
-                type="email"
-                label={gettext("Email")}
-                required
-              />
-              <.input
-                id="enrollment-role"
-                aria-label={gettext("Role")}
-                field={@add_member_form[:role]}
-                type="select"
-                label={gettext("Role")}
-                options={[{gettext("Member"), "member"}, {gettext("Manager"), "manager"}]}
-              />
-              <button type="submit" class="btn btn-primary">{gettext("Add member")}</button>
-            </fieldset>
-            <p :if={@add_member_error} id="add-existing-member-error" role="alert">
-              {@add_member_error}
-            </p>
-          </.form>
-          <section class="space-y-4" id="incubator-roster">
-            <h2 class="text-xl font-semibold">{gettext("Requests and members")}</h2><p :if={
-              @roster == []
-            }>
-              {gettext("No requests yet.")}
-            </p>
-            <article
-              :for={member <- @roster}
-              id={"membership-#{member.id}"}
-              class="rounded-xl border border-base-300 p-5 space-y-4"
-              data-status={member.status}
-              data-revision={member.revision}
-            >
-              <div>
-                <h3 class="text-lg font-semibold">{member.display_name}</h3><p>
-                  {UI.status(member.status)}
-                </p><p :if={is_nil(member.conduct_at)} class="text-sm">
-                  {gettext("Conduct acknowledgement has not been recorded for this account.")}
-                </p><p :if={member.identifier} class="break-words">
-                  {gettext("WhatsApp identifier")}: {member.identifier}
-                </p><p :if={member.matched_at}>{gettext("Identifier matched")}</p>
-              </div>
-              <dl
-                :if={member.contribution != %{}}
-                class="text-sm"
-                id={"member-contribution-#{member.id}"}
-              >
-                <div :if={member.contribution["selected_skills"] not in [nil, []]}>
-                  <dt class="font-semibold">{gettext("Skills you can offer")}</dt>
-                  <dd>
-                    {PauseAiCaWeb.VolunteerForms.skill_summary(
-                      member.contribution["selected_skills"],
-                      member.contribution["experience"] || %{}
-                    )}
-                  </dd>
-                </div>
-                <div :if={is_integer(member.contribution["availability_hours_per_week"])}>
-                  <dt class="font-semibold">{gettext("Hours available per week")}</dt>
-                  <dd>{member.contribution["availability_hours_per_week"]}</dd>
-                </div>
-              </dl>
-              <form
-                :if={
-                  (member.status == "pending" and !member.matched_at and @profile) &&
-                    @profile.whatsapp_enabled
-                }
-                phx-submit="match"
-                class="space-y-2"
-                id={"match-#{member.id}"}
-              >
-                <input type="hidden" name="member[id]" value={member.id} /><input
-                  type="hidden"
-                  name="member[revision]"
-                  value={member.revision}
-                />
+              <input type="hidden" name="_profile_revision" value={@profile && @profile.revision} />
+              <h2 class="text-xl font-semibold">{gettext("Group configuration")}</h2>
+              <div class="grid gap-4 md:grid-cols-2">
                 <.input
-                  name="member[reference]"
-                  label={gettext("Reference received privately from this applicant")}
-                  value=""
+                  field={@form[:name_en]}
+                  label={gettext("English name")}
                   required
-                  autocomplete="off"
+                  maxlength="100"
+                /><.input
+                  field={@form[:name_fr]}
+                  label={gettext("French name")}
+                  required
                   maxlength="100"
                 />
-                <button class="btn btn-outline" type="submit">{gettext("Match identifier")}</button>
-              </form>
-              <form phx-submit="decide" class="space-y-3" id={"decision-#{member.id}"}>
-                <input type="hidden" name="member[id]" value={member.id} /><input
-                  type="hidden"
-                  name="member[revision]"
-                  value={member.revision}
-                />
-                <.input
-                  name="member[reason]"
-                  value=""
-                  label={gettext("Private moderation reason")}
-                  maxlength="1000"
-                />
-                <.input
-                  :if={member.status == "approved"}
-                  name="member[observed_admission]"
-                  value={false}
-                  type="checkbox"
-                  label={gettext("I verified this member's admission in the external group.")}
-                />
-                <div class="flex flex-wrap gap-2">
-                  <button
-                    :if={member.status == "pending"}
-                    name="decision"
-                    value="approve"
-                    class="btn btn-primary"
-                    type="submit"
-                  >{gettext("Approve request")}</button>
-                  <button
-                    :if={member.status == "pending"}
-                    name="decision"
-                    value="reject"
-                    class="btn btn-outline"
-                    type="submit"
-                  >{gettext("Decline request")}</button>
-                  <button
-                    :if={member.status == "approved"}
-                    name="decision"
-                    value="admit"
-                    class="btn btn-primary"
-                    type="submit"
-                  >{gettext("Confirm admission")}</button>
-                  <button
-                    :if={member.status in ["approved", "admitted"]}
-                    name="decision"
-                    value="suspend"
-                    class="btn btn-outline"
-                    type="submit"
-                  >{gettext("Suspend membership")}</button>
-                  <button
-                    :if={member.status in ["pending", "approved", "admitted", "suspended"]}
-                    name="decision"
-                    value="remove"
-                    class="btn btn-outline"
-                    type="submit"
-                  >{gettext("Remove membership")}</button>
-                </div>
-              </form>
-              <div
-                :if={member.external_removal_pending}
-                class="rounded border border-warning p-3 space-y-2"
-              >
-                <p>
-                  {gettext(
-                    "Remove this person from the external group, then confirm completion here."
-                  )}
-                </p><button
-                  type="button"
-                  phx-click="confirm_removal"
-                  phx-value-id={member.id}
-                  phx-value-revision={member.revision}
-                  class="btn btn-outline"
-                >{gettext("Confirm external removal")}</button>
               </div>
-              <form
-                :if={member.status in ["approved", "admitted"]}
-                phx-submit="delegate"
-                class="flex flex-wrap items-end gap-3"
-                id={"delegate-#{member.id}"}
+              <div class="grid gap-4 md:grid-cols-2">
+                <.input
+                  field={@form[:summary_en]}
+                  type="textarea"
+                  label={gettext("English description")}
+                  maxlength="2000"
+                /><.input
+                  field={@form[:summary_fr]}
+                  type="textarea"
+                  label={gettext("French description")}
+                  maxlength="2000"
+                />
+              </div>
+              <.input
+                field={@form[:fsas]}
+                label={gettext("Postal areas")}
+                aria-describedby="incubator-fsa-help"
+              /><p id="incubator-fsa-help" class="text-sm">
+                {gettext("FSA: the first three characters of your postal code, for example H2X.")} {gettext(
+                  "Separate multiple areas with commas. These areas describe the group; they do not grant membership."
+                )}
+              </p>
+              <.input
+                field={@form[:stage]}
+                type="select"
+                label={gettext("Group stage")}
+                options={[{gettext("Active group"), "active"}, {gettext("Incubator"), "incubator"}]}
+              />
+              <.input field={@form[:events_url]} type="url" label={gettext("Public events link")} />
+              <details
+                id="incubator-next-event"
+                open={@next_event_open}
+                class="rounded-lg border border-base-300 p-4"
               >
-                <input type="hidden" name="member[id]" value={member.id} /><input
-                  type="hidden"
-                  name="member[revision]"
-                  value={member.revision}
+                <summary phx-click="toggle-next-event" class="cursor-pointer font-semibold">
+                  {gettext("Next group event")}
+                </summary>
+                <div class="space-y-4 pt-4">
+                  <.input
+                    field={@form[:next_event_title_en]}
+                    label={gettext("English event title")}
+                    maxlength="200"
+                  />
+                  <.input
+                    field={@form[:next_event_title_fr]}
+                    label={gettext("French event title")}
+                    maxlength="200"
+                  />
+                  <.input
+                    field={@form[:next_event_local_start]}
+                    type="datetime-local"
+                    label={gettext("Event date and local time")}
+                  />
+                  <.input
+                    field={@form[:next_event_timezone]}
+                    label={gettext("Event time zone")}
+                    placeholder="America/Toronto"
+                  />
+                  <.input field={@form[:next_event_url]} type="url" label={gettext("Event link")} />
+                  <p class="text-sm">
+                    {gettext(
+                      "Complete every event field, or clear them all. Past events are hidden automatically."
+                    )}
+                  </p>
+                </div>
+              </details>
+              <.input
+                field={@form[:whatsapp_enabled]}
+                type="checkbox"
+                label={gettext("Offer a manager-approved WhatsApp group")}
+              />
+              <.input
+                :if={@form[:whatsapp_enabled].value in [true, "true"]}
+                field={@form[:moderator_contact]}
+                label={gettext("Private WhatsApp verification contact")}
+                maxlength="200"
+              />
+              <.input
+                field={@form[:whatsapp_invite_url]}
+                type="url"
+                label={gettext("Private WhatsApp invitation link")}
+              />
+              <.input
+                field={@form[:whatsapp_approval_confirmed]}
+                type="checkbox"
+                label={gettext("I confirmed that managers approve new members in WhatsApp.")}
+              />
+              <p class="text-sm">
+                {gettext(
+                  "Website approval and WhatsApp admission are separate. Confirm admission manually after checking the external group."
+                )}
+              </p>
+              <.input
+                :if={@superadmin}
+                field={@form[:published]}
+                type="checkbox"
+                label={gettext("Publish in the public directory")}
+              />
+              <p :if={!@superadmin} class="text-sm">
+                {gettext("A superadmin publishes this group in the public directory.")}
+              </p>
+              <button type="submit" class="btn btn-primary">{gettext("Save configuration")}</button>
+            </.form>
+          </div>
+          <div hidden={@tab != "members"}>
+            <.form
+              :if={@superadmin and @group_id}
+              for={@add_member_form}
+              id="incubator-add-member"
+              phx-change="change-existing-member"
+              phx-submit="add-existing-member"
+              class="rounded-xl border border-base-300 p-4 space-y-3"
+            >
+              <h2 class="text-xl font-semibold">{gettext("Add existing account")}</h2>
+              <fieldset
+                disabled={!connected?(@socket)}
+                class="grid gap-3 md:grid-cols-[minmax(0,1fr)_12rem_auto] md:items-end"
+              >
+                <input type="hidden" name="_group_ref" value={@group_id} />
+                <.input
+                  id="enrollment-email"
+                  field={@add_member_form[:email]}
+                  type="email"
+                  label={gettext("Email")}
+                  required
                 />
                 <.input
+                  id="enrollment-role"
+                  aria-label={gettext("Role")}
+                  field={@add_member_form[:role]}
                   type="select"
-                  name="member[role]"
-                  label={gettext("Group role")}
-                  value={member.role}
-                  options={[
-                    {gettext("Member"), "member"},
-                    {gettext("Coordinator"), "coordinator"},
-                    {gettext("Manager"), "manager"}
-                  ]}
+                  label={gettext("Role")}
+                  options={[{gettext("Member"), "member"}, {gettext("Manager"), "manager"}]}
                 />
-                <button type="submit" class="btn btn-outline">{gettext("Save group role")}</button>
-              </form>
-            </article>
-          </section>
-          <.live_component
-            module={PauseAiCaWeb.GroupResponsibilitiesComponent}
-            id={"responsibilities-#{@group_id}"}
-            group_id={@group_id}
-            scope={@current_scope}
-            roster={@roster}
-          />
-          <section class="space-y-3" id="incubator-activity">
+                <button type="submit" class="btn btn-primary">{gettext("Add member")}</button>
+              </fieldset>
+              <p :if={@add_member_error} id="add-existing-member-error" role="alert">
+                {@add_member_error}
+              </p>
+            </.form>
+            <section class="space-y-4" id="incubator-roster">
+              <h2 class="text-xl font-semibold">{gettext("Requests and members")}</h2><p :if={
+                @roster == []
+              }>
+                {gettext("No requests yet.")}
+              </p>
+              <article
+                :for={member <- @roster}
+                id={"membership-#{member.id}"}
+                class="rounded-xl border border-base-300 p-5 space-y-4"
+                data-status={member.status}
+                data-revision={member.revision}
+              >
+                <div>
+                  <h3 class="text-lg font-semibold">{member.display_name}</h3><p>
+                    {UI.status(member.status)}
+                  </p><p :if={is_nil(member.conduct_at)} class="text-sm">
+                    {gettext("Conduct acknowledgement has not been recorded for this account.")}
+                  </p><p :if={member.identifier} class="break-words">
+                    {gettext("WhatsApp identifier")}: {member.identifier}
+                  </p><p :if={member.matched_at}>{gettext("Identifier matched")}</p>
+                </div>
+                <dl
+                  :if={member.contribution != %{}}
+                  class="text-sm"
+                  id={"member-contribution-#{member.id}"}
+                >
+                  <div :if={member.contribution["selected_skills"] not in [nil, []]}>
+                    <dt class="font-semibold">{gettext("Skills you can offer")}</dt>
+                    <dd>
+                      {PauseAiCaWeb.VolunteerForms.skill_summary(
+                        member.contribution["selected_skills"],
+                        member.contribution["experience"] || %{}
+                      )}
+                    </dd>
+                  </div>
+                  <div :if={is_integer(member.contribution["availability_hours_per_week"])}>
+                    <dt class="font-semibold">{gettext("Hours available per week")}</dt>
+                    <dd>{member.contribution["availability_hours_per_week"]}</dd>
+                  </div>
+                </dl>
+                <form
+                  :if={
+                    (member.status == "pending" and !member.matched_at and @profile) &&
+                      @profile.whatsapp_enabled
+                  }
+                  phx-submit="match"
+                  class="space-y-2"
+                  id={"match-#{member.id}"}
+                >
+                  <input type="hidden" name="member[id]" value={member.id} /><input
+                    type="hidden"
+                    name="member[revision]"
+                    value={member.revision}
+                  />
+                  <.input
+                    name="member[reference]"
+                    label={gettext("Reference received privately from this applicant")}
+                    value=""
+                    required
+                    autocomplete="off"
+                    maxlength="100"
+                  />
+                  <button class="btn btn-outline" type="submit">{gettext("Match identifier")}</button>
+                </form>
+                <form phx-submit="decide" class="space-y-3" id={"decision-#{member.id}"}>
+                  <input type="hidden" name="member[id]" value={member.id} /><input
+                    type="hidden"
+                    name="member[revision]"
+                    value={member.revision}
+                  />
+                  <.input
+                    name="member[reason]"
+                    value=""
+                    label={gettext("Private moderation reason")}
+                    maxlength="1000"
+                  />
+                  <.input
+                    :if={member.status == "approved"}
+                    name="member[observed_admission]"
+                    value={false}
+                    type="checkbox"
+                    label={gettext("I verified this member's admission in the external group.")}
+                  />
+                  <div class="flex flex-wrap gap-2">
+                    <button
+                      :if={member.status == "pending"}
+                      name="decision"
+                      value="approve"
+                      class="btn btn-primary"
+                      type="submit"
+                    >{gettext("Approve request")}</button>
+                    <button
+                      :if={member.status == "pending"}
+                      name="decision"
+                      value="reject"
+                      class="btn btn-outline"
+                      type="submit"
+                    >{gettext("Decline request")}</button>
+                    <button
+                      :if={member.status == "approved"}
+                      name="decision"
+                      value="admit"
+                      class="btn btn-primary"
+                      type="submit"
+                    >{gettext("Confirm admission")}</button>
+                    <button
+                      :if={member.status in ["approved", "admitted"]}
+                      name="decision"
+                      value="suspend"
+                      class="btn btn-outline"
+                      type="submit"
+                    >{gettext("Suspend membership")}</button>
+                    <button
+                      :if={member.status in ["pending", "approved", "admitted", "suspended"]}
+                      name="decision"
+                      value="remove"
+                      class="btn btn-outline"
+                      type="submit"
+                    >{gettext("Remove membership")}</button>
+                  </div>
+                </form>
+                <div
+                  :if={member.external_removal_pending}
+                  class="rounded border border-warning p-3 space-y-2"
+                >
+                  <p>
+                    {gettext(
+                      "Remove this person from the external group, then confirm completion here."
+                    )}
+                  </p><button
+                    type="button"
+                    phx-click="confirm_removal"
+                    phx-value-id={member.id}
+                    phx-value-revision={member.revision}
+                    class="btn btn-outline"
+                  >{gettext("Confirm external removal")}</button>
+                </div>
+                <form
+                  :if={member.status in ["approved", "admitted"]}
+                  phx-submit="delegate"
+                  class="flex flex-wrap items-end gap-3"
+                  id={"delegate-#{member.id}"}
+                >
+                  <input type="hidden" name="member[id]" value={member.id} /><input
+                    type="hidden"
+                    name="member[revision]"
+                    value={member.revision}
+                  />
+                  <.input
+                    type="select"
+                    name="member[role]"
+                    label={gettext("Group role")}
+                    value={member.role}
+                    options={[
+                      {gettext("Member"), "member"},
+                      {gettext("Coordinator"), "coordinator"},
+                      {gettext("Manager"), "manager"}
+                    ]}
+                  />
+                  <button type="submit" class="btn btn-outline">{gettext("Save group role")}</button>
+                </form>
+              </article>
+            </section>
+          </div>
+          <div hidden={@tab != "responsibilities"}>
+            <.live_component
+              module={PauseAiCaWeb.GroupResponsibilitiesComponent}
+              id={"responsibilities-#{@group_id}"}
+              group_id={@group_id}
+              scope={@current_scope}
+              roster={@roster}
+            />
+          </div>
+          <section :if={@tab == "activity"} class="space-y-3" id="incubator-activity">
             <h2 class="text-xl font-semibold">{gettext("Activity")}</h2><p :if={@events == []}>
               {gettext("No activity yet.")}
             </p><ul class="divide-y divide-base-300">
@@ -756,6 +812,18 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
                 >{Calendar.strftime(event.inserted_at, "%Y-%m-%d %H:%M UTC")}</time>
               </li>
             </ul>
+            <nav class="flex gap-4" aria-label={gettext("Activity")}>
+              <.link
+                :if={@activity_page > 1}
+                patch={management_path(@group_id, @locale) <> "&tab=activity&page=#{@activity_page - 1}"}
+                class="link"
+              >{gettext("Previous")}</.link>
+              <.link
+                :if={@more_activity}
+                patch={management_path(@group_id, @locale) <> "&tab=activity&page=#{@activity_page + 1}"}
+                class="link"
+              >{gettext("Next")}</.link>
+            </nav>
           </section>
         </div>
       </section>

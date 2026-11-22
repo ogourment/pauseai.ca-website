@@ -83,7 +83,7 @@ if System.get_env("ATDD") == "true" do
         )
         |> click_link(
           "#manage-menu [data-navigation-item='pauseai.groups']",
-          tr(locale, "Local groups"),
+          tr(locale, "Groups"),
           exact: true
         )
         |> connected()
@@ -92,7 +92,7 @@ if System.get_env("ATDD") == "true" do
           id,
           "Existing account enrollment form",
           "/#{locale} · open Management menu",
-          tr(locale, "Local groups")
+          tr(locale, "Groups")
         )
         |> add_account(locale, member, "Member")
 
@@ -108,7 +108,8 @@ if System.get_env("ATDD") == "true" do
       browser =
         browser
         |> assert_membership(locale, manager_record, "manager")
-        |> assert_has("body", text: tr(locale, "Member added by organizer"))
+        |> PhoenixTest.Playwright.click("nav a[href*='tab=activity']")
+        |> assert_has("#incubator-activity", text: tr(locale, "Member added by organizer"))
         |> capture(
           id,
           "Organizer added an existing member and manager",
@@ -119,7 +120,8 @@ if System.get_env("ATDD") == "true" do
         |> connected()
         |> assert_membership(locale, member_record, "member")
         |> assert_membership(locale, manager_record, "manager")
-        |> assert_has("body", text: tr(locale, "Member added by organizer"))
+        |> PhoenixTest.Playwright.click("nav a[href*='tab=activity']")
+        |> assert_has("#incubator-activity", text: tr(locale, "Member added by organizer"))
         |> capture(
           id,
           "Roster and organizer attribution survive reload",

@@ -32,6 +32,7 @@ if System.get_env("ATDD") == "true" do
         c.conn
         |> login(manager)
         |> visit("/manage/groups?group=#{group.id}")
+        |> PhoenixTest.Playwright.click("nav a[href*='tab=settings']")
         |> click_link("Edit chapter homepage")
         |> assert_has("[data-phx-main].phx-connected")
         |> fill_in("Chapter address under /groups/", with: "toronto")
