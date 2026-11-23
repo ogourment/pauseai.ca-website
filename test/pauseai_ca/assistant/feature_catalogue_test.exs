@@ -358,6 +358,31 @@ defmodule PauseAiCa.Assistant.FeatureCatalogueTest do
            ]
   end
 
+  test "account profiles require the exact recorded English and French scenarios", context do
+    report =
+      Map.put(context.report, "scenarios", [
+        %{"id" => "PROFILE-UX-01-en", "status" => "success"},
+        %{"id" => "PROFILE-UX-01-fr", "status" => "success"}
+      ])
+
+    write(%{context | report: report})
+    assert {:ok, loaded} = FeatureCatalogue.load(context.identity, evidence_path: context.path)
+
+    profiles = Enum.find(loaded.features, &(&1.id == "account-profiles"))
+    assert profiles.scenarios == ["PROFILE-UX-01-en", "PROFILE-UX-01-fr"]
+
+    runtime = %{
+      version: context.identity.version,
+      build: context.identity.release_id,
+      evidence: loaded.feature_evidence
+    }
+
+    assert Catalog.describe(profiles, runtime).status == :available
+
+    without_french = update_in(runtime.evidence.results, &Map.delete(&1, "PROFILE-UX-01-fr"))
+    assert Catalog.describe(profiles, without_french).status == :unverified
+  end
+
   test "organizer coaching is bound to the recorded bilingual journeys", context do
     write(context)
     assert {:ok, loaded} = FeatureCatalogue.load(context.identity, evidence_path: context.path)

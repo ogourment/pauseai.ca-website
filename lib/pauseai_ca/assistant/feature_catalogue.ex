@@ -51,7 +51,7 @@ defmodule PauseAiCa.Assistant.FeatureCatalogue do
      "/manage/tasks", ["TASK-MEMBER-01"], :tasks_enabled, "0.7.0"},
     {"account-profiles", "My profile and Volunteer profile",
      "Open My account → My profile to save contact details and an optional postal area. Find my MP is a separate full-code lookup. Open Volunteer profile for group work, availability, skills and sharing preferences.",
-     "/en/profile", ["PROFILE-UX-01-en", "PROFILE-UX-01-fr"], nil, "0.8.39"},
+     "/en/profile", ["PROFILE-UX-01"], nil, "0.8.39"},
     {"organizer-tasks", "Organizer tasks", "Manage scoped tasks and their activity.",
      "/manage/tasks", ["TASK-PAI-01", "TASK-PAI-01-authority"], :tasks_enabled, "0.5.36"},
     {"blog-editor", "Blog editing", "Edit Markdown posts and review reader sections.",
