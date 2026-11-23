@@ -1,6 +1,21 @@
 defmodule PauseAiCaWeb.PageControllerTest do
   use PauseAiCaWeb.ConnCase
 
+  test "visitors can open the two additional Toronto march photographs in either language", %{
+    conn: conn
+  } do
+    for path <- ["/en/our-actions", "/fr/nos-actions"] do
+      html = conn |> get(path) |> html_response(200)
+
+      for name <- ["t-speech", "t-freeze"] do
+        photo = "/images/toronto-site/#{name}.jpg"
+        assert html =~ ~s(href="#{photo}")
+        assert html =~ ~s(src="#{photo}")
+        assert File.regular?(Application.app_dir(:pauseai_ca, "priv/static" <> photo))
+      end
+    end
+  end
+
   test "GET / preserves the English entry point and declares its canonical URL", %{conn: conn} do
     conn = get(conn, ~p"/")
     assert html_response(conn, 200) =~ ~s(rel="canonical")

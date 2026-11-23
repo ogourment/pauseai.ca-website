@@ -187,6 +187,32 @@ defmodule PauseAiCaWeb.ActionsLive do
               </figcaption>
             </figure>
           </div>
+          <div id="toronto-march-gallery" class="mt-6 grid items-start gap-6 md:grid-cols-[3fr_5fr]">
+            <figure>
+              <a href={~p"/images/toronto-site/t-speech.jpg"}>
+                <img
+                  src={~p"/images/toronto-site/t-speech.jpg"}
+                  width="725"
+                  height="680"
+                  loading="lazy"
+                  alt={gettext("A speaker addresses the crowd at Queen’s Park.")}
+                  class="h-auto w-full rounded-xl"
+                />
+              </a>
+            </figure>
+            <figure>
+              <a href={~p"/images/toronto-site/t-freeze.jpg"}>
+                <img
+                  src={~p"/images/toronto-site/t-freeze.jpg"}
+                  width="1209"
+                  height="680"
+                  loading="lazy"
+                  alt={gettext("Marchers hold up their signs in downtown Toronto.")}
+                  class="h-auto w-full rounded-xl"
+                />
+              </a>
+            </figure>
+          </div>
         </section>
         <section id="montreal-2026-09-26" class="mt-12 scroll-mt-40 border-t border-stone-300 pt-10">
           <h2 class="font-heading text-3xl text-stone-950">
