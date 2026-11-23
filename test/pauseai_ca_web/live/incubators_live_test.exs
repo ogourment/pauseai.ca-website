@@ -45,6 +45,30 @@ defmodule PauseAiCaWeb.IncubatorsLiveTest do
     end
   end
 
+  @tag :empty_groups
+  test "visitors see Montréal, Toronto with a march photo, then Ottawa in both editions", c do
+    for city <- ["Ottawa", "Toronto", "Montréal"] do
+      {:ok, group} = Volunteers.create_group(c.admin, %{name: city})
+
+      {:ok, _} =
+        Incubators.configure(c.admin, group.id, %{
+          "name_en" => city,
+          "name_fr" => city,
+          "area_served" => "local",
+          "published" => true,
+          "fsas" => "H2X"
+        })
+    end
+
+    for path <- ["/en/groups", "/fr/groupes"] do
+      {:ok, view, _} = live(build_conn(), path)
+      assert has_element?(view, ".chapter-card:nth-child(1) h2", "Montréal")
+      assert has_element?(view, ".chapter-card:nth-child(2) h2", "Toronto")
+      assert has_element?(view, ".chapter-card:nth-child(2) img[src$='/t-treaty.jpg']")
+      assert has_element?(view, ".chapter-card:nth-child(3) h2", "Ottawa")
+    end
+  end
+
   test "Manage remembers each organizer’s last visit and scopes new activity to their groups",
        c do
     conn = log_in_user(build_conn(), c.manager)

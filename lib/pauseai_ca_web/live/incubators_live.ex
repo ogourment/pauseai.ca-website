@@ -62,7 +62,7 @@ defmodule PauseAiCaWeb.IncubatorsLive do
            |> redirect(to: directory(socket.assigns.locale))}
       end
     else
-      {:noreply, assign(socket, groups: Incubators.public_groups(), group: nil)}
+      {:noreply, assign(socket, groups: directory_groups(), group: nil)}
     end
   end
 
@@ -202,7 +202,7 @@ defmodule PauseAiCaWeb.IncubatorsLive do
           _ -> {:noreply, redirect(socket, to: directory(socket.assigns.locale))}
         end
       else
-        {:noreply, assign(socket, groups: Incubators.public_groups())}
+        {:noreply, assign(socket, groups: directory_groups())}
       end
     else
       {:noreply, redirect(socket, to: "/#{socket.assigns.locale}")}
@@ -233,10 +233,19 @@ defmodule PauseAiCaWeb.IncubatorsLive do
   def directory(_), do: "/en/groups"
 
   @chapter_locations %{
-    "montreal" => %{x: 72.21, y: 82.95},
-    "ottawa" => %{x: 69.59, y: 84.18},
-    "toronto" => %{x: 65.71, y: 89.61}
+    "montreal" => %{order: 1, x: 72.21, y: 82.95},
+    "ottawa" => %{order: 3, x: 69.59, y: 84.18},
+    "toronto" => %{order: 2, x: 65.71, y: 89.61}
   }
+
+  defp directory_groups do
+    Enum.sort_by(Incubators.public_groups(), fn group ->
+      case chapter_location(group) do
+        %{order: order} -> order
+        nil -> 4
+      end
+    end)
+  end
 
   defp chapter_location(group) do
     name =
@@ -366,6 +375,15 @@ defmodule PauseAiCaWeb.IncubatorsLive do
                   class="chapter-card-photo"
                   alt={gettext("Demonstrators holding a PauseAI banner and signs at Phillips Square")}
                 />
+                <img
+                  :if={chapter_location(group) && chapter_location(group).city == "toronto"}
+                  src={~p"/images/toronto-site/t-treaty.jpg"}
+                  width="871"
+                  height="680"
+                  loading="lazy"
+                  class="chapter-card-photo"
+                  alt={gettext("Two marchers hold signs calling for an AI treaty in Toronto.")}
+                />
                 <div class="chapter-card-content space-y-3">
                   <h2 class="text-2xl font-bold">{title(group, @locale)}</h2>
                   <.link
@@ -377,6 +395,11 @@ defmodule PauseAiCaWeb.IncubatorsLive do
                     }
                     class="chapter-card-credit underline"
                   >{gettext("Montréal, September 26. Photo: Clara Lacasse.")}</.link>
+                  <.link
+                    :if={chapter_location(group) && chapter_location(group).city == "toronto"}
+                    href={(if @locale == "fr", do: "/fr/nos-actions", else: "/en/our-actions") <> "#toronto-2026-11-14"}
+                    class="chapter-card-credit underline"
+                  >{gettext("Photo source: PauseAI Toronto.")}</.link>
                   <.link
                     :if={group.chapter_slug}
                     href={"/groups/#{group.chapter_slug}?locale=#{@locale}"}
