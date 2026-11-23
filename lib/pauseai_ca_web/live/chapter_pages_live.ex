@@ -217,7 +217,12 @@ if Code.ensure_loaded?(PhoenixCMSWeb) do
               <TorontoChapterActions.riding_tool :if={
                 @chapter.slug == "toronto" and @page.slug == "write-to-your-mp"
               } />
-              <.page_body content={@page.body} chapter={@chapter.slug} page={@page.slug} locale={@locale} />
+              <.page_body
+                content={@page.body}
+                chapter={@chapter.slug}
+                page={@page.slug}
+                locale={@locale}
+              />
             </div>
           </.website_page>
         </section>
@@ -336,7 +341,10 @@ if Code.ensure_loaded?(PhoenixCMSWeb) do
 
     defp page_body(%{chapter: "toronto", page: "governance"} = assigns) do
       ~H"""
-      {raw(PauseAiCaWeb.TorontoPresentation.governance(@content) |> PauseAiCaWeb.TorontoPresentation.national_donations(@locale))}
+      {raw(
+        PauseAiCaWeb.TorontoPresentation.governance(@content)
+        |> PauseAiCaWeb.TorontoPresentation.national_donations(@locale)
+      )}
       """
     end
 

@@ -274,7 +274,13 @@ defmodule PauseAiCaWeb.ChapterLive do
       )
 
     ~H"""
-    <TorontoLanding.landing :if={@sections} sections={@sections} name={@name} lang={@content_lang} locale={@locale} />
+    <TorontoLanding.landing
+      :if={@sections}
+      sections={@sections}
+      name={@name}
+      lang={@content_lang}
+      locale={@locale}
+    />
     <article :if={!@sections} class="space-y-6">
       <div class={["grid items-start gap-6", @welcome.photo != "" && "md:grid-cols-2 md:gap-10"]}>
         <div class="min-w-0 space-y-4">

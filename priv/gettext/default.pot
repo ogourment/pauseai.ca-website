@@ -116,7 +116,7 @@ msgid "Clear my answers"
 msgstr ""
 
 #: lib/pauseai_ca_web/controllers/page_html/about.html.heex:60
-#: lib/pauseai_ca_web/live/donate_live.ex:529
+#: lib/pauseai_ca_web/live/donate_live.ex:543
 #, elixir-autogen, elixir-format
 msgid "Contact us"
 msgstr ""
@@ -179,7 +179,7 @@ msgid "Evaluate responses"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/layouts.ex:554
-#: lib/pauseai_ca_web/live/chapter_live.ex:289
+#: lib/pauseai_ca_web/live/chapter_live.ex:295
 #, elixir-autogen, elixir-format
 msgid "Events"
 msgstr ""
@@ -211,8 +211,8 @@ msgstr ""
 #: lib/pauseai_ca_web/components/layouts.ex:164
 #: lib/pauseai_ca_web/components/layouts.ex:676
 #: lib/pauseai_ca_web/components/layouts.ex:709
-#: lib/pauseai_ca_web/live/chapter_live.ex:288
-#: lib/pauseai_ca_web/live/incubators_live.ex:404
+#: lib/pauseai_ca_web/live/chapter_live.ex:294
+#: lib/pauseai_ca_web/live/incubators_live.ex:427
 #: lib/pauseai_ca_web/live/participation_live.ex:16
 #, elixir-autogen, elixir-format
 msgid "Get involved"
@@ -355,7 +355,7 @@ msgid "Postal code"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/layouts.ex:360
-#: lib/pauseai_ca_web/live/donate_live.ex:590
+#: lib/pauseai_ca_web/live/donate_live.ex:604
 #, elixir-autogen, elixir-format
 msgid "Privacy"
 msgstr ""
@@ -986,8 +986,8 @@ msgstr ""
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:1476
 #: lib/pauseai_ca_web/live/contact_lists_live.ex:548
 #: lib/pauseai_ca_web/live/contact_lists_live.ex:608
-#: lib/pauseai_ca_web/live/donate_live.ex:539
-#: lib/pauseai_ca_web/live/incubators_live.ex:512
+#: lib/pauseai_ca_web/live/donate_live.ex:553
+#: lib/pauseai_ca_web/live/incubators_live.ex:535
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:543
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:839
 #: lib/pauseai_ca_web/live/participation_form.ex:553
@@ -1475,7 +1475,7 @@ msgstr ""
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:1054
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:1129
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:1152
-#: lib/pauseai_ca_web/live/donate_live.ex:542
+#: lib/pauseai_ca_web/live/donate_live.ex:556
 #: lib/pauseai_ca_web/live/email_preferences_live.ex:173
 #: lib/pauseai_ca_web/live/incubator_management_live.ex:629
 #: lib/pauseai_ca_web/live/managed_accounts_live.ex:829
@@ -2255,7 +2255,7 @@ msgstr ""
 
 #: lib/pauseai_ca_web/live/assistant_instructions_live.ex:173
 #: lib/pauseai_ca_web/live/chapter_live.ex:187
-#: lib/pauseai_ca_web/live/chapter_pages_live.ex:288
+#: lib/pauseai_ca_web/live/chapter_pages_live.ex:295
 #: lib/pauseai_ca_web/live/donation_page_live.ex:586
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:638
 #: lib/pauseai_ca_web/live/mp_templates_live.ex:330
@@ -2694,7 +2694,7 @@ msgstr ""
 msgid "Provider events"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/actions_live.ex:256
+#: lib/pauseai_ca_web/live/actions_live.ex:282
 #: lib/pauseai_ca_web/live/protest_recap_live.ex:132
 #, elixir-autogen, elixir-format
 msgid "Read the report in Le Devoir (French)"
@@ -2775,7 +2775,7 @@ msgstr ""
 msgid "You no longer have access to this account."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:556
+#: lib/pauseai_ca_web/live/donate_live.ex:570
 #, elixir-autogen, elixir-format
 msgid "Amount you intend to give (CAD, optional)"
 msgstr ""
@@ -2786,8 +2786,8 @@ msgid "Browser visits — all time"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/donation_page_content.ex:336
-#: lib/pauseai_ca_web/live/donate_live.ex:346
-#: lib/pauseai_ca_web/live/donate_live.ex:595
+#: lib/pauseai_ca_web/live/donate_live.ex:353
+#: lib/pauseai_ca_web/live/donate_live.ex:609
 #, elixir-autogen, elixir-format
 msgid "Business Number"
 msgstr ""
@@ -2803,14 +2803,15 @@ msgid "Contact permission recorded"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/donation_page_content.ex:336
-#: lib/pauseai_ca_web/live/donate_live.ex:346
-#: lib/pauseai_ca_web/live/donate_live.ex:595
+#: lib/pauseai_ca_web/live/donate_live.ex:353
+#: lib/pauseai_ca_web/live/donate_live.ex:609
 #, elixir-autogen, elixir-format
 msgid "Corporation number"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/layouts.ex:669
 #: lib/pauseai_ca_web/components/layouts.ex:699
+#: lib/pauseai_ca_web/live/chapter_pages_live.ex:375
 #: lib/pauseai_ca_web/live/donate_live.ex:25
 #, elixir-autogen, elixir-format
 msgid "Donate"
@@ -2824,7 +2825,7 @@ msgstr ""
 msgid "Donation pledges"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:525
+#: lib/pauseai_ca_web/live/donate_live.ex:539
 #, elixir-autogen, elixir-format
 msgid "If you had already made a pledge with this email, your earlier details have been kept. Contact us to change them."
 msgstr ""
@@ -2839,7 +2840,7 @@ msgstr ""
 msgid "No pledges on this page."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:572
+#: lib/pauseai_ca_web/live/donate_live.ex:586
 #, elixir-autogen, elixir-format
 msgid "Notes (optional)"
 msgstr ""
@@ -2870,8 +2871,8 @@ msgstr ""
 #: lib/pauseai_ca_web/components/layouts/root.html.heex:14
 #: lib/pauseai_ca_web/controllers/page_html/about.html.heex:9
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:19
-#: lib/pauseai_ca_web/live/donate_live.ex:346
-#: lib/pauseai_ca_web/live/donate_live.ex:595
+#: lib/pauseai_ca_web/live/donate_live.ex:353
+#: lib/pauseai_ca_web/live/donate_live.ex:609
 #: lib/pauseai_ca_web/seo.ex:16
 #, elixir-autogen, elixir-format
 msgid "PauseAI Canada"
@@ -2887,7 +2888,7 @@ msgstr ""
 #: lib/pauseai_ca_web/live/admin_contacts_live.ex:1310
 #: lib/pauseai_ca_web/live/administrators_live.ex:113
 #: lib/pauseai_ca_web/live/assistant_instructions_live.ex:174
-#: lib/pauseai_ca_web/live/donate_live.ex:592
+#: lib/pauseai_ca_web/live/donate_live.ex:606
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:638
 #: lib/pauseai_ca_web/live/mp_templates_live.ex:330
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:1157
@@ -2901,12 +2902,12 @@ msgstr ""
 msgid "Saving…"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:518
+#: lib/pauseai_ca_web/live/donate_live.ex:532
 #, elixir-autogen, elixir-format
 msgid "Thank you for your support"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:586
+#: lib/pauseai_ca_web/live/donate_live.ex:600
 #, elixir-autogen, elixir-format
 msgid "This does not subscribe you to a mailing list."
 msgstr ""
@@ -2916,8 +2917,8 @@ msgstr ""
 msgid "We could not save your pledge right now. Please try again later."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:274
-#: lib/pauseai_ca_web/live/donate_live.ex:420
+#: lib/pauseai_ca_web/live/donate_live.ex:281
+#: lib/pauseai_ca_web/live/donate_live.ex:434
 #, elixir-autogen, elixir-format
 msgid "What your support makes possible"
 msgstr ""
@@ -2928,7 +2929,7 @@ msgstr ""
 msgid "You do not have access to this page."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:582
+#: lib/pauseai_ca_web/live/donate_live.ex:596
 #, elixir-autogen, elixir-format
 msgid "You may contact me about this pledge."
 msgstr ""
@@ -2970,41 +2971,41 @@ msgstr ""
 msgid "Grant access and notify"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/actions_live.ex:210
+#: lib/pauseai_ca_web/live/actions_live.ex:236
 #: lib/pauseai_ca_web/live/protest_recap_live.ex:74
 #, elixir-autogen, elixir-format
 msgid "At Phillips Square, Montréal. Photo: Clara Lacasse."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/actions_live.ex:280
+#: lib/pauseai_ca_web/live/actions_live.ex:306
 #: lib/pauseai_ca_web/live/protest_recap_live.ex:157
 #, elixir-autogen, elixir-format
 msgid "Calling for a global pause. Photo: Clara Lacasse."
 msgstr ""
 
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:65
-#: lib/pauseai_ca_web/live/actions_live.ex:206
-#: lib/pauseai_ca_web/live/incubators_live.ex:367
+#: lib/pauseai_ca_web/live/actions_live.ex:232
+#: lib/pauseai_ca_web/live/incubators_live.ex:376
 #: lib/pauseai_ca_web/live/protest_recap_live.ex:69
 #, elixir-autogen, elixir-format
 msgid "Demonstrators holding a PauseAI banner and signs at Phillips Square"
 msgstr ""
 
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:75
-#: lib/pauseai_ca_web/live/actions_live.ex:275
-#: lib/pauseai_ca_web/live/donate_live.ex:390
+#: lib/pauseai_ca_web/live/actions_live.ex:301
+#: lib/pauseai_ca_web/live/donate_live.ex:404
 #: lib/pauseai_ca_web/live/protest_recap_live.ex:152
 #, elixir-autogen, elixir-format
 msgid "Demonstrators holding signs calling for a worldwide pause on AI"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/actions_live.ex:298
+#: lib/pauseai_ca_web/live/actions_live.ex:324
 #: lib/pauseai_ca_web/live/protest_recap_live.ex:175
 #, elixir-autogen, elixir-format
 msgid "Jeremy Eliosoff wearing a yellow PauseAI shirt at the Montréal protest"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/actions_live.ex:304
+#: lib/pauseai_ca_web/live/actions_live.ex:330
 #: lib/pauseai_ca_web/live/protest_recap_live.ex:181
 #, elixir-autogen, elixir-format
 msgid "Jeremy Eliosoff. Photo: Clara Lacasse."
@@ -3020,22 +3021,22 @@ msgstr ""
 msgid "Background on the reported incidents:"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:436
+#: lib/pauseai_ca_web/live/donate_live.ex:450
 #, elixir-autogen, elixir-format
 msgid "Bring people together"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:508
+#: lib/pauseai_ca_web/live/donate_live.ex:522
 #, elixir-autogen, elixir-format
 msgid "Continue to the form"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:430
+#: lib/pauseai_ca_web/live/donate_live.ex:444
 #, elixir-autogen, elixir-format
 msgid "Design and print flyers and posters"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:467
+#: lib/pauseai_ca_web/live/donate_live.ex:481
 #, elixir-autogen, elixir-format
 msgid "Develop and operate the website and connect the tools it needs"
 msgstr ""
@@ -3050,24 +3051,24 @@ msgstr ""
 msgid "Jeremy Eliosoff at the Montréal protest"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/actions_live.ex:231
+#: lib/pauseai_ca_web/live/actions_live.ex:257
 #: lib/pauseai_ca_web/live/protest_press_release_live.ex:114
 #: lib/pauseai_ca_web/live/protest_recap_live.ex:122
 #, elixir-autogen, elixir-format
 msgid "Jeremy Eliosoff, National Leader, PauseAI Canada"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:460
+#: lib/pauseai_ca_web/live/donate_live.ex:474
 #, elixir-autogen, elixir-format
 msgid "Keep people connected"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:449
+#: lib/pauseai_ca_web/live/donate_live.ex:463
 #, elixir-autogen, elixir-format
 msgid "Make the case for policy"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:431
+#: lib/pauseai_ca_web/live/donate_live.ex:445
 #, elixir-autogen, elixir-format
 msgid "Manage social media"
 msgstr ""
@@ -3078,8 +3079,8 @@ msgid "Media inquiries"
 msgstr ""
 
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:96
-#: lib/pauseai_ca_web/live/donate_live.ex:395
-#: lib/pauseai_ca_web/live/incubators_live.ex:379
+#: lib/pauseai_ca_web/live/donate_live.ex:409
+#: lib/pauseai_ca_web/live/incubators_live.ex:397
 #, elixir-autogen, elixir-format
 msgid "Montréal, September 26. Photo: Clara Lacasse."
 msgstr ""
@@ -3095,7 +3096,7 @@ msgstr ""
 msgid "Photo: Clara Lacasse."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:432
+#: lib/pauseai_ca_web/live/donate_live.ex:446
 #, elixir-autogen, elixir-format
 msgid "Photograph actions and write articles and other content"
 msgstr ""
@@ -3105,7 +3106,7 @@ msgstr ""
 msgid "Press release · September 26, 2026"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:423
+#: lib/pauseai_ca_web/live/donate_live.ex:437
 #, elixir-autogen, elixir-format
 msgid "Reach more people"
 msgstr ""
@@ -3120,12 +3121,12 @@ msgstr ""
 msgid "Recent reported incidents show AI agents attempting unauthorized access to government and company websites and coordinating through online forums. These incidents strengthen the case for slowing the development of increasingly capable systems while safety and control remain unresolved."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:443
+#: lib/pauseai_ca_web/live/donate_live.ex:457
 #, elixir-autogen, elixir-format
 msgid "Rent meeting space and support accessible gatherings"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:456
+#: lib/pauseai_ca_web/live/donate_live.ex:470
 #, elixir-autogen, elixir-format
 msgid "Research policy and prepare briefs and fact sheets"
 msgstr ""
@@ -3135,7 +3136,7 @@ msgstr ""
 msgid "See the protest recap and photos"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:503
+#: lib/pauseai_ca_web/live/donate_live.ex:517
 #, elixir-autogen, elixir-format
 msgid "Suggested pledge selected: $%{amount} CAD"
 msgstr ""
@@ -3185,12 +3186,12 @@ msgstr ""
 msgid "Coordinate a global pause so society has time to ensure that advanced AI remains safe and under democratic control."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:445
+#: lib/pauseai_ca_web/live/donate_live.ex:459
 #, elixir-autogen, elixir-format
 msgid "Cover travel costs to reach more communities across Canada"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:444
+#: lib/pauseai_ca_web/live/donate_live.ex:458
 #, elixir-autogen, elixir-format
 msgid "Design and facilitate workshops"
 msgstr ""
@@ -3211,7 +3212,7 @@ msgstr ""
 msgid "PauseAI Global"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:469
+#: lib/pauseai_ca_web/live/donate_live.ex:483
 #, elixir-autogen, elixir-format
 msgid "Pay for video conferencing and software for communication, design and organizing"
 msgstr ""
@@ -3226,7 +3227,7 @@ msgstr ""
 msgid "Support an international treaty banning the development of superintelligent AI."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/actions_live.ex:226
+#: lib/pauseai_ca_web/live/actions_live.ex:252
 #: lib/pauseai_ca_web/live/protest_recap_live.ex:117
 #, elixir-autogen, elixir-format
 msgid "We need to give ourselves more time to learn how to control AI systems before making them even more powerful. A pause is necessary."
@@ -3238,24 +3239,24 @@ msgid "We welcome Prime Minister Mark Carney's support for the international cal
 msgstr ""
 
 #: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:76
-#: lib/pauseai_ca_web/live/donate_live.ex:549
+#: lib/pauseai_ca_web/live/donate_live.ex:563
 #, elixir-autogen, elixir-format
 msgid "Contribution frequency"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:566
+#: lib/pauseai_ca_web/live/donate_live.ex:580
 #, elixir-autogen, elixir-format
 msgid "For a monthly pledge, enter the amount you intend to give each month. No recurring payment is set up here."
 msgstr ""
 
 #: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:77
-#: lib/pauseai_ca_web/live/donate_live.ex:551
+#: lib/pauseai_ca_web/live/donate_live.ex:565
 #, elixir-autogen, elixir-format
 msgid "Monthly"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/admin_donation_pledges_live.ex:78
-#: lib/pauseai_ca_web/live/donate_live.ex:551
+#: lib/pauseai_ca_web/live/donate_live.ex:565
 #, elixir-autogen, elixir-format
 msgid "One-time"
 msgstr ""
@@ -3266,7 +3267,7 @@ msgid "A protest organized by PauseAI Montréal brought together around 40 peopl
 msgstr ""
 
 #: lib/pauseai_ca_web/live/blog_editor_live.ex:300
-#: lib/pauseai_ca_web/live/donate_live.ex:592
+#: lib/pauseai_ca_web/live/donate_live.ex:606
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:1157
 #: lib/pauseai_ca_web/live/question_drafts_live.ex:586
 #: lib/pauseai_ca_web/live/tasks_live.ex:559
@@ -3331,7 +3332,7 @@ msgstr ""
 msgid "An agreement will need public and political support. We are building that support through conversations, local groups and contact with elected representatives."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:374
+#: lib/pauseai_ca_web/live/donate_live.ex:388
 #, elixir-autogen, elixir-format
 msgid "Around 40 people joined our September 26 demonstration in Montréal. Your support will help us print information, hold meetings and workshops, and put proposals before elected representatives."
 msgstr ""
@@ -3346,12 +3347,12 @@ msgstr ""
 msgid "Current and former Canadian parliamentarians from several parties have signed a statement calling for an international agreement to prohibit superintelligent AI. Read the statement and see who has signed."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:425
+#: lib/pauseai_ca_web/live/donate_live.ex:439
 #, elixir-autogen, elixir-format
 msgid "Explain AI risks and our call for a pause through printed materials, photographs, articles and social media."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:438
+#: lib/pauseai_ca_web/live/donate_live.ex:452
 #, elixir-autogen, elixir-format
 msgid "Hold meetings and workshops where people can ask questions, learn and plan local activities. Travel helps us meet people in more parts of Canada."
 msgstr ""
@@ -3362,7 +3363,7 @@ msgstr ""
 msgid "In Montréal, a call for a global pause on AI"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:462
+#: lib/pauseai_ca_web/live/donate_live.ex:476
 #, elixir-autogen, elixir-format
 msgid "Keep the website, email lists and volunteer signup tools working, and pay for the software used to organize our activities."
 msgstr ""
@@ -3378,7 +3379,7 @@ msgstr ""
 msgid "PauseAI Canada is a citizens’ group calling for an international pause in the development of advanced AI until its safety can be established."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:451
+#: lib/pauseai_ca_web/live/donate_live.ex:465
 #, elixir-autogen, elixir-format
 msgid "Prepare research, briefs and fact sheets to support specific requests to governments."
 msgstr ""
@@ -3388,8 +3389,8 @@ msgstr ""
 msgid "Researchers in Canada and elsewhere warn that advanced AI could escape human control. Read their arguments and the proposals for responding to that risk."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:262
-#: lib/pauseai_ca_web/live/donate_live.ex:368
+#: lib/pauseai_ca_web/live/donate_live.ex:269
+#: lib/pauseai_ca_web/live/donate_live.ex:382
 #: lib/pauseai_ca_web/seo.ex:64
 #, elixir-autogen, elixir-format
 msgid "Support PauseAI Canada"
@@ -5202,7 +5203,7 @@ msgstr ""
 #: lib/pauseai_ca_web/live/blog_editor_live.ex:270
 #: lib/pauseai_ca_web/live/blog_editor_live.ex:276
 #: lib/pauseai_ca_web/live/chapter_live.ex:85
-#: lib/pauseai_ca_web/live/chapter_pages_live.ex:147
+#: lib/pauseai_ca_web/live/chapter_pages_live.ex:151
 #: lib/pauseai_ca_web/live/donation_page_live.ex:190
 #: lib/pauseai_ca_web/live/donation_page_live.ex:1128
 #: lib/pauseai_ca_web/live/mp_templates_live.ex:191
@@ -5404,7 +5405,7 @@ msgstr ""
 
 #: lib/pauseai_ca_web/live/email_preferences_live.ex:146
 #: lib/pauseai_ca_web/live/email_preferences_live.ex:165
-#: lib/pauseai_ca_web/live/incubators_live.ex:261
+#: lib/pauseai_ca_web/live/incubators_live.ex:270
 #: lib/pauseai_ca_web/live/newsletters_live.ex:468
 #: lib/pauseai_ca_web/live/welcome_calls_live.ex:101
 #: lib/pauseai_ca_web/live/welcome_management_live.ex:284
@@ -5542,7 +5543,7 @@ msgid "Approve the reviewed batch before sending."
 msgstr ""
 
 #: lib/pauseai_ca_web/live/assistant_audit_live.ex:908
-#: lib/pauseai_ca_web/live/incubators_live.ex:259
+#: lib/pauseai_ca_web/live/incubators_live.ex:268
 #: lib/pauseai_ca_web/live/newsletter_draft_live.ex:588
 #, elixir-autogen, elixir-format
 msgid "Approved"
@@ -6165,7 +6166,7 @@ msgstr ""
 
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:35
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:252
-#: lib/pauseai_ca_web/live/actions_live.ex:317
+#: lib/pauseai_ca_web/live/actions_live.ex:343
 #: lib/pauseai_ca_web/live/participation_form.ex:478
 #: lib/pauseai_ca_web/live/participation_form.ex:481
 #, elixir-autogen, elixir-format
@@ -6199,7 +6200,7 @@ msgid "Withdraw my local request"
 msgstr ""
 
 #: lib/pauseai_ca_web/controllers/participation_html/action.html.heex:31
-#: lib/pauseai_ca_web/live/incubators_live.ex:498
+#: lib/pauseai_ca_web/live/incubators_live.ex:521
 #, elixir-autogen, elixir-format
 msgid "Withdraw request"
 msgstr ""
@@ -6429,44 +6430,44 @@ msgstr ""
 msgid "Unsure submissions are held for review, never retried automatically."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:479
+#: lib/pauseai_ca_web/live/donate_live.ex:493
 #, elixir-autogen, elixir-format
 msgid "Choose a suggested amount or enter your own for a future contribution. We will contact you about your pledge. This form does not send a payment."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:400
+#: lib/pauseai_ca_web/live/donate_live.ex:414
 #, elixir-autogen, elixir-format
 msgid "Donate by Interac e-Transfer"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:477
+#: lib/pauseai_ca_web/live/donate_live.ex:491
 #, elixir-autogen, elixir-format
 msgid "Make a pledge"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:417
+#: lib/pauseai_ca_web/live/donate_live.ex:431
 #, elixir-autogen, elixir-format
 msgid "Prefer to make a pledge?"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:337
-#: lib/pauseai_ca_web/live/donate_live.ex:409
+#: lib/pauseai_ca_web/live/donate_live.ex:344
+#: lib/pauseai_ca_web/live/donate_live.ex:423
 #, elixir-autogen, elixir-format
 msgid "Recipient"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:330
-#: lib/pauseai_ca_web/live/donate_live.ex:402
+#: lib/pauseai_ca_web/live/donate_live.ex:337
+#: lib/pauseai_ca_web/live/donate_live.ex:416
 #, elixir-autogen, elixir-format
 msgid "Send your donation from your banking app to the address below. Autodeposit is enabled. Check that the recipient name is PauseAI Canada before confirming."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:411
+#: lib/pauseai_ca_web/live/donate_live.ex:425
 #, elixir-autogen, elixir-format
 msgid "You can donate directly without completing the pledge form."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:520
+#: lib/pauseai_ca_web/live/donate_live.ex:534
 #, elixir-autogen, elixir-format
 msgid "Your pledge is recorded. We will contact you about it. No payment has been taken through this form."
 msgstr ""
@@ -7006,7 +7007,7 @@ msgid "Back to editing"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/layouts.ex:332
-#: lib/pauseai_ca_web/live/incubators_live.ex:317
+#: lib/pauseai_ca_web/live/incubators_live.ex:326
 #, elixir-autogen, elixir-format
 msgid "Breadcrumbs"
 msgstr ""
@@ -7522,7 +7523,7 @@ msgstr ""
 msgid "This task changed in another tab. Your draft has been retained."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/chapter_pages_live.ex:84
+#: lib/pauseai_ca_web/live/chapter_pages_live.ex:88
 #: lib/pauseai_ca_web/live/tasks_live.ex:314
 #: lib/pauseai_ca_web/live/tasks_live.ex:471
 #: lib/pauseai_ca_web/live/welcome_management_live.ex:382
@@ -7549,7 +7550,7 @@ msgstr ""
 msgid "Recorded account %{id}"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:291
+#: lib/pauseai_ca_web/live/incubators_live.ex:300
 #, elixir-autogen
 msgid "A manager must confirm removal from the external group before a new request."
 msgstr ""
@@ -7560,7 +7561,7 @@ msgid "A superadmin publishes this group in the public directory."
 msgstr ""
 
 #: lib/pauseai_ca_web/live/incubator_management_live.ex:385
-#: lib/pauseai_ca_web/live/incubators_live.ex:260
+#: lib/pauseai_ca_web/live/incubators_live.ex:269
 #, elixir-autogen
 msgid "Admission confirmed"
 msgstr ""
@@ -7575,12 +7576,12 @@ msgstr ""
 msgid "Approve request"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:282
+#: lib/pauseai_ca_web/live/incubators_live.ex:291
 #, elixir-autogen
 msgid "Assign another confirmed manager before removing the last manager."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:268
+#: lib/pauseai_ca_web/live/incubators_live.ex:277
 #, elixir-autogen
 msgid "Check the required fields, postal areas and secure links, then try again."
 msgstr ""
@@ -7600,7 +7601,7 @@ msgstr ""
 msgid "Confirm external removal"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:467
+#: lib/pauseai_ca_web/live/incubators_live.ex:490
 #, elixir-autogen
 msgid "Create private matching reference"
 msgstr ""
@@ -7610,14 +7611,14 @@ msgstr ""
 msgid "Decline request"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:262
+#: lib/pauseai_ca_web/live/incubators_live.ex:271
 #: lib/pauseai_ca_web/live/welcome_calls_live.ex:100
 #: lib/pauseai_ca_web/live/welcome_management_live.ex:287
 #, elixir-autogen
 msgid "Declined"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:509
+#: lib/pauseai_ca_web/live/incubators_live.ex:532
 #, elixir-autogen
 msgid "Edit your request"
 msgstr ""
@@ -7637,17 +7638,17 @@ msgstr ""
 msgid "External removal confirmed"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:461
+#: lib/pauseai_ca_web/live/incubators_live.ex:484
 #, elixir-autogen
 msgid "External removal is awaiting manager confirmation."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:388
+#: lib/pauseai_ca_web/live/incubators_live.ex:411
 #, elixir-autogen
 msgid "FSA: the first three characters of your postal code, for example H2X."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:332
+#: lib/pauseai_ca_web/live/incubators_live.ex:341
 #, elixir-autogen
 msgid "Find a local group, see its activities and request to join."
 msgstr ""
@@ -7673,7 +7674,7 @@ msgstr ""
 msgid "Group configuration saved."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:412
+#: lib/pauseai_ca_web/live/incubators_live.ex:435
 #, elixir-autogen
 msgid "Group events"
 msgstr ""
@@ -7699,13 +7700,13 @@ msgid "Group updated"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/layouts.ex:662
-#: lib/pauseai_ca_web/live/chapter_pages_live.ex:380
-#: lib/pauseai_ca_web/live/incubators_live.ex:318
+#: lib/pauseai_ca_web/live/chapter_pages_live.ex:408
+#: lib/pauseai_ca_web/live/incubators_live.ex:327
 #, elixir-autogen
 msgid "Home"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:536
+#: lib/pauseai_ca_web/live/incubators_live.ex:559
 #, elixir-autogen
 msgid "I agree to follow these conduct rules."
 msgstr ""
@@ -7735,11 +7736,11 @@ msgstr ""
 #: lib/pauseai_ca_web/components/layouts.ex:520
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:48
 #: lib/pauseai_ca_web/live/chapter_live.ex:157
-#: lib/pauseai_ca_web/live/chapter_pages_live.ex:204
+#: lib/pauseai_ca_web/live/chapter_pages_live.ex:208
 #: lib/pauseai_ca_web/live/incubators_live.ex:19
-#: lib/pauseai_ca_web/live/incubators_live.ex:319
-#: lib/pauseai_ca_web/live/incubators_live.ex:322
-#: lib/pauseai_ca_web/live/incubators_live.ex:348
+#: lib/pauseai_ca_web/live/incubators_live.ex:328
+#: lib/pauseai_ca_web/live/incubators_live.ex:331
+#: lib/pauseai_ca_web/live/incubators_live.ex:357
 #: lib/pauseai_ca_web/seo.ex:60
 #, elixir-autogen
 msgid "Local groups"
@@ -7788,23 +7789,23 @@ msgstr ""
 msgid "Offer a manager-approved WhatsApp group"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:487
+#: lib/pauseai_ca_web/live/incubators_live.ex:510
 #, elixir-autogen
 msgid "Open WhatsApp invitation"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:258
+#: lib/pauseai_ca_web/live/incubators_live.ex:267
 #, elixir-autogen
 msgid "Pending review"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:273
+#: lib/pauseai_ca_web/live/incubators_live.ex:282
 #, elixir-autogen
 msgid "Please wait one minute before requesting another reference."
 msgstr ""
 
 #: lib/pauseai_ca_web/live/incubator_management_live.ex:521
-#: lib/pauseai_ca_web/live/incubators_live.ex:388
+#: lib/pauseai_ca_web/live/incubators_live.ex:411
 #, elixir-autogen
 msgid "Postal areas"
 msgstr ""
@@ -7854,7 +7855,7 @@ msgstr ""
 msgid "Remove this person from the external group, then confirm completion here."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:264
+#: lib/pauseai_ca_web/live/incubators_live.ex:273
 #, elixir-autogen
 msgid "Removed"
 msgstr ""
@@ -7869,7 +7870,7 @@ msgstr ""
 msgid "Request declined"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:510
+#: lib/pauseai_ca_web/live/incubators_live.ex:533
 #, elixir-autogen
 msgid "Request to join"
 msgstr ""
@@ -7885,7 +7886,7 @@ msgstr ""
 msgid "Requests and members"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:528
+#: lib/pauseai_ca_web/live/incubators_live.ex:551
 #, elixir-autogen
 msgid "Respect others, protect personal information and follow the group manager's conduct guidance."
 msgstr ""
@@ -7900,12 +7901,12 @@ msgstr ""
 msgid "Save group role"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:542
+#: lib/pauseai_ca_web/live/incubators_live.ex:565
 #, elixir-autogen
 msgid "Save request"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:469
+#: lib/pauseai_ca_web/live/incubators_live.ex:492
 #, elixir-autogen
 msgid "Send this reference privately to the group manager using your WhatsApp account. It expires after 15 minutes and can be used once."
 msgstr ""
@@ -7915,7 +7916,7 @@ msgstr ""
 msgid "Separate multiple areas with commas. These areas describe the group; they do not grant membership."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:480
+#: lib/pauseai_ca_web/live/incubators_live.ex:503
 #, elixir-autogen
 msgid "Show my invitation"
 msgstr ""
@@ -7925,17 +7926,17 @@ msgstr ""
 msgid "Suspend membership"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:263
+#: lib/pauseai_ca_web/live/incubators_live.ex:272
 #, elixir-autogen
 msgid "Suspended"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:489
+#: lib/pauseai_ca_web/live/incubators_live.ex:512
 #, elixir-autogen
 msgid "The group manager must approve admission in WhatsApp. Website approval does not add you automatically."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:295
+#: lib/pauseai_ca_web/live/incubators_live.ex:304
 #, elixir-autogen
 msgid "This action is unavailable. Check the member status, required confirmation and your current access."
 msgstr ""
@@ -7946,17 +7947,17 @@ msgstr ""
 msgid "This group is unavailable or your access has changed."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:286
+#: lib/pauseai_ca_web/live/incubators_live.ex:295
 #, elixir-autogen
 msgid "This identifier is already linked to another approved member. Resolve the match before approving."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:270
+#: lib/pauseai_ca_web/live/incubators_live.ex:279
 #, elixir-autogen
 msgid "This record changed. Reload the page before trying again."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:277
+#: lib/pauseai_ca_web/live/incubators_live.ex:286
 #, elixir-autogen
 msgid "This reference is invalid, expired or already used. Ask the applicant for a new one."
 msgstr ""
@@ -7968,14 +7969,14 @@ msgstr ""
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:247
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:249
 #: lib/pauseai_ca_web/live/assistant_settings_live.ex:291
-#: lib/pauseai_ca_web/live/incubators_live.ex:265
+#: lib/pauseai_ca_web/live/incubators_live.ex:274
 #: lib/pauseai_ca_web/live/mailbox_access_live.ex:221
 #: lib/pauseai_ca_web/live/slack_community_live.ex:343
 #, elixir-autogen
 msgid "Unavailable"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:521
+#: lib/pauseai_ca_web/live/incubators_live.ex:544
 #, elixir-autogen
 msgid "Use the phone number or identifier the manager can recognize in WhatsApp. Only group managers can review it."
 msgstr ""
@@ -7990,7 +7991,7 @@ msgstr ""
 msgid "WhatsApp identifier"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:496
+#: lib/pauseai_ca_web/live/incubators_live.ex:519
 #, elixir-autogen
 msgid "Withdraw your request and group access?"
 msgstr ""
@@ -8000,12 +8001,12 @@ msgstr ""
 msgid "You do not manage any groups."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:516
+#: lib/pauseai_ca_web/live/incubators_live.ex:539
 #, elixir-autogen
 msgid "Your WhatsApp identifier"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:459
+#: lib/pauseai_ca_web/live/incubators_live.ex:482
 #, elixir-autogen
 msgid "Your request"
 msgstr ""
@@ -8020,47 +8021,47 @@ msgstr ""
 msgid "Your request has been withdrawn."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:328
+#: lib/pauseai_ca_web/live/incubators_live.ex:337
 #, elixir-autogen
 msgid "Reload and discard unsaved request changes?"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:330
+#: lib/pauseai_ca_web/live/incubators_live.ex:339
 #, elixir-autogen
 msgid "Reload request"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:540
+#: lib/pauseai_ca_web/live/incubators_live.ex:563
 #, elixir-autogen
 msgid "Please agree to the conduct rules before saving your request."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:523
+#: lib/pauseai_ca_web/live/incubators_live.ex:546
 #, elixir-autogen
 msgid "When joining with a phone number, other WhatsApp group members can see that number. Use an active username where supported."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:301
+#: lib/pauseai_ca_web/live/donate_live.ex:308
 #, elixir-autogen, elixir-format
 msgid "A Manifund account is required to donate. You can read the full proposal without an account."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:294
+#: lib/pauseai_ca_web/live/donate_live.ex:301
 #, elixir-autogen, elixir-format
 msgid "Donate on Manifund"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:327
+#: lib/pauseai_ca_web/live/donate_live.ex:334
 #, elixir-autogen, elixir-format
 msgid "Or donate by Interac e-Transfer"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:309
+#: lib/pauseai_ca_web/live/donate_live.ex:316
 #, elixir-autogen, elixir-format
 msgid "Read the full proposal"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:315
+#: lib/pauseai_ca_web/live/donate_live.ex:322
 #, elixir-autogen, elixir-format
 msgid "The Manifund campaign link is unavailable here. You can still donate by Interac below."
 msgstr ""
@@ -8769,12 +8770,12 @@ msgstr ""
 msgid "Capture thread replies"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:334
+#: lib/pauseai_ca_web/live/incubators_live.ex:343
 #, elixir-autogen, elixir-format
 msgid "Join a local waitlist below or offer to help start an incubator in your area."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:266
+#: lib/pauseai_ca_web/live/donate_live.ex:273
 #, elixir-autogen, elixir-format
 msgid "Help Canadians make the case for an international pause on the development of the most powerful AI systems. Your donation helps people organize locally, explain the risks, and bring concrete requests to elected representatives."
 msgstr ""
@@ -8784,14 +8785,14 @@ msgstr ""
 #: lib/pauseai_ca_web/components/donation_page_content.ex:281
 #: lib/pauseai_ca_web/controllers/page_html.ex:75
 #: lib/pauseai_ca_web/controllers/page_html/strategy.html.heex:91
-#: lib/pauseai_ca_web/live/donate_live.ex:296
-#: lib/pauseai_ca_web/live/donate_live.ex:617
+#: lib/pauseai_ca_web/live/donate_live.ex:303
+#: lib/pauseai_ca_web/live/donate_live.ex:631
 #: lib/pauseai_ca_web/live/library_live.ex:204
 #, elixir-autogen, elixir-format
 msgid "Opens in a new tab"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:276
+#: lib/pauseai_ca_web/live/donate_live.ex:283
 #, elixir-autogen, elixir-format
 msgid "Support local groups in Toronto and across Canada, public meetings and outreach materials, and research and briefings for conversations with MPs."
 msgstr ""
@@ -8801,7 +8802,7 @@ msgstr ""
 msgid "Waitlist for %{group}"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/donate_live.ex:616
+#: lib/pauseai_ca_web/live/donate_live.ex:630
 #, elixir-autogen, elixir-format
 msgid "Read our brochure (PDF)"
 msgstr ""
@@ -11292,8 +11293,8 @@ msgstr ""
 #: lib/pauseai_ca_web/live/assistant_instructions_live.ex:79
 #: lib/pauseai_ca_web/live/assistant_instructions_live.ex:127
 #: lib/pauseai_ca_web/live/chapter_live.ex:75
-#: lib/pauseai_ca_web/live/chapter_pages_live.ex:124
-#: lib/pauseai_ca_web/live/chapter_pages_live.ex:131
+#: lib/pauseai_ca_web/live/chapter_pages_live.ex:128
+#: lib/pauseai_ca_web/live/chapter_pages_live.ex:135
 #: lib/pauseai_ca_web/live/mp_templates_live.ex:95
 #: lib/pauseai_ca_web/live/mp_templates_live.ex:124
 #: lib/pauseai_ca_web/live/mp_templates_live.ex:190
@@ -11790,7 +11791,7 @@ msgid "Group stage"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/incubator_management_live.ex:532
-#: lib/pauseai_ca_web/live/incubators_live.ex:385
+#: lib/pauseai_ca_web/live/incubators_live.ex:408
 #, elixir-autogen, elixir-format
 msgid "Incubator"
 msgstr ""
@@ -12894,7 +12895,7 @@ msgstr ""
 msgid "Alongside the Montreal march, demonstrations took place on Saturday in Toronto, Vancouver, Washington, D.C., San Francisco, New York, Boston, Paris, Marseille, and Berlin. These citizen mobilizations were part of a global day of action ahead of the APEC Summit in Shenzhen on November 18 and 19, where world leaders will gather, and which represents a key opportunity to begin negotiating an international AI treaty."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/actions_live.ex:215
+#: lib/pauseai_ca_web/live/actions_live.ex:241
 #, elixir-autogen, elixir-format
 msgid "Around 40 people gathered at Phillips Square on September 26 for a global, coordinated pause in advanced AI development. The peaceful demonstration ran from 1 to 2 p.m., and organizers distributed around a hundred educational brochures."
 msgstr ""
@@ -12909,7 +12910,7 @@ msgstr ""
 msgid "Defined as AI surpassing human capabilities across most cognitive tasks, superintelligence is the stated goal of frontier AI companies, including OpenAI and Anthropic, despite warnings from experts such as Yoshua Bengio and Geoffrey Hinton that developing it without reliable control and alignment methods would pose an existential threat to humanity."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/actions_live.ex:243
+#: lib/pauseai_ca_web/live/actions_live.ex:269
 #, elixir-autogen, elixir-format
 msgid "Event details and photos"
 msgstr ""
@@ -12989,7 +12990,7 @@ msgstr ""
 msgid "Participants gathered at Dorchester Square at 1 p.m., then marched to the U.S. Consulate and the Chinese Consulate."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/actions_live.ex:220
+#: lib/pauseai_ca_web/live/actions_live.ex:246
 #, elixir-autogen, elixir-format
 msgid "PauseAI Canada called on the government to recognize artificial superintelligence as a national security threat, support an international treaty prohibiting its development and coordinate a global pause under democratic control."
 msgstr ""
@@ -13006,6 +13007,7 @@ msgstr ""
 
 #: lib/pauseai_ca/incubators/chapter_markdown.ex:19
 #: lib/pauseai_ca_web/live/actions_live.ex:184
+#: lib/pauseai_ca_web/live/incubators_live.ex:402
 #, elixir-autogen, elixir-format
 msgid "Photo source: PauseAI Toronto."
 msgstr ""
@@ -13031,7 +13033,7 @@ msgid "Read about PauseAI Canada's Montréal and Toronto marches, with photograp
 msgstr ""
 
 #: lib/pauseai_ca_web/live/actions_live.ex:104
-#: lib/pauseai_ca_web/live/actions_live.ex:252
+#: lib/pauseai_ca_web/live/actions_live.ex:278
 #, elixir-autogen, elixir-format
 msgid "Read the press release"
 msgstr ""
@@ -13098,7 +13100,7 @@ msgstr ""
 msgid "November 14, 2026"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/actions_live.ex:194
+#: lib/pauseai_ca_web/live/actions_live.ex:220
 #, elixir-autogen, elixir-format
 msgid "September 26, 2026"
 msgstr ""
@@ -13657,13 +13659,13 @@ msgstr ""
 
 #: lib/pauseai_ca_web/live/chapter_live.ex:134
 #: lib/pauseai_ca_web/live/chapter_live.ex:164
-#: lib/pauseai_ca_web/live/chapter_pages_live.ex:246
+#: lib/pauseai_ca_web/live/chapter_pages_live.ex:252
 #: lib/pauseai_ca_web/live/incubator_management_live.ex:466
 #, elixir-autogen
 msgid "Edit chapter homepage"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/incubators_live.ex:384
+#: lib/pauseai_ca_web/live/incubators_live.ex:407
 #, elixir-autogen
 msgid "Visit chapter homepage"
 msgstr ""
@@ -13683,7 +13685,7 @@ msgstr ""
 msgid "Check the chapter address and welcome text. Your changes have not been saved."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/chapter_live.ex:282
+#: lib/pauseai_ca_web/live/chapter_live.ex:288
 #, elixir-autogen
 msgid "A local chapter of PauseAI Canada."
 msgstr ""
@@ -13704,13 +13706,13 @@ msgid "French welcome"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/chapter_live.ex:190
-#: lib/pauseai_ca_web/live/chapter_pages_live.ex:314
+#: lib/pauseai_ca_web/live/chapter_pages_live.ex:321
 #, elixir-autogen
 msgid "Publish saved draft"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/chapter_live.ex:177
-#: lib/pauseai_ca_web/live/chapter_pages_live.ex:277
+#: lib/pauseai_ca_web/live/chapter_pages_live.ex:284
 #, elixir-autogen
 msgid "Markdown guide"
 msgstr ""
@@ -13731,7 +13733,7 @@ msgid "Insert image"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/chapter_live.ex:178
-#: lib/pauseai_ca_web/live/chapter_pages_live.ex:278
+#: lib/pauseai_ca_web/live/chapter_pages_live.ex:285
 #, elixir-autogen
 msgid "## Next meetup\n\nJoin **local volunteers**.\n\n- Bring a friend\n- [Find an event](https://pauseai.ca/en/groups)"
 msgstr ""
@@ -14365,11 +14367,17 @@ msgstr ""
 msgid "Use lowercase letters, digits and hyphens, up to 80 characters."
 msgstr ""
 
+#: lib/pauseai_ca_web/live/actions_live.ex:198
+#, elixir-autogen
 msgid "A speaker addresses the crowd at Queen’s Park."
 msgstr ""
 
+#: lib/pauseai_ca_web/live/actions_live.ex:210
+#, elixir-autogen
 msgid "Marchers hold up their signs in downtown Toronto."
 msgstr ""
 
+#: lib/pauseai_ca_web/live/incubators_live.ex:385
+#, elixir-autogen
 msgid "Two marchers hold signs calling for an AI treaty in Toronto."
 msgstr ""
