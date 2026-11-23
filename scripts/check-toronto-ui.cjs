@@ -60,7 +60,11 @@ const assert = require('node:assert/strict');
       for (const fragment of ['monthly','once','one-off','donate']) {
         await page.goto(`${base}/groups/toronto/pages/donate?locale=${locale}#${fragment}`, {waitUntil:'networkidle'});
         assert.equal(new URL(page.url()).pathname,national);
+        assert.equal(new URL(page.url()).hash, `#${fragment}`);
         await page.locator(`#${fragment}`).waitFor({state:'attached'});
+        const arrival = await page.locator(`#${fragment}`).boundingBox();
+        const headerBottom = await page.evaluate(() => Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-bottom')) || 0);
+        assert.ok(arrival && arrival.y >= headerBottom - 1 && arrival.y < 900, 'legacy bookmark hidden behind header');
         assert.equal(await page.locator('#toronto-giving-options').count(),0);
       }
       await context.close();

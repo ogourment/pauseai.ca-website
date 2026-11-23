@@ -37,3 +37,4 @@
 .toronto-board-member img {display:block;width:100%;height:auto;aspect-ratio:1;object-fit:cover;border-radius:.5rem;}
 .toronto-board-member h3 {margin-top:0;}
 .toronto-board-member div p {margin-bottom:0;}
+[data-chapter-donation-bookmark] {scroll-margin-top:calc(max(var(--header-bottom, 0px), 12rem) + .75rem);}
