@@ -381,7 +381,7 @@ defmodule PauseAiCaWeb.IncubatorsLive do
                   width="871"
                   height="680"
                   loading="lazy"
-                  class="chapter-card-photo"
+                  class="block h-auto w-full"
                   alt={gettext("Two marchers hold signs calling for an AI treaty in Toronto.")}
                 />
                 <div class="chapter-card-content space-y-3">
