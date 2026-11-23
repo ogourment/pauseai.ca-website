@@ -2,9 +2,10 @@ defmodule PauseAiCaWeb.TorontoLanding do
   @moduledoc "Chapter-owned presentation for Toronto's editable Markdown homepage."
   use Phoenix.Component
 
-  attr :sections, :list, required: true
-  attr :name, :string, required: true
-  attr :lang, :string, required: true
+  attr(:sections, :list, required: true)
+  attr(:name, :string, required: true)
+  attr(:lang, :string, required: true)
+  attr(:locale, :string, default: "en")
 
   def landing(assigns) do
     [intro | sections] = assigns.sections
@@ -15,7 +16,7 @@ defmodule PauseAiCaWeb.TorontoLanding do
       <header class="toronto-hero">
         <div class="toronto-hero-copy">
           <h1>{@name}</h1>
-          {Phoenix.HTML.raw(@intro.html)}
+          {Phoenix.HTML.raw(PauseAiCaWeb.TorontoPresentation.national_donations(@intro.html, @locale))}
         </div>
         <figure lang="en">
           <img
@@ -28,7 +29,7 @@ defmodule PauseAiCaWeb.TorontoLanding do
       </header>
       <section :for={section <- @sections} class="toronto-story">
         <span :if={section.alias} id={section.alias} class="chapter-fragment-alias" aria-hidden="true"></span>
-        {Phoenix.HTML.raw(section.html)}
+        {Phoenix.HTML.raw(PauseAiCaWeb.TorontoPresentation.national_donations(section.html, @locale))}
       </section>
     </article>
     """

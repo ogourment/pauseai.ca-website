@@ -20,6 +20,10 @@ if Code.ensure_loaded?(PhoenixCMSWeb) do
         !Application.get_env(:pauseai_ca, :incubators_enabled, false) ->
           {:ok, redirect(socket, to: IncubatorsLive.directory(locale))}
 
+        socket.assigns.live_action == :show and params["slug"] == "toronto" and
+            params["page"] == "donate" ->
+          {:ok, redirect(socket, to: PauseAiCaWeb.TorontoPresentation.donate_path(locale))}
+
         socket.assigns.live_action == :show ->
           chapter = Incubators.published_chapter!(params["slug"])
           rows = public_rows(chapter, locale)
@@ -213,10 +217,7 @@ if Code.ensure_loaded?(PhoenixCMSWeb) do
               <TorontoChapterActions.riding_tool :if={
                 @chapter.slug == "toronto" and @page.slug == "write-to-your-mp"
               } />
-              <TorontoChapterActions.giving_options :if={
-                @chapter.slug == "toronto" and @page.slug == "donate"
-              } />
-              <.page_body content={@page.body} chapter={@chapter.slug} page={@page.slug} />
+              <.page_body content={@page.body} chapter={@chapter.slug} page={@page.slug} locale={@locale} />
             </div>
           </.website_page>
         </section>
@@ -266,6 +267,7 @@ if Code.ensure_loaded?(PhoenixCMSWeb) do
                   <.page_body
                     content={@page.draft["body"]}
                     chapter={@profile.chapter_slug}
+                    locale={@locale}
                     page={@page.slug}
                   />
                 </div>
@@ -327,15 +329,29 @@ if Code.ensure_loaded?(PhoenixCMSWeb) do
       ~H"""
       <%= for section <- @sections do %>
         <span :if={section.alias} id={section.alias} class="chapter-fragment-alias" aria-hidden="true"></span>
-        {raw(section.html)}
+        {raw(PauseAiCaWeb.TorontoPresentation.national_donations(section.html, @locale))}
       <% end %>
+      """
+    end
+
+    defp page_body(%{chapter: "toronto", page: "governance"} = assigns) do
+      ~H"""
+      {raw(PauseAiCaWeb.TorontoPresentation.governance(@content) |> PauseAiCaWeb.TorontoPresentation.national_donations(@locale))}
       """
     end
 
     defp page_body(assigns) do
       ~H"""
-      {raw(ChapterMarkdown.render_page(@content, @chapter))}
+      {raw(render_page(@content, @chapter, @locale))}
       """
+    end
+
+    defp render_page(content, chapter, locale) do
+      html = ChapterMarkdown.render_page(content, chapter)
+
+      if chapter == "toronto",
+        do: PauseAiCaWeb.TorontoPresentation.national_donations(html, locale),
+        else: html
     end
 
     def navigation(assigns) do
@@ -346,7 +362,11 @@ if Code.ensure_loaded?(PhoenixCMSWeb) do
       links =
         for page <- [hd(rows) | children] do
           %{
-            title: page.title,
+            title:
+              if(assigns.chapter.slug == "toronto" and page.slug == "donate",
+                do: gettext("Donate"),
+                else: page.title
+              ),
             href: public_path(assigns.chapter, page.slug, assigns.locale),
             current: page.slug == assigns.current
           }
@@ -360,7 +380,7 @@ if Code.ensure_loaded?(PhoenixCMSWeb) do
         id="chapter-page-navigation"
         links={@links}
         label={ChapterPageCopy.text(:chapter_pages)}
-        site_name={if @current != "home", do: profile_name(@chapter, @locale)}
+        site_name={profile_name(@chapter, @locale)}
       />
       """
     end
@@ -396,6 +416,9 @@ if Code.ensure_loaded?(PhoenixCMSWeb) do
 
       [landing | children]
     end
+
+    defp public_path(%{slug: "toronto"}, "donate", locale),
+      do: PauseAiCaWeb.TorontoPresentation.donate_path(locale)
 
     defp public_path(chapter, "home", locale), do: ~p"/groups/#{chapter.slug}?#{[locale: locale]}"
 

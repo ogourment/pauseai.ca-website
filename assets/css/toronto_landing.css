@@ -30,3 +30,10 @@
 .toronto-story:has(>p:nth-of-type(6) img):not(:has(h3)) img {width:100%;aspect-ratio:1.5;object-fit:cover;}
 .toronto-front :focus-visible {outline:3px solid #134790;outline-offset:3px;}
 @media(max-width:700px){.toronto-hero{grid-template-columns:1fr;}.toronto-hero figure{min-height:12rem;}.toronto-hero-copy{padding:1.35rem;}.toronto-hero h1{margin-bottom:.85rem;}.toronto-hero-copy p{margin-top:1rem;}}
+
+/* Keep each authored board portrait beside its name and role at every width. */
+.toronto-board-member {display:grid;grid-template-columns:clamp(5rem,18vw,9rem) minmax(0,1fr);gap:1.25rem;align-items:center;margin-block:1.5rem;}
+.toronto-board-member > p {margin:0;}
+.toronto-board-member img {display:block;width:100%;height:auto;aspect-ratio:1;object-fit:cover;border-radius:.5rem;}
+.toronto-board-member h3 {margin-top:0;}
+.toronto-board-member div p {margin-bottom:0;}

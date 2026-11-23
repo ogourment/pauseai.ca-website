@@ -47,43 +47,4 @@ defmodule PauseAiCaWeb.TorontoChapterActions do
     </toronto-ridings>
     """
   end
-
-  def giving_options(assigns) do
-    giving = @data["giving"]
-    monthly = Enum.sort_by(giving["monthly"], fn {amount, _} -> String.to_integer(amount) end)
-    assigns = assign(assigns, giving: giving, monthly: monthly)
-
-    ~H"""
-    <nav
-      id="toronto-giving-options"
-      aria-label="Toronto donation amounts"
-      class="my-6 grid gap-4 sm:grid-cols-2"
-    >
-      <section id="monthly">
-        <h2 class="font-semibold">Monthly gifts</h2>
-        <div class="mt-2 flex flex-wrap gap-2">
-          <a
-            :for={{amount, href} <- @monthly}
-            class="btn"
-            href={href}
-            aria-label={"Donate C$#{amount} a month"}
-          >C${amount}</a>
-        </div>
-      </section>
-      <section id="one-off">
-        <span id="once" class="chapter-fragment-alias" aria-hidden="true"></span>
-        <h2 class="font-semibold">One-off gifts</h2>
-        <div class="mt-2 flex flex-wrap gap-2">
-          <a
-            :for={amount <- @giving["onceAmounts"]}
-            class="btn"
-            href={@giving["once"] <> "?prefilled_amount=" <> Integer.to_string(amount * 100)}
-            aria-label={"Donate C$#{amount} once"}
-          >C${amount}</a>
-          <a class="btn" href={@giving["once"]}>Other amount</a>
-        </div>
-      </section>
-    </nav>
-    """
-  end
 end
