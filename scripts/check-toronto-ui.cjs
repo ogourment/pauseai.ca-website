@@ -24,7 +24,8 @@ const assert = require('node:assert/strict');
         assert.match(await nav.innerText(), /Toronto/);
         assert.equal(await nav.locator(`a[href="${national}"]`).count(),1);
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth),false);
-        assert.equal(await page.locator('a[href*="stripe.com"], a[href*="manifund.org"]').count(),0);
+        assert.equal(await page.locator('a[href*="stripe.com"], a[href*="manifund.org"], a[href*="/groups/toronto/pages/donate"], a[href*="pauseaitoronto.info/donate"], a[href^="mailto:donate@pauseaitoronto.info"]').count(),0);
+        assert.doesNotMatch(await page.locator('body').innerText(), /Donate to Toronto|Give monthly|Give once/);
         if (slug === 'home') homeGeometry = await geometry();
         if (slug === 'governance') {
           const rows = page.locator('.toronto-board-member');
