@@ -1,7 +1,9 @@
 defmodule PauseAiCaWeb.PageControllerTest do
   use PauseAiCaWeb.ConnCase
 
-  test "visitors can open the two additional Toronto march photographs in either language", %{conn: conn} do
+  test "visitors can open the two additional Toronto march photographs in either language", %{
+    conn: conn
+  } do
     for path <- ["/en/our-actions", "/fr/nos-actions"] do
       html = conn |> get(path) |> html_response(200)
 
