@@ -115,11 +115,16 @@ defmodule PauseAiCaWeb.IncubatorsLiveTest do
   test "directory shortcuts and the Toronto chapter shortcut preserve the query", %{conn: conn} do
     for {short, canonical} <- [
           {"/groups", "/en/groups"},
-          {"/groupes", "/fr/groupes"},
-          {"/toronto", "/groups/toronto"}
+          {"/groupes", "/fr/groupes"}
         ] do
       assert redirected_to(get(conn, short <> "?from=event"), 301) == canonical <> "?from=event"
     end
+
+    assert redirected_to(get(conn, "/toronto?from=event"), 301) ==
+             "/groups/toronto?from=event&locale=en"
+
+    assert redirected_to(get(conn, "/toronto?locale=fr"), 301) ==
+             "/groups/toronto?locale=fr"
   end
 
   test "CHAPTER-PUBLISH-01 scoped draft, preview, publication and revocation", c do
@@ -134,6 +139,24 @@ defmodule PauseAiCaWeb.IncubatorsLiveTest do
     view |> element("#chapter-publish") |> render_click()
     {:ok, _, public} = live(build_conn(), "/groups/toronto")
     assert public =~ "First welcome"
+
+    for {route, locale, text} <- [
+          {"/toronto", "en", "First welcome"},
+          {"/toronto?locale=fr", "fr", "Bienvenue"}
+        ] do
+      alias_conn = build_conn() |> Plug.Test.init_test_session(%{site_locale: "fr"}) |> get(route)
+
+      published_page =
+        alias_conn
+        |> recycle()
+        |> get(redirected_to(alias_conn, 301))
+        |> html_response(200)
+
+      html = LazyHTML.from_document(published_page)
+      assert Enum.count(LazyHTML.query(html, ~s(html[lang="#{locale}"]))) == 1
+
+      assert published_page =~ text
+    end
 
     view
     |> form("#chapter-form", put_in(fields, [:chapter, :en], "Private revision"))

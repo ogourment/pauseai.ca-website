@@ -1,0 +1,32 @@
+.toronto-front {
+  --toronto-ink: #211b13;
+  --toronto-orange: #ff981c;
+  --toronto-paper: #fffaf1;
+  color: var(--toronto-ink);
+  background: var(--toronto-paper);
+}
+.toronto-hero {display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); background: var(--toronto-orange);}
+.toronto-hero-copy {align-self: center; padding: clamp(1.4rem,4vw,4rem);}
+.toronto-hero h1 {font: 750 1.05rem/1.25 system-ui,sans-serif; margin: 0 0 1.5rem;}
+.toronto-hero h2 {font: 900 clamp(2.2rem,4.2vw,4.35rem)/.99 system-ui,sans-serif; letter-spacing: -.047em; text-wrap: balance; margin: 0;}
+.toronto-hero-copy p {display:flex; flex-wrap:wrap; gap:.6rem; margin-top: 1.65rem; align-items:center;}
+.toronto-hero-copy p a {border:1px solid var(--toronto-ink); border-radius:2rem; padding:.7rem 1.1rem; min-height:44px; color:var(--toronto-ink); font-weight:700; text-decoration:none;}
+.toronto-hero-copy p a:first-child {background:var(--toronto-ink); color:#fff;}
+.toronto-hero figure {margin:0; position:relative; min-height: clamp(16rem,30vw,28rem);}
+.toronto-hero figure img {position:absolute; width:100%; height:100%; object-fit:cover;}
+.toronto-hero figcaption {position:absolute; bottom:0; right:0; padding:.25rem .6rem; font-size:.75rem; color:white; background:#19140feb;}
+.toronto-story {padding:clamp(1.25rem,3.5vw,3rem); border-bottom:1px solid #dbceba;}
+.toronto-story h2 {font-size:clamp(1.6rem,3vw,2.4rem); font-weight:800; letter-spacing:-.035em;}
+.toronto-story h3 {font-size:1.3rem; font-weight:750; margin-top:1rem;}
+.toronto-story p {margin:.75rem 0; max-width:74ch; line-height:1.65;}
+.toronto-story a {color:inherit; text-decoration:underline; text-underline-offset:.18em;}
+.toronto-story ol,.toronto-story ul {display:grid; grid-template-columns:repeat(auto-fit,minmax(min(13rem,100%),1fr)); gap:.55rem; margin-block:1rem;}
+.toronto-story li>a {display:block; height:100%; padding:.8rem 1rem; min-height:44px; background:#fff; border:1px solid #c9bca8; border-radius:.4rem; font-weight:650;}
+.toronto-story li img {width:100%; aspect-ratio: 1.3; object-fit:contain; margin-bottom:.5rem;}
+.toronto-story img {max-width:100%; height:auto;}
+.toronto-story:has(>p:nth-of-type(6) img):not(:has(h3)) {display:grid; grid-template-columns:repeat(auto-fit,minmax(min(13rem,100%),1fr)); gap:.6rem;}
+.toronto-story:has(>p:nth-of-type(6) img):not(:has(h3)) > :not(p:has(>img:only-child)) {grid-column:1/-1;}
+.toronto-story:has(>p:nth-of-type(6) img):not(:has(h3)) >p:has(>img:only-child) {margin:0;}
+.toronto-story:has(>p:nth-of-type(6) img):not(:has(h3)) img {width:100%;aspect-ratio:1.5;object-fit:cover;}
+.toronto-front :focus-visible {outline:3px solid #134790;outline-offset:3px;}
+@media(max-width:700px){.toronto-hero{grid-template-columns:1fr;}.toronto-hero figure{min-height:12rem;}.toronto-hero-copy{padding:1.35rem;}.toronto-hero h1{margin-bottom:.85rem;}.toronto-hero-copy p{margin-top:1rem;}}

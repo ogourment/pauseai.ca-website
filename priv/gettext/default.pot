@@ -31,7 +31,7 @@ msgstr ""
 
 #: lib/pauseai_ca_web/live/november_press_release_live.ex:87
 #: lib/pauseai_ca_web/live/protest_press_release_live.ex:138
-#: lib/pauseai_ca_web/seo.ex:46
+#: lib/pauseai_ca_web/seo.ex:48
 #, elixir-autogen, elixir-format
 msgid "About PauseAI Canada"
 msgstr ""
@@ -179,7 +179,7 @@ msgid "Evaluate responses"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/layouts.ex:554
-#: lib/pauseai_ca_web/live/chapter_live.ex:263
+#: lib/pauseai_ca_web/live/chapter_live.ex:283
 #, elixir-autogen, elixir-format
 msgid "Events"
 msgstr ""
@@ -211,7 +211,7 @@ msgstr ""
 #: lib/pauseai_ca_web/components/layouts.ex:164
 #: lib/pauseai_ca_web/components/layouts.ex:676
 #: lib/pauseai_ca_web/components/layouts.ex:709
-#: lib/pauseai_ca_web/live/chapter_live.ex:262
+#: lib/pauseai_ca_web/live/chapter_live.ex:282
 #: lib/pauseai_ca_web/live/incubators_live.ex:404
 #: lib/pauseai_ca_web/live/participation_live.ex:16
 #, elixir-autogen, elixir-format
@@ -324,7 +324,7 @@ msgid "Our role"
 msgstr ""
 
 #: lib/pauseai_ca_web/controllers/page_html/strategy.html.heex:10
-#: lib/pauseai_ca_web/seo.ex:50
+#: lib/pauseai_ca_web/seo.ex:52
 #, elixir-autogen, elixir-format
 msgid "Our strategy"
 msgstr ""
@@ -362,7 +362,7 @@ msgstr ""
 
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:190
 #: lib/pauseai_ca_web/controllers/page_html/privacy.html.heex:10
-#: lib/pauseai_ca_web/seo.ex:54
+#: lib/pauseai_ca_web/seo.ex:56
 #, elixir-autogen, elixir-format
 msgid "Privacy policy"
 msgstr ""
@@ -531,7 +531,7 @@ msgstr ""
 msgid "Two of the three Turing Award winners for deep learning built their careers in Canada. Both now say the technology they created could escape human control."
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_controller.ex:68
+#: lib/pauseai_ca_web/controllers/page_controller.ex:76
 #, elixir-autogen, elixir-format
 msgid "Understand and act"
 msgstr ""
@@ -1249,7 +1249,7 @@ msgstr ""
 
 #: lib/pauseai_ca_web/live/admin_contact_import_live.ex:437
 #: lib/pauseai_ca_web/live/blog_editor_live.ex:301
-#: lib/pauseai_ca_web/live/chapter_live.ex:199
+#: lib/pauseai_ca_web/live/chapter_live.ex:204
 #: lib/pauseai_ca_web/live/donation_page_live.ex:593
 #, elixir-autogen, elixir-format
 msgid "Preview"
@@ -2254,7 +2254,8 @@ msgid "Save and exit"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/assistant_instructions_live.ex:173
-#: lib/pauseai_ca_web/live/chapter_live.ex:176
+#: lib/pauseai_ca_web/live/chapter_live.ex:181
+#: lib/pauseai_ca_web/live/chapter_pages_live.ex:288
 #: lib/pauseai_ca_web/live/donation_page_live.ex:586
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:638
 #: lib/pauseai_ca_web/live/mp_templates_live.ex:330
@@ -2871,7 +2872,7 @@ msgstr ""
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:19
 #: lib/pauseai_ca_web/live/donate_live.ex:346
 #: lib/pauseai_ca_web/live/donate_live.ex:595
-#: lib/pauseai_ca_web/seo.ex:14
+#: lib/pauseai_ca_web/seo.ex:16
 #, elixir-autogen, elixir-format
 msgid "PauseAI Canada"
 msgstr ""
@@ -3389,7 +3390,7 @@ msgstr ""
 
 #: lib/pauseai_ca_web/live/donate_live.ex:262
 #: lib/pauseai_ca_web/live/donate_live.ex:368
-#: lib/pauseai_ca_web/seo.ex:62
+#: lib/pauseai_ca_web/seo.ex:64
 #, elixir-autogen, elixir-format
 msgid "Support PauseAI Canada"
 msgstr ""
@@ -3848,7 +3849,7 @@ msgstr ""
 
 #: lib/pauseai_ca_web/live/assistant_instructions_live.ex:199
 #: lib/pauseai_ca_web/live/blog_editor_live.ex:341
-#: lib/pauseai_ca_web/live/chapter_live.ex:201
+#: lib/pauseai_ca_web/live/chapter_live.ex:206
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:591
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:631
 #: lib/pauseai_ca_web/live/mp_templates_live.ex:321
@@ -3860,7 +3861,7 @@ msgstr ""
 
 #: lib/pauseai_ca_web/live/assistant_instructions_live.ex:202
 #: lib/pauseai_ca_web/live/blog_editor_live.ex:344
-#: lib/pauseai_ca_web/live/chapter_live.ex:205
+#: lib/pauseai_ca_web/live/chapter_live.ex:210
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:594
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:634
 #: lib/pauseai_ca_web/live/mp_templates_live.ex:325
@@ -3872,7 +3873,7 @@ msgstr ""
 
 #: lib/pauseai_ca_web/live/assistant_instructions_live.ex:200
 #: lib/pauseai_ca_web/live/blog_editor_live.ex:342
-#: lib/pauseai_ca_web/live/chapter_live.ex:202
+#: lib/pauseai_ca_web/live/chapter_live.ex:207
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:592
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:632
 #: lib/pauseai_ca_web/live/mp_templates_live.ex:322
@@ -3884,7 +3885,7 @@ msgstr ""
 
 #: lib/pauseai_ca_web/live/assistant_instructions_live.ex:203
 #: lib/pauseai_ca_web/live/blog_editor_live.ex:345
-#: lib/pauseai_ca_web/live/chapter_live.ex:204
+#: lib/pauseai_ca_web/live/chapter_live.ex:209
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:595
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:635
 #: lib/pauseai_ca_web/live/mp_templates_live.ex:327
@@ -3896,7 +3897,7 @@ msgstr ""
 
 #: lib/pauseai_ca_web/live/assistant_instructions_live.ex:201
 #: lib/pauseai_ca_web/live/blog_editor_live.ex:343
-#: lib/pauseai_ca_web/live/chapter_live.ex:203
+#: lib/pauseai_ca_web/live/chapter_live.ex:208
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:593
 #: lib/pauseai_ca_web/live/mail_drafts_live.ex:633
 #: lib/pauseai_ca_web/live/mp_templates_live.ex:323
@@ -5201,6 +5202,7 @@ msgstr ""
 #: lib/pauseai_ca_web/live/blog_editor_live.ex:270
 #: lib/pauseai_ca_web/live/blog_editor_live.ex:276
 #: lib/pauseai_ca_web/live/chapter_live.ex:79
+#: lib/pauseai_ca_web/live/chapter_pages_live.ex:147
 #: lib/pauseai_ca_web/live/donation_page_live.ex:190
 #: lib/pauseai_ca_web/live/donation_page_live.ex:1128
 #: lib/pauseai_ca_web/live/mp_templates_live.ex:191
@@ -6584,7 +6586,7 @@ msgstr ""
 msgid "No content in this view."
 msgstr ""
 
-#: lib/pauseai_ca_web/controllers/page_controller.ex:55
+#: lib/pauseai_ca_web/controllers/page_controller.ex:63
 #: lib/pauseai_ca_web/controllers/page_html/not_found.html.heex:8
 #, elixir-autogen, elixir-format
 msgid "Page not found"
@@ -7520,6 +7522,7 @@ msgstr ""
 msgid "This task changed in another tab. Your draft has been retained."
 msgstr ""
 
+#: lib/pauseai_ca_web/live/chapter_pages_live.ex:84
 #: lib/pauseai_ca_web/live/tasks_live.ex:314
 #: lib/pauseai_ca_web/live/tasks_live.ex:471
 #: lib/pauseai_ca_web/live/welcome_management_live.ex:382
@@ -7696,6 +7699,7 @@ msgid "Group updated"
 msgstr ""
 
 #: lib/pauseai_ca_web/components/layouts.ex:662
+#: lib/pauseai_ca_web/live/chapter_pages_live.ex:380
 #: lib/pauseai_ca_web/live/incubators_live.ex:318
 #, elixir-autogen
 msgid "Home"
@@ -7731,11 +7735,12 @@ msgstr ""
 #: lib/pauseai_ca_web/components/layouts.ex:520
 #: lib/pauseai_ca_web/controllers/page_html/home.html.heex:48
 #: lib/pauseai_ca_web/live/chapter_live.ex:151
+#: lib/pauseai_ca_web/live/chapter_pages_live.ex:204
 #: lib/pauseai_ca_web/live/incubators_live.ex:19
 #: lib/pauseai_ca_web/live/incubators_live.ex:319
 #: lib/pauseai_ca_web/live/incubators_live.ex:322
 #: lib/pauseai_ca_web/live/incubators_live.ex:348
-#: lib/pauseai_ca_web/seo.ex:58
+#: lib/pauseai_ca_web/seo.ex:60
 #, elixir-autogen
 msgid "Local groups"
 msgstr ""
@@ -8960,7 +8965,7 @@ msgstr ""
 
 #: lib/pauseai_ca_web/live/blog_editor_live.ex:340
 #: lib/pauseai_ca_web/live/blog_editor_live.ex:354
-#: lib/pauseai_ca_web/live/chapter_live.ex:200
+#: lib/pauseai_ca_web/live/chapter_live.ex:205
 #: lib/pauseai_ca_web/live/donation_page_live.ex:1000
 #, elixir-autogen, elixir-format
 msgid "Draft preview"
@@ -11287,6 +11292,8 @@ msgstr ""
 #: lib/pauseai_ca_web/live/assistant_instructions_live.ex:79
 #: lib/pauseai_ca_web/live/assistant_instructions_live.ex:127
 #: lib/pauseai_ca_web/live/chapter_live.ex:69
+#: lib/pauseai_ca_web/live/chapter_pages_live.ex:124
+#: lib/pauseai_ca_web/live/chapter_pages_live.ex:131
 #: lib/pauseai_ca_web/live/mp_templates_live.ex:95
 #: lib/pauseai_ca_web/live/mp_templates_live.ex:124
 #: lib/pauseai_ca_web/live/mp_templates_live.ex:190
@@ -12449,117 +12456,117 @@ msgstr ""
 msgid "Your remaining token allowance cannot cover another request. Your draft is retained."
 msgstr ""
 
-#: lib/pauseai_ca_web/seo.ex:77
+#: lib/pauseai_ca_web/seo.ex:79
 #, elixir-autogen, elixir-format
 msgid "Contact your MP about AI safety"
 msgstr ""
 
-#: lib/pauseai_ca_web/seo.ex:103
+#: lib/pauseai_ca_web/seo.ex:105
 #, elixir-autogen, elixir-format
 msgid "Explore AI control and safety questions through PauseAI Canada's interactive Rogue Agent game."
 msgstr ""
 
-#: lib/pauseai_ca_web/seo.ex:69
+#: lib/pauseai_ca_web/seo.ex:71
 #, elixir-autogen, elixir-format
 msgid "Explore research, questions and learning resources about advanced AI risks and the case for a global pause."
 msgstr ""
 
-#: lib/pauseai_ca_web/seo.ex:59
+#: lib/pauseai_ca_web/seo.ex:61
 #, elixir-autogen, elixir-format
 msgid "Find a PauseAI Canada group or incubator, join a local waitlist or offer to help organize in your community."
 msgstr ""
 
-#: lib/pauseai_ca_web/seo.ex:66
+#: lib/pauseai_ca_web/seo.ex:68
 #, elixir-autogen, elixir-format
 msgid "Get involved with PauseAI Canada"
 msgstr ""
 
-#: lib/pauseai_ca_web/seo.ex:67
+#: lib/pauseai_ca_web/seo.ex:69
 #, elixir-autogen, elixir-format
 msgid "Get updates, join a local group or offer your help with PauseAI Canada."
 msgstr ""
 
-#: lib/pauseai_ca_web/seo.ex:63
+#: lib/pauseai_ca_web/seo.ex:65
 #, elixir-autogen, elixir-format
 msgid "Help fund local organizing and PauseAI Canada's work toward international safeguards for advanced AI."
 msgstr ""
 
-#: lib/pauseai_ca_web/seo.ex:55
+#: lib/pauseai_ca_web/seo.ex:57
 #, elixir-autogen, elixir-format
 msgid "How PauseAI Canada handles personal information, website activity and communication preferences."
 msgstr ""
 
-#: lib/pauseai_ca_web/seo.ex:51
+#: lib/pauseai_ca_web/seo.ex:53
 #, elixir-autogen, elixir-format
 msgid "How PauseAI Canada works toward an internationally coordinated pause on advanced AI through public action and political engagement."
 msgstr ""
 
-#: lib/pauseai_ca_web/seo.ex:43
+#: lib/pauseai_ca_web/seo.ex:45
 #, elixir-autogen, elixir-format
 msgid "Join PauseAI Canada in calling for a global pause on advanced AI. Learn about the risks, contact your MP and get involved locally."
 msgstr ""
 
-#: lib/pauseai_ca_web/seo.ex:47
+#: lib/pauseai_ca_web/seo.ex:49
 #, elixir-autogen, elixir-format
 msgid "Meet the Canadian movement calling for international safeguards and a global pause on advanced AI."
 msgstr ""
 
-#: lib/pauseai_ca_web/seo.ex:100
+#: lib/pauseai_ca_web/seo.ex:102
 #, elixir-autogen, elixir-format
 msgid "Montréal protest press release"
 msgstr ""
 
-#: lib/pauseai_ca_web/seo.ex:96
+#: lib/pauseai_ca_web/seo.ex:98
 #, elixir-autogen, elixir-format
 msgid "Montréal protest — September 26, 2026"
 msgstr ""
 
-#: lib/pauseai_ca_web/seo.ex:72
+#: lib/pauseai_ca_web/seo.ex:74
 #, elixir-autogen, elixir-format
 msgid "PauseAI Canada articles"
 msgstr ""
 
-#: lib/pauseai_ca_web/seo.ex:42
+#: lib/pauseai_ca_web/seo.ex:44
 #, elixir-autogen, elixir-format
 msgid "PauseAI Canada — A global pause on advanced AI"
 msgstr ""
 
-#: lib/pauseai_ca_web/seo.ex:73
+#: lib/pauseai_ca_web/seo.ex:75
 #, elixir-autogen, elixir-format
 msgid "Read news, analysis and updates from PauseAI Canada, with practical ways to get involved."
 msgstr ""
 
-#: lib/pauseai_ca_web/seo.ex:97
+#: lib/pauseai_ca_web/seo.ex:99
 #, elixir-autogen, elixir-format
 msgid "Read the recap of PauseAI Canada's September 26, 2026 protest in Montréal."
 msgstr ""
 
-#: lib/pauseai_ca_web/seo.ex:102
+#: lib/pauseai_ca_web/seo.ex:104
 #, elixir-autogen, elixir-format
 msgid "Rogue Agent"
 msgstr ""
 
-#: lib/pauseai_ca_web/seo.ex:101
+#: lib/pauseai_ca_web/seo.ex:103
 #, elixir-autogen, elixir-format
 msgid "The press release for PauseAI Canada's September 26, 2026 protest in Montréal."
 msgstr ""
 
-#: lib/pauseai_ca_web/seo.ex:82
+#: lib/pauseai_ca_web/seo.ex:84
 #, elixir-autogen, elixir-format
 msgid "Understand the Warning Shot Protocol and take action on advanced AI risks with PauseAI Canada."
 msgstr ""
 
-#: lib/pauseai_ca_web/seo.ex:68
+#: lib/pauseai_ca_web/seo.ex:70
 #, elixir-autogen, elixir-format
 msgid "Understand the risks of advanced AI"
 msgstr ""
 
-#: lib/pauseai_ca_web/seo.ex:81
+#: lib/pauseai_ca_web/seo.ex:83
 #, elixir-autogen, elixir-format
 msgid "Warning Shot Protocol"
 msgstr ""
 
-#: lib/pauseai_ca_web/seo.ex:78
+#: lib/pauseai_ca_web/seo.ex:80
 #, elixir-autogen, elixir-format
 msgid "Write to your Member of Parliament about advanced AI risks and international safeguards using PauseAI Canada's letter tool."
 msgstr ""
@@ -12948,7 +12955,7 @@ msgstr ""
 msgid "Media Contact"
 msgstr ""
 
-#: lib/pauseai_ca_web/seo.ex:91
+#: lib/pauseai_ca_web/seo.ex:93
 #, elixir-autogen, elixir-format
 msgid "Montréal march press release — November 16, 2026"
 msgstr ""
@@ -12957,7 +12964,7 @@ msgstr ""
 #: lib/pauseai_ca_web/live/actions_live.ex:8
 #: lib/pauseai_ca_web/live/actions_live.ex:24
 #: lib/pauseai_ca_web/live/actions_live.ex:32
-#: lib/pauseai_ca_web/seo.ex:85
+#: lib/pauseai_ca_web/seo.ex:87
 #, elixir-autogen, elixir-format
 msgid "Our actions"
 msgstr ""
@@ -12992,7 +12999,7 @@ msgstr ""
 msgid "PauseAI Canada calls on Prime Minister Mark Carney to commit to pressuring the leaders of the United States and China at the summit to establish such a treaty. Given the existential risks posed by superintelligence, negotiating an international treaty banning its development must be treated as a top priority for Canada's national security."
 msgstr ""
 
-#: lib/pauseai_ca_web/seo.ex:92
+#: lib/pauseai_ca_web/seo.ex:94
 #, elixir-autogen, elixir-format
 msgid "PauseAI Canada's November 16 press release following the November 14 Montréal march for an AI treaty."
 msgstr ""
@@ -13018,7 +13025,7 @@ msgstr ""
 msgid "Press release · November 16, 2026"
 msgstr ""
 
-#: lib/pauseai_ca_web/seo.ex:86
+#: lib/pauseai_ca_web/seo.ex:88
 #, elixir-autogen, elixir-format
 msgid "Read about PauseAI Canada's Montréal and Toronto marches, with photographs and Montréal press releases."
 msgstr ""
@@ -13649,7 +13656,8 @@ msgid "Chapter homepage"
 msgstr ""
 
 #: lib/pauseai_ca_web/live/chapter_live.ex:128
-#: lib/pauseai_ca_web/live/chapter_live.ex:157
+#: lib/pauseai_ca_web/live/chapter_live.ex:158
+#: lib/pauseai_ca_web/live/chapter_pages_live.ex:246
 #: lib/pauseai_ca_web/live/incubator_management_live.ex:466
 #, elixir-autogen
 msgid "Edit chapter homepage"
@@ -13675,52 +13683,55 @@ msgstr ""
 msgid "Check the chapter address and welcome text. Your changes have not been saved."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/chapter_live.ex:256
+#: lib/pauseai_ca_web/live/chapter_live.ex:276
 #, elixir-autogen
 msgid "A local chapter of PauseAI Canada."
 msgstr ""
 
-#: lib/pauseai_ca_web/live/chapter_live.ex:161
+#: lib/pauseai_ca_web/live/chapter_live.ex:163
 #, elixir-autogen
 msgid "Chapter address under /groups/"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/chapter_live.ex:197
+#: lib/pauseai_ca_web/live/chapter_live.ex:202
 #, elixir-autogen
 msgid "English welcome"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/chapter_live.ex:197
+#: lib/pauseai_ca_web/live/chapter_live.ex:202
 #, elixir-autogen
 msgid "French welcome"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/chapter_live.ex:179
+#: lib/pauseai_ca_web/live/chapter_live.ex:184
+#: lib/pauseai_ca_web/live/chapter_pages_live.ex:314
 #, elixir-autogen
 msgid "Publish saved draft"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/chapter_live.ex:166
+#: lib/pauseai_ca_web/live/chapter_live.ex:171
+#: lib/pauseai_ca_web/live/chapter_pages_live.ex:277
 #, elixir-autogen
 msgid "Markdown guide"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/chapter_live.ex:172
+#: lib/pauseai_ca_web/live/chapter_live.ex:177
 #, elixir-autogen
 msgid "French edition (optional)"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/chapter_live.ex:208
+#: lib/pauseai_ca_web/live/chapter_live.ex:220
 #, elixir-autogen
 msgid "Image library"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/chapter_live.ex:218
+#: lib/pauseai_ca_web/live/chapter_live.ex:230
 #, elixir-autogen
 msgid "Insert image"
 msgstr ""
 
-#: lib/pauseai_ca_web/live/chapter_live.ex:167
+#: lib/pauseai_ca_web/live/chapter_live.ex:172
+#: lib/pauseai_ca_web/live/chapter_pages_live.ex:278
 #, elixir-autogen
 msgid "## Next meetup\n\nJoin **local volunteers**.\n\n- Bring a friend\n- [Find an event](https://pauseai.ca/en/groups)"
 msgstr ""
@@ -14257,4 +14268,99 @@ msgstr ""
 #: lib/pauseai_ca_web/components/profile_components.ex:17
 #, elixir-autogen, elixir-format
 msgid "Profile pages"
+msgstr ""
+
+#: lib/pauseai_ca_web/chapter_page_copy.ex:7
+#, elixir-autogen, elixir-format
+msgid "A page already uses this address."
+msgstr ""
+
+#: lib/pauseai_ca_web/chapter_page_copy.ex:8
+#, elixir-autogen, elixir-format
+msgid "Add page"
+msgstr ""
+
+#: lib/pauseai_ca_web/chapter_page_copy.ex:11
+#, elixir-autogen, elixir-format
+msgid "Another edit was saved. Copy your text before reloading this page."
+msgstr ""
+
+#: lib/pauseai_ca_web/chapter_page_copy.ex:13
+#, elixir-autogen, elixir-format
+msgid "Back to editor"
+msgstr ""
+
+#: lib/pauseai_ca_web/chapter_page_copy.ex:14
+#, elixir-autogen, elixir-format
+msgid "Chapter pages"
+msgstr ""
+
+#: lib/pauseai_ca_web/chapter_page_copy.ex:15
+#, elixir-autogen, elixir-format
+msgid "Content"
+msgstr ""
+
+#: lib/pauseai_ca_web/chapter_page_copy.ex:18
+#, elixir-autogen, elixir-format
+msgid "English edition. Saving a draft keeps the published page as it is."
+msgstr ""
+
+#: lib/pauseai_ca_web/chapter_page_copy.ex:20
+#, elixir-autogen, elixir-format
+msgid "Enter a title of 150 characters or fewer."
+msgstr ""
+
+#: lib/pauseai_ca_web/chapter_page_copy.ex:21
+#, elixir-autogen, elixir-format
+msgid "Enter a whole number from 0 to 9,999."
+msgstr ""
+
+#: lib/pauseai_ca_web/chapter_page_copy.ex:22
+#, elixir-autogen, elixir-format
+msgid "Manage chapter pages"
+msgstr ""
+
+#: lib/pauseai_ca_web/chapter_page_copy.ex:23
+#, elixir-autogen, elixir-format
+msgid "Navigation order"
+msgstr ""
+
+#: lib/pauseai_ca_web/chapter_page_copy.ex:24
+#, elixir-autogen, elixir-format
+msgid "Page address"
+msgstr ""
+
+#: lib/pauseai_ca_web/chapter_page_copy.ex:25
+#, elixir-autogen, elixir-format
+msgid "Preview private draft"
+msgstr ""
+
+#: lib/pauseai_ca_web/chapter_page_copy.ex:26
+#, elixir-autogen, elixir-format
+msgid "Private draft preview"
+msgstr ""
+
+#: lib/pauseai_ca_web/chapter_page_copy.ex:27
+#, elixir-autogen, elixir-format
+msgid "Save some content before publishing."
+msgstr ""
+
+#: lib/pauseai_ca_web/chapter_page_copy.ex:28
+#, elixir-autogen, elixir-format
+msgid "The page could not be saved. Your text is still here."
+msgstr ""
+
+#: lib/pauseai_ca_web/chapter_page_copy.ex:38
+#, elixir-autogen, elixir-format
+msgid "Up to %{limit} characters per edition."
+msgstr ""
+
+#: lib/pauseai_ca_web/chapter_page_copy.ex:31
+#, elixir-autogen, elixir-format
+msgid "Use %{limit} characters or fewer."
+msgstr ""
+
+#: lib/pauseai_ca_web/chapter_page_copy.ex:34
+#, elixir-autogen, elixir-format
+msgid "Use lowercase letters, digits and hyphens, up to 80 characters."
 msgstr ""

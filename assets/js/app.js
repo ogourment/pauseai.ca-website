@@ -22,6 +22,7 @@ import {installJourneyBreadcrumbs} from "phoenix_app_shell/assets/js/journey.mjs
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
 import "phoenix_html"
 import "./signup_analytics"
+import "./toronto_ridings"
 import {FormDraft} from "./form_draft"
 import "./learning_journey"
 import "./rogue_window"
@@ -40,7 +41,7 @@ const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: {_csrf_token: csrfToken},
-  hooks: {...colocatedHooks, PhoenixDataGrid, PhoenixMarkdownEditor, PhoenixAgentAssistant, PhoenixAgentAssistantGuided, PhoenixAgentAssistantTime, FormDraft},
+  hooks: {...colocatedHooks, ...window.PhoenixCMSWeb?.hooks, PhoenixDataGrid, PhoenixMarkdownEditor, PhoenixAgentAssistant, PhoenixAgentAssistantGuided, PhoenixAgentAssistantTime, FormDraft},
   disconnectedTimeout: 1500,
 })
 
@@ -338,7 +339,7 @@ document.addEventListener('toggle', event => {
 // Insert the selected library image into the edition being edited.
 document.addEventListener("chapter:insert-image", event => {
   const button = event.target.closest("button[data-snippet]")
-  const field = button?.closest("[id^='chapter-edition-']")?.querySelector("[data-pme-source]")
+  const field = button?.closest("[data-chapter-editor]")?.querySelector("[data-pme-source], textarea[name='content[body]']")
   if (!field) return
   field.setRangeText(button.dataset.snippet, field.selectionStart, field.selectionEnd, "end")
   field.dispatchEvent(new Event("input", {bubbles: true}))

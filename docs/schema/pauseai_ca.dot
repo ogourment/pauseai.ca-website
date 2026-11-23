@@ -358,6 +358,39 @@ digraph Schema {
   ];
 
 
+  "public.chapter_page_edits" [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.chapter_page_edits</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">bigint NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">page_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">bigint NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">actor_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">revision</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">integer NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">action</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">content</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
+  "public.chapter_pages" [
+    label=<
+      <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
+        <TR><TD BGCOLOR="#e2e8f0" COLSPAN="2"><FONT POINT-SIZE="12"><B>public.chapter_pages</B></FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">id PK</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">bigint NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">group_id</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">uuid NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">slug</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">text NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">revision</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">integer NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">draft</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">jsonb NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">published</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">jsonb</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">inserted_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="10">updated_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="10">timestamp without time zone NOT NULL</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+
   "public.chat_slack_inbox" [
     label=<
       <TABLE BORDER="1" CELLBORDER="1" CELLPADDING="4" CELLSPACING="0" COLOR="#94a3b8">
@@ -1788,6 +1821,9 @@ digraph Schema {
   "public.campaign_send_intents" -> "public.users" [label="actor_id -> id"];
   "public.chapter_edits" -> "public.users" [label="actor_id -> id"];
   "public.chapter_edits" -> "public.volunteer_groups" [label="group_id -> id"];
+  "public.chapter_page_edits" -> "public.users" [label="actor_id -> id"];
+  "public.chapter_page_edits" -> "public.chapter_pages" [label="page_id -> id"];
+  "public.chapter_pages" -> "public.volunteer_groups" [label="group_id -> id"];
   "public.chat_slack_links" -> "public.users" [label="user_id -> id"];
   "public.chat_slack_oauth_states" -> "public.users" [label="user_id -> id"];
   "public.chat_slack_outbox" -> "public.chat_slack_links" [label="link_id -> id"];

@@ -33,6 +33,15 @@ mail_environment =
 
 config :pauseai_ca, :mail_environment, mail_environment
 
+# Published chapter subpages remain available only in isolated development,
+# tests, or the staging rollout.
+chapter_pages_enabled =
+  config_env() in [:dev, :test] or
+    (mail_environment == :staging and
+       System.get_env("PAUSEAI_GROUP_WEBSITES_ENABLED") in [nil, "true", "1"])
+
+config :pauseai_ca, :chapter_pages_enabled, chapter_pages_enabled
+
 # Local/staging rollout is enabled by default. A deployment can explicitly
 # enable or disable Tasks without rebuilding the release artifact.
 tasks_enabled =

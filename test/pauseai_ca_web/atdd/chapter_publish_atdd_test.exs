@@ -51,8 +51,9 @@ if System.get_env("ATDD") == "true" do
         |> PhoenixTest.Playwright.evaluate(
           "window.open('', 'pme-chapter-editor-en').document.querySelector('iframe').srcdoc",
           fn html ->
-            assert html =~ "<h2>Toronto meetups</h2>" and
-                     html =~ "<strong>local volunteers</strong>"
+            preview = LazyHTML.from_document(html)
+            assert preview |> LazyHTML.query("h2") |> LazyHTML.text() == "Toronto meetups"
+            assert preview |> LazyHTML.query("strong") |> LazyHTML.text() == "local volunteers"
 
             assert html =~ "toronto-crossing.jpg"
             refute html =~ "chapter-publish"

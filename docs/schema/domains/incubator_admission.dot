@@ -45,6 +45,20 @@ digraph incubator_admission {
     </TABLE>
   >];
 
+  "chapter_pages" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.chapter_pages</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">bigint NOT NULL</TD></TR><TR><TD ALIGN="LEFT">group_id</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">slug</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">revision</TD><TD ALIGN="LEFT">integer NOT NULL</TD></TR><TR><TD ALIGN="LEFT">draft</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">published</TD><TD ALIGN="LEFT">jsonb NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
+  "chapter_page_edits" [label=<
+    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+      <TR><TD BGCOLOR="#dbeafe" COLSPAN="2"><B>public.chapter_page_edits</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id PK</TD><TD ALIGN="LEFT">bigint NOT NULL</TD></TR><TR><TD ALIGN="LEFT">page_id</TD><TD ALIGN="LEFT">bigint NOT NULL</TD></TR><TR><TD ALIGN="LEFT">actor_id</TD><TD ALIGN="LEFT">uuid NOT NULL</TD></TR><TR><TD ALIGN="LEFT">revision</TD><TD ALIGN="LEFT">integer NOT NULL</TD></TR><TR><TD ALIGN="LEFT">action</TD><TD ALIGN="LEFT">text NOT NULL</TD></TR><TR><TD ALIGN="LEFT">content</TD><TD ALIGN="LEFT">jsonb NOT NULL</TD></TR><TR><TD ALIGN="LEFT">inserted_at</TD><TD ALIGN="LEFT">timestamp without time zone NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
   }
 
   subgraph cluster_external {
@@ -70,6 +84,9 @@ digraph incubator_admission {
 
   "chapter_edits" -> "users" [label="actor_id -> id", color="#d97706", style="dashed", penwidth=1.5];
   "chapter_edits" -> "volunteer_groups" [label="group_id -> id", color="#d97706", style="dashed", penwidth=1.5];
+  "chapter_page_edits" -> "users" [label="actor_id -> id", color="#d97706", style="dashed", penwidth=1.5];
+  "chapter_page_edits" -> "chapter_pages" [label="page_id -> id", color="#64748b"];
+  "chapter_pages" -> "volunteer_groups" [label="group_id -> id", color="#d97706", style="dashed", penwidth=1.5];
   "group_responsibilities" -> "incubator_memberships" [label="membership_id -> id", color="#64748b"];
   "incubator_membership_events" -> "users" [label="actor_id -> id", color="#d97706", style="dashed", penwidth=1.5];
   "incubator_membership_events" -> "volunteer_groups" [label="group_id -> id", color="#d97706", style="dashed", penwidth=1.5];

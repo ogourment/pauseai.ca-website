@@ -2,15 +2,17 @@ defmodule PauseAiCaWeb.SEO do
   @moduledoc "Published public pages and their canonical bilingual search metadata."
   use Gettext, backend: PauseAiCaWeb.Gettext
   import Ecto.Query
-  alias PauseAiCaWeb.Site
-  alias PauseAiCa.{Blog, MPTemplates, Repo}
+  alias PauseAiCaWeb.{ChapterPagesLive, Site}
+  alias PauseAiCa.{Blog, Incubators, MPTemplates, Repo}
 
   def for_conn(conn) do
     locale = conn.assigns[:locale] || "en"
     path = if conn.request_path == "/", do: "/#{locale}", else: conn.request_path
     entry = Enum.find(static_entries(locale), &(&1.path == path)) || dynamic_entry(path, locale)
     public? = entry != nil and (is_nil(conn.status) or conn.status < 400)
-    canonical = if public?, do: Site.url(locale, entry.path)
+    content_locale = if public?, do: Map.get(entry, :locale, locale), else: locale
+    canonical = if public?, do: Site.url(content_locale, entry.path)
+    image = if public?, do: Map.get(entry, :image), else: nil
     name = Gettext.with_locale(PauseAiCaWeb.Gettext, locale, fn -> gettext("PauseAI Canada") end)
 
     %{
@@ -19,8 +21,8 @@ defmodule PauseAiCaWeb.SEO do
       canonical: canonical,
       alternates: if(public?, do: alternates(entry), else: []),
       site_name: name,
-      locale: if(locale == "fr", do: "fr_CA", else: "en_CA"),
-      image: Site.url(locale, "/images/social-preview.png"),
+      locale: if(content_locale == "fr", do: "fr_CA", else: "en_CA"),
+      image: Site.url(content_locale, image || "/images/social-preview.png"),
       noindex: PauseAiCa.Environment.badged?() or not public?,
       type: if(public? and entry.kind == :article, do: "article", else: "website"),
       structured_json:
@@ -139,9 +141,143 @@ defmodule PauseAiCaWeb.SEO do
       [^locale, section, slug] when section in ["mp-templates", "modeles-de-lettre"] ->
         if path == template_path(locale) <> "/" <> slug, do: template_entry(slug, locale)
 
+      ["groups", slug] ->
+        chapter_entry(path, slug, nil, locale)
+
+      ["groups", slug, "pages", page] ->
+        chapter_entry(path, slug, page, locale)
+
       _ ->
         nil
     end
+  end
+
+  defp chapter_entry(path, slug, page_slug, locale) do
+    with true <- ChapterPagesLive.available?(),
+         true <- Application.get_env(:pauseai_ca, :incubators_enabled, false),
+         %{slug: ^slug} = chapter <- Incubators.published_chapter(slug),
+         true <- path == chapter_path(slug, page_slug) do
+      chapter_entry_for_page(chapter, page_slug, path, locale)
+    else
+      _ -> nil
+    end
+  end
+
+  defp chapter_entry_for_page(chapter, nil, path, locale) do
+    editions =
+      for lang <- ["en", "fr"],
+          String.trim(chapter.content[lang] || "") != "",
+          into: %{},
+          do: {lang, chapter_home_path(path, lang)}
+
+    language =
+      if Map.has_key?(editions, locale),
+        do: locale,
+        else: Enum.find(["en", "fr"], &Map.has_key?(editions, &1))
+
+    if language do
+      chapter_entry_data(
+        chapter,
+        editions,
+        language,
+        chapter_name(chapter, language),
+        chapter_summary(chapter, language)
+      )
+    end
+  end
+
+  defp chapter_entry_for_page(chapter, slug, path, _locale) when slug != "home" do
+    case Enum.find(Incubators.published_chapter_pages(chapter.group_id), &(elem(&1, 0) == slug)) do
+      {^slug, %{"body" => body, "title" => title}} ->
+        chapter_entry_data(
+          chapter,
+          %{"en" => path},
+          "en",
+          title <> " · " <> chapter_name(chapter, "en"),
+          chapter_page_description(chapter.slug, slug, body)
+        )
+
+      _ ->
+        nil
+    end
+  end
+
+  defp chapter_entry_for_page(_chapter, _slug, _path, _locale), do: nil
+
+  defp chapter_entry_data(chapter, paths, language, title, description) do
+    %{
+      path: paths[language],
+      paths: paths,
+      title: title,
+      description: description,
+      locale: language,
+      kind: :website,
+      image: if(chapter.slug == "toronto", do: "/images/protest-2026-11-14/toronto-crossing.jpg")
+    }
+  end
+
+  defp chapter_path(slug, nil), do: "/groups/" <> slug
+  defp chapter_path(slug, page), do: chapter_path(slug, nil) <> "/pages/" <> page
+  defp chapter_home_path(path, "fr"), do: path <> "?locale=fr"
+  defp chapter_home_path(path, _), do: path
+  defp chapter_name(chapter, "fr"), do: chapter.name_fr
+  defp chapter_name(chapter, _), do: chapter.name_en
+
+  defp chapter_summary(chapter, language) do
+    summary = if language == "fr", do: chapter.summary_fr, else: chapter.summary_en
+
+    case plain_text(summary || "") do
+      "" -> chapter_home_description(chapter, language)
+      description -> description
+    end
+  end
+
+  defp chapter_home_description(%{slug: "toronto"}, "en"),
+    do:
+      "Meet PauseAI Toronto, learn why it calls for an AI treaty, and find local events and ways to get involved."
+
+  defp chapter_home_description(chapter, language),
+    do: markdown_summary(chapter.content[language])
+
+  defp chapter_page_description("toronto", "governance", _),
+    do: "Meet the people on PauseAI Toronto’s board and read the chapter’s donation policies."
+
+  defp chapter_page_description("toronto", "donate", _),
+    do:
+      "Support PauseAI Toronto with a monthly or one-off gift. Read about its funding plans and donation policies."
+
+  defp chapter_page_description(_chapter, _slug, source), do: markdown_summary(source)
+
+  defp markdown_summary(source) do
+    sections = MDEx.parse_document!(source).nodes
+
+    Enum.find_value(sections, fn
+      %MDEx.Paragraph{nodes: nodes} ->
+        if Enum.any?(nodes, &match?(%MDEx.Text{literal: <<_::binary>>}, &1)) do
+          case plain_text(markdown_text(nodes)) do
+            "" -> nil
+            description -> description
+          end
+        end
+
+      _ ->
+        nil
+    end) ||
+      Enum.find_value(sections, fn
+        %MDEx.Heading{nodes: nodes} -> plain_text(markdown_text(nodes))
+        _ -> nil
+      end)
+  end
+
+  defp markdown_text(nodes) do
+    Enum.map_join(nodes, fn
+      %MDEx.Text{literal: text} -> text
+      %MDEx.Image{} -> ""
+      %MDEx.SoftBreak{} -> " "
+      %MDEx.LineBreak{} -> " "
+      %{nodes: children} -> markdown_text(children)
+      _ -> ""
+    end)
   end
 
   defp article_entry(nil, _), do: nil

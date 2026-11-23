@@ -5,6 +5,7 @@
 
 @import "tailwindcss" source(none);
 @import "./rogue_game.css";
+@import "./toronto_landing.css";
 @import "phoenix-colocated/pauseai_ca/colocated.css";
 @source "../css";
 @source "../js";
@@ -629,3 +630,70 @@ body:has(#site-assistant-launcher) #site-footer {
 .workspace-root a{text-decoration:underline}
 .manage-panel .manage-overview{border-bottom:1px solid #e7e5e4;border-radius:0}
 @media(min-width:640px){.section-menu-panel.manage-panel{width:min(32rem,80vw)}.manage-sections{display:grid;grid-template-columns:1fr 1fr;gap:.35rem .8rem}}
+
+/* CMS controls share chapter colors with readable links on each theme. */
+:root {
+  --pcms-link: #8c340e;
+  --pcms-accent: #8c340e;
+  --pcms-accent-strong: #70280a;
+  --pcms-on-accent: #fffaf4;
+  --pcms-focus: #134790;
+  --pcms-field-border: #77665a;
+}
+
+[data-theme="dark"] {
+  --pcms-link: #ffbc82;
+  --pcms-accent: #ffbc82;
+  --pcms-accent-strong: #ffd1a8;
+  --pcms-on-accent: #241404;
+  --pcms-focus: #ffd283;
+  --pcms-field-border: #a39686;
+}
+
+#publish-chapter-page {
+  color: var(--pcms-on-accent);
+  background: var(--pcms-accent);
+  border-color: var(--pcms-accent);
+}
+
+#publish-chapter-page:hover {
+  background: var(--pcms-accent-strong);
+  border-color: var(--pcms-accent-strong);
+}
+
+#publish-chapter-page:focus-visible {
+  outline: 3px solid var(--pcms-focus);
+  outline-offset: 2px;
+}
+
+/* Keep chapter bookmarks below the shared sticky header before and after it is measured. */
+:where([data-published-chapter], [data-published-chapter-page]) [id] {
+  scroll-margin-top: calc(var(--header-bottom, 8rem) + 0.75rem);
+}
+
+.chapter-fragment-alias {
+  display: block;
+}
+
+@media (max-width: 639px) {
+  :where([data-published-chapter], [data-published-chapter-page]) [id] {
+    scroll-margin-top: calc(var(--header-bottom, 12rem) + 0.75rem);
+  }
+}
+
+#toronto-giving-options .btn,
+#toronto-riding-filter {
+  border-color: var(--pcms-field-border);
+}
+
+#toronto-giving-options .btn:hover,
+#toronto-riding-filter:hover {
+  border-color: var(--pcms-link);
+}
+
+#toronto-giving-options .btn:focus-visible,
+#toronto-riding-filter:focus-visible {
+  border-color: var(--pcms-focus);
+  outline: 3px solid var(--pcms-focus);
+  outline-offset: 2px;
+}

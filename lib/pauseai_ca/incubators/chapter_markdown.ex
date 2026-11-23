@@ -16,13 +16,8 @@ defmodule PauseAiCa.Incubators.ChapterMarkdown do
     ]
   end
 
-  def render(source) do
-    doc =
-      source
-      |> MDEx.parse_document!()
-      |> MDEx.Document.update_nodes(MDEx.Image, fn image ->
-        if image.url in [@toronto, @montreal], do: image, else: %MDEx.Text{literal: ""}
-      end)
+  def render(source, chapter_slug \\ nil) do
+    doc = parse(source, chapter_slug)
 
     {intro, rest} =
       Enum.split_while(doc.nodes, fn
@@ -43,17 +38,102 @@ defmodule PauseAiCa.Incubators.ChapterMarkdown do
       end
 
     %{
-      intro: html(doc, intro),
-      photo: html(doc, photo),
-      caption: html(doc, caption),
-      body: html(doc, body)
+      intro: html(doc, intro, chapter_slug),
+      photo: html(doc, photo, chapter_slug),
+      caption: html(doc, caption, chapter_slug),
+      body: html(doc, body, chapter_slug)
     }
   end
 
-  defp html(_doc, []), do: ""
+  def toronto_landing_sections(source) do
+    case MDEx.parse_document!(source) do
+      %{nodes: [%MDEx.Heading{level: 1} | _]} = doc ->
+        case sections(prepare(doc, "toronto"), %{"Get involved" => "do", "What we want" => "want"}) do
+          [_, _ | _] = sections -> sections
+          _ -> nil
+        end
 
-  defp html(doc, nodes) do
+      _ ->
+        nil
+    end
+  end
+
+  def toronto_plan_sections(source),
+    do: source |> parse("toronto") |> sections(%{"Theory of change" => "theory"})
+
+  defp sections(doc, aliases) do
+    existing =
+      doc.nodes
+      |> Enum.map(&heading_text/1)
+      |> MapSet.new(&String.downcase/1)
+
+    {sections, current} =
+      Enum.reduce(doc.nodes, {[], []}, fn
+        %MDEx.Heading{level: 2} = heading, {sections, [_ | _] = current} ->
+          {[Enum.reverse(current) | sections], [heading]}
+
+        node, {sections, current} ->
+          {sections, [node | current]}
+      end)
+
+    for nodes <- Enum.reverse([Enum.reverse(current) | sections]), nodes != [] do
+      anchor = Map.get(aliases, heading_text(hd(nodes)))
+      anchor = if anchor && !MapSet.member?(existing, anchor), do: anchor
+      %{alias: anchor, html: html(doc, nodes, "toronto")}
+    end
+  end
+
+  defp heading_text(%MDEx.Heading{nodes: [%MDEx.Text{literal: text}]}), do: text
+  defp heading_text(_), do: ""
+
+  def render_page(source, chapter_slug) do
+    source
+    |> parse(chapter_slug)
+    |> MDEx.to_html!(render_options(chapter_slug))
+  end
+
+  defp parse(source, chapter_slug), do: source |> MDEx.parse_document!() |> prepare(chapter_slug)
+
+  defp prepare(doc, chapter_slug) do
+    doc
+    |> MDEx.Document.update_nodes(MDEx.Image, fn image ->
+      if allowed_image?(image.url, chapter_slug), do: image, else: %MDEx.Text{literal: ""}
+    end)
+    |> MDEx.Document.update_nodes(MDEx.Heading, fn
+      %MDEx.Heading{level: 1} = heading when is_binary(chapter_slug) -> %{heading | level: 2}
+      heading -> heading
+    end)
+  end
+
+  defp render_options(nil) do
+    [render: [escape: true], sanitize: [url_schemes: ["https", "http", "mailto"]]]
+  end
+
+  defp render_options(_chapter_slug) do
+    [
+      extension: [header_id_prefix: ""],
+      render: [escape: true],
+      sanitize: [
+        url_schemes: ["https", "http", "mailto"],
+        add_tag_attributes: Map.new(~w(h1 h2 h3 h4 h5 h6 a), &{&1, ["id"]})
+      ]
+    ]
+  end
+
+  defp allowed_image?(url, "toronto") do
+    url in [@toronto, @montreal] or
+      Regex.match?(
+        ~r{\A/images/toronto-site/(?:[a-zA-Z0-9_-]+/)*[a-zA-Z0-9_.-]+\.(?:jpg|jpeg|png|webp|gif|svg)\z},
+        url
+      )
+  end
+
+  defp allowed_image?(url, _), do: url in [@toronto, @montreal]
+
+  defp html(_doc, [], _chapter_slug), do: ""
+
+  defp html(doc, nodes, chapter_slug) do
     %{doc | nodes: nodes}
-    |> MDEx.to_html!(render: [escape: true], sanitize: [url_schemes: ["https", "http", "mailto"]])
+    |> MDEx.to_html!(render_options(chapter_slug))
   end
 end

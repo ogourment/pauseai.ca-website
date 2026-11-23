@@ -12,7 +12,15 @@ defmodule PauseAiCaWeb.PageController do
 
   def groups_en(conn, _), do: permanent_redirect(conn, "/en/groups")
   def groups_fr(conn, _), do: permanent_redirect(conn, "/fr/groupes")
-  def toronto(conn, _), do: permanent_redirect(conn, "/groups/toronto")
+
+  def toronto(conn, _) do
+    locale = if conn.query_params["locale"] == "fr", do: "fr", else: "en"
+    query = Map.put(conn.query_params, "locale", locale)
+
+    conn
+    |> put_status(:moved_permanently)
+    |> redirect(to: ~p"/groups/toronto?#{query}")
+  end
 
   def legacy_canada(conn, _params),
     do: permanent_redirect(conn, "/en")

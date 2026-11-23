@@ -137,7 +137,7 @@ defmodule PauseAiCa.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.2.0"},
       {:bandit, "1.14.1"}
-    ]
+    ] ++ cms_web_dependencies()
   end
 
   # Aliases are shortcuts or tasks specific to the current project.
@@ -250,6 +250,24 @@ defmodule PauseAiCa.MixProject do
     end
   end
 
+  defp cms_web_dependencies do
+    case System.get_env("PHOENIX_CMS_WEB_PATH") do
+      path when is_binary(path) and path != "" ->
+        unless System.get_env("PHOENIX_CMS_PATH") not in [nil, ""],
+          do: raise("PHOENIX_CMS_WEB_PATH requires the matching PHOENIX_CMS_PATH")
+
+        [{:phoenix_cms_web, path: Path.expand(path)}]
+
+      _ ->
+        [
+          {:phoenix_cms_web,
+           git: "https://github.com/ogourment/phoenix_cms-compiled.git",
+           ref: "606117e74ca626f07e6140af0b3b9ea1062cc2e3",
+           subdir: "packages/phoenix_cms_web"}
+        ]
+    end
+  end
+
   defp cms_dependency do
     case System.get_env("PHOENIX_CMS_PATH") do
       path when is_binary(path) and path != "" ->
@@ -258,7 +276,8 @@ defmodule PauseAiCa.MixProject do
       _ ->
         {:phoenix_cms,
          git: "https://github.com/ogourment/phoenix_cms-compiled.git",
-         ref: "8d750caebdc0e0d99a380bd9feaea6ea676be3eb"}
+         ref: "0ce9fb1b097e20054ea305a600a9e1c05ef7f610",
+         override: true}
     end
   end
 

@@ -7,8 +7,17 @@ defmodule PauseAiCa.Incubators do
   alias PauseAiCa.Accounts.{Scope, User}
   alias PauseAiCa.Volunteers.{Group, Manager}
   alias PauseAiCa.Volunteers.Profile, as: VolunteerProfile
-  alias PauseAiCa.Incubators.{Profile, Membership, Event, Responsibility}
 
+  alias PauseAiCa.Incubators.{
+    ChapterPage,
+    ChapterPageEdit,
+    Profile,
+    Membership,
+    Event,
+    Responsibility
+  }
+
+  @chapter_content_limit 50_000
   @public ~w(group_id name_en name_fr summary_en summary_fr fsas stage events_url next_event_title_en next_event_title_fr next_event_starts_at next_event_timezone next_event_url whatsapp_enabled)a
   @profile_fields Enum.reject(@public, &(&1 == :group_id)) ++
                     [
@@ -40,13 +49,168 @@ defmodule PauseAiCa.Incubators do
   end
 
   def published_chapter!(slug) do
-    p =
-      Repo.one!(
+    published_chapter(slug) || raise Ecto.NoResultsError, queryable: Profile
+  end
+
+  def published_chapter(slug) when is_binary(slug) do
+    profile =
+      Repo.one(
         from p in Profile,
           where: p.published and p.chapter_slug == ^slug and not is_nil(p.chapter_content)
       )
 
-    Map.merge(Map.take(p, @public), %{slug: slug, content: p.chapter_content})
+    if profile,
+      do: Map.merge(Map.take(profile, @public), %{slug: slug, content: profile.chapter_content})
+  end
+
+  def chapter_pages(scope, group_id) do
+    with :ok <- manager(scope, group_id),
+         %Profile{published: true, chapter_content: content} = profile <-
+           Repo.get_by(Profile, group_id: group_id),
+         true <- is_map(content) do
+      pages =
+        Repo.all(from p in ChapterPage, where: p.group_id == ^group_id, order_by: p.slug)
+
+      {:ok, profile, pages}
+    else
+      _ -> {:error, :forbidden}
+    end
+  end
+
+  def published_chapter_pages(group_id) do
+    Repo.all(
+      from p in ChapterPage,
+        join: profile in Profile,
+        on: profile.group_id == p.group_id,
+        where:
+          p.group_id == ^group_id and profile.published and
+            not is_nil(profile.chapter_content) and not is_nil(p.published),
+        select: {p.slug, p.published}
+    )
+  end
+
+  def save_chapter_page(scope, group_id, slug, revision, attrs) when is_map(attrs),
+    do: edit_chapter_page(scope, group_id, slug, revision, {:save, attrs})
+
+  def publish_chapter_page(scope, group_id, slug, revision) when is_binary(slug),
+    do: edit_chapter_page(scope, group_id, slug, revision, :publish)
+
+  defp edit_chapter_page(scope, group_id, slug, revision, operation) do
+    with :ok <- manager(scope, group_id) do
+      Repo.transaction(fn ->
+        lock_group!(scope, group_id)
+        lock_chapter_grant!(scope, group_id)
+
+        unless Repo.one(
+                 from p in Profile,
+                   where:
+                     p.group_id == ^group_id and p.published and not is_nil(p.chapter_content),
+                   select: p.id,
+                   lock: "FOR SHARE"
+               ),
+               do: Repo.rollback(:not_found)
+
+        page =
+          if slug do
+            Repo.get_by(ChapterPage, group_id: group_id, slug: slug) ||
+              Repo.rollback(:not_found)
+          else
+            %ChapterPage{group_id: group_id, revision: 0}
+          end
+
+        if page.revision != revision, do: Repo.rollback(:stale)
+        persist_chapter_page!(scope, page, operation)
+      end)
+    end
+  end
+
+  defp persist_chapter_page!(scope, page, {:save, attrs}) do
+    slug = page.slug || attrs["slug"]
+    title = attrs["title"]
+    body = attrs["body"]
+    order = attrs["navigation_order"]
+
+    errors =
+      %{}
+      |> chapter_page_error(
+        "slug",
+        is_binary(slug) and slug != "home" and String.length(slug) <= 80 and
+          Regex.match?(~r/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/, slug),
+        :bad_address
+      )
+      |> chapter_page_error(
+        "title",
+        is_binary(title) and String.trim(title) != "" and
+          String.length(title) <= 150,
+        :bad_title
+      )
+      |> chapter_page_error(
+        "body",
+        is_binary(body) and String.length(body) <= @chapter_content_limit,
+        :bad_body
+      )
+      |> chapter_page_error(
+        "navigation_order",
+        is_nil(order) or
+          (is_integer(order) and order in 0..9999),
+        :bad_order
+      )
+
+    if errors != %{}, do: Repo.rollback({:invalid, errors})
+
+    draft = %{"title" => String.trim(title), "body" => body, "navigation_order" => order}
+
+    changeset =
+      page
+      |> change(slug: slug, draft: draft)
+      |> unique_constraint([:group_id, :slug], error_key: :slug)
+
+    write_chapter_page!(scope, changeset, "saved")
+  end
+
+  defp persist_chapter_page!(scope, page, :publish) do
+    if String.trim(page.draft["body"]) == "",
+      do: Repo.rollback({:invalid, %{"body" => :empty_publication}})
+
+    write_chapter_page!(scope, change(page, published: page.draft), "published")
+  end
+
+  defp chapter_page_error(errors, _key, true, _reason), do: errors
+  defp chapter_page_error(errors, key, false, reason), do: Map.put(errors, key, reason)
+
+  defp write_chapter_page!(scope, changeset, action) do
+    revision = changeset.data.revision + 1
+
+    case changeset |> put_change(:revision, revision) |> Repo.insert_or_update() do
+      {:ok, saved} ->
+        Repo.insert!(%ChapterPageEdit{
+          page_id: saved.id,
+          revision: revision,
+          actor_id: scope.user.id,
+          action: action,
+          content: saved.draft
+        })
+
+        saved
+
+      {:error, changeset} ->
+        if changeset.errors[:slug],
+          do: Repo.rollback({:invalid, %{"slug" => :address_taken}}),
+          else: Repo.rollback(:save_failed)
+    end
+  end
+
+  defp lock_chapter_grant!(scope, group_id) do
+    unless Volunteers.superadmin?(scope) do
+      grant =
+        Repo.one(
+          from m in Manager,
+            where: m.user_id == ^scope.user.id and m.group_id == ^group_id,
+            lock: "FOR SHARE"
+        )
+
+      unless grant, do: Repo.rollback(:forbidden)
+    end
   end
 
   def save_chapter(scope, group_id, revision, attrs) when is_map(attrs),
@@ -60,16 +224,7 @@ defmodule PauseAiCa.Incubators do
       Repo.transaction(fn ->
         lock_group!(scope, group_id)
 
-        unless Volunteers.superadmin?(scope) do
-          grant =
-            Repo.one(
-              from m in Manager,
-                where: m.user_id == ^scope.user.id and m.group_id == ^group_id,
-                lock: "FOR SHARE"
-            )
-
-          unless grant, do: Repo.rollback(:forbidden)
-        end
+        lock_chapter_grant!(scope, group_id)
 
         profile = Repo.get_by(Profile, group_id: group_id, published: true)
         unless profile, do: Repo.rollback(:not_found)
@@ -81,7 +236,8 @@ defmodule PauseAiCa.Incubators do
               content = Map.take(attrs, ~w(en fr))
 
               unless Enum.all?(~w(en fr), fn key ->
-                       is_binary(content[key]) and String.length(content[key]) <= 4000
+                       is_binary(content[key]) and
+                         String.length(content[key]) <= @chapter_content_limit
                      end),
                      do: Repo.rollback(:invalid)
 
@@ -126,6 +282,8 @@ defmodule PauseAiCa.Incubators do
       end)
     end
   end
+
+  def chapter_content_limit, do: @chapter_content_limit
 
   def upcoming_event?(profile, now \\ DateTime.utc_now()) do
     match?(%DateTime{}, profile.next_event_starts_at) &&

@@ -27,6 +27,13 @@ defmodule PauseAiCaWeb.Endpoint do
     only: PauseAiCaWeb.static_paths(),
     raise_on_missing_only: code_reloading?
 
+  if Code.ensure_loaded?(PhoenixCMSWeb) do
+    plug Plug.Static,
+      at: "/pcms",
+      from: {:phoenix_cms_web, "priv/static"},
+      only: ~w(phoenix_cms_web.css phoenix_cms_web.js)
+  end
+
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
   if code_reloading? do

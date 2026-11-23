@@ -2,7 +2,7 @@ defmodule PauseAiCaWeb.ChapterLive do
   use PauseAiCaWeb, :live_view
   alias PauseAiCa.Incubators
   alias PauseAiCa.Incubators.ChapterMarkdown
-  alias PauseAiCaWeb.IncubatorsLive
+  alias PauseAiCaWeb.{ChapterPagesLive, IncubatorsLive, TorontoLanding}
 
   @impl true
   def mount(params, _, socket) do
@@ -151,10 +151,12 @@ defmodule PauseAiCaWeb.ChapterLive do
         <.link href={IncubatorsLive.directory(@locale)} class="underline">{gettext("Local groups")}</.link>
         <%= if @live_action == :show do %>
           <div data-published-chapter>
+            <ChapterPagesLive.navigation chapter={@chapter} locale={@locale} />
             <.chapter_content group={@chapter} content={@chapter.content} locale={@locale} />
           </div>
         <% else %>
           <h1 class="text-3xl font-bold">{gettext("Edit chapter homepage")}</h1>
+          <ChapterPagesLive.manage_link profile={@profile} locale={@locale} />
           <.form for={@form} id="chapter-form" phx-submit="save" class="space-y-4">
             <.input
               field={@form[:slug]}
@@ -162,6 +164,9 @@ defmodule PauseAiCaWeb.ChapterLive do
               readonly={!!@profile.chapter_slug}
               required
             />
+            <p class="text-sm">
+              {PauseAiCaWeb.ChapterPageCopy.text(:home_limit)}
+            </p>
             <details>
               <summary class="cursor-pointer underline">{gettext("Markdown guide")}</summary>
               <pre class="mt-2 whitespace-pre-wrap"><code>{gettext("## Next meetup\n\nJoin **local volunteers**.\n\n- Bring a friend\n- [Find an event](https://pauseai.ca/en/groups)")}</code></pre>
@@ -188,7 +193,7 @@ defmodule PauseAiCaWeb.ChapterLive do
 
   defp edition(assigns) do
     ~H"""
-    <div class="space-y-2" id={"chapter-edition-#{@lang}"}>
+    <div class="space-y-2" id={"chapter-edition-#{@lang}"} data-chapter-editor>
       <.live_component
         module={PhoenixMarkdownEditor.Component}
         id={"chapter-editor-#{@lang}"}
@@ -204,22 +209,28 @@ defmodule PauseAiCaWeb.ChapterLive do
         preview_error_message={gettext("Preview unavailable. Your text is retained.")}
         disconnected_message={gettext("Connection interrupted; text retained in this page.")}
       />
-      <details>
-        <summary class="cursor-pointer underline">{gettext("Image library")}</summary>
-        <div class="grid gap-3 sm:grid-cols-2">
-          <button
-            :for={{url, alt, credit} <- ChapterMarkdown.images()}
-            type="button"
-            data-snippet={"\n\n![#{alt}](#{url})\n\n*#{credit}*\n"}
-            phx-click={JS.dispatch("chapter:insert-image")}
-            class="text-left rounded border p-2"
-          >
-            <img src={url} alt={alt} loading="lazy" class="h-24 w-full object-cover" />
-            <span>{gettext("Insert image")} · {credit}</span>
-          </button>
-        </div>
-      </details>
+      <.image_library />
     </div>
+    """
+  end
+
+  def image_library(assigns) do
+    ~H"""
+    <details>
+      <summary class="cursor-pointer underline">{gettext("Image library")}</summary>
+      <div class="grid gap-3 sm:grid-cols-2">
+        <button
+          :for={{url, alt, credit} <- ChapterMarkdown.images()}
+          type="button"
+          data-snippet={"\n\n![#{alt}](#{url})\n\n*#{credit}*\n"}
+          phx-click={JS.dispatch("chapter:insert-image")}
+          class="text-left rounded border p-2"
+        >
+          <img src={url} alt={alt} loading="lazy" class="h-24 w-full object-cover" />
+          <span>{gettext("Insert image")} · {credit}</span>
+        </button>
+      </div>
+    </details>
     """
   end
 
@@ -240,19 +251,28 @@ defmodule PauseAiCaWeb.ChapterLive do
         do: assigns.locale,
         else: if(assigns.locale == "en", do: "fr", else: "en")
 
+    slug =
+      if ChapterPagesLive.available?() do
+        Map.get(assigns.group, :slug) || Map.get(assigns.group, :chapter_slug)
+      end
+
+    source = assigns.content[lang] || ""
+    sections = if slug == "toronto", do: ChapterMarkdown.toronto_landing_sections(source)
+
     assigns =
       assign(assigns,
         content_lang: lang,
-        welcome: ChapterMarkdown.render(assigns.content[lang] || "")
+        name: if(assigns.locale == "fr", do: assigns.group.name_fr, else: assigns.group.name_en),
+        sections: sections,
+        welcome: if(is_nil(sections), do: ChapterMarkdown.render(source, slug))
       )
 
     ~H"""
-    <article class="space-y-6">
+    <TorontoLanding.landing :if={@sections} sections={@sections} name={@name} lang={@content_lang} />
+    <article :if={!@sections} class="space-y-6">
       <div class={["grid items-start gap-6", @welcome.photo != "" && "md:grid-cols-2 md:gap-10"]}>
         <div class="min-w-0 space-y-4">
-          <h1 class="text-4xl font-bold">
-            {if @locale == "fr", do: @group.name_fr, else: @group.name_en}
-          </h1>
+          <h1 class="text-4xl font-bold">{@name}</h1>
           <p>{gettext("A local chapter of PauseAI Canada.")}</p>
           <.welcome_text html={@welcome.intro} lang={@content_lang} />
           <div class="flex flex-wrap items-center gap-4">
@@ -286,7 +306,7 @@ defmodule PauseAiCaWeb.ChapterLive do
     <div
       :if={@html != ""}
       lang={@lang}
-      class="max-w-prose space-y-3 leading-relaxed [&_h2]:text-2xl [&_h3]:text-xl [&_a]:underline [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-6 [&_ol]:pl-6 [&_img]:rounded-xl"
+      class="max-w-prose space-y-3 leading-relaxed [&_h1]:text-2xl [&_h2]:text-2xl [&_h3]:text-xl [&_a]:underline [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-6 [&_ol]:pl-6 [&_img]:rounded-xl"
     >
       {raw(@html)}
     </div>

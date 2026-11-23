@@ -208,6 +208,14 @@ defmodule PauseAiCaWeb.Router do
       live "/manage/mp-templates/:id", MPTemplatesLive, :edit
       live "/manage/donations", DonationPageLive, :index
       live "/manage/groups/:id/homepage", ChapterLive, :edit
+
+      if Code.ensure_loaded?(PhoenixCMSWeb) do
+        live "/manage/groups/:id/pages", ChapterPagesLive, :index
+        live "/manage/groups/:id/new-page", ChapterPagesLive, :new
+        live "/manage/groups/:id/pages/:page", ChapterPagesLive, :edit
+        live "/manage/groups/:id/pages/:page/preview", ChapterPagesLive, :preview
+      end
+
       live "/manage/groups", IncubatorManagementLive, :index
       live "/community/slack", SlackCommunityLive, :index
       live "/manage/tasks", TasksLive, :index
@@ -278,6 +286,11 @@ defmodule PauseAiCaWeb.Router do
       live "/en/mp-templates/:slug", MPTemplateLive, :en
       live "/fr/modeles-de-lettre/:slug", MPTemplateLive, :fr
       live "/groups/:slug", ChapterLive, :show
+
+      if Code.ensure_loaded?(PhoenixCMSWeb) do
+        live "/groups/:slug/pages/:page", ChapterPagesLive, :show
+      end
+
       live "/en/groups", IncubatorsLive, :en
       live "/fr/groupes", IncubatorsLive, :fr
       live "/en/donate", DonateLive, :en
