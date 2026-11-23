@@ -668,7 +668,7 @@ body:has(#site-assistant-launcher) #site-footer {
 
 /* Keep chapter bookmarks below the shared sticky header before and after it is measured. */
 :where([data-published-chapter], [data-published-chapter-page]) [id] {
-  scroll-margin-top: calc(var(--header-bottom, 8rem) + 0.75rem);
+  scroll-margin-top: calc(max(var(--header-bottom, 0px), 8rem) + 0.75rem);
 }
 
 .chapter-fragment-alias {
@@ -677,7 +677,7 @@ body:has(#site-assistant-launcher) #site-footer {
 
 @media (max-width: 639px) {
   :where([data-published-chapter], [data-published-chapter-page]) [id] {
-    scroll-margin-top: calc(var(--header-bottom, 12rem) + 0.75rem);
+    scroll-margin-top: calc(max(var(--header-bottom, 0px), 12rem) + 0.75rem);
   }
 }
 
