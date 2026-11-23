@@ -31,7 +31,7 @@ defmodule PauseAiCaWeb.DashboardLive do
      |> assign(:pending, Engagement.list_pending_actions(scope))
      |> assign(:editing_id, nil)
      |> assign(:selected_type, nil)
-     |> assign(:needs_local_context, is_nil(scope.user.postal_code))
+     |> assign(:needs_local_context, is_nil(scope.user.fsa) and is_nil(scope.user.postal_code))
      |> assign(:representative, scope.user.representative)
      |> assign(:saved_resources, scope.user.saved_resources)
      |> assign(:custom_resource_urls, scope.user.custom_resource_urls)
@@ -275,16 +275,20 @@ defmodule PauseAiCaWeb.DashboardLive do
             class="mt-8 rounded-3xl border border-brand/40 bg-brand-wash p-6"
           >
             <h2 class="font-serif text-2xl text-stone-950">
-              {gettext("Where does your MP stand?")}
+              {gettext("Your local area")}
             </h2>
             <p class="mt-2 leading-7 text-stone-600">
-              {gettext("Add your full postal code to your profile to identify your riding and MP.")}
+              {gettext(
+                "Add the first three characters of your postal code so we know your local area."
+              )}
             </p>
             <.link
-              navigate={if(@locale == "fr", do: ~p"/fr/profil", else: ~p"/en/profile")}
+              navigate={
+                if(@locale == "fr", do: ~p"/fr/profil#location", else: ~p"/en/profile#location")
+              }
               class="mt-4 inline-flex rounded-full bg-stone-900 px-5 py-3 font-semibold text-white hover:bg-stone-700"
             >
-              {gettext("Complete my profile")}
+              {gettext("Add my postal area")}
             </.link>
           </div>
 

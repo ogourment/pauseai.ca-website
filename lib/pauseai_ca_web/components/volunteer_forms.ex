@@ -111,6 +111,100 @@ defmodule PauseAiCaWeb.VolunteerForms do
     """
   end
 
+  attr :form, :any, required: true
+  attr :errors, :map, required: true
+
+  slot :inner_block, required: true
+
+  def contribution_fields(assigns) do
+    ~H"""
+    <section
+      class="min-w-0 space-y-3 rounded-xl border border-stone-200 bg-white p-5"
+      aria-labelledby="volunteer-activities-title"
+    >
+      <h2 id="volunteer-activities-title" class="text-balance font-serif text-2xl">
+        {gettext("Activities and experience")}
+      </h2>
+      <.activities
+        prefix="profile"
+        field="selected_skills"
+        selected={List.wrap(@form[:selected_skills].value)}
+        experience={@form[:experience].value || %{}}
+      />
+    </section>
+    <section
+      class="min-w-0 space-y-3 rounded-xl border border-stone-200 bg-white p-5"
+      aria-labelledby="volunteer-availability-title"
+    >
+      <h2 id="volunteer-availability-title" class="text-balance font-serif text-2xl">
+        {gettext("Availability and interests")}
+      </h2>
+      <.contribution_input field={@form[:availability_hours_per_week]} errors={@errors} type="number" />
+      <.contribution_input field={@form[:application_message]} errors={@errors} />
+      <.contribution_input field={@form[:bio]} errors={@errors} />
+      <details
+        id="volunteer-additional-skills"
+        class="space-y-3 border-t border-stone-200 pt-3"
+        open={@errors["skills"] != nil or @errors["other_skills"] != nil}
+      >
+        <summary class="cursor-pointer text-balance font-semibold">
+          {gettext("Skills in your own words")}
+        </summary>
+        <.contribution_input field={@form[:skills]} errors={@errors} />
+        <.contribution_input field={@form[:other_skills]} errors={@errors} />
+      </details>
+      <div class="space-y-1 rounded-lg bg-stone-100 p-3">
+        <input type="hidden" name={@form[:share_contribution].name} value="false" />
+        <label for={@form[:share_contribution].id} class="flex items-start gap-2">
+          <input
+            type="checkbox"
+            class="checkbox checkbox-sm mt-0.5 shrink-0"
+            id={@form[:share_contribution].id}
+            name={@form[:share_contribution].name}
+            value="true"
+            checked={@form[:share_contribution].value in [true, "true"]}
+            aria-describedby="volunteer-sharing-help"
+          />
+          <span>{gettext("Share my activities, experience and hours")}</span>
+        </label>
+        <p id="volunteer-sharing-help" class="pl-7 text-sm">
+          {gettext("Only eligible managers of my groups can see these details when sharing is on.")}
+        </p>
+      </div>
+      {render_slot(@inner_block)}
+    </section>
+    """
+  end
+
+  attr :field, :any, required: true
+  attr :errors, :map, required: true
+  attr :type, :string, default: "textarea"
+
+  defp contribution_input(assigns) do
+    key = to_string(assigns.field.field)
+    assigns = assign(assigns, key: key, reason: assigns.errors[key])
+
+    ~H"""
+    <.input
+      field={@field}
+      type={@type}
+      label={label(@key)}
+      min={if @type == "number", do: "0"}
+      max={if @type == "number", do: "168"}
+      aria-invalid={if @reason, do: "true"}
+      aria-describedby={if @reason, do: @field.id <> "-error"}
+      rows={if @type == "textarea", do: "3"}
+      placeholder={
+        if @key == "skills", do: gettext("For example: Organizing / Facilitation: advanced")
+      }
+      class={if @type == "textarea", do: "textarea w-full", else: "input w-full"}
+    />
+    <p :if={@reason} id={@field.id <> "-error"} class="text-sm text-red-700" role="alert">
+      {error(@reason)}
+    </p>
+    """
+  end
+
   attr :prefix, :string, required: true
   attr :field, :string, required: true
   attr :selected, :list, required: true
@@ -128,7 +222,7 @@ defmodule PauseAiCaWeb.VolunteerForms do
         class="border-t py-2"
         open={Enum.any?(ids, &(&1 in @selected))}
       >
-        <summary class="cursor-pointer font-semibold">{skill_label(group)}</summary>
+        <summary class="cursor-pointer text-balance font-semibold">{skill_label(group)}</summary>
         <div :for={id <- ids} class="py-1">
           <label><input
             type="checkbox"
@@ -151,12 +245,16 @@ defmodule PauseAiCaWeb.VolunteerForms do
           </fieldset>
         </div>
       </details>
-      <label class="block"><input
-        type="checkbox"
-        name={@prefix <> "[" <> @field <> "][]"}
-        value="first_task"
-        checked={"first_task" in @selected}
-      /> {skill_label("first_task")}</label>
+      <label class="flex items-start gap-2">
+        <input
+          type="checkbox"
+          class="mt-1 shrink-0"
+          name={@prefix <> "[" <> @field <> "][]"}
+          value="first_task"
+          checked={"first_task" in @selected}
+        />
+        <span class="text-balance">{skill_label("first_task")}</span>
+      </label>
     </fieldset>
     """
   end

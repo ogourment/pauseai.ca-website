@@ -82,14 +82,14 @@ defmodule PauseAiCaWeb.VolunteerHandoffTest do
       |> form("[data-task-form]", task: %{status: "done", description: unquote(receipt)})
       |> render_submit()
 
-      {:ok, member_view, _} = live(log_in_user(build_conn(), member), "/en/profile")
+      {:ok, member_view, _} = live(log_in_user(build_conn(), member), "/en/profile/volunteer")
       assert has_element?(member_view, "#my-group-work li", unquote(assignment))
       assert has_element?(member_view, "#my-group-work li", unquote(receipt))
       assert has_element?(member_view, "#my-group-work li", "Done")
     end
   end
 
-  test "an Ottawa organizer assigns the march edit and the editor finds it on their own profile" do
+  test "an Ottawa organizer assigns the march edit and the editor finds it on their volunteer profile" do
     admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
     admin_scope = Scope.for_user(admin)
     {:ok, group} = Volunteers.create_group(admin_scope, %{name: "Ottawa"})
@@ -132,16 +132,16 @@ defmodule PauseAiCaWeb.VolunteerHandoffTest do
     |> render_submit()
 
     member_conn = log_in_user(build_conn(), editor)
-    {:ok, view, _} = live(member_conn, "/en/profile")
+    {:ok, view, _} = live(member_conn, "/en/profile/volunteer")
     assert has_element?(view, "#my-group-work", "Video Editor")
     assert has_element?(view, "#my-group-work", "Edit the November 14 march footage")
     assert has_element?(view, "#my-group-work", "Return the captioned cut")
-    {:ok, stranger, _} = live(log_in_user(build_conn(), user_fixture()), "/en/profile")
+    {:ok, stranger, _} = live(log_in_user(build_conn(), user_fixture()), "/en/profile/volunteer")
     refute has_element?(stranger, "#my-group-work")
     membership |> Ecto.Changeset.change(status: "removed") |> Repo.update!()
     send(view.pid, :refresh_group_work)
     refute has_element?(view, "#my-group-work")
-    {:ok, refreshed, _} = live(member_conn, "/en/profile")
+    {:ok, refreshed, _} = live(member_conn, "/en/profile/volunteer")
     refute has_element?(refreshed, "#my-group-work")
   end
 end

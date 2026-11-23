@@ -72,12 +72,12 @@ defmodule PauseAiCaWeb.Navigation do
       item("pauseai.donations", gettext_noop("Donation page"), :manage, :donations, :admin, 35),
       item("pauseai.groups", gettext_noop("Groups"), :manage, :groups, :groups, 14),
       item(
-        "pauseai.my-groups",
-        gettext_noop("Local groups"),
+        "pauseai.volunteer-profile",
+        gettext_noop("Volunteer profile"),
         :account,
-        :my_groups,
-        :incubators,
-        25
+        :volunteer_profile,
+        :self,
+        21
       ),
       item(
         "pauseai.group-websites",
@@ -138,6 +138,13 @@ defmodule PauseAiCaWeb.Navigation do
 
   def breadcrumb_context(_scope, _locale), do: %{roots: [], sections: []}
 
+  def profile_breadcrumb_context(locale) do
+    {:ok, href} = resolve_route(:my_dashboard, %{locale: locale})
+    label = Gettext.with_locale(PauseAiCaWeb.Gettext, locale, fn -> area_labels().account end)
+
+    %{roots: [%{href: href, label: label}], sections: []}
+  end
+
   def assistant_breadcrumb_context(scope, locale) do
     roots =
       if Volunteers.superadmin?(scope) do
@@ -187,11 +194,6 @@ defmodule PauseAiCaWeb.Navigation do
   def authorize(%{required_capability: :groups}, context),
     do: context.organizer and Application.get_env(:pauseai_ca, :incubators_enabled, false)
 
-  def authorize(%{required_capability: :incubators}, %{
-        actor: %Scope{user: %User{confirmed_at: at}}
-      }),
-      do: at != nil and Application.get_env(:pauseai_ca, :incubators_enabled, false)
-
   def authorize(%{required_capability: :slack}, %{actor: %Scope{user: %User{confirmed_at: at}}}),
     do: at != nil and Application.get_env(:pauseai_ca, :slack_enabled, false)
 
@@ -219,35 +221,92 @@ defmodule PauseAiCaWeb.Navigation do
   def resolve_route(key, %{locale: locale}) do
     route =
       case key do
-        :assistant -> "/admin/assistant"
-        :contacts -> "/admin/contacts"
-        :local_interest -> "/manage/local-interest"
-        :administrators -> "/manage/administrators"
-        :dashboard -> "/admin/dashboard"
-        :blog -> "/manage/blog"
-        :mp_templates -> "/manage/mp-templates"
-        :donations -> "/manage/donations"
-        :donation_pledges -> "/admin/donation-pledges"
-        :interac_donations -> "/admin/interac-donations"
-        :versions -> "/admin/versions"
-        :acceptance -> "/admin/acceptance"
-        :groups -> "/manage/groups"
-        :group_websites -> "/manage/group-websites"
-        :my_groups -> if(locale == "fr", do: "/fr/groupes", else: "/en/groups")
-        :slack -> "/community/slack"
-        :tasks -> "/manage/tasks"
-        :welcome -> "/manage/welcome-calls"
-        :my_welcome -> if(locale == "fr", do: "/fr/appels-accueil", else: "/en/welcome-calls")
-        :accounts -> "/manage/accounts"
-        :contact_lists -> "/manage/lists"
-        :mail -> "/manage/mail?workspace=emails"
-        :newsletters -> "/manage/mail?workspace=newsletters"
-        :questions -> "/manage/questions"
-        :my_dashboard -> if(locale == "fr", do: "/fr/tableau-de-bord", else: "/en/dashboard")
-        :my_profile -> if(locale == "fr", do: "/fr/profil", else: "/en/profile")
-        :password -> "/users/settings#password_form"
-        :settings -> "/users/settings"
-        _ -> nil
+        :assistant ->
+          "/admin/assistant"
+
+        :contacts ->
+          "/admin/contacts"
+
+        :local_interest ->
+          "/manage/local-interest"
+
+        :administrators ->
+          "/manage/administrators"
+
+        :dashboard ->
+          "/admin/dashboard"
+
+        :blog ->
+          "/manage/blog"
+
+        :mp_templates ->
+          "/manage/mp-templates"
+
+        :donations ->
+          "/manage/donations"
+
+        :donation_pledges ->
+          "/admin/donation-pledges"
+
+        :interac_donations ->
+          "/admin/interac-donations"
+
+        :versions ->
+          "/admin/versions"
+
+        :acceptance ->
+          "/admin/acceptance"
+
+        :groups ->
+          "/manage/groups"
+
+        :group_websites ->
+          "/manage/group-websites"
+
+        :volunteer_profile ->
+          if(locale == "fr", do: "/fr/profil/benevolat", else: "/en/profile/volunteer")
+
+        :slack ->
+          "/community/slack"
+
+        :tasks ->
+          "/manage/tasks"
+
+        :welcome ->
+          "/manage/welcome-calls"
+
+        :my_welcome ->
+          if(locale == "fr", do: "/fr/appels-accueil", else: "/en/welcome-calls")
+
+        :accounts ->
+          "/manage/accounts"
+
+        :contact_lists ->
+          "/manage/lists"
+
+        :mail ->
+          "/manage/mail?workspace=emails"
+
+        :newsletters ->
+          "/manage/mail?workspace=newsletters"
+
+        :questions ->
+          "/manage/questions"
+
+        :my_dashboard ->
+          if(locale == "fr", do: "/fr/tableau-de-bord", else: "/en/dashboard")
+
+        :my_profile ->
+          if(locale == "fr", do: "/fr/profil", else: "/en/profile")
+
+        :password ->
+          "/users/settings#password_form"
+
+        :settings ->
+          "/users/settings"
+
+        _ ->
+          nil
       end
 
     if route do
@@ -256,7 +315,7 @@ defmodule PauseAiCaWeb.Navigation do
          key in [
            :my_dashboard,
            :my_profile,
-           :my_groups,
+           :volunteer_profile,
            :settings,
            :password,
            :versions,

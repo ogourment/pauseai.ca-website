@@ -10,7 +10,8 @@ if System.get_env("ATDD") == "true" do
                  [
                    {"DOM-01", "French domain follows account creation through delivered email"},
                    {"VISIT-01", "Marked browser visits stay excluded after sign-out"},
-                   {"VOL-11", "Hidden volunteer profile preserves the usable account profile"}
+                   {"VOL-11",
+                    "Legacy profile bookmarks preserve editable account and volunteer details"}
                  ],
                  fn {id, title} ->
                    %{
@@ -143,25 +144,26 @@ if System.get_env("ATDD") == "true" do
 
       b = sign_in(c.conn, user)
 
-      for {locale, path, name, postal, city, save} <- [
-            {"en", "/en/profile", "Name", "Full postal code", "City", "Find my MP"},
-            {"fr", "/fr/profil", "Nom", "Code postal complet", "Ville", "Trouver mon député·e"}
+      for {locale, path, name, postal, city} <- [
+            {"en", "/en/profile", "Name", "Postal code (optional)", "City"},
+            {"fr", "/fr/profil", "Nom", localized("Postal code (optional)"), "Ville"}
           ] do
         b =
           b
           |> visit("/volunteer-profile?locale=" <> locale)
           |> assert_path(path)
           |> assert_has("[data-phx-main].phx-connected")
-          |> refute_has("a[href*='volunteer-profile']")
+          |> assert_has("#volunteer-profile-link")
 
         b =
           b
           |> fill_in(name, with: "Profile Review")
           |> fill_in(postal, with: "H2X 1Y4")
           |> fill_in(city, with: "Montréal")
-          |> click_button(save)
-          |> assert_has("#flash-info",
-            text: if(locale == "fr", do: "Profil enregistré.", else: "Profile saved.")
+          |> click_button(if(locale == "fr", do: localized("Save changes"), else: "Save changes"))
+          |> assert_has("#profile-save-status",
+            text: if(locale == "fr", do: "Profil enregistré.", else: "Profile saved."),
+            exact: true
           )
 
         assert Accounts.get_user!(user.id).name == "Profile Review"
@@ -348,6 +350,12 @@ if System.get_env("ATDD") == "true" do
       scenario = Enum.find(@scenarios, &(&1.id == id))
       AtddEvidence.mark_scenario_success!(scenario)
       AcceptanceHarness.Evidence.record_current_scenario_runtime(scenario)
+    end
+
+    defp localized(text) do
+      Gettext.with_locale(PauseAiCaWeb.Gettext, "fr", fn ->
+        Gettext.gettext(PauseAiCaWeb.Gettext, text)
+      end)
     end
   end
 end

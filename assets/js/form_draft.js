@@ -4,6 +4,7 @@ export const FormDraft = {
   mounted() {
     this.key = this.el.dataset.draftKey
     this.prefix = this.el.dataset.draftPrefix + '['
+    this.submitted = this.el.dataset.submitted === 'true'
     this.saveDraft = () => {
       const values = this.readDraft()
       if (this.el.querySelector("[data-experience]") || values.experience) values.experience = {}
@@ -31,12 +32,15 @@ export const FormDraft = {
     if (Object.keys(values).length) this.pushEventTo(this.el, 'restore-draft', {values})
   },
   updated() {
-    if (!this.el.hasAttribute('data-interest-group')) return
-    if (this.el.dataset.submitted === 'true') {
+    const interestGroup = this.el.hasAttribute('data-interest-group')
+    if (!interestGroup && !this.el.hasAttribute('data-draft-clear-on-save')) return
+    const submitted = this.el.dataset.submitted === 'true'
+    if (submitted && (interestGroup || !this.submitted)) {
       try { sessionStorage.removeItem(this.key) } catch (_) {}
-    } else {
+    } else if (interestGroup && !submitted) {
       this.saveDraft()
     }
+    this.submitted = submitted
   },
   readDraft() {
     try {

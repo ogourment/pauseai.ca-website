@@ -40,16 +40,6 @@ if System.get_env("ATDD") == "true" do
                      roles: ["Organizer / volunteer"],
                      source_file: __ENV__.file
                    }
-                   |> then(fn scenario ->
-                     if id == "VOL-09",
-                       do:
-                         Map.merge(scenario, %{
-                           status: :ignored,
-                           reason:
-                             "Self-service volunteer profile temporarily hidden pending incubator roadmap review"
-                         }),
-                       else: scenario
-                   end)
                  end
                )
 
@@ -133,9 +123,9 @@ if System.get_env("ATDD") == "true" do
       recipient =
         recipient
         |> account_menu()
-        |> click_link("My profile")
+        |> click_link("#account-menu a", "My profile", exact: true)
         |> assert_has("input[value='Camille Exemple']")
-        |> assert_has("input[value='H2X1Y4']")
+        |> assert_has("#profile_postal_code[value='H2X 1Y4']")
         |> capture(
           id,
           "Follow delivered sign-in and open My profile",
@@ -240,103 +230,95 @@ if System.get_env("ATDD") == "true" do
       finish(id)
     end
 
-    @tag :ignore
     test "VOL-09 optional profile wizard, another device and volunteer editing without Catalyse",
          c do
       id = "VOL-09"
 
-      scenario = Enum.find(@scenarios, &(&1.id == id))
+      b =
+        open_workspace(c.conn, c.admin, id)
+        |> select("Default incubator / group", option: "Montréal")
+        |> paste(1, "profile")
+        |> click_button("Optional details")
 
-      AcceptanceHarness.ignore(scenario, fn ->
-        b =
-          open_workspace(c.conn, c.admin, id)
-          |> select("Default incubator / group", option: "Montréal")
-          |> paste(1, "profile")
-          |> click_button("Optional details")
-
-        b =
-          b
-          |> select("Preferred contact method", option: "Signal")
-          |> fill_in("Signal", with: "+1 555 010 1234")
-          |> fill_in("City", with: "Montréal")
-          |> click_button("Next")
-          |> fill_in("Hours available per week", with: "4")
-          |> fill_in("Skills and proficiency", with: "Organizing / Facilitation: advanced")
-          |> capture(
-            id,
-            "Enter contact and contribution in separate short steps",
-            "Local fields preserve channel, city, integer hours and named skill proficiency"
-          )
-
-        b |> click_button("Save and exit") |> refute_has("#row-details")
-
-        b =
-          open_workspace(new_device(c), c.admin, id)
-          |> click_link("Untitled batch · Draft")
-          |> assert_has("#profile_availability_hours_per_week[value='4']")
-          |> capture(id, "Resume from another browser", "Contribution step and values restored")
-          |> click_button("Back to rows")
-          |> review(1, id)
-          |> confirm(id)
-
-        AcceptanceHarness.Evidence.record_pending_step(
-          "VOL-09-self-service-pending.png",
-          "Volunteer resumes their imported profile",
-          "Self-service volunteer profile is deferred pending incubator roadmap review",
-          %{"scenario_id" => id, "step" => "self-service", "user" => "Volunteer"}
+      b =
+        b
+        |> select("Preferred contact method", option: "Signal")
+        |> fill_in("Signal", with: "+1 555 010 1234")
+        |> fill_in("City", with: "Montréal")
+        |> click_button("Next")
+        |> fill_in("Hours available per week", with: "4")
+        |> fill_in("Skills and proficiency", with: "Organizing / Facilitation: advanced")
+        |> capture(
+          id,
+          "Enter contact and contribution in separate short steps",
+          "Local fields preserve channel, city, integer hours and named skill proficiency"
         )
 
-        recipient =
-          new_device(c)
-          |> show_email(invitation("profile1@example.org"))
-          |> sign_in_email()
-          |> account_menu()
-          |> evaluate(
-            "Array.from(document.querySelectorAll('#account-menu a')).some(link => link.textContent.trim() === 'Volunteer profile')",
-            &assert(&1, "Expected the deferred Volunteer profile menu link")
-          )
-          |> click_link("Volunteer profile")
-          |> assert_has("#profile_signal_number[value='+1 555 010 1234']")
-          |> capture(
-            id,
-            "Volunteer opens their imported profile",
-            "Private organizer notes are absent"
-          )
+      b |> click_button("Save and exit") |> refute_has("#row-details")
 
-        recipient =
-          recipient
-          |> fill_in("Contact instructions", with: "Evenings")
-          |> click_button("Save and exit")
-          |> assert_path("/dashboard")
-          |> assert_has("#suggested-next-step")
+      b =
+        open_workspace(new_device(c), c.admin, id)
+        |> click_link("Untitled batch · Draft")
+        |> assert_has("#profile_availability_hours_per_week[value='4']")
+        |> capture(id, "Resume from another browser", "Contribution step and values restored")
+        |> click_button("Back to rows")
+        |> review(1, id)
+        |> confirm(id)
 
-        recipient =
-          recipient
-          |> account_menu()
-          |> click_link("Volunteer profile")
-          |> assert_has("#profile_contact_notes", text: "Evenings")
-          |> click_button("Next")
-          |> click_button("Next")
-          |> click_button("Save profile")
-          |> capture(
-            id,
-            "Resume and finish personal profile",
-            "Profile is persisted locally without external linkage"
-          )
+      recipient =
+        new_device(c)
+        |> show_email(invitation("profile1@example.org"))
+        |> sign_in_email()
+        |> account_menu()
+        |> click_link("#account-menu a", "My profile", exact: true)
+        |> click("#profile-form details > summary")
+        |> assert_has("#profile_signal_number[value='+1 555 010 1234']")
+        |> capture(
+          id,
+          "Volunteer opens their imported contact details",
+          "Private organizer notes are absent"
+        )
+        |> fill_in("Contact instructions", with: "Evenings")
+        |> click_button("#profile-form button", "Save changes")
+        |> assert_has("#profile-save-status", text: "Profile saved.", exact: true)
 
-        user = Accounts.get_user_by_email("profile1@example.org")
-        profile = Repo.get_by!(Profile, user_id: user.id)
-        assert profile.details["availability_hours_per_week"] == 4
+      recipient =
+        recipient
+        |> account_menu()
+        |> click_link("#account-menu a", "Volunteer profile", exact: true)
+        |> assert_has("#volunteer-profile-form #profile_availability_hours_per_week[value='4']")
+        |> capture(
+          id,
+          "Open the imported volunteer contribution",
+          "Hours and skills are available without repeating personal setup"
+        )
+        |> fill_in("Hours available per week", with: "5")
+        |> click_button("#volunteer-profile-form button", "Save changes")
+        |> assert_has("#volunteer-save-status", text: "Saved", exact: true)
+        |> visit("/en/profile/volunteer")
+        |> assert_has("#volunteer-profile-form #profile_availability_hours_per_week[value='5']")
+        |> account_menu()
+        |> click_link("#account-menu a", "My profile", exact: true)
+        |> click("#profile-form details > summary")
+        |> assert_has("#profile_contact_notes", text: "Evenings")
+        |> capture(
+          id,
+          "Reopen the saved contact details after editing hours",
+          "The two saves persist separately without external linkage"
+        )
 
-        assert [%{"name" => "Facilitation", "proficiency" => "advanced"}] =
-                 profile.details["skills"]
+      user = Accounts.get_user_by_email("profile1@example.org")
+      profile = Repo.get_by!(Profile, user_id: user.id)
+      assert profile.details["availability_hours_per_week"] == 5
 
-        refute Map.has_key?(profile.details, "notes")
-        refute Map.has_key?(profile.details, "catalyse_id")
-        recipient |> refute_has("body", text: "private-profile")
-        b |> assert_has("#batch-result")
-        finish(id)
-      end)
+      assert [%{"name" => "Facilitation", "proficiency" => "advanced"}] =
+               profile.details["skills"]
+
+      refute Map.has_key?(profile.details, "notes")
+      refute Map.has_key?(profile.details, "catalyse_id")
+      recipient |> refute_has("body", text: "private-profile")
+      b |> assert_has("#batch-result")
+      finish(id)
     end
 
     test "VOL-02 French CSV correction, mapping and scoped results", c do

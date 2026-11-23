@@ -26,6 +26,7 @@ defmodule PauseAiCa.Accounts.User do
     field :postal_code, :string
     field :city, :string
     field :representative, :map
+    field :profile_contact, :map, redact: true
     field :custom_resource_urls, {:array, :string}, default: []
 
     timestamps(type: :utc_datetime)

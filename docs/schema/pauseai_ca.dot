@@ -1560,6 +1560,7 @@ digraph Schema {
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">staging_login_allowed</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">boolean NOT NULL</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">phone</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">character varying</FONT></TD></TR>
   <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">last_manage_visit_at</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">timestamp without time zone</FONT></TD></TR>
+  <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">profile_contact</FONT></TD><TD ALIGN="LEFT"><FONT POINT-SIZE="12">jsonb</FONT></TD></TR>
       </TABLE>
     >
   ];

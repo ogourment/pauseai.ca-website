@@ -11,6 +11,8 @@ msgstr ""
 "Language: fr\n"
 "Plural-Forms: nplurals=2; plural=(n>1);\n"
 
+#: lib/pauseai_ca/accounts/personal_profile.ex:183
+#, elixir-autogen
 msgid "can't be blank"
 msgstr "ne peut être vide"
 
@@ -118,7 +120,7 @@ msgstr "choisissez au moins une option"
 msgid "enter a city or postal area for local follow-up"
 msgstr "indiquez une ville ou une région postale pour le suivi local"
 
-#: lib/pauseai_ca/accounts/user.ex:72
+#: lib/pauseai_ca/accounts/user.ex:74
 #, elixir-autogen, elixir-format
 msgid "enter a phone number with 7 to 20 digits"
 msgstr "indiquez un numéro de téléphone contenant de 7 à 20 chiffres"
@@ -138,23 +140,33 @@ msgstr "saisissez un code postal canadien complet"
 msgid "must be a positive amount with at most two decimal places"
 msgstr "doit être un montant positif avec au plus deux décimales"
 
-#: lib/pauseai_ca/incubators.ex:197
+#: lib/pauseai_ca/incubators.ex:245
 #, elixir-autogen, elixir-format
 msgid "choose an active group or incubator"
 msgstr "choisissez un groupe actif ou un incubateur"
 
-#: lib/pauseai_ca/incubators.ex:207
+#: lib/pauseai_ca/incubators.ex:255
 #, elixir-autogen, elixir-format
 msgid "use a valid local date, time and time zone"
 msgstr "saisissez une date, une heure locale et un fuseau horaire valides"
 
-#: lib/pauseai_ca/incubators.ex:858
+#: lib/pauseai_ca/incubators.ex:965
 #, elixir-autogen, elixir-format
 msgid "use a valid time zone"
 msgstr "saisissez un fuseau horaire valide"
 
+#: lib/pauseai_ca/incubators.ex:910
+#, elixir-autogen, elixir-format
+msgid "Enter at least one service-area FSA before publishing."
+msgstr "Entrez au moins une RTA du territoire desservi avant de publier."
+
+#: lib/pauseai_ca/incubators.ex:903
+#, elixir-autogen, elixir-format
 msgid "Only a local group can be published in the directory."
 msgstr "Seul un groupe local peut figurer dans le répertoire."
 
-msgid "Enter at least one service-area FSA before publishing."
-msgstr "Entrez au moins une RTA du territoire desservi avant de publier."
+# From Ecto.Changeset.validate_format/3 (local context)
+#: lib/pauseai_ca/accounts/personal_profile.ex:76
+#, elixir-autogen, elixir-format
+msgid "enter the first three characters or a full Canadian postal code"
+msgstr "saisissez les trois premiers caractères ou un code postal canadien complet"

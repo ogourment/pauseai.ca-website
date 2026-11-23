@@ -92,6 +92,26 @@ defmodule PauseAiCaWeb.IncubatorsLiveTest do
     assert first == view |> element("#incubator-activity ul") |> render()
   end
 
+  test "group activity identifies the affected member separately from the organizer", c do
+    {:ok, group} = Volunteers.create_group(c.admin, %{name: "Group activity review"})
+    {:ok, _} = Volunteers.assign_manager(c.admin, group.id, c.manager.email)
+    {:ok, member} = Incubators.add_existing_member(c.admin, group.id, c.member.email, "member")
+    event = Repo.get_by!(Incubators.Event, membership_id: member.id, action: "member_added")
+
+    older =
+      Repo.insert!(%Incubators.Event{group_id: group.id, actor_id: c.manager.id, action: "admit"})
+
+    {:ok, view, _} =
+      live(
+        log_in_user(build_conn(), c.manager),
+        "/manage/groups?group=#{group.id}&tab=activity&locale=en"
+      )
+
+    assert has_element?(view, "#group-event-#{older.id}", "Unknown member")
+    assert has_element?(view, "#group-event-#{event.id}", "Member: Review member")
+    assert has_element?(view, "#group-event-#{event.id}", "Recorded by #{c.admin.user.email}")
+  end
+
   test "directory shortcuts and the Toronto chapter shortcut preserve the query", %{conn: conn} do
     for {short, canonical} <- [
           {"/groups", "/en/groups"},

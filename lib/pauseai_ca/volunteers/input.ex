@@ -3,6 +3,7 @@ defmodule PauseAiCa.Volunteers.Input do
 
   @fields ~w(name email postal_code city country group_id notes bio discord_handle signal_number whatsapp_number contact_preference contact_notes availability_hours_per_week skills other_skills application_message)
   @profile_fields ~w(bio city country discord_handle signal_number whatsapp_number contact_preference contact_notes availability_hours_per_week skills other_skills application_message)
+  @contribution_fields ~w(bio availability_hours_per_week skills other_skills application_message selected_skills experience share_contribution)
   @aliases %{
     "local_group" => "group_id",
     "location" => "city",
@@ -44,6 +45,28 @@ defmodule PauseAiCa.Volunteers.Input do
   def skill_ids, do: @skill_ids
   def fields, do: @fields
   def profile_fields, do: @profile_fields
+  def contribution_fields, do: @contribution_fields
+
+  def contribution_values(attrs), do: Map.take(profile(attrs), @contribution_fields)
+
+  def contribution_draft(details, draft) do
+    details
+    |> Map.take(@contribution_fields)
+    |> Map.update("skills", "", &format_detailed_skills/1)
+    |> Map.update("availability_hours_per_week", "", &format_hours/1)
+    |> Map.merge(Map.take(draft, @contribution_fields))
+  end
+
+  defp format_detailed_skills(skills) when is_list(skills) do
+    Enum.map_join(skills, "\n", fn skill ->
+      "#{skill["category"]} / #{skill["name"]}: #{skill["proficiency"]}"
+    end)
+  end
+
+  defp format_detailed_skills(skills), do: clean(skills)
+
+  defp format_hours(hours) when is_integer(hours), do: Integer.to_string(hours)
+  defp format_hours(hours), do: clean(hours)
 
   def csv(contents) when byte_size(contents) <= 5_000_000 do
     if String.valid?(contents) do

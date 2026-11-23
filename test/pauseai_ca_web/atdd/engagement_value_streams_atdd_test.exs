@@ -135,9 +135,15 @@ if System.get_env("ATDD") == "true" do
       browser =
         browser
         |> visit("/fr/profil")
-        |> fill_in("Code postal complet", with: "H2X 1Y4")
+        |> fill_in("#profile_postal_code", "Code postal", with: "H2X 1Y4", exact: false)
         |> check("M’envoyer des nouvelles locales pertinentes")
-        |> click_button("Trouver mon député")
+        |> click_button("#profile-form button", localized("Save changes"))
+        |> assert_has("#profile-save-status", text: "Profil enregistré.", exact: true)
+        |> click("#mp-lookup > summary")
+        |> fill_in("#mp-form input[name='lookup[postal_code]']", "Code postal complet",
+          with: "H2X 1Y4"
+        )
+        |> click_button("#mp-form button", localized("Look up my MP"))
         |> assert_has("#mp-result", text: "Steven Guilbeault")
         |> assert_has("#mp-position", text: "pas encore documentée")
         |> visit("/fr/tableau-de-bord")
@@ -336,6 +342,12 @@ if System.get_env("ATDD") == "true" do
       |> PauseAiCaWeb.AtddNavigation.open_section("account")
       |> click_link("Log out")
       |> assert_path("/")
+    end
+
+    defp localized(text) do
+      Gettext.with_locale(PauseAiCaWeb.Gettext, "fr", fn ->
+        Gettext.gettext(PauseAiCaWeb.Gettext, text)
+      end)
     end
   end
 end

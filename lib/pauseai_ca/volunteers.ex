@@ -485,6 +485,45 @@ defmodule PauseAiCa.Volunteers do
     _ in [DBConnection.ConnectionError, Postgrex.Error] -> {:error, :unavailable}
   end
 
+  def save_contribution(scope, attrs) do
+    fields = Input.contribution_fields()
+    attrs = Map.take(attrs, fields)
+
+    Repo.transact(fn ->
+      # Reserve the profile if this is the volunteer's first save. A concurrent
+      # import or save can create it first, so read the row again under lock.
+      with {:ok, _} <-
+             Repo.insert(%Profile{user_id: scope.user.id},
+               on_conflict: :nothing,
+               conflict_target: [:user_id]
+             ) do
+        profile =
+          Repo.one!(from p in Profile, where: p.user_id == ^scope.user.id, lock: "FOR UPDATE")
+
+        values =
+          Input.contribution_draft(profile.details, profile.draft)
+          |> Input.merge_profile(attrs)
+          |> Input.contribution_values()
+
+        case Input.profile_errors(values) do
+          errors when map_size(errors) > 0 ->
+            {:error, errors}
+
+          _ ->
+            profile
+            |> change(
+              draft: Map.merge(profile.draft, values),
+              details: Map.merge(profile.details, Input.profile_details(values)),
+              step: "review"
+            )
+            |> Repo.update()
+        end
+      end
+    end)
+  rescue
+    _ in [DBConnection.ConnectionError, Postgrex.Error] -> {:error, :unavailable}
+  end
+
   defp create_signup(scope, batch, %{row: row, group: group}) do
     user =
       Repo.one(from u in User, where: fragment("lower(?)", u.email) == ^row["email"], limit: 1)

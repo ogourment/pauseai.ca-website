@@ -605,8 +605,20 @@ defmodule PauseAiCa.Incubators do
       rows =
         Repo.all(
           from e in Event,
+            left_join: member in Membership,
+            on: member.id == e.membership_id and member.group_id == e.group_id,
+            left_join: actor in User,
+            on: actor.id == e.actor_id,
             where: e.group_id == ^group_id,
             order_by: [desc: e.inserted_at, desc: e.id],
+            select: %{
+              id: e.id,
+              action: e.action,
+              inserted_at: e.inserted_at,
+              membership_id: e.membership_id,
+              member_name: member.display_name,
+              actor_name: coalesce(fragment("NULLIF(?, '')", actor.name), actor.email)
+            },
             limit: 11,
             offset: ^((page - 1) * 10)
         )

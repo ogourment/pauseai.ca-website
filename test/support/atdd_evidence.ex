@@ -22,7 +22,21 @@ defmodule PauseAiCaWeb.AtddEvidence do
     conn =
       PhoenixTest.Playwright.evaluate(
         conn,
-        "(#{BrowserEvidence.pin_viewport_chrome_script()})()"
+        """
+        (async () => {
+          await (#{BrowserEvidence.pin_viewport_chrome_script()})();
+          const header = document.querySelector('#site-header[data-acceptance-pinned-position]:has(nav details[open])');
+          // A static header drops its z-index and paints an open menu behind the page.
+          if (header?.style.position === 'static') {
+            header.style.setProperty('position', 'relative', 'important');
+          }
+          // At document top, an open phone menu still needs its viewport-based width.
+          const phoneMenu = header?.querySelector('details[open] > .section-menu-panel[data-acceptance-pinned-position]');
+          if (phoneMenu?.style.position === 'absolute') {
+            phoneMenu.style.setProperty('position', 'fixed', 'important');
+          }
+        })()
+        """
       )
 
     try do

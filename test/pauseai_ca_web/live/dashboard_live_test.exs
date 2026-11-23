@@ -65,7 +65,11 @@ defmodule PauseAiCaWeb.DashboardLiveTest do
   test "sends members to their profile for riding information", %{conn: conn} do
     {:ok, view, _html} = live(conn, ~p"/dashboard")
 
-    assert has_element?(view, "#fsa-reminder a[href='/en/profile']", "Complete my profile")
+    assert has_element?(
+             view,
+             "#fsa-reminder a[href='/en/profile#location']",
+             "Add my postal area"
+           )
   end
 
   test "shows saved reading and formats dates for people", %{conn: conn, user: user, scope: scope} do

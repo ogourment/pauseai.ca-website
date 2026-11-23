@@ -821,8 +821,17 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
             <h2 class="text-xl font-semibold">{gettext("Activity")}</h2><p :if={@events == []}>
               {gettext("No activity yet.")}
             </p><ul class="divide-y divide-base-300">
-              <li :for={event <- @events} class="py-3">
-                <p>{event_label(event.action)}</p><time
+              <li :for={event <- @events} id={"group-event-#{event.id}"} class="py-3">
+                <p class="font-semibold">{event_label(event.action)}</p>
+                <p :if={membership_event?(event)}>
+                  {gettext("Member: %{name}", name: event.member_name || gettext("Unknown member"))}
+                </p>
+                <p>
+                  {gettext("Recorded by %{name}",
+                    name: event.actor_name || gettext("Unknown account")
+                  )}
+                </p>
+                <time
                   class="text-sm"
                   datetime={DateTime.to_iso8601(event.inserted_at)}
                 >{Calendar.strftime(event.inserted_at, "%Y-%m-%d %H:%M UTC")}</time>
@@ -845,5 +854,10 @@ defmodule PauseAiCaWeb.IncubatorManagementLive do
       </section>
     </Layouts.management>
     """
+  end
+
+  defp membership_event?(event) do
+    event.membership_id != nil or
+      event.action in ~w(member_added request reference_issued identifier_matched approve admit reject suspend remove withdraw external_removal_confirmed delegate)
   end
 end

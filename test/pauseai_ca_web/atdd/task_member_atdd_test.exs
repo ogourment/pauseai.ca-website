@@ -159,7 +159,7 @@ if System.get_env("ATDD") == "true" do
       assert protected_counts() == baseline
       refute_received {:email, _}
       {member_token, _} = generate_user_magic_link_token(member)
-      profile = if locale == "fr", do: "/fr/profil", else: "/en/profile"
+      profile = if locale == "fr", do: "/fr/profil/benevolat", else: "/en/profile/volunteer"
 
       viewport =
         if locale == "fr", do: %{width: 390, height: 844}, else: %{width: 1280, height: 900}
@@ -170,10 +170,13 @@ if System.get_env("ATDD") == "true" do
       |> visit("/users/log-in/#{member_token}")
       |> click_button("Keep me logged in on this device")
       |> assert_path("/")
-      |> visit(profile)
+      |> visit("/#{locale}")
+      |> AtddNavigation.open_section("account")
+      |> click("#account-menu a[href='#{profile}']")
+      |> assert_path(profile)
       |> assert_has("#my-group-work", text: title)
       |> assert_has("#my-group-work", text: role_title)
-      |> capture(id, "Member reads their assignment", "Signed-in member", "My profile")
+      |> capture(id, "Member reads their assignment", "My account menu", "Volunteer profile")
 
       AtddEvidence.mark_scenario_success!(Enum.find(@scenarios, &(&1.id == id)))
       browser

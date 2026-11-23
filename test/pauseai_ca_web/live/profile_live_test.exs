@@ -3,7 +3,7 @@ defmodule PauseAiCaWeb.ProfileLiveTest do
 
   import Phoenix.LiveViewTest
 
-  alias PauseAiCa.{Accounts, Repo}
+  alias PauseAiCa.{Accounts, Repo, Volunteers.Profile}
 
   setup :register_and_log_in_user
 
@@ -12,60 +12,15 @@ defmodule PauseAiCaWeb.ProfileLiveTest do
     assert {:error, {:redirect, %{to: "/users/log-in"}}} = live(conn, ~p"/en/profile")
   end
 
-  test "the volunteer editor is reachable in both languages and resumes its saved draft", %{
-    conn: conn,
-    user: user
-  } do
-    for {profile, volunteer} <- [
-          {"/en/profile", "/en/profile/volunteer"},
-          {"/fr/profil", "/fr/profil/benevolat"}
-        ] do
-      assert {:ok, view, _} = live(conn, profile)
-      assert has_element?(view, "#volunteer-profile-link[href='#{volunteer}']")
-      assert {:ok, editor, _} = live(conn, volunteer)
-      assert has_element?(editor, "#volunteer-profile-form")
-    end
-
-    assert {:ok, editor, _} = live(conn, "/en/profile/volunteer")
-    render_click(editor, "next")
-
-    render_change(editor, "change", %{
-      "profile" => %{
-        "availability_hours_per_week" => "3",
-        "selected_skills" => ["", "video_editing"],
-        "experience" => %{"video_editing" => "guide", "photography" => "done"},
-        "share_contribution" => "true"
-      }
-    })
-
-    assert {:ok, _profile, _html} =
-             editor
-             |> render_submit("save", %{"profile" => %{"availability_hours_per_week" => "3"}})
-             |> follow_redirect(conn, "/en/profile")
-
-    assert PauseAiCa.Volunteers.get_profile(PauseAiCa.Accounts.Scope.for_user(user)).draft[
-             "availability_hours_per_week"
-           ] == "3"
-
-    assert {:ok, reopened, _} = live(conn, "/en/profile/volunteer")
-    assert has_element?(reopened, "input[name='profile[availability_hours_per_week]'][value='3']")
-    assert has_element?(reopened, "input[value='video_editing'][checked]")
-    assert has_element?(reopened, "input[data-experience=video_editing][value=guide][checked]")
-    refute has_element?(reopened, "input[data-experience=photography]")
-    render_click(reopened, "next")
-    assert has_element?(reopened, "dd", "Video editing (I can guide someone)")
-    assert has_element?(reopened, "dd", "Managers of my groups")
-  end
-
   test "phone is optional and can be saved or cleared without a full postal code", %{
     conn: conn,
     user: user
   } do
     {:ok, view, _} = live(conn, "/en/profile")
-    view |> form("#profile-phone-form", phone: %{phone: "+1 613 555 0102"}) |> render_submit()
+    view |> form("#profile-form", profile: %{phone: "+1 613 555 0102"}) |> render_submit()
     assert Accounts.get_user!(user.id).phone == "+1 613 555 0102"
     assert is_nil(Accounts.get_user!(user.id).postal_code)
-    view |> form("#profile-phone-form", phone: %{phone: ""}) |> render_submit()
+    view |> form("#profile-form", profile: %{phone: ""}) |> render_submit()
     assert is_nil(Accounts.get_user!(user.id).phone)
   end
 
@@ -83,6 +38,14 @@ defmodule PauseAiCaWeb.ProfileLiveTest do
     )
     |> render_submit()
 
+    refute has_element?(view, "#mp-result")
+    assert is_nil(Accounts.get_user!(user.id).representative)
+
+    view
+    |> form("#mp-form", lookup: %{postal_code: "h2x 1y4"})
+    |> render_submit()
+
+    render_async(view)
     assert has_element?(view, "#mp-result", "Steven Guilbeault")
     assert has_element?(view, "#mp-result", "Laurier—Sainte-Marie")
     assert has_element?(view, "#mp-position", "not yet documented")
@@ -94,6 +57,113 @@ defmodule PauseAiCaWeb.ProfileLiveTest do
     assert stored.fsa == "H2X"
     assert stored.local_updates
     assert stored.representative["name"] == "Steven Guilbeault"
+
+    view |> form("#profile-form", profile: %{postal_code: "K1A"}) |> render_submit()
+    assert %{fsa: "K1A", postal_code: nil, representative: nil} = Accounts.get_user!(user.id)
+    refute has_element?(view, "#mp-result")
+
+    view |> form("#profile-form", profile: %{postal_code: ""}) |> render_submit()
+    assert %{fsa: nil, postal_code: nil} = Accounts.get_user!(user.id)
+  end
+
+  test "keeps conflicting city and legacy contacts visible until edited, then respects clearing",
+       %{
+         conn: conn,
+         user: user
+       } do
+    user |> Ecto.Changeset.change(city: "Montréal") |> Repo.update!()
+
+    legacy =
+      Repo.insert!(%Profile{
+        user_id: user.id,
+        draft: %{"city" => "Québec", "discord_handle" => "draft-handle"},
+        details: %{"country" => "Canada", "contact_notes" => "Legacy instructions"}
+      })
+
+    {:ok, view, _} = live(conn, "/en/profile")
+    assert has_element?(view, "#profile-city-conflict", "Québec")
+    assert has_element?(view, "#profile_city[value='Montréal']")
+    assert has_element?(view, "#profile_country[value='Canada']")
+    assert has_element?(view, "#profile_discord_handle[value='draft-handle']")
+
+    view |> form("#profile-form", profile: %{name: "Test Supporter"}) |> render_submit()
+    assert has_element?(view, "#profile-city-conflict")
+
+    view
+    |> form("#profile-form", profile: %{city: "", discord_handle: "", contact_notes: ""})
+    |> render_submit()
+
+    reopened_user = Accounts.get_user!(user.id)
+    assert reopened_user.city == nil
+    assert reopened_user.profile_contact["discord_handle"] == nil
+    assert reopened_user.profile_contact["contact_notes"] == nil
+    assert Repo.get!(Profile, legacy.id).draft == legacy.draft
+    assert Repo.get!(Profile, legacy.id).details == legacy.details
+
+    {:ok, reopened, _} = live(conn, "/en/profile")
+    refute has_element?(reopened, "#profile-city-conflict")
+    refute has_element?(reopened, "#profile_city[value='Québec']")
+    refute has_element?(reopened, "#profile_discord_handle[value='draft-handle']")
+  end
+
+  test "requires the newly selected handle and preserves all submitted values on error", %{
+    conn: conn,
+    user: user
+  } do
+    {:ok, view, _} = live(conn, "/en/profile")
+
+    view
+    |> form("#profile-form", profile: %{city: "Sudbury", contact_preference: "signal"})
+    |> render_submit()
+
+    assert has_element?(view, "#profile-form details[open]", "can't be blank")
+    assert has_element?(view, "#profile_city[value='Sudbury']")
+    assert is_nil(Accounts.get_user!(user.id).city)
+
+    view |> form("#profile-form", profile: %{signal_number: "+1 705 555 0102"}) |> render_submit()
+
+    stored = Accounts.get_user!(user.id)
+    assert stored.city == "Sudbury"
+    assert stored.profile_contact["contact_preference"] == "signal"
+    assert stored.profile_contact["signal_number"] == "+1 705 555 0102"
+    assert has_element?(view, "#profile-save-status", "Profile saved.")
+  end
+
+  test "looks up an unsaved postal code without changing profile details", %{
+    conn: conn,
+    user: user
+  } do
+    {:ok, view, _} = live(conn, "/en/profile")
+
+    view |> form("#mp-form", lookup: %{postal_code: "H2X"}) |> render_submit()
+    assert has_element?(view, "#mp-lookup-error", "Enter a complete Canadian postal code.")
+
+    view |> form("#mp-form", lookup: %{postal_code: "H2X 1Y4"}) |> render_submit()
+    render_async(view)
+    assert has_element?(view, "#mp-result", "Steven Guilbeault")
+    assert %{postal_code: nil, fsa: nil, representative: nil} = Accounts.get_user!(user.id)
+
+    {:ok, reopened, _} = live(conn, "/en/profile")
+    refute has_element?(reopened, "#mp-result")
+  end
+
+  test "saving in one tab preserves untargeted changes from another tab", %{
+    conn: conn,
+    user: user
+  } do
+    {:ok, location_view, _} = live(conn, "/en/profile")
+    {:ok, phone_view, _} = live(conn, "/en/profile")
+
+    location_view
+    |> form("#profile-form", profile: %{city: "Sudbury", postal_code: "P3E"})
+    |> render_submit()
+
+    phone_view
+    |> form("#profile-form", profile: %{phone: "+1 705 555 0102"})
+    |> render_submit()
+
+    assert %{city: "Sudbury", fsa: "P3E", phone: "+1 705 555 0102"} =
+             Accounts.get_user!(user.id)
   end
 
   test "manages saved nuggets and personal resource links", %{conn: conn, user: user} do
