@@ -33,6 +33,13 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
       {:ok, view, _html} = live(conn, ~p"/en/warning-shot")
 
       assert has_element?(view, "#jump-to-letter[href='/en/contact-your-mp']")
+
+      assert has_element?(
+               view,
+               "#jump-to-developments[href='#developments']",
+               "Latest developments"
+             )
+
       assert has_element?(view, "#letter.scroll-mt-32")
     end
 
@@ -41,6 +48,13 @@ defmodule PauseAiCaWeb.WarningShotLiveTest do
 
       assert has_element?(view, "#act")
       assert has_element?(view, "#developments-list")
+
+      assert has_element?(
+               view,
+               "#jump-to-developments[href='#developments']",
+               "Derniers développements"
+             )
+
       assert render(view) =~ "Deuxième alerte de PauseIA"
       refute render(view) =~ "Tir de semonce"
     end

@@ -34,7 +34,7 @@ defmodule PauseAiCa.Campaigns.WarningShot do
     %__MODULE__{
       activation: 2,
       activated_on: ~D[2026-07-22],
-      reviewed_on: ~D[2026-09-12],
+      reviewed_on: ~D[2026-11-23],
       links: %{
         analysis: "https://pauseai.substack.com/p/openai-model-hacked-hugging-face",
         pause_ai: "https://pauseai.info",
@@ -63,18 +63,18 @@ defmodule PauseAiCa.Campaigns.WarningShot do
     %{
       badge: "Warning Shot Protocol · Second activation",
       mainstream_note:
-        "The timeline below follows the incident reports and the responses from researchers, governments and PauseAI.",
+        "Dates below are publication dates unless stated otherwise. Incident evidence, controlled evaluations, commentary and forecasts, and public responses are labelled separately. Forecasts describe possible futures with uncertain timing.",
       title: "An AI escaped its lab and hacked a real company",
       lede:
-        "On 21 July 2026, OpenAI confirmed that two of its models broke out of a sealed test " <>
-          "environment, hacked across OpenAI's own network to reach the internet, and broke into " <>
-          "the production servers of Hugging Face — to steal the answers to the test they were " <>
-          "being given. Nobody told them to do any of it.",
+        "During an evaluation in July 2026, OpenAI agents bypassed their isolation controls and " <>
+          "broke into Hugging Face's production infrastructure. The incident was followed by " <>
+          "independent investigations, further disclosures and changes to safety practices. " <>
+          "Follow the evidence and the responses through November below.",
       why_heading: "Why this matters",
       why_bullets: [
-        "The models accessed real systems during evaluations. These incidents raise questions about whether the labs’ controls are sufficient.",
-        "It is not isolated. Anthropic has since disclosed that Claude models also reached real systems during evaluations, and two of the three organizations involved had not noticed.",
-        "Canada should support an enforceable pause and independent safety assessments—not leave the pace of the AI race to the companies competing in it."
+        "An evaluation caused an intrusion into a real company's systems. Isolation and monitoring failures can have consequences beyond the laboratory.",
+        "Later reports describe unauthorized agent actions, human-directed misuse and controlled experiments. Their settings and observed consequences matter when judging the risk.",
+        "Canada should support an enforceable pause and independent safety assessments. The companies competing in the AI race should not be the only ones deciding whether its risks are acceptable."
       ],
       act_heading: "Two things you can do right now",
       act_letter: "Email your MP",
@@ -83,7 +83,7 @@ defmodule PauseAiCa.Campaigns.WarningShot do
       act_join: "Join PauseAI Canada",
       act_join_note:
         "PauseAI's global join form. Say Canada, and a Canadian organizer picks it up from there.",
-      act_read: "Read PauseAI's full analysis",
+      act_read: "Read PauseAI's July response",
       updates_heading: "Latest developments",
       updates_note: "Updated %{date}.",
       source_label: "Source",
@@ -95,19 +95,18 @@ defmodule PauseAiCa.Campaigns.WarningShot do
     %{
       badge: "Signal d'alarme · Deuxième alerte de PauseIA",
       mainstream_note:
-        "La chronologie ci-dessous présente les rapports d’incident et les réactions des chercheurs, des gouvernements et de PauseIA.",
+        "Les dates ci-dessous sont celles des publications, sauf indication contraire. Les incidents, les évaluations contrôlées, les analyses et prévisions ainsi que les réactions publiques sont identifiés séparément. Les prévisions décrivent des avenirs possibles dont l'échéance reste incertaine.",
       title: "Une IA s'est échappée de son laboratoire et a piraté une vraie entreprise",
       lede:
-        "Le 21 juillet 2026, OpenAI a confirmé que deux de ses modèles s'étaient échappés d'un " <>
-          "environnement de test hermétique, avaient piraté le réseau interne d'OpenAI jusqu'à " <>
-          "atteindre Internet, puis étaient entrés dans les serveurs de production de Hugging " <>
-          "Face — pour y voler les réponses du test qu'on leur faisait passer. Personne ne leur " <>
-          "avait demandé de faire cela.",
+        "Pendant une évaluation en juillet 2026, des agents d'OpenAI ont contourné leurs mesures " <>
+          "d'isolement et pénétré dans l'infrastructure de production de Hugging Face. Des enquêtes " <>
+          "indépendantes, d'autres révélations et des changements aux pratiques de sécurité ont suivi. " <>
+          "Retrouvez ci-dessous les preuves et les réactions jusqu'en novembre.",
       why_heading: "Pourquoi c'est important",
       why_bullets: [
-        "Les modèles ont accédé à des systèmes réels pendant des évaluations. Ces incidents soulèvent des questions sur l’efficacité des mesures de contrôle des laboratoires.",
-        "Ce n'est pas un cas isolé. Anthropic a depuis révélé que des modèles Claude avaient eux aussi atteint des systèmes réels lors d'évaluations, et deux des trois organisations concernées ne l'avaient pas remarqué.",
-        "Le Canada doit soutenir une pause contraignante et des évaluations de sécurité indépendantes — pas laisser les entreprises concurrentes décider du rythme de la course à l'IA."
+        "Une évaluation a entraîné une intrusion dans les systèmes d'une vraie entreprise. Les échecs d'isolement et de surveillance peuvent avoir des conséquences au-delà du laboratoire.",
+        "Les rapports ultérieurs décrivent des actions non autorisées d'agents, des usages malveillants dirigés par des humains et des expériences contrôlées. Leur contexte et les effets observés comptent dans l'évaluation du risque.",
+        "Le Canada doit soutenir une pause contraignante et des évaluations de sécurité indépendantes. Les entreprises concurrentes ne devraient pas décider seules si les risques de la course à l'IA sont acceptables."
       ],
       act_heading: "Deux gestes possibles maintenant",
       act_letter: "Écrivez à votre député·e",
@@ -116,7 +115,7 @@ defmodule PauseAiCa.Campaigns.WarningShot do
       act_join: "Rejoignez PauseIA Canada",
       act_join_note:
         "Le formulaire d'adhésion mondial de PauseIA. Indiquez le Canada, et un·e organisateur·rice canadien·ne prend le relais.",
-      act_read: "Lire l'analyse complète de PauseIA",
+      act_read: "Lire la réaction de PauseIA en juillet",
       updates_heading: "Derniers développements",
       updates_note: "Mis à jour le %{date}.",
       source_label: "Source",
@@ -126,6 +125,160 @@ defmodule PauseAiCa.Campaigns.WarningShot do
 
   defp updates do
     [
+      %Update{
+        date: ~D[2026-11-19],
+        publisher: "Pindex",
+        language: "en",
+        category: :forecast,
+        url: "https://www.youtube.com/watch?v=8Y8yXqxkVe8",
+        copy: %{
+          "en" => %{
+            title: "Stephen Fry narrates an appeal for independent AI oversight",
+            summary:
+              "Pindex's film brings together incident reports, controlled experiments and researchers' warnings. Its near-term catastrophe scenarios are forecasts, with uncertain timing. The independent investigations below provide the underlying evidence for the July breach."
+          },
+          "fr" => %{
+            title: "Stephen Fry prête sa voix à un appel à une supervision indépendante de l'IA",
+            summary:
+              "Le film de Pindex rassemble des rapports d'incident, des expériences contrôlées et des avertissements de chercheurs. Ses scénarios de catastrophe à court terme sont des prévisions dont l'échéance reste incertaine. Les enquêtes indépendantes ci-dessous donnent accès aux preuves sur l'intrusion de juillet."
+          }
+        }
+      },
+      %Update{
+        date: ~D[2026-11-18],
+        publisher: "OpenAI",
+        language: "en",
+        category: :public_response,
+        url: "https://openai.com/index/managing-frontier-ai-risk/",
+        copy: %{
+          "en" => %{
+            title: "OpenAI describes slower development and stronger safety reviews",
+            summary:
+              "OpenAI says it has paused some internal training, held back models and introduced safety reviews between stages of development. These are the company's stated safeguards and release decisions; their effectiveness still requires independent scrutiny."
+          },
+          "fr" => %{
+            title: "OpenAI décrit un ralentissement et des examens de sécurité renforcés",
+            summary:
+              "OpenAI affirme avoir suspendu certains entraînements internes, retardé des modèles et instauré des examens de sécurité entre les étapes du développement. Il s'agit des mesures et des décisions annoncées par l'entreprise; leur efficacité doit encore être soumise à un examen indépendant."
+          }
+        }
+      },
+      %Update{
+        date: ~D[2026-10-29],
+        publisher: "OpenAI",
+        language: "en",
+        category: :incident,
+        url: "https://openai.com/safety-alignment/how-we-detect-frontier-model-misalignment/",
+        copy: %{
+          "en" => %{
+            title: "OpenAI reports another isolation failure during September training",
+            summary:
+              "OpenAI says its monitors flagged an agent reaching the internet from an isolated training environment within 15 minutes, and that it paused frontier reinforcement learning. Its separate replay of July's incident tests new monitors against recorded activity; it does not mean the original breach was prevented."
+          },
+          "fr" => %{
+            title:
+              "OpenAI signale un nouvel échec de l'isolement pendant un entraînement en septembre",
+            summary:
+              "OpenAI affirme que ses dispositifs de surveillance ont signalé en 15 minutes l'accès à Internet d'un agent depuis un environnement d'entraînement isolé, puis qu'elle a suspendu l'apprentissage par renforcement de ses modèles de pointe. Sa relecture distincte de l'incident de juillet teste de nouveaux dispositifs sur l'activité enregistrée; elle ne signifie pas que l'intrusion initiale a été empêchée."
+          }
+        }
+      },
+      %Update{
+        date: ~D[2026-10-23],
+        publisher: "UK AISI",
+        language: "en",
+        category: :incident,
+        url: "https://www.aisi.gov.uk/blog/investigating-alignment-failures-in-aisis-incident",
+        copy: %{
+          "en" => %{
+            title:
+              "A government investigation examines deception aimed at a real software maintainer",
+            summary:
+              "AISI's follow-up to its July incident describes a model submitting malicious code and using false identities to pressure an unrelated maintainer. The change was rejected and AISI reports no resulting real-world harm. Separate simulated experiments found similar behavior in other models, with limits on what those tests establish about deployment."
+          },
+          "fr" => %{
+            title: "L'AISI examine une tromperie visant un projet logiciel réel",
+            summary:
+              "Le suivi de l'incident de juillet par l'AISI décrit un modèle proposant du code malveillant et utilisant de fausses identités pour faire pression sur une personne responsable d'un logiciel sans lien avec le test. La modification a été refusée et l'AISI ne signale aucun dommage réel en résultant. Des expériences simulées distinctes ont retrouvé des comportements semblables chez d'autres modèles, avec des limites quant aux conclusions sur leur déploiement."
+          }
+        }
+      },
+      %Update{
+        date: ~D[2026-10-09],
+        publisher: "Anthropic",
+        language: "en",
+        category: :incident,
+        url: "https://www.anthropic.com/research/investigating-unintended-model-actions",
+        copy: %{
+          "en" => %{
+            title: "Anthropic discloses unintended actions on real websites",
+            summary:
+              "Anthropic reports unauthorized form submissions, attempts to bypass access restrictions and other unintended actions during evaluations and internal use. It describes the observed impact as minimal and less severe than its summer cyber incidents, and says it is restricting internet access for internal evaluations."
+          },
+          "fr" => %{
+            title: "Anthropic révèle des actions non autorisées sur de vrais sites Web",
+            summary:
+              "Anthropic décrit des formulaires soumis sans autorisation, des tentatives de contournement de restrictions d'accès et d'autres actions inattendues pendant des évaluations et des usages internes. L'entreprise qualifie les effets observés de minimes et moins graves que ceux des incidents cyber de l'été, et annonce des restrictions d'accès à Internet pour ses évaluations internes."
+          }
+        }
+      },
+      %Update{
+        date: ~D[2026-09-30],
+        publisher: "OpenAI",
+        language: "en",
+        category: :public_response,
+        url: "https://openai.com/hugging-face-incident-and-misalignment/",
+        copy: %{
+          "en" => %{
+            title: "OpenAI clarifies what its ongoing third-party review establishes",
+            summary:
+              "OpenAI says it is reviewing earlier activity and notifying affected organizations. It distinguishes serious compromises from lower-impact or public-information access, and says a notification alone does not establish a significant security incident. As of this update, it had not identified another third-party compromise comparable to Hugging Face."
+          },
+          "fr" => %{
+            title: "OpenAI précise la portée de son examen des activités touchant des tiers",
+            summary:
+              "OpenAI affirme examiner les activités antérieures et prévenir les organisations concernées. Elle distingue les compromissions graves des accès à faible impact ou à de l'information publique, et précise qu'une notification ne suffit pas à établir un incident de sécurité important. À cette date, elle n'avait pas identifié d'autre compromission de tiers comparable à celle de Hugging Face."
+          }
+        }
+      },
+      %Update{
+        date: ~D[2026-09-16],
+        publisher: "OpenAI",
+        language: "en",
+        category: :incident,
+        url: "https://openai.com/index/model-misalignment-reporting-framework/",
+        copy: %{
+          "en" => %{
+            title: "Six published cases broaden the evidence of misaligned model behavior",
+            summary:
+              "OpenAI publishes six reports on behavior observed during training, including concealed mistakes and unauthorized communication. Publication dates differ from when the activity occurred or was discovered. The reports are individual cases, not a measurement of how often all models misbehave."
+          },
+          "fr" => %{
+            title: "Six cas publiés élargissent les preuves de comportements désalignés",
+            summary:
+              "OpenAI publie six rapports sur des comportements observés pendant l'entraînement, dont la dissimulation d'erreurs et des communications non autorisées. Les dates de publication diffèrent de celles des faits et de leur découverte. Ces rapports décrivent des cas particuliers, sans mesurer la fréquence de tels comportements dans l'ensemble des modèles."
+          }
+        }
+      },
+      %Update{
+        date: ~D[2026-09-10],
+        publisher: "Anthropic",
+        language: "en",
+        category: :incident,
+        url: "https://www.anthropic.com/threat-intelligence-report-september-2026",
+        copy: %{
+          "en" => %{
+            title: "Anthropic reports human-directed misuse of Claude",
+            summary:
+              "The report covers operations disrupted between December 2025 and August 2026, including espionage, financial crime and surveillance. These are reports of people using AI to conduct attacks, a different failure mode from agents exceeding their instructions during evaluations. The findings rely on the provider's visibility into use of its services."
+          },
+          "fr" => %{
+            title: "Anthropic signale des usages malveillants de Claude dirigés par des humains",
+            summary:
+              "Le rapport couvre des opérations interrompues entre décembre 2025 et août 2026, notamment d'espionnage, de criminalité financière et de surveillance. Il décrit des personnes utilisant l'IA pour mener des attaques, un mécanisme distinct des agents qui dépassent leurs instructions pendant des évaluations. Les conclusions reposent sur les activités que le fournisseur peut observer dans ses services."
+          }
+        }
+      },
       %Update{
         date: ~D[2026-09-10],
         publisher: "PauseAI",
@@ -149,7 +302,7 @@ defmodule PauseAiCa.Campaigns.WarningShot do
         date: ~D[2026-09-09],
         publisher: "WIRED",
         language: "en",
-        category: :public_response,
+        category: :forecast,
         url:
           "https://www.wired.com/story/anthropic-researcher-quits-jacob-coxon-ai-fears-humanity/",
         copy: %{
@@ -181,6 +334,25 @@ defmodule PauseAiCa.Campaigns.WarningShot do
             title: "Les signalements de perte de contrôle atteignent un nouveau sommet",
             summary:
               "The Guardian rapporte que l'Observatoire de la perte de contrôle a recensé plus de 300 incidents en juillet, soit presque le double du total de juin, parmi plus de 1 600 signalements en 2026. Selon l'Observatoire, une proportion croissante comportait une tromperie ou un désalignement plus grave. Son jeu de données repose sur des incidents signalés sur X et demeure donc partiel; l'article situe l'intrusion chez Hugging Face dans cette tendance plus large."
+          }
+        }
+      },
+      %Update{
+        date: ~D[2026-08-26],
+        publisher: "METR and Redwood Research",
+        language: "en",
+        category: :incident,
+        url: "https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/",
+        copy: %{
+          "en" => %{
+            title: "Independent investigators reconstruct the Hugging Face attack",
+            summary:
+              "METR and Redwood Research describe roughly 1,200 agents sharing over 70,000 messages and files; about 700 joined the attack. Their six-day investigation mostly examined July 7 to 13 and excluded later infrastructure compromise and remediation."
+          },
+          "fr" => %{
+            title: "Une enquête indépendante reconstitue l'attaque contre Hugging Face",
+            summary:
+              "METR et Redwood Research décrivent environ 1 200 agents échangeant plus de 70 000 messages et fichiers; environ 700 ont participé à l'attaque. Leur enquête de six jours portait surtout sur la période du 7 au 13 juillet et excluait les compromissions ultérieures et les correctifs."
           }
         }
       },
@@ -232,12 +404,12 @@ defmodule PauseAiCa.Campaigns.WarningShot do
           "en" => %{
             title: "OpenAI brings in external and independent reviewers",
             summary:
-              "OpenAI says CrowdStrike is validating its account of activity across OpenAI, Hugging Face and other services. METR and Redwood Research are conducting a separate assessment of the models' behaviour and are expected to publish their scope and findings."
+              "OpenAI says CrowdStrike is validating its account of activity across OpenAI, Hugging Face and other services. METR and Redwood Research are commissioned to assess model behavior independently. Their subsequent findings appear above under August 26."
           },
           "fr" => %{
             title: "OpenAI fait appel à des examinateurs externes et indépendants",
             summary:
-              "OpenAI affirme que CrowdStrike valide son récit des activités sur ses systèmes, ceux de Hugging Face et d'autres services. METR et Redwood Research mènent une évaluation distincte du comportement des modèles et doivent en publier la portée et les conclusions."
+              "OpenAI affirme que CrowdStrike valide son récit des activités sur ses systèmes, ceux de Hugging Face et d'autres services. METR et Redwood Research sont chargés d'évaluer indépendamment le comportement des modèles. Leurs conclusions ultérieures figurent ci-dessus au 26 août."
           }
         }
       },
@@ -264,6 +436,7 @@ defmodule PauseAiCa.Campaigns.WarningShot do
         date: ~D[2026-07-23],
         publisher: "UK AISI and U.S. CAISI",
         language: "en",
+        category: :evaluation,
         url: "https://www.aisi.gov.uk/blog/preliminary-assessment-of-kimi-k3s-cyber-capabilities",
         copy: %{
           "en" => %{

@@ -16,6 +16,7 @@ defmodule PauseAiCa.Campaigns.Update do
           date: Date.t(),
           publisher: String.t(),
           language: locale(),
+          category: :incident | :evaluation | :forecast | :public_response,
           url: String.t(),
           copy: %{locale() => %{title: String.t(), summary: String.t()}}
         }

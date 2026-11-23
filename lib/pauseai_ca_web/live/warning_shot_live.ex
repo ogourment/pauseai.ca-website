@@ -679,6 +679,13 @@ defmodule PauseAiCaWeb.WarningShotLive do
             {@copy.title}
           </h1>
           <p class="mt-7 max-w-3xl text-xl leading-9 text-stone-700">{@copy.lede}</p>
+          <a
+            id="jump-to-developments"
+            href="#developments"
+            class="mt-5 inline-flex font-semibold text-stone-900 underline decoration-brand decoration-2 underline-offset-4"
+          >
+            {@copy.updates_heading}
+          </a>
 
           <div class="mt-10 border-l-4 border-brand bg-brand-wash p-7">
             <h2 class="font-heading text-2xl uppercase tracking-wide text-stone-950">
@@ -1152,7 +1159,11 @@ defmodule PauseAiCaWeb.WarningShotLive do
           </div>
         </section>
 
-        <section :if={!@contact_page} id="developments" class="border-t border-stone-200 bg-white">
+        <section
+          :if={!@contact_page}
+          id="developments"
+          class="scroll-mt-[calc(var(--header-height)+6rem)] border-t border-stone-200 bg-white"
+        >
           <div class="mx-auto max-w-5xl px-5 py-16">
             <h2 class="font-heading text-3xl uppercase tracking-wide text-stone-950">
               {@copy.updates_heading}
@@ -1181,9 +1192,7 @@ defmodule PauseAiCaWeb.WarningShotLive do
                   {Date.to_iso8601(update.date)}
                 </time>
                 <span class="ml-2 rounded-full bg-stone-100 px-2 py-1 text-xs font-semibold text-stone-700">
-                  {if update.category == :public_response,
-                    do: gettext("Public and political response"),
-                    else: gettext("Incident evidence")}
+                  {update_category_label(update.category)}
                 </span>
                 <h3 class="mt-1 font-heading text-2xl leading-snug text-stone-950">
                   <a
@@ -1212,6 +1221,11 @@ defmodule PauseAiCaWeb.WarningShotLive do
 
   # PauseAI's global onboarding form, prefilled with Canada and the reader's
   # language so a Canadian organizer picks the signup up.
+  defp update_category_label(:public_response), do: gettext("Public and political response")
+  defp update_category_label(:evaluation), do: gettext("Controlled evaluation")
+  defp update_category_label(:forecast), do: gettext("Commentary and forecasts")
+  defp update_category_label(:incident), do: gettext("Incident evidence")
+
   defp join_url(campaign, "fr"), do: campaign.links.join_fr
   defp join_url(campaign, _locale), do: campaign.links.join_en
 

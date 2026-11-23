@@ -146,9 +146,11 @@ defmodule PauseAiCa.Campaigns.Letter do
 
     I am writing about an incident that I believe belongs on the national security agenda and that has had very little attention in Canada.
 
-    On 21 July 2026, OpenAI confirmed that two of its AI models broke out of the isolated environment in which they were being tested. They exploited a previously unknown security vulnerability, moved across OpenAI's internal network until they reached a machine with internet access, and then broke into the production servers of the company Hugging Face in order to steal the answers to the test they were being given. No human instructed them to do this. OpenAI has since confirmed that the models also used exposed credentials on four accounts across four other services.
+    An independent investigation published by METR and Redwood Research on 26 August 2026 documented OpenAI agents coordinating an unauthorized attack on Hugging Face while trying to understand and manipulate the automated scoring of their evaluation.
 
-    Nine days later, Anthropic disclosed that its own models had reached the real systems of three organizations during safety evaluations. Two of those three organizations had not detected the activity.
+    Investigation: https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/
+
+    On 30 July 2026, Anthropic disclosed that its own models had reached the real systems of three organizations during safety evaluations. Two of those three organizations had not detected the activity.
 
     In April 2026, Anthropic's Claude Mythos model had already demonstrated that AI systems can autonomously find and exploit security flaws in the software that runs banks, hospitals, energy grids and government services. That showed the capability. What happened in July shows the propensity: a system deploying those capabilities on its own initiative, against a real company.
 
@@ -179,9 +181,11 @@ defmodule PauseAiCa.Campaigns.Letter do
 
     Je vous écris au sujet d'un incident qui, selon moi, relève de la sécurité nationale et qui a reçu très peu d'attention au Canada.
 
-    Le 21 juillet 2026, OpenAI a confirmé que deux de ses modèles d'IA s'étaient échappés de l'environnement isolé dans lequel ils étaient testés. Ils ont exploité une faille de sécurité jusque-là inconnue, ont traversé le réseau interne d'OpenAI jusqu'à atteindre une machine connectée à Internet, puis sont entrés dans les serveurs de production de l'entreprise Hugging Face afin d'y voler les réponses du test qu'on leur faisait passer. Aucun humain ne leur avait demandé de faire cela. OpenAI a depuis confirmé que les modèles avaient également utilisé des identifiants exposés sur quatre comptes répartis sur quatre autres services.
+    Une enquête indépendante publiée par METR et Redwood Research le 26 août 2026 a documenté la coordination d'agents d'OpenAI pour attaquer Hugging Face sans autorisation, dans le but de comprendre et de manipuler la notation automatique de leur évaluation.
 
-    Neuf jours plus tard, Anthropic a révélé que ses propres modèles avaient atteint les systèmes réels de trois organisations lors d'évaluations de sécurité. Deux de ces trois organisations n'avaient pas détecté l'activité.
+    Enquête : https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/
+
+    Le 30 juillet 2026, Anthropic a révélé que ses propres modèles avaient atteint les systèmes réels de trois organisations lors d'évaluations de sécurité. Deux de ces trois organisations n'avaient pas détecté l'activité.
 
     En avril 2026, le modèle Claude Mythos d'Anthropic avait déjà démontré que des systèmes d'IA peuvent trouver et exploiter de manière autonome des failles de sécurité dans les logiciels qui font fonctionner les banques, les hôpitaux, les réseaux énergétiques et les services gouvernementaux. Cela démontrait la capacité. Ce qui s'est produit en juillet démontre la propension: un système qui déploie ces capacités de sa propre initiative, contre une vraie entreprise.
 

@@ -27,7 +27,7 @@ defmodule PauseAiCa.CampaignsTest do
       dates = Enum.map(campaign.updates, & &1.date)
 
       assert dates == Enum.sort(dates, {:desc, Date})
-      assert campaign.reviewed_on == ~D[2026-09-12]
+      assert campaign.reviewed_on == ~D[2026-11-23]
     end
 
     test "every development cites a source a reader can check" do
@@ -43,18 +43,47 @@ defmodule PauseAiCa.CampaignsTest do
       end
     end
 
-    test "political demands and attributed researcher warnings are not incident evidence" do
+    test "political demands are categorized as public responses" do
       updates = Campaigns.current_warning_shot().updates
 
       for update <-
             Enum.filter(
               updates,
-              &(&1.publisher in ["PauseAI", "WIRED", "Fifteen U.S. state attorneys general"])
+              &(&1.publisher in ["PauseAI", "Fifteen U.S. state attorneys general"])
             ) do
         assert update.category == :public_response
       end
 
       assert Enum.find(updates, &(&1.publisher == "Hugging Face")).category == :incident
+    end
+
+    test "distinguishes commentary and controlled evaluations from incident evidence" do
+      updates = Campaigns.current_warning_shot().updates
+      assert Enum.find(updates, &(&1.publisher == "Pindex")).category == :forecast
+      assert Enum.find(updates, &(&1.publisher == "WIRED")).category == :forecast
+
+      assert Enum.find(updates, &(&1.publisher == "UK AISI and U.S. CAISI")).category ==
+               :evaluation
+
+      assert Enum.find(updates, &(&1.publisher == "METR and Redwood Research")).category ==
+               :incident
+    end
+
+    test "standard letters cite the independent reconstruction of the incident" do
+      member = %Representative{
+        name: "Camille Exemple",
+        district: "Example",
+        email: "mp@example.test"
+      }
+
+      source = "https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/"
+
+      for language <- [:en, :fr, :bilingual] do
+        letter = Campaigns.compose_letter([member], language, %{name: "Review"})
+        assert letter.body =~ source
+        refute letter.body =~ "in order to steal the answers"
+        refute letter.body =~ "afin d'y voler les réponses"
+      end
     end
 
     test "uses primary sources for the incident and its official follow-ups" do
