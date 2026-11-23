@@ -22,7 +22,7 @@
 .toronto-story a {color:inherit; text-decoration:underline; text-underline-offset:.18em;}
 .toronto-story ol,.toronto-story ul {display:grid; grid-template-columns:repeat(auto-fit,minmax(min(13rem,100%),1fr)); gap:.55rem; margin-block:1rem;}
 .toronto-story li>a {display:block; height:100%; padding:.8rem 1rem; min-height:44px; background:#fff; border:1px solid #c9bca8; border-radius:.4rem; font-weight:650;}
-.toronto-story li img {width:100%; aspect-ratio: 1.3; object-fit:contain; margin-bottom:.5rem;}
+.toronto-story li img {display:block; width:100%; aspect-ratio: 1.3; object-fit:contain; margin-bottom:.5rem;}
 .toronto-story img {max-width:100%; height:auto;}
 .toronto-story:has(>p:nth-of-type(6) img):not(:has(h3)) {display:grid; grid-template-columns:repeat(auto-fit,minmax(min(13rem,100%),1fr)); gap:.6rem;}
 .toronto-story:has(>p:nth-of-type(6) img):not(:has(h3)) > :not(p:has(>img:only-child)) {grid-column:1/-1;}

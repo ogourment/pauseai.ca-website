@@ -180,7 +180,7 @@ defmodule PauseAiCaWeb.SEO do
         chapter,
         editions,
         language,
-        chapter_name(chapter, language),
+        chapter_name(chapter, locale),
         chapter_summary(chapter, language)
       )
     end

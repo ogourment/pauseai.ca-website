@@ -82,9 +82,13 @@ if System.get_env("ATDD") == "true" do
       :ok = Volunteers.revoke_manager(admin, grant.id)
       editor |> click_button("Publish saved draft") |> assert_path("/manage/groups")
 
+      assert_initial_title("/groups/toronto?locale=en", "Toronto")
+
       c.conn
       |> visit("/toronto")
       |> assert_path("/groups/toronto")
+      |> assert_has("[data-phx-main].phx-connected")
+      |> PhoenixTest.Playwright.evaluate("document.title", &assert(&1 == "Toronto"))
       |> assert_has("h1", text: "Toronto")
       |> assert_has("h2", text: "Toronto meetups")
       |> assert_has("strong", text: "local volunteers")
@@ -130,7 +134,7 @@ if System.get_env("ATDD") == "true" do
       {:ok, profile} =
         Incubators.configure(admin, group.id, %{
           "name_en" => "Ottawa",
-          "name_fr" => "Ottawa",
+          "name_fr" => "Groupe d’Ottawa",
           "summary_fr" => "Le groupe local à Ottawa",
           "area_served" => "local",
           "fsas" => "H2X",
@@ -162,11 +166,15 @@ if System.get_env("ATDD") == "true" do
           """
         )
 
+      assert_initial_title("/groups/ottawa?locale=fr", "Groupe d’Ottawa")
+
       c.conn
       |> visit("/groupes")
       |> assert_path("/fr/groupes")
       |> click_link("Visiter la page du groupe")
-      |> assert_has("h1", text: "Ottawa")
+      |> assert_has("[data-phx-main].phx-connected")
+      |> PhoenixTest.Playwright.evaluate("document.title", &assert(&1 == "Groupe d’Ottawa"))
+      |> assert_has("h1", text: "Groupe d’Ottawa")
       |> assert_has("[lang=en] p", text: "Ottawa welcome")
       |> PhoenixTest.Playwright.click("#consent-decline")
       |> refute_has("#ga-script")
@@ -183,6 +191,96 @@ if System.get_env("ATDD") == "true" do
           assert String.ends_with?(url, "/groups/ottawa")
         end
       )
+    end
+
+    @tag browser_context_opts: [viewport: %{width: 390, height: 844}]
+    test "Toronto reserves portrait space and opens its legacy letter bookmark", c do
+      Ecto.Adapters.SQL.Sandbox.mode(Repo, {:shared, self()})
+
+      admin =
+        user_fixture()
+        |> Ecto.Changeset.change(superadmin: true)
+        |> Repo.update!()
+        |> Accounts.Scope.for_user()
+
+      {:ok, group} = Volunteers.create_group(admin, %{name: "Toronto"})
+
+      {:ok, profile} =
+        Incubators.configure(admin, group.id, %{
+          "name_en" => "Toronto",
+          "name_fr" => "Toronto",
+          "area_served" => "local",
+          "fsas" => "M5H",
+          "published" => true
+        })
+
+      source = """
+      # Welcome to Toronto
+
+      ## Team
+
+      ![Muhammad](/images/toronto-site/muhammad.jpg)
+      ![Daniel](/images/toronto-site/daniel.jpg)
+      ![Ilyass](/images/toronto-site/ilyass.jpg)
+
+      ## Shop
+
+      - [![Toronto cap](/images/toronto-site/shop/pauseai-cap.jpg) Toronto cap](https://example.org)
+      """
+
+      {:ok, draft} =
+        Incubators.save_chapter(admin, group.id, profile.revision, %{
+          "slug" => "toronto",
+          "en" => source,
+          "fr" => ""
+        })
+
+      {:ok, _} = Incubators.publish_chapter(admin, group.id, draft.revision)
+
+      {:ok, page} =
+        Incubators.save_chapter_page(admin, group.id, nil, 0, %{
+          "slug" => "write-to-your-mp",
+          "title" => "Write to your MP",
+          "body" => "Write to your representative."
+        })
+
+      {:ok, _} = Incubators.publish_chapter_page(admin, group.id, page.slug, page.revision)
+
+      c.conn
+      |> visit("/toronto")
+      |> assert_has(~s(img[alt="Muhammad"][width="560"][height="560"]))
+      |> assert_has(~s(img[alt="Daniel"][width="480"][height="480"]))
+      |> assert_has(~s(img[alt="Ilyass"][width="480"][height="480"]))
+      |> PhoenixTest.Playwright.evaluate(
+        ~s|getComputedStyle(document.querySelector('img[alt="Toronto cap"]')).display|,
+        &assert(&1 == "block")
+      )
+      |> visit("/groups/toronto/pages/write-to-your-mp?riding=toronto-centre#letter")
+      |> assert_has("[data-phx-main].phx-connected")
+      |> assert_has("#letter:not([hidden]) label[for='toronto-letter']", text: "Your letter")
+      |> PhoenixTest.Playwright.evaluate(
+        """
+        new Promise(resolve => requestAnimationFrame(() => {
+          const composer = document.querySelector('#letter');
+          const letter = composer.querySelector('#toronto-letter');
+          const stickyBottom = Math.max(...['site-header', 'announcement-banners']
+            .map(id => document.getElementById(id)?.getBoundingClientRect().bottom || 0));
+          const top = composer.getBoundingClientRect().top;
+          resolve(location.hash === '#letter' && letter.value.includes('Toronto Centre')
+            && top >= stickyBottom && top < innerHeight);
+        }))
+        """,
+        &assert(&1)
+      )
+      |> PhoenixTest.Playwright.screenshot("chapter-bookmarked-letter-phone.png")
+    end
+
+    defp assert_initial_title(path, title) do
+      base = Application.fetch_env!(:phoenix_test, :base_url)
+      %{status: 200, body: html} = Req.get!(base <> path)
+
+      assert html |> LazyHTML.from_document() |> LazyHTML.query("title") |> LazyHTML.text() ==
+               title
     end
 
     defp login(browser, user) do

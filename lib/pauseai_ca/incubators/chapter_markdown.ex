@@ -5,6 +5,12 @@ defmodule PauseAiCa.Incubators.ChapterMarkdown do
   @toronto "/images/protest-2026-11-14/toronto-crossing.jpg"
   @montreal "/images/protest-2026-11-14/clara-lacasse-23.jpg"
 
+  @toronto_portrait_sizes %{
+    "/images/toronto-site/muhammad.jpg" => 560,
+    "/images/toronto-site/daniel.jpg" => 480,
+    "/images/toronto-site/ilyass.jpg" => 480
+  }
+
   def images do
     [
       {@toronto,
@@ -89,7 +95,7 @@ defmodule PauseAiCa.Incubators.ChapterMarkdown do
   def render_page(source, chapter_slug) do
     source
     |> parse(chapter_slug)
-    |> MDEx.to_html!(render_options(chapter_slug))
+    |> render_html(chapter_slug)
   end
 
   defp parse(source, chapter_slug), do: source |> MDEx.parse_document!() |> prepare(chapter_slug)
@@ -134,6 +140,22 @@ defmodule PauseAiCa.Incubators.ChapterMarkdown do
 
   defp html(doc, nodes, chapter_slug) do
     %{doc | nodes: nodes}
-    |> MDEx.to_html!(render_options(chapter_slug))
+    |> render_html(chapter_slug)
+  end
+
+  defp render_html(doc, chapter_slug) do
+    html = MDEx.to_html!(doc, render_options(chapter_slug))
+
+    if chapter_slug == "toronto" do
+      Enum.reduce(@toronto_portrait_sizes, html, fn {path, size}, html ->
+        String.replace(
+          html,
+          ~s(<img src="#{path}"),
+          ~s(<img src="#{path}" width="#{size}" height="#{size}")
+        )
+      end)
+    else
+      html
+    end
   end
 end

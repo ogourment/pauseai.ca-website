@@ -28,7 +28,13 @@ defmodule PauseAiCaWeb.ChapterLive do
 
       socket.assigns.live_action == :show ->
         chapter = Incubators.published_chapter!(params["slug"])
-        {:ok, assign(socket, chapter: chapter, path: "/groups/#{chapter.slug}")}
+
+        {:ok,
+         assign(socket,
+           chapter: chapter,
+           path: "/groups/#{chapter.slug}",
+           page_title: chapter_name(chapter, locale)
+         )}
 
       true ->
         case Incubators.configuration(socket.assigns.current_scope, params["id"]) do
@@ -262,7 +268,7 @@ defmodule PauseAiCaWeb.ChapterLive do
     assigns =
       assign(assigns,
         content_lang: lang,
-        name: if(assigns.locale == "fr", do: assigns.group.name_fr, else: assigns.group.name_en),
+        name: chapter_name(assigns.group, assigns.locale),
         sections: sections,
         welcome: if(is_nil(sections), do: ChapterMarkdown.render(source, slug))
       )
@@ -300,6 +306,9 @@ defmodule PauseAiCaWeb.ChapterLive do
     </article>
     """
   end
+
+  defp chapter_name(chapter, "fr"), do: chapter.name_fr
+  defp chapter_name(chapter, _locale), do: chapter.name_en
 
   defp welcome_text(assigns) do
     ~H"""

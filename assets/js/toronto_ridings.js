@@ -8,6 +8,7 @@ class TorontoRidings extends HTMLElement {
     const links = Array.from(this.querySelectorAll('a[data-slug]'))
     const search = find('input[type=search]')
     const letter = find('textarea')
+    const composer = find('[data-compose]')
     const feedback = find('[data-feedback]')
     const drafts = new Map()
     let selected
@@ -33,7 +34,7 @@ class TorontoRidings extends HTMLElement {
       const contact = find('[data-contact]')
       contact.href = link.href
       contact.hidden = false
-      find('[data-compose]').hidden = !mp
+      composer.hidden = !mp
       letter.value = mp ? drafts.get(slug) ?? this.dataset.template.replaceAll('{mp}', mp).replaceAll('{riding}', riding) : ''
       feedback.textContent = ''
       if (updateURL) {
@@ -62,7 +63,12 @@ class TorontoRidings extends HTMLElement {
     filter()
     const slug = new URLSearchParams(location.search).get('riding')
     const arrival = links.find(link => link.dataset.slug === slug)
-    if (arrival) select(arrival, false)
+    if (arrival) {
+      select(arrival, false)
+      if (location.hash === '#letter' && !composer.hidden) {
+        requestAnimationFrame(() => composer.scrollIntoView({ behavior: 'instant' }))
+      }
+    }
   }
   disconnectedCallback() {
     this.listeners?.abort()

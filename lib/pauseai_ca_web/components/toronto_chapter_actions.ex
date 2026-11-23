@@ -35,7 +35,7 @@ defmodule PauseAiCaWeb.TorontoChapterActions do
         <section aria-label="Your MP" data-result tabindex="-1">
           <h2 data-name class="text-xl font-bold">Your MP</h2>
           <p data-instruction>Choose a riding to prepare a letter.</p>
-          <div data-compose hidden>
+          <div id="letter" data-compose hidden>
             <label for="toronto-letter" class="block font-semibold">Your letter</label>
             <textarea id="toronto-letter" rows="10" class="textarea my-2 w-full"></textarea>
             <button data-copy type="button" class="btn">Copy letter</button>
