@@ -220,7 +220,9 @@ defmodule PauseAiCaWeb.DonateLive do
           input_error={@gift_error}
           observation={@funding_observation}
           campaign_active={@campaign_mode}
-        />
+        >
+          <:before_heading><.chapter_donation_bookmarks /></:before_heading>
+        </PauseAiCaWeb.DonationPageContent.content>
       </Layouts.app>
     <% else %>
       <%= if @campaign_mode do %>
@@ -229,6 +231,18 @@ defmodule PauseAiCaWeb.DonateLive do
         <.legacy_pledge_page {assigns} />
       <% end %>
     <% end %>
+    """
+  end
+
+  defp chapter_donation_bookmarks(assigns) do
+    ~H"""
+    <span
+      :for={anchor <- ~w(monthly once one-off donate)}
+      id={anchor}
+      class="chapter-fragment-alias"
+      data-chapter-donation-bookmark
+      aria-hidden="true"
+    ></span>
     """
   end
 
@@ -258,13 +272,7 @@ defmodule PauseAiCaWeb.DonateLive do
       translated_path={if @locale == "fr", do: ~p"/en/donate", else: ~p"/fr/faire-un-don"}
     >
       <section id="donate-page" class="mx-auto max-w-3xl px-5 py-12">
-        <span
-          :for={anchor <- ~w(monthly once one-off donate)}
-          id={anchor}
-          class="chapter-fragment-alias"
-          data-chapter-donation-bookmark
-          aria-hidden="true"
-        ></span>
+        <.chapter_donation_bookmarks />
         <h1 class="font-heading text-4xl sm:text-5xl text-stone-950">
           {gettext("Support PauseAI Canada")}
         </h1>
@@ -371,13 +379,7 @@ defmodule PauseAiCaWeb.DonateLive do
       translated_path={if @locale == "fr", do: ~p"/en/donate", else: ~p"/fr/faire-un-don"}
     >
       <section id="donate-page" class="mx-auto max-w-5xl px-5 py-14">
-        <span
-          :for={anchor <- ~w(monthly once one-off donate)}
-          id={anchor}
-          class="chapter-fragment-alias"
-          data-chapter-donation-bookmark
-          aria-hidden="true"
-        ></span>
+        <.chapter_donation_bookmarks />
         <h1 class="font-heading text-5xl text-stone-950">
           {gettext("Support PauseAI Canada")}
         </h1>

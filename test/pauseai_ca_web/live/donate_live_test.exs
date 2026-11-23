@@ -13,7 +13,9 @@ defmodule PauseAiCaWeb.DonateLiveTest do
     :ok
   end
 
-  test "brochure link is available in both languages and page modes", %{conn: conn} do
+  test "brochure link and legacy bookmarks are available in both fallback modes and languages", %{
+    conn: conn
+  } do
     for enabled <- [false, true],
         {path, label} <- [
           {"/en/donate", "Read our brochure (PDF)"},
@@ -21,6 +23,13 @@ defmodule PauseAiCaWeb.DonateLiveTest do
         ] do
       Application.put_env(:pauseai_ca, :manifund_donations_enabled, enabled)
       {:ok, view, _} = live(conn, path)
+
+      anchors =
+        render(view)
+        |> LazyHTML.from_fragment()
+        |> LazyHTML.query("#donate-page [data-chapter-donation-bookmark]")
+
+      assert LazyHTML.attribute(anchors, "id") == ~w(monthly once one-off donate)
 
       assert has_element?(
                view,

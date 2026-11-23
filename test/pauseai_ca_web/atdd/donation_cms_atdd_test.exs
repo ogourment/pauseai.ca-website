@@ -100,6 +100,7 @@ if System.get_env("ATDD") == "true" do
           browser
           |> click_button(tr(locale, "Preview"))
           |> assert_has("#donation-preview", text: title)
+          |> refute_has("#donation-cms-preview [data-chapter-donation-bookmark]")
           |> PhoenixTest.Playwright.evaluate(
             "(() => {const el=document.querySelector('#donation-cms-preview-gift-attention');if(matchMedia('(prefers-reduced-motion: reduce)').matches)return el.getAnimations().length===0;if(!el.getClientRects().length)return true;const a=el.getAnimations()[0];return !!a && (a.effect.getComputedTiming().iterations===1 && a.effect.getKeyframes().some(k=>(k.transform||'').includes('1.045')))})()",
             &assert(&1)
@@ -159,6 +160,34 @@ if System.get_env("ATDD") == "true" do
             "Published synthetic donation page",
             "Publish makes the saved edition visible in the isolated database"
           )
+
+        browser =
+          Enum.reduce(~w(monthly once one-off donate), browser, fn anchor, browser ->
+            browser
+            |> visit("/groups/toronto/pages/donate?locale=#{locale}##{anchor}")
+            |> assert_path(public_path)
+            |> assert_has("#donate-page.donation-authored h1", text: title)
+            |> PhoenixTest.Playwright.evaluate(
+              """
+              new Promise(resolve => {
+                const deadline = performance.now() + 3000;
+                function checkArrival() {
+                  const anchors = document.querySelectorAll('#donate-page [id="#{anchor}"]');
+                  const stickyBottom = Math.max(...["site-header", "announcement-banners"].map(id =>
+                    document.getElementById(id)?.getBoundingClientRect().bottom ?? 0));
+                  const top = anchors[0]?.getBoundingClientRect().top;
+                  if (anchors.length === 1 && location.hash === "##{anchor}" &&
+                      top >= stickyBottom - 1 && top < innerHeight)
+                    return resolve(true);
+                  if (performance.now() >= deadline) return resolve(false);
+                  requestAnimationFrame(checkArrival);
+                }
+                requestAnimationFrame(checkArrival);
+              })
+              """,
+              &assert(&1)
+            )
+          end)
 
         gift_label = original.payload["editions"][locale]["gift_label"]
 

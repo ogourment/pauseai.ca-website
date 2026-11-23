@@ -16,6 +16,8 @@ defmodule PauseAiCaWeb.DonationPageContent do
   attr :input_error, :string, default: nil
   attr :preview_event, :string, default: nil
 
+  slot :before_heading
+
   def content(assigns) do
     copy = get_in(assigns.page, ["editions", assigns.locale]) || %{}
     display = assigns.page["display"] || %{}
@@ -80,6 +82,7 @@ defmodule PauseAiCaWeb.DonationPageContent do
       id={if @preview_mode, do: "donation-cms-preview", else: "donate-page"}
       class="donation-authored mx-auto max-w-5xl px-5 py-10"
     >
+      {render_slot(@before_heading)}
       <h1 class="font-heading text-4xl text-stone-950 sm:text-5xl">{text(@copy, "title")}</h1>
       <div class={["mt-5 grid items-start gap-5", @countdown && "md:grid-cols-[minmax(0,1fr)_20rem]"]}>
         <aside
