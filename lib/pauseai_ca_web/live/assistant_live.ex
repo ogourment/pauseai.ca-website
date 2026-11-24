@@ -318,11 +318,18 @@ defmodule PauseAiCaWeb.AssistantLive do
     message =
       case reason do
         :input_safety_unavailable ->
-          gettext("The input review could not complete. Your message is retained.")
-
-        reason when reason in [:input_safety_review_required, :input_safety_blocked] ->
           gettext(
-            "The automatic input review held your request before answer generation. Your message is retained."
+            "The Assistant couldn't check your question, so it stopped before answering. Your question is still here. You can try again later."
+          )
+
+        :input_safety_blocked ->
+          gettext(
+            "The safety check blocked this request. The Assistant can help you use the website, but it can't share private records. If you're trying to email people, describe the group you want to reach without pasting addresses. Ask how to contact them through the CRM."
+          )
+
+        :input_safety_review_required ->
+          gettext(
+            "Your question needs a safety review before the Assistant can answer. Your message is saved for review."
           )
 
         :output_safety_unavailable ->

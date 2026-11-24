@@ -70,7 +70,11 @@ defmodule PauseAiCaWeb.AssistantGuidedLiveTest do
 
     render_click(view, "assistant-guided-mode", %{"enabled" => "true"})
     render_submit(view, "assistant-submit", %{"assistant" => %{"text" => "show me"}})
-    assert render_async(view, 5_000) =~ "input review held"
+
+    assert render_async(view, 5_000) =~
+             "Your question needs a safety review before the Assistant can answer."
+
+    assert has_element?(view, "#site-assistant-error a", "Review details")
     refute_receive {:guided_provider_called, _}
     import Ecto.Query
 

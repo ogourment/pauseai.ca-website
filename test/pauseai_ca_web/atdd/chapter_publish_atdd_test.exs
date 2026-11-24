@@ -158,6 +158,12 @@ if System.get_env("ATDD") == "true" do
         PlaywrightEx.BrowserContext.add_init_script(c.conn.context_id,
           timeout: 5000,
           source: """
+          window.analyticsLog = [];
+          const originalInfo = console.info;
+          console.info = (...args) => {
+            if (String(args[0]).startsWith("external_call ")) window.analyticsLog.push(args[0]);
+            originalInfo.apply(console, args);
+          };
           const append = Node.prototype.appendChild;
           Node.prototype.appendChild = function(node) {
             if(node.tagName === 'SCRIPT' && node.src.includes('googletagmanager.com')) node.removeAttribute('src');
@@ -178,12 +184,33 @@ if System.get_env("ATDD") == "true" do
       |> assert_has("[lang=en] p", text: "Ottawa welcome")
       |> PhoenixTest.Playwright.click("#consent-decline")
       |> refute_has("#ga-script")
+      |> PhoenixTest.Playwright.evaluate("window.analyticsLog.length", &assert(&1 == 0))
       |> PhoenixTest.Playwright.screenshot("chapter-phone-fr.png")
       |> PhoenixTest.Playwright.evaluate(
         "localStorage.removeItem('pauseai-ca:analytics-consent')"
       )
       |> visit("/groups/ottawa?locale=fr&private=example")
       |> PhoenixTest.Playwright.click("#consent-accept")
+      |> PhoenixTest.Playwright.evaluate(
+        """
+        document.querySelector("#ga-script").dispatchEvent(new Event("error"));
+        window.analyticsLog
+        """,
+        fn entries ->
+          assert Enum.any?(
+                   entries,
+                   &String.contains?(&1, "operation=load_script outcome=started")
+                 )
+
+          assert Enum.any?(entries, &String.contains?(&1, "operation=load_script outcome=failed"))
+          assert Enum.any?(entries, &String.contains?(&1, "operation=enqueue outcome=queued"))
+
+          refute Enum.any?(
+                   entries,
+                   &String.contains?(&1, ["private=example", "G-ATDDLOCAL", "/groups/ottawa"])
+                 )
+        end
+      )
       |> PhoenixTest.Playwright.evaluate(
         "window.dataLayer.filter(x=>x[1]==='page_view').map(x=>x[2].page_location)",
         fn urls ->

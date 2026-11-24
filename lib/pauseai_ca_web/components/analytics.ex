@@ -77,9 +77,22 @@ defmodule PauseAiCaWeb.Analytics do
               s.id = "ga-script"
               s.async = true
               s.src = `https://www.googletagmanager.com/gtag/js?id=${id}`
+              const callId = () => window.crypto?.randomUUID?.() || "unavailable"
+              const attempt = callId()
+              const started = performance.now()
+              const recordLoad = outcome => console.info(
+                "external_call service=google_analytics operation=load_script outcome=" +
+                outcome + " attempt_id=" + attempt + " duration_ms=" + Math.round(performance.now() - started)
+              )
+              recordLoad("started")
+              s.addEventListener("load", () => recordLoad("loaded"), {once: true})
+              s.addEventListener("error", () => recordLoad("failed"), {once: true})
               document.head.appendChild(s)
               window.dataLayer = window.dataLayer || []
-              function gtag(){ window.dataLayer.push(arguments) }
+              function gtag(){
+                window.dataLayer.push(arguments)
+                console.info("external_call service=google_analytics operation=enqueue outcome=queued attempt_id=" + callId())
+              }
               window.gtag = gtag
               gtag("js", new Date())
               // No advertising signals, and IPs truncated: we want to know which

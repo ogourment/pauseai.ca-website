@@ -154,6 +154,10 @@ if System.get_env("ATDD") == "true" do
       }
     ]
 
+    defmodule DisconnectedReviewer do
+      def review(_, _), do: {:error, :transport_failed}
+    end
+
     defmodule UncertainInput do
       def review(_, _) do
         {:ok,
@@ -701,9 +705,8 @@ if System.get_env("ATDD") == "true" do
 
         message =
           if locale == "fr",
-            do:
-              "Le contrôle automatique a retenu votre demande avant la génération d’une réponse.",
-            else: "The automatic input review held your request before answer generation."
+            do: "Votre question doit être examinée",
+            else: "Your question needs a safety review"
 
         send_label = if locale == "fr", do: "Envoyer", else: "Send"
 
@@ -731,6 +734,42 @@ if System.get_env("ATDD") == "true" do
             "Assistant on Contacts",
             "Send the synthetic onboarding question with a75% fixture review",
             "The request is retained, the input phase is explained, and a protected review-details link is available. The fixture deliberately remains held; it does not claim a real classifier result."
+          )
+
+        refute_receive {:assistant_generated, _, _}
+
+        disconnected =
+          Keyword.put(config[:safety], :jev, {DisconnectedReviewer, [api_key: "fixture"]})
+
+        Application.put_env(
+          :pauseai_ca,
+          :agent_assistant,
+          Keyword.put(config, :safety, disconnected)
+        )
+
+        question = "Can I get a CSV of our email list?"
+
+        browser =
+          browser
+          |> fill_in("#site-assistant-text", "Message", with: question)
+          |> click_button("#site-assistant-form button[type=submit]", send_label)
+          |> assert_has("#site-assistant-error",
+            text:
+              tr(
+                locale,
+                "The Assistant couldn't check your question, so it stopped before answering. Your question is still here. You can try again later."
+              )
+          )
+          |> assert_has("#site-assistant-text", value: question)
+          |> click_link("#site-assistant-error a", details_label)
+          |> assert_has("#assistant-exchange-status", text: "JEV")
+          |> refute_has("#assistant-review-approve")
+          |> capture(
+            id,
+            "Why the Assistant stopped",
+            "Activity & security",
+            "Open the request details",
+            "The request shows the failed connection, its effect and who can act."
           )
 
         refute_receive {:assistant_generated, _, _}
@@ -996,7 +1035,7 @@ if System.get_env("ATDD") == "true" do
             text:
               tr(
                 locale,
-                "The automatic input review held your request before answer generation. Your message is retained."
+                "Your question needs a safety review before the Assistant can answer. Your message is saved for review."
               )
           )
           |> capture(

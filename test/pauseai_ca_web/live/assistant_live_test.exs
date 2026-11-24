@@ -287,6 +287,24 @@ defmodule PauseAiCaWeb.AssistantLiveTest do
     end
   end
 
+  test "a blocked request offers a way to get outreach help without sharing addresses", c do
+    assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+    token = Accounts.generate_user_session_token(c.admin)
+
+    {:ok, view, _} =
+      live_isolated(c.conn, PauseAiCaWeb.AssistantLive, session: %{"user_token" => token})
+
+    render_click(view, "assistant-toggle")
+
+    render_submit(view, "assistant-submit", %{
+      "assistant" => %{"text" => "synthetic blocked request"}
+    })
+
+    render_async(view, 2_000)
+    assert has_element?(view, "#site-assistant-error", "how to contact them through the CRM")
+    refute_receive {:assistant_generated, _, _}
+  end
+
   for direction <- ["input", "output"] do
     test "#{direction} review holds explain the phase and preserve the editable question", c do
       direction = unquote(direction)
@@ -320,7 +338,7 @@ defmodule PauseAiCaWeb.AssistantLiveTest do
              )
 
       if direction == "input" do
-        assert render(view) =~ "before answer generation"
+        assert render(view) =~ "Your question needs a safety review"
         refute_receive {:assistant_generated, _, _}
       else
         assert render(view) =~ "held by the output review"

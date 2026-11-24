@@ -1,5 +1,8 @@
 import Config
 
+# Transport tests own the process-wide Finch observation lifecycle.
+config :pauseai_ca, :outbound_call_logs, System.get_env("OUTBOUND_CALL_LOGS") == "true"
+
 # Tests inject funding observations; never call public providers at application startup.
 config :pauseai_ca, :donation_funding_enabled, false
 

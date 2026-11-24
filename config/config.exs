@@ -7,6 +7,9 @@
 # General application configuration
 import Config
 
+# The outbound observer records each attempt. Req default retry warnings can include raw exceptions.
+config :req, default_options: [retry_log_level: false]
+
 config :mime, :types, %{"message/rfc822" => ["eml"]}
 
 # The campaign handoff is consumer-owned; no donor data or provider requests

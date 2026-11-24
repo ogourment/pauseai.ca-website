@@ -118,7 +118,6 @@ defmodule PauseAiCaWeb.AssistantAuditLiveTest do
     assert has_element?(view, "#assistant-request-timeline", "Request activity")
     assert html =~ "0.87" and html =~ "0.01"
     assert html =~ "Answer withheld: output review needs attention."
-    assert html =~ "independent yes-probabilities"
     refute html =~ "PRIVATE"
     refute has_element?(view, "#assistant-audit-table-#{unrelated.id}")
     refute has_element?(view, "button", "Approve")
@@ -545,6 +544,77 @@ defmodule PauseAiCaWeb.AssistantAuditLiveTest do
     assert {:ok, []} = Assistant.history(c.scope, conversation)
     refute has_element?(view, "#assistant-review-approve")
     refute_receive {:assistant_generated, _, _}
+  end
+
+  defmodule FailedReviewer do
+    def review(_, opts), do: {:error, Keyword.fetch!(opts, :failure)}
+  end
+
+  test "a failed connection explains what happened and who can act", c do
+    safety =
+      Keyword.put(
+        c.config[:safety],
+        :jev,
+        {FailedReviewer, [api_key: "fixture", failure: :transport_failed]}
+      )
+
+    Application.put_env(:pauseai_ca, :agent_assistant, Keyword.put(c.config, :safety, safety))
+    assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+    assert {:ok, conversation} = Assistant.conversation(c.scope)
+    reference = Ecto.UUID.generate()
+
+    assert {:error, :input_safety_unavailable} =
+             Assistant.run(c.scope, reference, "Can I get a CSV of our email list?", conversation)
+
+    refute_receive {:assistant_generated, _, _}
+
+    for {locale, explanation} <- [
+          {"en", "There is no decision to approve"},
+          {"fr", "aucune décision à approuver"}
+        ] do
+      {:ok, view, _} =
+        live(
+          log_in_user(c.conn, c.other),
+          "/admin/assistant/activity/requests/#{reference}?locale=#{locale}"
+        )
+
+      render_async(view, @review_completion_timeout)
+      assert has_element?(view, "#assistant-exchange-status", "JEV")
+      assert has_element?(view, "#assistant-exchange-status", explanation)
+      refute has_element?(view, "#assistant-review-approve")
+    end
+  end
+
+  for {failure, explanation} <- [
+        {:transport_closed, "connection to JEV closed"},
+        {:checker_unauthorized, "JEV rejected the site's credentials"}
+      ] do
+    test "review explains #{failure} without exposing private error details", c do
+      safety =
+        Keyword.put(
+          c.config[:safety],
+          :jev,
+          {FailedReviewer, [api_key: "fixture", failure: unquote(failure)]}
+        )
+
+      Application.put_env(:pauseai_ca, :agent_assistant, Keyword.put(c.config, :safety, safety))
+      assert {:ok, _} = Assistant.set_enabled(c.scope, true)
+      assert {:ok, conversation} = Assistant.conversation(c.scope)
+      reference = Ecto.UUID.generate()
+
+      assert {:error, :input_safety_unavailable} =
+               Assistant.run(c.scope, reference, "How do I contact a group?", conversation)
+
+      {:ok, view, _} =
+        live(
+          log_in_user(c.conn, c.other),
+          "/admin/assistant/activity/requests/#{reference}?locale=en"
+        )
+
+      render_async(view, @review_completion_timeout)
+      assert has_element?(view, "#assistant-exchange-status", unquote(explanation))
+      refute has_element?(view, "#assistant-review-approve")
+    end
   end
 
   test "superadmin approves another requester's input and generates its frozen turn once", c do

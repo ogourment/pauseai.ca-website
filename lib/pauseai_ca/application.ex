@@ -8,7 +8,8 @@ defmodule PauseAiCa.Application do
   @impl true
   def start(_type, _args) do
     children =
-      PauseAiCa.Donations.Funding.children() ++
+      outbound_observer() ++
+        PauseAiCa.Donations.Funding.children() ++
         [
           PauseAiCaWeb.Telemetry,
           PauseAiCa.Repo,
@@ -35,6 +36,12 @@ defmodule PauseAiCa.Application do
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: PauseAiCa.Supervisor]
     Supervisor.start_link(children, opts)
+  end
+
+  defp outbound_observer do
+    if Application.get_env(:pauseai_ca, :outbound_call_logs, true),
+      do: [{PauseAiCa.OutboundHTTP, &PauseAiCa.ExternalServices.classify/1}],
+      else: []
   end
 
   # Tell Phoenix to update the endpoint configuration

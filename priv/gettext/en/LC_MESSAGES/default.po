@@ -10841,11 +10841,6 @@ msgstr "Operator alert queued"
 msgid "Outcome"
 msgstr "Outcome"
 
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:415
-#, elixir-autogen, elixir-format
-msgid "Protected activity metadata. Message content is not displayed."
-msgstr "Protected activity metadata. Message content is not displayed."
-
 #: lib/pauseai_ca_web/live/assistant_audit_live.ex:919
 #, elixir-autogen, elixir-format
 msgid "Recorded"
@@ -11173,16 +11168,6 @@ msgstr "Input review needs attention."
 #, elixir-autogen, elixir-format
 msgid "Input safety checks blocked the request."
 msgstr "Input safety checks blocked the request."
-
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:886
-#, elixir-autogen, elixir-format
-msgid "Input safety checks were unavailable."
-msgstr "Input safety checks were unavailable."
-
-#: lib/pauseai_ca_web/live/assistant_audit_live.ex:421
-#, elixir-autogen, elixir-format
-msgid "Low-risk and malicious scores are independent yes-probabilities, not a combined confidence score."
-msgstr "Low-risk and malicious scores are independent yes-probabilities, not a combined confidence score."
 
 #: lib/pauseai_ca_web/live/assistant_audit_live.ex:597
 #: lib/pauseai_ca_web/live/assistant_audit_live.ex:841
@@ -12373,16 +12358,6 @@ msgstr "An answer was generated and held by the output review. Your message is r
 #, elixir-autogen, elixir-format
 msgid "An answer was generated, but its review could not complete. Your message is retained."
 msgstr "An answer was generated, but its review could not complete. Your message is retained."
-
-#: lib/pauseai_ca_web/live/assistant_live.ex:324
-#, elixir-autogen, elixir-format
-msgid "The automatic input review held your request before answer generation. Your message is retained."
-msgstr "The automatic input review held your request before answer generation. Your message is retained."
-
-#: lib/pauseai_ca_web/live/assistant_live.ex:321
-#, elixir-autogen, elixir-format
-msgid "The input review could not complete. Your message is retained."
-msgstr "The input review could not complete. Your message is retained."
 
 #: lib/pauseai_ca_web/live/assistant_live.ex:356
 #, elixir-autogen, elixir-format
@@ -14341,3 +14316,77 @@ msgstr "Commentary and forecasts"
 #, elixir-autogen, elixir-format
 msgid "Controlled evaluation"
 msgstr "Controlled evaluation"
+
+#: lib/pauseai_ca_web/live/assistant_live.ex:324
+#, elixir-autogen, elixir-format
+msgid "Your question needs a safety review before the Assistant can answer. Your message is saved for review."
+msgstr "Your question needs a safety review before the Assistant can answer. Your message is saved for review."
+
+#: lib/pauseai_ca_web/live/assistant_live.ex:321
+#, elixir-autogen, elixir-format
+msgid "The Assistant couldn't check your question, so it stopped before answering. Your question is still here. You can try again later."
+msgstr "The Assistant couldn't check your question, so it stopped before answering. Your question is still here. You can try again later."
+
+#, elixir-autogen, elixir-format
+msgid "The safety check blocked this request. The Assistant can help you use the website, but it can't share private records. If you're trying to email people, describe the group you want to reach without pasting addresses. Ask how to contact them through the CRM."
+msgstr "The safety check blocked this request. The Assistant can help you use the website, but it can't share private records. If you're trying to email people, describe the group you want to reach without pasting addresses. Ask how to contact them through the CRM."
+
+#, elixir-autogen, elixir-format
+msgid "A required check of the question failed. The Assistant stopped before answering. There is no decision to approve. If this continues, give the site operator the request reference."
+msgstr "A required check of the question failed. The Assistant stopped before answering. There is no decision to approve. If this continues, give the site operator the request reference."
+
+#, elixir-autogen, elixir-format
+msgid "Choose a request to see what happened, whether an answer reached the user and whether anyone needs to act."
+msgstr "Choose a request to see what happened, whether an answer reached the user and whether anyone needs to act."
+
+#, elixir-autogen, elixir-format
+msgid "A required check failed before the Assistant could answer. Open this request for details."
+msgstr "A required check failed before the Assistant could answer. Open this request for details."
+
+#, elixir-autogen, elixir-format
+msgid "Check failed before answer"
+msgstr "Check failed before answer"
+
+#, elixir-autogen, elixir-format
+msgid "The Assistant could not communicate with its second safety checker (JEV)."
+msgstr "The Assistant could not communicate with its second safety checker (JEV)."
+
+#, elixir-autogen, elixir-format
+msgid "JEV did not respond in time."
+msgstr "JEV did not respond in time."
+
+#, elixir-autogen, elixir-format
+msgid "The connection to JEV closed before the check finished."
+msgstr "The connection to JEV closed before the check finished."
+
+#, elixir-autogen, elixir-format
+msgid "The site could not find the network address for JEV."
+msgstr "The site could not find the network address for JEV."
+
+#, elixir-autogen, elixir-format
+msgid "The site could not establish a secure connection to JEV."
+msgstr "The site could not establish a secure connection to JEV."
+
+#, elixir-autogen, elixir-format
+msgid "The connection to JEV was refused."
+msgstr "The connection to JEV was refused."
+
+#, elixir-autogen, elixir-format
+msgid "JEV rejected the site's credentials. Ask the operator to verify the site's access to JEV."
+msgstr "JEV rejected the site's credentials. Ask the operator to verify the site's access to JEV."
+
+#, elixir-autogen, elixir-format
+msgid "JEV received too many requests and asked the site to slow down."
+msgstr "JEV received too many requests and asked the site to slow down."
+
+#, elixir-autogen, elixir-format
+msgid "%{cause} The Assistant stopped before answering. There is no decision to approve. If this repeats, give the site operator the request reference."
+msgstr "%{cause} The Assistant stopped before answering. There is no decision to approve. If this repeats, give the site operator the request reference."
+
+#, elixir-autogen, elixir-format
+msgid "%{cause} The Assistant had generated an answer, but the check failed before it could be shown. If this repeats, give the site operator the request reference."
+msgstr "%{cause} The Assistant had generated an answer, but the check failed before it could be shown. If this repeats, give the site operator the request reference."
+
+#, elixir-autogen, elixir-format
+msgid "The site did not get a usable safety decision from JEV."
+msgstr "The site did not get a usable safety decision from JEV."

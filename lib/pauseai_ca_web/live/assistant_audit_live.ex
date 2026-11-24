@@ -412,16 +412,13 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
           <.link navigate={~p"/admin/assistant?#{[locale: @locale]}"}>{gettext("Back to assistant")}</.link>
           <h1 class="text-2xl font-bold">{gettext("Activity & security")}</h1>
           <p :if={is_nil(@request_ref)}>
-            {gettext("Protected activity metadata. Message content is not displayed.")}
+            {gettext(
+              "Choose a request to see what happened, whether an answer reached the user and whether anyone needs to act."
+            )}
           </p>
           <div :if={@request_ref} id="assistant-request-timeline">
             <h2 class="text-lg font-semibold">{gettext("Request activity")}</h2>
             <p class="break-all">{gettext("Request reference")}: {@request_ref}</p>
-            <p>
-              {gettext(
-                "Low-risk and malicious scores are independent yes-probabilities, not a combined confidence score."
-              )}
-            </p>
             <p
               :if={@exchange_loading or (is_nil(@exchange) and is_nil(@exchange_error))}
               role="status"
@@ -557,7 +554,7 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
       <div id="assistant-review-question" class="paa-message" data-role="user">
         <p>{@exchange.question}</p>
       </div>
-      <h3 :if={@exchange.phase != :input} class="font-semibold">
+      <h3 :if={@exchange.answer} class="font-semibold">
         {if @exchange.status in [:approved, :released],
           do: gettext("Answer"),
           else: gettext("Held answer")}
@@ -582,7 +579,7 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
           ]
         }>
           <h3 class="font-semibold">{label}</h3>
-          <dl :if={event}>
+          <dl :if={event && event["decision"]}>
             <div>
               <dt>{gettext("Review action")}</dt><dd>
                 {action(get_in(event, ["decision", "action"]))}
@@ -766,6 +763,26 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
     """
   end
 
+  defp review_status(%{input_review: %{"error" => %{"stage" => "jev", "code" => code}}}) do
+    gettext(
+      "%{cause} The Assistant stopped before answering. There is no decision to approve. If this repeats, give the site operator the request reference.",
+      cause: jev_problem(code)
+    )
+  end
+
+  defp review_status(%{output_review: %{"error" => %{"stage" => "jev", "code" => code}}}) do
+    gettext(
+      "%{cause} The Assistant had generated an answer, but the check failed before it could be shown. If this repeats, give the site operator the request reference.",
+      cause: jev_problem(code)
+    )
+  end
+
+  defp review_status(%{input_review: %{"error" => _}}) do
+    gettext(
+      "A required check of the question failed. The Assistant stopped before answering. There is no decision to approve. If this continues, give the site operator the request reference."
+    )
+  end
+
   defp review_status(%{status: :held, phase: :input}),
     do: gettext("Input held for superadmin review. Approve the request to generate an answer.")
 
@@ -791,6 +808,34 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
   defp review_status(:rejected), do: gettext("Rejected · The answer remains withheld.")
   defp review_status(:released), do: gettext("The answer was released automatically.")
   defp review_status(_), do: gettext("This exchange cannot be reviewed securely.")
+
+  defp jev_problem(code) when code in ["checker_timeout", "transport_timeout"],
+    do: gettext("JEV did not respond in time.")
+
+  defp jev_problem("transport_closed"),
+    do: gettext("The connection to JEV closed before the check finished.")
+
+  defp jev_problem("transport_dns_failed"),
+    do: gettext("The site could not find the network address for JEV.")
+
+  defp jev_problem("transport_tls_failed"),
+    do: gettext("The site could not establish a secure connection to JEV.")
+
+  defp jev_problem("transport_refused"), do: gettext("The connection to JEV was refused.")
+
+  defp jev_problem("checker_unauthorized"),
+    do:
+      gettext(
+        "JEV rejected the site's credentials. Ask the operator to verify the site's access to JEV."
+      )
+
+  defp jev_problem("rate_limited"),
+    do: gettext("JEV received too many requests and asked the site to slow down.")
+
+  defp jev_problem("transport_failed"),
+    do: gettext("The Assistant could not communicate with its second safety checker (JEV).")
+
+  defp jev_problem(_), do: gettext("The site did not get a usable safety decision from JEV.")
 
   defp decision_error(:confirmation_expired),
     do: gettext("This confirmation expired. Cancel and review the answer again.")
@@ -883,7 +928,13 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
 
   defp hold_reason("safety_review_required"), do: gettext("Input review needs attention.")
   defp hold_reason("safety_blocked"), do: gettext("Input safety checks blocked the request.")
-  defp hold_reason("safety_unavailable"), do: gettext("Input safety checks were unavailable.")
+
+  defp hold_reason(reason) when reason in ["safety_unavailable", "input_safety_unavailable"],
+    do:
+      gettext(
+        "A required check failed before the Assistant could answer. Open this request for details."
+      )
+
   defp hold_reason(_), do: gettext("The request could not continue safely.")
 
   defp activity("human_review_requested"), do: gettext("Human review requested")
@@ -917,6 +968,10 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
   defp outcome("pending"), do: gettext("Pending")
   defp outcome("submitting"), do: gettext("Submitting")
   defp outcome(_), do: gettext("Recorded")
+
+  defp event_outcome(%{hold_reason: reason})
+       when reason in ["safety_unavailable", "input_safety_unavailable"],
+       do: gettext("Check failed before answer")
 
   defp event_outcome(%{kind: "provider_failure", outcome: details}), do: details
   defp event_outcome(row), do: outcome(row.outcome)
