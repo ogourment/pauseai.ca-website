@@ -903,6 +903,7 @@ defmodule PauseAiCaWeb.AssistantAuditLive do
   defp action(_), do: nil
   defp policy("strict_v1"), do: gettext("Strict policy")
   defp policy("text_coaching_v1"), do: gettext("Text coaching policy")
+  defp policy("text_coaching_v2"), do: gettext("Text coaching · lower threshold for questions")
   defp policy(_), do: nil
   defp probability(nil), do: nil
   defp probability(value), do: :erlang.float_to_binary(value / 1, decimals: 2)

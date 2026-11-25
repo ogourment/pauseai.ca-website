@@ -123,6 +123,35 @@ defmodule PauseAiCaWeb.AssistantAuditLiveTest do
     refute has_element?(view, "button", "Approve")
   end
 
+  test "the protected timeline labels the v2 review policy in English and French", c do
+    reference = Ecto.UUID.generate()
+
+    record(c, c.other.id, %{
+      "kind" => "safety_review",
+      "request_id" => reference,
+      "direction" => "output",
+      "decision" => %{
+        "action" => "review",
+        "policy" => "text_coaching_v2",
+        "jev" => %{"probabilities" => %{"low" => 0.89, "block" => 0.01}},
+        "moderation" => %{"flagged" => false}
+      }
+    })
+
+    for {locale, label} <- [
+          {"en", "Text coaching · lower threshold for questions"},
+          {"fr", "Conseil textuel · seuil réduit pour les questions"}
+        ] do
+      {:ok, view, _html} =
+        live(
+          log_in_user(build_conn(), c.admin),
+          "/admin/assistant/activity/requests/#{reference}?locale=#{locale}"
+        )
+
+      assert has_element?(view, "#assistant-audit-table", label)
+    end
+  end
+
   test "provider failure details are visible through the protected English and French timeline",
        c do
     reference = Ecto.UUID.generate()

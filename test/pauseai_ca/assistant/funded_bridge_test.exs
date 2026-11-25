@@ -127,7 +127,7 @@ defmodule PauseAiCa.Assistant.FundedBridgeTest do
         expires_at: nil
       })
 
-  defp install_http(c, actor_id \\ nil) do
+  defp install_http(c, actor_id \\ nil, low_scores \\ %{}) do
     actor_id = actor_id || c.admin.id
 
     Req.Test.stub(__MODULE__, fn conn ->
@@ -184,7 +184,7 @@ defmodule PauseAiCa.Assistant.FundedBridgeTest do
           Req.Test.json(conn, %{
             "model" => "jev-fixture",
             "answers" => %{
-              "low" => %{"type" => "noul", "noul" => 1.0},
+              "low" => %{"type" => "noul", "noul" => Map.get(low_scores, purpose, 1.0)},
               "block" => %{"type" => "noul", "noul" => 0.0}
             },
             "usage" => %{"input_tokens" => 2}
@@ -299,6 +299,35 @@ defmodule PauseAiCa.Assistant.FundedBridgeTest do
     assert {:ok, usage} = Assistant.token_usage(c.scope)
     assert usage.reported_input == 10 and usage.reported_output == 7
     assert usage.pending_cost_micros == 0
+  end
+
+  test "v2 releases a coaching question at the lower input floor if its answer meets the existing floor",
+       c do
+    config = Keyword.put(c.config, :safety_policy, :text_coaching_v2)
+    Application.put_env(:pauseai_ca, :agent_assistant, config)
+    attest(c, config)
+    assert {:ok, ref} = Assistant.conversation(c.scope)
+    install_http(c, nil, %{"input_jev" => 0.75, "output_jev" => 0.90})
+
+    assert {:ok, %{text: "Synthetic released reply"}} =
+             Assistant.run(c.scope, Ecto.UUID.generate(), "How do I welcome a volunteer?", ref)
+
+    assert Agent.get(c.state, & &1.calls) ==
+             ~w(input_moderation input_jev generation output_moderation output_jev)
+  end
+
+  test "v2 still withholds an answer below the output floor", c do
+    config = Keyword.put(c.config, :safety_policy, :text_coaching_v2)
+    Application.put_env(:pauseai_ca, :agent_assistant, config)
+    attest(c, config)
+    assert {:ok, ref} = Assistant.conversation(c.scope)
+    install_http(c, nil, %{"input_jev" => 0.75, "output_jev" => 0.8999})
+
+    assert {:error, :output_safety_review_required} =
+             Assistant.run(c.scope, Ecto.UUID.generate(), "How do I welcome a volunteer?", ref)
+
+    assert Agent.get(c.state, & &1.calls) ==
+             ~w(input_moderation input_jev generation output_moderation output_jev)
   end
 
   test "High at75percent and Normal at90percent block forced submits without rewriting saved preferences",
