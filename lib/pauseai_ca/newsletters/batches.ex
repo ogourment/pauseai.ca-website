@@ -117,7 +117,21 @@ defmodule PauseAiCa.Newsletters.Batches do
           contact_target(record) |> Map.put(:origins, Map.get(origins, record.person.id, []))
         end)
 
-      {:ok, Map.put(page, :rows, status_rows(rows, "contacts"))}
+      eligible =
+        rows
+        |> Enum.filter(&(&1.status == :available))
+        |> Enum.map(& &1.email)
+        |> Newsletters.outreach_eligible_emails()
+
+      rows =
+        Enum.map(rows, fn row ->
+          if row.status == :available and
+               not MapSet.member?(eligible, String.downcase(String.trim(row.email))),
+             do: %{row | status: :excluded},
+             else: row
+        end)
+
+      {:ok, Map.put(page, :rows, rows)}
     end
   end
 

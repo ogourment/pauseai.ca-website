@@ -54,7 +54,24 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
   end
 
   def handle_params(params, uri, socket) do
-    socket = socket |> assign(guided_uri: uri) |> refresh_audience()
+    socket = assign(socket, guided_uri: uri)
+
+    socket =
+      case socket.assigns.draft do
+        %Draft{recipient_mode: "outreach"} ->
+          refresh_audience(socket)
+
+        %Draft{} ->
+          # Join before reading the full audience. A reconnect must not repeat
+          # the scan in the initial HTTP response and in the channel join.
+          if connected?(socket) and is_nil(socket.assigns.audience),
+            do: send(self(), :load_initial_audience)
+
+          socket
+
+        nil ->
+          socket
+      end
 
     socket =
       if params["batch"] && params["step"] == "review",
@@ -212,7 +229,7 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
 
   def handle_event("confirm-language", %{"email" => email, "language" => language}, socket) do
     # Accept only an address currently visible in this authorized audience.
-    if Enum.any?(socket.assigns.audience.rows, &(&1.email == email)) do
+    if Enum.any?(audience_rows(socket), &(&1.email == email)) do
       case PauseAiCa.Newsletters.Edition.confirm_preference(
              socket.assigns.current_scope,
              email,
@@ -260,7 +277,7 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
   def handle_event("select-visible", _, socket) do
     keys =
       selected(socket) ++
-        Enum.map(Enum.filter(socket.assigns.audience.rows, &(&1.status == :available)), & &1.id)
+        Enum.map(Enum.filter(audience_rows(socket), &(&1.status == :available)), & &1.id)
 
     attrs = Map.put(socket.assigns.form.params || %{}, "recipient_keys", Enum.uniq(keys))
     {:noreply, edit(socket, attrs)}
@@ -363,6 +380,15 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
     end
   end
 
+  def handle_info(:load_initial_audience, socket) do
+    cond do
+      is_nil(socket.assigns.draft) -> {:noreply, socket}
+      not authorized_editor?(socket) -> {:noreply, denied(socket)}
+      is_nil(socket.assigns.audience) -> {:noreply, refresh_audience(socket)}
+      true -> {:noreply, socket}
+    end
+  end
+
   def handle_info({:markdown_editor_changed, "newsletter-content", source}, socket) do
     {:noreply, edit(socket, Map.put(socket.assigns.form.params || %{}, "source", source))}
   end
@@ -378,6 +404,9 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
 
     {:noreply, socket}
   end
+
+  defp audience_rows(%{assigns: %{audience: %{rows: rows}}}), do: rows
+  defp audience_rows(_socket), do: []
 
   defp edit(socket, attrs) do
     if authorized_editor?(socket) do
@@ -408,7 +437,10 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
       query = attrs["candidate_q"] || socket.assigns.candidate_q
 
       filters_changed? =
-        query != socket.assigns.candidate_q or geography != socket.assigns.candidate_geography or
+        mode_changed? or
+          (Map.has_key?(attrs, "mailing_list_id") and
+             attrs["mailing_list_id"] != socket.assigns.form[:mailing_list_id].value) or
+          query != socket.assigns.candidate_q or geography != socket.assigns.candidate_geography or
           saved_filter != socket.assigns.candidate_saved_filter or
           (Map.has_key?(attrs, "region") and attrs["region"] != socket.assigns.form[:region].value)
 
@@ -440,7 +472,8 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
           )
         end
 
-      socket |> assign(reviewed: attrs["outreach_reviewed"] == "true") |> refresh_audience()
+      socket = assign(socket, reviewed: attrs["outreach_reviewed"] == "true")
+      if filters_changed?, do: refresh_audience(socket), else: socket
     else
       denied(socket)
     end
@@ -765,11 +798,15 @@ defmodule PauseAiCaWeb.NewsletterDraftLive do
               role="status"
               class="mt-3 font-semibold"
             >
-              {gettext("%{list} · %{count} eligible · %{edition}",
-                list: selected_list_name(@mailing_lists, @form[:mailing_list_id].value),
-                count: if(@audience, do: @audience.counts[:included] || 0, else: 0),
-                edition: edition_name(@form[:edition].value)
-              )}
+              {if @audience do
+                gettext("%{list} · %{count} eligible · %{edition}",
+                  list: selected_list_name(@mailing_lists, @form[:mailing_list_id].value),
+                  count: @audience.counts[:included] || 0,
+                  edition: edition_name(@form[:edition].value)
+                )
+              else
+                gettext("Loading…")
+              end}
             </p>
             <nav
               :if={@step == :compose and is_nil(@draft.archived_at)}

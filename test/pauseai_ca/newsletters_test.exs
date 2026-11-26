@@ -4,6 +4,39 @@ defmodule PauseAiCa.NewslettersTest do
   alias PauseAiCa.Newsletters.{Subscription, ConsentEvent}
   import PauseAiCa.AccountsFixtures
 
+  test "bulk outreach preview preserves canonical withdrawals and provider blocks" do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    scope = Accounts.Scope.for_user(admin)
+
+    root = Repo.insert!(%PhoenixCRM.Person{name: "Root"})
+    merged = Repo.insert!(%PhoenixCRM.Person{name: "Merged", canonical_id: root.id})
+    Repo.insert!(%PhoenixCRM.Address{person_id: root.id, email: "blocked-root@example.org"})
+    Repo.insert!(%PhoenixCRM.Address{person_id: merged.id, email: "blocked-alias@example.org"})
+
+    assert {:ok, _} =
+             Newsletters.observe_provider(scope, "blocked-root@example.org", %{
+               "provider_id" => 1,
+               "email_blacklisted" => true,
+               "observed_at" => DateTime.utc_now() |> DateTime.to_iso8601()
+             })
+
+    assert {:ok, _} =
+             Newsletters.record_withdrawal(scope, "withdrawn@example.org", "Fixture withdrawal")
+
+    emails = [
+      "allowed@example.org",
+      "blocked-root@example.org",
+      "blocked-alias@example.org",
+      "withdrawn@example.org",
+      "invalid"
+    ]
+
+    assert Newsletters.outreach_eligible_emails(emails) == MapSet.new(["allowed@example.org"])
+
+    assert Newsletters.outreach_eligible_emails(emails) ==
+             MapSet.new(Enum.filter(emails, &Newsletters.outreach_eligible?/1))
+  end
+
   test "admin withdrawal covers absent subscriptions, invalidates confirmation and is idempotent" do
     admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
     scope = Accounts.Scope.for_user(admin)

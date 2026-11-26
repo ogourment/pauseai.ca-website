@@ -90,6 +90,56 @@ defmodule PauseAiCaWeb.NewsletterDraftLiveTest do
     assert Repo.aggregate(Newsletters.Delivery, :count) == 0
   end
 
+  test "connect and reconnect load the audience once without rescanning on content edits",
+       %{conn: conn} do
+    admin = user_fixture() |> Ecto.Changeset.change(superadmin: true) |> Repo.update!()
+    scope = Accounts.Scope.for_user(admin)
+    {:ok, draft} = Newsletters.Drafts.create(scope, "emails")
+
+    for i <- 1..30 do
+      person = Repo.insert!(%PhoenixCRM.Person{name: "Reconnect fixture #{i}"})
+      Repo.insert!(%PhoenixCRM.Address{person_id: person.id, email: "reconnect-#{i}@example.org"})
+    end
+
+    conn = log_in_user(conn, admin)
+    path = "/manage/mail/drafts/#{draft.id}?locale=en"
+    observer = self()
+    handler = {__MODULE__, make_ref()}
+
+    :ok =
+      :telemetry.attach(
+        handler,
+        Keyword.fetch!(Repo.config(), :telemetry_prefix) ++ [:query],
+        fn _, _, metadata, observer ->
+          case metadata.source do
+            "newsletter_language_preferences" -> send(observer, {:audience_loaded, self()})
+            "newsletter_provider_events" -> send(observer, {:provider_query, self()})
+            _ -> :ok
+          end
+        end,
+        observer
+      )
+
+    on_exit(fn -> :telemetry.detach(handler) end)
+
+    assert html_response(get(conn, path), 200) =~ "newsletter-draft-form"
+    refute_receive {:audience_loaded, _}
+
+    for _ <- 1..2 do
+      {:ok, editor, _} = live(conn, path)
+      assert_receive {:audience_loaded, pid}, 1_000
+      assert pid == editor.pid
+      assert has_element?(editor, "#newsletter-recipient-picker")
+      assert has_element?(editor, "#newsletter-recipient-picker", "30 contacts")
+      assert_receive {:provider_query, ^pid}
+      refute_receive {:provider_query, ^pid}
+
+      send(editor.pid, {:markdown_editor_changed, "newsletter-content", "A local edit"})
+      assert has_element?(editor, "#newsletter-save-status", "Unsaved changes")
+      refute_receive {:audience_loaded, ^pid}
+    end
+  end
+
   test "manual fourteen-contact selection survives save/reload and requires review then approval before sending",
        %{conn: conn} do
     Ecto.Adapters.SQL.Sandbox.mode(Repo, {:shared, self()})

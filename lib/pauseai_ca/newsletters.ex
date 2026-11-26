@@ -281,6 +281,48 @@ defmodule PauseAiCa.Newsletters do
     end
   end
 
+  @doc "Bulk eligibility for the read-only Contacts audience preview."
+  def outreach_eligible_emails([]), do: MapSet.new()
+
+  def outreach_eligible_emails(emails) do
+    emails =
+      for email <- emails, {:ok, normalized} <- [normalize(email)], uniq: true, do: normalized
+
+    suppressed = MapSet.union(PauseAiCa.Mail.suppressed_emails(emails), withdrawn_aliases(emails))
+    allowed = Enum.reject(emails, &MapSet.member?(suppressed, &1))
+
+    aliases =
+      Repo.all(
+        from(a in PhoenixCRM.Address,
+          join: p in PhoenixCRM.Person,
+          on: p.id == a.person_id,
+          join: alias_person in PhoenixCRM.Person,
+          on:
+            coalesce(alias_person.canonical_id, alias_person.id) == coalesce(p.canonical_id, p.id),
+          join: alias_address in PhoenixCRM.Address,
+          on: alias_address.person_id == alias_person.id,
+          where: a.email in ^allowed,
+          select: {a.email, alias_address.email}
+        )
+      )
+      |> Enum.group_by(&elem(&1, 0), &elem(&1, 1))
+
+    provider_addresses = Enum.flat_map(allowed, &Map.get(aliases, &1, [&1])) |> Enum.uniq()
+    normalized = Map.new(provider_addresses, &{&1, normalize(&1)})
+    provider = provider_observations(for {:ok, email} <- Map.values(normalized), do: email)
+
+    allowed
+    |> Enum.reject(fn email ->
+      Enum.any?(Map.get(aliases, email, [email]), fn address ->
+        case normalized[address] do
+          {:ok, address} -> provider[address] == true
+          {:error, _} -> true
+        end
+      end)
+    end)
+    |> MapSet.new()
+  end
+
   @doc "Creates only a withdrawal ledger for manually reviewed outreach, without an opt-in/account."
   def outreach_withdrawal_token(scope, email) do
     with true <- Volunteers.superadmin?(scope), {:ok, email} <- normalize(email) do
