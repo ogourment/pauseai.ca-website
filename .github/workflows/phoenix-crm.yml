@@ -148,12 +148,14 @@ jobs:
             }
             projection = "tmp/atdd/assistant-features.json"
             with :ok <- PauseAiCa.Assistant.FeatureCatalogue.package_projection("tmp/atdd/evidence.json", projection, identity),
-                 {:ok, _} <- PauseAiCa.Assistant.FeatureCatalogue.load(identity, evidence_path: projection) do
+                 {:ok, loaded} <- PauseAiCa.Assistant.FeatureCatalogue.load(identity, evidence_path: projection),
+                 :ok <- PauseAiCa.Assistant.FeatureCatalogue.require_workflow_evidence(loaded) do
               :ok
             else
-              _ -> Mix.raise("Acceptance evidence is not bound to this release source, version and pipeline")
+              _ -> Mix.raise("Missing verified workflow coaching or mismatched acceptance release identity")
             end
           '
+          ASSISTANT_COACHING_PROJECTION=tmp/atdd/assistant-features.json mix test --only release_coaching test/pauseai_ca/assistant/request_context_test.exs
           version="$(cat _build/VERSION)"
           app="$(mix run --no-start -e 'IO.write(Mix.Project.config()[:app])')"
           destination="_build/prod/rel/$app/lib/$app-$version/priv/acceptance_evidence"

@@ -388,6 +388,8 @@ defmodule PauseAiCa.Assistant.FeatureCatalogueTest do
     assert {:ok, loaded} = FeatureCatalogue.load(context.identity, evidence_path: context.path)
 
     for {id, prefixes, version} <- [
+          {"historical-email-import", ["HIST-EMAIL-01"], "0.8.49"},
+          {"group-responsibilities", ["TASK-MEMBER-01"], "0.8.26"},
           {"group-enrollment", ["GROUP-ADMIN-01"], "0.6.19"},
           {"group-public-events", ["PUBLIC-GROUPS-EVENTS-01", "GROUP-EVENT-EDITOR-01"], "0.7.0"},
           {"local-followup", ["LOCAL-FOLLOWUP-01", "GROUP-PART-01"], "0.7.0"},
@@ -397,6 +399,79 @@ defmodule PauseAiCa.Assistant.FeatureCatalogueTest do
       assert feature.scenarios == Enum.flat_map(prefixes, &["#{&1}-en", "#{&1}-fr"])
       assert feature.introduced_in == version
       assert feature.controls == []
+    end
+  end
+
+  test "release coaching uses only an explicit successful step agreed on by both language runs",
+       context do
+    ids = ~w(HIST-EMAIL-01 TASK-MEMBER-01 TASK-PAI-01)
+
+    steps = fn text ->
+      [
+        %{
+          "status" => "success",
+          "metadata" => %{"assistant_summary" => text, "page_html" => "sensitive fixture"}
+        }
+      ]
+    end
+
+    scenarios =
+      for id <- ids, locale <- ~w(en fr) do
+        %{"id" => "#{id}-#{locale}", "status" => "success", "steps" => steps.("Reviewed #{id}")}
+      end
+
+    project = fn rows ->
+      FeatureCatalogue.project(
+        Map.put(
+          context.report,
+          "scenarios",
+          rows ++
+            Enum.map(~w(en fr), &%{"id" => "TASK-PAI-01-authority-#{&1}", "status" => "success"})
+        ),
+        context.identity
+      )
+    end
+
+    prepare = fn projection ->
+      File.write!(context.path, Jason.encode!(projection))
+      {:ok, loaded} = FeatureCatalogue.load(context.identity, evidence_path: context.path)
+      loaded
+    end
+
+    unrelated = %{
+      "id" => "OTHER",
+      "status" => "success",
+      "steps" => steps.("private unrelated content")
+    }
+
+    assert {:ok, projected} = project.(scenarios ++ [unrelated])
+    assert projected["assistant_summaries"] == Map.new(ids, &{&1, "Reviewed #{&1}"})
+    refute Jason.encode!(projected) =~ "sensitive fixture"
+    refute Jason.encode!(projected) =~ "private unrelated content"
+    assert :ok = FeatureCatalogue.require_workflow_evidence(prepare.(projected))
+
+    [first | rest] = scenarios
+
+    for rows <- [
+          rest,
+          [%{first | "status" => "failure"} | rest],
+          [%{first | "steps" => steps.("changed workflow")} | rest],
+          [%{first | "steps" => steps.("x") ++ steps.("y")} | rest],
+          [
+            %{
+              first
+              | "steps" => [
+                  %{"status" => "failure", "metadata" => %{"assistant_summary" => "unsafe"}}
+                ]
+            }
+            | rest
+          ]
+        ] do
+      assert {:ok, partial} = project.(rows)
+      refute Map.has_key?(partial["assistant_summaries"], "HIST-EMAIL-01")
+
+      assert {:error, :missing_workflow_evidence} =
+               FeatureCatalogue.require_workflow_evidence(prepare.(partial))
     end
   end
 

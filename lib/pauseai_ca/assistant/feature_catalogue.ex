@@ -6,7 +6,7 @@ defmodule PauseAiCa.Assistant.FeatureCatalogue do
   the health payload alone does not contain). Evidence v1 records the source,
   version and pipeline; the deployment workflow constructs the release ID from
   that version and pipeline. Unbound local reports are never accepted.
-  Only scenario IDs and their recorded statuses leave this loader.
+  For selected workflows, a successful bilingual browser journey also supplies its authored coaching text.
 
   `introduced_in` uses the source version at addition of the corresponding native
   scenario file, not a claim about its first deployment. The consumer currently
@@ -28,6 +28,8 @@ defmodule PauseAiCa.Assistant.FeatureCatalogue do
      ["CRM-ASSIST-GUIDE-01"], nil, "0.6.17"},
     {"crm-geography", "Contact geography", "Filter contacts by recorded geography.",
      "/admin/contacts", ["GEO-PAI-01"], nil, "0.5.37"},
+    {"historical-email-import", "Import an existing email", {:journey, "HIST-EMAIL-01"},
+     "/manage/mail/import", ["HIST-EMAIL-01"], nil, "0.8.49"},
     {"newsletter-compose", "Newsletter composition", "Compose and review a language edition.",
      "/manage/mail", ["PA-NEWS-01", "MAIL-GEO-01"], nil, "0.5.62"},
     {"newsletter-lists", "Dynamic mailing lists", "Prepare a whole-list recipient snapshot.",
@@ -46,14 +48,16 @@ defmodule PauseAiCa.Assistant.FeatureCatalogue do
     {"local-followup", "Local-interest follow-up",
      "Joiners open Get involved → Local groups, select their group, send their interests, and confirm by email. Organizers use Manage → Local participation to claim follow-up, contact the volunteer, or check onboarding calls.",
      "/manage/local-interest", ["LOCAL-FOLLOWUP-01", "GROUP-PART-01"], nil, "0.7.0"},
+    {"group-responsibilities", "Ongoing group responsibilities", {:journey, "TASK-MEMBER-01"},
+     "/manage/groups?tab=responsibilities", ["TASK-MEMBER-01"], :incubators_enabled, "0.8.26"},
     {"task-member-assignment", "Group member task assignment",
      "In Manage → Tasks choose a group, Add task, Assigned to, then Save. Approved members read their assignment under My account → Volunteer profile → My group work.",
      "/manage/tasks", ["TASK-MEMBER-01"], :tasks_enabled, "0.7.0"},
     {"account-profiles", "My profile and Volunteer profile",
      "Open My account → My profile to save contact details and an optional postal area. Find my MP is a separate full-code lookup. Open Volunteer profile for group work, availability, skills and sharing preferences.",
      "/en/profile", ["PROFILE-UX-01"], nil, "0.8.39"},
-    {"organizer-tasks", "Organizer tasks", "Manage scoped tasks and their activity.",
-     "/manage/tasks", ["TASK-PAI-01", "TASK-PAI-01-authority"], :tasks_enabled, "0.5.36"},
+    {"organizer-tasks", "Organizer tasks", {:journey, "TASK-PAI-01"}, "/manage/tasks",
+     ["TASK-PAI-01", "TASK-PAI-01-authority"], :tasks_enabled, "0.5.36"},
     {"blog-editor", "Blog editing", "Edit Markdown posts and review reader sections.",
      "/manage/blog", ["BLOG-01"], nil, "0.5.51"},
     {"newsletter-rich-paste", "Rich newsletter paste", "Save editable rich clipboard content.",
@@ -68,7 +72,7 @@ defmodule PauseAiCa.Assistant.FeatureCatalogue do
          {:ok, results} <- results(report) do
       {:ok,
        %{
-         features: features(),
+         features: features(Map.get(report, "assistant_summaries", %{}), results),
          feature_evidence: %{build: identity.release_id, results: results}
        }}
     else
@@ -82,18 +86,65 @@ defmodule PauseAiCa.Assistant.FeatureCatalogue do
   def project(report, identity) do
     with true <- valid_identity?(identity) and bound?(report, identity),
          {:ok, results} <- results(report) do
+      projection =
+        %{
+          "schema_version" => "acceptance_harness.evidence.v1",
+          "app" => Map.take(report["app"], ~w(version commit pipeline_id)),
+          "scenarios" =>
+            results
+            |> Enum.sort()
+            |> Enum.map(fn {id, status} -> %{"id" => id, "status" => status} end)
+        }
+
+      summaries = project_summaries(report["scenarios"])
+
       {:ok,
-       %{
-         "schema_version" => "acceptance_harness.evidence.v1",
-         "app" => Map.take(report["app"], ~w(version commit pipeline_id)),
-         "scenarios" =>
-           results
-           |> Enum.sort()
-           |> Enum.map(fn {id, status} -> %{"id" => id, "status" => status} end)
-       }}
+       if(summaries == %{},
+         do: projection,
+         else: Map.put(projection, "assistant_summaries", summaries)
+       )}
     else
       _ -> {:error, :unverified}
     end
+  end
+
+  # The capture contains private HTML and fixture data. Read only the explicit
+  # procedural text on one successful step of each registered language journey.
+  defp project_summaries(scenarios) do
+    by_id = Map.new(scenarios, &{&1["id"], &1})
+
+    for {_, _, {:journey, id}, _, _, _, _} <- @specs,
+        english = recorded_summary(by_id["#{id}-en"]),
+        is_binary(english),
+        recorded_summary(by_id["#{id}-fr"]) == english,
+        into: %{},
+        do: {id, english}
+  end
+
+  defp recorded_summary(%{"status" => "success", "steps" => steps}) when is_list(steps) do
+    case for(
+           %{"status" => "success", "metadata" => %{"assistant_summary" => text}} <- steps,
+           do: text
+         ) do
+      [summary] when is_binary(summary) and byte_size(summary) in 1..1024 -> summary
+      _ -> nil
+    end
+  end
+
+  defp recorded_summary(_), do: nil
+
+  @doc "Release gate for every feature whose guidance comes from a browser journey."
+  def require_workflow_evidence(%{features: features, feature_evidence: %{results: results}}) do
+    required = for {id, _, {:journey, _}, _, _, _, _} <- @specs, do: id
+
+    if Enum.all?(required, fn id ->
+         Enum.any?(features, fn feature ->
+           feature.id == id and feature.ready and
+             Enum.all?(feature.scenarios, &(results[&1] == "success"))
+         end)
+       end),
+       do: :ok,
+       else: {:error, :missing_workflow_evidence}
   end
 
   @doc "Build-time projection from a trusted CI report; no report bodies enter runtime coaching."
@@ -150,18 +201,33 @@ defmodule PauseAiCa.Assistant.FeatureCatalogue do
 
   defp results(_), do: {:error, :unverified}
 
-  defp features do
+  defp features(summaries, results) do
     Enum.map(@specs, fn {id, title, summary, path, scenarios, flag, version} ->
+      guidance =
+        case summary do
+          {:journey, key} ->
+            with true <- is_map(summaries),
+                 true <- Enum.all?(["en", "fr"], &(results["#{key}-#{&1}"] == "success")),
+                 text when is_binary(text) and byte_size(text) in 1..1024 <- summaries[key] do
+              text
+            else
+              _ -> nil
+            end
+
+          text ->
+            text
+        end
+
       %{
         id: id,
         title: title,
-        summary: summary,
+        summary: guidance || title,
         introduced_in: version,
         entry_path: path,
         controls: if(id == "crm-guided", do: ["menu.contacts", "crm.geography.areas"], else: []),
         scenarios: for(prefix <- scenarios, locale <- ["en", "fr"], do: "#{prefix}-#{locale}"),
         enabled: is_nil(flag) or Application.get_env(:pauseai_ca, flag, false) == true,
-        ready: true
+        ready: is_binary(guidance)
       }
     end)
   end

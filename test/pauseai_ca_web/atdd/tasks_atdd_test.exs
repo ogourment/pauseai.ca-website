@@ -4,6 +4,8 @@ if System.get_env("ATDD") == "true" do
     import PauseAiCa.AccountsFixtures
     alias PauseAiCa.{Accounts, Repo, Tasks, Volunteers}
     alias PauseAiCaWeb.AtddEvidence
+
+    @assistant_summary "In Manage → Tasks, select the group and open the task. Assigned to identifies who does the work; Accountable owner is separate. In the task editor select Status → Done and Save. Complete any blocking prerequisites first. The saved status and task history record completion. Ordinary members can view their own assignments in Volunteer profile."
     @moduletag :atdd
     @scenarios (for {locale, language, device} <- [
                       {"en", "English", "Desktop"},
@@ -154,6 +156,15 @@ if System.get_env("ATDD") == "true" do
       assert finished.status == "done"
 
       b =
+        capture(
+          b,
+          locale,
+          "Complete a task after its prerequisite",
+          "The task is saved as done.",
+          %{"assistant_summary" => @assistant_summary}
+        )
+
+      b =
         b
         |> select("[name='task[assignee_id]']", tr(locale, "Assigned to"),
           exact: false,
@@ -240,7 +251,7 @@ if System.get_env("ATDD") == "true" do
           Gettext.gettext(PauseAiCaWeb.Gettext, text)
         end)
 
-    defp capture(browser, locale, trigger, outcome) do
+    defp capture(browser, locale, trigger, outcome, extra_metadata \\ %{}) do
       step = Process.get({:task_step, locale}, 0) + 1
       Process.put({:task_step, locale}, step)
       filename = "TASK-PAI-01-#{locale}-#{step}.png"
@@ -254,13 +265,21 @@ if System.get_env("ATDD") == "true" do
 
       browser = AtddEvidence.capture_full_page(browser, filename)
 
-      AtddEvidence.record_step(filename, trigger, outcome, %{
-        "scenario_id" => "TASK-PAI-01-#{locale}",
-        "url" => AtddEvidence.safe_url(Process.get(:task_capture_url)),
-        "page_html" => AtddEvidence.scrub_html(AtddEvidence.page_html(browser)),
-        "step" => step,
-        "external_systems" => "Synthetic local database only; no providers or messages"
-      })
+      AtddEvidence.record_step(
+        filename,
+        trigger,
+        outcome,
+        Map.merge(
+          %{
+            "scenario_id" => "TASK-PAI-01-#{locale}",
+            "url" => AtddEvidence.safe_url(Process.get(:task_capture_url)),
+            "page_html" => AtddEvidence.scrub_html(AtddEvidence.page_html(browser)),
+            "step" => step,
+            "external_systems" => "Synthetic local database only; no providers or messages"
+          },
+          extra_metadata
+        )
+      )
 
       browser
     end

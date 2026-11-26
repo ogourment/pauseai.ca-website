@@ -2,12 +2,17 @@ defmodule PauseAiCa.Assistant.RequestContext do
   @moduledoc "Keeps model context within the configured turn ceiling without changing the question or spending policy."
   alias PhoenixAgentAssistant.{Context, Modes}
 
+  @coaching_fields ~w(id title summary introduced_in removed_in entry_path controls status reason)a
+
   def catalogue(features, ids \\ :all) do
     # The request already carries build/version. Test IDs belong to audit evidence,
     # rather than the model's coaching context. Availability and controls remain.
     features
     |> Enum.filter(&(ids == :all or &1.id in ids))
-    |> Enum.map(&Map.drop(&1, [:build, :app_version, :scenarios]))
+    |> Enum.map(fn feature ->
+      projected = Map.take(feature, @coaching_fields)
+      if projected[:controls] == [], do: Map.delete(projected, :controls), else: projected
+    end)
   end
 
   def prepare(request, messages, config, mode) do

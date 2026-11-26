@@ -675,7 +675,17 @@ defmodule PauseAiCa.Assistant do
     organizer_features =
       ~w(group-admission group-public-events local-followup task-member-assignment organizer-tasks)
 
-    authorized? = fn feature -> admin or (organizer and feature.id in organizer_features) end
+    authorized? = fn
+      %{id: "historical-email-import"} ->
+        admin
+
+      %{id: "group-responsibilities"} ->
+        organizer and (not admin or Repo.exists?(Volunteers.Group))
+
+      feature ->
+        admin or (organizer and feature.id in organizer_features)
+    end
+
     coaching_catalogue(config, identity, authorized?, guided)
   end
 

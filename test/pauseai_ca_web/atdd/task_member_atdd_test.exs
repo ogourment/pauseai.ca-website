@@ -6,6 +6,7 @@ if System.get_env("ATDD") == "true" do
     alias PauseAiCa.{Accounts, Incubators, Repo, Tasks, Volunteers}
     alias PauseAiCaWeb.{AtddEvidence, AtddNavigation}
 
+    @assistant_summary "In Manage → Groups, select the group and open Responsibilities → Add responsibility. Choose the approved member, enter the responsibility title and start date, then Save responsibility. The group roster of responsibilities shows the holder. Members see their own under My account → Volunteer profile → My group work. Track a discrete deliverable separately in Tasks."
     @moduletag :atdd
     @scenarios (for {locale, language, device} <- [
                       {"en", "English", "Desktop"},
@@ -94,6 +95,14 @@ if System.get_env("ATDD") == "true" do
         |> fill_in(tr(locale, "Start date"), with: Date.to_iso8601(Date.utc_today()))
         |> click_button(tr(locale, "Save responsibility"))
         |> assert_has("#group-responsibilities li", text: role_title)
+        |> assert_has("#group-responsibilities li", text: member.name)
+        |> capture(
+          id,
+          "Save a group responsibility",
+          "Group responsibilities",
+          tr(locale, "Save responsibility"),
+          %{"assistant_summary" => @assistant_summary}
+        )
 
       title =
         if locale == "fr",
@@ -217,7 +226,7 @@ if System.get_env("ATDD") == "true" do
           Gettext.gettext(PauseAiCaWeb.Gettext, text)
         end)
 
-    defp capture(browser, id, title, preceding, control) do
+    defp capture(browser, id, title, preceding, control, extra_metadata \\ %{}) do
       evaluate(browser, "document.documentElement.scrollWidth <= innerWidth", &assert(&1))
       step = Process.get({:task_member_step, id}, 0) + 1
       Process.put({:task_member_step, id}, step)
@@ -234,6 +243,8 @@ if System.get_env("ATDD") == "true" do
         "control" => control,
         "fixture" => "Synthetic local accounts and newsletter task; no email delivery"
       }
+
+      metadata = Map.merge(metadata, extra_metadata)
 
       outcome = "Approved ordinary member is assigned, with unchanged group and global authority."
       AcceptanceHarness.Evidence.record_pending_step(filename, title, outcome, metadata)
